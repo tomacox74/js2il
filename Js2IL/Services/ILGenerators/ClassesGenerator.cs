@@ -16,6 +16,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly MetadataBuilder _metadata;
         private readonly BaseClassLibraryReferences _bcl;
         private readonly ClassRegistry _classRegistry;
+        private readonly NestedTypeRelationshipRegistry _nestedTypeRelationshipRegistry;
         private readonly string _moduleName;
 
         private readonly IServiceProvider _serviceProvider;
@@ -25,12 +26,14 @@ namespace Js2IL.Services.ILGenerators
             MetadataBuilder metadata,
             BaseClassLibraryReferences bcl,
             ClassRegistry classRegistry,
+            NestedTypeRelationshipRegistry nestedTypeRelationshipRegistry,
             string moduleName)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
             _bcl = bcl ?? throw new ArgumentNullException(nameof(bcl));
             _classRegistry = classRegistry ?? throw new ArgumentNullException(nameof(classRegistry));
+            _nestedTypeRelationshipRegistry = nestedTypeRelationshipRegistry ?? throw new ArgumentNullException(nameof(nestedTypeRelationshipRegistry));
             _moduleName = moduleName ?? throw new ArgumentNullException(nameof(moduleName));
         }
 
@@ -428,7 +431,7 @@ namespace Js2IL.Services.ILGenerators
             var typeHandle = tb.AddTypeDefinition(typeAttrs, _bcl.ObjectType, firstFieldOverride: null, firstMethodOverride: ctorMethodDef);
             if (!parentType.IsNil)
             {
-                _metadata.AddNestedType(typeHandle, parentType);
+                _nestedTypeRelationshipRegistry.Add(typeHandle, parentType);
             }
             _classRegistry.Register(registryClassName, typeHandle);
 

@@ -12,6 +12,7 @@ using Js2IL.Services;
 using Js2IL.Services.TwoPhaseCompilation;
 using Microsoft.Extensions.DependencyInjection;
 using ScopesCallableKind = Js2IL.Services.ScopesAbi.CallableKind;
+using Js2IL.Utilities;
 
 namespace Js2IL;
 
@@ -90,14 +91,26 @@ internal sealed class JsMethodCompiler
     private readonly MemberReferenceRegistry _memberReferenceRegistry;
     private readonly BaseClassLibraryReferences _bclReferences;
     private readonly Services.VariableBindings.ScopeMetadataRegistry _scopeMetadataRegistry;
+    private readonly FunctionTypeMetadataRegistry _functionTypeMetadataRegistry;
+    private readonly Services.NestedTypeRelationshipRegistry _nestedTypeRelationshipRegistry;
 
-    public JsMethodCompiler(MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, MemberReferenceRegistry memberReferenceRegistry, BaseClassLibraryReferences bclReferences, Services.VariableBindings.ScopeMetadataRegistry scopeMetadataRegistry, IServiceProvider serviceProvider)
+    public JsMethodCompiler(
+        MetadataBuilder metadataBuilder,
+        TypeReferenceRegistry typeReferenceRegistry,
+        MemberReferenceRegistry memberReferenceRegistry,
+        BaseClassLibraryReferences bclReferences,
+        Services.VariableBindings.ScopeMetadataRegistry scopeMetadataRegistry,
+        FunctionTypeMetadataRegistry functionTypeMetadataRegistry,
+        Services.NestedTypeRelationshipRegistry nestedTypeRelationshipRegistry,
+        IServiceProvider serviceProvider)
     {
         _metadataBuilder = metadataBuilder;
         _typeReferenceRegistry = typeReferenceRegistry;
         _memberReferenceRegistry = memberReferenceRegistry;
         _bclReferences = bclReferences;
         _scopeMetadataRegistry = scopeMetadataRegistry;
+        _functionTypeMetadataRegistry = functionTypeMetadataRegistry;
+        _nestedTypeRelationshipRegistry = nestedTypeRelationshipRegistry;
         _serviceProvider = serviceProvider;
     }
 
@@ -527,7 +540,7 @@ internal sealed class JsMethodCompiler
             new MethodParameterDescriptor("__dirname", typeof(string))
         ];
         var methodDescriptor = new MethodDescriptor(
-            "Main",
+            "__js_module_init__",
             programTypeBuilder,
             parameters);
 
@@ -537,11 +550,60 @@ internal sealed class JsMethodCompiler
         var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
         // Define the module main type via TypeBuilder
-        programTypeBuilder.AddTypeDefinition(
+        var moduleTypeHandle = programTypeBuilder.AddTypeDefinition(
             TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
             _bclReferences.ObjectType);
 
+        // Establish all nesting relationships now that the module type exists.
+        // This is done in sorted order to satisfy ECMA-335 NestedClass table ordering.
+        EstablishModuleNesting(moduleName, moduleTypeHandle, scope);
+
         return methodDefinitionHandle;
+    }
+
+    private void EstablishModuleNesting(string moduleName, TypeDefinitionHandle moduleTypeHandle, Scope globalScope)
+    {
+        var relationships = new List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)>();
+
+        // Child scopes nest under their parent scope.
+        var visited = new HashSet<string>(StringComparer.Ordinal);
+        CollectScopeNestingRelationships(globalScope, relationships, visited);
+
+        foreach (var rel in relationships.Distinct())
+        {
+            _nestedTypeRelationshipRegistry.Add(rel.Nested, rel.Enclosing);
+        }
+    }
+
+    private void CollectScopeNestingRelationships(
+        Scope parentScope,
+        List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)> relationships,
+        HashSet<string> visited)
+    {
+        var parentKey = ScopeNaming.GetRegistryScopeName(parentScope);
+        if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(parentKey, out var parentTypeHandle))
+        {
+            // Parent scope may be empty and not registered; this is unexpected because TypeGenerator
+            // ensures all scopes get a type handle.
+            throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{parentKey}', but none was found.");
+        }
+
+        foreach (var child in parentScope.Children)
+        {
+            var childKey = ScopeNaming.GetRegistryScopeName(child);
+            if (!visited.Add(childKey))
+            {
+                continue;
+            }
+
+            if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(childKey, out var childTypeHandle))
+            {
+                throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{childKey}', but none was found.");
+            }
+
+            relationships.Add((childTypeHandle, parentTypeHandle));
+            CollectScopeNestingRelationships(child, relationships, visited);
+        }
     }
 
     #endregion

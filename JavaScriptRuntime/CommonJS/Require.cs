@@ -83,10 +83,26 @@ namespace JavaScriptRuntime.CommonJS
                 throw new ReferenceError($"Cannot require local module '{key}': no local modules assembly provided");
             
             var moduleId = ModuleName.GetModuleIdFromSpecifier(key);
-            var TypeName = $"Scripts.{moduleId}";
-            var localType = _localModulesAssembly.GetType(TypeName);
+            var moduleTypeNameCandidates = new[]
+            {
+                $"Modules.{moduleId}",
+                $"Scripts.{moduleId}",
+            };
+
+            Type? localType = null;
+            string? resolvedTypeName = null;
+            foreach (var candidate in moduleTypeNameCandidates)
+            {
+                localType = _localModulesAssembly.GetType(candidate);
+                if (localType != null)
+                {
+                    resolvedTypeName = candidate;
+                    break;
+                }
+            }
+
             if (localType == null)
-                throw new ReferenceError($"Cannot find local module type '{TypeName}' in assembly");
+                throw new ReferenceError($"Cannot find local module type '{moduleTypeNameCandidates[0]}' (or legacy '{moduleTypeNameCandidates[1]}') in assembly");
 
             // Store current parent before we change it
             var parentModule = _currentParentModule;
@@ -122,10 +138,23 @@ namespace JavaScriptRuntime.CommonJS
                 parentModule.AddChild(module);
             }
 
-            // method is a static member
-            var moduleEntryPoint = localType.GetMethod("Main");
+            // Method is a static member. Prefer the current compiler output, but allow legacy names.
+            var entryPointCandidates = new[]
+            {
+                "__js_module_init__",
+                "Main",
+            };
+
+            MethodInfo? moduleEntryPoint = null;
+            foreach (var candidate in entryPointCandidates)
+            {
+                moduleEntryPoint = localType.GetMethod(candidate, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                if (moduleEntryPoint != null)
+                    break;
+            }
+
             if (moduleEntryPoint == null)
-                throw new TypeError($"Local module '{moduleId}' does not have a static Main method");
+                throw new TypeError($"Local module '{resolvedTypeName ?? moduleId}' does not have a static __js_module_init__ (or legacy Main) method");
 
             var moduleDelegate = (ModuleMainDelegate)Delegate.CreateDelegate(
                 typeof(ModuleMainDelegate), moduleEntryPoint);

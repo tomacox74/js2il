@@ -67,6 +67,10 @@ namespace Js2IL.Services
             // create the entry point for spining up the execution engine
             createEntryPoint(methodBodyStream);
 
+            // Emit NestedClass table rows in one globally sorted pass.
+            // This must happen after all TypeDefs have been created.
+            _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>().EmitAllSorted(_metadataBuilder);
+
             this.CreateAssembly(assemblyName, outputPath);
         }
 
@@ -201,12 +205,11 @@ namespace Js2IL.Services
             // Create the assembly metadata.
             var assemblyName = _metadataBuilder.GetOrAddString(name);
             var culture = _metadataBuilder.GetOrAddString("");
-            var publicKey = _metadataBuilder.GetOrAddBlob(StandardPublicKey);
             this._metadataBuilder.AddAssembly(
                 name: assemblyName,
                 version: new Version(1, 0, 0, 0),
                 culture: culture,
-                publicKey: publicKey,
+                publicKey: default,
                 flags: 0,
                 hashAlgorithm: AssemblyHashAlgorithm.None
             );

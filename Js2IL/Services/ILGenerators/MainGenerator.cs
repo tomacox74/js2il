@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
+using Js2IL.Services;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
@@ -43,7 +44,13 @@ namespace Js2IL.Services.ILGenerators
             _metadataBuilder = metadataBuilder;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _classRegistry = serviceProvider.GetRequiredService<ClassRegistry>();
-            _classesGenerator = new ClassesGenerator(serviceProvider, metadataBuilder, bclReferences, _classRegistry, _moduleName);
+            _classesGenerator = new ClassesGenerator(
+                serviceProvider,
+                metadataBuilder,
+                bclReferences,
+                _classRegistry,
+                serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>(),
+                _moduleName);
             _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
         }
 

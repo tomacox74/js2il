@@ -42,6 +42,8 @@ public sealed class TwoPhaseCompilationCoordinator
     // Registry for storing callable declarations (CallableId-keyed, per design doc)
     // Injected from DI - single instance per compilation
     private readonly CallableRegistry _registry;
+
+    private readonly FunctionTypeMetadataRegistry _functionTypeMetadataRegistry;
     
     private IReadOnlyList<CallableId>? _discoveredCallables;
 
@@ -57,11 +59,13 @@ public sealed class TwoPhaseCompilationCoordinator
     public TwoPhaseCompilationCoordinator(
         ILogger logger, 
         CompilerOptions compilerOptions,
-        CallableRegistry registry)
+        CallableRegistry registry,
+        FunctionTypeMetadataRegistry? functionTypeMetadataRegistry = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _verbose = compilerOptions?.Verbose ?? false;
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
+        _functionTypeMetadataRegistry = functionTypeMetadataRegistry ?? new FunctionTypeMetadataRegistry();
     }
 
     /// <summary>
@@ -636,14 +640,15 @@ public sealed class TwoPhaseCompilationCoordinator
                 throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration scope not found: {callable.DisplayName}");
             }
 
-            var methodName = (funcDecl.Id as Identifier)?.Name ?? callable.Name ?? "anonymous";
+            var functionName = (funcDecl.Id as Identifier)?.Name ?? callable.Name ?? "anonymous";
+            const string ilMethodName = "__js_call__";
 
             // IR first
             var methodCompiler = serviceProvider.GetRequiredService<JsMethodCompiler>();
             var irBody = methodCompiler.TryCompileCallableBody(
                 callable: callable,
                 expectedMethodDef: expected,
-                ilMethodName: methodName,
+                ilMethodName: ilMethodName,
                 node: funcDecl,
                 scope: funcScope,
                 methodBodyStreamEncoder: methodBodyStreamEncoder,
@@ -662,15 +667,18 @@ public sealed class TwoPhaseCompilationCoordinator
                 var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
                 var extra = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $" (IR failure: {lastFailure})";
                 throw new NotSupportedException(
-                    $"[TwoPhase] IR pipeline could not compile function declaration '{methodName}' in scope '{funcScope.GetQualifiedName()}'.{extra}");
+                    $"[TwoPhase] IR pipeline could not compile function declaration '{functionName}' in scope '{funcScope.GetQualifiedName()}'.{extra}");
             }
 
             compiled[callable] = body;
             _registry.MarkBodyCompiledForAstNode(funcDecl);
         }
 
-        // Finalize MethodDef/Param rows deterministically (discovery order) as a single contiguous block.
-        var tb = new TypeBuilder(metadataBuilder, FunctionsNamespace, moduleName);
+        // Finalize MethodDef/Param rows deterministically (discovery order).
+        // Each function declaration becomes its own top-level type under namespace Modules.<ModuleName>.
+        // NOTE: Although a nested-type layout under the module would be nicer, some CLR loaders are
+        // sensitive to certain nested/enclosing TypeDef ordering; keep function declarations top-level
+        // for runtime loadability.
         foreach (var callable in functionDeclCallables)
         {
             if (!compiled.TryGetValue(callable, out var body))
@@ -678,12 +686,15 @@ public sealed class TwoPhaseCompilationCoordinator
                 // The plan is authoritative.
                 throw new InvalidOperationException($"[TwoPhase] Missing compiled body for function declaration: {callable.DisplayName}");
             }
-            _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, tb, body);
-        }
 
-        tb.AddTypeDefinition(
-            TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
-            bclReferences.ObjectType);
+            var functionName = callable.Name ?? "anonymous";
+            var functionTb = new TypeBuilder(metadataBuilder, $"Modules.{moduleName}", functionName);
+            _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, functionTb, body);
+
+            _ = functionTb.AddTypeDefinition(
+                TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+                bclReferences.ObjectType);
+        }
     }
 
     /// <summary>
@@ -973,7 +984,7 @@ public sealed class TwoPhaseCompilationCoordinator
     {
         return callable.Kind switch
         {
-            CallableKind.FunctionDeclaration => callable.Name ?? "anonymous",
+            CallableKind.FunctionDeclaration => "__js_call__",
             CallableKind.FunctionExpression => callable.Location.HasValue 
                 ? $"FunctionExpression_L{callable.Location.Value.Line}C{callable.Location.Value.Column}"
                 : "FunctionExpression_anonymous",

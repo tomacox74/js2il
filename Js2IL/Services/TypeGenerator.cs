@@ -184,15 +184,20 @@ namespace Js2IL.Services
         }
 
         /// <summary>
-        /// Phase 2: Recursively creates type definitions depth-first (children first).
-        /// All fields must already be created before this is called.
-        /// Root types go in the "Scopes" namespace, nested types are properly nested.
+        /// Phase 2: Recursively creates type definitions depth-first.
+        ///
+        /// NOTE: Although it is conceptually nice to nest the global scope type under the module type,
+        /// some CLR loaders are sensitive to certain nesting layouts when the enclosing TypeDef is emitted
+        /// later in the metadata stream. As a pragmatic workaround we emit the global scope as a top-level
+        /// type under namespace "Modules.<ModuleName>" with name "Scope".
         /// </summary>
         private void CreateAllTypes(Scope scope, string typeName)
         {
-            // First, recursively create all child types (depth-first)
-            // We'll create the parent type first, then update children to be nested
-            var parentType = CreateScopeType(scope, null, typeName, "Scopes");
+            // Create the root scope type.
+            var isGlobalScope = scope.Kind == ScopeKind.Global;
+            var rootTypeName = isGlobalScope ? "Scope" : typeName;
+            var rootNamespace = isGlobalScope ? $"Modules.{typeName}" : "Scopes";
+            var parentType = CreateScopeType(scope, null, rootTypeName, rootNamespace, isNestedType: false);
             
             // Now create child types as nested types (skip duplicates by name under the same parent)
             var seenChildNames = new HashSet<string>();
@@ -270,15 +275,22 @@ namespace Js2IL.Services
         /// Creates a single type definition for a scope.
         /// All fields must already exist. All types are created as top-level types.
         /// </summary>
-        private TypeDefinitionHandle CreateScopeType(Scope scope, TypeDefinitionHandle? parentType, string typeName, string namespaceString)
+        private TypeDefinitionHandle CreateScopeType(
+            Scope scope,
+            TypeDefinitionHandle? parentType,
+            string typeName,
+            string namespaceString,
+            bool isNestedType = false)
         {
-            // Set appropriate visibility: Public for root types, NestedPublic for nested types
-            var typeAttributes = parentType.HasValue 
+            var isNested = parentType.HasValue || isNestedType;
+
+            // Set appropriate visibility: Public for top-level types, NestedPublic for nested types
+            var typeAttributes = isNested
                 ? TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit
                 : TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
 
-            // For nested types, use empty namespace; for root types, use the provided namespace
-            var actualNamespace = parentType.HasValue ? "" : namespaceString;
+            // For nested types, use empty namespace; for top-level types, use the provided namespace
+            var actualNamespace = isNested ? "" : namespaceString;
 
             // Initialize TypeBuilder for this type (handles field/method tracking and first-method/field invariants)
             var tb = new TypeBuilder(_metadataBuilder, actualNamespace, typeName);
@@ -298,11 +310,9 @@ namespace Js2IL.Services
 
             var typeHandle = tb.AddTypeDefinition(typeAttributes, baseType);
 
-            // If this is a nested type, establish the nesting relationship
-            if (parentType.HasValue)
-            {
-                _metadataBuilder.AddNestedType(typeHandle, parentType.Value);
-            }
+            // NOTE: We intentionally do NOT emit NestedClass table rows here.
+            // Nesting relationships are established later in a single pass (sorted by nested type token)
+            // so the NestedClass table satisfies ECMA-335 sorting requirements.
 
             // Store the type handle and constructor for later reference
             var scopeKey = GetRegistryScopeName(scope);
