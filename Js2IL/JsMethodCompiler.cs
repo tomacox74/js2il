@@ -666,6 +666,41 @@ internal sealed class JsMethodCompiler
                 throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{childKey}', but none was found.");
             }
 
+            // Special case: class member scopes (ctor/get/set/method bodies) should be nested under the
+            // runtime class TypeDef as siblings of the class scope type.
+            //
+            // Desired layout:
+            //   <ClassName>
+            //     + Scope           (class lexical scope)
+            //     + Scope_ctor      (constructor body scope)
+            //     + Scope_get_x     (getter body scope)
+            //     + Scope_set_x     (setter body scope)
+            //     + Scope_method    (method body scope)
+            //
+            // rather than nesting those member scopes under <ClassName>+Scope.
+            if (parentScope.Kind == ScopeKind.Class
+                && child.Kind == ScopeKind.Function
+                && !string.IsNullOrWhiteSpace(child.DotNetTypeName)
+                && child.DotNetTypeName.StartsWith("Scope", StringComparison.Ordinal))
+            {
+                var classRegistry = _serviceProvider.GetService<Services.ClassRegistry>();
+                if (classRegistry != null)
+                {
+                    var registryClassName = GetRegistryClassName(parentScope);
+                    if (classRegistry.TryGet(registryClassName, out var classTypeHandle) && !classTypeHandle.IsNil)
+                    {
+                        relationships.Add((childTypeHandle, classTypeHandle));
+                        CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                        continue;
+                    }
+                }
+
+                // Fallback: if we can't resolve the runtime class TypeDef, keep legacy nesting.
+                relationships.Add((childTypeHandle, parentTypeHandle));
+                CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                continue;
+            }
+
             // Special case: class scopes should be nested under their runtime class TypeDef.
             // This keeps Modules.<Module>.Scope free of nested types and produces a clean layout:
             //   Modules.<Module>+<ClassName>
