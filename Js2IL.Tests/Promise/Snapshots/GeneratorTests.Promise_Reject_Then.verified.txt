@@ -7,11 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Scope
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C57
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_L1C57
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -30,11 +30,44 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L1C57::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class ArrowFunction_L1C57
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object message
+			) cil managed 
+		{
+			// Method begins at RVA 0x20ac
+			// Header size: 12
+			// Code size: 23 (0x17)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.1
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldarg.1
+			IL_000e: stelem.ref
+			IL_000f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: ret
+		} // end of method ArrowFunction_L1C57::__js_call__
+
+	} // end of class ArrowFunction_L1C57
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -80,7 +113,7 @@
 		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
 		IL_0010: stloc.1
 		IL_0011: ldnull
-		IL_0012: ldftn object Functions.ArrowFunction_L1C57::ArrowFunction_L1C57(object[], object)
+		IL_0012: ldftn object Modules.Promise_Reject_Then/ArrowFunction_L1C57::__js_call__(object[], object)
 		IL_0018: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_001d: ldc.i4.1
 		IL_001e: newarr [System.Runtime]System.Object
@@ -111,39 +144,6 @@
 	} // end of method Promise_Reject_Then::__js_module_init__
 
 } // end of class Modules.Promise_Reject_Then
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C57
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L1C57 (
-			object[] scopes,
-			object message
-		) cil managed 
-	{
-		// Method begins at RVA 0x20ac
-		// Header size: 12
-		// Code size: 23 (0x17)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldarg.1
-		IL_000e: stelem.ref
-		IL_000f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0014: stloc.0
-		IL_0015: ldloc.0
-		IL_0016: ret
-	} // end of method ArrowFunction_L1C57::ArrowFunction_L1C57
-
-} // end of class Functions.ArrowFunction_L1C57
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

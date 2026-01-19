@@ -58,6 +58,10 @@ namespace Js2IL.Tests.ArrowFunction
 
                 var nestedArrowFunction = createCounterClass.GetNestedType("ArrowFunction_L7C23")!;
                 Assert.True(nestedArrowFunction.IsClass, "Expected ArrowFunction_L7C23 to be a class");
+
+                // make sure there is no old Function.* types
+                var previousType = generatedAssembly.GetType("Functions.ArrowFunction_L7C23", throwOnError: false);
+                Assert.Null(previousType);
             });
         }
     }

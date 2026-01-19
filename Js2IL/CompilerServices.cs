@@ -66,6 +66,9 @@ public static class CompilerServices
         // Function type metadata (function declarations become nested types under Modules.<ModuleName>)
         services.AddSingleton<Services.FunctionTypeMetadataRegistry>();
 
+        // Anonymous callable owner type metadata (arrows + function expressions)
+        services.AddSingleton<Services.AnonymousCallableTypeMetadataRegistry>();
+
         // CallableMetadataRegistry will be populated and queried by the IL generators in a future phase.
         // It is registered here so that downstream components can start depending on it without breaking changes
         // when the callable metadata discovery and registration pipeline is fully integrated.

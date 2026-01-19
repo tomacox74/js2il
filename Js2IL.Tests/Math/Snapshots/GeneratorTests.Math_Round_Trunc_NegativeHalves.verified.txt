@@ -107,11 +107,11 @@
 
 	} // end of class toStr
 
-	.class nested public auto ansi beforefieldinit Scope
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C20
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_L3C20
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -130,11 +130,40 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L3C20::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class ArrowFunction_L3C20
+		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit ArrowFunction_L4C20
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object n
+			) cil managed 
+		{
+			// Method begins at RVA 0x230c
+			// Header size: 12
+			// Code size: 9 (0x9)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ret
+		} // end of method ArrowFunction_L3C20::__js_call__
+
+	} // end of class ArrowFunction_L3C20
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L4C20
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -153,11 +182,38 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L4C20::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class ArrowFunction_L4C20
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object n
+			) cil managed 
+		{
+			// Method begins at RVA 0x2324
+			// Header size: 12
+			// Code size: 9 (0x9)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Math::trunc(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ret
+		} // end of method ArrowFunction_L4C20::__js_call__
+
+	} // end of class ArrowFunction_L4C20
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Fields
 		.field public object toStr
 
@@ -276,7 +332,7 @@
 		IL_0101: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_0106: stloc.1
 		IL_0107: ldnull
-		IL_0108: ldftn object Functions.ArrowFunction_L3C20::ArrowFunction_L3C20(object[], object)
+		IL_0108: ldftn object Modules.Math_Round_Trunc_NegativeHalves/ArrowFunction_L3C20::__js_call__(object[], object)
 		IL_010e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0113: ldc.i4.1
 		IL_0114: newarr [System.Runtime]System.Object
@@ -296,7 +352,7 @@
 		IL_0130: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
 		IL_0135: stloc.2
 		IL_0136: ldnull
-		IL_0137: ldftn object Functions.ArrowFunction_L4C20::ArrowFunction_L4C20(object[], object)
+		IL_0137: ldftn object Modules.Math_Round_Trunc_NegativeHalves/ArrowFunction_L4C20::__js_call__(object[], object)
 		IL_013d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0142: ldc.i4.1
 		IL_0143: newarr [System.Runtime]System.Object
@@ -395,60 +451,6 @@
 	} // end of method Math_Round_Trunc_NegativeHalves::__js_module_init__
 
 } // end of class Modules.Math_Round_Trunc_NegativeHalves
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L3C20
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L3C20 (
-			object[] scopes,
-			object n
-		) cil managed 
-	{
-		// Method begins at RVA 0x230c
-		// Header size: 12
-		// Code size: 9 (0x9)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
-		IL_0006: stloc.0
-		IL_0007: ldloc.0
-		IL_0008: ret
-	} // end of method ArrowFunction_L3C20::ArrowFunction_L3C20
-
-} // end of class Functions.ArrowFunction_L3C20
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L4C20
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L4C20 (
-			object[] scopes,
-			object n
-		) cil managed 
-	{
-		// Method begins at RVA 0x2324
-		// Header size: 12
-		// Code size: 9 (0x9)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Math::trunc(object)
-		IL_0006: stloc.0
-		IL_0007: ldloc.0
-		IL_0008: ret
-	} // end of method ArrowFunction_L4C20::ArrowFunction_L4C20
-
-} // end of class Functions.ArrowFunction_L4C20
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

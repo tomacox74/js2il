@@ -7,11 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Scope
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C24
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_L3C24
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
@@ -49,11 +49,104 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L3C24::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class ArrowFunction_L3C24
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x20d0
+			// Header size: 12
+			// Code size: 184 (0xb8)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] object,
+				[2] object,
+				[3] object,
+				[4] bool
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
+			IL_0008: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
+			IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0012: ldc.r8 1
+			IL_001b: add
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: box [System.Runtime]System.Double
+			IL_0023: stloc.1
+			IL_0024: ldarg.0
+			IL_0025: ldc.i4.0
+			IL_0026: ldelem.ref
+			IL_0027: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
+			IL_002c: ldloc.1
+			IL_002d: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
+			IL_0032: ldstr "tick "
+			IL_0037: ldarg.0
+			IL_0038: ldc.i4.0
+			IL_0039: ldelem.ref
+			IL_003a: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
+			IL_003f: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
+			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0049: stloc.2
+			IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_004f: ldc.i4.1
+			IL_0050: newarr [System.Runtime]System.Object
+			IL_0055: dup
+			IL_0056: ldc.i4.0
+			IL_0057: ldloc.2
+			IL_0058: stelem.ref
+			IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_005e: pop
+			IL_005f: ldarg.0
+			IL_0060: ldc.i4.0
+			IL_0061: ldelem.ref
+			IL_0062: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
+			IL_0067: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
+			IL_006c: stloc.3
+			IL_006d: ldloc.3
+			IL_006e: ldc.r8 3
+			IL_0077: box [System.Runtime]System.Double
+			IL_007c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0081: stloc.s 4
+			IL_0083: ldloc.s 4
+			IL_0085: brfalse IL_00b6
+
+			IL_008a: ldarg.0
+			IL_008b: ldc.i4.0
+			IL_008c: ldelem.ref
+			IL_008d: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
+			IL_0092: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
+			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
+			IL_009c: pop
+			IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a2: ldc.i4.1
+			IL_00a3: newarr [System.Runtime]System.Object
+			IL_00a8: dup
+			IL_00a9: ldc.i4.0
+			IL_00aa: ldstr "cleared"
+			IL_00af: stelem.ref
+			IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00b5: pop
+
+			IL_00b6: ldnull
+			IL_00b7: ret
+		} // end of method ArrowFunction_L3C24::__js_call__
+
+	} // end of class ArrowFunction_L3C24
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Fields
 		.field public object count
 		.field public object id
@@ -102,7 +195,7 @@
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
 		IL_001a: ldnull
-		IL_001b: ldftn object Functions.ArrowFunction_L3C24::ArrowFunction_L3C24(object[])
+		IL_001b: ldftn object Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L3C24::__js_call__(object[])
 		IL_0021: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0026: ldc.i4.1
 		IL_0027: newarr [System.Runtime]System.Object
@@ -135,99 +228,6 @@
 	} // end of method SetInterval_ExecutesThreeTimes_ThenClears::__js_module_init__
 
 } // end of class Modules.SetInterval_ExecutesThreeTimes_ThenClears
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L3C24
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L3C24 (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x20d0
-		// Header size: 12
-		// Code size: 184 (0xb8)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] object,
-			[2] object,
-			[3] object,
-			[4] bool
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.0
-		IL_0002: ldelem.ref
-		IL_0003: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
-		IL_0008: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-		IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0012: ldc.r8 1
-		IL_001b: add
-		IL_001c: stloc.0
-		IL_001d: ldloc.0
-		IL_001e: box [System.Runtime]System.Double
-		IL_0023: stloc.1
-		IL_0024: ldarg.0
-		IL_0025: ldc.i4.0
-		IL_0026: ldelem.ref
-		IL_0027: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
-		IL_002c: ldloc.1
-		IL_002d: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-		IL_0032: ldstr "tick "
-		IL_0037: ldarg.0
-		IL_0038: ldc.i4.0
-		IL_0039: ldelem.ref
-		IL_003a: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
-		IL_003f: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0049: stloc.2
-		IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004f: ldc.i4.1
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: ldloc.2
-		IL_0058: stelem.ref
-		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005e: pop
-		IL_005f: ldarg.0
-		IL_0060: ldc.i4.0
-		IL_0061: ldelem.ref
-		IL_0062: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
-		IL_0067: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-		IL_006c: stloc.3
-		IL_006d: ldloc.3
-		IL_006e: ldc.r8 3
-		IL_0077: box [System.Runtime]System.Double
-		IL_007c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0081: stloc.s 4
-		IL_0083: ldloc.s 4
-		IL_0085: brfalse IL_00b6
-
-		IL_008a: ldarg.0
-		IL_008b: ldc.i4.0
-		IL_008c: ldelem.ref
-		IL_008d: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
-		IL_0092: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
-		IL_009c: pop
-		IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a2: ldc.i4.1
-		IL_00a3: newarr [System.Runtime]System.Object
-		IL_00a8: dup
-		IL_00a9: ldc.i4.0
-		IL_00aa: ldstr "cleared"
-		IL_00af: stelem.ref
-		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b5: pop
-
-		IL_00b6: ldnull
-		IL_00b7: ret
-	} // end of method ArrowFunction_L3C24::ArrowFunction_L3C24
-
-} // end of class Functions.ArrowFunction_L3C24
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

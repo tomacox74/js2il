@@ -92,6 +92,7 @@ internal sealed class JsMethodCompiler
     private readonly BaseClassLibraryReferences _bclReferences;
     private readonly Services.VariableBindings.ScopeMetadataRegistry _scopeMetadataRegistry;
     private readonly FunctionTypeMetadataRegistry _functionTypeMetadataRegistry;
+    private readonly AnonymousCallableTypeMetadataRegistry _anonymousCallableTypeMetadataRegistry;
     private readonly Services.NestedTypeRelationshipRegistry _nestedTypeRelationshipRegistry;
     private readonly Services.ModuleTypeMetadataRegistry _moduleTypeRegistry;
 
@@ -102,6 +103,7 @@ internal sealed class JsMethodCompiler
         BaseClassLibraryReferences bclReferences,
         Services.VariableBindings.ScopeMetadataRegistry scopeMetadataRegistry,
         FunctionTypeMetadataRegistry functionTypeMetadataRegistry,
+        AnonymousCallableTypeMetadataRegistry anonymousCallableTypeMetadataRegistry,
         Services.NestedTypeRelationshipRegistry nestedTypeRelationshipRegistry,
         Services.ModuleTypeMetadataRegistry moduleTypeRegistry,
         IServiceProvider serviceProvider)
@@ -112,6 +114,7 @@ internal sealed class JsMethodCompiler
         _bclReferences = bclReferences;
         _scopeMetadataRegistry = scopeMetadataRegistry;
         _functionTypeMetadataRegistry = functionTypeMetadataRegistry;
+        _anonymousCallableTypeMetadataRegistry = anonymousCallableTypeMetadataRegistry;
         _nestedTypeRelationshipRegistry = nestedTypeRelationshipRegistry;
         _moduleTypeRegistry = moduleTypeRegistry;
         _serviceProvider = serviceProvider;
@@ -433,7 +436,7 @@ internal sealed class JsMethodCompiler
         return CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }
 
-    public MethodDefinitionHandle TryCompileArrowFunction(string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
+    public MethodDefinitionHandle TryCompileArrowFunction(string typeName, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
         // Keep arrow-function IR support conservative for now; parameter destructuring for arrows
         // remains on the legacy path until snapshots are updated intentionally.
@@ -448,7 +451,7 @@ internal sealed class JsMethodCompiler
         }
 
         // Create the type builder for the arrow function
-        var arrowTypeBuilder = new TypeBuilder(_metadataBuilder, "Functions", methodName);
+        var arrowTypeBuilder = new TypeBuilder(_metadataBuilder, "Functions", typeName);
 
         // Build parameter descriptors: scopes array + JS parameters
         var parameters = new List<MethodParameterDescriptor>
@@ -579,6 +582,43 @@ internal sealed class JsMethodCompiler
             }
         }
 
+        // Anonymous callable owner types are nested under their declaring scope.
+        // Special case: when declared inside a function declaration, nest under the function owner type
+        // (so reflection sees: Modules.<Module>+<FunctionName>+ArrowFunction_LxCy).
+        foreach (var anon in _anonymousCallableTypeMetadataRegistry.GetAllForModule(moduleName))
+        {
+            TypeDefinitionHandle enclosing;
+
+            if (string.Equals(anon.DeclaringScopeName, moduleName, StringComparison.Ordinal))
+            {
+                enclosing = moduleTypeHandle;
+            }
+            else
+            {
+                // If declaring scope is a function declaration scope, prefer the function owner type.
+                // DeclaringScopeName is a registry scope key: "<module>/<path>".
+                var lastSlash = anon.DeclaringScopeName.LastIndexOf('/');
+                var lastSegment = lastSlash >= 0 && lastSlash < anon.DeclaringScopeName.Length - 1
+                    ? anon.DeclaringScopeName[(lastSlash + 1)..]
+                    : anon.DeclaringScopeName;
+
+                if (_functionTypeMetadataRegistry.TryGet(moduleName, lastSegment, out var functionOwner) && !functionOwner.IsNil)
+                {
+                    enclosing = functionOwner;
+                }
+                else
+                {
+                    // IMPORTANT: do NOT nest anonymous owner types under scope types.
+                    // Scope TypeDefs are generated later (Phase 2), and the CLR requires the enclosing
+                    // TypeDef to appear earlier in the TypeDef table than the nested type.
+                    // Nest under the module type to keep metadata valid.
+                    enclosing = moduleTypeHandle;
+                }
+            }
+
+            relationships.Add((anon.OwnerTypeHandle, enclosing));
+        }
+
         // Global scope nests under the module type: Modules.<ModuleName>.Scope
         var globalKey = ScopeNaming.GetRegistryScopeName(globalScope);
         if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(globalKey, out var globalScopeTypeHandle))
@@ -611,18 +651,7 @@ internal sealed class JsMethodCompiler
             throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{parentKey}', but none was found.");
         }
 
-        // If we're inside a function declaration, that function has a dedicated owner type
-        // (Modules.<Module>.<FunctionName>). For readability and stable reflection paths,
-        // we want certain nested scopes (e.g., arrow-function scopes) to be siblings of
-        // the function's Scope type under the owner type, rather than nested under Scope.
-        TypeDefinitionHandle? parentFunctionOwnerTypeHandle = null;
-        if (parentScope.Kind == ScopeKind.Function && parentScope.AstNode is FunctionDeclaration)
-        {
-            if (_functionTypeMetadataRegistry.TryGet(moduleName, parentScope.Name, out var ownerTypeHandle) && !ownerTypeHandle.IsNil)
-            {
-                parentFunctionOwnerTypeHandle = ownerTypeHandle;
-            }
-        }
+        var parentScopeKey = ScopeNaming.GetRegistryScopeName(parentScope);
 
         foreach (var child in parentScope.Children)
         {
@@ -654,11 +683,29 @@ internal sealed class JsMethodCompiler
                     relationships.Add((childTypeHandle, parentTypeHandle));
                 }
             }
-            else if (child.Kind == ScopeKind.Function && child.AstNode is ArrowFunctionExpression && parentFunctionOwnerTypeHandle.HasValue)
+            else if (child.Kind == ScopeKind.Function && child.AstNode is ArrowFunctionExpression)
             {
-                // Arrow function scopes inside a function declaration should be nested under the
-                // function owner type (Modules.<Module>.<FunctionName>+ArrowFunction_LxCy).
-                relationships.Add((childTypeHandle, parentFunctionOwnerTypeHandle.Value));
+                // Arrow function scope type (named "Scope") nests under its anonymous callable owner type.
+                if (_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, parentScopeKey, child.Name, out var arrowOwner) && !arrowOwner.IsNil)
+                {
+                    relationships.Add((childTypeHandle, arrowOwner));
+                }
+                else
+                {
+                    relationships.Add((childTypeHandle, parentTypeHandle));
+                }
+            }
+            else if (child.Kind == ScopeKind.Function && child.AstNode is FunctionExpression)
+            {
+                // Function-expression scope type (named "Scope") nests under its anonymous callable owner type.
+                if (_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, parentScopeKey, child.Name, out var funcExprOwner) && !funcExprOwner.IsNil)
+                {
+                    relationships.Add((childTypeHandle, funcExprOwner));
+                }
+                else
+                {
+                    relationships.Add((childTypeHandle, parentTypeHandle));
+                }
             }
             else
             {

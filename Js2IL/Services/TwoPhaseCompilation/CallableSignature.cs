@@ -68,7 +68,7 @@ public sealed record CallableSignature
     /// <summary>
     /// The IL method name for this callable.
     /// For function declarations: __js_call__
-    /// For arrows/function expressions: ArrowFunction_L&lt;line&gt;C&lt;col&gt; or FunctionExpression_L&lt;line&gt;C&lt;col&gt;
+    /// For arrows/function expressions: __js_call__
     /// For class constructors: .ctor
     /// For class methods: the method name
     /// </summary>

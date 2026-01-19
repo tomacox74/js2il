@@ -7,11 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Scope
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C29
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_L1C29
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -30,11 +30,47 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L1C29::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class ArrowFunction_L1C29
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object results
+			) cil managed 
+		{
+			// Method begins at RVA 0x20a4
+			// Header size: 12
+			// Code size: 41 (0x29)
+			.maxstack 32
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.2
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldstr "Empty array resolved with length:"
+			IL_0012: stelem.ref
+			IL_0013: dup
+			IL_0014: ldc.i4.1
+			IL_0015: ldarg.1
+			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_001b: box [System.Runtime]System.Double
+			IL_0020: stelem.ref
+			IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0026: pop
+			IL_0027: ldnull
+			IL_0028: ret
+		} // end of method ArrowFunction_L1C29::__js_call__
+
+	} // end of class ArrowFunction_L1C29
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -81,7 +117,7 @@
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::allSettled(object)
 		IL_0011: stloc.1
 		IL_0012: ldnull
-		IL_0013: ldftn object Functions.ArrowFunction_L1C29::ArrowFunction_L1C29(object[], object)
+		IL_0013: ldftn object Modules.Promise_AllSettled_EmptyArray/ArrowFunction_L1C29::__js_call__(object[], object)
 		IL_0019: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_001e: ldc.i4.1
 		IL_001f: newarr [System.Runtime]System.Object
@@ -107,42 +143,6 @@
 	} // end of method Promise_AllSettled_EmptyArray::__js_module_init__
 
 } // end of class Modules.Promise_AllSettled_EmptyArray
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C29
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L1C29 (
-			object[] scopes,
-			object results
-		) cil managed 
-	{
-		// Method begins at RVA 0x20a4
-		// Header size: 12
-		// Code size: 41 (0x29)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.2
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "Empty array resolved with length:"
-		IL_0012: stelem.ref
-		IL_0013: dup
-		IL_0014: ldc.i4.1
-		IL_0015: ldarg.1
-		IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_001b: box [System.Runtime]System.Double
-		IL_0020: stelem.ref
-		IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0026: pop
-		IL_0027: ldnull
-		IL_0028: ret
-	} // end of method ArrowFunction_L1C29::ArrowFunction_L1C29
-
-} // end of class Functions.ArrowFunction_L1C29
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

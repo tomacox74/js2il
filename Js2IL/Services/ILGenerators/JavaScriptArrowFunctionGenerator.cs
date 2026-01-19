@@ -36,8 +36,10 @@ namespace Js2IL.Services.ILGenerators
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(
             ArrowFunctionExpression arrowFunction,
-            string ilMethodName)
+            string arrowTypeName)
         {
+            const string ilMethodName = "__js_call__";
+
             // Two-phase lookup:
             // - Phase 1 may preallocate a MethodDef token for this arrow.
             // - A MethodDef token does NOT imply the body is compiled.
@@ -93,7 +95,7 @@ namespace Js2IL.Services.ILGenerators
                     throw new NotSupportedException($"IR pipeline could not compile arrow function '{ilMethodName}' in scope '{arrowScope.GetQualifiedName()}'.");
                 }
 
-                var irTb = new TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
+                var irTb = new TypeBuilder(_metadataBuilder, string.Empty, arrowTypeName);
                 _ = MethodDefinitionFinalizer.EmitMethod(_metadataBuilder, irTb, compiledBody);
 
                 _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, expectedPreallocatedHandle.Value);
@@ -102,11 +104,11 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Non-two-phase: compile directly (emits MethodDef + TypeDef).
-            var mdh = methodCompiler.TryCompileArrowFunction(ilMethodName, arrowFunction, arrowScope, _methodBodyStreamEncoder);
+            var mdh = methodCompiler.TryCompileArrowFunction(arrowTypeName, ilMethodName, arrowFunction, arrowScope, _methodBodyStreamEncoder);
             IR.IRPipelineMetrics.RecordArrowFunctionAttempt(!mdh.IsNil);
             if (mdh.IsNil)
             {
-                throw new NotSupportedException($"IR pipeline could not compile arrow function '{ilMethodName}' in scope '{arrowScope.GetQualifiedName()}'.");
+                throw new NotSupportedException($"IR pipeline could not compile arrow function '{arrowTypeName}' in scope '{arrowScope.GetQualifiedName()}'.");
             }
 
             _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, mdh);

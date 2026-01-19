@@ -7,11 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Scope
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L2C13
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_L2C13
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -31,11 +31,59 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L2C13::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class ArrowFunction_L2C13
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object a,
+				object b
+			) cil managed 
+		{
+			// Method begins at RVA 0x20e4
+			// Header size: 12
+			// Code size: 57 (0x39)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldstr "localeCompare"
+			IL_0006: ldc.i4.3
+			IL_0007: newarr [System.Runtime]System.Object
+			IL_000c: dup
+			IL_000d: ldc.i4.0
+			IL_000e: ldarg.2
+			IL_000f: stelem.ref
+			IL_0010: dup
+			IL_0011: ldc.i4.1
+			IL_0012: ldstr "en"
+			IL_0017: stelem.ref
+			IL_0018: dup
+			IL_0019: ldc.i4.2
+			IL_001a: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+			IL_001f: dup
+			IL_0020: ldstr "numeric"
+			IL_0025: ldc.i4.1
+			IL_0026: box [System.Runtime]System.Boolean
+			IL_002b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+			IL_0030: stelem.ref
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0036: stloc.0
+			IL_0037: ldloc.0
+			IL_0038: ret
+		} // end of method ArrowFunction_L2C13::__js_call__
+
+	} // end of class ArrowFunction_L2C13
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -89,7 +137,7 @@
 		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_002d: stloc.1
 		IL_002e: ldnull
-		IL_002f: ldftn object Functions.ArrowFunction_L2C13::ArrowFunction_L2C13(object[], object, object)
+		IL_002f: ldftn object Modules.String_LocaleCompare_Numeric/ArrowFunction_L2C13::__js_call__(object[], object, object)
 		IL_0035: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_003a: ldc.i4.1
 		IL_003b: newarr [System.Runtime]System.Object
@@ -130,54 +178,6 @@
 	} // end of method String_LocaleCompare_Numeric::__js_module_init__
 
 } // end of class Modules.String_LocaleCompare_Numeric
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L2C13
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L2C13 (
-			object[] scopes,
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x20e4
-		// Header size: 12
-		// Code size: 57 (0x39)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: ldstr "localeCompare"
-		IL_0006: ldc.i4.3
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
-		IL_000e: ldarg.2
-		IL_000f: stelem.ref
-		IL_0010: dup
-		IL_0011: ldc.i4.1
-		IL_0012: ldstr "en"
-		IL_0017: stelem.ref
-		IL_0018: dup
-		IL_0019: ldc.i4.2
-		IL_001a: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_001f: dup
-		IL_0020: ldstr "numeric"
-		IL_0025: ldc.i4.1
-		IL_0026: box [System.Runtime]System.Boolean
-		IL_002b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0030: stelem.ref
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0036: stloc.0
-		IL_0037: ldloc.0
-		IL_0038: ret
-	} // end of method ArrowFunction_L2C13::ArrowFunction_L2C13
-
-} // end of class Functions.ArrowFunction_L2C13
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

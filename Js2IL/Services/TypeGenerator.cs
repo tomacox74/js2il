@@ -96,6 +96,13 @@ namespace Js2IL.Services
                 return "Scope";
             }
 
+            // Anonymous callables (function expressions / arrow functions) also have dedicated owner types.
+            // Name their scope types "Scope" and nest under the owner type to avoid name collisions.
+            if (scope.Kind == ScopeKind.Function && (scope.AstNode is Acornima.Ast.FunctionExpression or Acornima.Ast.ArrowFunctionExpression))
+            {
+                return "Scope";
+            }
+
             return scope.Name;
         }
 

@@ -11,6 +11,54 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L7C16
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Fields
+				.field public object x
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x21af
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object x
+				) cil managed 
+			{
+				// Method begins at RVA 0x217c
+				// Header size: 12
+				// Code size: 12 (0xc)
+				.maxstack 32
+
+				IL_0000: ldarg.1
+				IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+				IL_0006: box [System.Runtime]System.Double
+				IL_000b: ret
+			} // end of method ArrowFunction_L7C16::__js_call__
+
+		} // end of class ArrowFunction_L7C16
+
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
@@ -35,29 +83,6 @@
 
 		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit ArrowFunction_L7C16
-			extends [System.Runtime]System.Object
-		{
-			// Fields
-			.field public object x
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x21af
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method ArrowFunction_L7C16::.ctor
-
-		} // end of class ArrowFunction_L7C16
-
 
 		// Methods
 		.method public hidebysig static 
@@ -81,7 +106,7 @@
 			IL_0007: ldarg.1
 			IL_0008: stfld object Modules.Array_Map_NestedParam/outer/Scope::arr
 			IL_000d: ldnull
-			IL_000e: ldftn object Functions.ArrowFunction_L7C16::ArrowFunction_L7C16(object[], object)
+			IL_000e: ldftn object Modules.Array_Map_NestedParam/outer/ArrowFunction_L7C16::__js_call__(object[], object)
 			IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 			IL_0019: ldc.i4.1
 			IL_001a: newarr [System.Runtime]System.Object
@@ -303,29 +328,6 @@
 	} // end of method Array_Map_NestedParam::__js_module_init__
 
 } // end of class Modules.Array_Map_NestedParam
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L7C16
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L7C16 (
-			object[] scopes,
-			object x
-		) cil managed 
-	{
-		// Method begins at RVA 0x217c
-		// Header size: 12
-		// Code size: 12 (0xc)
-		.maxstack 32
-
-		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0006: box [System.Runtime]System.Double
-		IL_000b: ret
-	} // end of method ArrowFunction_L7C16::ArrowFunction_L7C16
-
-} // end of class Functions.ArrowFunction_L7C16
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

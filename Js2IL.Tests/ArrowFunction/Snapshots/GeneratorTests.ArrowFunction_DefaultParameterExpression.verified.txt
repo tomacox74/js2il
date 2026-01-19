@@ -7,11 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Scope
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L2C19
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_L2C19
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -32,11 +32,70 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L2C19::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class ArrowFunction_L2C19
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object a,
+				object b,
+				object c
+			) cil managed 
+		{
+			// Method begins at RVA 0x2130
+			// Header size: 12
+			// Code size: 77 (0x4d)
+			.maxstack 32
+			.locals init (
+				[0] float64
+			)
+
+			IL_0000: ldarg.2
+			IL_0001: brtrue IL_001f
+
+			IL_0006: ldarg.1
+			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000c: ldc.r8 2
+			IL_0015: mul
+			IL_0016: stloc.0
+			IL_0017: ldloc.0
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: starg.s b
+
+			IL_001f: ldarg.3
+			IL_0020: brtrue IL_0036
+
+			IL_0025: ldarg.1
+			IL_0026: ldarg.2
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_002c: pop
+			IL_002d: ldarg.1
+			IL_002e: ldarg.2
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0034: starg.s c
+
+			IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003b: ldc.i4.1
+			IL_003c: newarr [System.Runtime]System.Object
+			IL_0041: dup
+			IL_0042: ldc.i4.0
+			IL_0043: ldarg.3
+			IL_0044: stelem.ref
+			IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_004a: pop
+			IL_004b: ldnull
+			IL_004c: ret
+		} // end of method ArrowFunction_L2C19::__js_call__
+
+	} // end of class ArrowFunction_L2C19
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -78,7 +137,7 @@
 		IL_0000: newobj instance void Modules.ArrowFunction_DefaultParameterExpression/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.ArrowFunction_L2C19::ArrowFunction_L2C19(object[], object, object, object)
+		IL_0007: ldftn object Modules.ArrowFunction_DefaultParameterExpression/ArrowFunction_L2C19::__js_call__(object[], object, object, object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -161,65 +220,6 @@
 	} // end of method ArrowFunction_DefaultParameterExpression::__js_module_init__
 
 } // end of class Modules.ArrowFunction_DefaultParameterExpression
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L2C19
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L2C19 (
-			object[] scopes,
-			object a,
-			object b,
-			object c
-		) cil managed 
-	{
-		// Method begins at RVA 0x2130
-		// Header size: 12
-		// Code size: 77 (0x4d)
-		.maxstack 32
-		.locals init (
-			[0] float64
-		)
-
-		IL_0000: ldarg.2
-		IL_0001: brtrue IL_001f
-
-		IL_0006: ldarg.1
-		IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000c: ldc.r8 2
-		IL_0015: mul
-		IL_0016: stloc.0
-		IL_0017: ldloc.0
-		IL_0018: box [System.Runtime]System.Double
-		IL_001d: starg.s b
-
-		IL_001f: ldarg.3
-		IL_0020: brtrue IL_0036
-
-		IL_0025: ldarg.1
-		IL_0026: ldarg.2
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002c: pop
-		IL_002d: ldarg.1
-		IL_002e: ldarg.2
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0034: starg.s c
-
-		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003b: ldc.i4.1
-		IL_003c: newarr [System.Runtime]System.Object
-		IL_0041: dup
-		IL_0042: ldc.i4.0
-		IL_0043: ldarg.3
-		IL_0044: stelem.ref
-		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_004a: pop
-		IL_004b: ldnull
-		IL_004c: ret
-	} // end of method ArrowFunction_L2C19::ArrowFunction_L2C19
-
-} // end of class Functions.ArrowFunction_L2C19
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

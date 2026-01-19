@@ -44,6 +44,7 @@ public sealed class TwoPhaseCompilationCoordinator
     private readonly CallableRegistry _registry;
 
     private readonly FunctionTypeMetadataRegistry _functionTypeMetadataRegistry;
+    private readonly AnonymousCallableTypeMetadataRegistry _anonymousCallableTypeMetadataRegistry;
     
     private IReadOnlyList<CallableId>? _discoveredCallables;
 
@@ -60,12 +61,14 @@ public sealed class TwoPhaseCompilationCoordinator
         ILogger logger, 
         CompilerOptions compilerOptions,
         CallableRegistry registry,
-        FunctionTypeMetadataRegistry? functionTypeMetadataRegistry = null)
+        FunctionTypeMetadataRegistry? functionTypeMetadataRegistry = null,
+        AnonymousCallableTypeMetadataRegistry? anonymousCallableTypeMetadataRegistry = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _verbose = compilerOptions?.Verbose ?? false;
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
         _functionTypeMetadataRegistry = functionTypeMetadataRegistry ?? new FunctionTypeMetadataRegistry();
+        _anonymousCallableTypeMetadataRegistry = anonymousCallableTypeMetadataRegistry ?? new AnonymousCallableTypeMetadataRegistry();
     }
 
     /// <summary>
@@ -392,7 +395,7 @@ public sealed class TwoPhaseCompilationCoordinator
             _functionTypeMetadataRegistry.Add(moduleName, functionName, ownerTypeHandle);
         }
 
-        // 2) Anonymous callable owner types (Functions.*)
+        // 2) Anonymous callable owner types
         // IMPORTANT: create these types in MethodDef-row order to keep TypeDef.MethodList monotonic.
         var anon = discoveredCallables
             .Where(c => c.Kind is CallableKind.Arrow or CallableKind.FunctionExpression)
@@ -444,12 +447,17 @@ public sealed class TwoPhaseCompilationCoordinator
                     continue;
             }
 
-            var tb = new TypeBuilder(metadataBuilder, FunctionsNamespace, ilMethodName);
-            _ = tb.AddTypeDefinition(
-                TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+            // Anonymous callable owner types are always declared as nested types (namespace is empty).
+            // Nesting is established later via NestedClass table rows.
+            var tb = new TypeBuilder(metadataBuilder, string.Empty, ilMethodName);
+            var ownerTypeHandle = tb.AddTypeDefinition(
+                TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
                 bclReferences.ObjectType,
                 firstFieldOverride: null,
                 firstMethodOverride: expected);
+
+            // Record the owner type for later nesting under its declaring scope or function owner.
+            _anonymousCallableTypeMetadataRegistry.Add(moduleName, callable.DeclaringScopeName, ilMethodName, ownerTypeHandle);
         }
     }
 
@@ -1042,7 +1050,7 @@ public sealed class TwoPhaseCompilationCoordinator
             ? $"ArrowFunction_{callable.Name}"
             : $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
 
-        var ilMethodName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
+        var arrowTypeName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
 
         var arrowGen = new JavaScriptArrowFunctionGenerator(
             serviceProvider,
@@ -1051,11 +1059,11 @@ public sealed class TwoPhaseCompilationCoordinator
             methodBodyStreamEncoder,
             symbolTable);
 
-        arrowGen.GenerateArrowFunctionMethod(arrowExpr, ilMethodName);
+        arrowGen.GenerateArrowFunctionMethod(arrowExpr, arrowTypeName);
 
         if (_verbose)
         {
-            _logger.WriteLine($"[TwoPhase] Phase 2: Compiled arrow: {ilMethodName}");
+            _logger.WriteLine($"[TwoPhase] Phase 2: Compiled arrow: {arrowTypeName}");
         }
     }
 
@@ -1102,7 +1110,8 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         var moduleName = symbolTable.Root.Name;
-        var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{col1Based}";
+        const string ilMethodName = "__js_call__";
+        var funcTypeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{col1Based}";
 
         var funcScope = symbolTable.FindScopeByAstNode(funcExpr);
         if (funcScope == null)
@@ -1126,13 +1135,13 @@ public sealed class TwoPhaseCompilationCoordinator
         if (compiledBody == null)
         {
             throw new NotSupportedException(
-                $"[TwoPhase] IR pipeline could not compile function expression '{ilMethodName}' in scope '{funcScope.GetQualifiedName()}'.");
+                $"[TwoPhase] IR pipeline could not compile function expression '{funcTypeName}' in scope '{funcScope.GetQualifiedName()}'.");
         }
 
         // Two-phase: the IR compiler returns a body-only representation. We must finalize it into
         // a MethodDef/TypeDef so existing call sites (ldftn / delegate creation) reference a real
         // method body at the preallocated token.
-        var irTb = new TypeBuilder(metadataBuilder, FunctionsNamespace, ilMethodName);
+        var irTb = new TypeBuilder(metadataBuilder, string.Empty, funcTypeName);
         _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, irTb, compiledBody);
 
         _registry.SetDeclaredTokenForAstNode(funcExpr, expected);
@@ -1140,7 +1149,7 @@ public sealed class TwoPhaseCompilationCoordinator
 
         if (_verbose)
         {
-            _logger.WriteLine($"[TwoPhase] Phase 2: Compiled function expression: {ilMethodName}");
+            _logger.WriteLine($"[TwoPhase] Phase 2: Compiled function expression: {funcTypeName}");
         }
     }
 
@@ -1250,11 +1259,11 @@ public sealed class TwoPhaseCompilationCoordinator
         {
             CallableKind.FunctionDeclaration => "__js_call__",
             CallableKind.FunctionExpression => callable.Location.HasValue 
-                ? $"FunctionExpression_L{callable.Location.Value.Line}C{callable.Location.Value.Column}"
-                : "FunctionExpression_anonymous",
+                ? "__js_call__"
+                : "__js_call__",
             CallableKind.Arrow => callable.Location.HasValue
-                ? $"ArrowFunction_L{callable.Location.Value.Line}C{callable.Location.Value.Column}"
-                : "ArrowFunction_anonymous",
+                ? "__js_call__"
+                : "__js_call__",
             CallableKind.ClassConstructor => ".ctor",
             CallableKind.ClassMethod or CallableKind.ClassStaticMethod => TryGetClassMemberName(callable.Name) ?? "method",
             CallableKind.ClassGetter or CallableKind.ClassStaticGetter => TryGetAccessorMethodName(callable.Name, "get") ?? "get",

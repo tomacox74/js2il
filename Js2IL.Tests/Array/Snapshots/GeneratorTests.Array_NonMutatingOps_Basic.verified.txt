@@ -7,11 +7,48 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L12C24
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object aa,
+				object bb
+			) cil managed 
+		{
+			// Method begins at RVA 0x2404
+			// Header size: 12
+			// Code size: 25 (0x19)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] object
+			)
+
+			IL_0000: ldarg.2
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldarg.1
+			IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000e: sub
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: box [System.Runtime]System.Double
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ret
+		} // end of method FunctionExpression_L12C24::__js_call__
+
+	} // end of class FunctionExpression_L12C24
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit FunctionExpression_L12C23
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
@@ -27,9 +64,9 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method FunctionExpression_L12C23::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class FunctionExpression_L12C23
+		} // end of class Scope
 
 
 		// Methods
@@ -226,7 +263,7 @@
 		IL_01f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_01f5: pop
 		IL_01f6: ldnull
-		IL_01f7: ldftn object Functions.FunctionExpression_L12C24::FunctionExpression_L12C24(object[], object, object)
+		IL_01f7: ldftn object Modules.Array_NonMutatingOps_Basic/FunctionExpression_L12C24::__js_call__(object[], object, object)
 		IL_01fd: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0202: ldc.i4.1
 		IL_0203: newarr [System.Runtime]System.Object
@@ -367,43 +404,6 @@
 	} // end of method Array_NonMutatingOps_Basic::__js_module_init__
 
 } // end of class Modules.Array_NonMutatingOps_Basic
-
-.class public auto ansi abstract sealed beforefieldinit Functions.FunctionExpression_L12C24
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object FunctionExpression_L12C24 (
-			object[] scopes,
-			object aa,
-			object bb
-		) cil managed 
-	{
-		// Method begins at RVA 0x2404
-		// Header size: 12
-		// Code size: 25 (0x19)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] object
-		)
-
-		IL_0000: ldarg.2
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: stloc.0
-		IL_0007: ldloc.0
-		IL_0008: ldarg.1
-		IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000e: sub
-		IL_000f: stloc.0
-		IL_0010: ldloc.0
-		IL_0011: box [System.Runtime]System.Double
-		IL_0016: stloc.1
-		IL_0017: ldloc.1
-		IL_0018: ret
-	} // end of method FunctionExpression_L12C24::FunctionExpression_L12C24
-
-} // end of class Functions.FunctionExpression_L12C24
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
