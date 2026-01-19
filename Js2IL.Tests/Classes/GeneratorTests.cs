@@ -15,7 +15,21 @@ namespace Js2IL.Tests.Classes
         public Task Classes_BitShiftInCtor_Int32Array()
         {
             var testName = nameof(Classes_BitShiftInCtor_Int32Array);
-            return GenerateTest(testName);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                // Verify that the generated IL does not contain invalid patterns
+                var moduleType = assembly.GetType("Modules.Classes_BitShiftInCtor_Int32Array");
+                Assert.NotNull(moduleType);
+
+                var nestedTypes = moduleType.GetNestedTypes();
+                Assert.True(nestedTypes.Length == 2, "Expected two nested types");
+
+                var nestedScopeType = moduleType.GetNestedType("Scope");
+                Assert.NotNull(nestedScopeType);
+
+                var nestedTypesUnderScope = nestedScopeType.GetNestedTypes();
+                Assert.True(nestedTypesUnderScope.Length == 0, "Scope should not contain any nested types");
+            });
         }
 
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariable_Log); return GenerateTest(testName); }
