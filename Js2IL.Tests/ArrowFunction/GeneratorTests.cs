@@ -55,6 +55,9 @@ namespace Js2IL.Tests.ArrowFunction
 
                 var createCounterScope = createCounterClass.GetNestedType("Scope")!;
                 Assert.True(createCounterScope.IsClass);
+
+                var nestedArrowFunction = createCounterClass.GetNestedType("ArrowFunction_L7C23")!;
+                Assert.True(nestedArrowFunction.IsClass, "Expected ArrowFunction_L7C23 to be a class");
             });
         }
     }

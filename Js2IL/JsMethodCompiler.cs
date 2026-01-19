@@ -611,6 +611,19 @@ internal sealed class JsMethodCompiler
             throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{parentKey}', but none was found.");
         }
 
+        // If we're inside a function declaration, that function has a dedicated owner type
+        // (Modules.<Module>.<FunctionName>). For readability and stable reflection paths,
+        // we want certain nested scopes (e.g., arrow-function scopes) to be siblings of
+        // the function's Scope type under the owner type, rather than nested under Scope.
+        TypeDefinitionHandle? parentFunctionOwnerTypeHandle = null;
+        if (parentScope.Kind == ScopeKind.Function && parentScope.AstNode is FunctionDeclaration)
+        {
+            if (_functionTypeMetadataRegistry.TryGet(moduleName, parentScope.Name, out var ownerTypeHandle) && !ownerTypeHandle.IsNil)
+            {
+                parentFunctionOwnerTypeHandle = ownerTypeHandle;
+            }
+        }
+
         foreach (var child in parentScope.Children)
         {
             var childKey = ScopeNaming.GetRegistryScopeName(child);
@@ -640,6 +653,12 @@ internal sealed class JsMethodCompiler
                     // Fallback: if the owner type isn't available for some reason, nest under the parent scope.
                     relationships.Add((childTypeHandle, parentTypeHandle));
                 }
+            }
+            else if (child.Kind == ScopeKind.Function && child.AstNode is ArrowFunctionExpression && parentFunctionOwnerTypeHandle.HasValue)
+            {
+                // Arrow function scopes inside a function declaration should be nested under the
+                // function owner type (Modules.<Module>.<FunctionName>+ArrowFunction_LxCy).
+                relationships.Add((childTypeHandle, parentFunctionOwnerTypeHandle.Value));
             }
             else
             {

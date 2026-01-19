@@ -748,10 +748,10 @@ namespace Js2IL.SymbolTables
                         break;
                     }
                     _visitedArrowFunctions.Add(arrowFunc);
-                    // Match arrow-function naming: ArrowFunction_<assignmentTarget> OR ArrowFunction_L{line}C{col}
-                    var arrowName = !string.IsNullOrEmpty(_currentAssignmentTarget)
-                        ? $"ArrowFunction_{_currentAssignmentTarget}"
-                        : $"ArrowFunction_L{arrowFunc.Location.Start.Line}C{arrowFunc.Location.Start.Column}";
+                    // Stable arrow-function naming: ArrowFunction_L{line}C{col1Based}
+                    // (use 1-based column to match SourceLocation conventions and tests)
+                    var col1Based = arrowFunc.Location.Start.Column + 1;
+                    var arrowName = $"ArrowFunction_L{arrowFunc.Location.Start.Line}C{col1Based}";
                     var arrowScope = new Scope(arrowName, ScopeKind.Function, currentScope, arrowFunc);
                     arrowScope.IsAsync = arrowFunc.Async;
                     if (arrowFunc.Async)

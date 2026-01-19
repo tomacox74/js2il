@@ -17,18 +17,13 @@ namespace Js2IL.Tests
         {
             _verifySettings.DisableDiff();
 
-            // create a temp directory for the generated assemblies
-            _outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
-            if (!Directory.Exists(_outputPath))
-            {
-                Directory.CreateDirectory(_outputPath);
-            }
-
-            _outputPath = Path.Combine(_outputPath, $"{testCategory}.GeneratorTests");
-            if (!Directory.Exists(_outputPath))
-            {
-                Directory.CreateDirectory(_outputPath);
-            }
+            // Create a temp directory for the generated assemblies.
+            // Use a unique per-run directory to avoid file locks from Assembly.LoadFile() causing
+            // intermittent failures when re-running tests on Windows.
+            var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
+            var runId = Guid.NewGuid().ToString("N");
+            _outputPath = Path.Combine(root, $"{testCategory}.GeneratorTests", runId);
+            Directory.CreateDirectory(_outputPath);
         }
 
         protected Task GenerateTest(string testName, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "")
