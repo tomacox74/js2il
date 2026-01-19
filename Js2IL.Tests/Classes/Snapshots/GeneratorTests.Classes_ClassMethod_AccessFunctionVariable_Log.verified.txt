@@ -11,6 +11,106 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
+		.class nested public auto ansi beforefieldinit MyClass
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2146
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+			.class nested public auto ansi beforefieldinit Scope_logValue
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x214f
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope_logValue::.ctor
+
+			} // end of class Scope_logValue
+
+
+			// Fields
+			.field private object[] _scopes
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					object[] scopes
+				) cil managed 
+			{
+				// Method begins at RVA 0x20e4
+				// Header size: 12
+				// Code size: 16 (0x10)
+				.maxstack 32
+				.locals init (
+					[0] object[]
+				)
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: ldarg.1
+				IL_0007: stloc.0
+				IL_0008: ldarg.0
+				IL_0009: ldloc.0
+				IL_000a: stfld object[] Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass::_scopes
+				IL_000f: ret
+			} // end of method MyClass::.ctor
+
+			.method public hidebysig 
+				instance object logValue () cil managed 
+			{
+				// Method begins at RVA 0x2100
+				// Header size: 12
+				// Code size: 40 (0x28)
+				.maxstack 32
+
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: ldc.i4.1
+				IL_0006: newarr [System.Runtime]System.Object
+				IL_000b: dup
+				IL_000c: ldc.i4.0
+				IL_000d: ldarg.0
+				IL_000e: ldfld object[] Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass::_scopes
+				IL_0013: ldc.i4.1
+				IL_0014: ldelem.ref
+				IL_0015: castclass Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/Scope
+				IL_001a: ldfld string Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/Scope::FUNCTION_VALUE
+				IL_001f: stelem.ref
+				IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0025: pop
+				IL_0026: ldnull
+				IL_0027: ret
+			} // end of method MyClass::logValue
+
+		} // end of class MyClass
+
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
@@ -21,7 +121,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x213a
+				// Method begins at RVA 0x213d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +141,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20d0
+			// Method begins at RVA 0x2080
 			// Header size: 12
 			// Code size: 85 (0x55)
 			.maxstack 32
@@ -68,17 +168,17 @@
 			IL_001e: ldc.i4.1
 			IL_001f: ldloc.0
 			IL_0020: stelem.ref
-			IL_0021: newobj instance void Classes.Classes_ClassMethod_AccessFunctionVariable_Log.MyClass::.ctor(object[])
+			IL_0021: newobj instance void Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass::.ctor(object[])
 			IL_0026: stloc.1
 			IL_0027: ldc.i4.0
 			IL_0028: newarr [System.Runtime]System.Object
 			IL_002d: stloc.2
 			IL_002e: ldloc.1
-			IL_002f: isinst Classes.Classes_ClassMethod_AccessFunctionVariable_Log.MyClass
+			IL_002f: isinst Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass
 			IL_0034: dup
 			IL_0035: brfalse IL_0045
 
-			IL_003a: callvirt instance object Classes.Classes_ClassMethod_AccessFunctionVariable_Log.MyClass::logValue()
+			IL_003a: callvirt instance object Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/MyClass::logValue()
 			IL_003f: pop
 			IL_0040: br IL_0053
 
@@ -105,7 +205,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2131
+			// Method begins at RVA 0x2134
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -155,106 +255,6 @@
 
 } // end of class Modules.Classes_ClassMethod_AccessFunctionVariable_Log
 
-.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_AccessFunctionVariable_Log.MyClass
-	extends [System.Runtime]System.Object
-{
-	// Nested Types
-	.class nested public auto ansi beforefieldinit Scope
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2143
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method Scope::.ctor
-
-	} // end of class Scope
-
-	.class nested public auto ansi beforefieldinit Scope_logValue
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x214c
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method Scope_logValue::.ctor
-
-	} // end of class Scope_logValue
-
-
-	// Fields
-	.field private object[] _scopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2080
-		// Header size: 12
-		// Code size: 16 (0x10)
-		.maxstack 32
-		.locals init (
-			[0] object[]
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.1
-		IL_0007: stloc.0
-		IL_0008: ldarg.0
-		IL_0009: ldloc.0
-		IL_000a: stfld object[] Classes.Classes_ClassMethod_AccessFunctionVariable_Log.MyClass::_scopes
-		IL_000f: ret
-	} // end of method MyClass::.ctor
-
-	.method public hidebysig 
-		instance object logValue () cil managed 
-	{
-		// Method begins at RVA 0x209c
-		// Header size: 12
-		// Code size: 40 (0x28)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldarg.0
-		IL_000e: ldfld object[] Classes.Classes_ClassMethod_AccessFunctionVariable_Log.MyClass::_scopes
-		IL_0013: ldc.i4.1
-		IL_0014: ldelem.ref
-		IL_0015: castclass Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/Scope
-		IL_001a: ldfld string Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction/Scope::FUNCTION_VALUE
-		IL_001f: stelem.ref
-		IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0025: pop
-		IL_0026: ldnull
-		IL_0027: ret
-	} // end of method MyClass::logValue
-
-} // end of class Classes.Classes_ClassMethod_AccessFunctionVariable_Log.MyClass
-
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -262,7 +262,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2155
+		// Method begins at RVA 0x2158
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

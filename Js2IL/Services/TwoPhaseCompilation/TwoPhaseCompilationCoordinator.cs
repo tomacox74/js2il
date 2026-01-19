@@ -200,12 +200,22 @@ public sealed class TwoPhaseCompilationCoordinator
 
         if (_discoveredCallables != null)
         {
+            // FunctionDeclaration MethodDefs must be preallocated before class types are declared
+            // so we can also predeclare function owner TypeDefs for nesting (Modules.<Module>+<FunctionName>).
+            // This enables function-local classes to be nested under their enclosing function owner type.
+            PreallocatePhase1FunctionDeclarationMethodDefs(symbolTable, metadataBuilder);
+
             // Class callable MethodDefs must be preallocated BEFORE class type declarations so
             // TypeDef.MethodList can point at the correct first MethodDef row for each class.
             // We preallocate in class declaration order (TypeDef order) to satisfy ECMA-335 method list rules.
             PreallocatePhase1ClassCallablesMethodDefs(symbolTable, metadataBuilder);
 
             PreallocatePhase1AnonymousCallablesMethodDefsInOrder(_discoveredCallables, ordered, metadataBuilder);
+
+            // Predeclare callable owner types (function declarations + anonymous callables) now that
+            // MethodDef tokens are allocated. This makes owner type handles available to generators
+            // that need to nest emitted types (e.g., function-local classes).
+            DeclareFunctionAndAnonymousOwnerTypesForNesting(symbolTable, metadataBuilder, bclReferences);
         }
 
         // Enable strict mode before any body compilation so expression emission cannot compile.
@@ -219,6 +229,18 @@ public sealed class TwoPhaseCompilationCoordinator
             // Keep existing safety invariant for now: classes/functions are emitted before anonymous callables.
             compileClassesAndFunctionsPhase2();
 
+            // Emit function declarations before class callables to match Phase 1 MethodDef row allocation.
+            // This ordering is required for valid TypeDef.MethodList monotonicity when function owner
+            // types appear before function-local classes.
+            CompileAndFinalizePhase2FunctionDeclarations(
+                symbolTable,
+                metadataBuilder,
+                ordered,
+                serviceProvider,
+                bclReferences,
+                methodBodyStreamEncoder,
+                classRegistry);
+
             // Compile class constructors/methods/accessors/.cctor bodies in planned Phase 2.
             // Compile bodies in plan order, then emit MethodDef rows grouped by class type (TypeDef order)
             // to satisfy ECMA-335 contiguous method list requirements.
@@ -227,18 +249,6 @@ public sealed class TwoPhaseCompilationCoordinator
                 metadataBuilder,
                 ordered,
                 serviceProvider,
-                methodBodyStreamEncoder,
-                classRegistry);
-
-            // Compile function declarations in planned Phase 2 order.
-            // We compile bodies in plan order (IR-first, legacy fallback), but finalize MethodDefs in a single
-            // deterministic block so metadata ordering stays valid.
-            CompileAndFinalizePhase2FunctionDeclarations(
-                symbolTable,
-                metadataBuilder,
-                ordered,
-                serviceProvider,
-                bclReferences,
                 methodBodyStreamEncoder,
                 classRegistry);
 
@@ -322,8 +332,11 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         var startRowId = methodDefBaseRowOverride ?? (metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1);
-        var nextRowId = PreallocatePhase1ClassCallablesMethodDefsFromRowId(symbolTable, startRowId);
-        _ = PreallocatePhase1FunctionDeclarationMethodDefsFromRowId(symbolTable, nextRowId);
+        // IMPORTANT ordering for ECMA-335 TypeDef.MethodList monotonicity:
+        // FunctionDeclaration MethodDefs must come before class callables so function owner TypeDefs
+        // can appear before function-local classes in the TypeDef table.
+        var nextRowId = PreallocatePhase1FunctionDeclarationMethodDefsFromRowId(symbolTable, startRowId);
+        nextRowId = PreallocatePhase1ClassCallablesMethodDefsFromRowId(symbolTable, nextRowId);
 
         // Override the MethodDef-row baseline when predeclaring before any methods are emitted.
         var methodDefRowCountAtPreallocationOverride = startRowId - 1;
@@ -341,7 +354,9 @@ public sealed class TwoPhaseCompilationCoordinator
     internal void DeclareFunctionAndAnonymousOwnerTypesForNesting(
         SymbolTable symbolTable,
         MetadataBuilder metadataBuilder,
-        BaseClassLibraryReferences bclReferences)
+        BaseClassLibraryReferences bclReferences,
+        TypeDefinitionHandle moduleTypeHandleForNesting = default,
+        NestedTypeRelationshipRegistry? nestedTypeRelationshipRegistry = null)
     {
         if (_discoveredCallables == null)
         {
@@ -356,6 +371,8 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         var moduleName = symbolTable.Root.Name;
+
+        var canNest = !moduleTypeHandleForNesting.IsNil && nestedTypeRelationshipRegistry != null;
 
         // 1) Function-declaration owner types (nested under Modules.<Module> as Modules.<Module>+<FunctionName>)
         // These must come AFTER class types (class ctors are emitted first), but BEFORE Functions.* types.
@@ -393,6 +410,12 @@ public sealed class TwoPhaseCompilationCoordinator
                 firstMethodOverride: expected);
 
             _functionTypeMetadataRegistry.Add(moduleName, functionName, ownerTypeHandle);
+
+            // NestedPublic types must have a valid enclosing type (NestedClass row) to be loadable.
+            if (canNest)
+            {
+                nestedTypeRelationshipRegistry!.Add(ownerTypeHandle, moduleTypeHandleForNesting);
+            }
         }
 
         // 2) Anonymous callable owner types
@@ -458,6 +481,36 @@ public sealed class TwoPhaseCompilationCoordinator
 
             // Record the owner type for later nesting under its declaring scope or function owner.
             _anonymousCallableTypeMetadataRegistry.Add(moduleName, callable.DeclaringScopeName, ilMethodName, ownerTypeHandle);
+
+            // Keep metadata loadable by ensuring anonymous owner types are nested under a TypeDef
+            // that is guaranteed to exist before scope TypeDefs (never under scope types).
+            if (canNest)
+            {
+                TypeDefinitionHandle enclosing;
+
+                if (string.Equals(callable.DeclaringScopeName, moduleName, StringComparison.Ordinal))
+                {
+                    enclosing = moduleTypeHandleForNesting;
+                }
+                else
+                {
+                    var lastSlash = callable.DeclaringScopeName.LastIndexOf('/');
+                    var lastSegment = lastSlash >= 0 && lastSlash < callable.DeclaringScopeName.Length - 1
+                        ? callable.DeclaringScopeName[(lastSlash + 1)..]
+                        : callable.DeclaringScopeName;
+
+                    if (_functionTypeMetadataRegistry.TryGet(moduleName, lastSegment, out var functionOwner) && !functionOwner.IsNil)
+                    {
+                        enclosing = functionOwner;
+                    }
+                    else
+                    {
+                        enclosing = moduleTypeHandleForNesting;
+                    }
+                }
+
+                nestedTypeRelationshipRegistry!.Add(ownerTypeHandle, enclosing);
+            }
         }
     }
 
@@ -551,6 +604,17 @@ public sealed class TwoPhaseCompilationCoordinator
                 _registry.SetToken(callable, preallocated);
             }
         }
+    }
+
+    private void PreallocatePhase1FunctionDeclarationMethodDefs(SymbolTable symbolTable, MetadataBuilder metadataBuilder)
+    {
+        if (_discoveredCallables == null)
+        {
+            return;
+        }
+
+        var startRowId = metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1;
+        _ = PreallocatePhase1FunctionDeclarationMethodDefsFromRowId(symbolTable, startRowId);
     }
 
     private void CompileAndFinalizePhase2ClassCallables(

@@ -2229,21 +2229,6 @@
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x318c
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
 		} // end of class Scope
 
 
@@ -2543,6 +2528,669 @@
 	} // end of method Compile_Scripts_GenerateFeatureCoverage::__js_module_init__
 
 } // end of class Modules.Compile_Scripts_GenerateFeatureCoverage
+
+.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L18C51
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes,
+			object s
+		) cil managed 
+	{
+		// Method begins at RVA 0x2e84
+		// Header size: 12
+		// Code size: 64 (0x40)
+		.maxstack 32
+		.locals init (
+			[0] object,
+			[1] string
+		)
+
+		IL_0000: ldnull
+		IL_0001: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage/escapePipes::__js_call__(object[], object)
+		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_000c: ldc.i4.1
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: dup
+		IL_0013: ldc.i4.0
+		IL_0014: ldarg.0
+		IL_0015: ldc.i4.0
+		IL_0016: ldelem.ref
+		IL_0017: stelem.ref
+		IL_0018: ldarg.1
+		IL_0019: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_001e: stloc.0
+		IL_001f: ldloc.0
+		IL_0020: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0025: stloc.1
+		IL_0026: ldstr "\u001a"
+		IL_002b: ldloc.1
+		IL_002c: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0031: stloc.1
+		IL_0032: ldloc.1
+		IL_0033: ldstr "\u001a"
+		IL_0038: call string [System.Runtime]System.String::Concat(string, string)
+		IL_003d: stloc.1
+		IL_003e: ldloc.1
+		IL_003f: ret
+	} // end of method ArrowFunction_L18C51::__js_call__
+
+} // end of class ArrowFunction_L18C51
+
+.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L36C39
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes,
+			object a,
+			object b
+		) cil managed 
+	{
+		// Method begins at RVA 0x2ed0
+		// Header size: 12
+		// Code size: 154 (0x9a)
+		.maxstack 32
+		.locals init (
+			[0] object,
+			[1] bool,
+			[2] object,
+			[3] object,
+			[4] string,
+			[5] object,
+			[6] string,
+			[7] object[]
+		)
+
+		IL_0000: ldarg.1
+		IL_0001: ldstr "paragraph"
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_000b: stloc.0
+		IL_000c: ldloc.0
+		IL_000d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0012: stloc.1
+		IL_0013: ldloc.1
+		IL_0014: brtrue IL_0024
+
+		IL_0019: ldstr ""
+		IL_001e: stloc.3
+		IL_001f: br IL_0026
+
+		IL_0024: ldloc.0
+		IL_0025: stloc.3
+
+		IL_0026: ldloc.3
+		IL_0027: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_002c: stloc.s 4
+		IL_002e: ldarg.2
+		IL_002f: ldstr "paragraph"
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0039: stloc.0
+		IL_003a: ldloc.0
+		IL_003b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0040: stloc.1
+		IL_0041: ldloc.1
+		IL_0042: brtrue IL_0053
+
+		IL_0047: ldstr ""
+		IL_004c: stloc.s 5
+		IL_004e: br IL_0056
+
+		IL_0053: ldloc.0
+		IL_0054: stloc.s 5
+
+		IL_0056: ldloc.s 5
+		IL_0058: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_005d: stloc.s 6
+		IL_005f: ldc.i4.3
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldloc.s 6
+		IL_0069: stelem.ref
+		IL_006a: dup
+		IL_006b: ldc.i4.1
+		IL_006c: ldnull
+		IL_006d: stelem.ref
+		IL_006e: dup
+		IL_006f: ldc.i4.2
+		IL_0070: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0075: dup
+		IL_0076: ldstr "numeric"
+		IL_007b: ldc.i4.1
+		IL_007c: box [System.Runtime]System.Boolean
+		IL_0081: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0086: stelem.ref
+		IL_0087: stloc.s 7
+		IL_0089: ldloc.s 4
+		IL_008b: ldstr "localeCompare"
+		IL_0090: ldloc.s 7
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0097: stloc.0
+		IL_0098: ldloc.0
+		IL_0099: ret
+	} // end of method ArrowFunction_L36C39::__js_call__
+
+} // end of class ArrowFunction_L36C39
+
+.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L61C37
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes,
+			object a,
+			object b
+		) cil managed 
+	{
+		// Method begins at RVA 0x2f78
+		// Header size: 12
+		// Code size: 154 (0x9a)
+		.maxstack 32
+		.locals init (
+			[0] object,
+			[1] bool,
+			[2] object,
+			[3] object,
+			[4] string,
+			[5] object,
+			[6] string,
+			[7] object[]
+		)
+
+		IL_0000: ldarg.1
+		IL_0001: ldstr "section"
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_000b: stloc.0
+		IL_000c: ldloc.0
+		IL_000d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0012: stloc.1
+		IL_0013: ldloc.1
+		IL_0014: brtrue IL_0024
+
+		IL_0019: ldstr ""
+		IL_001e: stloc.3
+		IL_001f: br IL_0026
+
+		IL_0024: ldloc.0
+		IL_0025: stloc.3
+
+		IL_0026: ldloc.3
+		IL_0027: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_002c: stloc.s 4
+		IL_002e: ldarg.2
+		IL_002f: ldstr "section"
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0039: stloc.0
+		IL_003a: ldloc.0
+		IL_003b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0040: stloc.1
+		IL_0041: ldloc.1
+		IL_0042: brtrue IL_0053
+
+		IL_0047: ldstr ""
+		IL_004c: stloc.s 5
+		IL_004e: br IL_0056
+
+		IL_0053: ldloc.0
+		IL_0054: stloc.s 5
+
+		IL_0056: ldloc.s 5
+		IL_0058: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_005d: stloc.s 6
+		IL_005f: ldc.i4.3
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldloc.s 6
+		IL_0069: stelem.ref
+		IL_006a: dup
+		IL_006b: ldc.i4.1
+		IL_006c: ldnull
+		IL_006d: stelem.ref
+		IL_006e: dup
+		IL_006f: ldc.i4.2
+		IL_0070: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0075: dup
+		IL_0076: ldstr "numeric"
+		IL_007b: ldc.i4.1
+		IL_007c: box [System.Runtime]System.Boolean
+		IL_0081: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0086: stelem.ref
+		IL_0087: stloc.s 7
+		IL_0089: ldloc.s 4
+		IL_008b: ldstr "localeCompare"
+		IL_0090: ldloc.s 7
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0097: stloc.0
+		IL_0098: ldloc.0
+		IL_0099: ret
+	} // end of method ArrowFunction_L61C37::__js_call__
+
+} // end of class ArrowFunction_L61C37
+
+.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L49C40
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes,
+			object a,
+			object b
+		) cil managed 
+	{
+		// Method begins at RVA 0x3020
+		// Header size: 12
+		// Code size: 154 (0x9a)
+		.maxstack 32
+		.locals init (
+			[0] object,
+			[1] bool,
+			[2] object,
+			[3] object,
+			[4] string,
+			[5] object,
+			[6] string,
+			[7] object[]
+		)
+
+		IL_0000: ldarg.1
+		IL_0001: ldstr "subsection"
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_000b: stloc.0
+		IL_000c: ldloc.0
+		IL_000d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0012: stloc.1
+		IL_0013: ldloc.1
+		IL_0014: brtrue IL_0024
+
+		IL_0019: ldstr ""
+		IL_001e: stloc.3
+		IL_001f: br IL_0026
+
+		IL_0024: ldloc.0
+		IL_0025: stloc.3
+
+		IL_0026: ldloc.3
+		IL_0027: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_002c: stloc.s 4
+		IL_002e: ldarg.2
+		IL_002f: ldstr "subsection"
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0039: stloc.0
+		IL_003a: ldloc.0
+		IL_003b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0040: stloc.1
+		IL_0041: ldloc.1
+		IL_0042: brtrue IL_0053
+
+		IL_0047: ldstr ""
+		IL_004c: stloc.s 5
+		IL_004e: br IL_0056
+
+		IL_0053: ldloc.0
+		IL_0054: stloc.s 5
+
+		IL_0056: ldloc.s 5
+		IL_0058: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_005d: stloc.s 6
+		IL_005f: ldc.i4.3
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldloc.s 6
+		IL_0069: stelem.ref
+		IL_006a: dup
+		IL_006b: ldc.i4.1
+		IL_006c: ldnull
+		IL_006d: stelem.ref
+		IL_006e: dup
+		IL_006f: ldc.i4.2
+		IL_0070: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0075: dup
+		IL_0076: ldstr "numeric"
+		IL_007b: ldc.i4.1
+		IL_007c: box [System.Runtime]System.Boolean
+		IL_0081: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0086: stelem.ref
+		IL_0087: stloc.s 7
+		IL_0089: ldloc.s 4
+		IL_008b: ldstr "localeCompare"
+		IL_0090: ldloc.s 7
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0097: stloc.0
+		IL_0098: ldloc.0
+		IL_0099: ret
+	} // end of method ArrowFunction_L49C40::__js_call__
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x30c6
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x30cf
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x30d8
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x30e1
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x30ea
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x30f3
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x30fc
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Block_L27C34::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x3105
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x310e
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x3117
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Block_L38C29::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x3120
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x3129
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x3132
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Block_L51C28::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x313b
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x3144
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x314d
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Block_L63C28::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x3156
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Block_L66C25::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x315f
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Block_L67C41::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x3168
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Block_L68C98::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x3171
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Block_L72C28::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x317a
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Block_L73C45::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x3183
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Block_L74C102::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x318c
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method ArrowFunction_L49C40::.ctor
+
+} // end of class ArrowFunction_L49C40
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

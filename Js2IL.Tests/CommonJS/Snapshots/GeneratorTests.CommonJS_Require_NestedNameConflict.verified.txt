@@ -108,28 +108,6 @@
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
-			// Nested Types
-			.class nested public auto ansi beforefieldinit Scope_Log
-				extends [System.Runtime]System.Object
-			{
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor () cil managed 
-				{
-					// Method begins at RVA 0x23ca
-					// Header size: 1
-					// Code size: 8 (0x8)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-					IL_0006: nop
-					IL_0007: ret
-				} // end of method Scope_Log::.ctor
-
-			} // end of class Scope_Log
-
-
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -147,73 +125,29 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi beforefieldinit Scope_Log
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x23ca
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_Log::.ctor
+
+		} // end of class Scope_Log
+
 
 		// Fields
 		.field private object[] _scopes
-
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor (
-				object[] scopes
-			) cil managed 
-		{
-			// Method begins at RVA 0x2208
-			// Header size: 12
-			// Code size: 16 (0x10)
-			.maxstack 32
-			.locals init (
-				[0] object[]
-			)
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.1
-			IL_0007: stloc.0
-			IL_0008: ldarg.0
-			IL_0009: ldloc.0
-			IL_000a: stfld object[] Modules.b/CommonClassName::_scopes
-			IL_000f: ret
-		} // end of method CommonClassName::.ctor
-
-		.method public hidebysig 
-			instance object Log () cil managed 
-		{
-			// Method begins at RVA 0x2224
-			// Header size: 12
-			// Code size: 71 (0x47)
-			.maxstack 32
-			.locals init (
-				[0] string
-			)
-
-			IL_0000: ldarg.0
-			IL_0001: ldfld object[] Modules.b/CommonClassName::_scopes
-			IL_0006: ldc.i4.0
-			IL_0007: ldelem.ref
-			IL_0008: castclass Modules.b/Scope
-			IL_000d: ldfld string Modules.b/Scope::moduleName
-			IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0017: stloc.0
-			IL_0018: ldstr "class from "
-			IL_001d: ldloc.0
-			IL_001e: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0023: stloc.0
-			IL_0024: ldloc.0
-			IL_0025: ldstr " has been loaded"
-			IL_002a: call string [System.Runtime]System.String::Concat(string, string)
-			IL_002f: stloc.0
-			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0035: ldc.i4.1
-			IL_0036: newarr [System.Runtime]System.Object
-			IL_003b: dup
-			IL_003c: ldc.i4.0
-			IL_003d: ldloc.0
-			IL_003e: stelem.ref
-			IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0044: pop
-			IL_0045: ldnull
-			IL_0046: ret
-		} // end of method CommonClassName::Log
 
 	} // end of class CommonClassName
 
@@ -248,7 +182,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2278
+			// Method begins at RVA 0x2208
 			// Header size: 12
 			// Code size: 66 (0x42)
 			.maxstack 32
@@ -283,6 +217,69 @@
 			IL_0040: ldnull
 			IL_0041: ret
 		} // end of method commonFunctionName::__js_call__
+
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x2258
+			// Header size: 12
+			// Code size: 16 (0x10)
+			.maxstack 32
+			.locals init (
+				[0] object[]
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.1
+			IL_0007: stloc.0
+			IL_0008: ldarg.0
+			IL_0009: ldloc.0
+			IL_000a: stfld object[] Modules.b/CommonClassName::_scopes
+			IL_000f: ret
+		} // end of method commonFunctionName::.ctor
+
+		.method public hidebysig 
+			instance object Log () cil managed 
+		{
+			// Method begins at RVA 0x2274
+			// Header size: 12
+			// Code size: 71 (0x47)
+			.maxstack 32
+			.locals init (
+				[0] string
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object[] Modules.b/CommonClassName::_scopes
+			IL_0006: ldc.i4.0
+			IL_0007: ldelem.ref
+			IL_0008: castclass Modules.b/Scope
+			IL_000d: ldfld string Modules.b/Scope::moduleName
+			IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0017: stloc.0
+			IL_0018: ldstr "class from "
+			IL_001d: ldloc.0
+			IL_001e: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0023: stloc.0
+			IL_0024: ldloc.0
+			IL_0025: ldstr " has been loaded"
+			IL_002a: call string [System.Runtime]System.String::Concat(string, string)
+			IL_002f: stloc.0
+			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0035: ldc.i4.1
+			IL_0036: newarr [System.Runtime]System.Object
+			IL_003b: dup
+			IL_003c: ldc.i4.0
+			IL_003d: ldloc.0
+			IL_003e: stelem.ref
+			IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0044: pop
+			IL_0045: ldnull
+			IL_0046: ret
+		} // end of method commonFunctionName::Log
 
 	} // end of class commonFunctionName
 
@@ -329,6 +326,47 @@
 			IL_0000: ldarg.1
 			IL_0001: ret
 		} // end of method ArrowFunction_L1C9::__js_call__
+
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x22d8
+			// Header size: 12
+			// Code size: 66 (0x42)
+			.maxstack 32
+			.locals init (
+				[0] string
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.helpers_b/Scope
+			IL_0008: ldfld string Modules.helpers_b/Scope::moduleName
+			IL_000d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0012: stloc.0
+			IL_0013: ldstr "Function from "
+			IL_0018: ldloc.0
+			IL_0019: call string [System.Runtime]System.String::Concat(string, string)
+			IL_001e: stloc.0
+			IL_001f: ldloc.0
+			IL_0020: ldstr " has been called"
+			IL_0025: call string [System.Runtime]System.String::Concat(string, string)
+			IL_002a: stloc.0
+			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0030: ldc.i4.1
+			IL_0031: newarr [System.Runtime]System.Object
+			IL_0036: dup
+			IL_0037: ldc.i4.0
+			IL_0038: ldloc.0
+			IL_0039: stelem.ref
+			IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_003f: pop
+			IL_0040: ldnull
+			IL_0041: ret
+		} // end of method commonFunctionName::__js_call__
 
 	} // end of class ArrowFunction_L1C9
 
@@ -412,7 +450,7 @@
 		IL_005e: ldc.i4.0
 		IL_005f: ldloc.0
 		IL_0060: stelem.ref
-		IL_0061: newobj instance void Modules.b/CommonClassName::.ctor(object[])
+		IL_0061: newobj instance void Modules.b/commonFunctionName::.ctor(object[])
 		IL_0066: stloc.1
 		IL_0067: ldloc.1
 		IL_0068: ldstr "Log"
@@ -447,28 +485,6 @@
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
-			// Nested Types
-			.class nested public auto ansi beforefieldinit Scope_Log
-				extends [System.Runtime]System.Object
-			{
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor () cil managed 
-				{
-					// Method begins at RVA 0x23f7
-					// Header size: 1
-					// Code size: 8 (0x8)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-					IL_0006: nop
-					IL_0007: ret
-				} // end of method Scope_Log::.ctor
-
-			} // end of class Scope_Log
-
-
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -486,73 +502,29 @@
 
 		} // end of class Scope
 
+		.class nested public auto ansi beforefieldinit Scope_Log
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x23f7
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_Log::.ctor
+
+		} // end of class Scope_Log
+
 
 		// Fields
 		.field private object[] _scopes
-
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor (
-				object[] scopes
-			) cil managed 
-		{
-			// Method begins at RVA 0x22d8
-			// Header size: 12
-			// Code size: 16 (0x10)
-			.maxstack 32
-			.locals init (
-				[0] object[]
-			)
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.1
-			IL_0007: stloc.0
-			IL_0008: ldarg.0
-			IL_0009: ldloc.0
-			IL_000a: stfld object[] Modules.helpers_b/CommonClassName::_scopes
-			IL_000f: ret
-		} // end of method CommonClassName::.ctor
-
-		.method public hidebysig 
-			instance object Log () cil managed 
-		{
-			// Method begins at RVA 0x22f4
-			// Header size: 12
-			// Code size: 71 (0x47)
-			.maxstack 32
-			.locals init (
-				[0] string
-			)
-
-			IL_0000: ldarg.0
-			IL_0001: ldfld object[] Modules.helpers_b/CommonClassName::_scopes
-			IL_0006: ldc.i4.0
-			IL_0007: ldelem.ref
-			IL_0008: castclass Modules.helpers_b/Scope
-			IL_000d: ldfld string Modules.helpers_b/Scope::moduleName
-			IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0017: stloc.0
-			IL_0018: ldstr "class from "
-			IL_001d: ldloc.0
-			IL_001e: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0023: stloc.0
-			IL_0024: ldloc.0
-			IL_0025: ldstr " has been loaded"
-			IL_002a: call string [System.Runtime]System.String::Concat(string, string)
-			IL_002f: stloc.0
-			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0035: ldc.i4.1
-			IL_0036: newarr [System.Runtime]System.Object
-			IL_003b: dup
-			IL_003c: ldc.i4.0
-			IL_003d: ldloc.0
-			IL_003e: stelem.ref
-			IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0044: pop
-			IL_0045: ldnull
-			IL_0046: ret
-		} // end of method CommonClassName::Log
 
 	} // end of class CommonClassName
 
@@ -563,21 +535,6 @@
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x2400
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
 		} // end of class Scope
 
 
@@ -587,7 +544,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2348
+			// Method begins at RVA 0x22d8
 			// Header size: 12
 			// Code size: 66 (0x42)
 			.maxstack 32
@@ -622,6 +579,69 @@
 			IL_0040: ldnull
 			IL_0041: ret
 		} // end of method commonFunctionName::__js_call__
+
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x2328
+			// Header size: 12
+			// Code size: 16 (0x10)
+			.maxstack 32
+			.locals init (
+				[0] object[]
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.1
+			IL_0007: stloc.0
+			IL_0008: ldarg.0
+			IL_0009: ldloc.0
+			IL_000a: stfld object[] Modules.helpers_b/CommonClassName::_scopes
+			IL_000f: ret
+		} // end of method commonFunctionName::.ctor
+
+		.method public hidebysig 
+			instance object Log () cil managed 
+		{
+			// Method begins at RVA 0x2344
+			// Header size: 12
+			// Code size: 71 (0x47)
+			.maxstack 32
+			.locals init (
+				[0] string
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object[] Modules.helpers_b/CommonClassName::_scopes
+			IL_0006: ldc.i4.0
+			IL_0007: ldelem.ref
+			IL_0008: castclass Modules.helpers_b/Scope
+			IL_000d: ldfld string Modules.helpers_b/Scope::moduleName
+			IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0017: stloc.0
+			IL_0018: ldstr "class from "
+			IL_001d: ldloc.0
+			IL_001e: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0023: stloc.0
+			IL_0024: ldloc.0
+			IL_0025: ldstr " has been loaded"
+			IL_002a: call string [System.Runtime]System.String::Concat(string, string)
+			IL_002f: stloc.0
+			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0035: ldc.i4.1
+			IL_0036: newarr [System.Runtime]System.Object
+			IL_003b: dup
+			IL_003c: ldc.i4.0
+			IL_003d: ldloc.0
+			IL_003e: stelem.ref
+			IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0044: pop
+			IL_0045: ldnull
+			IL_0046: ret
+		} // end of method commonFunctionName::Log
 
 	} // end of class commonFunctionName
 
@@ -751,7 +771,7 @@
 		IL_005e: ldc.i4.0
 		IL_005f: ldloc.0
 		IL_0060: stelem.ref
-		IL_0061: newobj instance void Modules.helpers_b/CommonClassName::.ctor(object[])
+		IL_0061: newobj instance void Modules.helpers_b/commonFunctionName::.ctor(object[])
 		IL_0066: stloc.1
 		IL_0067: ldloc.1
 		IL_0068: ldstr "Log"
@@ -773,7 +793,348 @@
 		IL_0095: ret
 	} // end of method helpers_b::__js_module_init__
 
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x2208
+		// Header size: 12
+		// Code size: 66 (0x42)
+		.maxstack 32
+		.locals init (
+			[0] string
+		)
+
+		IL_0000: ldarg.0
+		IL_0001: ldc.i4.0
+		IL_0002: ldelem.ref
+		IL_0003: castclass Modules.b/Scope
+		IL_0008: ldfld string Modules.b/Scope::moduleName
+		IL_000d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0012: stloc.0
+		IL_0013: ldstr "Function from "
+		IL_0018: ldloc.0
+		IL_0019: call string [System.Runtime]System.String::Concat(string, string)
+		IL_001e: stloc.0
+		IL_001f: ldloc.0
+		IL_0020: ldstr " has been called"
+		IL_0025: call string [System.Runtime]System.String::Concat(string, string)
+		IL_002a: stloc.0
+		IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldloc.0
+		IL_0039: stelem.ref
+		IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_003f: pop
+		IL_0040: ldnull
+		IL_0041: ret
+	} // end of method commonFunctionName::__js_call__
+
 } // end of class Modules.helpers_b
+
+.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C9
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes,
+			object x
+		) cil managed 
+	{
+		// Method begins at RVA 0x22c8
+		// Header size: 12
+		// Code size: 2 (0x2)
+		.maxstack 32
+
+		IL_0000: ldarg.1
+		IL_0001: ret
+	} // end of method ArrowFunction_L1C9::__js_call__
+
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x22d8
+		// Header size: 12
+		// Code size: 66 (0x42)
+		.maxstack 32
+		.locals init (
+			[0] string
+		)
+
+		IL_0000: ldarg.0
+		IL_0001: ldc.i4.0
+		IL_0002: ldelem.ref
+		IL_0003: castclass Modules.helpers_b/Scope
+		IL_0008: ldfld string Modules.helpers_b/Scope::moduleName
+		IL_000d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0012: stloc.0
+		IL_0013: ldstr "Function from "
+		IL_0018: ldloc.0
+		IL_0019: call string [System.Runtime]System.String::Concat(string, string)
+		IL_001e: stloc.0
+		IL_001f: ldloc.0
+		IL_0020: ldstr " has been called"
+		IL_0025: call string [System.Runtime]System.String::Concat(string, string)
+		IL_002a: stloc.0
+		IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldloc.0
+		IL_0039: stelem.ref
+		IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_003f: pop
+		IL_0040: ldnull
+		IL_0041: ret
+	} // end of method commonFunctionName::__js_call__
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x2328
+		// Header size: 12
+		// Code size: 16 (0x10)
+		.maxstack 32
+		.locals init (
+			[0] object[]
+		)
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ldarg.1
+		IL_0007: stloc.0
+		IL_0008: ldarg.0
+		IL_0009: ldloc.0
+		IL_000a: stfld object[] Modules.helpers_b/CommonClassName::_scopes
+		IL_000f: ret
+	} // end of method commonFunctionName::.ctor
+
+	.method public hidebysig 
+		instance object Log () cil managed 
+	{
+		// Method begins at RVA 0x2344
+		// Header size: 12
+		// Code size: 71 (0x47)
+		.maxstack 32
+		.locals init (
+			[0] string
+		)
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object[] Modules.helpers_b/CommonClassName::_scopes
+		IL_0006: ldc.i4.0
+		IL_0007: ldelem.ref
+		IL_0008: castclass Modules.helpers_b/Scope
+		IL_000d: ldfld string Modules.helpers_b/Scope::moduleName
+		IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0017: stloc.0
+		IL_0018: ldstr "class from "
+		IL_001d: ldloc.0
+		IL_001e: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0023: stloc.0
+		IL_0024: ldloc.0
+		IL_0025: ldstr " has been loaded"
+		IL_002a: call string [System.Runtime]System.String::Concat(string, string)
+		IL_002f: stloc.0
+		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0035: ldc.i4.1
+		IL_0036: newarr [System.Runtime]System.Object
+		IL_003b: dup
+		IL_003c: ldc.i4.0
+		IL_003d: ldloc.0
+		IL_003e: stelem.ref
+		IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0044: pop
+		IL_0045: ldnull
+		IL_0046: ret
+	} // end of method commonFunctionName::Log
+
+} // end of class ArrowFunction_L1C9
+
+.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C9
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes,
+			object x
+		) cil managed 
+	{
+		// Method begins at RVA 0x2398
+		// Header size: 12
+		// Code size: 2 (0x2)
+		.maxstack 32
+
+		IL_0000: ldarg.1
+		IL_0001: ret
+	} // end of method ArrowFunction_L1C9::__js_call__
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x23a6
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x23af
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x23b8
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x23c1
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x23ca
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope_Log::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x23d3
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x23dc
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x23e5
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x23ee
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x23f7
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope_Log::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2400
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+} // end of class ArrowFunction_L1C9
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

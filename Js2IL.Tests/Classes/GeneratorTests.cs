@@ -27,7 +27,23 @@ namespace Js2IL.Tests.Classes
             });
         }
 
-        [Fact] public Task Classes_ClassConstructor_AccessFunctionVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariable_Log); return GenerateTest(testName); }
+        [Fact]
+        public Task Classes_ClassConstructor_AccessFunctionVariable_Log()
+        {
+            var testName = nameof(Classes_ClassConstructor_AccessFunctionVariable_Log);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}");
+                Assert.NotNull(moduleType);
+
+                var flags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
+                var functionType = moduleType.GetNestedType("testFunction", flags);
+                Assert.NotNull(functionType);
+
+                var nestedClass = functionType.GetNestedType("MyClass", flags);
+                Assert.NotNull(nestedClass);
+            });
+        }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log); return GenerateTest(testName); }

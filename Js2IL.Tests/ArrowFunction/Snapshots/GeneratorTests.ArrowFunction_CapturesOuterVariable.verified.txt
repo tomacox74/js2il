@@ -17,21 +17,6 @@
 			// Fields
 			.field public object x
 
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x210d
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
 		} // end of class Scope
 
 
@@ -167,6 +152,73 @@
 	} // end of method ArrowFunction_CapturesOuterVariable::__js_module_init__
 
 } // end of class Modules.ArrowFunction_CapturesOuterVariable
+
+.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L2C13
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes,
+			object x
+		) cil managed 
+	{
+		// Method begins at RVA 0x20d8
+		// Header size: 12
+		// Code size: 32 (0x20)
+		.maxstack 32
+		.locals init (
+			[0] float64,
+			[1] object
+		)
+
+		IL_0000: ldarg.0
+		IL_0001: ldc.i4.0
+		IL_0002: ldelem.ref
+		IL_0003: castclass Modules.ArrowFunction_CapturesOuterVariable/Scope
+		IL_0008: ldfld float64 Modules.ArrowFunction_CapturesOuterVariable/Scope::n
+		IL_000d: stloc.0
+		IL_000e: ldarg.1
+		IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0014: ldloc.0
+		IL_0015: mul
+		IL_0016: stloc.0
+		IL_0017: ldloc.0
+		IL_0018: box [System.Runtime]System.Double
+		IL_001d: stloc.1
+		IL_001e: ldloc.1
+		IL_001f: ret
+	} // end of method ArrowFunction_L2C13::__js_call__
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2104
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x210d
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+} // end of class ArrowFunction_L2C13
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -140,7 +140,16 @@ namespace Js2IL.Services
 
                 // Declare callable-owner TypeDefs that scopes may nest under.
                 // IMPORTANT: function owner types must come AFTER classes (class ctors are emitted first).
-                coordinator.DeclareFunctionAndAnonymousOwnerTypesForNesting(symbolTable, _metadataBuilder, _bclReferences);
+                if (!moduleTypeRegistry.TryGet(module.Name, out var moduleTypeHandle) || moduleTypeHandle.IsNil)
+                {
+                    throw new InvalidOperationException($"Missing module type handle for module '{module.Name}' during callable-owner predeclaration.");
+                }
+                coordinator.DeclareFunctionAndAnonymousOwnerTypesForNesting(
+                    symbolTable,
+                    _metadataBuilder,
+                    _bclReferences,
+                    moduleTypeHandle,
+                    nestedTypeRegistry);
 
                 callableMethodDefBaseRow += callableCount;
             }

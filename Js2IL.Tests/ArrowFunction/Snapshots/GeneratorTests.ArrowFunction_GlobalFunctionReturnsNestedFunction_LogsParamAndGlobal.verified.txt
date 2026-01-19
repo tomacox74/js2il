@@ -86,21 +86,6 @@
 		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x2182
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
 		} // end of class Scope
 
 
@@ -251,6 +236,149 @@
 	} // end of method ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::__js_module_init__
 
 } // end of class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+
+.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C15
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes,
+			object p
+		) cil managed 
+	{
+		// Method begins at RVA 0x20d0
+		// Header size: 12
+		// Code size: 49 (0x31)
+		.maxstack 32
+		.locals init (
+			[0] class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_L3C15/Scope,
+			[1] object
+		)
+
+		IL_0000: newobj instance void Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_L3C15/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_L3C15/Scope::p
+		IL_000d: ldnull
+		IL_000e: ldftn object Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_L4C19::__js_call__(object[])
+		IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0019: ldc.i4.2
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldarg.0
+		IL_0022: ldc.i4.0
+		IL_0023: ldelem.ref
+		IL_0024: stelem.ref
+		IL_0025: dup
+		IL_0026: ldc.i4.1
+		IL_0027: ldloc.0
+		IL_0028: stelem.ref
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_002e: stloc.1
+		IL_002f: ldloc.1
+		IL_0030: ret
+	} // end of method ArrowFunction_L3C15::__js_call__
+
+} // end of class ArrowFunction_L3C15
+
+.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L4C19
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object __js_call__ (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x2110
+		// Header size: 12
+		// Code size: 84 (0x54)
+		.maxstack 32
+
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: ldc.i4.2
+		IL_0006: newarr [System.Runtime]System.Object
+		IL_000b: dup
+		IL_000c: ldc.i4.0
+		IL_000d: ldstr "param:"
+		IL_0012: stelem.ref
+		IL_0013: dup
+		IL_0014: ldc.i4.1
+		IL_0015: ldarg.0
+		IL_0016: ldc.i4.1
+		IL_0017: ldelem.ref
+		IL_0018: castclass Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_L3C15/Scope
+		IL_001d: ldfld object Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_L3C15/Scope::p
+		IL_0022: stelem.ref
+		IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0028: pop
+		IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002e: ldc.i4.2
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldstr "global:"
+		IL_003b: stelem.ref
+		IL_003c: dup
+		IL_003d: ldc.i4.1
+		IL_003e: ldarg.0
+		IL_003f: ldc.i4.0
+		IL_0040: ldelem.ref
+		IL_0041: castclass Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope
+		IL_0046: ldfld object Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope::g
+		IL_004b: stelem.ref
+		IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0051: pop
+		IL_0052: ldnull
+		IL_0053: ret
+	} // end of method ArrowFunction_L4C19::__js_call__
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2170
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2179
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2182
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Scope::.ctor
+
+} // end of class ArrowFunction_L4C19
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
