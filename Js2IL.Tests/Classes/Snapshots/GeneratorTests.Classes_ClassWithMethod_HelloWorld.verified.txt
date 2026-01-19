@@ -7,6 +7,46 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit Greeter
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2098
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Greeter::.ctor
+
+		.method public hidebysig 
+			instance object helloWorld () cil managed 
+		{
+			// Method begins at RVA 0x20ac
+			// Header size: 12
+			// Code size: 27 (0x1b)
+			.maxstack 32
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.1
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldstr "Hello world from Greeter"
+			IL_0012: stelem.ref
+			IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0018: pop
+			IL_0019: ldnull
+			IL_001a: ret
+		} // end of method Greeter::helloWorld
+
+	} // end of class Greeter
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -94,17 +134,17 @@
 
 		IL_0000: newobj instance void Modules.Classes_ClassWithMethod_HelloWorld/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.Classes_ClassWithMethod_HelloWorld.Greeter::.ctor()
+		IL_0006: newobj instance void Modules.Classes_ClassWithMethod_HelloWorld/Greeter::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldc.i4.0
 		IL_000d: newarr [System.Runtime]System.Object
 		IL_0012: stloc.2
 		IL_0013: ldloc.1
-		IL_0014: isinst Classes.Classes_ClassWithMethod_HelloWorld.Greeter
+		IL_0014: isinst Modules.Classes_ClassWithMethod_HelloWorld/Greeter
 		IL_0019: dup
 		IL_001a: brfalse IL_002a
 
-		IL_001f: callvirt instance object Classes.Classes_ClassWithMethod_HelloWorld.Greeter::helloWorld()
+		IL_001f: callvirt instance object Modules.Classes_ClassWithMethod_HelloWorld/Greeter::helloWorld()
 		IL_0024: pop
 		IL_0025: br IL_0038
 
@@ -119,46 +159,6 @@
 	} // end of method Classes_ClassWithMethod_HelloWorld::__js_module_init__
 
 } // end of class Modules.Classes_ClassWithMethod_HelloWorld
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassWithMethod_HelloWorld.Greeter
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2098
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method Greeter::.ctor
-
-	.method public hidebysig 
-		instance object helloWorld () cil managed 
-	{
-		// Method begins at RVA 0x20ac
-		// Header size: 12
-		// Code size: 27 (0x1b)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "Hello world from Greeter"
-		IL_0012: stelem.ref
-		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0018: pop
-		IL_0019: ldnull
-		IL_001a: ret
-	} // end of method Greeter::helloWorld
-
-} // end of class Classes.Classes_ClassWithMethod_HelloWorld.Greeter
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

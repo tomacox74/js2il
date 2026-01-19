@@ -68,19 +68,33 @@ namespace Js2IL.Services.ILGenerators
         public void DeclareClasses(SymbolTable table)
         {
             if (table == null) throw new ArgumentNullException(nameof(table));
-            EmitClassesRecursiveTwoPhase(table.Root);
+
+            // When compiling a JS "module" (a single entry file), the generated module root type is
+            // Modules.<ModuleName>. Top-level JS classes should be nested under that module type.
+            // This keeps reflection names module-qualified (Modules.<Module>+<ClassName>) and avoids
+            // emitting a parallel top-level namespace like Classes.<ModuleName>.<ClassName>.
+            var moduleTypeRegistry = _serviceProvider.GetRequiredService<ModuleTypeMetadataRegistry>();
+            moduleTypeRegistry.TryGet(_moduleName, out var moduleTypeHandle);
+
+            EmitClassesRecursiveTwoPhase(table.Root, moduleTypeHandle);
         }
 
-        private void EmitClassesRecursiveTwoPhase(Scope scope)
+        private void EmitClassesRecursiveTwoPhase(Scope scope, TypeDefinitionHandle moduleTypeHandle)
         {
             foreach (var child in scope.Children)
             {
                 if (child.Kind == ScopeKind.Class && child.AstNode is ClassDeclaration cdecl)
                 {
-                    DeclareClassTwoPhase(child, cdecl, parentType: default);
+                    // If the class is declared at module scope, nest it directly under Modules.<ModuleName>.
+                    // Otherwise keep legacy behavior (top-level TypeDef) for now.
+                    var parentType = (child.Parent == null || child.Parent.Kind == ScopeKind.Global)
+                        ? moduleTypeHandle
+                        : default;
+
+                    DeclareClassTwoPhase(child, cdecl, parentType);
                 }
 
-                EmitClassesRecursiveTwoPhase(child);
+                EmitClassesRecursiveTwoPhase(child, moduleTypeHandle);
             }
         }
 
@@ -99,7 +113,11 @@ namespace Js2IL.Services.ILGenerators
                 return existingTypeDef;
             }
 
-            var ns = classScope.DotNetNamespace ?? "Classes";
+            // Registry key can remain stable (based on DotNetNamespace/DotNetTypeName), but the emitted
+            // CLR type layout should reflect nesting when parentType is provided.
+            var ns = parentType.IsNil
+                ? (classScope.DotNetNamespace ?? "Classes")
+                : string.Empty;
             var name = classScope.DotNetTypeName ?? classScope.Name;
             var tb = new TypeBuilder(_metadata, ns, name);
 

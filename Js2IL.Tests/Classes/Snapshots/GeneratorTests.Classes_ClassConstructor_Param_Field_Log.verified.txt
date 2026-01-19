@@ -7,6 +7,55 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit Greeter
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object name
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object name
+			) cil managed 
+		{
+			// Method begins at RVA 0x209c
+			// Header size: 12
+			// Code size: 14 (0xe)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldarg.1
+			IL_0008: stfld object Modules.Classes_ClassConstructor_Param_Field_Log/Greeter::name
+			IL_000d: ret
+		} // end of method Greeter::.ctor
+
+		.method public hidebysig 
+			instance object sayName () cil managed 
+		{
+			// Method begins at RVA 0x20b8
+			// Header size: 12
+			// Code size: 28 (0x1c)
+			.maxstack 32
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.1
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldarg.0
+			IL_000e: ldfld object Modules.Classes_ClassConstructor_Param_Field_Log/Greeter::name
+			IL_0013: stelem.ref
+			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0019: pop
+			IL_001a: ldnull
+			IL_001b: ret
+		} // end of method Greeter::sayName
+
+	} // end of class Greeter
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -115,17 +164,17 @@
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_Param_Field_Log/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "Alice"
-		IL_000b: newobj instance void Classes.Classes_ClassConstructor_Param_Field_Log.Greeter::.ctor(object)
+		IL_000b: newobj instance void Modules.Classes_ClassConstructor_Param_Field_Log/Greeter::.ctor(object)
 		IL_0010: stloc.1
 		IL_0011: ldc.i4.0
 		IL_0012: newarr [System.Runtime]System.Object
 		IL_0017: stloc.2
 		IL_0018: ldloc.1
-		IL_0019: isinst Classes.Classes_ClassConstructor_Param_Field_Log.Greeter
+		IL_0019: isinst Modules.Classes_ClassConstructor_Param_Field_Log/Greeter
 		IL_001e: dup
 		IL_001f: brfalse IL_002f
 
-		IL_0024: callvirt instance object Classes.Classes_ClassConstructor_Param_Field_Log.Greeter::sayName()
+		IL_0024: callvirt instance object Modules.Classes_ClassConstructor_Param_Field_Log/Greeter::sayName()
 		IL_0029: pop
 		IL_002a: br IL_003d
 
@@ -140,55 +189,6 @@
 	} // end of method Classes_ClassConstructor_Param_Field_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_Param_Field_Log
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_Param_Field_Log.Greeter
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public object name
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object name
-		) cil managed 
-	{
-		// Method begins at RVA 0x209c
-		// Header size: 12
-		// Code size: 14 (0xe)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Classes.Classes_ClassConstructor_Param_Field_Log.Greeter::name
-		IL_000d: ret
-	} // end of method Greeter::.ctor
-
-	.method public hidebysig 
-		instance object sayName () cil managed 
-	{
-		// Method begins at RVA 0x20b8
-		// Header size: 12
-		// Code size: 28 (0x1c)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldarg.0
-		IL_000e: ldfld object Classes.Classes_ClassConstructor_Param_Field_Log.Greeter::name
-		IL_0013: stelem.ref
-		IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0019: pop
-		IL_001a: ldnull
-		IL_001b: ret
-	} // end of method Greeter::sayName
-
-} // end of class Classes.Classes_ClassConstructor_Param_Field_Log.Greeter
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

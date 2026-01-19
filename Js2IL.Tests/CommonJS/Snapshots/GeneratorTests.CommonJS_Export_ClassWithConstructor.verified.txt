@@ -78,11 +78,11 @@
 		IL_0036: newarr [System.Runtime]System.Object
 		IL_003b: stloc.s 4
 		IL_003d: ldloc.2
-		IL_003e: isinst Classes.CommonJS_Export_ClassWithConstructor_Lib.Person
+		IL_003e: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
 		IL_0043: dup
 		IL_0044: brfalse IL_0055
 
-		IL_0049: callvirt instance object Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::greet()
+		IL_0049: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
 		IL_004e: stloc.s 5
 		IL_0050: br IL_0065
 
@@ -125,11 +125,11 @@
 		IL_00af: newarr [System.Runtime]System.Object
 		IL_00b4: stloc.s 4
 		IL_00b6: ldloc.3
-		IL_00b7: isinst Classes.CommonJS_Export_ClassWithConstructor_Lib.Person
+		IL_00b7: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
 		IL_00bc: dup
 		IL_00bd: brfalse IL_00ce
 
-		IL_00c2: callvirt instance object Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::greet()
+		IL_00c2: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
 		IL_00c7: stloc.s 5
 		IL_00c9: br IL_00de
 
@@ -192,6 +192,71 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit Person
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object name
+		.field public object age
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object name,
+				object age
+			) cil managed 
+		{
+			// Method begins at RVA 0x2260
+			// Header size: 12
+			// Code size: 21 (0x15)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldarg.1
+			IL_0008: stfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::name
+			IL_000d: ldarg.0
+			IL_000e: ldarg.2
+			IL_000f: stfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::age
+			IL_0014: ret
+		} // end of method Person::.ctor
+
+		.method public hidebysig 
+			instance object greet () cil managed 
+		{
+			// Method begins at RVA 0x221c
+			// Header size: 12
+			// Code size: 56 (0x38)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldstr "Hello, I am "
+			IL_0005: ldarg.0
+			IL_0006: ldfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::name
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldstr " and I am "
+			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldarg.0
+			IL_001f: ldfld object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::age
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0029: stloc.0
+			IL_002a: ldloc.0
+			IL_002b: ldstr " years old."
+			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0035: stloc.0
+			IL_0036: ldloc.0
+			IL_0037: ret
+		} // end of method Person::greet
+
+	} // end of class Person
+
 	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L16C19
 		extends [System.Runtime]System.Object
 	{
@@ -213,7 +278,7 @@
 
 			IL_0000: ldarg.1
 			IL_0001: ldarg.2
-			IL_0002: newobj instance void Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::.ctor(object, object)
+			IL_0002: newobj instance void Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::.ctor(object, object)
 			IL_0007: stloc.0
 			IL_0008: ldloc.0
 			IL_0009: ret
@@ -363,7 +428,7 @@
 		IL_0022: ldstr "Default"
 		IL_0027: ldc.r8 25
 		IL_0030: box [System.Runtime]System.Double
-		IL_0035: newobj instance void Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::.ctor(object, object)
+		IL_0035: newobj instance void Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::.ctor(object, object)
 		IL_003a: stloc.2
 		IL_003b: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
 		IL_0040: dup
@@ -384,71 +449,6 @@
 	} // end of method CommonJS_Export_ClassWithConstructor_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ClassWithConstructor_Lib
-
-.class public auto ansi beforefieldinit Classes.CommonJS_Export_ClassWithConstructor_Lib.Person
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public object name
-	.field public object age
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object name,
-			object age
-		) cil managed 
-	{
-		// Method begins at RVA 0x2260
-		// Header size: 12
-		// Code size: 21 (0x15)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::name
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld object Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::age
-		IL_0014: ret
-	} // end of method Person::.ctor
-
-	.method public hidebysig 
-		instance object greet () cil managed 
-	{
-		// Method begins at RVA 0x221c
-		// Header size: 12
-		// Code size: 56 (0x38)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldstr "Hello, I am "
-		IL_0005: ldarg.0
-		IL_0006: ldfld object Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::name
-		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0010: stloc.0
-		IL_0011: ldloc.0
-		IL_0012: ldstr " and I am "
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_001c: stloc.0
-		IL_001d: ldloc.0
-		IL_001e: ldarg.0
-		IL_001f: ldfld object Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::age
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0029: stloc.0
-		IL_002a: ldloc.0
-		IL_002b: ldstr " years old."
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0035: stloc.0
-		IL_0036: ldloc.0
-		IL_0037: ret
-	} // end of method Person::greet
-
-} // end of class Classes.CommonJS_Export_ClassWithConstructor_Lib.Person
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

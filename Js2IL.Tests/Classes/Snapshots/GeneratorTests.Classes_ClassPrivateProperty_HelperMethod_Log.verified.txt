@@ -7,6 +7,53 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit Greeter
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public string _secret
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2098
+			// Header size: 12
+			// Code size: 18 (0x12)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldstr "TopSecret"
+			IL_000c: stfld string Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter::_secret
+			IL_0011: ret
+		} // end of method Greeter::.ctor
+
+		.method public hidebysig 
+			instance object logSecret () cil managed 
+		{
+			// Method begins at RVA 0x20b8
+			// Header size: 12
+			// Code size: 28 (0x1c)
+			.maxstack 32
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.1
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldarg.0
+			IL_000e: ldfld string Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter::_secret
+			IL_0013: stelem.ref
+			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0019: pop
+			IL_001a: ldnull
+			IL_001b: ret
+		} // end of method Greeter::logSecret
+
+	} // end of class Greeter
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -94,17 +141,17 @@
 
 		IL_0000: newobj instance void Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::.ctor()
+		IL_0006: newobj instance void Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldc.i4.0
 		IL_000d: newarr [System.Runtime]System.Object
 		IL_0012: stloc.2
 		IL_0013: ldloc.1
-		IL_0014: isinst Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter
+		IL_0014: isinst Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter
 		IL_0019: dup
 		IL_001a: brfalse IL_002a
 
-		IL_001f: callvirt instance object Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::logSecret()
+		IL_001f: callvirt instance object Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter::logSecret()
 		IL_0024: pop
 		IL_0025: br IL_0038
 
@@ -119,53 +166,6 @@
 	} // end of method Classes_ClassPrivateProperty_HelperMethod_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassPrivateProperty_HelperMethod_Log
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public string _secret
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2098
-		// Header size: 12
-		// Code size: 18 (0x12)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldstr "TopSecret"
-		IL_000c: stfld string Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::_secret
-		IL_0011: ret
-	} // end of method Greeter::.ctor
-
-	.method public hidebysig 
-		instance object logSecret () cil managed 
-	{
-		// Method begins at RVA 0x20b8
-		// Header size: 12
-		// Code size: 28 (0x1c)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldarg.0
-		IL_000e: ldfld string Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::_secret
-		IL_0013: stelem.ref
-		IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0019: pop
-		IL_001a: ldnull
-		IL_001b: ret
-	} // end of method Greeter::logSecret
-
-} // end of class Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

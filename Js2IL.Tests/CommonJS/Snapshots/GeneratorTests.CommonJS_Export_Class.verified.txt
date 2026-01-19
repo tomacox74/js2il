@@ -82,7 +82,7 @@
 		IL_004e: stelem.ref
 		IL_004f: stloc.2
 		IL_0050: ldloc.1
-		IL_0051: isinst Classes.CommonJS_Export_Class_Lib.Calculator
+		IL_0051: isinst Modules.CommonJS_Export_Class_Lib/Calculator
 		IL_0056: dup
 		IL_0057: brfalse IL_006d
 
@@ -92,7 +92,7 @@
 		IL_005f: ldloc.2
 		IL_0060: ldc.i4.1
 		IL_0061: ldelem.ref
-		IL_0062: callvirt instance object Classes.CommonJS_Export_Class_Lib.Calculator::'add'(object, object)
+		IL_0062: callvirt instance object Modules.CommonJS_Export_Class_Lib/Calculator::'add'(object, object)
 		IL_0067: stloc.3
 		IL_0068: br IL_007b
 
@@ -130,7 +130,7 @@
 		IL_00bf: stelem.ref
 		IL_00c0: stloc.2
 		IL_00c1: ldloc.1
-		IL_00c2: isinst Classes.CommonJS_Export_Class_Lib.Calculator
+		IL_00c2: isinst Modules.CommonJS_Export_Class_Lib/Calculator
 		IL_00c7: dup
 		IL_00c8: brfalse IL_00de
 
@@ -140,7 +140,7 @@
 		IL_00d0: ldloc.2
 		IL_00d1: ldc.i4.1
 		IL_00d2: ldelem.ref
-		IL_00d3: callvirt instance object Classes.CommonJS_Export_Class_Lib.Calculator::multiply(object, object)
+		IL_00d3: callvirt instance object Modules.CommonJS_Export_Class_Lib/Calculator::multiply(object, object)
 		IL_00d8: stloc.3
 		IL_00d9: br IL_00ec
 
@@ -173,6 +173,77 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit Calculator
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2190
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Calculator::.ctor
+
+		.method public hidebysig 
+			instance object 'add' (
+				object a,
+				object b
+			) cil managed 
+		{
+			// Method begins at RVA 0x21a4
+			// Header size: 12
+			// Code size: 10 (0xa)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
+			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0007: stloc.0
+			IL_0008: ldloc.0
+			IL_0009: ret
+		} // end of method Calculator::'add'
+
+		.method public hidebysig 
+			instance object multiply (
+				object a,
+				object b
+			) cil managed 
+		{
+			// Method begins at RVA 0x21bc
+			// Header size: 12
+			// Code size: 25 (0x19)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldarg.2
+			IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000e: mul
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: box [System.Runtime]System.Double
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ret
+		} // end of method Calculator::multiply
+
+	} // end of class Calculator
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -279,7 +350,7 @@
 
 		IL_0000: newobj instance void Modules.CommonJS_Export_Class_Lib/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.CommonJS_Export_Class_Lib.Calculator::.ctor()
+		IL_0006: newobj instance void Modules.CommonJS_Export_Class_Lib/Calculator::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldarg.2
 		IL_000d: ldstr "exports"
@@ -290,77 +361,6 @@
 	} // end of method CommonJS_Export_Class_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_Class_Lib
-
-.class public auto ansi beforefieldinit Classes.CommonJS_Export_Class_Lib.Calculator
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2190
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method Calculator::.ctor
-
-	.method public hidebysig 
-		instance object 'add' (
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x21a4
-		// Header size: 12
-		// Code size: 10 (0xa)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: ldarg.2
-		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0007: stloc.0
-		IL_0008: ldloc.0
-		IL_0009: ret
-	} // end of method Calculator::'add'
-
-	.method public hidebysig 
-		instance object multiply (
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x21bc
-		// Header size: 12
-		// Code size: 25 (0x19)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: stloc.0
-		IL_0007: ldloc.0
-		IL_0008: ldarg.2
-		IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000e: mul
-		IL_000f: stloc.0
-		IL_0010: ldloc.0
-		IL_0011: box [System.Runtime]System.Double
-		IL_0016: stloc.1
-		IL_0017: ldloc.1
-		IL_0018: ret
-	} // end of method Calculator::multiply
-
-} // end of class Classes.CommonJS_Export_Class_Lib.Calculator
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

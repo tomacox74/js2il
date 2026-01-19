@@ -7,6 +7,37 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit TestClass
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2148
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method TestClass::.ctor
+
+		.method public hidebysig 
+			instance float64 getValue () cil managed 
+		{
+			// Method begins at RVA 0x215c
+			// Header size: 12
+			// Code size: 10 (0xa)
+			.maxstack 32
+
+			IL_0000: ldc.r8 4
+			IL_0009: ret
+		} // end of method TestClass::getValue
+
+	} // end of class TestClass
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -98,17 +129,17 @@
 
 		IL_0000: newobj instance void Modules.BinaryOperator_EqualMethodReturn/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.BinaryOperator_EqualMethodReturn.TestClass::.ctor()
+		IL_0006: newobj instance void Modules.BinaryOperator_EqualMethodReturn/TestClass::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldc.i4.0
 		IL_000d: newarr [System.Runtime]System.Object
 		IL_0012: stloc.s 4
 		IL_0014: ldloc.1
-		IL_0015: isinst Classes.BinaryOperator_EqualMethodReturn.TestClass
+		IL_0015: isinst Modules.BinaryOperator_EqualMethodReturn/TestClass
 		IL_001a: dup
 		IL_001b: brfalse IL_0030
 
-		IL_0020: callvirt instance float64 Classes.BinaryOperator_EqualMethodReturn.TestClass::getValue()
+		IL_0020: callvirt instance float64 Modules.BinaryOperator_EqualMethodReturn/TestClass::getValue()
 		IL_0025: box [System.Runtime]System.Double
 		IL_002a: stloc.2
 		IL_002b: br IL_003f
@@ -189,37 +220,6 @@
 	} // end of method BinaryOperator_EqualMethodReturn::__js_module_init__
 
 } // end of class Modules.BinaryOperator_EqualMethodReturn
-
-.class public auto ansi beforefieldinit Classes.BinaryOperator_EqualMethodReturn.TestClass
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2148
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method TestClass::.ctor
-
-	.method public hidebysig 
-		instance float64 getValue () cil managed 
-	{
-		// Method begins at RVA 0x215c
-		// Header size: 12
-		// Code size: 10 (0xa)
-		.maxstack 32
-
-		IL_0000: ldc.r8 4
-		IL_0009: ret
-	} // end of method TestClass::getValue
-
-} // end of class Classes.BinaryOperator_EqualMethodReturn.TestClass
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -7,6 +7,550 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit BitArray
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field private object[] _scopes
+		.field public class [JavaScriptRuntime]JavaScriptRuntime.Int32Array wordArray
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object[] scopes,
+				object size
+			) cil managed 
+		{
+			// Method begins at RVA 0x244c
+			// Header size: 12
+			// Code size: 68 (0x44)
+			.maxstack 32
+			.locals init (
+				[0] object[],
+				[1] float64,
+				[2] object,
+				[3] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.1
+			IL_0007: stloc.0
+			IL_0008: ldarg.0
+			IL_0009: ldloc.0
+			IL_000a: stfld object[] Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::_scopes
+			IL_000f: ldarg.2
+			IL_0010: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0015: conv.i4
+			IL_0016: conv.u4
+			IL_0017: ldc.r8 5
+			IL_0020: conv.i4
+			IL_0021: shr.un
+			IL_0022: conv.r.un
+			IL_0023: stloc.1
+			IL_0024: ldc.r8 1
+			IL_002d: ldloc.1
+			IL_002e: add
+			IL_002f: stloc.1
+			IL_0030: ldloc.1
+			IL_0031: box [System.Runtime]System.Double
+			IL_0036: stloc.2
+			IL_0037: ldarg.0
+			IL_0038: ldloc.2
+			IL_0039: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+			IL_003e: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+			IL_0043: ret
+		} // end of method BitArray::.ctor
+
+		.method public hidebysig 
+			instance object setBitTrue (
+				object index
+			) cil managed 
+		{
+			// Method begins at RVA 0x249c
+			// Header size: 12
+			// Code size: 91 (0x5b)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] float64,
+				[2] float64,
+				[3] float64
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: conv.i4
+			IL_0007: conv.u4
+			IL_0008: ldc.r8 5
+			IL_0011: conv.i4
+			IL_0012: shr.un
+			IL_0013: conv.r.un
+			IL_0014: stloc.0
+			IL_0015: ldarg.1
+			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001b: conv.i4
+			IL_001c: ldc.r8 31
+			IL_0025: conv.i4
+			IL_0026: and
+			IL_0027: conv.r8
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+			IL_002f: ldloc.0
+			IL_0030: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_0035: stloc.2
+			IL_0036: ldc.r8 1
+			IL_003f: conv.i4
+			IL_0040: ldloc.1
+			IL_0041: conv.i4
+			IL_0042: shl
+			IL_0043: conv.r8
+			IL_0044: stloc.3
+			IL_0045: ldloc.2
+			IL_0046: conv.i4
+			IL_0047: ldloc.3
+			IL_0048: conv.i4
+			IL_0049: or
+			IL_004a: conv.r8
+			IL_004b: stloc.3
+			IL_004c: ldarg.0
+			IL_004d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+			IL_0052: ldloc.0
+			IL_0053: ldloc.3
+			IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+			IL_0059: ldnull
+			IL_005a: ret
+		} // end of method BitArray::setBitTrue
+
+		.method public hidebysig 
+			instance object setBitsTrue (
+				object range_start,
+				object step,
+				object range_stop
+			) cil managed 
+		{
+			// Method begins at RVA 0x2504
+			// Header size: 12
+			// Code size: 790 (0x316)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] float64,
+				[2] float64,
+				[3] float64,
+				[4] float64,
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[6] float64,
+				[7] object,
+				[8] object,
+				[9] object,
+				[10] object,
+				[11] bool,
+				[12] object
+			)
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.4
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldstr "args"
+			IL_0012: stelem.ref
+			IL_0013: dup
+			IL_0014: ldc.i4.1
+			IL_0015: ldarg.1
+			IL_0016: stelem.ref
+			IL_0017: dup
+			IL_0018: ldc.i4.2
+			IL_0019: ldarg.2
+			IL_001a: stelem.ref
+			IL_001b: dup
+			IL_001c: ldc.i4.3
+			IL_001d: ldarg.3
+			IL_001e: stelem.ref
+			IL_001f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0024: pop
+			IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_002a: stloc.s 5
+			IL_002c: ldarg.1
+			IL_002d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0032: stloc.s 6
+			IL_0034: ldloc.s 6
+			IL_0036: ldarg.3
+			IL_0037: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_003c: clt
+			IL_003e: brfalse IL_0058
+
+			IL_0043: ldc.r8 1
+			IL_004c: box [System.Runtime]System.Double
+			IL_0051: stloc.s 8
+			IL_0053: br IL_0068
+
+			IL_0058: ldc.r8 0.0
+			IL_0061: box [System.Runtime]System.Double
+			IL_0066: stloc.s 8
+
+			IL_0068: ldloc.s 5
+			IL_006a: ldc.i4.2
+			IL_006b: newarr [System.Runtime]System.Object
+			IL_0070: dup
+			IL_0071: ldc.i4.0
+			IL_0072: ldstr "cmp0"
+			IL_0077: stelem.ref
+			IL_0078: dup
+			IL_0079: ldc.i4.1
+			IL_007a: ldloc.s 8
+			IL_007c: stelem.ref
+			IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0082: pop
+			IL_0083: ldarg.0
+			IL_0084: ldfld object[] Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::_scopes
+			IL_0089: ldc.i4.0
+			IL_008a: ldelem.ref
+			IL_008b: castclass Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/Scope
+			IL_0090: ldfld float64 Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/Scope::WORD_SIZE
+			IL_0095: ldc.r8 2
+			IL_009e: div
+			IL_009f: stloc.s 6
+			IL_00a1: ldarg.2
+			IL_00a2: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00a7: ldloc.s 6
+			IL_00a9: cgt
+			IL_00ab: brfalse IL_00d4
+
+			IL_00b0: ldstr "not used in this test"
+			IL_00b5: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_00ba: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_00bf: dup
+			IL_00c0: isinst [System.Runtime]System.Exception
+			IL_00c5: dup
+			IL_00c6: brtrue IL_00d2
+
+			IL_00cb: pop
+			IL_00cc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_00d1: throw
+
+			IL_00d2: pop
+			IL_00d3: throw
+
+			IL_00d4: ldarg.1
+			IL_00d5: stloc.0
+			IL_00d6: ldloc.0
+			IL_00d7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00dc: stloc.s 6
+			IL_00de: ldloc.s 6
+			IL_00e0: conv.i4
+			IL_00e1: conv.u4
+			IL_00e2: ldc.r8 5
+			IL_00eb: conv.i4
+			IL_00ec: shr.un
+			IL_00ed: conv.r.un
+			IL_00ee: stloc.1
+			IL_00ef: ldarg.0
+			IL_00f0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+			IL_00f5: ldloc.1
+			IL_00f6: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_00fb: stloc.2
+			IL_00fc: ldloc.1
+			IL_00fd: box [System.Runtime]System.Double
+			IL_0102: stloc.s 9
+			IL_0104: ldloc.2
+			IL_0105: box [System.Runtime]System.Double
+			IL_010a: stloc.s 10
+			IL_010c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0111: ldc.i4.4
+			IL_0112: newarr [System.Runtime]System.Object
+			IL_0117: dup
+			IL_0118: ldc.i4.0
+			IL_0119: ldstr "init"
+			IL_011e: stelem.ref
+			IL_011f: dup
+			IL_0120: ldc.i4.1
+			IL_0121: ldloc.0
+			IL_0122: stelem.ref
+			IL_0123: dup
+			IL_0124: ldc.i4.2
+			IL_0125: ldloc.s 9
+			IL_0127: stelem.ref
+			IL_0128: dup
+			IL_0129: ldc.i4.3
+			IL_012a: ldloc.s 10
+			IL_012c: stelem.ref
+			IL_012d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0132: pop
+			// loop start (head: IL_0133)
+				IL_0133: ldloc.0
+				IL_0134: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0139: stloc.s 6
+				IL_013b: ldloc.s 6
+				IL_013d: ldarg.3
+				IL_013e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0143: clt
+				IL_0145: brfalse IL_025b
+
+				IL_014a: ldloc.0
+				IL_014b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0150: stloc.s 6
+				IL_0152: ldloc.s 6
+				IL_0154: conv.i4
+				IL_0155: ldc.r8 31
+				IL_015e: conv.i4
+				IL_015f: and
+				IL_0160: conv.r8
+				IL_0161: stloc.3
+				IL_0162: ldc.r8 1
+				IL_016b: conv.i4
+				IL_016c: ldloc.3
+				IL_016d: conv.i4
+				IL_016e: shl
+				IL_016f: conv.r8
+				IL_0170: stloc.s 6
+				IL_0172: ldloc.2
+				IL_0173: conv.i4
+				IL_0174: ldloc.s 6
+				IL_0176: conv.i4
+				IL_0177: or
+				IL_0178: conv.r8
+				IL_0179: stloc.2
+				IL_017a: ldloc.0
+				IL_017b: ldarg.1
+				IL_017c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0181: stloc.s 11
+				IL_0183: ldloc.s 11
+				IL_0185: brfalse IL_01c1
+
+				IL_018a: ldloc.3
+				IL_018b: box [System.Runtime]System.Double
+				IL_0190: stloc.s 10
+				IL_0192: ldloc.2
+				IL_0193: box [System.Runtime]System.Double
+				IL_0198: stloc.s 9
+				IL_019a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_019f: ldc.i4.4
+				IL_01a0: newarr [System.Runtime]System.Object
+				IL_01a5: dup
+				IL_01a6: ldc.i4.0
+				IL_01a7: ldstr "iter0"
+				IL_01ac: stelem.ref
+				IL_01ad: dup
+				IL_01ae: ldc.i4.1
+				IL_01af: ldloc.0
+				IL_01b0: stelem.ref
+				IL_01b1: dup
+				IL_01b2: ldc.i4.2
+				IL_01b3: ldloc.s 10
+				IL_01b5: stelem.ref
+				IL_01b6: dup
+				IL_01b7: ldc.i4.3
+				IL_01b8: ldloc.s 9
+				IL_01ba: stelem.ref
+				IL_01bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_01c0: pop
+
+				IL_01c1: ldloc.0
+				IL_01c2: ldarg.2
+				IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_01c8: stloc.0
+				IL_01c9: ldloc.0
+				IL_01ca: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_01cf: stloc.s 6
+				IL_01d1: ldloc.s 6
+				IL_01d3: conv.i4
+				IL_01d4: conv.u4
+				IL_01d5: ldc.r8 5
+				IL_01de: conv.i4
+				IL_01df: shr.un
+				IL_01e0: conv.r.un
+				IL_01e1: stloc.s 4
+				IL_01e3: ldloc.s 4
+				IL_01e5: ldloc.1
+				IL_01e6: ceq
+				IL_01e8: ldc.i4.0
+				IL_01e9: ceq
+				IL_01eb: brfalse IL_0256
+
+				IL_01f0: ldloc.1
+				IL_01f1: box [System.Runtime]System.Double
+				IL_01f6: stloc.s 9
+				IL_01f8: ldloc.2
+				IL_01f9: box [System.Runtime]System.Double
+				IL_01fe: stloc.s 10
+				IL_0200: ldloc.s 4
+				IL_0202: box [System.Runtime]System.Double
+				IL_0207: stloc.s 12
+				IL_0209: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_020e: ldc.i4.5
+				IL_020f: newarr [System.Runtime]System.Object
+				IL_0214: dup
+				IL_0215: ldc.i4.0
+				IL_0216: ldstr "commit"
+				IL_021b: stelem.ref
+				IL_021c: dup
+				IL_021d: ldc.i4.1
+				IL_021e: ldloc.s 9
+				IL_0220: stelem.ref
+				IL_0221: dup
+				IL_0222: ldc.i4.2
+				IL_0223: ldloc.s 10
+				IL_0225: stelem.ref
+				IL_0226: dup
+				IL_0227: ldc.i4.3
+				IL_0228: ldstr "->"
+				IL_022d: stelem.ref
+				IL_022e: dup
+				IL_022f: ldc.i4.4
+				IL_0230: ldloc.s 12
+				IL_0232: stelem.ref
+				IL_0233: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0238: pop
+				IL_0239: ldarg.0
+				IL_023a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+				IL_023f: ldloc.1
+				IL_0240: ldloc.2
+				IL_0241: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+				IL_0246: ldloc.s 4
+				IL_0248: stloc.1
+				IL_0249: ldarg.0
+				IL_024a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+				IL_024f: ldloc.1
+				IL_0250: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+				IL_0255: stloc.2
+
+				IL_0256: br IL_0133
+			// end loop
+
+			IL_025b: ldloc.1
+			IL_025c: box [System.Runtime]System.Double
+			IL_0261: stloc.s 12
+			IL_0263: ldloc.2
+			IL_0264: box [System.Runtime]System.Double
+			IL_0269: stloc.s 10
+			IL_026b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0270: ldc.i4.4
+			IL_0271: newarr [System.Runtime]System.Object
+			IL_0276: dup
+			IL_0277: ldc.i4.0
+			IL_0278: ldstr "end"
+			IL_027d: stelem.ref
+			IL_027e: dup
+			IL_027f: ldc.i4.1
+			IL_0280: ldloc.0
+			IL_0281: stelem.ref
+			IL_0282: dup
+			IL_0283: ldc.i4.2
+			IL_0284: ldloc.s 12
+			IL_0286: stelem.ref
+			IL_0287: dup
+			IL_0288: ldc.i4.3
+			IL_0289: ldloc.s 10
+			IL_028b: stelem.ref
+			IL_028c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0291: pop
+			IL_0292: ldarg.0
+			IL_0293: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+			IL_0298: ldloc.1
+			IL_0299: ldloc.2
+			IL_029a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+			IL_029f: ldarg.0
+			IL_02a0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+			IL_02a5: ldc.r8 0.0
+			IL_02ae: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_02b3: box [System.Runtime]System.Double
+			IL_02b8: stloc.s 10
+			IL_02ba: ldarg.0
+			IL_02bb: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+			IL_02c0: ldc.r8 1
+			IL_02c9: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_02ce: box [System.Runtime]System.Double
+			IL_02d3: stloc.s 12
+			IL_02d5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_02da: ldc.i4.4
+			IL_02db: newarr [System.Runtime]System.Object
+			IL_02e0: dup
+			IL_02e1: ldc.i4.0
+			IL_02e2: ldstr "after"
+			IL_02e7: stelem.ref
+			IL_02e8: dup
+			IL_02e9: ldc.i4.1
+			IL_02ea: ldloc.s 10
+			IL_02ec: stelem.ref
+			IL_02ed: dup
+			IL_02ee: ldc.i4.2
+			IL_02ef: ldloc.s 12
+			IL_02f1: stelem.ref
+			IL_02f2: dup
+			IL_02f3: ldc.i4.3
+			IL_02f4: ldarg.0
+			IL_02f5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+			IL_02fa: ldc.r8 2
+			IL_0303: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_0308: box [System.Runtime]System.Double
+			IL_030d: stelem.ref
+			IL_030e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0313: pop
+			IL_0314: ldnull
+			IL_0315: ret
+		} // end of method BitArray::setBitsTrue
+
+		.method public hidebysig 
+			instance float64 testBitTrue (
+				object index
+			) cil managed 
+		{
+			// Method begins at RVA 0x2828
+			// Header size: 12
+			// Code size: 78 (0x4e)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] float64,
+				[2] float64,
+				[3] float64
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: conv.i4
+			IL_0007: conv.u4
+			IL_0008: ldc.r8 5
+			IL_0011: conv.i4
+			IL_0012: shr.un
+			IL_0013: conv.r.un
+			IL_0014: stloc.0
+			IL_0015: ldarg.1
+			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001b: conv.i4
+			IL_001c: ldc.r8 31
+			IL_0025: conv.i4
+			IL_0026: and
+			IL_0027: conv.r8
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::wordArray
+			IL_002f: ldloc.0
+			IL_0030: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_0035: stloc.2
+			IL_0036: ldc.r8 1
+			IL_003f: conv.i4
+			IL_0040: ldloc.1
+			IL_0041: conv.i4
+			IL_0042: shl
+			IL_0043: conv.r8
+			IL_0044: stloc.3
+			IL_0045: ldloc.2
+			IL_0046: conv.i4
+			IL_0047: ldloc.3
+			IL_0048: conv.i4
+			IL_0049: and
+			IL_004a: conv.r8
+			IL_004b: stloc.3
+			IL_004c: ldloc.3
+			IL_004d: ret
+		} // end of method BitArray::testBitTrue
+
+	} // end of class BitArray
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -264,7 +808,7 @@
 		IL_0021: ldloc.s 4
 		IL_0023: ldc.r8 64
 		IL_002c: box [System.Runtime]System.Double
-		IL_0031: newobj instance void Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::.ctor(object[], object)
+		IL_0031: newobj instance void Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::.ctor(object[], object)
 		IL_0036: stloc.1
 		IL_0037: ldc.r8 3
 		IL_0040: box [System.Runtime]System.Double
@@ -311,7 +855,7 @@
 		IL_00c9: stelem.ref
 		IL_00ca: stloc.s 4
 		IL_00cc: ldloc.1
-		IL_00cd: isinst Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray
+		IL_00cd: isinst Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray
 		IL_00d2: dup
 		IL_00d3: brfalse IL_00ef
 
@@ -324,7 +868,7 @@
 		IL_00e0: ldloc.s 4
 		IL_00e2: ldc.i4.2
 		IL_00e3: ldelem.ref
-		IL_00e4: callvirt instance object Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::setBitsTrue(object, object, object)
+		IL_00e4: callvirt instance object Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::setBitsTrue(object, object, object)
 		IL_00e9: pop
 		IL_00ea: br IL_00fe
 
@@ -346,14 +890,14 @@
 		IL_011b: stelem.ref
 		IL_011c: stloc.s 4
 		IL_011e: ldloc.1
-		IL_011f: isinst Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray
+		IL_011f: isinst Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray
 		IL_0124: dup
 		IL_0125: brfalse IL_013f
 
 		IL_012a: ldloc.s 4
 		IL_012c: ldc.i4.0
 		IL_012d: ldelem.ref
-		IL_012e: callvirt instance float64 Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::testBitTrue(object)
+		IL_012e: callvirt instance float64 Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::testBitTrue(object)
 		IL_0133: box [System.Runtime]System.Double
 		IL_0138: stloc.s 6
 		IL_013a: br IL_014f
@@ -404,14 +948,14 @@
 		IL_01bc: stelem.ref
 		IL_01bd: stloc.s 4
 		IL_01bf: ldloc.1
-		IL_01c0: isinst Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray
+		IL_01c0: isinst Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray
 		IL_01c5: dup
 		IL_01c6: brfalse IL_01e0
 
 		IL_01cb: ldloc.s 4
 		IL_01cd: ldc.i4.0
 		IL_01ce: ldelem.ref
-		IL_01cf: callvirt instance float64 Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::testBitTrue(object)
+		IL_01cf: callvirt instance float64 Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::testBitTrue(object)
 		IL_01d4: box [System.Runtime]System.Double
 		IL_01d9: stloc.s 6
 		IL_01db: br IL_01f0
@@ -462,14 +1006,14 @@
 		IL_025d: stelem.ref
 		IL_025e: stloc.s 4
 		IL_0260: ldloc.1
-		IL_0261: isinst Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray
+		IL_0261: isinst Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray
 		IL_0266: dup
 		IL_0267: brfalse IL_0281
 
 		IL_026c: ldloc.s 4
 		IL_026e: ldc.i4.0
 		IL_026f: ldelem.ref
-		IL_0270: callvirt instance float64 Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::testBitTrue(object)
+		IL_0270: callvirt instance float64 Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::testBitTrue(object)
 		IL_0275: box [System.Runtime]System.Double
 		IL_027a: stloc.s 6
 		IL_027c: br IL_0291
@@ -520,14 +1064,14 @@
 		IL_02fe: stelem.ref
 		IL_02ff: stloc.s 4
 		IL_0301: ldloc.1
-		IL_0302: isinst Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray
+		IL_0302: isinst Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray
 		IL_0307: dup
 		IL_0308: brfalse IL_0322
 
 		IL_030d: ldloc.s 4
 		IL_030f: ldc.i4.0
 		IL_0310: ldelem.ref
-		IL_0311: callvirt instance float64 Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::testBitTrue(object)
+		IL_0311: callvirt instance float64 Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/BitArray::testBitTrue(object)
 		IL_0316: box [System.Runtime]System.Double
 		IL_031b: stloc.s 6
 		IL_031d: br IL_0332
@@ -605,550 +1149,6 @@
 	} // end of method Prime_SetBitsTrue_SmallStep_WordValueOrAssign::__js_module_init__
 
 } // end of class Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign
-
-.class public auto ansi beforefieldinit Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field private object[] _scopes
-	.field public class [JavaScriptRuntime]JavaScriptRuntime.Int32Array wordArray
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object[] scopes,
-			object size
-		) cil managed 
-	{
-		// Method begins at RVA 0x244c
-		// Header size: 12
-		// Code size: 68 (0x44)
-		.maxstack 32
-		.locals init (
-			[0] object[],
-			[1] float64,
-			[2] object,
-			[3] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.1
-		IL_0007: stloc.0
-		IL_0008: ldarg.0
-		IL_0009: ldloc.0
-		IL_000a: stfld object[] Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::_scopes
-		IL_000f: ldarg.2
-		IL_0010: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0015: conv.i4
-		IL_0016: conv.u4
-		IL_0017: ldc.r8 5
-		IL_0020: conv.i4
-		IL_0021: shr.un
-		IL_0022: conv.r.un
-		IL_0023: stloc.1
-		IL_0024: ldc.r8 1
-		IL_002d: ldloc.1
-		IL_002e: add
-		IL_002f: stloc.1
-		IL_0030: ldloc.1
-		IL_0031: box [System.Runtime]System.Double
-		IL_0036: stloc.2
-		IL_0037: ldarg.0
-		IL_0038: ldloc.2
-		IL_0039: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
-		IL_003e: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-		IL_0043: ret
-	} // end of method BitArray::.ctor
-
-	.method public hidebysig 
-		instance object setBitTrue (
-			object index
-		) cil managed 
-	{
-		// Method begins at RVA 0x249c
-		// Header size: 12
-		// Code size: 91 (0x5b)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] float64,
-			[2] float64,
-			[3] float64
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: conv.i4
-		IL_0007: conv.u4
-		IL_0008: ldc.r8 5
-		IL_0011: conv.i4
-		IL_0012: shr.un
-		IL_0013: conv.r.un
-		IL_0014: stloc.0
-		IL_0015: ldarg.1
-		IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001b: conv.i4
-		IL_001c: ldc.r8 31
-		IL_0025: conv.i4
-		IL_0026: and
-		IL_0027: conv.r8
-		IL_0028: stloc.1
-		IL_0029: ldarg.0
-		IL_002a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-		IL_002f: ldloc.0
-		IL_0030: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_0035: stloc.2
-		IL_0036: ldc.r8 1
-		IL_003f: conv.i4
-		IL_0040: ldloc.1
-		IL_0041: conv.i4
-		IL_0042: shl
-		IL_0043: conv.r8
-		IL_0044: stloc.3
-		IL_0045: ldloc.2
-		IL_0046: conv.i4
-		IL_0047: ldloc.3
-		IL_0048: conv.i4
-		IL_0049: or
-		IL_004a: conv.r8
-		IL_004b: stloc.3
-		IL_004c: ldarg.0
-		IL_004d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-		IL_0052: ldloc.0
-		IL_0053: ldloc.3
-		IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-		IL_0059: ldnull
-		IL_005a: ret
-	} // end of method BitArray::setBitTrue
-
-	.method public hidebysig 
-		instance object setBitsTrue (
-			object range_start,
-			object step,
-			object range_stop
-		) cil managed 
-	{
-		// Method begins at RVA 0x2504
-		// Header size: 12
-		// Code size: 790 (0x316)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] float64,
-			[2] float64,
-			[3] float64,
-			[4] float64,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[6] float64,
-			[7] object,
-			[8] object,
-			[9] object,
-			[10] object,
-			[11] bool,
-			[12] object
-		)
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.4
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "args"
-		IL_0012: stelem.ref
-		IL_0013: dup
-		IL_0014: ldc.i4.1
-		IL_0015: ldarg.1
-		IL_0016: stelem.ref
-		IL_0017: dup
-		IL_0018: ldc.i4.2
-		IL_0019: ldarg.2
-		IL_001a: stelem.ref
-		IL_001b: dup
-		IL_001c: ldc.i4.3
-		IL_001d: ldarg.3
-		IL_001e: stelem.ref
-		IL_001f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0024: pop
-		IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002a: stloc.s 5
-		IL_002c: ldarg.1
-		IL_002d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0032: stloc.s 6
-		IL_0034: ldloc.s 6
-		IL_0036: ldarg.3
-		IL_0037: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_003c: clt
-		IL_003e: brfalse IL_0058
-
-		IL_0043: ldc.r8 1
-		IL_004c: box [System.Runtime]System.Double
-		IL_0051: stloc.s 8
-		IL_0053: br IL_0068
-
-		IL_0058: ldc.r8 0.0
-		IL_0061: box [System.Runtime]System.Double
-		IL_0066: stloc.s 8
-
-		IL_0068: ldloc.s 5
-		IL_006a: ldc.i4.2
-		IL_006b: newarr [System.Runtime]System.Object
-		IL_0070: dup
-		IL_0071: ldc.i4.0
-		IL_0072: ldstr "cmp0"
-		IL_0077: stelem.ref
-		IL_0078: dup
-		IL_0079: ldc.i4.1
-		IL_007a: ldloc.s 8
-		IL_007c: stelem.ref
-		IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0082: pop
-		IL_0083: ldarg.0
-		IL_0084: ldfld object[] Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::_scopes
-		IL_0089: ldc.i4.0
-		IL_008a: ldelem.ref
-		IL_008b: castclass Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/Scope
-		IL_0090: ldfld float64 Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign/Scope::WORD_SIZE
-		IL_0095: ldc.r8 2
-		IL_009e: div
-		IL_009f: stloc.s 6
-		IL_00a1: ldarg.2
-		IL_00a2: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00a7: ldloc.s 6
-		IL_00a9: cgt
-		IL_00ab: brfalse IL_00d4
-
-		IL_00b0: ldstr "not used in this test"
-		IL_00b5: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_00ba: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-		IL_00bf: dup
-		IL_00c0: isinst [System.Runtime]System.Exception
-		IL_00c5: dup
-		IL_00c6: brtrue IL_00d2
-
-		IL_00cb: pop
-		IL_00cc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-		IL_00d1: throw
-
-		IL_00d2: pop
-		IL_00d3: throw
-
-		IL_00d4: ldarg.1
-		IL_00d5: stloc.0
-		IL_00d6: ldloc.0
-		IL_00d7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00dc: stloc.s 6
-		IL_00de: ldloc.s 6
-		IL_00e0: conv.i4
-		IL_00e1: conv.u4
-		IL_00e2: ldc.r8 5
-		IL_00eb: conv.i4
-		IL_00ec: shr.un
-		IL_00ed: conv.r.un
-		IL_00ee: stloc.1
-		IL_00ef: ldarg.0
-		IL_00f0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-		IL_00f5: ldloc.1
-		IL_00f6: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_00fb: stloc.2
-		IL_00fc: ldloc.1
-		IL_00fd: box [System.Runtime]System.Double
-		IL_0102: stloc.s 9
-		IL_0104: ldloc.2
-		IL_0105: box [System.Runtime]System.Double
-		IL_010a: stloc.s 10
-		IL_010c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0111: ldc.i4.4
-		IL_0112: newarr [System.Runtime]System.Object
-		IL_0117: dup
-		IL_0118: ldc.i4.0
-		IL_0119: ldstr "init"
-		IL_011e: stelem.ref
-		IL_011f: dup
-		IL_0120: ldc.i4.1
-		IL_0121: ldloc.0
-		IL_0122: stelem.ref
-		IL_0123: dup
-		IL_0124: ldc.i4.2
-		IL_0125: ldloc.s 9
-		IL_0127: stelem.ref
-		IL_0128: dup
-		IL_0129: ldc.i4.3
-		IL_012a: ldloc.s 10
-		IL_012c: stelem.ref
-		IL_012d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0132: pop
-		// loop start (head: IL_0133)
-			IL_0133: ldloc.0
-			IL_0134: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0139: stloc.s 6
-			IL_013b: ldloc.s 6
-			IL_013d: ldarg.3
-			IL_013e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0143: clt
-			IL_0145: brfalse IL_025b
-
-			IL_014a: ldloc.0
-			IL_014b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0150: stloc.s 6
-			IL_0152: ldloc.s 6
-			IL_0154: conv.i4
-			IL_0155: ldc.r8 31
-			IL_015e: conv.i4
-			IL_015f: and
-			IL_0160: conv.r8
-			IL_0161: stloc.3
-			IL_0162: ldc.r8 1
-			IL_016b: conv.i4
-			IL_016c: ldloc.3
-			IL_016d: conv.i4
-			IL_016e: shl
-			IL_016f: conv.r8
-			IL_0170: stloc.s 6
-			IL_0172: ldloc.2
-			IL_0173: conv.i4
-			IL_0174: ldloc.s 6
-			IL_0176: conv.i4
-			IL_0177: or
-			IL_0178: conv.r8
-			IL_0179: stloc.2
-			IL_017a: ldloc.0
-			IL_017b: ldarg.1
-			IL_017c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0181: stloc.s 11
-			IL_0183: ldloc.s 11
-			IL_0185: brfalse IL_01c1
-
-			IL_018a: ldloc.3
-			IL_018b: box [System.Runtime]System.Double
-			IL_0190: stloc.s 10
-			IL_0192: ldloc.2
-			IL_0193: box [System.Runtime]System.Double
-			IL_0198: stloc.s 9
-			IL_019a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_019f: ldc.i4.4
-			IL_01a0: newarr [System.Runtime]System.Object
-			IL_01a5: dup
-			IL_01a6: ldc.i4.0
-			IL_01a7: ldstr "iter0"
-			IL_01ac: stelem.ref
-			IL_01ad: dup
-			IL_01ae: ldc.i4.1
-			IL_01af: ldloc.0
-			IL_01b0: stelem.ref
-			IL_01b1: dup
-			IL_01b2: ldc.i4.2
-			IL_01b3: ldloc.s 10
-			IL_01b5: stelem.ref
-			IL_01b6: dup
-			IL_01b7: ldc.i4.3
-			IL_01b8: ldloc.s 9
-			IL_01ba: stelem.ref
-			IL_01bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_01c0: pop
-
-			IL_01c1: ldloc.0
-			IL_01c2: ldarg.2
-			IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_01c8: stloc.0
-			IL_01c9: ldloc.0
-			IL_01ca: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_01cf: stloc.s 6
-			IL_01d1: ldloc.s 6
-			IL_01d3: conv.i4
-			IL_01d4: conv.u4
-			IL_01d5: ldc.r8 5
-			IL_01de: conv.i4
-			IL_01df: shr.un
-			IL_01e0: conv.r.un
-			IL_01e1: stloc.s 4
-			IL_01e3: ldloc.s 4
-			IL_01e5: ldloc.1
-			IL_01e6: ceq
-			IL_01e8: ldc.i4.0
-			IL_01e9: ceq
-			IL_01eb: brfalse IL_0256
-
-			IL_01f0: ldloc.1
-			IL_01f1: box [System.Runtime]System.Double
-			IL_01f6: stloc.s 9
-			IL_01f8: ldloc.2
-			IL_01f9: box [System.Runtime]System.Double
-			IL_01fe: stloc.s 10
-			IL_0200: ldloc.s 4
-			IL_0202: box [System.Runtime]System.Double
-			IL_0207: stloc.s 12
-			IL_0209: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_020e: ldc.i4.5
-			IL_020f: newarr [System.Runtime]System.Object
-			IL_0214: dup
-			IL_0215: ldc.i4.0
-			IL_0216: ldstr "commit"
-			IL_021b: stelem.ref
-			IL_021c: dup
-			IL_021d: ldc.i4.1
-			IL_021e: ldloc.s 9
-			IL_0220: stelem.ref
-			IL_0221: dup
-			IL_0222: ldc.i4.2
-			IL_0223: ldloc.s 10
-			IL_0225: stelem.ref
-			IL_0226: dup
-			IL_0227: ldc.i4.3
-			IL_0228: ldstr "->"
-			IL_022d: stelem.ref
-			IL_022e: dup
-			IL_022f: ldc.i4.4
-			IL_0230: ldloc.s 12
-			IL_0232: stelem.ref
-			IL_0233: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0238: pop
-			IL_0239: ldarg.0
-			IL_023a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-			IL_023f: ldloc.1
-			IL_0240: ldloc.2
-			IL_0241: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-			IL_0246: ldloc.s 4
-			IL_0248: stloc.1
-			IL_0249: ldarg.0
-			IL_024a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-			IL_024f: ldloc.1
-			IL_0250: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-			IL_0255: stloc.2
-
-			IL_0256: br IL_0133
-		// end loop
-
-		IL_025b: ldloc.1
-		IL_025c: box [System.Runtime]System.Double
-		IL_0261: stloc.s 12
-		IL_0263: ldloc.2
-		IL_0264: box [System.Runtime]System.Double
-		IL_0269: stloc.s 10
-		IL_026b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0270: ldc.i4.4
-		IL_0271: newarr [System.Runtime]System.Object
-		IL_0276: dup
-		IL_0277: ldc.i4.0
-		IL_0278: ldstr "end"
-		IL_027d: stelem.ref
-		IL_027e: dup
-		IL_027f: ldc.i4.1
-		IL_0280: ldloc.0
-		IL_0281: stelem.ref
-		IL_0282: dup
-		IL_0283: ldc.i4.2
-		IL_0284: ldloc.s 12
-		IL_0286: stelem.ref
-		IL_0287: dup
-		IL_0288: ldc.i4.3
-		IL_0289: ldloc.s 10
-		IL_028b: stelem.ref
-		IL_028c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0291: pop
-		IL_0292: ldarg.0
-		IL_0293: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-		IL_0298: ldloc.1
-		IL_0299: ldloc.2
-		IL_029a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-		IL_029f: ldarg.0
-		IL_02a0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-		IL_02a5: ldc.r8 0.0
-		IL_02ae: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_02b3: box [System.Runtime]System.Double
-		IL_02b8: stloc.s 10
-		IL_02ba: ldarg.0
-		IL_02bb: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-		IL_02c0: ldc.r8 1
-		IL_02c9: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_02ce: box [System.Runtime]System.Double
-		IL_02d3: stloc.s 12
-		IL_02d5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02da: ldc.i4.4
-		IL_02db: newarr [System.Runtime]System.Object
-		IL_02e0: dup
-		IL_02e1: ldc.i4.0
-		IL_02e2: ldstr "after"
-		IL_02e7: stelem.ref
-		IL_02e8: dup
-		IL_02e9: ldc.i4.1
-		IL_02ea: ldloc.s 10
-		IL_02ec: stelem.ref
-		IL_02ed: dup
-		IL_02ee: ldc.i4.2
-		IL_02ef: ldloc.s 12
-		IL_02f1: stelem.ref
-		IL_02f2: dup
-		IL_02f3: ldc.i4.3
-		IL_02f4: ldarg.0
-		IL_02f5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-		IL_02fa: ldc.r8 2
-		IL_0303: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_0308: box [System.Runtime]System.Double
-		IL_030d: stelem.ref
-		IL_030e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0313: pop
-		IL_0314: ldnull
-		IL_0315: ret
-	} // end of method BitArray::setBitsTrue
-
-	.method public hidebysig 
-		instance float64 testBitTrue (
-			object index
-		) cil managed 
-	{
-		// Method begins at RVA 0x2828
-		// Header size: 12
-		// Code size: 78 (0x4e)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] float64,
-			[2] float64,
-			[3] float64
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: conv.i4
-		IL_0007: conv.u4
-		IL_0008: ldc.r8 5
-		IL_0011: conv.i4
-		IL_0012: shr.un
-		IL_0013: conv.r.un
-		IL_0014: stloc.0
-		IL_0015: ldarg.1
-		IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001b: conv.i4
-		IL_001c: ldc.r8 31
-		IL_0025: conv.i4
-		IL_0026: and
-		IL_0027: conv.r8
-		IL_0028: stloc.1
-		IL_0029: ldarg.0
-		IL_002a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::wordArray
-		IL_002f: ldloc.0
-		IL_0030: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_0035: stloc.2
-		IL_0036: ldc.r8 1
-		IL_003f: conv.i4
-		IL_0040: ldloc.1
-		IL_0041: conv.i4
-		IL_0042: shl
-		IL_0043: conv.r8
-		IL_0044: stloc.3
-		IL_0045: ldloc.2
-		IL_0046: conv.i4
-		IL_0047: ldloc.3
-		IL_0048: conv.i4
-		IL_0049: and
-		IL_004a: conv.r8
-		IL_004b: stloc.3
-		IL_004c: ldloc.3
-		IL_004d: ret
-	} // end of method BitArray::testBitTrue
-
-} // end of class Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

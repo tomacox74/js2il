@@ -7,6 +7,94 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit Calculator
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object 'value'
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object 'value'
+			) cil managed 
+		{
+			// Method begins at RVA 0x2204
+			// Header size: 12
+			// Code size: 14 (0xe)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldarg.1
+			IL_0008: stfld object Modules.Classes_Method_DefaultReturnUndefined/Calculator::'value'
+			IL_000d: ret
+		} // end of method Calculator::.ctor
+
+		.method public hidebysig 
+			instance object doNothing () cil managed 
+		{
+			// Method begins at RVA 0x2220
+			// Header size: 12
+			// Code size: 26 (0x1a)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] float64
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Classes_Method_DefaultReturnUndefined/Calculator::'value'
+			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000b: stloc.1
+			IL_000c: ldloc.1
+			IL_000d: ldc.r8 2
+			IL_0016: mul
+			IL_0017: stloc.0
+			IL_0018: ldnull
+			IL_0019: ret
+		} // end of method Calculator::doNothing
+
+		.method public hidebysig 
+			instance object returnsUndefined () cil managed 
+		{
+			// Method begins at RVA 0x2258
+			// Header size: 12
+			// Code size: 2 (0x2)
+			.maxstack 32
+
+			IL_0000: ldnull
+			IL_0001: ret
+		} // end of method Calculator::returnsUndefined
+
+		.method public hidebysig 
+			instance object returnsValue () cil managed 
+		{
+			// Method begins at RVA 0x2268
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Classes_Method_DefaultReturnUndefined/Calculator::'value'
+			IL_0006: ret
+		} // end of method Calculator::returnsValue
+
+		.method public hidebysig 
+			instance object returnsThis () cil managed 
+		{
+			// Method begins at RVA 0x2248
+			// Header size: 12
+			// Code size: 2 (0x2)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: ret
+		} // end of method Calculator::returnsThis
+
+	} // end of class Calculator
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -186,17 +274,17 @@
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 10
 		IL_000f: box [System.Runtime]System.Double
-		IL_0014: newobj instance void Classes.Classes_Method_DefaultReturnUndefined.Calculator::.ctor(object)
+		IL_0014: newobj instance void Modules.Classes_Method_DefaultReturnUndefined/Calculator::.ctor(object)
 		IL_0019: stloc.1
 		IL_001a: ldc.i4.0
 		IL_001b: newarr [System.Runtime]System.Object
 		IL_0020: stloc.s 6
 		IL_0022: ldloc.1
-		IL_0023: isinst Classes.Classes_Method_DefaultReturnUndefined.Calculator
+		IL_0023: isinst Modules.Classes_Method_DefaultReturnUndefined/Calculator
 		IL_0028: dup
 		IL_0029: brfalse IL_0039
 
-		IL_002e: callvirt instance object Classes.Classes_Method_DefaultReturnUndefined.Calculator::doNothing()
+		IL_002e: callvirt instance object Modules.Classes_Method_DefaultReturnUndefined/Calculator::doNothing()
 		IL_0033: stloc.2
 		IL_0034: br IL_0048
 
@@ -236,11 +324,11 @@
 		IL_0086: newarr [System.Runtime]System.Object
 		IL_008b: stloc.s 6
 		IL_008d: ldloc.1
-		IL_008e: isinst Classes.Classes_Method_DefaultReturnUndefined.Calculator
+		IL_008e: isinst Modules.Classes_Method_DefaultReturnUndefined/Calculator
 		IL_0093: dup
 		IL_0094: brfalse IL_00a4
 
-		IL_0099: callvirt instance object Classes.Classes_Method_DefaultReturnUndefined.Calculator::returnsUndefined()
+		IL_0099: callvirt instance object Modules.Classes_Method_DefaultReturnUndefined/Calculator::returnsUndefined()
 		IL_009e: stloc.3
 		IL_009f: br IL_00b3
 
@@ -280,11 +368,11 @@
 		IL_00f1: newarr [System.Runtime]System.Object
 		IL_00f6: stloc.s 6
 		IL_00f8: ldloc.1
-		IL_00f9: isinst Classes.Classes_Method_DefaultReturnUndefined.Calculator
+		IL_00f9: isinst Modules.Classes_Method_DefaultReturnUndefined/Calculator
 		IL_00fe: dup
 		IL_00ff: brfalse IL_0110
 
-		IL_0104: callvirt instance object Classes.Classes_Method_DefaultReturnUndefined.Calculator::returnsValue()
+		IL_0104: callvirt instance object Modules.Classes_Method_DefaultReturnUndefined/Calculator::returnsValue()
 		IL_0109: stloc.s 4
 		IL_010b: br IL_0120
 
@@ -308,11 +396,11 @@
 		IL_0137: newarr [System.Runtime]System.Object
 		IL_013c: stloc.s 6
 		IL_013e: ldloc.1
-		IL_013f: isinst Classes.Classes_Method_DefaultReturnUndefined.Calculator
+		IL_013f: isinst Modules.Classes_Method_DefaultReturnUndefined/Calculator
 		IL_0144: dup
 		IL_0145: brfalse IL_0156
 
-		IL_014a: callvirt instance object Classes.Classes_Method_DefaultReturnUndefined.Calculator::returnsThis()
+		IL_014a: callvirt instance object Modules.Classes_Method_DefaultReturnUndefined/Calculator::returnsThis()
 		IL_014f: stloc.s 5
 		IL_0151: br IL_0166
 
@@ -352,94 +440,6 @@
 	} // end of method Classes_Method_DefaultReturnUndefined::__js_module_init__
 
 } // end of class Modules.Classes_Method_DefaultReturnUndefined
-
-.class public auto ansi beforefieldinit Classes.Classes_Method_DefaultReturnUndefined.Calculator
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public object 'value'
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object 'value'
-		) cil managed 
-	{
-		// Method begins at RVA 0x2204
-		// Header size: 12
-		// Code size: 14 (0xe)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Classes.Classes_Method_DefaultReturnUndefined.Calculator::'value'
-		IL_000d: ret
-	} // end of method Calculator::.ctor
-
-	.method public hidebysig 
-		instance object doNothing () cil managed 
-	{
-		// Method begins at RVA 0x2220
-		// Header size: 12
-		// Code size: 26 (0x1a)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] float64
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object Classes.Classes_Method_DefaultReturnUndefined.Calculator::'value'
-		IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000b: stloc.1
-		IL_000c: ldloc.1
-		IL_000d: ldc.r8 2
-		IL_0016: mul
-		IL_0017: stloc.0
-		IL_0018: ldnull
-		IL_0019: ret
-	} // end of method Calculator::doNothing
-
-	.method public hidebysig 
-		instance object returnsUndefined () cil managed 
-	{
-		// Method begins at RVA 0x2258
-		// Header size: 12
-		// Code size: 2 (0x2)
-		.maxstack 32
-
-		IL_0000: ldnull
-		IL_0001: ret
-	} // end of method Calculator::returnsUndefined
-
-	.method public hidebysig 
-		instance object returnsValue () cil managed 
-	{
-		// Method begins at RVA 0x2268
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object Classes.Classes_Method_DefaultReturnUndefined.Calculator::'value'
-		IL_0006: ret
-	} // end of method Calculator::returnsValue
-
-	.method public hidebysig 
-		instance object returnsThis () cil managed 
-	{
-		// Method begins at RVA 0x2248
-		// Header size: 12
-		// Code size: 2 (0x2)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: ret
-	} // end of method Calculator::returnsThis
-
-} // end of class Classes.Classes_Method_DefaultReturnUndefined.Calculator
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

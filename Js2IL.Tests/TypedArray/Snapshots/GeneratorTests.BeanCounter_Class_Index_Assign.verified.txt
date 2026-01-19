@@ -7,6 +7,57 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit BeanCounter
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public class [JavaScriptRuntime]JavaScriptRuntime.Int32Array beanCounts
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20ec
+			// Header size: 12
+			// Code size: 32 (0x20)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldc.r8 3
+			IL_0010: box [System.Runtime]System.Double
+			IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+			IL_001a: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.BeanCounter_Class_Index_Assign/BeanCounter::beanCounts
+			IL_001f: ret
+		} // end of method BeanCounter::.ctor
+
+		.method public hidebysig 
+			instance object setBeanCount (
+				object 'box',
+				object count
+			) cil managed 
+		{
+			// Method begins at RVA 0x2118
+			// Header size: 12
+			// Code size: 16 (0x10)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.BeanCounter_Class_Index_Assign/BeanCounter::beanCounts
+			IL_0006: ldarg.1
+			IL_0007: ldarg.2
+			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_000d: pop
+			IL_000e: ldnull
+			IL_000f: ret
+		} // end of method BeanCounter::setBeanCount
+
+	} // end of class BeanCounter
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -114,7 +165,7 @@
 
 		IL_0000: newobj instance void Modules.BeanCounter_Class_Index_Assign/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.BeanCounter_Class_Index_Assign.BeanCounter::.ctor()
+		IL_0006: newobj instance void Modules.BeanCounter_Class_Index_Assign/BeanCounter::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldc.i4.2
 		IL_000d: newarr [System.Runtime]System.Object
@@ -130,7 +181,7 @@
 		IL_0033: stelem.ref
 		IL_0034: stloc.2
 		IL_0035: ldloc.1
-		IL_0036: isinst Classes.BeanCounter_Class_Index_Assign.BeanCounter
+		IL_0036: isinst Modules.BeanCounter_Class_Index_Assign/BeanCounter
 		IL_003b: dup
 		IL_003c: brfalse IL_0052
 
@@ -140,7 +191,7 @@
 		IL_0044: ldloc.2
 		IL_0045: ldc.i4.1
 		IL_0046: ldelem.ref
-		IL_0047: callvirt instance object Classes.BeanCounter_Class_Index_Assign.BeanCounter::setBeanCount(object, object)
+		IL_0047: callvirt instance object Modules.BeanCounter_Class_Index_Assign/BeanCounter::setBeanCount(object, object)
 		IL_004c: pop
 		IL_004d: br IL_0060
 
@@ -168,57 +219,6 @@
 	} // end of method BeanCounter_Class_Index_Assign::__js_module_init__
 
 } // end of class Modules.BeanCounter_Class_Index_Assign
-
-.class public auto ansi beforefieldinit Classes.BeanCounter_Class_Index_Assign.BeanCounter
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public class [JavaScriptRuntime]JavaScriptRuntime.Int32Array beanCounts
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20ec
-		// Header size: 12
-		// Code size: 32 (0x20)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldc.r8 3
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
-		IL_001a: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.BeanCounter_Class_Index_Assign.BeanCounter::beanCounts
-		IL_001f: ret
-	} // end of method BeanCounter::.ctor
-
-	.method public hidebysig 
-		instance object setBeanCount (
-			object 'box',
-			object count
-		) cil managed 
-	{
-		// Method begins at RVA 0x2118
-		// Header size: 12
-		// Code size: 16 (0x10)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.BeanCounter_Class_Index_Assign.BeanCounter::beanCounts
-		IL_0006: ldarg.1
-		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_000d: pop
-		IL_000e: ldnull
-		IL_000f: ret
-	} // end of method BeanCounter::setBeanCount
-
-} // end of class Classes.BeanCounter_Class_Index_Assign.BeanCounter
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

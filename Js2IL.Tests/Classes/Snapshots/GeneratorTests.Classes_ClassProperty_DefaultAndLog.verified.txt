@@ -7,6 +7,31 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit Greeter
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public string message
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2088
+			// Header size: 12
+			// Code size: 18 (0x12)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldstr "Hi"
+			IL_000c: stfld string Modules.Classes_ClassProperty_DefaultAndLog/Greeter::message
+			IL_0011: ret
+		} // end of method Greeter::.ctor
+
+	} // end of class Greeter
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -71,7 +96,7 @@
 
 		IL_0000: newobj instance void Modules.Classes_ClassProperty_DefaultAndLog/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.Classes_ClassProperty_DefaultAndLog.Greeter::.ctor()
+		IL_0006: newobj instance void Modules.Classes_ClassProperty_DefaultAndLog/Greeter::.ctor()
 		IL_000b: stloc.1
 		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0011: ldc.i4.1
@@ -88,31 +113,6 @@
 	} // end of method Classes_ClassProperty_DefaultAndLog::__js_module_init__
 
 } // end of class Modules.Classes_ClassProperty_DefaultAndLog
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassProperty_DefaultAndLog.Greeter
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public string message
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2088
-		// Header size: 12
-		// Code size: 18 (0x12)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldstr "Hi"
-		IL_000c: stfld string Classes.Classes_ClassProperty_DefaultAndLog.Greeter::message
-		IL_0011: ret
-	} // end of method Greeter::.ctor
-
-} // end of class Classes.Classes_ClassProperty_DefaultAndLog.Greeter
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

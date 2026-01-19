@@ -7,6 +7,64 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit MyClass
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field private object[] _scopes
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x20ac
+			// Header size: 12
+			// Code size: 16 (0x10)
+			.maxstack 32
+			.locals init (
+				[0] object[]
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.1
+			IL_0007: stloc.0
+			IL_0008: ldarg.0
+			IL_0009: ldloc.0
+			IL_000a: stfld object[] Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::_scopes
+			IL_000f: ret
+		} // end of method MyClass::.ctor
+
+		.method public hidebysig 
+			instance object logGlobal () cil managed 
+		{
+			// Method begins at RVA 0x20c8
+			// Header size: 12
+			// Code size: 40 (0x28)
+			.maxstack 32
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.1
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldarg.0
+			IL_000e: ldfld object[] Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::_scopes
+			IL_0013: ldc.i4.0
+			IL_0014: ldelem.ref
+			IL_0015: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope
+			IL_001a: ldfld string Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
+			IL_001f: stelem.ref
+			IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0025: pop
+			IL_0026: ldnull
+			IL_0027: ret
+		} // end of method MyClass::logGlobal
+
+	} // end of class MyClass
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -106,17 +164,17 @@
 		IL_0018: ldc.i4.0
 		IL_0019: ldloc.0
 		IL_001a: stelem.ref
-		IL_001b: newobj instance void Classes.Classes_ClassMethod_AccessGlobalVariable_Log.MyClass::.ctor(object[])
+		IL_001b: newobj instance void Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::.ctor(object[])
 		IL_0020: stloc.1
 		IL_0021: ldc.i4.0
 		IL_0022: newarr [System.Runtime]System.Object
 		IL_0027: stloc.2
 		IL_0028: ldloc.1
-		IL_0029: isinst Classes.Classes_ClassMethod_AccessGlobalVariable_Log.MyClass
+		IL_0029: isinst Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
 		IL_002e: dup
 		IL_002f: brfalse IL_003f
 
-		IL_0034: callvirt instance object Classes.Classes_ClassMethod_AccessGlobalVariable_Log.MyClass::logGlobal()
+		IL_0034: callvirt instance object Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::logGlobal()
 		IL_0039: pop
 		IL_003a: br IL_004d
 
@@ -131,64 +189,6 @@
 	} // end of method Classes_ClassMethod_AccessGlobalVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_AccessGlobalVariable_Log
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_AccessGlobalVariable_Log.MyClass
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field private object[] _scopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x20ac
-		// Header size: 12
-		// Code size: 16 (0x10)
-		.maxstack 32
-		.locals init (
-			[0] object[]
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.1
-		IL_0007: stloc.0
-		IL_0008: ldarg.0
-		IL_0009: ldloc.0
-		IL_000a: stfld object[] Classes.Classes_ClassMethod_AccessGlobalVariable_Log.MyClass::_scopes
-		IL_000f: ret
-	} // end of method MyClass::.ctor
-
-	.method public hidebysig 
-		instance object logGlobal () cil managed 
-	{
-		// Method begins at RVA 0x20c8
-		// Header size: 12
-		// Code size: 40 (0x28)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldarg.0
-		IL_000e: ldfld object[] Classes.Classes_ClassMethod_AccessGlobalVariable_Log.MyClass::_scopes
-		IL_0013: ldc.i4.0
-		IL_0014: ldelem.ref
-		IL_0015: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope
-		IL_001a: ldfld string Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
-		IL_001f: stelem.ref
-		IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0025: pop
-		IL_0026: ldnull
-		IL_0027: ret
-	} // end of method MyClass::logGlobal
-
-} // end of class Classes.Classes_ClassMethod_AccessGlobalVariable_Log.MyClass
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

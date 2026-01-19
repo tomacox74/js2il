@@ -7,6 +7,37 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi beforefieldinit Self
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20c8
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Self::.ctor
+
+		.method public hidebysig 
+			instance object isSelf () cil managed 
+		{
+			// Method begins at RVA 0x20dc
+			// Header size: 12
+			// Code size: 2 (0x2)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: ret
+		} // end of method Self::isSelf
+
+	} // end of class Self
+
 	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
@@ -97,17 +128,17 @@
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.Classes_ClassMethod_ReturnsThis_IsSelf_Log.Self::.ctor()
+		IL_0006: newobj instance void Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldc.i4.0
 		IL_000d: newarr [System.Runtime]System.Object
 		IL_0012: stloc.2
 		IL_0013: ldloc.1
-		IL_0014: isinst Classes.Classes_ClassMethod_ReturnsThis_IsSelf_Log.Self
+		IL_0014: isinst Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self
 		IL_0019: dup
 		IL_001a: brfalse IL_002a
 
-		IL_001f: callvirt instance object Classes.Classes_ClassMethod_ReturnsThis_IsSelf_Log.Self::isSelf()
+		IL_001f: callvirt instance object Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log/Self::isSelf()
 		IL_0024: stloc.3
 		IL_0025: br IL_0038
 
@@ -143,37 +174,6 @@
 	} // end of method Classes_ClassMethod_ReturnsThis_IsSelf_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_ReturnsThis_IsSelf_Log
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_ReturnsThis_IsSelf_Log.Self
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20c8
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method Self::.ctor
-
-	.method public hidebysig 
-		instance object isSelf () cil managed 
-	{
-		// Method begins at RVA 0x20dc
-		// Header size: 12
-		// Code size: 2 (0x2)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: ret
-	} // end of method Self::isSelf
-
-} // end of class Classes.Classes_ClassMethod_ReturnsThis_IsSelf_Log.Self
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
