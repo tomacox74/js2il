@@ -6,14 +6,6 @@ namespace Js2IL.Tests.Classes
     {
         public GeneratorTests() : base("Classes") { }
 
-        protected new Task GenerateTest(
-            string testName,
-            Action<VerifySettings>? configureSettings = null,
-            string[]? additionalScripts = null,
-            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-            Action<System.Reflection.Assembly>? verifyAssembly = null)
-            => base.GenerateTest(testName, configureSettings, additionalScripts, sourceFilePath, verifyAssembly);
-
         // Minimal repro: bit-shift and Int32Array length in a class constructor
         // This triggers invalid IL patterns (conv/add on boxed objects) in current codegen
         [Fact]
@@ -28,6 +20,10 @@ namespace Js2IL.Tests.Classes
                 // Module root type should be internal (non-public).
                 Assert.False(moduleType.IsPublic);
                 Assert.True(moduleType.IsNotPublic);
+
+                // Module root should contain the nested module scope type.
+                var nestedScopeType = moduleType.GetNestedType("Scope");
+                Assert.NotNull(nestedScopeType);
             });
         }
 
