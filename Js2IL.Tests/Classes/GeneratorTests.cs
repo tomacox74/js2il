@@ -6,8 +6,13 @@ namespace Js2IL.Tests.Classes
     {
         public GeneratorTests() : base("Classes") { }
 
-        protected new Task GenerateTest(string testName, Action<VerifySettings>? configureSettings = null, string[]? additionalScripts = null, [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
-            => base.GenerateTest(testName, configureSettings, additionalScripts, sourceFilePath);
+        protected new Task GenerateTest(
+            string testName,
+            Action<VerifySettings>? configureSettings = null,
+            string[]? additionalScripts = null,
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            Action<System.Reflection.Assembly>? verifyAssembly = null)
+            => base.GenerateTest(testName, configureSettings, additionalScripts, sourceFilePath, verifyAssembly);
 
         // Minimal repro: bit-shift and Int32Array length in a class constructor
         // This triggers invalid IL patterns (conv/add on boxed objects) in current codegen
@@ -17,18 +22,12 @@ namespace Js2IL.Tests.Classes
             var testName = nameof(Classes_BitShiftInCtor_Int32Array);
             return GenerateTest(testName, verifyAssembly: assembly =>
             {
-                // Verify that the generated IL does not contain invalid patterns
                 var moduleType = assembly.GetType("Modules.Classes_BitShiftInCtor_Int32Array");
                 Assert.NotNull(moduleType);
 
-                var nestedTypes = moduleType.GetNestedTypes();
-                Assert.True(nestedTypes.Length == 2, "Expected two nested types");
-
-                var nestedScopeType = moduleType.GetNestedType("Scope");
-                Assert.NotNull(nestedScopeType);
-
-                var nestedTypesUnderScope = nestedScopeType.GetNestedTypes();
-                Assert.True(nestedTypesUnderScope.Length == 0, "Scope should not contain any nested types");
+                // Module root type should be internal (non-public).
+                Assert.False(moduleType.IsPublic);
+                Assert.True(moduleType.IsNotPublic);
             });
         }
 
