@@ -100,7 +100,7 @@ namespace Js2IL.Services
 
                 var moduleRootTypeBuilder = new TypeBuilder(_metadataBuilder, "Modules", module.Name);
                 var moduleTypeHandle = moduleRootTypeBuilder.AddTypeDefinition(
-                    TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
+                    TypeAttributes.NotPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
                     _bclReferences.ObjectType,
                     firstFieldOverride: null,
                     firstMethodOverride: expectedInitHandle);
