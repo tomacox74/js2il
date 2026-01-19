@@ -20,6 +20,44 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 
+function getAssemblyFileBaseName(testName) {
+  // GeneratorTestsBase uses Path.GetFileNameWithoutExtension(testFilePath),
+  // so nested test names like "CommonJS_Require_X/a" produce "a.dll".
+  const normalized = String(testName).replace(/\\/g, '/');
+  const segments = normalized.split('/').filter(Boolean);
+  return segments.length > 0 ? segments[segments.length - 1] : String(testName);
+}
+
+function tryFindLatestGeneratedAssembly(category, assemblyFileBaseName) {
+  const tempDir = os.tmpdir();
+  const categoryRoot = path.join(tempDir, 'Js2IL.Tests', `${category}.GeneratorTests`);
+  const assemblyFileName = `${assemblyFileBaseName}.dll`;
+
+  if (!fs.existsSync(categoryRoot)) {
+    return null;
+  }
+
+  const runDirs = fs
+    .readdirSync(categoryRoot, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => path.join(categoryRoot, d.name));
+
+  let bestPath = null;
+  let bestMtime = -1;
+
+  for (const runDir of runDirs) {
+    const candidate = path.join(runDir, assemblyFileName);
+    if (!fs.existsSync(candidate)) continue;
+    const stat = fs.statSync(candidate);
+    if (stat.mtimeMs > bestMtime) {
+      bestMtime = stat.mtimeMs;
+      bestPath = candidate;
+    }
+  }
+
+  return bestPath;
+}
+
 function findProjectRoot(startDir) {
   // The compiled DLL may live anywhere (e.g. test_output/...).
   // Walk upward from __dirname until we find the repo markers.
@@ -89,13 +127,19 @@ function main() {
   }
 
   // Step 2: Find the generated assembly
-  // Generator tests output to: %TEMP%/Js2IL.Tests/{Category}.GeneratorTests/{TestName}.dll
-  const tempDir = os.tmpdir();
-  const testOutputDir = path.join(tempDir, 'Js2IL.Tests', `${category}.GeneratorTests`);
-  const assemblyPath = path.join(testOutputDir, `${testName}.dll`);
+  // GeneratorTestsBase writes to a per-run GUID directory:
+  //   %TEMP%/Js2IL.Tests/{Category}.GeneratorTests/{runId}/{assemblyName}.dll
+  // where assemblyName is the basename of the JS entry file.
+  const assemblyFileBaseName = getAssemblyFileBaseName(testName);
+  const assemblyPath =
+    tryFindLatestGeneratedAssembly(category, assemblyFileBaseName) ??
+    null;
 
-  if (!fs.existsSync(assemblyPath)) {
-    console.error(`Assembly not found at: ${assemblyPath}`);
+  if (!assemblyPath) {
+    const tempDir = os.tmpdir();
+    const categoryRoot = path.join(tempDir, 'Js2IL.Tests', `${category}.GeneratorTests`);
+    console.error(`Assembly not found for category '${category}' and test '${testName}'.`);
+    console.error(`Looked under: ${categoryRoot}`);
     console.error('Make sure the test ran successfully and generated the assembly.');
     process.exit(1);
   }
@@ -103,7 +147,9 @@ function main() {
   console.log(`Found assembly: ${assemblyPath}`);
 
   // Step 3: Create output directory for decompiled project
-  const decompileOutputDir = path.join(tempDir, 'Js2IL.Decompiled', testName);
+  const tempDir = os.tmpdir();
+  const safeOutputName = String(testName).replace(/[\\/]/g, '_');
+  const decompileOutputDir = path.join(tempDir, 'Js2IL.Decompiled', safeOutputName);
   
   // Clean up previous decompilation if exists
   if (fs.existsSync(decompileOutputDir)) {
