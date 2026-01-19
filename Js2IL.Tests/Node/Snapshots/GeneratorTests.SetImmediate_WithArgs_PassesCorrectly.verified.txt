@@ -3,18 +3,85 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.SetImmediate_WithArgs_PassesCorrectly.Scope
+.class public auto ansi beforefieldinit Modules.SetImmediate_WithArgs_PassesCorrectly
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit logNameAge
+	.class nested public auto ansi abstract sealed beforefieldinit logNameAge
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2100
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object name,
+				object age
+			) cil managed 
+		{
+			// Method begins at RVA 0x20c0
+			// Header size: 12
+			// Code size: 43 (0x2b)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldstr " "
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_000b: stloc.0
+			IL_000c: ldloc.0
+			IL_000d: ldarg.2
+			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0013: stloc.0
+			IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0019: ldc.i4.1
+			IL_001a: newarr [System.Runtime]System.Object
+			IL_001f: dup
+			IL_0020: ldc.i4.0
+			IL_0021: ldloc.0
+			IL_0022: stelem.ref
+			IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0028: pop
+			IL_0029: ldnull
+			IL_002a: ret
+		} // end of method logNameAge::__js_call__
+
+	} // end of class logNameAge
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object logNameAge
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20f7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,76 +90,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method logNameAge::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class logNameAge
+	} // end of class Scope
 
 
-	// Fields
-	.field public object logNameAge
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.SetImmediate_WithArgs_PassesCorrectly.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.SetImmediate_WithArgs_PassesCorrectly.logNameAge
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object name,
-			object age
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 43 (0x2b)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: ldstr " "
-		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_000b: stloc.0
-		IL_000c: ldloc.0
-		IL_000d: ldarg.2
-		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0013: stloc.0
-		IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0019: ldc.i4.1
-		IL_001a: newarr [System.Runtime]System.Object
-		IL_001f: dup
-		IL_0020: ldc.i4.0
-		IL_0021: ldloc.0
-		IL_0022: stelem.ref
-		IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0028: pop
-		IL_0029: ldnull
-		IL_002a: ret
-	} // end of method logNameAge::__js_call__
-
-} // end of class Modules.SetImmediate_WithArgs_PassesCorrectly.logNameAge
-
-.class public auto ansi beforefieldinit Modules.SetImmediate_WithArgs_PassesCorrectly
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -103,19 +105,19 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x209c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 98 (0x62)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.SetImmediate_WithArgs_PassesCorrectly.Scope,
+			[0] class Modules.SetImmediate_WithArgs_PassesCorrectly/Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Modules.SetImmediate_WithArgs_PassesCorrectly.Scope::.ctor()
+		IL_0000: newobj instance void Modules.SetImmediate_WithArgs_PassesCorrectly/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.SetImmediate_WithArgs_PassesCorrectly.logNameAge::__js_call__(object[], object, object)
+		IL_0007: ldftn object Modules.SetImmediate_WithArgs_PassesCorrectly/logNameAge::__js_call__(object[], object, object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -160,7 +162,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210a
+		// Method begins at RVA 0x2109
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

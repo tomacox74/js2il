@@ -3,22 +3,64 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_TwoParams_AddMethod.Scope
+.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_TwoParams_AddMethod
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Adder
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested public auto ansi beforefieldinit Adder
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit constructor
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2176
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method constructor::.ctor
+
+			} // end of class constructor
+
+			.class nested public auto ansi beforefieldinit 'add'
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x217f
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method 'add'::.ctor
+
+			} // end of class add
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x216d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,36 +69,16 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Adder::.ctor
 
-		} // end of class constructor
-
-		.class nested public auto ansi beforefieldinit 'add'
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x206b
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method 'add'::.ctor
-
-		} // end of class add
+		} // end of class Adder
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2164
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -65,84 +87,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Adder::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Adder
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Classes_ClassConstructor_TwoParams_AddMethod.Scope
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public object a
-	.field public object b
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x2074
-		// Header size: 12
-		// Code size: 21 (0x15)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::a
-		IL_000d: ldarg.0
-		IL_000e: ldarg.2
-		IL_000f: stfld object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::b
-		IL_0014: ret
-	} // end of method Adder::.ctor
-
-	.method public hidebysig 
-		instance object 'add' () cil managed 
-	{
-		// Method begins at RVA 0x2098
-		// Header size: 12
-		// Code size: 20 (0x14)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::a
-		IL_0006: ldarg.0
-		IL_0007: ldfld object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::b
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0011: stloc.0
-		IL_0012: ldloc.0
-		IL_0013: ret
-	} // end of method Adder::'add'
-
-} // end of class Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder
-
-.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_TwoParams_AddMethod
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -153,19 +102,19 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b8
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 193 (0xc1)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Classes_ClassConstructor_TwoParams_AddMethod.Scope,
+			[0] class Modules.Classes_ClassConstructor_TwoParams_AddMethod/Scope,
 			[1] object,
 			[2] object,
 			[3] object[],
 			[4] object
 		)
 
-		IL_0000: newobj instance void Modules.Classes_ClassConstructor_TwoParams_AddMethod.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassConstructor_TwoParams_AddMethod/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "Hello"
 		IL_000b: ldstr "World"
@@ -238,6 +187,59 @@
 
 } // end of class Modules.Classes_ClassConstructor_TwoParams_AddMethod
 
+.class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public object a
+	.field public object b
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			object a,
+			object b
+		) cil managed 
+	{
+		// Method begins at RVA 0x2120
+		// Header size: 12
+		// Code size: 21 (0x15)
+		.maxstack 32
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::a
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::b
+		IL_0014: ret
+	} // end of method Adder::.ctor
+
+	.method public hidebysig 
+		instance object 'add' () cil managed 
+	{
+		// Method begins at RVA 0x2144
+		// Header size: 12
+		// Code size: 20 (0x14)
+		.maxstack 32
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::a
+		IL_0006: ldarg.0
+		IL_0007: ldfld object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::b
+		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0011: stloc.0
+		IL_0012: ldloc.0
+		IL_0013: ret
+	} // end of method Adder::'add'
+
+} // end of class Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -245,7 +247,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2185
+		// Method begins at RVA 0x2188
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

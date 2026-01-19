@@ -3,22 +3,44 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope
+.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_NewClassReferencingGlobal
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Inner
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested public auto ansi beforefieldinit Inner
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit constructor
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2126
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method constructor::.ctor
+
+			} // end of class constructor
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x211d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,40 +49,40 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Inner::.ctor
 
-		} // end of class constructor
+		} // end of class Inner
 
-
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method Inner::.ctor
-
-	} // end of class Inner
-
-	.class nested public auto ansi beforefieldinit Outer
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested public auto ansi beforefieldinit Outer
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit constructor
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2138
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method constructor::.ctor
+
+			} // end of class constructor
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2074
+				// Method begins at RVA 0x212f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -69,16 +91,19 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Outer::.ctor
 
-		} // end of class constructor
+		} // end of class Outer
 
+
+		// Fields
+		.field public float64 GLOBAL_VALUE
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x206b
+			// Method begins at RVA 0x2114
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -87,30 +112,60 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Outer::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Outer
+	} // end of class Scope
 
-
-	// Fields
-	.field public float64 GLOBAL_VALUE
 
 	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Header size: 12
+		// Code size: 79 (0x4f)
+		.maxstack 32
+		.locals init (
+			[0] class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope,
+			[1] object
+		)
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
+		IL_0000: newobj instance void Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.r8 42
+		IL_0010: stfld float64 Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope::GLOBAL_VALUE
+		IL_0015: ldc.i4.1
+		IL_0016: newarr [System.Runtime]System.Object
+		IL_001b: dup
+		IL_001c: ldc.i4.0
+		IL_001d: ldloc.0
+		IL_001e: stelem.ref
+		IL_001f: newobj instance void Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer::.ctor(object[])
+		IL_0024: stloc.1
+		IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldloc.1
+		IL_0033: ldstr "inner"
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003d: ldstr "value"
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0047: stelem.ref
+		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004d: pop
+		IL_004e: ret
+	} // end of method Classes_ClassConstructor_NewClassReferencingGlobal::__js_module_init__
 
-} // end of class Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope
+} // end of class Modules.Classes_ClassConstructor_NewClassReferencingGlobal
 
 .class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Inner
 	extends [System.Runtime]System.Object
@@ -125,7 +180,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b4
+		// Method begins at RVA 0x20e0
 		// Header size: 12
 		// Code size: 40 (0x28)
 		.maxstack 32
@@ -144,8 +199,8 @@
 		IL_0010: ldarg.1
 		IL_0011: ldc.i4.0
 		IL_0012: ldelem.ref
-		IL_0013: castclass Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope
-		IL_0018: ldfld float64 Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope::GLOBAL_VALUE
+		IL_0013: castclass Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope
+		IL_0018: ldfld float64 Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope::GLOBAL_VALUE
 		IL_001d: box [System.Runtime]System.Double
 		IL_0022: stfld object Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Inner::'value'
 		IL_0027: ret
@@ -166,7 +221,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2080
+		// Method begins at RVA 0x20ac
 		// Header size: 12
 		// Code size: 39 (0x27)
 		.maxstack 32
@@ -198,59 +253,6 @@
 
 } // end of class Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer
 
-.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_NewClassReferencingGlobal
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void __js_module_init__ (
-			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
-			object module,
-			string __filename,
-			string __dirname
-		) cil managed 
-	{
-		// Method begins at RVA 0x20e8
-		// Header size: 12
-		// Code size: 79 (0x4f)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope,
-			[1] object
-		)
-
-		IL_0000: newobj instance void Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 42
-		IL_0010: stfld float64 Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope::GLOBAL_VALUE
-		IL_0015: ldc.i4.1
-		IL_0016: newarr [System.Runtime]System.Object
-		IL_001b: dup
-		IL_001c: ldc.i4.0
-		IL_001d: ldloc.0
-		IL_001e: stelem.ref
-		IL_001f: newobj instance void Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer::.ctor(object[])
-		IL_0024: stloc.1
-		IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002a: ldc.i4.1
-		IL_002b: newarr [System.Runtime]System.Object
-		IL_0030: dup
-		IL_0031: ldc.i4.0
-		IL_0032: ldloc.1
-		IL_0033: ldstr "inner"
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_003d: ldstr "value"
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0047: stelem.ref
-		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_004d: pop
-		IL_004e: ret
-	} // end of method Classes_ClassConstructor_NewClassReferencingGlobal::__js_module_init__
-
-} // end of class Modules.Classes_ClassConstructor_NewClassReferencingGlobal
-
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -258,7 +260,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2143
+		// Method begins at RVA 0x2141
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

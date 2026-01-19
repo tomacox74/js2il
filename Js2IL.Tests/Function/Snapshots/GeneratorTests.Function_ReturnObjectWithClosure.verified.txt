@@ -3,22 +3,26 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Function_ReturnObjectWithClosure.Scope
+.class public auto ansi beforefieldinit Modules.Function_ReturnObjectWithClosure
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit createCalculator
+	.class nested public auto ansi abstract sealed beforefieldinit createCalculator
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit multiply
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			// Fields
+			.field public object factor
+			.field public object multiply
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x21fc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,20 +31,143 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method multiply::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class multiply
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object factor
+			) cil managed 
+		{
+			// Method begins at RVA 0x2160
+			// Header size: 12
+			// Code size: 84 (0x54)
+			.maxstack 32
+			.locals init (
+				[0] class Modules.Function_ReturnObjectWithClosure/createCalculator/Scope,
+				[1] object,
+				[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+			)
+
+			IL_0000: newobj instance void Modules.Function_ReturnObjectWithClosure/createCalculator/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldarg.1
+			IL_0008: stfld object Modules.Function_ReturnObjectWithClosure/createCalculator/Scope::factor
+			IL_000d: ldnull
+			IL_000e: ldftn object Modules.Function_ReturnObjectWithClosure/multiply::__js_call__(object[], object)
+			IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+			IL_0019: ldc.i4.2
+			IL_001a: newarr [System.Runtime]System.Object
+			IL_001f: dup
+			IL_0020: ldc.i4.0
+			IL_0021: ldarg.0
+			IL_0022: ldc.i4.0
+			IL_0023: ldelem.ref
+			IL_0024: stelem.ref
+			IL_0025: dup
+			IL_0026: ldc.i4.1
+			IL_0027: ldloc.0
+			IL_0028: stelem.ref
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_002e: stloc.1
+			IL_002f: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+			IL_0034: dup
+			IL_0035: ldstr "multiply"
+			IL_003a: ldloc.1
+			IL_003b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+			IL_0040: dup
+			IL_0041: ldstr "factor"
+			IL_0046: ldloc.0
+			IL_0047: ldfld object Modules.Function_ReturnObjectWithClosure/createCalculator/Scope::factor
+			IL_004c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+			IL_0051: stloc.2
+			IL_0052: ldloc.2
+			IL_0053: ret
+		} // end of method createCalculator::__js_call__
+
+	} // end of class createCalculator
+
+	.class nested public auto ansi abstract sealed beforefieldinit multiply
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2205
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object x
+			) cil managed 
+		{
+			// Method begins at RVA 0x21c0
+			// Header size: 12
+			// Code size: 39 (0x27)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] float64,
+				[2] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.1
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.Function_ReturnObjectWithClosure/createCalculator/Scope
+			IL_0008: ldfld object Modules.Function_ReturnObjectWithClosure/createCalculator/Scope::factor
+			IL_000d: stloc.0
+			IL_000e: ldarg.1
+			IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0014: stloc.1
+			IL_0015: ldloc.1
+			IL_0016: ldloc.0
+			IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001c: mul
+			IL_001d: stloc.1
+			IL_001e: ldloc.1
+			IL_001f: box [System.Runtime]System.Double
+			IL_0024: stloc.2
+			IL_0025: ldloc.2
+			IL_0026: ret
+		} // end of method multiply::__js_call__
+
+	} // end of class multiply
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Fields
-		.field public object factor
-		.field public object multiply
+		.field public object createCalculator
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x21f3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -49,136 +176,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method createCalculator::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class createCalculator
+	} // end of class Scope
 
 
-	// Fields
-	.field public object createCalculator
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Function_ReturnObjectWithClosure.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.Function_ReturnObjectWithClosure.createCalculator
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object factor
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 84 (0x54)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.Function_ReturnObjectWithClosure.Scope/createCalculator,
-			[1] object,
-			[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
-		)
-
-		IL_0000: newobj instance void Modules.Function_ReturnObjectWithClosure.Scope/createCalculator::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Modules.Function_ReturnObjectWithClosure.Scope/createCalculator::factor
-		IL_000d: ldnull
-		IL_000e: ldftn object Modules.Function_ReturnObjectWithClosure.multiply::__js_call__(object[], object)
-		IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0019: ldc.i4.2
-		IL_001a: newarr [System.Runtime]System.Object
-		IL_001f: dup
-		IL_0020: ldc.i4.0
-		IL_0021: ldarg.0
-		IL_0022: ldc.i4.0
-		IL_0023: ldelem.ref
-		IL_0024: stelem.ref
-		IL_0025: dup
-		IL_0026: ldc.i4.1
-		IL_0027: ldloc.0
-		IL_0028: stelem.ref
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_002e: stloc.1
-		IL_002f: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0034: dup
-		IL_0035: ldstr "multiply"
-		IL_003a: ldloc.1
-		IL_003b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0040: dup
-		IL_0041: ldstr "factor"
-		IL_0046: ldloc.0
-		IL_0047: ldfld object Modules.Function_ReturnObjectWithClosure.Scope/createCalculator::factor
-		IL_004c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0051: stloc.2
-		IL_0052: ldloc.2
-		IL_0053: ret
-	} // end of method createCalculator::__js_call__
-
-} // end of class Modules.Function_ReturnObjectWithClosure.createCalculator
-
-.class public auto ansi abstract sealed beforefieldinit Modules.Function_ReturnObjectWithClosure.multiply
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object x
-		) cil managed 
-	{
-		// Method begins at RVA 0x20cc
-		// Header size: 12
-		// Code size: 39 (0x27)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] float64,
-			[2] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.1
-		IL_0002: ldelem.ref
-		IL_0003: castclass Modules.Function_ReturnObjectWithClosure.Scope/createCalculator
-		IL_0008: ldfld object Modules.Function_ReturnObjectWithClosure.Scope/createCalculator::factor
-		IL_000d: stloc.0
-		IL_000e: ldarg.1
-		IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0014: stloc.1
-		IL_0015: ldloc.1
-		IL_0016: ldloc.0
-		IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001c: mul
-		IL_001d: stloc.1
-		IL_001e: ldloc.1
-		IL_001f: box [System.Runtime]System.Double
-		IL_0024: stloc.2
-		IL_0025: ldloc.2
-		IL_0026: ret
-	} // end of method multiply::__js_call__
-
-} // end of class Modules.Function_ReturnObjectWithClosure.multiply
-
-.class public auto ansi beforefieldinit Modules.Function_ReturnObjectWithClosure
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -189,21 +191,21 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2100
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 258 (0x102)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Function_ReturnObjectWithClosure.Scope,
+			[0] class Modules.Function_ReturnObjectWithClosure/Scope,
 			[1] object,
 			[2] object,
 			[3] object
 		)
 
-		IL_0000: newobj instance void Modules.Function_ReturnObjectWithClosure.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Function_ReturnObjectWithClosure/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_ReturnObjectWithClosure.createCalculator::__js_call__(object[], object)
+		IL_0007: ldftn object Modules.Function_ReturnObjectWithClosure/createCalculator::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -255,7 +257,7 @@
 		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0096: pop
 		IL_0097: ldnull
-		IL_0098: ldftn object Modules.Function_ReturnObjectWithClosure.createCalculator::__js_call__(object[], object)
+		IL_0098: ldftn object Modules.Function_ReturnObjectWithClosure/createCalculator::__js_call__(object[], object)
 		IL_009e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_00a3: ldc.i4.1
 		IL_00a4: newarr [System.Runtime]System.Object

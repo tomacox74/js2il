@@ -3,18 +3,104 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Array_AsArray_Ternary.Scope
+.class public auto ansi beforefieldinit Modules.Array_AsArray_Ternary
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit asArray
+	.class nested public auto ansi abstract sealed beforefieldinit asArray
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2167
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object v
+			) cil managed 
+		{
+			// Method begins at RVA 0x2104
+			// Header size: 12
+			// Code size: 78 (0x4e)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] bool,
+				[2] object,
+				[3] object,
+				[4] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_000d: stloc.1
+			IL_000e: ldloc.1
+			IL_000f: brfalse IL_001c
+
+			IL_0014: ldarg.1
+			IL_0015: stloc.s 4
+			IL_0017: br IL_004b
+
+			IL_001c: ldarg.1
+			IL_001d: ldc.i4.0
+			IL_001e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+			IL_0028: stloc.1
+			IL_0029: ldloc.1
+			IL_002a: brfalse IL_003c
+
+			IL_002f: ldc.i4.0
+			IL_0030: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0035: stloc.s 4
+			IL_0037: br IL_004b
+
+			IL_003c: ldc.i4.1
+			IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0042: dup
+			IL_0043: ldarg.1
+			IL_0044: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+			IL_0049: stloc.s 4
+
+			IL_004b: ldloc.s 4
+			IL_004d: ret
+		} // end of method asArray::__js_call__
+
+	} // end of class asArray
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object asArray
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x215e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,95 +109,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method asArray::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class asArray
+	} // end of class Scope
 
 
-	// Fields
-	.field public object asArray
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Array_AsArray_Ternary.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.Array_AsArray_Ternary.asArray
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object v
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 78 (0x4e)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] bool,
-			[2] object,
-			[3] object,
-			[4] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-		IL_0006: stloc.0
-		IL_0007: ldloc.0
-		IL_0008: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_000d: stloc.1
-		IL_000e: ldloc.1
-		IL_000f: brfalse IL_001c
-
-		IL_0014: ldarg.1
-		IL_0015: stloc.s 4
-		IL_0017: br IL_004b
-
-		IL_001c: ldarg.1
-		IL_001d: ldc.i4.0
-		IL_001e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_0028: stloc.1
-		IL_0029: ldloc.1
-		IL_002a: brfalse IL_003c
-
-		IL_002f: ldc.i4.0
-		IL_0030: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0035: stloc.s 4
-		IL_0037: br IL_004b
-
-		IL_003c: ldc.i4.1
-		IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0042: dup
-		IL_0043: ldarg.1
-		IL_0044: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0049: stloc.s 4
-
-		IL_004b: ldloc.s 4
-		IL_004d: ret
-	} // end of method asArray::__js_call__
-
-} // end of class Modules.Array_AsArray_Ternary.asArray
-
-.class public auto ansi beforefieldinit Modules.Array_AsArray_Ternary
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -122,18 +124,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c0
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 167 (0xa7)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Array_AsArray_Ternary.Scope,
+			[0] class Modules.Array_AsArray_Ternary/Scope,
 			[1] object,
 			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array
 		)
 
-		IL_0000: newobj instance void Modules.Array_AsArray_Ternary.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Array_AsArray_Ternary/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
@@ -143,7 +145,7 @@
 		IL_001b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_0020: stloc.3
 		IL_0021: ldnull
-		IL_0022: ldftn object Modules.Array_AsArray_Ternary.asArray::__js_call__(object[], object)
+		IL_0022: ldftn object Modules.Array_AsArray_Ternary/asArray::__js_call__(object[], object)
 		IL_0028: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_002d: ldc.i4.1
 		IL_002e: newarr [System.Runtime]System.Object
@@ -155,7 +157,7 @@
 		IL_0038: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_003d: stloc.1
 		IL_003e: ldnull
-		IL_003f: ldftn object Modules.Array_AsArray_Ternary.asArray::__js_call__(object[], object)
+		IL_003f: ldftn object Modules.Array_AsArray_Ternary/asArray::__js_call__(object[], object)
 		IL_0045: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_004a: ldc.i4.1
 		IL_004b: newarr [System.Runtime]System.Object
@@ -201,7 +203,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2173
+		// Method begins at RVA 0x2170
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

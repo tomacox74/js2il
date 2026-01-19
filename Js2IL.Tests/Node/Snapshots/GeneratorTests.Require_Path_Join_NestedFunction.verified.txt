@@ -3,18 +3,89 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Require_Path_Join_NestedFunction.Scope
+.class public auto ansi beforefieldinit Modules.Require_Path_Join_NestedFunction
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit joinWrapper
+	.class nested public auto ansi abstract sealed beforefieldinit joinWrapper
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2127
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object a,
+				object b
+			) cil managed 
+		{
+			// Method begins at RVA 0x20e8
+			// Header size: 12
+			// Code size: 42 (0x2a)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.Require_Path_Join_NestedFunction/Scope
+			IL_0008: ldfld object Modules.Require_Path_Join_NestedFunction/Scope::path
+			IL_000d: stloc.0
+			IL_000e: ldloc.0
+			IL_000f: ldstr "join"
+			IL_0014: ldc.i4.2
+			IL_0015: newarr [System.Runtime]System.Object
+			IL_001a: dup
+			IL_001b: ldc.i4.0
+			IL_001c: ldarg.1
+			IL_001d: stelem.ref
+			IL_001e: dup
+			IL_001f: ldc.i4.1
+			IL_0020: ldarg.2
+			IL_0021: stelem.ref
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0027: stloc.0
+			IL_0028: ldloc.0
+			IL_0029: ret
+		} // end of method joinWrapper::__js_call__
+
+	} // end of class joinWrapper
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object path
+		.field public object joinWrapper
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x211e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,80 +94,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method joinWrapper::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class joinWrapper
+	} // end of class Scope
 
 
-	// Fields
-	.field public object path
-	.field public object joinWrapper
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Require_Path_Join_NestedFunction.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.Require_Path_Join_NestedFunction.joinWrapper
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 42 (0x2a)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.0
-		IL_0002: ldelem.ref
-		IL_0003: castclass Modules.Require_Path_Join_NestedFunction.Scope
-		IL_0008: ldfld object Modules.Require_Path_Join_NestedFunction.Scope::path
-		IL_000d: stloc.0
-		IL_000e: ldloc.0
-		IL_000f: ldstr "join"
-		IL_0014: ldc.i4.2
-		IL_0015: newarr [System.Runtime]System.Object
-		IL_001a: dup
-		IL_001b: ldc.i4.0
-		IL_001c: ldarg.1
-		IL_001d: stelem.ref
-		IL_001e: dup
-		IL_001f: ldc.i4.1
-		IL_0020: ldarg.2
-		IL_0021: stelem.ref
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0027: stloc.0
-		IL_0028: ldloc.0
-		IL_0029: ret
-	} // end of method joinWrapper::__js_call__
-
-} // end of class Modules.Require_Path_Join_NestedFunction.joinWrapper
-
-.class public auto ansi beforefieldinit Modules.Require_Path_Join_NestedFunction
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -107,18 +109,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x209c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 140 (0x8c)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Require_Path_Join_NestedFunction.Scope,
+			[0] class Modules.Require_Path_Join_NestedFunction/Scope,
 			[1] object,
 			[2] object[],
 			[3] object
 		)
 
-		IL_0000: newobj instance void Modules.Require_Path_Join_NestedFunction.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Require_Path_Join_NestedFunction/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
@@ -139,9 +141,9 @@
 		IL_0026: stloc.3
 		IL_0027: ldloc.0
 		IL_0028: ldloc.3
-		IL_0029: stfld object Modules.Require_Path_Join_NestedFunction.Scope::path
+		IL_0029: stfld object Modules.Require_Path_Join_NestedFunction/Scope::path
 		IL_002e: ldnull
-		IL_002f: ldftn object Modules.Require_Path_Join_NestedFunction.joinWrapper::__js_call__(object[], object, object)
+		IL_002f: ldftn object Modules.Require_Path_Join_NestedFunction/joinWrapper::__js_call__(object[], object, object)
 		IL_0035: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_003a: ldc.i4.1
 		IL_003b: newarr [System.Runtime]System.Object
@@ -188,7 +190,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2134
+		// Method begins at RVA 0x2130
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

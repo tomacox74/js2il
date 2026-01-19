@@ -95,9 +95,6 @@ namespace Js2IL.Services.ILGenerators
 
                 var irTb = new TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
                 _ = MethodDefinitionFinalizer.EmitMethod(_metadataBuilder, irTb, compiledBody);
-                irTb.AddTypeDefinition(
-                    TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
-                    _bclReferences.ObjectType);
 
                 _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, expectedPreallocatedHandle.Value);
                 _callableRegistry.MarkBodyCompiledForAstNode(arrowFunction);

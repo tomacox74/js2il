@@ -3,154 +3,79 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Promise_Executor_Resolved.Scope
-	extends [System.Runtime]System.Object
-{
-	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_p
-		extends [System.Runtime]System.Object
-	{
-		// Fields
-		.field public object resolve
-
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method ArrowFunction_p::.ctor
-
-	} // end of class ArrowFunction_p
-
-	.class nested public auto ansi beforefieldinit ArrowFunction_L5C7
-		extends [System.Runtime]System.Object
-	{
-		// Fields
-		.field public object message
-
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2062
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method ArrowFunction_L5C7::.ctor
-
-	} // end of class ArrowFunction_L5C7
-
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Promise_Executor_Resolved.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L5C8
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L5C8 (
-			object[] scopes,
-			object message
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 31 (0x1f)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.2
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "Promise resolved with message:"
-		IL_0012: stelem.ref
-		IL_0013: dup
-		IL_0014: ldc.i4.1
-		IL_0015: ldarg.1
-		IL_0016: stelem.ref
-		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_001c: pop
-		IL_001d: ldnull
-		IL_001e: ret
-	} // end of method ArrowFunction_L5C8::ArrowFunction_L5C8
-
-} // end of class Functions.ArrowFunction_L5C8
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C23
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L1C23 (
-			object[] scopes,
-			object resolve
-		) cil managed 
-	{
-		// Method begins at RVA 0x2098
-		// Header size: 12
-		// Code size: 37 (0x25)
-		.maxstack 32
-		.locals init (
-			[0] object[]
-		)
-
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "Hello World"
-		IL_000d: stelem.ref
-		IL_000e: stloc.0
-		IL_000f: ldarg.1
-		IL_0010: ldc.i4.1
-		IL_0011: newarr [System.Runtime]System.Object
-		IL_0016: dup
-		IL_0017: ldc.i4.0
-		IL_0018: ldarg.0
-		IL_0019: ldc.i4.0
-		IL_001a: ldelem.ref
-		IL_001b: stelem.ref
-		IL_001c: ldloc.0
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0022: pop
-		IL_0023: ldnull
-		IL_0024: ret
-	} // end of method ArrowFunction_L1C23::ArrowFunction_L1C23
-
-} // end of class Functions.ArrowFunction_L1C23
-
 .class public auto ansi beforefieldinit Modules.Promise_Executor_Resolved
 	extends [System.Runtime]System.Object
 {
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit ArrowFunction_p
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object resolve
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2122
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method ArrowFunction_p::.ctor
+
+		} // end of class ArrowFunction_p
+
+		.class nested public auto ansi beforefieldinit ArrowFunction_L5C7
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object message
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x212b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method ArrowFunction_L5C7::.ctor
+
+		} // end of class ArrowFunction_L5C7
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2119
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -161,18 +86,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20cc
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 94 (0x5e)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Promise_Executor_Resolved.Scope,
+			[0] class Modules.Promise_Executor_Resolved/Scope,
 			[1] object,
 			[2] object,
 			[3] object[]
 		)
 
-		IL_0000: newobj instance void Modules.Promise_Executor_Resolved.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Executor_Resolved/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
 		IL_0007: ldftn object Functions.ArrowFunction_L1C23::ArrowFunction_L1C23(object[], object)
@@ -216,6 +141,83 @@
 
 } // end of class Modules.Promise_Executor_Resolved
 
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L5C8
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L5C8 (
+			object[] scopes,
+			object message
+		) cil managed 
+	{
+		// Method begins at RVA 0x20bc
+		// Header size: 12
+		// Code size: 31 (0x1f)
+		.maxstack 32
+
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: ldc.i4.2
+		IL_0006: newarr [System.Runtime]System.Object
+		IL_000b: dup
+		IL_000c: ldc.i4.0
+		IL_000d: ldstr "Promise resolved with message:"
+		IL_0012: stelem.ref
+		IL_0013: dup
+		IL_0014: ldc.i4.1
+		IL_0015: ldarg.1
+		IL_0016: stelem.ref
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_001c: pop
+		IL_001d: ldnull
+		IL_001e: ret
+	} // end of method ArrowFunction_L5C8::ArrowFunction_L5C8
+
+} // end of class Functions.ArrowFunction_L5C8
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C23
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L1C23 (
+			object[] scopes,
+			object resolve
+		) cil managed 
+	{
+		// Method begins at RVA 0x20e8
+		// Header size: 12
+		// Code size: 37 (0x25)
+		.maxstack 32
+		.locals init (
+			[0] object[]
+		)
+
+		IL_0000: ldc.i4.1
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldstr "Hello World"
+		IL_000d: stelem.ref
+		IL_000e: stloc.0
+		IL_000f: ldarg.1
+		IL_0010: ldc.i4.1
+		IL_0011: newarr [System.Runtime]System.Object
+		IL_0016: dup
+		IL_0017: ldc.i4.0
+		IL_0018: ldarg.0
+		IL_0019: ldc.i4.0
+		IL_001a: ldelem.ref
+		IL_001b: stelem.ref
+		IL_001c: ldloc.0
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0022: pop
+		IL_0023: ldnull
+		IL_0024: ret
+	} // end of method ArrowFunction_L1C23::ArrowFunction_L1C23
+
+} // end of class Functions.ArrowFunction_L1C23
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -223,7 +225,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2136
+		// Method begins at RVA 0x2134
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

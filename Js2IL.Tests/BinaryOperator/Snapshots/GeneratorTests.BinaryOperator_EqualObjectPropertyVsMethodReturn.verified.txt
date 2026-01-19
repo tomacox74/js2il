@@ -3,26 +3,48 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn.Scope
+.class public auto ansi beforefieldinit Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Counter
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit count
+		.class nested public auto ansi beforefieldinit Counter
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested public auto ansi beforefieldinit Block_L7C31
+			.class nested public auto ansi beforefieldinit count
 				extends [System.Runtime]System.Object
 			{
+				// Nested Types
+				.class nested public auto ansi beforefieldinit Block_L7C31
+					extends [System.Runtime]System.Object
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Method begins at RVA 0x21ba
+						// Header size: 1
+						// Code size: 8 (0x8)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+						IL_0006: nop
+						IL_0007: ret
+					} // end of method Block_L7C31::.ctor
+
+				} // end of class Block_L7C31
+
+
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x206b
+					// Method begins at RVA 0x21b1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -31,16 +53,16 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L7C31::.ctor
+				} // end of method count::.ctor
 
-			} // end of class Block_L7C31
+			} // end of class count
 
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x21a8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,16 +71,16 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method count::.ctor
+			} // end of method Counter::.ctor
 
-		} // end of class count
+		} // end of class Counter
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x219f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -67,91 +89,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Counter::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Counter
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn.Scope
-
-.class public auto ansi beforefieldinit Classes.BinaryOperator_EqualObjectPropertyVsMethodReturn.Counter
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2074
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method Counter::.ctor
-
-	.method public hidebysig 
-		instance object count () cil managed 
-	{
-		// Method begins at RVA 0x2088
-		// Header size: 12
-		// Code size: 75 (0x4b)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] float64,
-			[2] object
-		)
-
-		IL_0000: ldc.r8 0.0
-		IL_0009: stloc.0
-		IL_000a: ldc.r8 0.0
-		IL_0013: stloc.1
-		// loop start (head: IL_0014)
-			IL_0014: ldloc.1
-			IL_0015: ldc.r8 10
-			IL_001e: clt
-			IL_0020: brfalse IL_0042
-
-			IL_0025: ldloc.0
-			IL_0026: ldc.r8 1
-			IL_002f: add
-			IL_0030: stloc.0
-			IL_0031: ldloc.1
-			IL_0032: ldc.r8 1
-			IL_003b: add
-			IL_003c: stloc.1
-			IL_003d: br IL_0014
-		// end loop
-
-		IL_0042: ldloc.0
-		IL_0043: box [System.Runtime]System.Double
-		IL_0048: stloc.2
-		IL_0049: ldloc.2
-		IL_004a: ret
-	} // end of method Counter::count
-
-} // end of class Classes.BinaryOperator_EqualObjectPropertyVsMethodReturn.Counter
-
-.class public auto ansi beforefieldinit Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -162,12 +104,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e0
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 216 (0xd8)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn.Scope,
+			[0] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[2] object,
 			[3] object,
@@ -177,7 +119,7 @@
 			[7] object
 		)
 
-		IL_0000: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn.Scope::.ctor()
+		IL_0000: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
 		IL_000b: dup
@@ -255,6 +197,66 @@
 
 } // end of class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn
 
+.class public auto ansi beforefieldinit Classes.BinaryOperator_EqualObjectPropertyVsMethodReturn.Counter
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2134
+		// Header size: 12
+		// Code size: 7 (0x7)
+		.maxstack 32
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ret
+	} // end of method Counter::.ctor
+
+	.method public hidebysig 
+		instance object count () cil managed 
+	{
+		// Method begins at RVA 0x2148
+		// Header size: 12
+		// Code size: 75 (0x4b)
+		.maxstack 32
+		.locals init (
+			[0] float64,
+			[1] float64,
+			[2] object
+		)
+
+		IL_0000: ldc.r8 0.0
+		IL_0009: stloc.0
+		IL_000a: ldc.r8 0.0
+		IL_0013: stloc.1
+		// loop start (head: IL_0014)
+			IL_0014: ldloc.1
+			IL_0015: ldc.r8 10
+			IL_001e: clt
+			IL_0020: brfalse IL_0042
+
+			IL_0025: ldloc.0
+			IL_0026: ldc.r8 1
+			IL_002f: add
+			IL_0030: stloc.0
+			IL_0031: ldloc.1
+			IL_0032: ldc.r8 1
+			IL_003b: add
+			IL_003c: stloc.1
+			IL_003d: br IL_0014
+		// end loop
+
+		IL_0042: ldloc.0
+		IL_0043: box [System.Runtime]System.Double
+		IL_0048: stloc.2
+		IL_0049: ldloc.2
+		IL_004a: ret
+	} // end of method Counter::count
+
+} // end of class Classes.BinaryOperator_EqualObjectPropertyVsMethodReturn.Counter
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -262,7 +264,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c4
+		// Method begins at RVA 0x21c3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

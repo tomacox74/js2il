@@ -93,6 +93,7 @@ internal sealed class JsMethodCompiler
     private readonly Services.VariableBindings.ScopeMetadataRegistry _scopeMetadataRegistry;
     private readonly FunctionTypeMetadataRegistry _functionTypeMetadataRegistry;
     private readonly Services.NestedTypeRelationshipRegistry _nestedTypeRelationshipRegistry;
+    private readonly Services.ModuleTypeMetadataRegistry _moduleTypeRegistry;
 
     public JsMethodCompiler(
         MetadataBuilder metadataBuilder,
@@ -102,6 +103,7 @@ internal sealed class JsMethodCompiler
         Services.VariableBindings.ScopeMetadataRegistry scopeMetadataRegistry,
         FunctionTypeMetadataRegistry functionTypeMetadataRegistry,
         Services.NestedTypeRelationshipRegistry nestedTypeRelationshipRegistry,
+        Services.ModuleTypeMetadataRegistry moduleTypeRegistry,
         IServiceProvider serviceProvider)
     {
         _metadataBuilder = metadataBuilder;
@@ -111,6 +113,7 @@ internal sealed class JsMethodCompiler
         _scopeMetadataRegistry = scopeMetadataRegistry;
         _functionTypeMetadataRegistry = functionTypeMetadataRegistry;
         _nestedTypeRelationshipRegistry = nestedTypeRelationshipRegistry;
+        _moduleTypeRegistry = moduleTypeRegistry;
         _serviceProvider = serviceProvider;
     }
 
@@ -529,6 +532,11 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
+        if (!_moduleTypeRegistry.TryGet(moduleName, out var moduleTypeHandle) || moduleTypeHandle.IsNil)
+        {
+            throw new InvalidOperationException($"Expected module type handle to be registered for module '{moduleName}', but none was found.");
+        }
+
         // create the tools we need to generate the module type and method
         var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Modules", moduleName);
 
@@ -549,11 +557,6 @@ internal sealed class JsMethodCompiler
 
         var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
-        // Define the module main type via TypeBuilder
-        var moduleTypeHandle = programTypeBuilder.AddTypeDefinition(
-            TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
-            _bclReferences.ObjectType);
-
         // Establish all nesting relationships now that the module type exists.
         // This is done in sorted order to satisfy ECMA-335 NestedClass table ordering.
         EstablishModuleNesting(moduleName, moduleTypeHandle, scope);
@@ -565,9 +568,28 @@ internal sealed class JsMethodCompiler
     {
         var relationships = new List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)>();
 
+        // Function-declaration owner types should be nested directly under the module type so
+        // reflection sees: Modules.<ModuleName>+<FunctionName>
+        // (and the function's scope nests under that owner type).
+        foreach (var owner in _functionTypeMetadataRegistry.GetAllForModule(moduleName).Values)
+        {
+            if (!owner.IsNil)
+            {
+                relationships.Add((owner, moduleTypeHandle));
+            }
+        }
+
+        // Global scope nests under the module type: Modules.<ModuleName>.Scope
+        var globalKey = ScopeNaming.GetRegistryScopeName(globalScope);
+        if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(globalKey, out var globalScopeTypeHandle))
+        {
+            throw new InvalidOperationException($"Expected scope type handle to be registered for global scope '{globalKey}', but none was found.");
+        }
+        relationships.Add((globalScopeTypeHandle, moduleTypeHandle));
+
         // Child scopes nest under their parent scope.
         var visited = new HashSet<string>(StringComparer.Ordinal);
-        CollectScopeNestingRelationships(globalScope, relationships, visited);
+        CollectScopeNestingRelationships(moduleName, globalScope, relationships, visited);
 
         foreach (var rel in relationships.Distinct())
         {
@@ -576,6 +598,7 @@ internal sealed class JsMethodCompiler
     }
 
     private void CollectScopeNestingRelationships(
+        string moduleName,
         Scope parentScope,
         List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)> relationships,
         HashSet<string> visited)
@@ -601,8 +624,29 @@ internal sealed class JsMethodCompiler
                 throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{childKey}', but none was found.");
             }
 
-            relationships.Add((childTypeHandle, parentTypeHandle));
-            CollectScopeNestingRelationships(child, relationships, visited);
+            // Special case: function declarations have a dedicated callable owner type.
+            // We nest the function's *scope type* under that owner type so IL reads as:
+            //   .class ... Modules.<Module>.<FunctionName>/Scope
+            // rather than:
+            //   .class ... Modules.<Module>.Scope/<FunctionName>
+            if (child.Kind == ScopeKind.Function && child.AstNode is FunctionDeclaration)
+            {
+                if (_functionTypeMetadataRegistry.TryGet(moduleName, child.Name, out var ownerTypeHandle) && !ownerTypeHandle.IsNil)
+                {
+                    relationships.Add((childTypeHandle, ownerTypeHandle));
+                }
+                else
+                {
+                    // Fallback: if the owner type isn't available for some reason, nest under the parent scope.
+                    relationships.Add((childTypeHandle, parentTypeHandle));
+                }
+            }
+            else
+            {
+                relationships.Add((childTypeHandle, parentTypeHandle));
+            }
+
+            CollectScopeNestingRelationships(moduleName, child, relationships, visited);
         }
     }
 

@@ -3,26 +3,51 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Async_RealSuspension_SetTimeout.Scope
+.class public auto ansi beforefieldinit Modules.Async_RealSuspension_SetTimeout
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit run
+	.class nested public auto ansi abstract sealed beforefieldinit run
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_L6C23
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested public auto ansi beforefieldinit ArrowFunction_L7C19
+			.class nested public auto ansi beforefieldinit ArrowFunction_L6C23
 				extends [System.Runtime]System.Object
 			{
+				// Nested Types
+				.class nested public auto ansi beforefieldinit ArrowFunction_L7C19
+					extends [System.Runtime]System.Object
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Method begins at RVA 0x227d
+						// Header size: 1
+						// Code size: 8 (0x8)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+						IL_0006: nop
+						IL_0007: ret
+					} // end of method ArrowFunction_L7C19::.ctor
+
+				} // end of class ArrowFunction_L7C19
+
+
+				// Fields
+				.field public object resolve
+
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x206b
+					// Method begins at RVA 0x2274
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -31,19 +56,36 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method ArrowFunction_L7C19::.ctor
+				} // end of method ArrowFunction_L6C23::.ctor
 
-			} // end of class ArrowFunction_L7C19
+			} // end of class ArrowFunction_L6C23
 
+			.class nested public auto ansi beforefieldinit ArrowFunction_L11C12
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2286
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
 
-			// Fields
-			.field public object resolve
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method ArrowFunction_L11C12::.ctor
+
+			} // end of class ArrowFunction_L11C12
+
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x226b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,18 +94,102 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L6C23::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class ArrowFunction_L6C23
+		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit ArrowFunction_L11C12
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x20cc
+			// Header size: 12
+			// Code size: 128 (0x80)
+			.maxstack 32
+			.locals init (
+				[0] class Modules.Async_RealSuspension_SetTimeout/run/Scope,
+				[1] object,
+				[2] object,
+				[3] object[]
+			)
+
+			IL_0000: newobj instance void Modules.Async_RealSuspension_SetTimeout/run/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_000b: ldc.i4.1
+			IL_000c: newarr [System.Runtime]System.Object
+			IL_0011: dup
+			IL_0012: ldc.i4.0
+			IL_0013: ldstr "Inside async function (before await)"
+			IL_0018: stelem.ref
+			IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_001e: pop
+			IL_001f: ldnull
+			IL_0020: ldftn object Functions.ArrowFunction_L6C24::ArrowFunction_L6C24(object[], object)
+			IL_0026: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+			IL_002b: ldc.i4.2
+			IL_002c: newarr [System.Runtime]System.Object
+			IL_0031: dup
+			IL_0032: ldc.i4.0
+			IL_0033: ldarg.0
+			IL_0034: ldc.i4.0
+			IL_0035: ldelem.ref
+			IL_0036: stelem.ref
+			IL_0037: dup
+			IL_0038: ldc.i4.1
+			IL_0039: ldloc.0
+			IL_003a: stelem.ref
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_0040: stloc.1
+			IL_0041: ldloc.1
+			IL_0042: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
+			IL_0047: stloc.1
+			IL_0048: ldnull
+			IL_0049: ldftn object Functions.ArrowFunction_L11C13::ArrowFunction_L11C13(object[])
+			IL_004f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_0054: ldc.i4.1
+			IL_0055: newarr [System.Runtime]System.Object
+			IL_005a: dup
+			IL_005b: ldc.i4.0
+			IL_005c: ldarg.0
+			IL_005d: ldc.i4.0
+			IL_005e: ldelem.ref
+			IL_005f: stelem.ref
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_0065: stloc.2
+			IL_0066: ldc.i4.1
+			IL_0067: newarr [System.Runtime]System.Object
+			IL_006c: dup
+			IL_006d: ldc.i4.0
+			IL_006e: ldloc.2
+			IL_006f: stelem.ref
+			IL_0070: stloc.3
+			IL_0071: ldloc.1
+			IL_0072: ldstr "then"
+			IL_0077: ldloc.3
+			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_007d: stloc.1
+			IL_007e: ldloc.1
+			IL_007f: ret
+		} // end of method run::__js_call__
+
+	} // end of class run
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit ArrowFunction_L16C11
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2074
+				// Method begins at RVA 0x228f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -72,16 +198,19 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L11C12::.ctor
+			} // end of method ArrowFunction_L16C11::.ctor
 
-		} // end of class ArrowFunction_L11C12
+		} // end of class ArrowFunction_L16C11
 
+
+		// Fields
+		.field public object run
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2262
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -90,132 +219,81 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method run::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class run
-
-	.class nested public auto ansi beforefieldinit ArrowFunction_L16C11
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x207d
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method ArrowFunction_L16C11::.ctor
-
-	} // end of class ArrowFunction_L16C11
+	} // end of class Scope
 
 
-	// Fields
-	.field public object run
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Async_RealSuspension_SetTimeout.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.Async_RealSuspension_SetTimeout.run
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2088
+		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 128 (0x80)
+		// Code size: 112 (0x70)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Async_RealSuspension_SetTimeout.Scope/run,
+			[0] class Modules.Async_RealSuspension_SetTimeout/Scope,
 			[1] object,
 			[2] object,
 			[3] object[]
 		)
 
-		IL_0000: newobj instance void Modules.Async_RealSuspension_SetTimeout.Scope/run::.ctor()
+		IL_0000: newobj instance void Modules.Async_RealSuspension_SetTimeout/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_000b: ldc.i4.1
 		IL_000c: newarr [System.Runtime]System.Object
 		IL_0011: dup
 		IL_0012: ldc.i4.0
-		IL_0013: ldstr "Inside async function (before await)"
+		IL_0013: ldstr "Before calling async function"
 		IL_0018: stelem.ref
 		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_001e: pop
 		IL_001f: ldnull
-		IL_0020: ldftn object Functions.ArrowFunction_L6C24::ArrowFunction_L6C24(object[], object)
-		IL_0026: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_002b: ldc.i4.2
+		IL_0020: ldftn object Modules.Async_RealSuspension_SetTimeout/run::__js_call__(object[])
+		IL_0026: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_002b: ldc.i4.1
 		IL_002c: newarr [System.Runtime]System.Object
 		IL_0031: dup
 		IL_0032: ldc.i4.0
-		IL_0033: ldarg.0
-		IL_0034: ldc.i4.0
-		IL_0035: ldelem.ref
-		IL_0036: stelem.ref
-		IL_0037: dup
-		IL_0038: ldc.i4.1
-		IL_0039: ldloc.0
-		IL_003a: stelem.ref
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0040: stloc.1
-		IL_0041: ldloc.1
-		IL_0042: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
-		IL_0047: stloc.1
-		IL_0048: ldnull
-		IL_0049: ldftn object Functions.ArrowFunction_L11C13::ArrowFunction_L11C13(object[])
-		IL_004f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0054: ldc.i4.1
-		IL_0055: newarr [System.Runtime]System.Object
-		IL_005a: dup
-		IL_005b: ldc.i4.0
-		IL_005c: ldarg.0
-		IL_005d: ldc.i4.0
-		IL_005e: ldelem.ref
-		IL_005f: stelem.ref
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0065: stloc.2
-		IL_0066: ldc.i4.1
-		IL_0067: newarr [System.Runtime]System.Object
-		IL_006c: dup
-		IL_006d: ldc.i4.0
-		IL_006e: ldloc.2
-		IL_006f: stelem.ref
-		IL_0070: stloc.3
-		IL_0071: ldloc.1
-		IL_0072: ldstr "then"
-		IL_0077: ldloc.3
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_007d: stloc.1
-		IL_007e: ldloc.1
-		IL_007f: ret
-	} // end of method run::__js_call__
+		IL_0033: ldloc.0
+		IL_0034: stelem.ref
+		IL_0035: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_003a: stloc.1
+		IL_003b: ldnull
+		IL_003c: ldftn object Functions.ArrowFunction_L16C12::ArrowFunction_L16C12(object[])
+		IL_0042: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0047: ldc.i4.1
+		IL_0048: newarr [System.Runtime]System.Object
+		IL_004d: dup
+		IL_004e: ldc.i4.0
+		IL_004f: ldloc.0
+		IL_0050: stelem.ref
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0056: stloc.2
+		IL_0057: ldc.i4.1
+		IL_0058: newarr [System.Runtime]System.Object
+		IL_005d: dup
+		IL_005e: ldc.i4.0
+		IL_005f: ldloc.2
+		IL_0060: stelem.ref
+		IL_0061: stloc.3
+		IL_0062: ldloc.1
+		IL_0063: ldstr "then"
+		IL_0068: ldloc.3
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_006e: pop
+		IL_006f: ret
+	} // end of method Async_RealSuspension_SetTimeout::__js_module_init__
 
-} // end of class Modules.Async_RealSuspension_SetTimeout.run
+} // end of class Modules.Async_RealSuspension_SetTimeout
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L16C12
 	extends [System.Runtime]System.Object
@@ -226,7 +304,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x2158
 		// Header size: 12
 		// Code size: 27 (0x1b)
 		.maxstack 32
@@ -255,7 +333,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x213c
+		// Method begins at RVA 0x2180
 		// Header size: 12
 		// Code size: 27 (0x1b)
 		.maxstack 32
@@ -285,20 +363,20 @@
 			object resolve
 		) cil managed 
 	{
-		// Method begins at RVA 0x2164
+		// Method begins at RVA 0x21a8
 		// Header size: 12
 		// Code size: 82 (0x52)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Async_RealSuspension_SetTimeout.Scope/run/ArrowFunction_L6C23,
+			[0] class Modules.Async_RealSuspension_SetTimeout/run/Scope/ArrowFunction_L6C23,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Modules.Async_RealSuspension_SetTimeout.Scope/run/ArrowFunction_L6C23::.ctor()
+		IL_0000: newobj instance void Modules.Async_RealSuspension_SetTimeout/run/Scope/ArrowFunction_L6C23::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Modules.Async_RealSuspension_SetTimeout.Scope/run/ArrowFunction_L6C23::resolve
+		IL_0008: stfld object Modules.Async_RealSuspension_SetTimeout/run/Scope/ArrowFunction_L6C23::resolve
 		IL_000d: ldnull
 		IL_000e: ldftn object Functions.ArrowFunction_L7C20::ArrowFunction_L7C20(object[])
 		IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
@@ -344,7 +422,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x21c4
+		// Method begins at RVA 0x2208
 		// Header size: 12
 		// Code size: 78 (0x4e)
 		.maxstack 32
@@ -367,8 +445,8 @@
 		IL_0020: ldarg.0
 		IL_0021: ldc.i4.2
 		IL_0022: ldelem.ref
-		IL_0023: castclass Modules.Async_RealSuspension_SetTimeout.Scope/run/ArrowFunction_L6C23
-		IL_0028: ldfld object Modules.Async_RealSuspension_SetTimeout.Scope/run/ArrowFunction_L6C23::resolve
+		IL_0023: castclass Modules.Async_RealSuspension_SetTimeout/run/Scope/ArrowFunction_L6C23
+		IL_0028: ldfld object Modules.Async_RealSuspension_SetTimeout/run/Scope/ArrowFunction_L6C23::resolve
 		IL_002d: ldc.i4.3
 		IL_002e: newarr [System.Runtime]System.Object
 		IL_0033: dup
@@ -398,80 +476,6 @@
 
 } // end of class Functions.ArrowFunction_L7C20
 
-.class public auto ansi beforefieldinit Modules.Async_RealSuspension_SetTimeout
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void __js_module_init__ (
-			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
-			object module,
-			string __filename,
-			string __dirname
-		) cil managed 
-	{
-		// Method begins at RVA 0x2220
-		// Header size: 12
-		// Code size: 112 (0x70)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.Async_RealSuspension_SetTimeout.Scope,
-			[1] object,
-			[2] object,
-			[3] object[]
-		)
-
-		IL_0000: newobj instance void Modules.Async_RealSuspension_SetTimeout.Scope::.ctor()
-		IL_0005: stloc.0
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000b: ldc.i4.1
-		IL_000c: newarr [System.Runtime]System.Object
-		IL_0011: dup
-		IL_0012: ldc.i4.0
-		IL_0013: ldstr "Before calling async function"
-		IL_0018: stelem.ref
-		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_001e: pop
-		IL_001f: ldnull
-		IL_0020: ldftn object Modules.Async_RealSuspension_SetTimeout.run::__js_call__(object[])
-		IL_0026: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_002b: ldc.i4.1
-		IL_002c: newarr [System.Runtime]System.Object
-		IL_0031: dup
-		IL_0032: ldc.i4.0
-		IL_0033: ldloc.0
-		IL_0034: stelem.ref
-		IL_0035: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_003a: stloc.1
-		IL_003b: ldnull
-		IL_003c: ldftn object Functions.ArrowFunction_L16C12::ArrowFunction_L16C12(object[])
-		IL_0042: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0047: ldc.i4.1
-		IL_0048: newarr [System.Runtime]System.Object
-		IL_004d: dup
-		IL_004e: ldc.i4.0
-		IL_004f: ldloc.0
-		IL_0050: stelem.ref
-		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0056: stloc.2
-		IL_0057: ldc.i4.1
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldloc.2
-		IL_0060: stelem.ref
-		IL_0061: stloc.3
-		IL_0062: ldloc.1
-		IL_0063: ldstr "then"
-		IL_0068: ldloc.3
-		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_006e: pop
-		IL_006f: ret
-	} // end of method Async_RealSuspension_SetTimeout::__js_module_init__
-
-} // end of class Modules.Async_RealSuspension_SetTimeout
-
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -479,7 +483,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x229c
+		// Method begins at RVA 0x2298
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

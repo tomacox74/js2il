@@ -3,21 +3,43 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Promise_Race_MixedValues.Scope
+.class public auto ansi beforefieldinit Modules.Promise_Race_MixedValues
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_L4C31
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
-		// Fields
-		.field public object result
+		// Nested Types
+		.class nested public auto ansi beforefieldinit ArrowFunction_L4C31
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object result
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2100
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method ArrowFunction_L4C31::.ctor
+
+		} // end of class ArrowFunction_L4C31
+
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20f7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -26,65 +48,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_L4C31::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_L4C31
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Promise_Race_MixedValues.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L4C32
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L4C32 (
-			object[] scopes,
-			object result
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 31 (0x1f)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.2
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "First settled:"
-		IL_0012: stelem.ref
-		IL_0013: dup
-		IL_0014: ldc.i4.1
-		IL_0015: ldarg.1
-		IL_0016: stelem.ref
-		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_001c: pop
-		IL_001d: ldnull
-		IL_001e: ret
-	} // end of method ArrowFunction_L4C32::ArrowFunction_L4C32
-
-} // end of class Functions.ArrowFunction_L4C32
-
-.class public auto ansi beforefieldinit Modules.Promise_Race_MixedValues
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -95,12 +63,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2090
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 110 (0x6e)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Promise_Race_MixedValues.Scope,
+			[0] class Modules.Promise_Race_MixedValues/Scope,
 			[1] object,
 			[2] string,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
@@ -109,7 +77,7 @@
 			[6] object[]
 		)
 
-		IL_0000: newobj instance void Modules.Promise_Race_MixedValues.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Race_MixedValues/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "promise"
 		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
@@ -156,6 +124,40 @@
 
 } // end of class Modules.Promise_Race_MixedValues
 
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L4C32
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L4C32 (
+			object[] scopes,
+			object result
+		) cil managed 
+	{
+		// Method begins at RVA 0x20cc
+		// Header size: 12
+		// Code size: 31 (0x1f)
+		.maxstack 32
+
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: ldc.i4.2
+		IL_0006: newarr [System.Runtime]System.Object
+		IL_000b: dup
+		IL_000c: ldc.i4.0
+		IL_000d: ldstr "First settled:"
+		IL_0012: stelem.ref
+		IL_0013: dup
+		IL_0014: ldc.i4.1
+		IL_0015: ldarg.1
+		IL_0016: stelem.ref
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_001c: pop
+		IL_001d: ldnull
+		IL_001e: ret
+	} // end of method ArrowFunction_L4C32::ArrowFunction_L4C32
+
+} // end of class Functions.ArrowFunction_L4C32
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -163,7 +165,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210a
+		// Method begins at RVA 0x2109
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

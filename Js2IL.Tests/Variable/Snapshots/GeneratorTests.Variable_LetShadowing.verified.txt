@@ -3,18 +3,78 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Variable_LetShadowing.Scope
+.class public auto ansi beforefieldinit Modules.Variable_LetShadowing
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit f
+	.class nested public auto ansi abstract sealed beforefieldinit f
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20df
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x20a4
+			// Header size: 12
+			// Code size: 38 (0x26)
+			.maxstack 32
+			.locals init (
+				[0] float64
+			)
+
+			IL_0000: ldc.r8 2
+			IL_0009: stloc.0
+			IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_000f: ldc.i4.1
+			IL_0010: newarr [System.Runtime]System.Object
+			IL_0015: dup
+			IL_0016: ldc.i4.0
+			IL_0017: ldloc.0
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: stelem.ref
+			IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0023: pop
+			IL_0024: ldnull
+			IL_0025: ret
+		} // end of method f::__js_call__
+
+	} // end of class f
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object f
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20d6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,69 +83,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method f::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class f
+	} // end of class Scope
 
 
-	// Fields
-	.field public object f
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Variable_LetShadowing.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.Variable_LetShadowing.f
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 38 (0x26)
-		.maxstack 32
-		.locals init (
-			[0] float64
-		)
-
-		IL_0000: ldc.r8 2
-		IL_0009: stloc.0
-		IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000f: ldc.i4.1
-		IL_0010: newarr [System.Runtime]System.Object
-		IL_0015: dup
-		IL_0016: ldc.i4.0
-		IL_0017: ldloc.0
-		IL_0018: box [System.Runtime]System.Double
-		IL_001d: stelem.ref
-		IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0023: pop
-		IL_0024: ldnull
-		IL_0025: ret
-	} // end of method f::__js_call__
-
-} // end of class Modules.Variable_LetShadowing.f
-
-.class public auto ansi beforefieldinit Modules.Variable_LetShadowing
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -96,21 +98,21 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2098
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 71 (0x47)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Variable_LetShadowing.Scope,
+			[0] class Modules.Variable_LetShadowing/Scope,
 			[1] float64
 		)
 
-		IL_0000: newobj instance void Modules.Variable_LetShadowing.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Variable_LetShadowing/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 1
 		IL_000f: stloc.1
 		IL_0010: ldnull
-		IL_0011: ldftn object Modules.Variable_LetShadowing.f::__js_call__(object[])
+		IL_0011: ldftn object Modules.Variable_LetShadowing/f::__js_call__(object[])
 		IL_0017: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_001c: ldc.i4.1
 		IL_001d: newarr [System.Runtime]System.Object
@@ -142,7 +144,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20eb
+		// Method begins at RVA 0x20e8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

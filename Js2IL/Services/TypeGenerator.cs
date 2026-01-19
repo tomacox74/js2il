@@ -20,20 +20,34 @@ namespace Js2IL.Services
         private readonly MetadataBuilder _metadataBuilder;
         private readonly BaseClassLibraryReferences _bclReferences;
         private readonly MethodBodyStreamEncoder _methodBodyStream;
+        private readonly ModuleTypeMetadataRegistry _moduleTypeRegistry;
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes;
         private readonly Dictionary<string, List<FieldDefinitionHandle>> _scopeFields;
         private readonly Dictionary<string, MethodDefinitionHandle> _scopeConstructors;
         private readonly VariableRegistry _variableRegistry;
+        private readonly int _deferredCtorStartRow;
+        private int _nextDeferredCtorRow;
+        private readonly List<(string ScopeKey, string Namespace, string TypeName, bool IsAsync, bool IsGenerator, MethodDefinitionHandle ExpectedCtor)> _deferredCtorPlan;
 
-        public TypeGenerator(MetadataBuilder metadataBuilder, BaseClassLibraryReferences bclReferences, MethodBodyStreamEncoder methodBodyStream, VariableRegistry variableRegistry)
+        public TypeGenerator(
+            MetadataBuilder metadataBuilder,
+            BaseClassLibraryReferences bclReferences,
+            MethodBodyStreamEncoder methodBodyStream,
+            ModuleTypeMetadataRegistry moduleTypeRegistry,
+            VariableRegistry variableRegistry,
+            int deferredCtorStartRow)
         {
             _metadataBuilder = metadataBuilder;
             _bclReferences = bclReferences;
             _methodBodyStream = methodBodyStream;
+            _moduleTypeRegistry = moduleTypeRegistry;
             _variableRegistry = variableRegistry;
             _scopeTypes = new Dictionary<string, TypeDefinitionHandle>();
             _scopeFields = new Dictionary<string, List<FieldDefinitionHandle>>();
             _scopeConstructors = new Dictionary<string, MethodDefinitionHandle>();
+            _deferredCtorStartRow = deferredCtorStartRow;
+            _nextDeferredCtorRow = deferredCtorStartRow;
+            _deferredCtorPlan = new List<(string, string, string, bool, bool, MethodDefinitionHandle)>();
         }
 
         /// <summary>
@@ -51,7 +65,39 @@ namespace Js2IL.Services
             PopulateVariableRegistry(symbolTable.Root);
         }
 
+        /// <summary>
+        /// Emits all deferred scope constructors in the exact order scope TypeDefs were created.
+        /// This must be called after all callable method bodies are emitted, and before module init / entrypoint
+        /// methods are emitted, so TypeDef.MethodList ordering remains valid.
+        /// </summary>
+        public void EmitDeferredScopeConstructors()
+        {
+            foreach (var item in _deferredCtorPlan)
+            {
+                var tb = new TypeBuilder(_metadataBuilder, item.Namespace, item.TypeName);
+                var actual = EmitScopeConstructor(tb, item.IsAsync, item.IsGenerator);
+                if (actual != item.ExpectedCtor)
+                {
+                    throw new InvalidOperationException(
+                        $"Deferred scope ctor MethodDef token mismatch for scope '{item.ScopeKey}'. Expected 0x{MetadataTokens.GetToken(item.ExpectedCtor):X8}, got 0x{MetadataTokens.GetToken(actual):X8}.");
+                }
+            }
+        }
+
         private static string GetRegistryScopeName(Scope scope) => ScopeNaming.GetRegistryScopeName(scope);
+
+        private static string GetClrTypeNameForScope(Scope scope)
+        {
+            // Function declarations have an associated callable owner type (Modules.<Module>.<FunctionName>).
+            // To keep the IL readable and avoid awkward names like Scope/<FunctionName>, we name the
+            // function's scope type "Scope" and later nest it under the callable owner type.
+            if (scope.Kind == ScopeKind.Function && scope.AstNode is Acornima.Ast.FunctionDeclaration)
+            {
+                return "Scope";
+            }
+
+            return scope.Name;
+        }
 
 
     private void CreateTypeFields(Scope scope, TypeBuilder typeBuilder)
@@ -186,18 +232,29 @@ namespace Js2IL.Services
         /// <summary>
         /// Phase 2: Recursively creates type definitions depth-first.
         ///
-        /// NOTE: Although it is conceptually nice to nest the global scope type under the module type,
-        /// some CLR loaders are sensitive to certain nesting layouts when the enclosing TypeDef is emitted
-        /// later in the metadata stream. As a pragmatic workaround we emit the global scope as a top-level
-        /// type under namespace "Modules.<ModuleName>" with name "Scope".
+        /// NOTE: The global scope type is emitted as a nested type under the module type (Modules.<ModuleName>).
+        /// This keeps scope layout consistent with other nested scope types.
         /// </summary>
         private void CreateAllTypes(Scope scope, string typeName)
         {
             // Create the root scope type.
             var isGlobalScope = scope.Kind == ScopeKind.Global;
             var rootTypeName = isGlobalScope ? "Scope" : typeName;
-            var rootNamespace = isGlobalScope ? $"Modules.{typeName}" : "Scopes";
-            var parentType = CreateScopeType(scope, null, rootTypeName, rootNamespace, isNestedType: false);
+
+            // Global scope is nested under module type: Modules.<ModuleName>.Scope
+            TypeDefinitionHandle? enclosingModuleType = null;
+            if (isGlobalScope)
+            {
+                if (!_moduleTypeRegistry.TryGet(typeName, out var moduleTypeHandle) || moduleTypeHandle.IsNil)
+                {
+                    throw new InvalidOperationException(
+                        $"Expected module type handle to be registered for module '{typeName}', but none was found.");
+                }
+                enclosingModuleType = moduleTypeHandle;
+            }
+
+            var rootNamespace = isGlobalScope ? "" : "Scopes";
+            var parentType = CreateScopeType(scope, enclosingModuleType, rootTypeName, rootNamespace, isNestedType: isGlobalScope);
             
             // Now create child types as nested types (skip duplicates by name under the same parent)
             var seenChildNames = new HashSet<string>();
@@ -208,7 +265,7 @@ namespace Js2IL.Services
                     // Duplicate child scope name under the same parent (e.g., repeated traversal). Skip.
                     continue;
                 }
-                CreateAllTypesNested(childScope, childScope.Name, parentType);
+                CreateAllTypesNested(childScope, GetClrTypeNameForScope(childScope), parentType);
             }
         }
 
@@ -228,7 +285,7 @@ namespace Js2IL.Services
                 {
                     continue;
                 }
-                CreateAllTypesNested(childScope, childScope.Name, currentType);
+                CreateAllTypesNested(childScope, GetClrTypeNameForScope(childScope), currentType);
             }
 
             return currentType;
@@ -298,8 +355,10 @@ namespace Js2IL.Services
             // Create fields via TypeBuilder so it can track the first field
             CreateTypeFields(scope, tb);
 
-            // Create the constructor for this type via TypeBuilder so it can track the first method
-            var ctorHandle = CreateScopeConstructor(tb, scope);
+            // Defer constructor MethodDef emission until after callable methods are emitted.
+            // We preassign a stable future MethodDef handle so TypeDef.MethodList points at the ctor,
+            // and later emit the MethodDef rows in this exact type-creation order.
+            var ctorHandle = MetadataTokens.MethodDefinitionHandle(_nextDeferredCtorRow++);
 
             // Create the type definition
             var baseType = scope.IsAsync
@@ -308,7 +367,11 @@ namespace Js2IL.Services
                     ? _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.GeneratorScope))
                     : _bclReferences.ObjectType;
 
-            var typeHandle = tb.AddTypeDefinition(typeAttributes, baseType);
+            var typeHandle = tb.AddTypeDefinition(
+                typeAttributes,
+                baseType,
+                firstFieldOverride: null,
+                firstMethodOverride: ctorHandle);
 
             // NOTE: We intentionally do NOT emit NestedClass table rows here.
             // Nesting relationships are established later in a single pass (sorted by nested type token)
@@ -321,6 +384,8 @@ namespace Js2IL.Services
             // Register the scope type immediately so even scopes without variables can be instantiated later.
             _variableRegistry.EnsureScopeType(scopeKey, typeHandle);
 
+            _deferredCtorPlan.Add((scopeKey, actualNamespace, typeName, scope.IsAsync, scope.IsGenerator, ctorHandle));
+
             return typeHandle;
         }
 
@@ -328,7 +393,7 @@ namespace Js2IL.Services
         /// <summary>
         /// Creates a constructor method definition for a scope type.
         /// </summary>
-    private MethodDefinitionHandle CreateScopeConstructor(TypeBuilder tb, Scope scope)
+        private MethodDefinitionHandle EmitScopeConstructor(TypeBuilder tb, bool isAsync, bool isGenerator)
         {
             // Create constructor method signature
             var ctorSig = new BlobBuilder();
@@ -337,19 +402,16 @@ namespace Js2IL.Services
                 .Parameters(0, returnType => returnType.Void(), parameters => { });
             var ctorSigHandle = _metadataBuilder.GetOrAddBlob(ctorSig);
 
-            // Generate IL body for constructor: ldarg.0, call Object::.ctor(), nop, ret
+            // Generate IL body for constructor: ldarg.0, call base::.ctor(), nop, ret
             var ilBuilder = new BlobBuilder();
             var encoder = new InstructionEncoder(ilBuilder);
-            
-            // ldarg.0 - load 'this' onto the stack
             encoder.OpCode(ILOpCode.Ldarg_0);
-            
-            // call base constructor
-            if (scope.IsAsync)
+
+            if (isAsync)
             {
                 encoder.Call(_bclReferences.AsyncScope_Ctor_Ref);
             }
-            else if (scope.IsGenerator)
+            else if (isGenerator)
             {
                 encoder.Call(_bclReferences.GeneratorScope_Ctor_Ref);
             }
@@ -357,28 +419,20 @@ namespace Js2IL.Services
             {
                 encoder.Call(_bclReferences.Object_Ctor_Ref);
             }
-            
-            // nop - no operation (matches C# compiler output)
+
             encoder.OpCode(ILOpCode.Nop);
-            
-            // ret - return from constructor
             encoder.OpCode(ILOpCode.Ret);
 
-            // Add the method body to the stream - pass the encoder, not the builder
             var bodyOffset = _methodBodyStream.AddMethodBody(
                 encoder,
                 localVariablesSignature: default,
                 attributes: MethodBodyAttributes.None);
 
-            // Create the constructor method definition with IL body
-            var ctorHandle = tb.AddMethodDefinition(
+            return tb.AddMethodDefinition(
                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
                 ".ctor",
                 ctorSigHandle,
-                bodyOffset // IL body offset in the stream
-            );
-
-            return ctorHandle;
+                bodyOffset);
         }
 
         /// <summary>

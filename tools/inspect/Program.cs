@@ -7,11 +7,39 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
+using System.Runtime.Loader;
 
 class Program
 {
     static int Main(string[] args)
     {
+        if (args.Length >= 2 && (string.Equals(args[0], "--load-alc", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(args[0], "--load-default-alc", StringComparison.OrdinalIgnoreCase)))
+        {
+            return LoadWithDefaultAlc(args[1]);
+        }
+
+        if (args.Length >= 2 && string.Equals(args[0], "--entry", StringComparison.OrdinalIgnoreCase))
+        {
+            return DumpEntryPoint(args[1]);
+        }
+
+        if (args.Length >= 2 && string.Equals(args[0], "--load-stream", StringComparison.OrdinalIgnoreCase))
+        {
+            return LoadFromStreamInIsolatedAlc(args[1]);
+        }
+
+        if (args.Length >= 2 && string.Equals(args[0], "--validate-nested", StringComparison.OrdinalIgnoreCase))
+        {
+            return ValidateNestedMetadata(args[1]);
+        }
+
+        if (args.Length >= 2 && (string.Equals(args[0], "--types", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(args[0], "--typedefs", StringComparison.OrdinalIgnoreCase)))
+        {
+            return ListTypeDefinitions(args[1]);
+        }
+
         if (args.Length >= 1 && (string.Equals(args[0], "--metadata-members", StringComparison.OrdinalIgnoreCase) ||
                                  string.Equals(args[0], "--members", StringComparison.OrdinalIgnoreCase)))
         {
@@ -294,6 +322,202 @@ class Program
             Console.WriteLine("Inspector exception: " + ex);
             return 1;
         }
+    }
+
+    private static int LoadWithDefaultAlc(string assemblyPath)
+    {
+        try
+        {
+            assemblyPath = Path.GetFullPath(assemblyPath);
+            Console.WriteLine("Loading via AssemblyLoadContext.Default.LoadFromAssemblyPath");
+            Console.WriteLine("Path: " + assemblyPath);
+
+            var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+            Console.WriteLine("Loaded: " + asm.FullName);
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Load failed: " + ex.GetType().FullName);
+            Console.WriteLine(ex.Message);
+            return 1;
+        }
+    }
+
+    private static int DumpEntryPoint(string assemblyPath)
+    {
+        try
+        {
+            assemblyPath = Path.GetFullPath(assemblyPath);
+            Console.WriteLine("Loading to inspect EntryPoint");
+            Console.WriteLine("Path: " + assemblyPath);
+
+            var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+            var ep = asm.EntryPoint;
+            if (ep == null)
+            {
+                Console.WriteLine("EntryPoint: <null>");
+                return 2;
+            }
+
+            Console.WriteLine("EntryPoint: " + ep);
+            Console.WriteLine("DeclaringType: " + (ep.DeclaringType?.FullName ?? "<null>"));
+            Console.WriteLine("IsStatic: " + ep.IsStatic);
+            Console.WriteLine("IsPublic: " + ep.IsPublic);
+            Console.WriteLine("CallingConvention: " + ep.CallingConvention);
+            Console.WriteLine("ReturnType: " + ep.ReturnType.FullName);
+            var parms = ep.GetParameters();
+            Console.WriteLine("ParamCount: " + parms.Length);
+            for (int i = 0; i < parms.Length; i++)
+            {
+                Console.WriteLine($"  [{i}] {parms[i].ParameterType.FullName} {parms[i].Name}");
+            }
+
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Failed: " + ex.GetType().FullName);
+            Console.WriteLine(ex.Message);
+            return 1;
+        }
+    }
+
+    private static int LoadFromStreamInIsolatedAlc(string assemblyPath)
+    {
+        try
+        {
+            assemblyPath = Path.GetFullPath(assemblyPath);
+            Console.WriteLine("Loading via isolated collectible ALC + LoadFromStream");
+            Console.WriteLine("Path: " + assemblyPath);
+
+            var dir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
+            var alc = new AssemblyLoadContext("inspect-isolated", isCollectible: true);
+            try
+            {
+                using var stream = File.OpenRead(assemblyPath);
+                var asm = alc.LoadFromStream(stream);
+                Console.WriteLine("Loaded: " + asm.FullName);
+                return 0;
+            }
+            finally
+            {
+                alc.Unload();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Load failed: " + ex.GetType().FullName);
+            Console.WriteLine(ex.Message);
+            return 1;
+        }
+    }
+
+    private static int ValidateNestedMetadata(string assemblyPath)
+    {
+        assemblyPath = Path.GetFullPath(assemblyPath);
+        Console.WriteLine("Validating nested metadata for: " + assemblyPath);
+
+        using var stream = File.OpenRead(assemblyPath);
+        using var peReader = new PEReader(stream);
+        if (!peReader.HasMetadata)
+        {
+            Console.WriteLine("No metadata found.");
+            return 2;
+        }
+
+        var reader = peReader.GetMetadataReader();
+
+        int nestedVisibilityWithoutEnclosing = 0;
+        int declaringTypeButNonNestedVisibility = 0;
+        int resolvedDeclaringTypes = 0;
+
+        foreach (var typeHandle in reader.TypeDefinitions)
+        {
+            var typeDef = reader.GetTypeDefinition(typeHandle);
+            var attrs = typeDef.Attributes;
+
+            // Any of the Nested* visibilities means the type MUST have an enclosing type via NestedClass table.
+            var visibility = attrs & TypeAttributes.VisibilityMask;
+            var isNestedVisibility = visibility is TypeAttributes.NestedPublic or TypeAttributes.NestedPrivate or TypeAttributes.NestedFamily or
+                                    TypeAttributes.NestedAssembly or TypeAttributes.NestedFamANDAssem or TypeAttributes.NestedFamORAssem;
+
+            var declaringType = typeDef.GetDeclaringType();
+            var hasDeclaringType = !declaringType.IsNil;
+
+            if (isNestedVisibility)
+            {
+                if (!hasDeclaringType)
+                {
+                    nestedVisibilityWithoutEnclosing++;
+                    Console.WriteLine($"ERROR: TypeDef {MetadataTokens.GetToken(typeHandle):X8} has nested visibility {visibility} but GetDeclaringType() is nil.");
+                }
+                else
+                {
+                    resolvedDeclaringTypes++;
+                }
+            }
+
+            if (!isNestedVisibility && hasDeclaringType)
+            {
+                declaringTypeButNonNestedVisibility++;
+                Console.WriteLine($"ERROR: TypeDef {MetadataTokens.GetToken(typeHandle):X8} has declaring type (0x{MetadataTokens.GetToken(declaringType):X8}) but visibility is {visibility}.");
+            }
+        }
+
+        Console.WriteLine($"Nested visibility types with resolved declaring type: {resolvedDeclaringTypes}");
+        Console.WriteLine($"Types with nested visibility but missing declaring type: {nestedVisibilityWithoutEnclosing}");
+        Console.WriteLine($"Types with declaring type but non-nested visibility: {declaringTypeButNonNestedVisibility}");
+
+        return (nestedVisibilityWithoutEnclosing == 0 && declaringTypeButNonNestedVisibility == 0) ? 0 : 3;
+    }
+
+    private static int ListTypeDefinitions(string assemblyPath)
+    {
+        assemblyPath = Path.GetFullPath(assemblyPath);
+        Console.WriteLine("Listing TypeDefs for: " + assemblyPath);
+
+        using var stream = File.OpenRead(assemblyPath);
+        using var peReader = new PEReader(stream);
+        if (!peReader.HasMetadata)
+        {
+            Console.WriteLine("PE file has no metadata.");
+            return 2;
+        }
+
+        var reader = peReader.GetMetadataReader();
+
+        static string GetTypeName(MetadataReader r, TypeDefinitionHandle h)
+        {
+            if (h.IsNil) return "<nil>";
+            var td = r.GetTypeDefinition(h);
+            var ns = r.GetString(td.Namespace);
+            var name = r.GetString(td.Name);
+            return string.IsNullOrEmpty(ns) ? name : ns + "." + name;
+        }
+
+        foreach (var tdHandle in reader.TypeDefinitions)
+        {
+            var td = reader.GetTypeDefinition(tdHandle);
+            var token = MetadataTokens.GetToken(tdHandle);
+            var flags = (uint)td.Attributes;
+            var vis = td.Attributes & TypeAttributes.VisibilityMask;
+            var declaring = td.GetDeclaringType();
+            var declaringToken = declaring.IsNil ? 0u : (uint)MetadataTokens.GetToken(declaring);
+
+            var firstField = td.GetFields().FirstOrDefault();
+            var firstMethod = td.GetMethods().FirstOrDefault();
+
+            var firstFieldToken = firstField.IsNil ? 0u : (uint)MetadataTokens.GetToken(firstField);
+            var firstMethodToken = firstMethod.IsNil ? 0u : (uint)MetadataTokens.GetToken(firstMethod);
+
+            Console.WriteLine(
+                $"0x{token:X8} flags=0x{flags:X8} vis={vis,-18} name='{reader.GetString(td.Name)}' ns='{reader.GetString(td.Namespace)}' " +
+                $"declaring=0x{declaringToken:X8} ({(declaring.IsNil ? "<nil>" : GetTypeName(reader, declaring))}) " +
+                $"firstField=0x{firstFieldToken:X8} firstMethod=0x{firstMethodToken:X8}");
+        }
+
+        return 0;
     }
 
     private static int DumpNestedClassTable(string assemblyPath)

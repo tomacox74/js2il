@@ -92,6 +92,13 @@ namespace Js2IL.Services.ILGenerators
             var registryClassName = GetRegistryClassName(classScope);
             var declaringScopeName = GetClassDeclaringScopeName(classScope);
 
+            // Idempotency: classes may be predeclared in an earlier pass to stabilize TypeDef ordering.
+            // If already declared, skip emitting a duplicate TypeDef/fields.
+            if (_classRegistry.TryGet(registryClassName, out var existingTypeDef) && !existingTypeDef.IsNil)
+            {
+                return existingTypeDef;
+            }
+
             var ns = classScope.DotNetNamespace ?? "Classes";
             var name = classScope.DotNetTypeName ?? classScope.Name;
             var tb = new TypeBuilder(_metadata, ns, name);

@@ -3,22 +3,44 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Function_GlobalFunctionWithArrayIteration.Scope
+.class public auto ansi beforefieldinit Modules.Function_GlobalFunctionWithArrayIteration
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit processArray
+	.class nested public auto ansi abstract sealed beforefieldinit processArray
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Block_L3C41
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Block_L3C41
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2187
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L3C41::.ctor
+
+			} // end of class Block_L3C41
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x217e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,16 +49,84 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L3C41::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class Block_L3C41
+		} // end of class Scope
 
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object arr
+			) cil managed 
+		{
+			// Method begins at RVA 0x2108
+			// Header size: 12
+			// Code size: 97 (0x61)
+			.maxstack 32
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[1] float64,
+				[2] float64,
+				[3] object
+			)
+
+			IL_0000: ldc.i4.0
+			IL_0001: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0006: stloc.0
+			IL_0007: ldc.r8 0.0
+			IL_0010: stloc.1
+			// loop start (head: IL_0011)
+				IL_0011: ldloc.1
+				IL_0012: ldarg.1
+				IL_0013: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+				IL_0018: clt
+				IL_001a: brfalse IL_005f
+
+				IL_001f: ldarg.1
+				IL_0020: ldloc.1
+				IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+				IL_0026: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_002b: ldc.r8 2
+				IL_0034: mul
+				IL_0035: stloc.2
+				IL_0036: ldloc.2
+				IL_0037: box [System.Runtime]System.Double
+				IL_003c: stloc.3
+				IL_003d: ldloc.0
+				IL_003e: ldc.i4.1
+				IL_003f: newarr [System.Runtime]System.Object
+				IL_0044: dup
+				IL_0045: ldc.i4.0
+				IL_0046: ldloc.3
+				IL_0047: stelem.ref
+				IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+				IL_004d: pop
+				IL_004e: ldloc.1
+				IL_004f: ldc.r8 1
+				IL_0058: add
+				IL_0059: stloc.1
+				IL_005a: br IL_0011
+			// end loop
+
+			IL_005f: ldloc.0
+			IL_0060: ret
+		} // end of method processArray::__js_call__
+
+	} // end of class processArray
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object processArray
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2175
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -45,99 +135,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method processArray::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class processArray
+	} // end of class Scope
 
 
-	// Fields
-	.field public object processArray
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Function_GlobalFunctionWithArrayIteration.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.Function_GlobalFunctionWithArrayIteration.processArray
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object arr
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 97 (0x61)
-		.maxstack 32
-		.locals init (
-			[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[1] float64,
-			[2] float64,
-			[3] object
-		)
-
-		IL_0000: ldc.i4.0
-		IL_0001: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0006: stloc.0
-		IL_0007: ldc.r8 0.0
-		IL_0010: stloc.1
-		// loop start (head: IL_0011)
-			IL_0011: ldloc.1
-			IL_0012: ldarg.1
-			IL_0013: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0018: clt
-			IL_001a: brfalse IL_005f
-
-			IL_001f: ldarg.1
-			IL_0020: ldloc.1
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_0026: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_002b: ldc.r8 2
-			IL_0034: mul
-			IL_0035: stloc.2
-			IL_0036: ldloc.2
-			IL_0037: box [System.Runtime]System.Double
-			IL_003c: stloc.3
-			IL_003d: ldloc.0
-			IL_003e: ldc.i4.1
-			IL_003f: newarr [System.Runtime]System.Object
-			IL_0044: dup
-			IL_0045: ldc.i4.0
-			IL_0046: ldloc.3
-			IL_0047: stelem.ref
-			IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
-			IL_004d: pop
-			IL_004e: ldloc.1
-			IL_004f: ldc.r8 1
-			IL_0058: add
-			IL_0059: stloc.1
-			IL_005a: br IL_0011
-		// end loop
-
-		IL_005f: ldloc.0
-		IL_0060: ret
-	} // end of method processArray::__js_call__
-
-} // end of class Modules.Function_GlobalFunctionWithArrayIteration.processArray
-
-.class public auto ansi beforefieldinit Modules.Function_GlobalFunctionWithArrayIteration
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -148,18 +150,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20dc
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 170 (0xaa)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Function_GlobalFunctionWithArrayIteration.Scope,
+			[0] class Modules.Function_GlobalFunctionWithArrayIteration/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] object,
 			[3] object
 		)
 
-		IL_0000: newobj instance void Modules.Function_GlobalFunctionWithArrayIteration.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Function_GlobalFunctionWithArrayIteration/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.4
 		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
@@ -181,7 +183,7 @@
 		IL_0057: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_005c: stloc.1
 		IL_005d: ldnull
-		IL_005e: ldftn object Modules.Function_GlobalFunctionWithArrayIteration.processArray::__js_call__(object[], object)
+		IL_005e: ldftn object Modules.Function_GlobalFunctionWithArrayIteration/processArray::__js_call__(object[], object)
 		IL_0064: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0069: ldc.i4.1
 		IL_006a: newarr [System.Runtime]System.Object
@@ -223,7 +225,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2192
+		// Method begins at RVA 0x2190
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

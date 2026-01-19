@@ -61,6 +61,7 @@ public static class CompilerServices
 
         // Collect nested type relationships and emit NestedClass rows in sorted order at the end.
         services.AddSingleton<Services.NestedTypeRelationshipRegistry>();
+            services.AddSingleton<Services.ModuleTypeMetadataRegistry>();
 
         // Function type metadata (function declarations become nested types under Modules.<ModuleName>)
         services.AddSingleton<Services.FunctionTypeMetadataRegistry>();

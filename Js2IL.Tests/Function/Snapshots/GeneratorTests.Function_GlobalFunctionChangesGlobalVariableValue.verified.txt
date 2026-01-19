@@ -3,18 +3,151 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope
+.class public auto ansi beforefieldinit Modules.Function_GlobalFunctionChangesGlobalVariableValue
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit changeGlobalValues
+	.class nested public auto ansi abstract sealed beforefieldinit changeGlobalValues
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21e1
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x2108
+			// Header size: 12
+			// Code size: 196 (0xc4)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope
+			IL_0008: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::counter
+			IL_000d: stloc.0
+			IL_000e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0013: ldc.i4.4
+			IL_0014: newarr [System.Runtime]System.Object
+			IL_0019: dup
+			IL_001a: ldc.i4.0
+			IL_001b: ldstr "Before change - counter:"
+			IL_0020: stelem.ref
+			IL_0021: dup
+			IL_0022: ldc.i4.1
+			IL_0023: ldloc.0
+			IL_0024: stelem.ref
+			IL_0025: dup
+			IL_0026: ldc.i4.2
+			IL_0027: ldstr "message:"
+			IL_002c: stelem.ref
+			IL_002d: dup
+			IL_002e: ldc.i4.3
+			IL_002f: ldarg.0
+			IL_0030: ldc.i4.0
+			IL_0031: ldelem.ref
+			IL_0032: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope
+			IL_0037: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::message
+			IL_003c: stelem.ref
+			IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0042: pop
+			IL_0043: ldarg.0
+			IL_0044: ldc.i4.0
+			IL_0045: ldelem.ref
+			IL_0046: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope
+			IL_004b: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::counter
+			IL_0050: ldc.r8 10
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_005e: stloc.1
+			IL_005f: ldarg.0
+			IL_0060: ldc.i4.0
+			IL_0061: ldelem.ref
+			IL_0062: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope
+			IL_0067: ldloc.1
+			IL_0068: stfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::counter
+			IL_006d: ldarg.0
+			IL_006e: ldc.i4.0
+			IL_006f: ldelem.ref
+			IL_0070: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope
+			IL_0075: ldstr "Modified message"
+			IL_007a: stfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::message
+			IL_007f: ldarg.0
+			IL_0080: ldc.i4.0
+			IL_0081: ldelem.ref
+			IL_0082: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope
+			IL_0087: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::counter
+			IL_008c: stloc.0
+			IL_008d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0092: ldc.i4.4
+			IL_0093: newarr [System.Runtime]System.Object
+			IL_0098: dup
+			IL_0099: ldc.i4.0
+			IL_009a: ldstr "After change - counter:"
+			IL_009f: stelem.ref
+			IL_00a0: dup
+			IL_00a1: ldc.i4.1
+			IL_00a2: ldloc.0
+			IL_00a3: stelem.ref
+			IL_00a4: dup
+			IL_00a5: ldc.i4.2
+			IL_00a6: ldstr "message:"
+			IL_00ab: stelem.ref
+			IL_00ac: dup
+			IL_00ad: ldc.i4.3
+			IL_00ae: ldarg.0
+			IL_00af: ldc.i4.0
+			IL_00b0: ldelem.ref
+			IL_00b1: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope
+			IL_00b6: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::message
+			IL_00bb: stelem.ref
+			IL_00bc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00c1: pop
+			IL_00c2: ldnull
+			IL_00c3: ret
+		} // end of method changeGlobalValues::__js_call__
+
+	} // end of class changeGlobalValues
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object counter
+		.field public object message
+		.field public object changeGlobalValues
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x21d8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,142 +156,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method changeGlobalValues::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class changeGlobalValues
+	} // end of class Scope
 
 
-	// Fields
-	.field public object counter
-	.field public object message
-	.field public object changeGlobalValues
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.Function_GlobalFunctionChangesGlobalVariableValue.changeGlobalValues
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 196 (0xc4)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.0
-		IL_0002: ldelem.ref
-		IL_0003: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope
-		IL_0008: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::counter
-		IL_000d: stloc.0
-		IL_000e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0013: ldc.i4.4
-		IL_0014: newarr [System.Runtime]System.Object
-		IL_0019: dup
-		IL_001a: ldc.i4.0
-		IL_001b: ldstr "Before change - counter:"
-		IL_0020: stelem.ref
-		IL_0021: dup
-		IL_0022: ldc.i4.1
-		IL_0023: ldloc.0
-		IL_0024: stelem.ref
-		IL_0025: dup
-		IL_0026: ldc.i4.2
-		IL_0027: ldstr "message:"
-		IL_002c: stelem.ref
-		IL_002d: dup
-		IL_002e: ldc.i4.3
-		IL_002f: ldarg.0
-		IL_0030: ldc.i4.0
-		IL_0031: ldelem.ref
-		IL_0032: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope
-		IL_0037: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::message
-		IL_003c: stelem.ref
-		IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0042: pop
-		IL_0043: ldarg.0
-		IL_0044: ldc.i4.0
-		IL_0045: ldelem.ref
-		IL_0046: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope
-		IL_004b: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::counter
-		IL_0050: ldc.r8 10
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_005e: stloc.1
-		IL_005f: ldarg.0
-		IL_0060: ldc.i4.0
-		IL_0061: ldelem.ref
-		IL_0062: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope
-		IL_0067: ldloc.1
-		IL_0068: stfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::counter
-		IL_006d: ldarg.0
-		IL_006e: ldc.i4.0
-		IL_006f: ldelem.ref
-		IL_0070: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope
-		IL_0075: ldstr "Modified message"
-		IL_007a: stfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::message
-		IL_007f: ldarg.0
-		IL_0080: ldc.i4.0
-		IL_0081: ldelem.ref
-		IL_0082: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope
-		IL_0087: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::counter
-		IL_008c: stloc.0
-		IL_008d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0092: ldc.i4.4
-		IL_0093: newarr [System.Runtime]System.Object
-		IL_0098: dup
-		IL_0099: ldc.i4.0
-		IL_009a: ldstr "After change - counter:"
-		IL_009f: stelem.ref
-		IL_00a0: dup
-		IL_00a1: ldc.i4.1
-		IL_00a2: ldloc.0
-		IL_00a3: stelem.ref
-		IL_00a4: dup
-		IL_00a5: ldc.i4.2
-		IL_00a6: ldstr "message:"
-		IL_00ab: stelem.ref
-		IL_00ac: dup
-		IL_00ad: ldc.i4.3
-		IL_00ae: ldarg.0
-		IL_00af: ldc.i4.0
-		IL_00b0: ldelem.ref
-		IL_00b1: castclass Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope
-		IL_00b6: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::message
-		IL_00bb: stelem.ref
-		IL_00bc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c1: pop
-		IL_00c2: ldnull
-		IL_00c3: ret
-	} // end of method changeGlobalValues::__js_call__
-
-} // end of class Modules.Function_GlobalFunctionChangesGlobalVariableValue.changeGlobalValues
-
-.class public auto ansi beforefieldinit Modules.Function_GlobalFunctionChangesGlobalVariableValue
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -169,26 +171,26 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2134
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 172 (0xac)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope,
+			[0] class Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldc.r8 0.0
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::counter
+		IL_0015: stfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::counter
 		IL_001a: ldloc.0
 		IL_001b: ldstr "Initial message"
-		IL_0020: stfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::message
+		IL_0020: stfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::message
 		IL_0025: ldloc.0
-		IL_0026: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::counter
+		IL_0026: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::counter
 		IL_002b: stloc.1
 		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0031: ldc.i4.4
@@ -208,12 +210,12 @@
 		IL_004b: dup
 		IL_004c: ldc.i4.3
 		IL_004d: ldloc.0
-		IL_004e: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::message
+		IL_004e: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::message
 		IL_0053: stelem.ref
 		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0059: pop
 		IL_005a: ldnull
-		IL_005b: ldftn object Modules.Function_GlobalFunctionChangesGlobalVariableValue.changeGlobalValues::__js_call__(object[])
+		IL_005b: ldftn object Modules.Function_GlobalFunctionChangesGlobalVariableValue/changeGlobalValues::__js_call__(object[])
 		IL_0061: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0066: ldc.i4.1
 		IL_0067: newarr [System.Runtime]System.Object
@@ -224,7 +226,7 @@
 		IL_0070: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_0075: pop
 		IL_0076: ldloc.0
-		IL_0077: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::counter
+		IL_0077: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::counter
 		IL_007c: stloc.1
 		IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0082: ldc.i4.4
@@ -244,7 +246,7 @@
 		IL_009c: dup
 		IL_009d: ldc.i4.3
 		IL_009e: ldloc.0
-		IL_009f: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue.Scope::message
+		IL_009f: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::message
 		IL_00a4: stelem.ref
 		IL_00a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00aa: pop
@@ -260,7 +262,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ec
+		// Method begins at RVA 0x21ea
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

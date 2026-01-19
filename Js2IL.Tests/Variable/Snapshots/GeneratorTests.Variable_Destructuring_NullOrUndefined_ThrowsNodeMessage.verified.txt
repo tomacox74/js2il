@@ -3,22 +3,64 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope
+.class public auto ansi beforefieldinit Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit logError
+	.class nested public auto ansi abstract sealed beforefieldinit logError
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Block_L2C6
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Block_L2C6
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x236b
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L2C6::.ctor
+
+			} // end of class Block_L2C6
+
+			.class nested public auto ansi beforefieldinit Block_L4C14
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2374
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L4C14::.ctor
+
+			} // end of class Block_L4C14
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x2362
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,56 +69,203 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L2C6::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class Block_L2C6
-
-		.class nested public auto ansi beforefieldinit Block_L4C14
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x206b
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Block_L4C14::.ctor
-
-		} // end of class Block_L4C14
+		} // end of class Scope
 
 
 		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object fn
+			) cil managed 
 		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Method begins at RVA 0x2170
+			// Header size: 12
+			// Code size: 151 (0x97)
+			.maxstack 32
+			.locals init (
+				[0] class [System.Runtime]System.Exception,
+				[1] object,
+				[2] object,
+				[3] object[],
+				[4] object
+			)
 
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method logError::.ctor
+			.try
+			{
+				IL_0000: ldc.i4.0
+				IL_0001: newarr [System.Runtime]System.Object
+				IL_0006: stloc.3
+				IL_0007: ldarg.1
+				IL_0008: ldc.i4.1
+				IL_0009: newarr [System.Runtime]System.Object
+				IL_000e: dup
+				IL_000f: ldc.i4.0
+				IL_0010: ldarg.0
+				IL_0011: ldc.i4.0
+				IL_0012: ldelem.ref
+				IL_0013: stelem.ref
+				IL_0014: ldloc.3
+				IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+				IL_001a: pop
+				IL_001b: leave IL_0095
+			} // end .try
+			catch [System.Runtime]System.Exception
+			{
+				IL_0020: stloc.0
+				IL_0021: ldloc.0
+				IL_0022: dup
+				IL_0023: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0028: dup
+				IL_0029: brtrue IL_003f
+
+				IL_002e: pop
+				IL_002f: dup
+				IL_0030: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0035: dup
+				IL_0036: brtrue IL_004b
+
+				IL_003b: pop
+				IL_003c: pop
+				IL_003d: rethrow
+
+				IL_003f: pop
+				IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0045: stloc.1
+				IL_0046: br IL_004d
+
+				IL_004b: pop
+				IL_004c: stloc.1
+
+				IL_004d: ldloc.1
+				IL_004e: stloc.2
+				IL_004f: ldloc.2
+				IL_0050: ldstr "name"
+				IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_005a: ldstr ": "
+				IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0064: stloc.s 4
+				IL_0066: ldloc.s 4
+				IL_0068: ldloc.2
+				IL_0069: ldstr "message"
+				IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0078: stloc.s 4
+				IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_007f: ldc.i4.1
+				IL_0080: newarr [System.Runtime]System.Object
+				IL_0085: dup
+				IL_0086: ldc.i4.0
+				IL_0087: ldloc.s 4
+				IL_0089: stelem.ref
+				IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_008f: pop
+				IL_0090: leave IL_0095
+			} // end handler
+
+			IL_0095: ldnull
+			IL_0096: ret
+		} // end of method logError::__js_call__
 
 	} // end of class logError
 
-	.class nested public auto ansi beforefieldinit ArrowFunction_L10C9
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit ArrowFunction_L10C9
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x237d
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method ArrowFunction_L10C9::.ctor
+
+		} // end of class ArrowFunction_L10C9
+
+		.class nested public auto ansi beforefieldinit ArrowFunction_L16C9
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2386
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method ArrowFunction_L16C9::.ctor
+
+		} // end of class ArrowFunction_L16C9
+
+		.class nested public auto ansi beforefieldinit ArrowFunction_L22C9
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x238f
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method ArrowFunction_L22C9::.ctor
+
+		} // end of class ArrowFunction_L22C9
+
+		.class nested public auto ansi beforefieldinit ArrowFunction_L28C9
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2398
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method ArrowFunction_L28C9::.ctor
+
+		} // end of class ArrowFunction_L28C9
+
+
+		// Fields
+		.field public object logError
+		.field public object x
+		.field public object y
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2074
+			// Method begins at RVA 0x2359
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -85,192 +274,142 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_L10C9::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_L10C9
-
-	.class nested public auto ansi beforefieldinit ArrowFunction_L16C9
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x207d
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method ArrowFunction_L16C9::.ctor
-
-	} // end of class ArrowFunction_L16C9
-
-	.class nested public auto ansi beforefieldinit ArrowFunction_L22C9
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2086
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method ArrowFunction_L22C9::.ctor
-
-	} // end of class ArrowFunction_L22C9
-
-	.class nested public auto ansi beforefieldinit ArrowFunction_L28C9
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x208f
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method ArrowFunction_L28C9::.ctor
-
-	} // end of class ArrowFunction_L28C9
+	} // end of class Scope
 
 
-	// Fields
-	.field public object logError
-	.field public object x
-	.field public object y
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.logError
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object fn
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2098
+		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 151 (0x97)
+		// Code size: 273 (0x111)
 		.maxstack 32
 		.locals init (
-			[0] class [System.Runtime]System.Exception,
-			[1] object,
-			[2] object,
-			[3] object[],
-			[4] object
+			[0] class Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope,
+			[1] object
 		)
 
-		.try
-		{
-			IL_0000: ldc.i4.0
-			IL_0001: newarr [System.Runtime]System.Object
-			IL_0006: stloc.3
-			IL_0007: ldarg.1
-			IL_0008: ldc.i4.1
-			IL_0009: newarr [System.Runtime]System.Object
-			IL_000e: dup
-			IL_000f: ldc.i4.0
-			IL_0010: ldarg.0
-			IL_0011: ldc.i4.0
-			IL_0012: ldelem.ref
-			IL_0013: stelem.ref
-			IL_0014: ldloc.3
-			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_001a: pop
-			IL_001b: leave IL_0095
-		} // end .try
-		catch [System.Runtime]System.Exception
-		{
-			IL_0020: stloc.0
-			IL_0021: ldloc.0
-			IL_0022: dup
-			IL_0023: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0028: dup
-			IL_0029: brtrue IL_003f
+		IL_0000: newobj instance void Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.0
+		IL_0008: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_000d: stfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::x
+		IL_0012: ldnull
+		IL_0013: ldftn object Functions.ArrowFunction_L10C10::ArrowFunction_L10C10(object[])
+		IL_0019: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_001e: ldc.i4.1
+		IL_001f: newarr [System.Runtime]System.Object
+		IL_0024: dup
+		IL_0025: ldc.i4.0
+		IL_0026: ldloc.0
+		IL_0027: stelem.ref
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_002d: stloc.1
+		IL_002e: ldnull
+		IL_002f: ldftn object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/logError::__js_call__(object[], object)
+		IL_0035: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldloc.0
+		IL_0043: stelem.ref
+		IL_0044: ldloc.1
+		IL_0045: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_004a: pop
+		IL_004b: ldloc.0
+		IL_004c: ldnull
+		IL_004d: stfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::x
+		IL_0052: ldnull
+		IL_0053: ldftn object Functions.ArrowFunction_L16C10::ArrowFunction_L16C10(object[])
+		IL_0059: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_005e: ldc.i4.1
+		IL_005f: newarr [System.Runtime]System.Object
+		IL_0064: dup
+		IL_0065: ldc.i4.0
+		IL_0066: ldloc.0
+		IL_0067: stelem.ref
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_006d: stloc.1
+		IL_006e: ldnull
+		IL_006f: ldftn object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/logError::__js_call__(object[], object)
+		IL_0075: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_007a: ldc.i4.1
+		IL_007b: newarr [System.Runtime]System.Object
+		IL_0080: dup
+		IL_0081: ldc.i4.0
+		IL_0082: ldloc.0
+		IL_0083: stelem.ref
+		IL_0084: ldloc.1
+		IL_0085: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_008a: pop
+		IL_008b: ldloc.0
+		IL_008c: ldc.i4.0
+		IL_008d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0092: stfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::y
+		IL_0097: ldnull
+		IL_0098: ldftn object Functions.ArrowFunction_L22C10::ArrowFunction_L22C10(object[])
+		IL_009e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_00a3: ldc.i4.1
+		IL_00a4: newarr [System.Runtime]System.Object
+		IL_00a9: dup
+		IL_00aa: ldc.i4.0
+		IL_00ab: ldloc.0
+		IL_00ac: stelem.ref
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_00b2: stloc.1
+		IL_00b3: ldnull
+		IL_00b4: ldftn object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/logError::__js_call__(object[], object)
+		IL_00ba: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00bf: ldc.i4.1
+		IL_00c0: newarr [System.Runtime]System.Object
+		IL_00c5: dup
+		IL_00c6: ldc.i4.0
+		IL_00c7: ldloc.0
+		IL_00c8: stelem.ref
+		IL_00c9: ldloc.1
+		IL_00ca: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_00cf: pop
+		IL_00d0: ldloc.0
+		IL_00d1: ldnull
+		IL_00d2: stfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::y
+		IL_00d7: ldnull
+		IL_00d8: ldftn object Functions.ArrowFunction_L28C10::ArrowFunction_L28C10(object[])
+		IL_00de: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_00e3: ldc.i4.1
+		IL_00e4: newarr [System.Runtime]System.Object
+		IL_00e9: dup
+		IL_00ea: ldc.i4.0
+		IL_00eb: ldloc.0
+		IL_00ec: stelem.ref
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_00f2: stloc.1
+		IL_00f3: ldnull
+		IL_00f4: ldftn object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/logError::__js_call__(object[], object)
+		IL_00fa: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00ff: ldc.i4.1
+		IL_0100: newarr [System.Runtime]System.Object
+		IL_0105: dup
+		IL_0106: ldc.i4.0
+		IL_0107: ldloc.0
+		IL_0108: stelem.ref
+		IL_0109: ldloc.1
+		IL_010a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_010f: pop
+		IL_0110: ret
+	} // end of method Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage::__js_module_init__
 
-			IL_002e: pop
-			IL_002f: dup
-			IL_0030: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0035: dup
-			IL_0036: brtrue IL_004b
-
-			IL_003b: pop
-			IL_003c: pop
-			IL_003d: rethrow
-
-			IL_003f: pop
-			IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0045: stloc.1
-			IL_0046: br IL_004d
-
-			IL_004b: pop
-			IL_004c: stloc.1
-
-			IL_004d: ldloc.1
-			IL_004e: stloc.2
-			IL_004f: ldloc.2
-			IL_0050: ldstr "name"
-			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_005a: ldstr ": "
-			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0064: stloc.s 4
-			IL_0066: ldloc.s 4
-			IL_0068: ldloc.2
-			IL_0069: ldstr "message"
-			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0078: stloc.s 4
-			IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007f: ldc.i4.1
-			IL_0080: newarr [System.Runtime]System.Object
-			IL_0085: dup
-			IL_0086: ldc.i4.0
-			IL_0087: ldloc.s 4
-			IL_0089: stelem.ref
-			IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_008f: pop
-			IL_0090: leave IL_0095
-		} // end handler
-
-		IL_0095: ldnull
-		IL_0096: ret
-	} // end of method logError::__js_call__
-
-} // end of class Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.logError
+} // end of class Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L10C10
 	extends [System.Runtime]System.Object
@@ -281,7 +420,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x214c
+		// Method begins at RVA 0x2224
 		// Header size: 12
 		// Code size: 61 (0x3d)
 		.maxstack 32
@@ -293,8 +432,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope
-		IL_0008: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope::x
+		IL_0003: castclass Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope
+		IL_0008: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::x
 		IL_000d: stloc.1
 		IL_000e: ldloc.1
 		IL_000f: brfalse IL_001f
@@ -327,7 +466,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2198
+		// Method begins at RVA 0x2270
 		// Header size: 12
 		// Code size: 61 (0x3d)
 		.maxstack 32
@@ -339,8 +478,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope
-		IL_0008: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope::x
+		IL_0003: castclass Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope
+		IL_0008: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::x
 		IL_000d: stloc.1
 		IL_000e: ldloc.1
 		IL_000f: brfalse IL_001f
@@ -373,7 +512,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x21e4
+		// Method begins at RVA 0x22bc
 		// Header size: 12
 		// Code size: 65 (0x41)
 		.maxstack 32
@@ -385,8 +524,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope
-		IL_0008: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope::y
+		IL_0003: castclass Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope
+		IL_0008: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::y
 		IL_000d: stloc.1
 		IL_000e: ldloc.1
 		IL_000f: brfalse IL_001f
@@ -419,7 +558,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2234
+		// Method begins at RVA 0x230c
 		// Header size: 12
 		// Code size: 65 (0x41)
 		.maxstack 32
@@ -431,8 +570,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope
-		IL_0008: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope::y
+		IL_0003: castclass Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope
+		IL_0008: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::y
 		IL_000d: stloc.1
 		IL_000e: ldloc.1
 		IL_000f: brfalse IL_001f
@@ -455,141 +594,6 @@
 	} // end of method ArrowFunction_L28C10::ArrowFunction_L28C10
 
 } // end of class Functions.ArrowFunction_L28C10
-
-.class public auto ansi beforefieldinit Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void __js_module_init__ (
-			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
-			object module,
-			string __filename,
-			string __dirname
-		) cil managed 
-	{
-		// Method begins at RVA 0x2284
-		// Header size: 12
-		// Code size: 273 (0x111)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope,
-			[1] object
-		)
-
-		IL_0000: newobj instance void Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.i4.0
-		IL_0008: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_000d: stfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope::x
-		IL_0012: ldnull
-		IL_0013: ldftn object Functions.ArrowFunction_L10C10::ArrowFunction_L10C10(object[])
-		IL_0019: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_001e: ldc.i4.1
-		IL_001f: newarr [System.Runtime]System.Object
-		IL_0024: dup
-		IL_0025: ldc.i4.0
-		IL_0026: ldloc.0
-		IL_0027: stelem.ref
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_002d: stloc.1
-		IL_002e: ldnull
-		IL_002f: ldftn object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.logError::__js_call__(object[], object)
-		IL_0035: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_003a: ldc.i4.1
-		IL_003b: newarr [System.Runtime]System.Object
-		IL_0040: dup
-		IL_0041: ldc.i4.0
-		IL_0042: ldloc.0
-		IL_0043: stelem.ref
-		IL_0044: ldloc.1
-		IL_0045: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_004a: pop
-		IL_004b: ldloc.0
-		IL_004c: ldnull
-		IL_004d: stfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope::x
-		IL_0052: ldnull
-		IL_0053: ldftn object Functions.ArrowFunction_L16C10::ArrowFunction_L16C10(object[])
-		IL_0059: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_005e: ldc.i4.1
-		IL_005f: newarr [System.Runtime]System.Object
-		IL_0064: dup
-		IL_0065: ldc.i4.0
-		IL_0066: ldloc.0
-		IL_0067: stelem.ref
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_006d: stloc.1
-		IL_006e: ldnull
-		IL_006f: ldftn object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.logError::__js_call__(object[], object)
-		IL_0075: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_007a: ldc.i4.1
-		IL_007b: newarr [System.Runtime]System.Object
-		IL_0080: dup
-		IL_0081: ldc.i4.0
-		IL_0082: ldloc.0
-		IL_0083: stelem.ref
-		IL_0084: ldloc.1
-		IL_0085: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_008a: pop
-		IL_008b: ldloc.0
-		IL_008c: ldc.i4.0
-		IL_008d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0092: stfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope::y
-		IL_0097: ldnull
-		IL_0098: ldftn object Functions.ArrowFunction_L22C10::ArrowFunction_L22C10(object[])
-		IL_009e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_00a3: ldc.i4.1
-		IL_00a4: newarr [System.Runtime]System.Object
-		IL_00a9: dup
-		IL_00aa: ldc.i4.0
-		IL_00ab: ldloc.0
-		IL_00ac: stelem.ref
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_00b2: stloc.1
-		IL_00b3: ldnull
-		IL_00b4: ldftn object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.logError::__js_call__(object[], object)
-		IL_00ba: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_00bf: ldc.i4.1
-		IL_00c0: newarr [System.Runtime]System.Object
-		IL_00c5: dup
-		IL_00c6: ldc.i4.0
-		IL_00c7: ldloc.0
-		IL_00c8: stelem.ref
-		IL_00c9: ldloc.1
-		IL_00ca: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_00cf: pop
-		IL_00d0: ldloc.0
-		IL_00d1: ldnull
-		IL_00d2: stfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.Scope::y
-		IL_00d7: ldnull
-		IL_00d8: ldftn object Functions.ArrowFunction_L28C10::ArrowFunction_L28C10(object[])
-		IL_00de: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_00e3: ldc.i4.1
-		IL_00e4: newarr [System.Runtime]System.Object
-		IL_00e9: dup
-		IL_00ea: ldc.i4.0
-		IL_00eb: ldloc.0
-		IL_00ec: stelem.ref
-		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_00f2: stloc.1
-		IL_00f3: ldnull
-		IL_00f4: ldftn object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.logError::__js_call__(object[], object)
-		IL_00fa: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_00ff: ldc.i4.1
-		IL_0100: newarr [System.Runtime]System.Object
-		IL_0105: dup
-		IL_0106: ldc.i4.0
-		IL_0107: ldloc.0
-		IL_0108: stelem.ref
-		IL_0109: ldloc.1
-		IL_010a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_010f: pop
-		IL_0110: ret
-	} // end of method Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage::__js_module_init__
-
-} // end of class Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -3,22 +3,44 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Classes_ClassWithStaticMethod_HelloWorld.Scope
+.class public auto ansi beforefieldinit Modules.Classes_ClassWithStaticMethod_HelloWorld
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Greeter
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit helloWorld
+		.class nested public auto ansi beforefieldinit Greeter
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit helloWorld
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x20b9
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method helloWorld::.ctor
+
+			} // end of class helloWorld
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x20b0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,16 +49,16 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method helloWorld::.ctor
+			} // end of method Greeter::.ctor
 
-		} // end of class helloWorld
+		} // end of class Greeter
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20a7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -45,27 +67,37 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Greeter::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Greeter
+	} // end of class Scope
 
 
 	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Header size: 12
+		// Code size: 13 (0xd)
+		.maxstack 32
+		.locals (
+			[0] class Modules.Classes_ClassWithStaticMethod_HelloWorld/Scope
+		)
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
+		IL_0000: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call object Classes.Classes_ClassWithStaticMethod_HelloWorld.Greeter::helloWorld()
+		IL_000b: pop
+		IL_000c: ret
+	} // end of method Classes_ClassWithStaticMethod_HelloWorld::__js_module_init__
 
-} // end of class Modules.Classes_ClassWithStaticMethod_HelloWorld.Scope
+} // end of class Modules.Classes_ClassWithStaticMethod_HelloWorld
 
 .class public auto ansi beforefieldinit Classes.Classes_ClassWithStaticMethod_HelloWorld.Greeter
 	extends [System.Runtime]System.Object
@@ -107,36 +139,6 @@
 
 } // end of class Classes.Classes_ClassWithStaticMethod_HelloWorld.Greeter
 
-.class public auto ansi beforefieldinit Modules.Classes_ClassWithStaticMethod_HelloWorld
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void __js_module_init__ (
-			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
-			object module,
-			string __filename,
-			string __dirname
-		) cil managed 
-	{
-		// Method begins at RVA 0x20a8
-		// Header size: 12
-		// Code size: 13 (0xd)
-		.maxstack 32
-		.locals (
-			[0] class Modules.Classes_ClassWithStaticMethod_HelloWorld.Scope
-		)
-
-		IL_0000: newobj instance void Modules.Classes_ClassWithStaticMethod_HelloWorld.Scope::.ctor()
-		IL_0005: stloc.0
-		IL_0006: call object Classes.Classes_ClassWithStaticMethod_HelloWorld.Greeter::helloWorld()
-		IL_000b: pop
-		IL_000c: ret
-	} // end of method Classes_ClassWithStaticMethod_HelloWorld::__js_module_init__
-
-} // end of class Modules.Classes_ClassWithStaticMethod_HelloWorld
-
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -144,7 +146,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c1
+		// Method begins at RVA 0x20c2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

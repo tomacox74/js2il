@@ -3,22 +3,44 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Classes_ClassPrivateField_HelperMethod_Log.Scope
+.class public auto ansi beforefieldinit Modules.Classes_ClassPrivateField_HelperMethod_Log
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Greeter
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit logSecret
+		.class nested public auto ansi beforefieldinit Greeter
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit logSecret
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x20f2
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method logSecret::.ctor
+
+			} // end of class logSecret
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x20e9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,16 +49,16 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method logSecret::.ctor
+			} // end of method Greeter::.ctor
 
-		} // end of class logSecret
+		} // end of class Greeter
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20e0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -45,78 +67,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Greeter::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Greeter
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Classes_ClassPrivateField_HelperMethod_Log.Scope
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field private string __js2il_priv_secret
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 18 (0x12)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldstr "TopSecret"
-		IL_000c: stfld string Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter::__js2il_priv_secret
-		IL_0011: ret
-	} // end of method Greeter::.ctor
-
-	.method public hidebysig 
-		instance object logSecret () cil managed 
-	{
-		// Method begins at RVA 0x208c
-		// Header size: 12
-		// Code size: 28 (0x1c)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldarg.0
-		IL_000e: ldfld string Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter::__js2il_priv_secret
-		IL_0013: stelem.ref
-		IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0019: pop
-		IL_001a: ldnull
-		IL_001b: ret
-	} // end of method Greeter::logSecret
-
-} // end of class Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter
-
-.class public auto ansi beforefieldinit Modules.Classes_ClassPrivateField_HelperMethod_Log
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -127,17 +82,17 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b4
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 57 (0x39)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Classes_ClassPrivateField_HelperMethod_Log.Scope,
+			[0] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Scope,
 			[1] object,
 			[2] object[]
 		)
 
-		IL_0000: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassPrivateField_HelperMethod_Log/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter::.ctor()
 		IL_000b: stloc.1
@@ -165,6 +120,53 @@
 
 } // end of class Modules.Classes_ClassPrivateField_HelperMethod_Log
 
+.class public auto ansi beforefieldinit Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field private string __js2il_priv_secret
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2098
+		// Header size: 12
+		// Code size: 18 (0x12)
+		.maxstack 32
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ldarg.0
+		IL_0007: ldstr "TopSecret"
+		IL_000c: stfld string Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter::__js2il_priv_secret
+		IL_0011: ret
+	} // end of method Greeter::.ctor
+
+	.method public hidebysig 
+		instance object logSecret () cil managed 
+	{
+		// Method begins at RVA 0x20b8
+		// Header size: 12
+		// Code size: 28 (0x1c)
+		.maxstack 32
+
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: ldc.i4.1
+		IL_0006: newarr [System.Runtime]System.Object
+		IL_000b: dup
+		IL_000c: ldc.i4.0
+		IL_000d: ldarg.0
+		IL_000e: ldfld string Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter::__js2il_priv_secret
+		IL_0013: stelem.ref
+		IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0019: pop
+		IL_001a: ldnull
+		IL_001b: ret
+	} // end of method Greeter::logSecret
+
+} // end of class Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -172,7 +174,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f9
+		// Method begins at RVA 0x20fb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -3,22 +3,47 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope
+.class public auto ansi beforefieldinit Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_testFunction
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_nestedFunction
+		.class nested public auto ansi beforefieldinit ArrowFunction_testFunction
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit ArrowFunction_nestedFunction
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2195
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method ArrowFunction_nestedFunction::.ctor
+
+			} // end of class ArrowFunction_nestedFunction
+
+
+			// Fields
+			.field public string outerVar
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x218c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,19 +52,19 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_nestedFunction::.ctor
+			} // end of method ArrowFunction_testFunction::.ctor
 
-		} // end of class ArrowFunction_nestedFunction
+		} // end of class ArrowFunction_testFunction
 
 
 		// Fields
-		.field public string outerVar
+		.field public string globalVar
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2183
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -48,30 +73,64 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_testFunction::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_testFunction
+	} // end of class Scope
 
-
-	// Fields
-	.field public string globalVar
 
 	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Header size: 12
+		// Code size: 71 (0x47)
+		.maxstack 32
+		.locals init (
+			[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope,
+			[1] object,
+			[2] object[]
+		)
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
+		IL_0000: newobj instance void Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldstr "global"
+		IL_000c: stfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope::globalVar
+		IL_0011: ldnull
+		IL_0012: ldftn object Functions.ArrowFunction_L3C22::ArrowFunction_L3C22(object[])
+		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_001d: ldc.i4.1
+		IL_001e: newarr [System.Runtime]System.Object
+		IL_0023: dup
+		IL_0024: ldc.i4.0
+		IL_0025: ldloc.0
+		IL_0026: stelem.ref
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_002c: stloc.1
+		IL_002d: ldc.i4.0
+		IL_002e: newarr [System.Runtime]System.Object
+		IL_0033: stloc.2
+		IL_0034: ldloc.1
+		IL_0035: ldc.i4.1
+		IL_0036: newarr [System.Runtime]System.Object
+		IL_003b: dup
+		IL_003c: ldc.i4.0
+		IL_003d: ldnull
+		IL_003e: stelem.ref
+		IL_003f: ldloc.2
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0045: pop
+		IL_0046: ret
+	} // end of method ArrowFunction_NestedFunctionAccessesMultipleScopes::__js_module_init__
 
-} // end of class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope
+} // end of class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L3C22
 	extends [System.Runtime]System.Object
@@ -82,21 +141,21 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x206c
+		// Method begins at RVA 0x20a4
 		// Header size: 12
 		// Code size: 80 (0x50)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope/ArrowFunction_testFunction,
+			[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope/ArrowFunction_testFunction,
 			[1] object,
 			[2] object[]
 		)
 
-		IL_0000: newobj instance void Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope/ArrowFunction_testFunction::.ctor()
+		IL_0000: newobj instance void Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope/ArrowFunction_testFunction::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldstr "outer"
-		IL_000c: stfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope/ArrowFunction_testFunction::outerVar
+		IL_000c: stfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope/ArrowFunction_testFunction::outerVar
 		IL_0011: ldnull
 		IL_0012: ldftn object Functions.ArrowFunction_L6C28::ArrowFunction_L6C28(object[])
 		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
@@ -144,7 +203,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c8
+		// Method begins at RVA 0x2100
 		// Header size: 12
 		// Code size: 119 (0x77)
 		.maxstack 32
@@ -166,8 +225,8 @@
 		IL_001b: ldarg.0
 		IL_001c: ldc.i4.0
 		IL_001d: ldelem.ref
-		IL_001e: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope
-		IL_0023: ldfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope::globalVar
+		IL_001e: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
+		IL_0023: ldfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope::globalVar
 		IL_0028: stelem.ref
 		IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_002e: pop
@@ -183,8 +242,8 @@
 		IL_0044: ldarg.0
 		IL_0045: ldc.i4.1
 		IL_0046: ldelem.ref
-		IL_0047: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope/ArrowFunction_testFunction
-		IL_004c: ldfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope/ArrowFunction_testFunction::outerVar
+		IL_0047: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope/ArrowFunction_testFunction
+		IL_004c: ldfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope/ArrowFunction_testFunction::outerVar
 		IL_0051: stelem.ref
 		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0057: pop
@@ -207,63 +266,6 @@
 
 } // end of class Functions.ArrowFunction_L6C28
 
-.class public auto ansi beforefieldinit Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void __js_module_init__ (
-			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
-			object module,
-			string __filename,
-			string __dirname
-		) cil managed 
-	{
-		// Method begins at RVA 0x214c
-		// Header size: 12
-		// Code size: 71 (0x47)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope,
-			[1] object,
-			[2] object[]
-		)
-
-		IL_0000: newobj instance void Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldstr "global"
-		IL_000c: stfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes.Scope::globalVar
-		IL_0011: ldnull
-		IL_0012: ldftn object Functions.ArrowFunction_L3C22::ArrowFunction_L3C22(object[])
-		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_001d: ldc.i4.1
-		IL_001e: newarr [System.Runtime]System.Object
-		IL_0023: dup
-		IL_0024: ldc.i4.0
-		IL_0025: ldloc.0
-		IL_0026: stelem.ref
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_002c: stloc.1
-		IL_002d: ldc.i4.0
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: stloc.2
-		IL_0034: ldloc.1
-		IL_0035: ldc.i4.1
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: dup
-		IL_003c: ldc.i4.0
-		IL_003d: ldnull
-		IL_003e: stelem.ref
-		IL_003f: ldloc.2
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0045: pop
-		IL_0046: ret
-	} // end of method ArrowFunction_NestedFunctionAccessesMultipleScopes::__js_module_init__
-
-} // end of class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes
-
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -271,7 +273,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219f
+		// Method begins at RVA 0x219e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

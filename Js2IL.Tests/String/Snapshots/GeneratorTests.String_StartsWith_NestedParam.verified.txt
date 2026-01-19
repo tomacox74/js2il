@@ -3,22 +3,26 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.String_StartsWith_NestedParam.Scope
+.class public auto ansi beforefieldinit Modules.String_StartsWith_NestedParam
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit outer
+	.class nested public auto ansi abstract sealed beforefieldinit outer
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit inner
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			// Fields
+			.field public object s
+			.field public object inner
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x211b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,20 +31,129 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method inner::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class inner
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object s
+			) cil managed 
+		{
+			// Method begins at RVA 0x209c
+			// Header size: 12
+			// Code size: 54 (0x36)
+			.maxstack 32
+			.locals init (
+				[0] class Modules.String_StartsWith_NestedParam/outer/Scope,
+				[1] object
+			)
+
+			IL_0000: newobj instance void Modules.String_StartsWith_NestedParam/outer/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldarg.1
+			IL_0008: stfld object Modules.String_StartsWith_NestedParam/outer/Scope::s
+			IL_000d: ldnull
+			IL_000e: ldftn object Modules.String_StartsWith_NestedParam/inner::__js_call__(object[], object)
+			IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+			IL_0019: ldc.i4.2
+			IL_001a: newarr [System.Runtime]System.Object
+			IL_001f: dup
+			IL_0020: ldc.i4.0
+			IL_0021: ldarg.0
+			IL_0022: ldc.i4.0
+			IL_0023: ldelem.ref
+			IL_0024: stelem.ref
+			IL_0025: dup
+			IL_0026: ldc.i4.1
+			IL_0027: ldloc.0
+			IL_0028: stelem.ref
+			IL_0029: ldstr "a"
+			IL_002e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+			IL_0033: stloc.1
+			IL_0034: ldloc.1
+			IL_0035: ret
+		} // end of method outer::__js_call__
+
+	} // end of class outer
+
+	.class nested public auto ansi abstract sealed beforefieldinit inner
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2124
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object p
+			) cil managed 
+		{
+			// Method begins at RVA 0x20e0
+			// Header size: 12
+			// Code size: 38 (0x26)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.1
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.String_StartsWith_NestedParam/outer/Scope
+			IL_0008: ldfld object Modules.String_StartsWith_NestedParam/outer/Scope::s
+			IL_000d: stloc.0
+			IL_000e: ldloc.0
+			IL_000f: ldstr "startsWith"
+			IL_0014: ldc.i4.1
+			IL_0015: newarr [System.Runtime]System.Object
+			IL_001a: dup
+			IL_001b: ldc.i4.0
+			IL_001c: ldarg.1
+			IL_001d: stelem.ref
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0023: stloc.0
+			IL_0024: ldloc.0
+			IL_0025: ret
+		} // end of method inner::__js_call__
+
+	} // end of class inner
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Fields
-		.field public object s
-		.field public object inner
+		.field public object outer
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2112
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -49,122 +162,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method outer::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class outer
+	} // end of class Scope
 
 
-	// Fields
-	.field public object outer
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.String_StartsWith_NestedParam.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.String_StartsWith_NestedParam.outer
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object s
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 54 (0x36)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.String_StartsWith_NestedParam.Scope/outer,
-			[1] object
-		)
-
-		IL_0000: newobj instance void Modules.String_StartsWith_NestedParam.Scope/outer::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Modules.String_StartsWith_NestedParam.Scope/outer::s
-		IL_000d: ldnull
-		IL_000e: ldftn object Modules.String_StartsWith_NestedParam.inner::__js_call__(object[], object)
-		IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0019: ldc.i4.2
-		IL_001a: newarr [System.Runtime]System.Object
-		IL_001f: dup
-		IL_0020: ldc.i4.0
-		IL_0021: ldarg.0
-		IL_0022: ldc.i4.0
-		IL_0023: ldelem.ref
-		IL_0024: stelem.ref
-		IL_0025: dup
-		IL_0026: ldc.i4.1
-		IL_0027: ldloc.0
-		IL_0028: stelem.ref
-		IL_0029: ldstr "a"
-		IL_002e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0033: stloc.1
-		IL_0034: ldloc.1
-		IL_0035: ret
-	} // end of method outer::__js_call__
-
-} // end of class Modules.String_StartsWith_NestedParam.outer
-
-.class public auto ansi abstract sealed beforefieldinit Modules.String_StartsWith_NestedParam.inner
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object p
-		) cil managed 
-	{
-		// Method begins at RVA 0x20b0
-		// Header size: 12
-		// Code size: 38 (0x26)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.1
-		IL_0002: ldelem.ref
-		IL_0003: castclass Modules.String_StartsWith_NestedParam.Scope/outer
-		IL_0008: ldfld object Modules.String_StartsWith_NestedParam.Scope/outer::s
-		IL_000d: stloc.0
-		IL_000e: ldloc.0
-		IL_000f: ldstr "startsWith"
-		IL_0014: ldc.i4.1
-		IL_0015: newarr [System.Runtime]System.Object
-		IL_001a: dup
-		IL_001b: ldc.i4.0
-		IL_001c: ldarg.1
-		IL_001d: stelem.ref
-		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0023: stloc.0
-		IL_0024: ldloc.0
-		IL_0025: ret
-	} // end of method inner::__js_call__
-
-} // end of class Modules.String_StartsWith_NestedParam.inner
-
-.class public auto ansi beforefieldinit Modules.String_StartsWith_NestedParam
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -175,19 +177,19 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e4
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 61 (0x3d)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.String_StartsWith_NestedParam.Scope,
+			[0] class Modules.String_StartsWith_NestedParam/Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Modules.String_StartsWith_NestedParam.Scope::.ctor()
+		IL_0000: newobj instance void Modules.String_StartsWith_NestedParam/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.String_StartsWith_NestedParam.outer::__js_call__(object[], object)
+		IL_0007: ldftn object Modules.String_StartsWith_NestedParam/outer::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object

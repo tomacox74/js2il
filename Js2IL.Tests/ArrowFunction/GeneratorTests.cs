@@ -39,6 +39,23 @@ namespace Js2IL.Tests.ArrowFunction
         public Task ArrowFunction_SimpleExpression() { var testName = nameof(ArrowFunction_SimpleExpression); return GenerateTest(testName); }
 
         [Fact]
-        public Task ArrowFunction_ClosureMutatesOuterVariable() { var testName = nameof(ArrowFunction_ClosureMutatesOuterVariable); return GenerateTest(testName); }
+        public Task ArrowFunction_ClosureMutatesOuterVariable()
+        {
+            var testName = nameof(ArrowFunction_ClosureMutatesOuterVariable);
+
+            return GenerateTest(testName, verifyAssembly: (generatedAssembly) => {
+                var globalScript = generatedAssembly.GetType("Modules.ArrowFunction_ClosureMutatesOuterVariable", throwOnError: true)!;
+                Assert.True(globalScript.IsClass, "Expected globalScript to be a class.");
+                
+                var globalScope = globalScript.GetNestedType("Scope")!;
+                Assert.True(globalScope.IsClass, "Expected globalScope to be a class");
+
+                var createCounterClass = globalScript.GetNestedType("createCounter")!;
+                Assert.True(createCounterClass.IsClass, "Expected createCounter to be a class");
+
+                var createCounterScope = createCounterClass.GetNestedType("Scope")!;
+                Assert.True(createCounterScope.IsClass);
+            });
+        }
     }
 }

@@ -3,18 +3,40 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.SetTimeout_OneSecondDelay.Scope
+.class public auto ansi beforefieldinit Modules.SetTimeout_OneSecondDelay
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_logHello
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit ArrowFunction_logHello
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20e4
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method ArrowFunction_logHello::.ctor
+
+		} // end of class ArrowFunction_logHello
+
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20db
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,60 +45,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_logHello::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_logHello
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.SetTimeout_OneSecondDelay.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C18
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L1C18 (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 27 (0x1b)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "Hello, World!  One second has elapsed."
-		IL_0012: stelem.ref
-		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0018: pop
-		IL_0019: ldnull
-		IL_001a: ret
-	} // end of method ArrowFunction_L1C18::ArrowFunction_L1C18
-
-} // end of class Functions.ArrowFunction_L1C18
-
-.class public auto ansi beforefieldinit Modules.SetTimeout_OneSecondDelay
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -87,16 +60,16 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x208c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 87 (0x57)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.SetTimeout_OneSecondDelay.Scope,
+			[0] class Modules.SetTimeout_OneSecondDelay/Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Modules.SetTimeout_OneSecondDelay.Scope::.ctor()
+		IL_0000: newobj instance void Modules.SetTimeout_OneSecondDelay/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
 		IL_0007: ldftn object Functions.ArrowFunction_L1C18::ArrowFunction_L1C18(object[])
@@ -130,6 +103,35 @@
 
 } // end of class Modules.SetTimeout_OneSecondDelay
 
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C18
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L1C18 (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x20b4
+		// Header size: 12
+		// Code size: 27 (0x1b)
+		.maxstack 32
+
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: ldc.i4.1
+		IL_0006: newarr [System.Runtime]System.Object
+		IL_000b: dup
+		IL_000c: ldc.i4.0
+		IL_000d: ldstr "Hello, World!  One second has elapsed."
+		IL_0012: stelem.ref
+		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0018: pop
+		IL_0019: ldnull
+		IL_001a: ret
+	} // end of method ArrowFunction_L1C18::ArrowFunction_L1C18
+
+} // end of class Functions.ArrowFunction_L1C18
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -137,7 +139,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ef
+		// Method begins at RVA 0x20ed
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

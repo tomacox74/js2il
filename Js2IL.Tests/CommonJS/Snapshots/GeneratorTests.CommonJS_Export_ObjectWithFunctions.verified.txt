@@ -3,116 +3,31 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.CommonJS_Export_ObjectWithFunctions_Main.Scope
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.CommonJS_Export_ObjectWithFunctions_Main.Scope
-
-.class public auto ansi beforefieldinit Modules.CommonJS_Export_ObjectWithFunctions_Lib.Scope
-	extends [System.Runtime]System.Object
-{
-	// Nested Types
-	.class nested public auto ansi beforefieldinit foo
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2062
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method foo::.ctor
-
-	} // end of class foo
-
-	.class nested public auto ansi beforefieldinit 'add'
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x206b
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method 'add'::.ctor
-
-	} // end of class add
-
-	.class nested public auto ansi beforefieldinit multiply
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2074
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method multiply::.ctor
-
-	} // end of class multiply
-
-
-	// Fields
-	.field public object foo
-	.field public object 'add'
-	.field public object multiply
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2059
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.CommonJS_Export_ObjectWithFunctions_Lib.Scope
-
 .class public auto ansi beforefieldinit Modules.CommonJS_Export_ObjectWithFunctions_Main
 	extends [System.Runtime]System.Object
 {
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2249
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -123,18 +38,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2080
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 249 (0xf9)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.CommonJS_Export_ObjectWithFunctions_Main.Scope,
+			[0] class Modules.CommonJS_Export_ObjectWithFunctions_Main/Scope,
 			[1] object,
 			[2] object[],
 			[3] object
 		)
 
-		IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithFunctions_Main.Scope::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithFunctions_Main/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
@@ -235,95 +150,188 @@
 
 } // end of class Modules.CommonJS_Export_ObjectWithFunctions_Main
 
-.class public auto ansi abstract sealed beforefieldinit Modules.CommonJS_Export_ObjectWithFunctions_Lib.foo
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x21a0
-		// Header size: 12
-		// Code size: 6 (0x6)
-		.maxstack 32
-
-		IL_0000: ldstr "ok"
-		IL_0005: ret
-	} // end of method foo::__js_call__
-
-} // end of class Modules.CommonJS_Export_ObjectWithFunctions_Lib.foo
-
-.class public auto ansi abstract sealed beforefieldinit Modules.CommonJS_Export_ObjectWithFunctions_Lib.add
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x2188
-		// Header size: 12
-		// Code size: 10 (0xa)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: ldarg.2
-		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0007: stloc.0
-		IL_0008: ldloc.0
-		IL_0009: ret
-	} // end of method 'add'::__js_call__
-
-} // end of class Modules.CommonJS_Export_ObjectWithFunctions_Lib.add
-
-.class public auto ansi abstract sealed beforefieldinit Modules.CommonJS_Export_ObjectWithFunctions_Lib.multiply
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x21b4
-		// Header size: 12
-		// Code size: 25 (0x19)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: stloc.0
-		IL_0007: ldloc.0
-		IL_0008: ldarg.2
-		IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000e: mul
-		IL_000f: stloc.0
-		IL_0010: ldloc.0
-		IL_0011: box [System.Runtime]System.Double
-		IL_0016: stloc.1
-		IL_0017: ldloc.1
-		IL_0018: ret
-	} // end of method multiply::__js_call__
-
-} // end of class Modules.CommonJS_Export_ObjectWithFunctions_Lib.multiply
-
 .class public auto ansi beforefieldinit Modules.CommonJS_Export_ObjectWithFunctions_Lib
 	extends [System.Runtime]System.Object
 {
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit foo
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x225b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x2210
+			// Header size: 12
+			// Code size: 6 (0x6)
+			.maxstack 32
+
+			IL_0000: ldstr "ok"
+			IL_0005: ret
+		} // end of method foo::__js_call__
+
+	} // end of class foo
+
+	.class nested public auto ansi abstract sealed beforefieldinit 'add'
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2264
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object a,
+				object b
+			) cil managed 
+		{
+			// Method begins at RVA 0x21f8
+			// Header size: 12
+			// Code size: 10 (0xa)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
+			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0007: stloc.0
+			IL_0008: ldloc.0
+			IL_0009: ret
+		} // end of method 'add'::__js_call__
+
+	} // end of class add
+
+	.class nested public auto ansi abstract sealed beforefieldinit multiply
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x226d
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object a,
+				object b
+			) cil managed 
+		{
+			// Method begins at RVA 0x2224
+			// Header size: 12
+			// Code size: 25 (0x19)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldarg.2
+			IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000e: mul
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: box [System.Runtime]System.Double
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ret
+		} // end of method multiply::__js_call__
+
+	} // end of class multiply
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object foo
+		.field public object 'add'
+		.field public object multiply
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2252
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -334,22 +342,22 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21dc
+		// Method begins at RVA 0x2158
 		// Header size: 12
 		// Code size: 148 (0x94)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.CommonJS_Export_ObjectWithFunctions_Lib.Scope,
+			[0] class Modules.CommonJS_Export_ObjectWithFunctions_Lib/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
 			[4] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
 		)
 
-		IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithFunctions_Lib.Scope::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithFunctions_Lib/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.CommonJS_Export_ObjectWithFunctions_Lib.foo::__js_call__(object[])
+		IL_0007: ldftn object Modules.CommonJS_Export_ObjectWithFunctions_Lib/foo::__js_call__(object[])
 		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -360,7 +368,7 @@
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0021: stloc.1
 		IL_0022: ldnull
-		IL_0023: ldftn object Modules.CommonJS_Export_ObjectWithFunctions_Lib.add::__js_call__(object[], object, object)
+		IL_0023: ldftn object Modules.CommonJS_Export_ObjectWithFunctions_Lib/'add'::__js_call__(object[], object, object)
 		IL_0029: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_002e: ldc.i4.1
 		IL_002f: newarr [System.Runtime]System.Object
@@ -371,7 +379,7 @@
 		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_003d: stloc.2
 		IL_003e: ldnull
-		IL_003f: ldftn object Modules.CommonJS_Export_ObjectWithFunctions_Lib.multiply::__js_call__(object[], object, object)
+		IL_003f: ldftn object Modules.CommonJS_Export_ObjectWithFunctions_Lib/multiply::__js_call__(object[], object, object)
 		IL_0045: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_004a: ldc.i4.1
 		IL_004b: newarr [System.Runtime]System.Object
@@ -412,7 +420,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x227c
+		// Method begins at RVA 0x2276
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

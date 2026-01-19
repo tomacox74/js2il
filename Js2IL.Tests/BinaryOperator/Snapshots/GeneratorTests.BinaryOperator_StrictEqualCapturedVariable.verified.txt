@@ -3,22 +3,44 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.BinaryOperator_StrictEqualCapturedVariable.Scope
+.class public auto ansi beforefieldinit Modules.BinaryOperator_StrictEqualCapturedVariable
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit process
+	.class nested public auto ansi abstract sealed beforefieldinit process
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Block_L7C33
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Block_L7C33
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x21b3
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L7C33::.ctor
+
+			} // end of class Block_L7C33
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x21aa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,40 +49,108 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L7C33::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class Block_L7C33
+		} // end of class Scope
 
 
 		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object callback
+			) cil managed 
 		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Method begins at RVA 0x20b8
+			// Header size: 12
+			// Code size: 84 (0x54)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] object,
+				[2] object[]
+			)
 
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method process::.ctor
+			IL_0000: ldc.r8 0.0
+			IL_0009: stloc.0
+			// loop start (head: IL_000a)
+				IL_000a: ldloc.0
+				IL_000b: ldc.r8 10
+				IL_0014: clt
+				IL_0016: brfalse IL_0052
+
+				IL_001b: ldloc.0
+				IL_001c: box [System.Runtime]System.Double
+				IL_0021: stloc.1
+				IL_0022: ldc.i4.1
+				IL_0023: newarr [System.Runtime]System.Object
+				IL_0028: dup
+				IL_0029: ldc.i4.0
+				IL_002a: ldloc.1
+				IL_002b: stelem.ref
+				IL_002c: stloc.2
+				IL_002d: ldarg.1
+				IL_002e: ldc.i4.1
+				IL_002f: newarr [System.Runtime]System.Object
+				IL_0034: dup
+				IL_0035: ldc.i4.0
+				IL_0036: ldarg.0
+				IL_0037: ldc.i4.0
+				IL_0038: ldelem.ref
+				IL_0039: stelem.ref
+				IL_003a: ldloc.2
+				IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+				IL_0040: pop
+				IL_0041: ldloc.0
+				IL_0042: ldc.r8 1
+				IL_004b: add
+				IL_004c: stloc.0
+				IL_004d: br IL_000a
+			// end loop
+
+			IL_0052: ldnull
+			IL_0053: ret
+		} // end of method process::__js_call__
 
 	} // end of class process
 
-	.class nested public auto ansi beforefieldinit ArrowFunction_L12C8
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Block_L13C30
+		.class nested public auto ansi beforefieldinit ArrowFunction_L12C8
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Block_L13C30
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x21c5
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L13C30::.ctor
+
+			} // end of class Block_L13C30
+
+
+			// Fields
+			.field public object id
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2074
+				// Method begins at RVA 0x21bc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -69,19 +159,19 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L13C30::.ctor
+			} // end of method ArrowFunction_L12C8::.ctor
 
-		} // end of class Block_L13C30
+		} // end of class ArrowFunction_L12C8
 
 
 		// Fields
-		.field public object id
+		.field public object process
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x206b
+			// Method begins at RVA 0x21a1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -90,93 +180,68 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_L12C8::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_L12C8
+	} // end of class Scope
 
 
-	// Fields
-	.field public object process
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.BinaryOperator_StrictEqualCapturedVariable.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.BinaryOperator_StrictEqualCapturedVariable.process
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object callback
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2080
+		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 84 (0x54)
+		// Code size: 89 (0x59)
 		.maxstack 32
 		.locals init (
-			[0] float64,
-			[1] object,
-			[2] object[]
+			[0] class Modules.BinaryOperator_StrictEqualCapturedVariable/Scope,
+			[1] object
 		)
 
-		IL_0000: ldc.r8 0.0
-		IL_0009: stloc.0
-		// loop start (head: IL_000a)
-			IL_000a: ldloc.0
-			IL_000b: ldc.r8 10
-			IL_0014: clt
-			IL_0016: brfalse IL_0052
+		IL_0000: newobj instance void Modules.BinaryOperator_StrictEqualCapturedVariable/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.ArrowFunction_L12C9::ArrowFunction_L12C9(object[], object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldnull
+		IL_0023: ldftn object Modules.BinaryOperator_StrictEqualCapturedVariable/process::__js_call__(object[], object)
+		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: ldloc.1
+		IL_0039: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_003e: pop
+		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0044: ldc.i4.1
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: dup
+		IL_004b: ldc.i4.0
+		IL_004c: ldstr "done"
+		IL_0051: stelem.ref
+		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0057: pop
+		IL_0058: ret
+	} // end of method BinaryOperator_StrictEqualCapturedVariable::__js_module_init__
 
-			IL_001b: ldloc.0
-			IL_001c: box [System.Runtime]System.Double
-			IL_0021: stloc.1
-			IL_0022: ldc.i4.1
-			IL_0023: newarr [System.Runtime]System.Object
-			IL_0028: dup
-			IL_0029: ldc.i4.0
-			IL_002a: ldloc.1
-			IL_002b: stelem.ref
-			IL_002c: stloc.2
-			IL_002d: ldarg.1
-			IL_002e: ldc.i4.1
-			IL_002f: newarr [System.Runtime]System.Object
-			IL_0034: dup
-			IL_0035: ldc.i4.0
-			IL_0036: ldarg.0
-			IL_0037: ldc.i4.0
-			IL_0038: ldelem.ref
-			IL_0039: stelem.ref
-			IL_003a: ldloc.2
-			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_0040: pop
-			IL_0041: ldloc.0
-			IL_0042: ldc.r8 1
-			IL_004b: add
-			IL_004c: stloc.0
-			IL_004d: br IL_000a
-		// end loop
-
-		IL_0052: ldnull
-		IL_0053: ret
-	} // end of method process::__js_call__
-
-} // end of class Modules.BinaryOperator_StrictEqualCapturedVariable.process
+} // end of class Modules.BinaryOperator_StrictEqualCapturedVariable
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L12C9
 	extends [System.Runtime]System.Object
@@ -188,7 +253,7 @@
 			object id
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e0
+		// Method begins at RVA 0x2118
 		// Header size: 12
 		// Code size: 125 (0x7d)
 		.maxstack 32
@@ -255,67 +320,6 @@
 
 } // end of class Functions.ArrowFunction_L12C9
 
-.class public auto ansi beforefieldinit Modules.BinaryOperator_StrictEqualCapturedVariable
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void __js_module_init__ (
-			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
-			object module,
-			string __filename,
-			string __dirname
-		) cil managed 
-	{
-		// Method begins at RVA 0x216c
-		// Header size: 12
-		// Code size: 89 (0x59)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.BinaryOperator_StrictEqualCapturedVariable.Scope,
-			[1] object
-		)
-
-		IL_0000: newobj instance void Modules.BinaryOperator_StrictEqualCapturedVariable.Scope::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Functions.ArrowFunction_L12C9::ArrowFunction_L12C9(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldnull
-		IL_0023: ldftn object Modules.BinaryOperator_StrictEqualCapturedVariable.process::__js_call__(object[], object)
-		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.0
-		IL_0037: stelem.ref
-		IL_0038: ldloc.1
-		IL_0039: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_003e: pop
-		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0044: ldc.i4.1
-		IL_0045: newarr [System.Runtime]System.Object
-		IL_004a: dup
-		IL_004b: ldc.i4.0
-		IL_004c: ldstr "done"
-		IL_0051: stelem.ref
-		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0057: pop
-		IL_0058: ret
-	} // end of method BinaryOperator_StrictEqualCapturedVariable::__js_module_init__
-
-} // end of class Modules.BinaryOperator_StrictEqualCapturedVariable
-
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -323,7 +327,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d1
+		// Method begins at RVA 0x21ce
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

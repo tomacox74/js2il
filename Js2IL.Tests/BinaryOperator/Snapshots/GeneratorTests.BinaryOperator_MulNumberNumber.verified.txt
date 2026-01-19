@@ -3,29 +3,31 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.BinaryOperator_MulNumberNumber.Scope
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.BinaryOperator_MulNumberNumber.Scope
-
 .class public auto ansi beforefieldinit Modules.BinaryOperator_MulNumberNumber
 	extends [System.Runtime]System.Object
 {
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x209b
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -36,17 +38,17 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x205c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 63 (0x3f)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.BinaryOperator_MulNumberNumber.Scope,
+			[0] class Modules.BinaryOperator_MulNumberNumber/Scope,
 			[1] float64,
 			[2] object
 		)
 
-		IL_0000: newobj instance void Modules.BinaryOperator_MulNumberNumber.Scope::.ctor()
+		IL_0000: newobj instance void Modules.BinaryOperator_MulNumberNumber/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 3
 		IL_000f: ldc.r8 4
@@ -80,7 +82,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a7
+		// Method begins at RVA 0x20a4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

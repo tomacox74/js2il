@@ -3,18 +3,81 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Function_IsEven_CompareResultToTrue.Scope
+.class public auto ansi beforefieldinit Modules.Function_IsEven_CompareResultToTrue
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit isEven
+	.class nested public auto ansi abstract sealed beforefieldinit isEven
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20f4
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object n
+			) cil managed 
+		{
+			// Method begins at RVA 0x20b8
+			// Header size: 12
+			// Code size: 39 (0x27)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] bool,
+				[2] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: ldc.r8 2
+			IL_000f: rem
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldc.r8 0.0
+			IL_001b: ceq
+			IL_001d: stloc.1
+			IL_001e: ldloc.1
+			IL_001f: box [System.Runtime]System.Boolean
+			IL_0024: stloc.2
+			IL_0025: ldloc.2
+			IL_0026: ret
+		} // end of method isEven::__js_call__
+
+	} // end of class isEven
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object isEven
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20eb
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,72 +86,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method isEven::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class isEven
+	} // end of class Scope
 
 
-	// Fields
-	.field public object isEven
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Function_IsEven_CompareResultToTrue.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.Function_IsEven_CompareResultToTrue.isEven
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object n
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 39 (0x27)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] bool,
-			[2] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: ldc.r8 2
-		IL_000f: rem
-		IL_0010: stloc.0
-		IL_0011: ldloc.0
-		IL_0012: ldc.r8 0.0
-		IL_001b: ceq
-		IL_001d: stloc.1
-		IL_001e: ldloc.1
-		IL_001f: box [System.Runtime]System.Boolean
-		IL_0024: stloc.2
-		IL_0025: ldloc.2
-		IL_0026: ret
-	} // end of method isEven::__js_call__
-
-} // end of class Modules.Function_IsEven_CompareResultToTrue.isEven
-
-.class public auto ansi beforefieldinit Modules.Function_IsEven_CompareResultToTrue
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -99,21 +101,21 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2098
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 90 (0x5a)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Function_IsEven_CompareResultToTrue.Scope,
+			[0] class Modules.Function_IsEven_CompareResultToTrue/Scope,
 			[1] object,
 			[2] bool,
 			[3] object
 		)
 
-		IL_0000: newobj instance void Modules.Function_IsEven_CompareResultToTrue.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Function_IsEven_CompareResultToTrue/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_IsEven_CompareResultToTrue.isEven::__js_call__(object[], object)
+		IL_0007: ldftn object Modules.Function_IsEven_CompareResultToTrue/isEven::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -154,7 +156,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fe
+		// Method begins at RVA 0x20fd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

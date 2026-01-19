@@ -3,22 +3,64 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.CompoundAssignment_LocalVarIndex.Scope
+.class public auto ansi beforefieldinit Modules.CompoundAssignment_LocalVarIndex
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit TestClass
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested public auto ansi beforefieldinit TestClass
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit constructor
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2161
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method constructor::.ctor
+
+			} // end of class constructor
+
+			.class nested public auto ansi beforefieldinit test
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x216a
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method test::.ctor
+
+			} // end of class test
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x2158
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,36 +69,16 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method TestClass::.ctor
 
-		} // end of class constructor
-
-		.class nested public auto ansi beforefieldinit test
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x206b
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method test::.ctor
-
-		} // end of class test
+		} // end of class TestClass
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x214f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -65,27 +87,58 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method TestClass::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class TestClass
+	} // end of class Scope
 
 
 	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Header size: 12
+		// Code size: 57 (0x39)
+		.maxstack 32
+		.locals init (
+			[0] class Modules.CompoundAssignment_LocalVarIndex/Scope,
+			[1] object,
+			[2] object[]
+		)
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
+		IL_0000: newobj instance void Modules.CompoundAssignment_LocalVarIndex/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void Classes.CompoundAssignment_LocalVarIndex.TestClass::.ctor()
+		IL_000b: stloc.1
+		IL_000c: ldc.i4.0
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: stloc.2
+		IL_0013: ldloc.1
+		IL_0014: isinst Classes.CompoundAssignment_LocalVarIndex.TestClass
+		IL_0019: dup
+		IL_001a: brfalse IL_002a
 
-} // end of class Modules.CompoundAssignment_LocalVarIndex.Scope
+		IL_001f: callvirt instance object Classes.CompoundAssignment_LocalVarIndex.TestClass::test()
+		IL_0024: pop
+		IL_0025: br IL_0038
+
+		IL_002a: pop
+		IL_002b: ldloc.1
+		IL_002c: ldstr "test"
+		IL_0031: ldloc.2
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0037: pop
+
+		IL_0038: ret
+	} // end of method CompoundAssignment_LocalVarIndex::__js_module_init__
+
+} // end of class Modules.CompoundAssignment_LocalVarIndex
 
 .class public auto ansi beforefieldinit Classes.CompoundAssignment_LocalVarIndex.TestClass
 	extends [System.Runtime]System.Object
@@ -97,7 +150,7 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2074
+		// Method begins at RVA 0x2098
 		// Header size: 12
 		// Code size: 32 (0x20)
 		.maxstack 32
@@ -118,7 +171,7 @@
 	.method public hidebysig 
 		instance object test () cil managed 
 	{
-		// Method begins at RVA 0x20a0
+		// Method begins at RVA 0x20c4
 		// Header size: 12
 		// Code size: 127 (0x7f)
 		.maxstack 32
@@ -179,57 +232,6 @@
 
 } // end of class Classes.CompoundAssignment_LocalVarIndex.TestClass
 
-.class public auto ansi beforefieldinit Modules.CompoundAssignment_LocalVarIndex
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void __js_module_init__ (
-			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
-			object module,
-			string __filename,
-			string __dirname
-		) cil managed 
-	{
-		// Method begins at RVA 0x212c
-		// Header size: 12
-		// Code size: 57 (0x39)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.CompoundAssignment_LocalVarIndex.Scope,
-			[1] object,
-			[2] object[]
-		)
-
-		IL_0000: newobj instance void Modules.CompoundAssignment_LocalVarIndex.Scope::.ctor()
-		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.CompoundAssignment_LocalVarIndex.TestClass::.ctor()
-		IL_000b: stloc.1
-		IL_000c: ldc.i4.0
-		IL_000d: newarr [System.Runtime]System.Object
-		IL_0012: stloc.2
-		IL_0013: ldloc.1
-		IL_0014: isinst Classes.CompoundAssignment_LocalVarIndex.TestClass
-		IL_0019: dup
-		IL_001a: brfalse IL_002a
-
-		IL_001f: callvirt instance object Classes.CompoundAssignment_LocalVarIndex.TestClass::test()
-		IL_0024: pop
-		IL_0025: br IL_0038
-
-		IL_002a: pop
-		IL_002b: ldloc.1
-		IL_002c: ldstr "test"
-		IL_0031: ldloc.2
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0037: pop
-
-		IL_0038: ret
-	} // end of method CompoundAssignment_LocalVarIndex::__js_module_init__
-
-} // end of class Modules.CompoundAssignment_LocalVarIndex
-
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -237,7 +239,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2171
+		// Method begins at RVA 0x2173
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

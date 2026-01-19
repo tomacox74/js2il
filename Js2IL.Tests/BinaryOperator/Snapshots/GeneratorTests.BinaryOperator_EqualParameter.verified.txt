@@ -3,18 +3,146 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.BinaryOperator_EqualParameter.Scope
+.class public auto ansi beforefieldinit Modules.BinaryOperator_EqualParameter
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit testParam
+	.class nested public auto ansi abstract sealed beforefieldinit testParam
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21c3
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object 'value'
+			) cil managed 
+		{
+			// Method begins at RVA 0x20e4
+			// Header size: 12
+			// Code size: 202 (0xca)
+			.maxstack 32
+			.locals init (
+				[0] bool,
+				[1] bool,
+				[2] bool,
+				[3] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldc.r8 3
+			IL_000a: box [System.Runtime]System.Double
+			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+			IL_0014: stloc.0
+			IL_0015: ldarg.1
+			IL_0016: ldc.r8 5
+			IL_001f: box [System.Runtime]System.Double
+			IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+			IL_0029: stloc.1
+			IL_002a: ldarg.1
+			IL_002b: ldc.r8 7
+			IL_0034: box [System.Runtime]System.Double
+			IL_0039: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+			IL_003e: stloc.2
+			IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0044: ldc.i4.2
+			IL_0045: newarr [System.Runtime]System.Object
+			IL_004a: dup
+			IL_004b: ldc.i4.0
+			IL_004c: ldstr "value:"
+			IL_0051: stelem.ref
+			IL_0052: dup
+			IL_0053: ldc.i4.1
+			IL_0054: ldarg.1
+			IL_0055: stelem.ref
+			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_005b: pop
+			IL_005c: ldloc.0
+			IL_005d: box [System.Runtime]System.Boolean
+			IL_0062: stloc.3
+			IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0068: ldc.i4.2
+			IL_0069: newarr [System.Runtime]System.Object
+			IL_006e: dup
+			IL_006f: ldc.i4.0
+			IL_0070: ldstr "value == 3:"
+			IL_0075: stelem.ref
+			IL_0076: dup
+			IL_0077: ldc.i4.1
+			IL_0078: ldloc.3
+			IL_0079: stelem.ref
+			IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_007f: pop
+			IL_0080: ldloc.1
+			IL_0081: box [System.Runtime]System.Boolean
+			IL_0086: stloc.3
+			IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008c: ldc.i4.2
+			IL_008d: newarr [System.Runtime]System.Object
+			IL_0092: dup
+			IL_0093: ldc.i4.0
+			IL_0094: ldstr "value == 5:"
+			IL_0099: stelem.ref
+			IL_009a: dup
+			IL_009b: ldc.i4.1
+			IL_009c: ldloc.3
+			IL_009d: stelem.ref
+			IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00a3: pop
+			IL_00a4: ldloc.2
+			IL_00a5: box [System.Runtime]System.Boolean
+			IL_00aa: stloc.3
+			IL_00ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00b0: ldc.i4.2
+			IL_00b1: newarr [System.Runtime]System.Object
+			IL_00b6: dup
+			IL_00b7: ldc.i4.0
+			IL_00b8: ldstr "value == 7:"
+			IL_00bd: stelem.ref
+			IL_00be: dup
+			IL_00bf: ldc.i4.1
+			IL_00c0: ldloc.3
+			IL_00c1: stelem.ref
+			IL_00c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00c7: pop
+			IL_00c8: ldnull
+			IL_00c9: ret
+		} // end of method testParam::__js_call__
+
+	} // end of class testParam
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object testParam
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x21ba
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,137 +151,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method testParam::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class testParam
+	} // end of class Scope
 
 
-	// Fields
-	.field public object testParam
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.BinaryOperator_EqualParameter.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Modules.BinaryOperator_EqualParameter.testParam
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object 'value'
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 202 (0xca)
-		.maxstack 32
-		.locals init (
-			[0] bool,
-			[1] bool,
-			[2] bool,
-			[3] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: ldc.r8 3
-		IL_000a: box [System.Runtime]System.Double
-		IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_0014: stloc.0
-		IL_0015: ldarg.1
-		IL_0016: ldc.r8 5
-		IL_001f: box [System.Runtime]System.Double
-		IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_0029: stloc.1
-		IL_002a: ldarg.1
-		IL_002b: ldc.r8 7
-		IL_0034: box [System.Runtime]System.Double
-		IL_0039: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_003e: stloc.2
-		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0044: ldc.i4.2
-		IL_0045: newarr [System.Runtime]System.Object
-		IL_004a: dup
-		IL_004b: ldc.i4.0
-		IL_004c: ldstr "value:"
-		IL_0051: stelem.ref
-		IL_0052: dup
-		IL_0053: ldc.i4.1
-		IL_0054: ldarg.1
-		IL_0055: stelem.ref
-		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005b: pop
-		IL_005c: ldloc.0
-		IL_005d: box [System.Runtime]System.Boolean
-		IL_0062: stloc.3
-		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0068: ldc.i4.2
-		IL_0069: newarr [System.Runtime]System.Object
-		IL_006e: dup
-		IL_006f: ldc.i4.0
-		IL_0070: ldstr "value == 3:"
-		IL_0075: stelem.ref
-		IL_0076: dup
-		IL_0077: ldc.i4.1
-		IL_0078: ldloc.3
-		IL_0079: stelem.ref
-		IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007f: pop
-		IL_0080: ldloc.1
-		IL_0081: box [System.Runtime]System.Boolean
-		IL_0086: stloc.3
-		IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008c: ldc.i4.2
-		IL_008d: newarr [System.Runtime]System.Object
-		IL_0092: dup
-		IL_0093: ldc.i4.0
-		IL_0094: ldstr "value == 5:"
-		IL_0099: stelem.ref
-		IL_009a: dup
-		IL_009b: ldc.i4.1
-		IL_009c: ldloc.3
-		IL_009d: stelem.ref
-		IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a3: pop
-		IL_00a4: ldloc.2
-		IL_00a5: box [System.Runtime]System.Boolean
-		IL_00aa: stloc.3
-		IL_00ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b0: ldc.i4.2
-		IL_00b1: newarr [System.Runtime]System.Object
-		IL_00b6: dup
-		IL_00b7: ldc.i4.0
-		IL_00b8: ldstr "value == 7:"
-		IL_00bd: stelem.ref
-		IL_00be: dup
-		IL_00bf: ldc.i4.1
-		IL_00c0: ldloc.3
-		IL_00c1: stelem.ref
-		IL_00c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c7: pop
-		IL_00c8: ldnull
-		IL_00c9: ret
-	} // end of method testParam::__js_call__
-
-} // end of class Modules.BinaryOperator_EqualParameter.testParam
-
-.class public auto ansi beforefieldinit Modules.BinaryOperator_EqualParameter
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -164,18 +166,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x213c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 133 (0x85)
 		.maxstack 32
 		.locals (
-			[0] class Modules.BinaryOperator_EqualParameter.Scope
+			[0] class Modules.BinaryOperator_EqualParameter/Scope
 		)
 
-		IL_0000: newobj instance void Modules.BinaryOperator_EqualParameter.Scope::.ctor()
+		IL_0000: newobj instance void Modules.BinaryOperator_EqualParameter/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.BinaryOperator_EqualParameter.testParam::__js_call__(object[], object)
+		IL_0007: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -188,7 +190,7 @@
 		IL_002a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_002f: pop
 		IL_0030: ldnull
-		IL_0031: ldftn object Modules.BinaryOperator_EqualParameter.testParam::__js_call__(object[], object)
+		IL_0031: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object)
 		IL_0037: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_003c: ldc.i4.1
 		IL_003d: newarr [System.Runtime]System.Object
@@ -201,7 +203,7 @@
 		IL_0054: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_0059: pop
 		IL_005a: ldnull
-		IL_005b: ldftn object Modules.BinaryOperator_EqualParameter.testParam::__js_call__(object[], object)
+		IL_005b: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object)
 		IL_0061: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0066: ldc.i4.1
 		IL_0067: newarr [System.Runtime]System.Object
@@ -225,7 +227,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21cd
+		// Method begins at RVA 0x21cc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

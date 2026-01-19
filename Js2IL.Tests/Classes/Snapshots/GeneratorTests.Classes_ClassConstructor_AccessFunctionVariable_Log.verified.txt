@@ -3,26 +3,48 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope
+.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_AccessFunctionVariable_Log
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit testFunction
+	.class nested public auto ansi abstract sealed beforefieldinit testFunction
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit MyClass
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested public auto ansi beforefieldinit constructor
+			.class nested public auto ansi beforefieldinit MyClass
 				extends [System.Runtime]System.Object
 			{
+				// Nested Types
+				.class nested public auto ansi beforefieldinit constructor
+					extends [System.Runtime]System.Object
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Method begins at RVA 0x2110
+						// Header size: 1
+						// Code size: 8 (0x8)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+						IL_0006: nop
+						IL_0007: ret
+					} // end of method constructor::.ctor
+
+				} // end of class constructor
+
+
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x206b
+					// Method begins at RVA 0x2107
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -31,16 +53,19 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method constructor::.ctor
+				} // end of method MyClass::.ctor
 
-			} // end of class constructor
+			} // end of class MyClass
 
+
+			// Fields
+			.field public string FUNCTION_VALUE
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x20fe
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,19 +74,62 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method MyClass::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class MyClass
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x20c0
+			// Header size: 12
+			// Code size: 41 (0x29)
+			.maxstack 32
+			.locals init (
+				[0] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope,
+				[1] object
+			)
+
+			IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "Hello from function"
+			IL_000c: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope::FUNCTION_VALUE
+			IL_0011: ldc.i4.2
+			IL_0012: newarr [System.Runtime]System.Object
+			IL_0017: dup
+			IL_0018: ldc.i4.0
+			IL_0019: ldarg.0
+			IL_001a: ldc.i4.0
+			IL_001b: ldelem.ref
+			IL_001c: stelem.ref
+			IL_001d: dup
+			IL_001e: ldc.i4.1
+			IL_001f: ldloc.0
+			IL_0020: stelem.ref
+			IL_0021: newobj instance void Classes.Classes_ClassConstructor_AccessFunctionVariable_Log.MyClass::.ctor(object[])
+			IL_0026: stloc.1
+			IL_0027: ldnull
+			IL_0028: ret
+		} // end of method testFunction::__js_call__
+
+	} // end of class testFunction
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Fields
-		.field public string FUNCTION_VALUE
+		.field public object testFunction
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20f5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -70,30 +138,46 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method testFunction::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class testFunction
+	} // end of class Scope
 
-
-	// Fields
-	.field public object testFunction
 
 	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Header size: 12
+		// Code size: 35 (0x23)
+		.maxstack 32
+		.locals (
+			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/Scope
+		)
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
+		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction::__js_call__(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0021: pop
+		IL_0022: ret
+	} // end of method Classes_ClassConstructor_AccessFunctionVariable_Log::__js_module_init__
 
-} // end of class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope
+} // end of class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log
 
 .class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_AccessFunctionVariable_Log.MyClass
 	extends [System.Runtime]System.Object
@@ -107,7 +191,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2074
+		// Method begins at RVA 0x2080
 		// Header size: 12
 		// Code size: 49 (0x31)
 		.maxstack 32
@@ -130,8 +214,8 @@
 		IL_001c: ldarg.1
 		IL_001d: ldc.i4.1
 		IL_001e: ldelem.ref
-		IL_001f: castclass Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope/testFunction
-		IL_0024: ldfld string Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope/testFunction::FUNCTION_VALUE
+		IL_001f: castclass Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope
+		IL_0024: ldfld string Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope::FUNCTION_VALUE
 		IL_0029: stelem.ref
 		IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_002f: pop
@@ -140,88 +224,6 @@
 
 } // end of class Classes.Classes_ClassConstructor_AccessFunctionVariable_Log.MyClass
 
-.class public auto ansi abstract sealed beforefieldinit Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.testFunction
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x20b4
-		// Header size: 12
-		// Code size: 41 (0x29)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope/testFunction,
-			[1] object
-		)
-
-		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope/testFunction::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldstr "Hello from function"
-		IL_000c: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope/testFunction::FUNCTION_VALUE
-		IL_0011: ldc.i4.2
-		IL_0012: newarr [System.Runtime]System.Object
-		IL_0017: dup
-		IL_0018: ldc.i4.0
-		IL_0019: ldarg.0
-		IL_001a: ldc.i4.0
-		IL_001b: ldelem.ref
-		IL_001c: stelem.ref
-		IL_001d: dup
-		IL_001e: ldc.i4.1
-		IL_001f: ldloc.0
-		IL_0020: stelem.ref
-		IL_0021: newobj instance void Classes.Classes_ClassConstructor_AccessFunctionVariable_Log.MyClass::.ctor(object[])
-		IL_0026: stloc.1
-		IL_0027: ldnull
-		IL_0028: ret
-	} // end of method testFunction::__js_call__
-
-} // end of class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.testFunction
-
-.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_AccessFunctionVariable_Log
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void __js_module_init__ (
-			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
-			object module,
-			string __filename,
-			string __dirname
-		) cil managed 
-	{
-		// Method begins at RVA 0x20ec
-		// Header size: 12
-		// Code size: 35 (0x23)
-		.maxstack 32
-		.locals (
-			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope
-		)
-
-		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.testFunction::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0021: pop
-		IL_0022: ret
-	} // end of method Classes_ClassConstructor_AccessFunctionVariable_Log::__js_module_init__
-
-} // end of class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log
-
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -229,7 +231,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211b
+		// Method begins at RVA 0x2119
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

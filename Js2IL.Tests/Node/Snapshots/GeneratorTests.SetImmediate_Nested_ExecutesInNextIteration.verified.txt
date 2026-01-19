@@ -3,22 +3,44 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.SetImmediate_Nested_ExecutesInNextIteration.Scope
+.class public auto ansi beforefieldinit Modules.SetImmediate_Nested_ExecutesInNextIteration
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_L1C13
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_L3C17
+		.class nested public auto ansi beforefieldinit ArrowFunction_L1C13
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit ArrowFunction_L3C17
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2139
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method ArrowFunction_L3C17::.ctor
+
+			} // end of class ArrowFunction_L3C17
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x2130
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,16 +49,16 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L3C17::.ctor
+			} // end of method ArrowFunction_L1C13::.ctor
 
-		} // end of class ArrowFunction_L3C17
+		} // end of class ArrowFunction_L1C13
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2127
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -45,27 +67,61 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_L1C13::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_L1C13
+	} // end of class Scope
 
 
 	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Header size: 12
+		// Code size: 73 (0x49)
+		.maxstack 32
+		.locals init (
+			[0] class Modules.SetImmediate_Nested_ExecutesInNextIteration/Scope,
+			[1] object
+		)
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
+		IL_0000: newobj instance void Modules.SetImmediate_Nested_ExecutesInNextIteration/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.ArrowFunction_L1C14::ArrowFunction_L1C14(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldloc.1
+		IL_0023: ldc.i4.0
+		IL_0024: newarr [System.Runtime]System.Object
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_002e: pop
+		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0034: ldc.i4.1
+		IL_0035: newarr [System.Runtime]System.Object
+		IL_003a: dup
+		IL_003b: ldc.i4.0
+		IL_003c: ldstr "scheduled nested immediates."
+		IL_0041: stelem.ref
+		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0047: pop
+		IL_0048: ret
+	} // end of method SetImmediate_Nested_ExecutesInNextIteration::__js_module_init__
 
-} // end of class Modules.SetImmediate_Nested_ExecutesInNextIteration.Scope
+} // end of class Modules.SetImmediate_Nested_ExecutesInNextIteration
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C14
 	extends [System.Runtime]System.Object
@@ -76,16 +132,16 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x206c
+		// Method begins at RVA 0x20a8
 		// Header size: 12
 		// Code size: 76 (0x4c)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.SetImmediate_Nested_ExecutesInNextIteration.Scope/ArrowFunction_L1C13,
+			[0] class Modules.SetImmediate_Nested_ExecutesInNextIteration/Scope/ArrowFunction_L1C13,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Modules.SetImmediate_Nested_ExecutesInNextIteration.Scope/ArrowFunction_L1C13::.ctor()
+		IL_0000: newobj instance void Modules.SetImmediate_Nested_ExecutesInNextIteration/Scope/ArrowFunction_L1C13::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_000b: ldc.i4.1
@@ -129,7 +185,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c4
+		// Method begins at RVA 0x2100
 		// Header size: 12
 		// Code size: 27 (0x1b)
 		.maxstack 32
@@ -152,60 +208,6 @@
 
 } // end of class Functions.ArrowFunction_L3C18
 
-.class public auto ansi beforefieldinit Modules.SetImmediate_Nested_ExecutesInNextIteration
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void __js_module_init__ (
-			object exports,
-			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
-			object module,
-			string __filename,
-			string __dirname
-		) cil managed 
-	{
-		// Method begins at RVA 0x20ec
-		// Header size: 12
-		// Code size: 73 (0x49)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.SetImmediate_Nested_ExecutesInNextIteration.Scope,
-			[1] object
-		)
-
-		IL_0000: newobj instance void Modules.SetImmediate_Nested_ExecutesInNextIteration.Scope::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Functions.ArrowFunction_L1C14::ArrowFunction_L1C14(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldloc.1
-		IL_0023: ldc.i4.0
-		IL_0024: newarr [System.Runtime]System.Object
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_002e: pop
-		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0034: ldc.i4.1
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldstr "scheduled nested immediates."
-		IL_0041: stelem.ref
-		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0047: pop
-		IL_0048: ret
-	} // end of method SetImmediate_Nested_ExecutesInNextIteration::__js_module_init__
-
-} // end of class Modules.SetImmediate_Nested_ExecutesInNextIteration
-
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -213,7 +215,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2141
+		// Method begins at RVA 0x2142
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

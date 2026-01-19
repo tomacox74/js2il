@@ -3,18 +3,40 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Function_IIFE_Classic.Scope
+.class public auto ansi beforefieldinit Modules.Function_IIFE_Classic
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit FunctionExpression_L1C1
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit FunctionExpression_L1C1
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20c8
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method FunctionExpression_L1C1::.ctor
+
+		} // end of class FunctionExpression_L1C1
+
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20bf
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,60 +45,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method FunctionExpression_L1C1::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class FunctionExpression_L1C1
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Function_IIFE_Classic.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Functions.FunctionExpression_L1C2
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object FunctionExpression_L1C2 (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 27 (0x1b)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "IIFE ran"
-		IL_0012: stelem.ref
-		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0018: pop
-		IL_0019: ldnull
-		IL_001a: ret
-	} // end of method FunctionExpression_L1C2::FunctionExpression_L1C2
-
-} // end of class Functions.FunctionExpression_L1C2
-
-.class public auto ansi beforefieldinit Modules.Function_IIFE_Classic
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -87,17 +60,17 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x208c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 60 (0x3c)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Function_IIFE_Classic.Scope,
+			[0] class Modules.Function_IIFE_Classic/Scope,
 			[1] object,
 			[2] object[]
 		)
 
-		IL_0000: newobj instance void Modules.Function_IIFE_Classic.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Function_IIFE_Classic/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
 		IL_0007: ldftn object Functions.FunctionExpression_L1C2::FunctionExpression_L1C2(object[])
@@ -128,6 +101,35 @@
 
 } // end of class Modules.Function_IIFE_Classic
 
+.class public auto ansi abstract sealed beforefieldinit Functions.FunctionExpression_L1C2
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object FunctionExpression_L1C2 (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x2098
+		// Header size: 12
+		// Code size: 27 (0x1b)
+		.maxstack 32
+
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: ldc.i4.1
+		IL_0006: newarr [System.Runtime]System.Object
+		IL_000b: dup
+		IL_000c: ldc.i4.0
+		IL_000d: ldstr "IIFE ran"
+		IL_0012: stelem.ref
+		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0018: pop
+		IL_0019: ldnull
+		IL_001a: ret
+	} // end of method FunctionExpression_L1C2::FunctionExpression_L1C2
+
+} // end of class Functions.FunctionExpression_L1C2
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -135,7 +137,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d4
+		// Method begins at RVA 0x20d1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

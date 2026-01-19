@@ -3,112 +3,77 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.Array_Sort_WithComparatorArrow.Scope
-	extends [System.Runtime]System.Object
-{
-	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_L2C9
-		extends [System.Runtime]System.Object
-	{
-		// Fields
-		.field public object a
-		.field public object b
-
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method ArrowFunction_L2C9::.ctor
-
-	} // end of class ArrowFunction_L2C9
-
-	.class nested public auto ansi beforefieldinit Block_L3C37
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2062
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method Block_L3C37::.ctor
-
-	} // end of class Block_L3C37
-
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.Array_Sort_WithComparatorArrow.Scope
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L2C10
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L2C10 (
-			object[] scopes,
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 25 (0x19)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: stloc.0
-		IL_0007: ldloc.0
-		IL_0008: ldarg.2
-		IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000e: sub
-		IL_000f: stloc.0
-		IL_0010: ldloc.0
-		IL_0011: box [System.Runtime]System.Double
-		IL_0016: stloc.1
-		IL_0017: ldloc.1
-		IL_0018: ret
-	} // end of method ArrowFunction_L2C10::ArrowFunction_L2C10
-
-} // end of class Functions.ArrowFunction_L2C10
-
 .class public auto ansi beforefieldinit Modules.Array_Sort_WithComparatorArrow
 	extends [System.Runtime]System.Object
 {
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit ArrowFunction_L2C9
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object a
+			.field public object b
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x216e
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method ArrowFunction_L2C9::.ctor
+
+		} // end of class ArrowFunction_L2C9
+
+		.class nested public auto ansi beforefieldinit Block_L3C37
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2177
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L3C37::.ctor
+
+		} // end of class Block_L3C37
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2165
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -119,18 +84,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2094
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 228 (0xe4)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.Array_Sort_WithComparatorArrow.Scope,
+			[0] class Modules.Array_Sort_WithComparatorArrow/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] float64,
 			[3] object
 		)
 
-		IL_0000: newobj instance void Modules.Array_Sort_WithComparatorArrow.Scope::.ctor()
+		IL_0000: newobj instance void Modules.Array_Sort_WithComparatorArrow/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.5
 		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
@@ -208,6 +173,43 @@
 
 } // end of class Modules.Array_Sort_WithComparatorArrow
 
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L2C10
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L2C10 (
+			object[] scopes,
+			object a,
+			object b
+		) cil managed 
+	{
+		// Method begins at RVA 0x2140
+		// Header size: 12
+		// Code size: 25 (0x19)
+		.maxstack 32
+		.locals init (
+			[0] float64,
+			[1] object
+		)
+
+		IL_0000: ldarg.1
+		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0006: stloc.0
+		IL_0007: ldloc.0
+		IL_0008: ldarg.2
+		IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_000e: sub
+		IL_000f: stloc.0
+		IL_0010: ldloc.0
+		IL_0011: box [System.Runtime]System.Double
+		IL_0016: stloc.1
+		IL_0017: ldloc.1
+		IL_0018: ret
+	} // end of method ArrowFunction_L2C10::ArrowFunction_L2C10
+
+} // end of class Functions.ArrowFunction_L2C10
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -215,7 +217,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2184
+		// Method begins at RVA 0x2180
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

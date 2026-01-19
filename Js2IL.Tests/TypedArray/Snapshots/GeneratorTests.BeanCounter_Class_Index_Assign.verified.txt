@@ -3,22 +3,64 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Modules.BeanCounter_Class_Index_Assign.Scope
+.class public auto ansi beforefieldinit Modules.BeanCounter_Class_Index_Assign
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit BeanCounter
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested public auto ansi beforefieldinit BeanCounter
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit constructor
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2146
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method constructor::.ctor
+
+			} // end of class constructor
+
+			.class nested public auto ansi beforefieldinit setBeanCount
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x214f
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method setBeanCount::.ctor
+
+			} // end of class setBeanCount
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x213d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,36 +69,16 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method BeanCounter::.ctor
 
-		} // end of class constructor
-
-		.class nested public auto ansi beforefieldinit setBeanCount
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x206b
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method setBeanCount::.ctor
-
-		} // end of class setBeanCount
+		} // end of class BeanCounter
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2134
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -65,82 +87,11 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method BeanCounter::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class BeanCounter
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class Modules.BeanCounter_Class_Index_Assign.Scope
-
-.class public auto ansi beforefieldinit Classes.BeanCounter_Class_Index_Assign.BeanCounter
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public class [JavaScriptRuntime]JavaScriptRuntime.Int32Array beanCounts
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2074
-		// Header size: 12
-		// Code size: 32 (0x20)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldc.r8 3
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
-		IL_001a: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.BeanCounter_Class_Index_Assign.BeanCounter::beanCounts
-		IL_001f: ret
-	} // end of method BeanCounter::.ctor
-
-	.method public hidebysig 
-		instance object setBeanCount (
-			object 'box',
-			object count
-		) cil managed 
-	{
-		// Method begins at RVA 0x20a0
-		// Header size: 12
-		// Code size: 16 (0x10)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.BeanCounter_Class_Index_Assign.BeanCounter::beanCounts
-		IL_0006: ldarg.1
-		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_000d: pop
-		IL_000e: ldnull
-		IL_000f: ret
-	} // end of method BeanCounter::setBeanCount
-
-} // end of class Classes.BeanCounter_Class_Index_Assign.BeanCounter
-
-.class public auto ansi beforefieldinit Modules.BeanCounter_Class_Index_Assign
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
 		void __js_module_init__ (
@@ -151,17 +102,17 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20bc
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 142 (0x8e)
 		.maxstack 32
 		.locals init (
-			[0] class Modules.BeanCounter_Class_Index_Assign.Scope,
+			[0] class Modules.BeanCounter_Class_Index_Assign/Scope,
 			[1] object,
 			[2] object[]
 		)
 
-		IL_0000: newobj instance void Modules.BeanCounter_Class_Index_Assign.Scope::.ctor()
+		IL_0000: newobj instance void Modules.BeanCounter_Class_Index_Assign/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Classes.BeanCounter_Class_Index_Assign.BeanCounter::.ctor()
 		IL_000b: stloc.1
@@ -218,6 +169,57 @@
 
 } // end of class Modules.BeanCounter_Class_Index_Assign
 
+.class public auto ansi beforefieldinit Classes.BeanCounter_Class_Index_Assign.BeanCounter
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public class [JavaScriptRuntime]JavaScriptRuntime.Int32Array beanCounts
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x20ec
+		// Header size: 12
+		// Code size: 32 (0x20)
+		.maxstack 32
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ldarg.0
+		IL_0007: ldc.r8 3
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+		IL_001a: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.BeanCounter_Class_Index_Assign.BeanCounter::beanCounts
+		IL_001f: ret
+	} // end of method BeanCounter::.ctor
+
+	.method public hidebysig 
+		instance object setBeanCount (
+			object 'box',
+			object count
+		) cil managed 
+	{
+		// Method begins at RVA 0x2118
+		// Header size: 12
+		// Code size: 16 (0x10)
+		.maxstack 32
+
+		IL_0000: ldarg.0
+		IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.BeanCounter_Class_Index_Assign.BeanCounter::beanCounts
+		IL_0006: ldarg.1
+		IL_0007: ldarg.2
+		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_000d: pop
+		IL_000e: ldnull
+		IL_000f: ret
+	} // end of method BeanCounter::setBeanCount
+
+} // end of class Classes.BeanCounter_Class_Index_Assign.BeanCounter
+
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -225,7 +227,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2156
+		// Method begins at RVA 0x2158
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
