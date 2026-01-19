@@ -103,6 +103,13 @@ namespace Js2IL.Services
                 return "Scope";
             }
 
+            // Class scopes should not take the same CLR type name as the runtime class TypeDef.
+            // We emit the class *scope* type as "Scope" and nest it under the class TypeDef.
+            if (scope.Kind == ScopeKind.Class)
+            {
+                return "Scope";
+            }
+
             return scope.Name;
         }
 

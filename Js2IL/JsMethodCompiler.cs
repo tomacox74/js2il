@@ -666,6 +666,31 @@ internal sealed class JsMethodCompiler
                 throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{childKey}', but none was found.");
             }
 
+            // Special case: class scopes should be nested under their runtime class TypeDef.
+            // This keeps Modules.<Module>.Scope free of nested types and produces a clean layout:
+            //   Modules.<Module>+<ClassName>
+            //     + Scope
+            // rather than nesting the class scope under the parent scope type.
+            if (child.Kind == ScopeKind.Class)
+            {
+                var classRegistry = _serviceProvider.GetService<Services.ClassRegistry>();
+                if (classRegistry != null)
+                {
+                    var registryClassName = GetRegistryClassName(child);
+                    if (classRegistry.TryGet(registryClassName, out var classTypeHandle) && !classTypeHandle.IsNil)
+                    {
+                        relationships.Add((childTypeHandle, classTypeHandle));
+                        CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                        continue;
+                    }
+                }
+
+                // Fallback: if we can't resolve the runtime class TypeDef, keep legacy nesting.
+                relationships.Add((childTypeHandle, parentTypeHandle));
+                CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                continue;
+            }
+
             // Special case: function declarations have a dedicated callable owner type.
             // We nest the function's *scope type* under that owner type so IL reads as:
             //   .class ... Modules.<Module>.<FunctionName>/Scope

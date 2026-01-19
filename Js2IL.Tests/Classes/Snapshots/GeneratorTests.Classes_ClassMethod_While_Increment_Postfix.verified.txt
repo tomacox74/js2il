@@ -10,60 +10,8 @@
 	.class nested public auto ansi beforefieldinit Counter
 		extends [System.Runtime]System.Object
 	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x20c4
-			// Header size: 12
-			// Code size: 7 (0x7)
-			.maxstack 32
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ret
-		} // end of method Counter::.ctor
-
-		.method public hidebysig 
-			instance object run (
-				object n
-			) cil managed 
-		{
-			// Method begins at RVA 0x20d8
-			// Header size: 12
-			// Code size: 43 (0x2b)
-			.maxstack 32
-			.locals init (
-				[0] float64
-			)
-
-			IL_0000: ldc.r8 0.0
-			IL_0009: stloc.0
-			// loop start (head: IL_000a)
-				IL_000a: ldloc.0
-				IL_000b: ldarg.1
-				IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0011: clt
-				IL_0013: brfalse IL_0029
-
-				IL_0018: ldloc.0
-				IL_0019: ldc.r8 1
-				IL_0022: add
-				IL_0023: stloc.0
-				IL_0024: br IL_000a
-			// end loop
-
-			IL_0029: ldnull
-			IL_002a: ret
-		} // end of method Counter::run
-
-	} // end of class Counter
-
-	.class nested public auto ansi beforefieldinit Scope
-		extends [System.Runtime]System.Object
-	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Counter
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
@@ -123,11 +71,63 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Counter::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class Counter
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20c4
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Counter::.ctor
+
+		.method public hidebysig 
+			instance object run (
+				object n
+			) cil managed 
+		{
+			// Method begins at RVA 0x20d8
+			// Header size: 12
+			// Code size: 43 (0x2b)
+			.maxstack 32
+			.locals init (
+				[0] float64
+			)
+
+			IL_0000: ldc.r8 0.0
+			IL_0009: stloc.0
+			// loop start (head: IL_000a)
+				IL_000a: ldloc.0
+				IL_000b: ldarg.1
+				IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0011: clt
+				IL_0013: brfalse IL_0029
+
+				IL_0018: ldloc.0
+				IL_0019: ldc.r8 1
+				IL_0022: add
+				IL_0023: stloc.0
+				IL_0024: br IL_000a
+			// end loop
+
+			IL_0029: ldnull
+			IL_002a: ret
+		} // end of method Counter::run
+
+	} // end of class Counter
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
