@@ -454,6 +454,31 @@ namespace Js2IL.SymbolTables
                             // Create a pseudo-scope for the method if we compile methods as functions later
                             var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
                             var methodScope = new Scope(mname, ScopeKind.Function, classScope, mfunc);
+
+                            // Author a distinct CLR type name for class member scopes so nested types don't collide.
+                            // Examples:
+                            // - constructor -> Scope_ctor
+                            // - get x() -> Scope_get_x
+                            // - set x(v) -> Scope_set_x
+                            // - foo() -> Scope_foo
+                            var sanitizedMemberName = SanitizeForMetadata(mname);
+                            if (string.Equals(mname, "constructor", StringComparison.Ordinal))
+                            {
+                                methodScope.DotNetTypeName = "Scope_ctor";
+                            }
+                            else if (mdef.Kind == PropertyKind.Get)
+                            {
+                                methodScope.DotNetTypeName = $"Scope_get_{sanitizedMemberName}";
+                            }
+                            else if (mdef.Kind == PropertyKind.Set)
+                            {
+                                methodScope.DotNetTypeName = $"Scope_set_{sanitizedMemberName}";
+                            }
+                            else
+                            {
+                                methodScope.DotNetTypeName = $"Scope_{sanitizedMemberName}";
+                            }
+
                             foreach (var p in mfunc.Params)
                             {
                                 if (p is Identifier pid)

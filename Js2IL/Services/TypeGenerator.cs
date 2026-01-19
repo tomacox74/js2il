@@ -88,6 +88,17 @@ namespace Js2IL.Services
 
         private static string GetClrTypeNameForScope(Scope scope)
         {
+            // If the symbol table authored an explicit CLR type name for a *function scope* and it
+            // represents a scope type name (e.g., Scope_ctor / Scope_get_<name> / Scope_set_<name>),
+            // prefer it. Do NOT use class scope DotNetTypeName (e.g., "BitBag") here, since class
+            // DotNetTypeName refers to the runtime class TypeDef, not the class scope type.
+            if (scope.Kind == ScopeKind.Function
+                && !string.IsNullOrWhiteSpace(scope.DotNetTypeName)
+                && scope.DotNetTypeName.StartsWith("Scope", StringComparison.Ordinal))
+            {
+                return scope.DotNetTypeName;
+            }
+
             // Function declarations have an associated callable owner type (Modules.<Module>.<FunctionName>).
             // To keep the IL readable and avoid awkward names like Scope/<FunctionName>, we name the
             // function's scope type "Scope" and later nest it under the callable owner type.
