@@ -571,54 +571,6 @@ internal sealed class JsMethodCompiler
     {
         var relationships = new List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)>();
 
-        // Function-declaration owner types should be nested directly under the module type so
-        // reflection sees: Modules.<ModuleName>+<FunctionName>
-        // (and the function's scope nests under that owner type).
-        foreach (var owner in _functionTypeMetadataRegistry.GetAllForModule(moduleName).Values)
-        {
-            if (!owner.IsNil)
-            {
-                relationships.Add((owner, moduleTypeHandle));
-            }
-        }
-
-        // Anonymous callable owner types are nested under their declaring scope.
-        // Special case: when declared inside a function declaration, nest under the function owner type
-        // (so reflection sees: Modules.<Module>+<FunctionName>+ArrowFunction_LxCy).
-        foreach (var anon in _anonymousCallableTypeMetadataRegistry.GetAllForModule(moduleName))
-        {
-            TypeDefinitionHandle enclosing;
-
-            if (string.Equals(anon.DeclaringScopeName, moduleName, StringComparison.Ordinal))
-            {
-                enclosing = moduleTypeHandle;
-            }
-            else
-            {
-                // If declaring scope is a function declaration scope, prefer the function owner type.
-                // DeclaringScopeName is a registry scope key: "<module>/<path>".
-                var lastSlash = anon.DeclaringScopeName.LastIndexOf('/');
-                var lastSegment = lastSlash >= 0 && lastSlash < anon.DeclaringScopeName.Length - 1
-                    ? anon.DeclaringScopeName[(lastSlash + 1)..]
-                    : anon.DeclaringScopeName;
-
-                if (_functionTypeMetadataRegistry.TryGet(moduleName, lastSegment, out var functionOwner) && !functionOwner.IsNil)
-                {
-                    enclosing = functionOwner;
-                }
-                else
-                {
-                    // IMPORTANT: do NOT nest anonymous owner types under scope types.
-                    // Scope TypeDefs are generated later (Phase 2), and the CLR requires the enclosing
-                    // TypeDef to appear earlier in the TypeDef table than the nested type.
-                    // Nest under the module type to keep metadata valid.
-                    enclosing = moduleTypeHandle;
-                }
-            }
-
-            relationships.Add((anon.OwnerTypeHandle, enclosing));
-        }
-
         // Global scope nests under the module type: Modules.<ModuleName>.Scope
         var globalKey = ScopeNaming.GetRegistryScopeName(globalScope);
         if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(globalKey, out var globalScopeTypeHandle))

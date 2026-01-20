@@ -141,14 +141,6 @@ namespace Js2IL.Services.ILGenerators
                             firstMethodOverride: expected);
 
                         functionTypes.Add(_moduleName, functionName, ownerType);
-
-                        // Ensure the owner type is nested under the module root even if other phases
-                        // haven't registered the relationship yet.
-                        var moduleTypeRegistry = _serviceProvider.GetRequiredService<ModuleTypeMetadataRegistry>();
-                        if (moduleTypeRegistry.TryGet(_moduleName, out var moduleType) && !moduleType.IsNil)
-                        {
-                            _nestedTypeRelationshipRegistry.Add(ownerType, moduleType);
-                        }
                     }
 
                     parentType = ownerType;

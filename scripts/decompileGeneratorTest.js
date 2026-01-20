@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
-Runs a generator test, decompiles the resulting assembly to a C# project, and opens it in VS Code.
+Runs a generator test and opens the resulting assembly in ILSpy.
 
 Usage:
   node scripts/decompileGeneratorTest.js <Category> <TestName>
@@ -11,8 +11,7 @@ Examples:
   node scripts/decompileGeneratorTest.js Classes Classes_ClassWithMethod_HelloWorld
 
 Requirements:
-  - ilspycmd must be in PATH
-  - code (VS Code CLI) must be in PATH
+  - ilspy must be in PATH
 */
 
 const childProcess = require('node:child_process');
@@ -76,6 +75,18 @@ function findProjectRoot(startDir) {
 }
 
 const projectRoot = findProjectRoot(__dirname);
+
+function openInIlSpy(assemblyPath) {
+  // Launch GUI and let this script exit without waiting.
+  const child = childProcess.spawn('ilspy', [assemblyPath], {
+    detached: true,
+    stdio: 'ignore',
+    shell: true,
+    cwd: process.cwd(),
+  });
+
+  child.unref();
+}
 
 function main() {
   const args = process.argv.slice(2);
@@ -146,65 +157,13 @@ function main() {
 
   console.log(`Found assembly: ${assemblyPath}`);
 
-  // Step 3: Create output directory for decompiled project
-  const tempDir = os.tmpdir();
-  const safeOutputName = String(testName).replace(/[\\/]/g, '_');
-  const decompileOutputDir = path.join(tempDir, 'Js2IL.Decompiled', safeOutputName);
-  
-  // Clean up previous decompilation if exists
-  if (fs.existsSync(decompileOutputDir)) {
-    fs.rmSync(decompileOutputDir, { recursive: true, force: true });
-  }
-  fs.mkdirSync(decompileOutputDir, { recursive: true });
-
-  console.log(`Decompiling to: ${decompileOutputDir}`);
-
-  // Step 4: Decompile using ilspycmd to a C# project
-  const ilspyResult = childProcess.spawnSync(
-    'ilspycmd',
-    [
-      '-p',  // Generate project files
-      '-o', decompileOutputDir,
-      assemblyPath,
-    ],
-    {
-      stdio: 'inherit',
-      shell: true,
-      cwd: process.cwd(),
-    }
-  );
-
-  if (ilspyResult.status !== 0) {
-    console.error('ilspycmd decompilation failed.');
-    process.exit(1);
-  }
-
-  // Step 5: Find the .csproj file
-  const files = fs.readdirSync(decompileOutputDir);
-  const csprojFile = files.find(f => f.endsWith('.csproj'));
-  
-  if (!csprojFile) {
-    console.error('No .csproj file found in decompiled output.');
-    console.error('Files in output directory:', files);
-    process.exit(1);
-  }
-
-  const projectPath = path.join(decompileOutputDir, csprojFile);
-  console.log(`Opening project: ${projectPath}`);
-
-  // Step 6: Open in VS Code
-  const codeResult = childProcess.spawnSync(
-    'code',
-    [decompileOutputDir],
-    {
-      stdio: 'inherit',
-      shell: true,
-      cwd: process.cwd(),
-    }
-  );
-
-  if (codeResult.status !== 0) {
-    console.error('Failed to open VS Code.');
+  // Step 3: Open the assembly in ILSpy
+  try {
+    console.log('Opening in ILSpy...');
+    openInIlSpy(assemblyPath);
+  } catch (err) {
+    console.error('Failed to launch ILSpy (is `ilspy` on PATH?).');
+    console.error(err);
     process.exit(1);
   }
 

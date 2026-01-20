@@ -22,7 +22,8 @@ namespace Js2IL.Tests.Classes
                 Assert.True(moduleType.IsNotPublic);
 
                 // Module root should contain the nested module scope type.
-                var nestedScopeType = moduleType.GetNestedType("Scope");
+                var flags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
+                var nestedScopeType = moduleType.GetNestedType("Scope", flags);
                 Assert.NotNull(nestedScopeType);
             });
         }

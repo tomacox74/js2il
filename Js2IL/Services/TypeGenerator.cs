@@ -366,9 +366,12 @@ namespace Js2IL.Services
         {
             var isNested = parentType.HasValue || isNestedType;
 
-            // Set appropriate visibility: Public for top-level types, NestedPublic for nested types
+            // Set appropriate visibility: Public for top-level types, NestedPrivate for nested types.
+            // NOTE: This is expected to break some execution tests because other generated types legitimately
+            // reference scope types (e.g., closure bind sites and cross-type captures). We are intentionally
+            // tightening visibility to observe the resulting runtime failures.
             var typeAttributes = isNested
-                ? TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit
+                ? TypeAttributes.NestedPrivate | TypeAttributes.Class | TypeAttributes.BeforeFieldInit
                 : TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
 
             // For nested types, use empty namespace; for top-level types, use the provided namespace

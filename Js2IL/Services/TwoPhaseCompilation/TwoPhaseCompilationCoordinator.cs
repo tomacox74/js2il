@@ -113,24 +113,6 @@ public sealed class TwoPhaseCompilationCoordinator
             // Arrow functions may contain `new ClassName()` which requires the class to exist.
             compileClassesAndFunctionsPhase2();
 
-            // Sanity check: the number of MethodDef rows added by class/function declaration
-            // must match what we assumed when preallocating anonymous callable MethodDef handles.
-            if (_methodDefRowCountAtPreallocation.HasValue && _expectedMethodDefsBeforeAnonymousCallables.HasValue)
-            {
-                var expected = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value;
-                var actual = metadataBuilder.GetRowCount(TableIndex.MethodDef);
-                if (actual != expected)
-                {
-                    throw new InvalidOperationException(
-                        $"[TwoPhase] MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes/functions, but was {actual}. " +
-                        "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during class/function declaration). " +
-                        "Common causes include new synthesized methods (for example, class static field initializers or helper methods) being emitted without updating CallableDiscovery/" +
-                        "preallocation logic (_expectedMethodDefsBeforeAnonymousCallables). Verify that any additional MethodDef emissions during class/function declaration are either " +
-                        "accounted for in the preallocation calculation or are moved to a phase that runs after anonymous callable preallocation."
-                    );
-                }
-            }
-
             if (_discoveredCallables != null)
             {
                 compileAnonymousCallablesPhase2(_discoveredCallables);
@@ -200,17 +182,24 @@ public sealed class TwoPhaseCompilationCoordinator
 
         if (_discoveredCallables != null)
         {
-            // FunctionDeclaration MethodDefs must be preallocated before class types are declared
-            // so we can also predeclare function owner TypeDefs for nesting (Modules.<Module>+<FunctionName>).
-            // This enables function-local classes to be nested under their enclosing function owner type.
-            PreallocatePhase1FunctionDeclarationMethodDefs(symbolTable, metadataBuilder);
+            // Deterministic MethodDef-row allocation:
+            // 1) FunctionDeclaration callables
+            // 2) Anonymous callables (Arrow/FunctionExpression)
+            // 3) Class callables (ctors/methods/etc.)
+            //
+            // This ordering is required when function-local classes can be nested under anonymous
+            // callable owner types: the enclosing callable's MethodList must not be later than the
+            // nested class's MethodList (ECMA-335 TypeDef.MethodList monotonicity).
+            var methodDefRowCountBefore = metadataBuilder.GetRowCount(TableIndex.MethodDef);
+            var startRowId = methodDefRowCountBefore + 1;
 
-            // Class callable MethodDefs must be preallocated BEFORE class type declarations so
-            // TypeDef.MethodList can point at the correct first MethodDef row for each class.
-            // We preallocate in class declaration order (TypeDef order) to satisfy ECMA-335 method list rules.
-            PreallocatePhase1ClassCallablesMethodDefs(symbolTable, metadataBuilder);
+            var nextRowId = PreallocatePhase1FunctionDeclarationMethodDefsFromRowId(symbolTable, startRowId);
 
             PreallocatePhase1AnonymousCallablesMethodDefsInOrder(_discoveredCallables, ordered, metadataBuilder);
+
+            var anonymousCallableCount = ordered.Count(c => c.Kind is CallableKind.Arrow or CallableKind.FunctionExpression);
+            var classCallablesStartRowId = nextRowId + anonymousCallableCount;
+            _ = PreallocatePhase1ClassCallablesMethodDefsFromRowId(symbolTable, classCallablesStartRowId);
 
             // Predeclare callable owner types (function declarations + anonymous callables) now that
             // MethodDef tokens are allocated. This makes owner type handles available to generators
@@ -241,6 +230,13 @@ public sealed class TwoPhaseCompilationCoordinator
                 methodBodyStreamEncoder,
                 classRegistry);
 
+            // Compile/finalize anonymous callables BEFORE class callables so nested class MethodDefs
+            // appear after their enclosing callable owner MethodDef in the MethodDef table.
+            if (_discoveredCallables != null)
+            {
+                compileAnonymousCallablesPhase2(ordered);
+            }
+
             // Compile class constructors/methods/accessors/.cctor bodies in planned Phase 2.
             // Compile bodies in plan order, then emit MethodDef rows grouped by class type (TypeDef order)
             // to satisfy ECMA-335 contiguous method list requirements.
@@ -251,24 +247,6 @@ public sealed class TwoPhaseCompilationCoordinator
                 serviceProvider,
                 methodBodyStreamEncoder,
                 classRegistry);
-
-            if (_methodDefRowCountAtPreallocation.HasValue && _expectedMethodDefsBeforeAnonymousCallables.HasValue)
-            {
-                var expected = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value;
-                var actual = metadataBuilder.GetRowCount(TableIndex.MethodDef);
-                if (actual != expected)
-                {
-                    throw new InvalidOperationException(
-                        $"[TwoPhase] MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes + finalizing class callables + finalizing function declarations, but was {actual}. " +
-                        "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during finalization)."
-                    );
-                }
-            }
-
-            if (_discoveredCallables != null)
-            {
-                compileAnonymousCallablesPhase2(ordered);
-            }
         });
     }
 
@@ -333,10 +311,9 @@ public sealed class TwoPhaseCompilationCoordinator
 
         var startRowId = methodDefBaseRowOverride ?? (metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1);
         // IMPORTANT ordering for ECMA-335 TypeDef.MethodList monotonicity:
-        // FunctionDeclaration MethodDefs must come before class callables so function owner TypeDefs
-        // can appear before function-local classes in the TypeDef table.
+        // FunctionDeclaration MethodDefs must come before anonymous callables, and anonymous callables
+        // must come before class callables when classes can be nested under anonymous owner types.
         var nextRowId = PreallocatePhase1FunctionDeclarationMethodDefsFromRowId(symbolTable, startRowId);
-        nextRowId = PreallocatePhase1ClassCallablesMethodDefsFromRowId(symbolTable, nextRowId);
 
         // Override the MethodDef-row baseline when predeclaring before any methods are emitted.
         var methodDefRowCountAtPreallocationOverride = startRowId - 1;
@@ -345,6 +322,10 @@ public sealed class TwoPhaseCompilationCoordinator
             ordered,
             metadataBuilder,
             methodDefRowCountAtPreallocationOverride);
+
+        var anonymousCallableCount = ordered.Count(c => c.Kind is CallableKind.Arrow or CallableKind.FunctionExpression);
+        var classCallablesStartRowId = nextRowId + anonymousCallableCount;
+        _ = PreallocatePhase1ClassCallablesMethodDefsFromRowId(symbolTable, classCallablesStartRowId);
     }
 
     /// <summary>
@@ -356,7 +337,9 @@ public sealed class TwoPhaseCompilationCoordinator
         MetadataBuilder metadataBuilder,
         BaseClassLibraryReferences bclReferences,
         TypeDefinitionHandle moduleTypeHandleForNesting = default,
-        NestedTypeRelationshipRegistry? nestedTypeRelationshipRegistry = null)
+        NestedTypeRelationshipRegistry? nestedTypeRelationshipRegistry = null,
+        bool declareFunctionDeclarationOwnerTypes = true,
+        bool declareAnonymousOwnerTypes = true)
     {
         if (_discoveredCallables == null)
         {
@@ -374,142 +357,193 @@ public sealed class TwoPhaseCompilationCoordinator
 
         var canNest = !moduleTypeHandleForNesting.IsNil && nestedTypeRelationshipRegistry != null;
 
-        // 1) Function-declaration owner types (nested under Modules.<Module> as Modules.<Module>+<FunctionName>)
-        // These must come AFTER class types (class ctors are emitted first), but BEFORE Functions.* types.
-        var functionDeclCallables = discoveredCallables
-            .Where(c => c.Kind == CallableKind.FunctionDeclaration)
-            .ToList();
+        // When scope types are emitted as NestedPrivate, any nested callable that references an
+        // outer callable's Scope type must be nested under that outer callable-owner type.
+        // Otherwise the CLR will throw TypeAccessException at runtime.
+        //
+        // To make nesting robust regardless of discovery/declaration order, we:
+        // 1) declare/register owner TypeDefs
+        // 2) in a second pass, emit NestedClass relationships once all enclosing types exist
+        var pendingNest = new List<(TypeDefinitionHandle OwnerType, string DeclaringScopeName)>();
 
-        foreach (var callable in functionDeclCallables)
+        TypeDefinitionHandle ResolveEnclosingType(string declaringScopeName)
         {
-            var functionName = callable.Name ?? "anonymous";
-
-            if (_functionTypeMetadataRegistry.TryGet(moduleName, functionName, out var existing) && !existing.IsNil)
+            if (!canNest)
             {
-                continue;
+                throw new InvalidOperationException("ResolveEnclosingType requires a moduleTypeHandleForNesting and nestedTypeRelationshipRegistry.");
             }
 
-            if (!_registry.TryGetDeclaredToken(callable, out var tok) || tok.Kind != HandleKind.MethodDefinition)
+            if (string.Equals(declaringScopeName, moduleName, StringComparison.Ordinal))
             {
-                throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration missing declared token during predeclare: {callable.DisplayName}");
+                return moduleTypeHandleForNesting;
             }
 
-            var expected = (MethodDefinitionHandle)tok;
-            if (expected.IsNil)
+            var segments = declaringScopeName
+                .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (var i = segments.Length - 1; i >= 0; i--)
             {
-                throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration has nil token during predeclare: {callable.DisplayName}");
+                var candidateName = segments[i];
+
+                if (_functionTypeMetadataRegistry.TryGet(moduleName, candidateName, out var functionOwner) && !functionOwner.IsNil)
+                {
+                    return functionOwner;
+                }
+
+                var candidateDeclaringScope = i == 0
+                    ? string.Empty
+                    : string.Join("/", segments.Take(i));
+
+                if (_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, candidateDeclaringScope, candidateName, out var anonOwner)
+                    && !anonOwner.IsNil)
+                {
+                    return anonOwner;
+                }
             }
 
-            // Owner type will be nested under the module TypeDef later via NestedClass rows.
-            // Nested types should not carry their own namespace.
-            var tb = new TypeBuilder(metadataBuilder, string.Empty, functionName);
-            var ownerTypeHandle = tb.AddTypeDefinition(
-                TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
-                bclReferences.ObjectType,
-                firstFieldOverride: null,
-                firstMethodOverride: expected);
+            return moduleTypeHandleForNesting;
+        }
 
-            _functionTypeMetadataRegistry.Add(moduleName, functionName, ownerTypeHandle);
+        if (declareFunctionDeclarationOwnerTypes)
+        {
+            var functionDeclCallables = discoveredCallables
+                .Where(c => c.Kind == CallableKind.FunctionDeclaration)
+                .ToList();
 
-            // NestedPublic types must have a valid enclosing type (NestedClass row) to be loadable.
-            if (canNest)
+            foreach (var callable in functionDeclCallables)
             {
-                nestedTypeRelationshipRegistry!.Add(ownerTypeHandle, moduleTypeHandleForNesting);
+                var functionName = callable.Name ?? "anonymous";
+
+                if (!_registry.TryGetDeclaredToken(callable, out var tok) || tok.Kind != HandleKind.MethodDefinition)
+                {
+                    throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration missing declared token during predeclare: {callable.DisplayName}");
+                }
+
+                var expected = (MethodDefinitionHandle)tok;
+                if (expected.IsNil)
+                {
+                    throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration has nil token during predeclare: {callable.DisplayName}");
+                }
+
+                if (!_functionTypeMetadataRegistry.TryGet(moduleName, functionName, out var ownerTypeHandle) || ownerTypeHandle.IsNil)
+                {
+                    var tb = new TypeBuilder(metadataBuilder, string.Empty, functionName);
+                    ownerTypeHandle = tb.AddTypeDefinition(
+                        TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+                        bclReferences.ObjectType,
+                        firstFieldOverride: null,
+                        firstMethodOverride: expected);
+
+                    _functionTypeMetadataRegistry.Add(moduleName, functionName, ownerTypeHandle);
+                }
+
+                if (canNest)
+                {
+                    pendingNest.Add((ownerTypeHandle, callable.DeclaringScopeName));
+                }
             }
         }
 
-        // 2) Anonymous callable owner types
-        // IMPORTANT: create these types in MethodDef-row order to keep TypeDef.MethodList monotonic.
-        var anon = discoveredCallables
-            .Where(c => c.Kind is CallableKind.Arrow or CallableKind.FunctionExpression)
-            .Select(c =>
-            {
-                if (!_registry.TryGetDeclaredToken(c, out var tok) || tok.Kind != HandleKind.MethodDefinition)
-                {
-                    throw new InvalidOperationException($"[TwoPhase] Anonymous callable missing declared token during predeclare: {c.DisplayName}");
-                }
-                var mdh = (MethodDefinitionHandle)tok;
-                return (Callable: c, Method: mdh);
-            })
-            .OrderBy(x => MetadataTokens.GetRowNumber(x.Method))
-            .ToList();
-
-        foreach (var item in anon)
+        if (declareAnonymousOwnerTypes)
         {
-            var callable = item.Callable;
-            var expected = item.Method;
-            if (expected.IsNil)
+            // IMPORTANT: create these types in MethodDef-row order to keep TypeDef.MethodList monotonic.
+            var anon = discoveredCallables
+                .Where(c => c.Kind is CallableKind.Arrow or CallableKind.FunctionExpression)
+                .Select(c =>
+                {
+                    if (!_registry.TryGetDeclaredToken(c, out var tok) || tok.Kind != HandleKind.MethodDefinition)
+                    {
+                        throw new InvalidOperationException($"[TwoPhase] Anonymous callable missing declared token during predeclare: {c.DisplayName}");
+                    }
+                    var mdh = (MethodDefinitionHandle)tok;
+                    return (Callable: c, Method: mdh);
+                })
+                .OrderBy(x => MetadataTokens.GetRowNumber(x.Method))
+                .ToList();
+
+            foreach (var item in anon)
             {
-                throw new InvalidOperationException($"[TwoPhase] Anonymous callable has nil token during predeclare: {callable.DisplayName}");
+                var callable = item.Callable;
+                var expected = item.Method;
+                if (expected.IsNil)
+                {
+                    throw new InvalidOperationException($"[TwoPhase] Anonymous callable has nil token during predeclare: {callable.DisplayName}");
+                }
+
+                string ilMethodName;
+                switch (callable.Kind)
+                {
+                    case CallableKind.Arrow:
+                    {
+                        if (callable.AstNode is not ArrowFunctionExpression arrowExpr)
+                        {
+                            throw new InvalidOperationException($"[TwoPhase] Expected ArrowFunctionExpression node for {callable.DisplayName}");
+                        }
+                        // Prefer the actual scope name authored by SymbolTableBuilder.
+                        // This ensures naming matches assignment-target naming rules and avoids
+                        // mismatches when nesting scope types under anonymous owner types.
+                        var scope = symbolTable.FindScopeByAstNode(arrowExpr);
+                        if (scope != null && !string.IsNullOrWhiteSpace(scope.Name))
+                        {
+                            ilMethodName = scope.Name;
+                        }
+                        else
+                        {
+                            var col1Based = arrowExpr.Location.Start.Column + 1;
+                            ilMethodName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
+                        }
+                        break;
+                    }
+                    case CallableKind.FunctionExpression:
+                    {
+                        if (callable.AstNode is not FunctionExpression funcExpr)
+                        {
+                            throw new InvalidOperationException($"[TwoPhase] Expected FunctionExpression node for {callable.DisplayName}");
+                        }
+                        var scope = symbolTable.FindScopeByAstNode(funcExpr);
+                        if (scope != null && !string.IsNullOrWhiteSpace(scope.Name))
+                        {
+                            ilMethodName = scope.Name;
+                        }
+                        else
+                        {
+                            // Fallback: location-based naming (0-based column) to match SymbolTableBuilder.
+                            var col0Based = funcExpr.Location.Start.Column;
+                            ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{col0Based}";
+                        }
+                        break;
+                    }
+                    default:
+                        continue;
+                }
+
+                // Classes may predeclare anonymous owner types early. Avoid creating duplicate TypeDefs.
+                if (!_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, callable.DeclaringScopeName, ilMethodName, out var ownerTypeHandle)
+                    || ownerTypeHandle.IsNil)
+                {
+                    var tb = new TypeBuilder(metadataBuilder, string.Empty, ilMethodName);
+                    ownerTypeHandle = tb.AddTypeDefinition(
+                        TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+                        bclReferences.ObjectType,
+                        firstFieldOverride: null,
+                        firstMethodOverride: expected);
+
+                    _anonymousCallableTypeMetadataRegistry.Add(moduleName, callable.DeclaringScopeName, ilMethodName, ownerTypeHandle);
+                }
+
+                if (canNest)
+                {
+                    pendingNest.Add((ownerTypeHandle, callable.DeclaringScopeName));
+                }
             }
+        }
 
-            string ilMethodName;
-            switch (callable.Kind)
+        if (canNest)
+        {
+            foreach (var (ownerType, declaringScopeName) in pendingNest)
             {
-                case CallableKind.Arrow:
-                {
-                    if (callable.AstNode is not ArrowFunctionExpression arrowExpr)
-                    {
-                        throw new InvalidOperationException($"[TwoPhase] Expected ArrowFunctionExpression node for {callable.DisplayName}");
-                    }
-                    var col1Based = arrowExpr.Location.Start.Column + 1;
-                    ilMethodName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
-                    break;
-                }
-                case CallableKind.FunctionExpression:
-                {
-                    if (callable.AstNode is not FunctionExpression funcExpr)
-                    {
-                        throw new InvalidOperationException($"[TwoPhase] Expected FunctionExpression node for {callable.DisplayName}");
-                    }
-                    var col1Based = funcExpr.Location.Start.Column + 1;
-                    ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{col1Based}";
-                    break;
-                }
-                default:
-                    continue;
-            }
-
-            // Anonymous callable owner types are always declared as nested types (namespace is empty).
-            // Nesting is established later via NestedClass table rows.
-            var tb = new TypeBuilder(metadataBuilder, string.Empty, ilMethodName);
-            var ownerTypeHandle = tb.AddTypeDefinition(
-                TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
-                bclReferences.ObjectType,
-                firstFieldOverride: null,
-                firstMethodOverride: expected);
-
-            // Record the owner type for later nesting under its declaring scope or function owner.
-            _anonymousCallableTypeMetadataRegistry.Add(moduleName, callable.DeclaringScopeName, ilMethodName, ownerTypeHandle);
-
-            // Keep metadata loadable by ensuring anonymous owner types are nested under a TypeDef
-            // that is guaranteed to exist before scope TypeDefs (never under scope types).
-            if (canNest)
-            {
-                TypeDefinitionHandle enclosing;
-
-                if (string.Equals(callable.DeclaringScopeName, moduleName, StringComparison.Ordinal))
-                {
-                    enclosing = moduleTypeHandleForNesting;
-                }
-                else
-                {
-                    var lastSlash = callable.DeclaringScopeName.LastIndexOf('/');
-                    var lastSegment = lastSlash >= 0 && lastSlash < callable.DeclaringScopeName.Length - 1
-                        ? callable.DeclaringScopeName[(lastSlash + 1)..]
-                        : callable.DeclaringScopeName;
-
-                    if (_functionTypeMetadataRegistry.TryGet(moduleName, lastSegment, out var functionOwner) && !functionOwner.IsNil)
-                    {
-                        enclosing = functionOwner;
-                    }
-                    else
-                    {
-                        enclosing = moduleTypeHandleForNesting;
-                    }
-                }
-
-                nestedTypeRelationshipRegistry!.Add(ownerTypeHandle, enclosing);
+                var enclosing = ResolveEnclosingType(declaringScopeName);
+                nestedTypeRelationshipRegistry!.Add(ownerType, enclosing);
             }
         }
     }
@@ -1108,13 +1142,14 @@ public sealed class TwoPhaseCompilationCoordinator
     {
         var moduleName = symbolTable.Root.Name;
 
-        // Use 1-based column to match the CallableId.SourceLocation format used in Phase 1 declaration
-        var col1Based = arrowExpr.Location.Start.Column + 1;
-        var arrowBaseScopeName = callable.Name != null
-            ? $"ArrowFunction_{callable.Name}"
-            : $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
-
-        var arrowTypeName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
+        var arrowScope = symbolTable.FindScopeByAstNode(arrowExpr);
+        var arrowTypeName = arrowScope?.Name;
+        if (string.IsNullOrWhiteSpace(arrowTypeName))
+        {
+            // Fallback: location-based naming (1-based column) to match SymbolTableBuilder.
+            var col1Based = arrowExpr.Location.Start.Column + 1;
+            arrowTypeName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
+        }
 
         var arrowGen = new JavaScriptArrowFunctionGenerator(
             serviceProvider,
@@ -1157,31 +1192,15 @@ public sealed class TwoPhaseCompilationCoordinator
             throw new InvalidOperationException($"[TwoPhase] FunctionExpression has nil token: {callable.DisplayName}");
         }
 
-        // Use 1-based column to match the CallableId.SourceLocation format used in Phase 1 declaration
-        var col1Based = funcExpr.Location.Start.Column + 1;
-        string baseScopeName;
-        if (funcExpr.Id is Identifier fid && !string.IsNullOrEmpty(fid.Name))
-        {
-            baseScopeName = fid.Name;
-        }
-        else if (callable.Name != null)
-        {
-            baseScopeName = $"FunctionExpression_{callable.Name}";
-        }
-        else
-        {
-            baseScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{col1Based}";
-        }
-
         var moduleName = symbolTable.Root.Name;
         const string ilMethodName = "__js_call__";
-        var funcTypeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{col1Based}";
-
         var funcScope = symbolTable.FindScopeByAstNode(funcExpr);
         if (funcScope == null)
         {
             throw new InvalidOperationException($"[TwoPhase] FunctionExpression scope not found: {callable.DisplayName}");
         }
+
+        var funcTypeName = funcScope.Name;
 
         var methodCompiler = serviceProvider.GetRequiredService<JsMethodCompiler>();
         var compiledBody = methodCompiler.TryCompileCallableBody(
@@ -1225,17 +1244,10 @@ public sealed class TwoPhaseCompilationCoordinator
     {
         _methodDefRowCountAtPreallocation = methodDefRowCountAtPreallocationOverride ?? metadataBuilder.GetRowCount(TableIndex.MethodDef);
 
-        // Phase 2 ordering baseline: classes + function declarations are still emitted before anonymous callables.
-        _expectedMethodDefsBeforeAnonymousCallables = discoveredCallables.Count(c => c.Kind is
-            CallableKind.FunctionDeclaration or
-            CallableKind.ClassConstructor or
-            CallableKind.ClassMethod or
-            CallableKind.ClassGetter or
-            CallableKind.ClassSetter or
-            CallableKind.ClassStaticMethod or
-            CallableKind.ClassStaticGetter or
-            CallableKind.ClassStaticSetter or
-            CallableKind.ClassStaticInitializer);
+        // Phase 2 ordering baseline:
+        // - Function declarations are finalized before anonymous callables.
+        // - Class callables are finalized after anonymous callables.
+        _expectedMethodDefsBeforeAnonymousCallables = discoveredCallables.Count(c => c.Kind is CallableKind.FunctionDeclaration);
 
         var nextRowId = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value + 1;
 

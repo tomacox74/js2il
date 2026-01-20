@@ -126,9 +126,31 @@ namespace Js2IL.Services
                     _metadataBuilder,
                     methodDefBaseRowOverride: callableMethodDefBaseRow);
 
-                // Predeclare class TypeDefs (requires ctor MethodDef token to already be allocated above).
+                if (!moduleTypeRegistry.TryGet(module.Name, out var moduleTypeHandle) || moduleTypeHandle.IsNil)
+                {
+                    throw new InvalidOperationException($"Missing module type handle for module '{module.Name}' during callable-owner predeclaration.");
+                }
+
+                // Shared registries for nesting and class lookup
                 var classRegistry = _serviceProvider.GetRequiredService<ClassRegistry>();
                 var nestedTypeRegistry = _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>();
+
+                // Declare callable-owner TypeDefs that scope TypeDefs may nest under.
+                // NOTE: Do not declare class TypeDefs here; classes are declared by the planned two-phase
+                // compilation path (MainGenerator -> TwoPhaseCompilationCoordinator). Duplicating class
+                // declarations here corrupts TypeDef/MethodDef ordering and can cause CLR TypeLoadException.
+                coordinator.DeclareFunctionAndAnonymousOwnerTypesForNesting(
+                    symbolTable,
+                    _metadataBuilder,
+                    _bclReferences,
+                    moduleTypeHandleForNesting: moduleTypeHandle,
+                    nestedTypeRelationshipRegistry: nestedTypeRegistry,
+                    declareFunctionDeclarationOwnerTypes: true,
+                    declareAnonymousOwnerTypes: true);
+
+                // Predeclare class TypeDefs now (idempotent) so scope TypeDefs emitted in Phase 2 can nest
+                // under their correct owning class type. This is required for function-local classes when
+                // scopes are NestedPrivate.
                 var classesGenerator = new ClassesGenerator(
                     _serviceProvider,
                     _metadataBuilder,
@@ -137,19 +159,6 @@ namespace Js2IL.Services
                     nestedTypeRegistry,
                     module.Name);
                 classesGenerator.DeclareClasses(symbolTable);
-
-                // Declare callable-owner TypeDefs that scopes may nest under.
-                // IMPORTANT: function owner types must come AFTER classes (class ctors are emitted first).
-                if (!moduleTypeRegistry.TryGet(module.Name, out var moduleTypeHandle) || moduleTypeHandle.IsNil)
-                {
-                    throw new InvalidOperationException($"Missing module type handle for module '{module.Name}' during callable-owner predeclaration.");
-                }
-                coordinator.DeclareFunctionAndAnonymousOwnerTypesForNesting(
-                    symbolTable,
-                    _metadataBuilder,
-                    _bclReferences,
-                    moduleTypeHandle,
-                    nestedTypeRegistry);
 
                 callableMethodDefBaseRow += callableCount;
             }

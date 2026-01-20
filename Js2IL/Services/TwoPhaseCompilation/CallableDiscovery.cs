@@ -105,11 +105,12 @@ public sealed class CallableDiscovery
             _discovered.Add(callableId);
             
             // Recurse into nested functions
-            // IMPORTANT: scope name must match SymbolTableBuilder naming (0-based column) so nested
-            // DeclaringScopeName values line up with Scope.GetQualifiedName() used by the IR pipeline.
+            // IMPORTANT: scope name must match SymbolTableBuilder naming so nested DeclaringScopeName
+            // values line up with Scope.GetQualifiedName() used across the pipeline.
+            // SymbolTableBuilder may name anonymous function-expression scopes using an assignment target.
             var scopeName = funcName != null
                 ? $"{parentScopeName}/{funcName}"
-                : $"{parentScopeName}/FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+                : $"{parentScopeName}/{functionScope.Name}";
             DiscoverFromScope(functionScope, scopeName);
         }
         else if (astNode is ArrowFunctionExpression arrowExpr)
