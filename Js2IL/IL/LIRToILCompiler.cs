@@ -54,6 +54,73 @@ internal sealed class LIRToILCompiler
         returnType.Type().Object();
     }
 
+    private BlobHandle BuildMethodSignature(MethodDescriptor methodDescriptor)
+    {
+        var methodParameters = methodDescriptor.Parameters;
+
+        var sigBuilder = new BlobBuilder();
+        new BlobEncoder(sigBuilder)
+            .MethodSignature(isInstanceMethod: !methodDescriptor.IsStatic)
+            .Parameters(methodParameters.Count, returnType =>
+            {
+                if (methodDescriptor.ReturnsVoid)
+                {
+                    returnType.Void();
+                }
+                else
+                {
+                    EmitReturnType(returnType, methodDescriptor.ReturnClrType);
+                }
+            }, parameters =>
+            {
+                for (int i = 0; i < methodParameters.Count; i++)
+                {
+                    var parameterDefinition = methodParameters[i];
+
+                    if (parameterDefinition.ParameterType == typeof(object))
+                    {
+                        parameters.AddParameter().Type().Object();
+                    }
+                    else if (parameterDefinition.ParameterType == typeof(string))
+                    {
+                        parameters.AddParameter().Type().String();
+                    }
+                    else if (parameterDefinition.ParameterType.IsArray
+                        && parameterDefinition.ParameterType.GetElementType() == typeof(object))
+                    {
+                        parameters.AddParameter().Type().SZArray().Object();
+                    }
+                    else
+                    {
+                        var typeRef = _typeReferenceRegistry.GetOrAdd(parameterDefinition.ParameterType!);
+                        parameters.AddParameter().Type().Type(typeRef, false);
+                    }
+                }
+            });
+
+        return _metadataBuilder.GetOrAddBlob(sigBuilder);
+    }
+
+    private static MethodAttributes ComputeMethodAttributes(MethodDescriptor methodDescriptor)
+    {
+        MethodAttributes methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
+
+        if (string.Equals(methodDescriptor.Name, ".ctor", StringComparison.Ordinal))
+        {
+            methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+        }
+        else if (string.Equals(methodDescriptor.Name, ".cctor", StringComparison.Ordinal))
+        {
+            methodAttributes = MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+        }
+        else if (methodDescriptor.IsStatic)
+        {
+            methodAttributes |= MethodAttributes.Static;
+        }
+
+        return methodAttributes;
+    }
+
     private Type GetDeclaredScopeFieldClrType(string scopeName, string fieldName)
     {
         if (TryGetAsyncScopeBaseFieldClrType(fieldName, out var asyncFieldType))
@@ -139,15 +206,20 @@ internal sealed class LIRToILCompiler
         return true;
     }
 
-    private void EmitBoxIfNeededForTypedScopeFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
+    private void EmitCastOrBoxAfterTypedFieldLoad(
+        Type fieldClrType,
+        ValueStorage targetStorage,
+        InstructionEncoder ilEncoder,
+        bool allowReferenceNarrowingCast)
     {
-        // If the field is reference-typed (often object) but the consumer expects a more specific
+        // If the loaded value is reference-typed (often object) but the consumer expects a more specific
         // reference type (e.g., JavaScriptRuntime.Array), insert a castclass.
-        if (!fieldClrType.IsValueType &&
-            targetStorage.Kind == ValueStorageKind.Reference &&
-            targetStorage.ClrType != null &&
-            targetStorage.ClrType != typeof(object) &&
-            fieldClrType != targetStorage.ClrType)
+        if (allowReferenceNarrowingCast
+            && !fieldClrType.IsValueType
+            && targetStorage.Kind == ValueStorageKind.Reference
+            && targetStorage.ClrType != null
+            && targetStorage.ClrType != typeof(object)
+            && fieldClrType != targetStorage.ClrType)
         {
             ilEncoder.OpCode(ILOpCode.Castclass);
             ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(targetStorage.ClrType));
@@ -172,6 +244,11 @@ internal sealed class LIRToILCompiler
             ilEncoder.OpCode(ILOpCode.Box);
             ilEncoder.Token(_bclReferences.BooleanType);
         }
+    }
+
+    private void EmitBoxIfNeededForTypedScopeFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
+    {
+        EmitCastOrBoxAfterTypedFieldLoad(fieldClrType, targetStorage, ilEncoder, allowReferenceNarrowingCast: true);
     }
 
     private static Type GetDeclaredUserClassFieldClrType(
@@ -225,26 +302,7 @@ internal sealed class LIRToILCompiler
 
     private void EmitBoxIfNeededForTypedUserClassFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
     {
-        if (!fieldClrType.IsValueType)
-        {
-            return;
-        }
-
-        if (targetStorage.Kind == ValueStorageKind.UnboxedValue && targetStorage.ClrType == fieldClrType)
-        {
-            return;
-        }
-
-        if (fieldClrType == typeof(double))
-        {
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(_bclReferences.DoubleType);
-        }
-        else if (fieldClrType == typeof(bool))
-        {
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(_bclReferences.BooleanType);
-        }
+        EmitCastOrBoxAfterTypedFieldLoad(fieldClrType, targetStorage, ilEncoder, allowReferenceNarrowingCast: false);
     }
 
     private void EmitLoadTempAsDouble(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
@@ -358,44 +416,7 @@ internal sealed class LIRToILCompiler
         _compiled = true;
         _methodBody = methodBody;
 
-        var methodParameters = methodDescriptor.Parameters;
-
-        // Build method signature
-        var sigBuilder = new BlobBuilder();
-        new BlobEncoder(sigBuilder)
-            .MethodSignature(isInstanceMethod: !methodDescriptor.IsStatic)
-            .Parameters(methodParameters.Count, returnType =>
-            {
-                if (methodDescriptor.ReturnsVoid)
-                    returnType.Void();
-                else
-                    EmitReturnType(returnType, methodDescriptor.ReturnClrType);
-            }, parameters =>
-            {
-                for (int i = 0; i < methodParameters.Count; i++)
-                {
-                    var parameterDefinition = methodParameters[i];
-
-                    if (parameterDefinition.ParameterType == typeof(object))
-                    {
-                        parameters.AddParameter().Type().Object();
-                    }
-                    else if (parameterDefinition.ParameterType == typeof(string))
-                    {
-                        parameters.AddParameter().Type().String();
-                    }
-                    else if (parameterDefinition.ParameterType.IsArray && parameterDefinition.ParameterType.GetElementType() == typeof(object))
-                    {
-                        parameters.AddParameter().Type().SZArray().Object();
-                    }
-                    else
-                    {
-                        var typeRef = _typeReferenceRegistry.GetOrAdd(parameterDefinition.ParameterType!);
-                        parameters.AddParameter().Type().Type(typeRef, false);
-                    }
-                }
-            });
-        var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+        var methodSig = BuildMethodSignature(methodDescriptor);
 
         // Compile body
         if (!TryCompileMethodBodyToIL(methodDescriptor, methodBodyStreamEncoder, out var bodyOffset))
@@ -403,20 +424,7 @@ internal sealed class LIRToILCompiler
             return null;
         }
 
-        MethodAttributes methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
-
-        if (string.Equals(methodDescriptor.Name, ".ctor", StringComparison.Ordinal))
-        {
-            methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
-        }
-        else if (string.Equals(methodDescriptor.Name, ".cctor", StringComparison.Ordinal))
-        {
-            methodAttributes = MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
-        }
-        else if (methodDescriptor.IsStatic)
-        {
-            methodAttributes |= MethodAttributes.Static;
-        }
+        var methodAttributes = ComputeMethodAttributes(methodDescriptor);
 
         var result = new CompiledCallableBody
         {
@@ -426,7 +434,7 @@ internal sealed class LIRToILCompiler
             Attributes = methodAttributes,
             Signature = methodSig,
             BodyOffset = bodyOffset,
-            ParameterNames = methodParameters.Select(p => p.Name).ToArray()
+            ParameterNames = methodDescriptor.Parameters.Select(p => p.Name).ToArray()
         };
         result.Validate();
         return result;
@@ -448,45 +456,8 @@ internal sealed class LIRToILCompiler
         _methodBody = methodBody;
 
         var programTypeBuilder = methodDescriptor.TypeBuilder;
-        var methodParameters = methodDescriptor.Parameters;
 
-        // Create the method signature for the Main method with parameters
-        var sigBuilder = new BlobBuilder();
-        new BlobEncoder(sigBuilder)
-            .MethodSignature(isInstanceMethod: !methodDescriptor.IsStatic)
-            .Parameters(methodParameters.Count, returnType =>
-            {
-                if (methodDescriptor.ReturnsVoid)
-                    returnType.Void();
-                else
-                    EmitReturnType(returnType, methodDescriptor.ReturnClrType);
-            }, parameters =>
-            {
-                for (int i = 0; i < methodParameters.Count; i++)
-                {
-                    var parameterDefinition = methodParameters[i];
-
-                    if (parameterDefinition.ParameterType == typeof(object))
-                    {
-                        parameters.AddParameter().Type().Object();
-                    }
-                    else if (parameterDefinition.ParameterType == typeof(string))
-                    {
-                        parameters.AddParameter().Type().String();
-                    }
-                    else if (parameterDefinition.ParameterType.IsArray && parameterDefinition.ParameterType.GetElementType() == typeof(object))
-                    {
-                        parameters.AddParameter().Type().SZArray().Object();
-                    }
-                    else
-                    {
-                        // Assume it's a type reference
-                        var typeRef = _typeReferenceRegistry.GetOrAdd(parameterDefinition.ParameterType!);
-                        parameters.AddParameter().Type().Type(typeRef, false);
-                    }
-                }
-            });
-        var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+        var methodSig = BuildMethodSignature(methodDescriptor);
 
         // Compile the method body to IL
         if (!TryCompileMethodBodyToIL(methodDescriptor, methodBodyStreamEncoder, out var bodyOffset))
@@ -495,22 +466,9 @@ internal sealed class LIRToILCompiler
             return default;
         }
 
-        var parameterNames = methodParameters.Select(p => p.Name).ToArray();
+        var parameterNames = methodDescriptor.Parameters.Select(p => p.Name).ToArray();
 
-        MethodAttributes methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
-
-        if (string.Equals(methodDescriptor.Name, ".ctor", StringComparison.Ordinal))
-        {
-            methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
-        }
-        else if (string.Equals(methodDescriptor.Name, ".cctor", StringComparison.Ordinal))
-        {
-            methodAttributes = MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
-        }
-        else if (methodDescriptor.IsStatic)
-        {
-            methodAttributes |= MethodAttributes.Static;
-        }
+        var methodAttributes = ComputeMethodAttributes(methodDescriptor);
 
         var methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
             methodAttributes,
@@ -981,9 +939,7 @@ internal sealed class LIRToILCompiler
         switch (instruction)
         {
             case LIRAddNumber addNumber:
-                EmitLoadTemp(addNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(addNumber.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Add);
+                TryEmitStackValueInstruction(addNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(addNumber.Result, ilEncoder, allocation);
                 break;
             case LIRConcatStrings concatStrings:
@@ -992,9 +948,7 @@ internal sealed class LIRToILCompiler
                     // Stackify will re-emit concat inline at the single use site.
                     break;
                 }
-                EmitLoadTemp(concatStrings.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(concatStrings.Right, ilEncoder, allocation, methodDescriptor);
-                EmitStringConcat(ilEncoder);
+                TryEmitStackValueInstruction(concatStrings, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(concatStrings.Result, ilEncoder, allocation);
                 break;
             case LIRAddDynamic addDynamic:
@@ -1016,15 +970,11 @@ internal sealed class LIRToILCompiler
                 EmitStoreTemp(addDynamicObjectDouble.Result, ilEncoder, allocation);
                 break;
             case LIRSubNumber subNumber:
-                EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(subNumber.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Sub);
+                TryEmitStackValueInstruction(subNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(subNumber.Result, ilEncoder, allocation);
                 break;
             case LIRMulNumber mulNumber:
-                EmitLoadTemp(mulNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(mulNumber.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Mul);
+                TryEmitStackValueInstruction(mulNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(mulNumber.Result, ilEncoder, allocation);
                 break;
             case LIRMulDynamic mulDynamic:
@@ -1038,7 +988,7 @@ internal sealed class LIRToILCompiler
                 {
                     break;
                 }
-                ilEncoder.LoadConstantR8(constNumber.Value);
+                TryEmitStackValueInstruction(constNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(constNumber.Result, ilEncoder, allocation);
                 break;
             case LIRConstString constString:
@@ -1046,7 +996,7 @@ internal sealed class LIRToILCompiler
                 {
                     break;
                 }
-                ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(constString.Value));
+                TryEmitStackValueInstruction(constString, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(constString.Result, ilEncoder, allocation);
                 break;
             case LIRConstBoolean constBoolean:
@@ -1054,7 +1004,7 @@ internal sealed class LIRToILCompiler
                 {
                     break;
                 }
-                ilEncoder.LoadConstantI4(constBoolean.Value ? 1 : 0);
+                TryEmitStackValueInstruction(constBoolean, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(constBoolean.Result, ilEncoder, allocation);
                 break;
             case LIRConstUndefined:
@@ -1062,7 +1012,7 @@ internal sealed class LIRToILCompiler
                 {
                     break;
                 }
-                ilEncoder.OpCode(ILOpCode.Ldnull);
+                TryEmitStackValueInstruction((LIRConstUndefined)instruction, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(((LIRConstUndefined)instruction).Result, ilEncoder, allocation);
                 break;
             case LIRConstNull:
@@ -1070,7 +1020,7 @@ internal sealed class LIRToILCompiler
                 {
                     break;
                 }
-                ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
+                TryEmitStackValueInstruction((LIRConstNull)instruction, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(((LIRConstNull)instruction).Result, ilEncoder, allocation);
                 break;
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
@@ -1114,21 +1064,7 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
-                EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Box);
-                if (convertToObject.SourceType == typeof(bool))
-                {
-                    ilEncoder.Token(_bclReferences.BooleanType);
-                }
-                else if (convertToObject.SourceType == typeof(JavaScriptRuntime.JsNull))
-                {
-                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
-                }
-                else
-                {
-                    ilEncoder.Token(_bclReferences.DoubleType);
-                }
-
+                TryEmitStackValueInstruction(convertToObject, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(convertToObject.Result, ilEncoder, allocation);
                 break;
 
@@ -1138,16 +1074,7 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
-                // Convert boxed/object value to JS number (double) using runtime coercion.
-                EmitLoadTempAsObject(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);
-                {
-                    var toNumberMref = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.TypeUtilities),
-                        nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                        parameterTypes: new[] { typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(toNumberMref);
-                }
+                TryEmitStackValueInstruction(convertToNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(convertToNumber.Result, ilEncoder, allocation);
                 break;
 
@@ -1157,7 +1084,7 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
-                EmitConvertToBooleanCore(convertToBoolean.Source, ilEncoder, allocation, methodDescriptor);
+                TryEmitStackValueInstruction(convertToBoolean, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(convertToBoolean.Result, ilEncoder, allocation);
                 break;
 
@@ -1167,7 +1094,7 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
-                EmitConvertToStringCore(convertToString.Source, ilEncoder, allocation, methodDescriptor);
+                TryEmitStackValueInstruction(convertToString, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(convertToString.Result, ilEncoder, allocation);
                 break;
             case LIRTypeof:
@@ -1321,25 +1248,19 @@ internal sealed class LIRToILCompiler
             
             // Division
             case LIRDivNumber divNumber:
-                EmitLoadTemp(divNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(divNumber.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Div);
+                TryEmitStackValueInstruction(divNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(divNumber.Result, ilEncoder, allocation);
                 break;
 
             // Remainder (modulo)
             case LIRModNumber modNumber:
-                EmitLoadTemp(modNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(modNumber.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Rem);
+                TryEmitStackValueInstruction(modNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(modNumber.Result, ilEncoder, allocation);
                 break;
 
             // Exponentiation (Math.Pow)
             case LIRExpNumber expNumber:
-                EmitLoadTemp(expNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(expNumber.Right, ilEncoder, allocation, methodDescriptor);
-                EmitMathPow(ilEncoder);
+                TryEmitStackValueInstruction(expNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(expNumber.Result, ilEncoder, allocation);
                 break;
 
@@ -3750,6 +3671,54 @@ internal sealed class LIRToILCompiler
 
     #region Temp/Local Variable Management
 
+    private void EmitLocalType(SignatureTypeEncoder typeEncoder, ValueStorage storage, bool allowUnboxedJsNull)
+    {
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
+        {
+            typeEncoder.Boolean();
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+        {
+            typeEncoder.Double();
+            return;
+        }
+
+        if (allowUnboxedJsNull && storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(JavaScriptRuntime.JsNull))
+        {
+            var typeRef = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull));
+            typeEncoder.Type(typeRef, false);
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
+        {
+            typeEncoder.String();
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.Reference
+            && storage.ClrType != null
+            && storage.ClrType.IsArray
+            && storage.ClrType.GetElementType() == typeof(object))
+        {
+            typeEncoder.SZArray().Object();
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
+        {
+            // Preserve known runtime reference types for declared variables (e.g., JavaScriptRuntime.Array)
+            // so later lowering/emission can take advantage of typed locals.
+            var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
+            typeEncoder.Type(typeRef, false);
+            return;
+        }
+
+        typeEncoder.Object();
+    }
+
     private StandaloneSignatureHandle CreateLocalVariablesSignature(TempLocalAllocation allocation)
     {
         int varCount = MethodBody.VariableNames.Count;
@@ -3781,74 +3750,15 @@ internal sealed class LIRToILCompiler
         // Variable locals (shifted by scope local count)
         for (int i = 0; i < varCount; i++)
         {
-            var typeEncoder = localEncoder.AddVariable().Type();
-
             var storage = MethodBody.VariableStorages[i];
-            if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
-            {
-                typeEncoder.Boolean();
-            }
-            else if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
-            {
-                typeEncoder.Double();
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
-            {
-                typeEncoder.String();
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType.IsArray && storage.ClrType.GetElementType() == typeof(object))
-            {
-                typeEncoder.SZArray().Object();
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
-            {
-                // Preserve known runtime reference types for declared variables (e.g., JavaScriptRuntime.Array)
-                // so later lowering/emission can take advantage of typed locals.
-                var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
-                typeEncoder.Type(typeRef, false);
-            }
-            else
-            {
-                typeEncoder.Object();
-            }
+            EmitLocalType(localEncoder.AddVariable().Type(), storage, allowUnboxedJsNull: false);
         }
 
         // Then temp locals
         for (int i = 0; i < allocation.SlotStorages.Count; i++)
         {
             var storage = allocation.SlotStorages[i];
-            var typeEncoder = localEncoder.AddVariable().Type();
-
-            if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
-            {
-                typeEncoder.Double();
-            }
-            else if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
-            {
-                typeEncoder.Boolean();
-            }
-            else if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(JavaScriptRuntime.JsNull))
-            {
-                var typeRef = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull));
-                typeEncoder.Type(typeRef, false);
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
-            {
-                typeEncoder.String();
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType.IsArray && storage.ClrType.GetElementType() == typeof(object))
-            {
-                typeEncoder.SZArray().Object();
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
-            {
-                var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
-                typeEncoder.Type(typeRef, false);
-            }
-            else
-            {
-                typeEncoder.Object();
-            }
+            EmitLocalType(localEncoder.AddVariable().Type(), storage, allowUnboxedJsNull: true);
         }
 
         var signature = _metadataBuilder.AddStandaloneSignature(_metadataBuilder.GetOrAddBlob(localSig));
@@ -3886,64 +3796,13 @@ internal sealed class LIRToILCompiler
         }
 
         // Emit the constant/expression inline
+        if (TryEmitStackValueInstruction(def, ilEncoder, allocation, methodDescriptor))
+        {
+            return;
+        }
+
         switch (def)
         {
-            case LIRConstNumber constNum:
-                ilEncoder.LoadConstantR8(constNum.Value);
-                break;
-            case LIRConstString constStr:
-                ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(constStr.Value));
-                break;
-            case LIRConstBoolean constBool:
-                ilEncoder.LoadConstantI4(constBool.Value ? 1 : 0);
-                break;
-            case LIRConstUndefined:
-                ilEncoder.OpCode(ILOpCode.Ldnull);
-                break;
-            case LIRConstNull:
-                ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
-                break;
-            case LIRLoadThis:
-                if (methodDescriptor.IsStatic)
-                {
-                    var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(getThisRef);
-                    break;
-                }
-                ilEncoder.LoadArgument(0);
-                break;
-            case LIRLoadScopesArgument:
-                if (!methodDescriptor.HasScopesParameter)
-                {
-                    throw new InvalidOperationException("Cannot emit scopes argument when method has no scopes parameter");
-                }
-                // Static functions: scopes is arg0. Instance constructors: scopes is arg1.
-                ilEncoder.LoadArgument(methodDescriptor.IsStatic ? 0 : 1);
-                break;
-            case LIRLoadParameter loadParam:
-                // Emit ldarg.X inline - no local slot needed
-                int ilArgIndex = GetIlArgIndexForJsParameter(methodDescriptor, loadParam.ParameterIndex);
-                ilEncoder.LoadArgument(ilArgIndex);
-                break;
-            case LIRConvertToObject convertToObject:
-                // Emit the source inline and box it
-                EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Box);
-                if (convertToObject.SourceType == typeof(bool))
-                {
-                    ilEncoder.Token(_bclReferences.BooleanType);
-                }
-                else if (convertToObject.SourceType == typeof(JavaScriptRuntime.JsNull))
-                {
-                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
-                }
-                else
-                {
-                    ilEncoder.Token(_bclReferences.DoubleType);
-                }
-                break;
-
             case LIRNewBuiltInError newError:
                 {
                     var errorClrType = Js2IL.IR.BuiltInErrorTypes.GetRuntimeErrorClrType(newError.ErrorTypeName);
@@ -3968,74 +3827,6 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(defaultCtor);
                     break;
                 }
-            case LIRConvertToNumber convertToNumber:
-                // Emit inline: if already an unboxed numeric value, skip boxing + ToNumber.
-                // In this compiler pipeline, the only non-numeric unboxed values are bool and JsNull.
-                if (GetTempStorage(convertToNumber.Source) is { Kind: ValueStorageKind.UnboxedValue, ClrType: var clrType } &&
-                    clrType != typeof(bool) &&
-                    clrType != typeof(JavaScriptRuntime.JsNull))
-                {
-                    EmitLoadTemp(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);
-                    break;
-                }
-
-                // Otherwise load as object, call TypeUtilities.ToNumber(object)
-                EmitLoadTempAsObject(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);
-                {
-                    var toNumberMref = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.TypeUtilities),
-                        nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                        parameterTypes: new[] { typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(toNumberMref);
-                }
-                break;
-
-            case LIRConvertToBoolean convertToBoolean:
-                EmitConvertToBooleanCore(convertToBoolean.Source, ilEncoder, allocation, methodDescriptor);
-                break;
-
-            case LIRConvertToString convertToString:
-                EmitConvertToStringCore(convertToString.Source, ilEncoder, allocation, methodDescriptor);
-                break;
-
-            case LIRConcatStrings concatStrings:
-                EmitLoadTemp(concatStrings.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(concatStrings.Right, ilEncoder, allocation, methodDescriptor);
-                EmitStringConcat(ilEncoder);
-                break;
-
-            case LIRAddNumber addNumber:
-                EmitLoadTemp(addNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(addNumber.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Add);
-                break;
-            case LIRSubNumber subNumber:
-                EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(subNumber.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Sub);
-                break;
-            case LIRMulNumber mulNumber:
-                EmitLoadTemp(mulNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(mulNumber.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Mul);
-                break;
-            case LIRDivNumber divNumber:
-                EmitLoadTemp(divNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(divNumber.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Div);
-                break;
-            case LIRModNumber modNumber:
-                EmitLoadTemp(modNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(modNumber.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Rem);
-                break;
-            case LIRExpNumber expNumber:
-                EmitLoadTemp(expNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(expNumber.Right, ilEncoder, allocation, methodDescriptor);
-                EmitMathPow(ilEncoder);
-                break;
-
             case LIRCompareNumberLessThan cmpLt:
                 EmitLoadTemp(cmpLt.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(cmpLt.Right, ilEncoder, allocation, methodDescriptor);
@@ -4800,6 +4591,142 @@ internal sealed class LIRToILCompiler
                 }
             default:
                 throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - unsupported instruction {def.GetType().Name}");
+        }
+    }
+
+    private bool TryEmitStackValueInstruction(
+        LIRInstruction instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        switch (instruction)
+        {
+            case LIRConstNumber constNum:
+                ilEncoder.LoadConstantR8(constNum.Value);
+                return true;
+            case LIRConstString constStr:
+                ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(constStr.Value));
+                return true;
+            case LIRConstBoolean constBool:
+                ilEncoder.LoadConstantI4(constBool.Value ? 1 : 0);
+                return true;
+            case LIRConstUndefined:
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+                return true;
+            case LIRConstNull:
+                ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
+                return true;
+            case LIRLoadThis:
+                if (methodDescriptor.IsStatic)
+                {
+                    var getThisRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(getThisRef);
+                    return true;
+                }
+                ilEncoder.LoadArgument(0);
+                return true;
+            case LIRLoadScopesArgument:
+                if (!methodDescriptor.HasScopesParameter)
+                {
+                    throw new InvalidOperationException("Cannot emit scopes argument when method has no scopes parameter");
+                }
+                // Static functions: scopes is arg0. Instance constructors: scopes is arg1.
+                ilEncoder.LoadArgument(methodDescriptor.IsStatic ? 0 : 1);
+                return true;
+            case LIRLoadParameter loadParam:
+                // Emit ldarg.X inline - no local slot needed
+                int ilArgIndex = GetIlArgIndexForJsParameter(methodDescriptor, loadParam.ParameterIndex);
+                ilEncoder.LoadArgument(ilArgIndex);
+                return true;
+            case LIRConvertToObject convertToObject:
+                EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Box);
+                if (convertToObject.SourceType == typeof(bool))
+                {
+                    ilEncoder.Token(_bclReferences.BooleanType);
+                }
+                else if (convertToObject.SourceType == typeof(JavaScriptRuntime.JsNull))
+                {
+                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
+                }
+                else
+                {
+                    ilEncoder.Token(_bclReferences.DoubleType);
+                }
+                return true;
+
+            case LIRConvertToNumber convertToNumber:
+                // If already an unboxed numeric value, skip boxing + ToNumber.
+                // In this compiler pipeline, the only non-numeric unboxed values are bool and JsNull.
+                if (GetTempStorage(convertToNumber.Source) is { Kind: ValueStorageKind.UnboxedValue, ClrType: var clrType }
+                    && clrType != typeof(bool)
+                    && clrType != typeof(JavaScriptRuntime.JsNull))
+                {
+                    EmitLoadTemp(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);
+                    return true;
+                }
+
+                EmitLoadTempAsObject(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toNumberMref);
+                }
+                return true;
+
+            case LIRConvertToBoolean convertToBoolean:
+                EmitConvertToBooleanCore(convertToBoolean.Source, ilEncoder, allocation, methodDescriptor);
+                return true;
+
+            case LIRConvertToString convertToString:
+                EmitConvertToStringCore(convertToString.Source, ilEncoder, allocation, methodDescriptor);
+                return true;
+
+            case LIRConcatStrings concatStrings:
+                EmitLoadTemp(concatStrings.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(concatStrings.Right, ilEncoder, allocation, methodDescriptor);
+                EmitStringConcat(ilEncoder);
+                return true;
+
+            case LIRAddNumber addNumber:
+                EmitLoadTemp(addNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Add);
+                return true;
+            case LIRSubNumber subNumber:
+                EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(subNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Sub);
+                return true;
+            case LIRMulNumber mulNumber:
+                EmitLoadTemp(mulNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(mulNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Mul);
+                return true;
+            case LIRDivNumber divNumber:
+                EmitLoadTemp(divNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(divNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Div);
+                return true;
+            case LIRModNumber modNumber:
+                EmitLoadTemp(modNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(modNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Rem);
+                return true;
+            case LIRExpNumber expNumber:
+                EmitLoadTemp(expNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(expNumber.Right, ilEncoder, allocation, methodDescriptor);
+                EmitMathPow(ilEncoder);
+                return true;
+            default:
+                return false;
         }
     }
 
