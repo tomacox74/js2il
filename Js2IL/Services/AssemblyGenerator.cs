@@ -72,7 +72,6 @@ namespace Js2IL.Services
                 _metadataBuilder,
                 _bclReferences,
                 methodBodyStream,
-                _serviceProvider.GetRequiredService<ModuleTypeMetadataRegistry>(),
                 _variableRegistry,
                 deferredCtorStartRow: _metadataBuilder.GetRowCount(TableIndex.MethodDef) + totalCallableMethods + totalModuleInitMethods + 1);
 
