@@ -526,5 +526,5 @@ Open question: whether some exceptions should permanently fault a runtime instan
 
 - [JavaScriptToDotNetTypeMapping.md](JavaScriptToDotNetTypeMapping.md)
 - [CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md)
-- [TwoPhaseCompilationPipeline.md](TwoPhaseCompilationPipeline.md)
+- [compiler/TwoPhaseCompilationPipeline.md](compiler/TwoPhaseCompilationPipeline.md)
 - [NodeSupport.md](NodeSupport.md)

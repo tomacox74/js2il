@@ -7,7 +7,7 @@ It is intentionally **implementation-oriented** (what JS2IL emits today) and **n
 It complements the deeper closure ABI design in:
 
 - [docs/CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md)
-- [docs/TwoPhaseCompilationPipeline.md](TwoPhaseCompilationPipeline.md)
+- [docs/compiler/TwoPhaseCompilationPipeline.md](compiler/TwoPhaseCompilationPipeline.md)
 
 ## Index
 
@@ -444,7 +444,7 @@ A typical shape of emitted artifacts:
 ## Related implementation references
 
 - Closure ABI and scopes-array conventions: [docs/CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md)
-- Two-phase compilation and callable identity/token preallocation: [docs/TwoPhaseCompilationPipeline.md](TwoPhaseCompilationPipeline.md)
+- Two-phase compilation and callable identity/token preallocation: [docs/compiler/TwoPhaseCompilationPipeline.md](compiler/TwoPhaseCompilationPipeline.md)
 - Module init + scope/class nesting: [Js2IL/JsMethodCompiler.cs](../Js2IL/JsMethodCompiler.cs) (`TryCompileMainMethod`, `EstablishModuleNesting`)
 - IR lowering + normalization (AST→HIR→LIR→IL): [Js2IL/JsMethodCompiler.cs](../Js2IL/JsMethodCompiler.cs) (`TryLowerASTToLIR`), [Js2IL/IR/LIR/LIRIntrinsicNormalization.cs](../Js2IL/IR/LIR/LIRIntrinsicNormalization.cs), [Js2IL/IR/LIR/LIRTypeNormalization.cs](../Js2IL/IR/LIR/LIRTypeNormalization.cs)
 - Scope type generation: [Js2IL/Services/TypeGenerator.cs](../Js2IL/Services/TypeGenerator.cs)
