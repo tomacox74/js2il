@@ -7,9 +7,31 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L1C2
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L1C1
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20c8
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
@@ -32,20 +54,13 @@
 			IL_0018: pop
 			IL_0019: ldnull
 			IL_001a: ret
-		} // end of method FunctionExpression_L1C2::__js_call__
+		} // end of method FunctionExpression_L1C1::__js_call__
 
-	} // end of class FunctionExpression_L1C2
+	} // end of class FunctionExpression_L1C1
 
-	.class nested public auto ansi beforefieldinit Scope
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
-		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-		} // end of class Scope
-
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -87,7 +102,7 @@
 		IL_0000: newobj instance void Modules.Function_IIFE_Classic/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_IIFE_Classic/FunctionExpression_L1C2::__js_call__(object[])
+		IL_0007: ldftn object Modules.Function_IIFE_Classic/FunctionExpression_L1C1::__js_call__(object[])
 		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -114,63 +129,6 @@
 	} // end of method Function_IIFE_Classic::__js_module_init__
 
 } // end of class Modules.Function_IIFE_Classic
-
-.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L1C2
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2098
-		// Header size: 12
-		// Code size: 27 (0x1b)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "IIFE ran"
-		IL_0012: stelem.ref
-		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0018: pop
-		IL_0019: ldnull
-		IL_001a: ret
-	} // end of method FunctionExpression_L1C2::__js_call__
-
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20bf
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20c8
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class FunctionExpression_L1C2
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

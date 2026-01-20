@@ -7,61 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L3C24
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				object[] scopes,
-				object x
-			) cil managed 
-		{
-			// Method begins at RVA 0x2144
-			// Header size: 12
-			// Code size: 23 (0x17)
-			.maxstack 32
-
-			IL_0000: ldarg.1
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: ldc.r8 5
-			IL_000f: cgt
-			IL_0011: box [System.Runtime]System.Boolean
-			IL_0016: ret
-		} // end of method FunctionExpression_L3C24::__js_call__
-
-	} // end of class FunctionExpression_L3C24
-
-	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L8C27
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				object[] scopes,
-				object x
-			) cil managed 
-		{
-			// Method begins at RVA 0x2168
-			// Header size: 12
-			// Code size: 23 (0x17)
-			.maxstack 32
-
-			IL_0000: ldarg.1
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: ldc.r8 100
-			IL_000f: cgt
-			IL_0011: box [System.Runtime]System.Boolean
-			IL_0016: ret
-		} // end of method FunctionExpression_L8C27::__js_call__
-
-	} // end of class FunctionExpression_L8C27
-
-	.class nested public auto ansi beforefieldinit Scope
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_found
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
@@ -81,12 +31,79 @@
 
 		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit Scope
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object x
+			) cil managed 
+		{
+			// Method begins at RVA 0x2144
+			// Header size: 12
+			// Code size: 23 (0x17)
+			.maxstack 32
+
+			IL_0000: ldarg.1
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: ldc.r8 5
+			IL_000f: cgt
+			IL_0011: box [System.Runtime]System.Boolean
+			IL_0016: ret
+		} // end of method FunctionExpression_found::__js_call__
+
+	} // end of class FunctionExpression_found
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_notFound
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x219d
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
 		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object x
+			) cil managed 
+		{
+			// Method begins at RVA 0x2168
+			// Header size: 12
+			// Code size: 23 (0x17)
+			.maxstack 32
+
+			IL_0000: ldarg.1
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: ldc.r8 100
+			IL_000f: cgt
+			IL_0011: box [System.Runtime]System.Boolean
+			IL_0016: ret
+		} // end of method FunctionExpression_notFound::__js_call__
+
+	} // end of class FunctionExpression_notFound
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -149,7 +166,7 @@
 		IL_0057: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_005c: stloc.1
 		IL_005d: ldnull
-		IL_005e: ldftn object Modules.Array_Find_Basic/FunctionExpression_L3C24::__js_call__(object[], object)
+		IL_005e: ldftn object Modules.Array_Find_Basic/FunctionExpression_found::__js_call__(object[], object)
 		IL_0064: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0069: ldc.i4.1
 		IL_006a: newarr [System.Runtime]System.Object
@@ -178,7 +195,7 @@
 		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00a0: pop
 		IL_00a1: ldnull
-		IL_00a2: ldftn object Modules.Array_Find_Basic/FunctionExpression_L8C27::__js_call__(object[], object)
+		IL_00a2: ldftn object Modules.Array_Find_Basic/FunctionExpression_notFound::__js_call__(object[], object)
 		IL_00a8: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_00ad: ldc.i4.1
 		IL_00ae: newarr [System.Runtime]System.Object
@@ -210,98 +227,6 @@
 	} // end of method Array_Find_Basic::__js_module_init__
 
 } // end of class Modules.Array_Find_Basic
-
-.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L3C24
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object x
-		) cil managed 
-	{
-		// Method begins at RVA 0x2144
-		// Header size: 12
-		// Code size: 23 (0x17)
-		.maxstack 32
-
-		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: ldc.r8 5
-		IL_000f: cgt
-		IL_0011: box [System.Runtime]System.Boolean
-		IL_0016: ret
-	} // end of method FunctionExpression_L3C24::__js_call__
-
-} // end of class FunctionExpression_L3C24
-
-.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L8C27
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object x
-		) cil managed 
-	{
-		// Method begins at RVA 0x2168
-		// Header size: 12
-		// Code size: 23 (0x17)
-		.maxstack 32
-
-		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: ldc.r8 100
-		IL_000f: cgt
-		IL_0011: box [System.Runtime]System.Boolean
-		IL_0016: ret
-	} // end of method FunctionExpression_L8C27::__js_call__
-
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x218b
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2194
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x219d
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class FunctionExpression_L8C27
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object

@@ -11,7 +11,69 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
+		.class nested public auto ansi abstract sealed beforefieldinit inner
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested private auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2124
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object p
+				) cil managed 
+			{
+				// Method begins at RVA 0x20e0
+				// Header size: 12
+				// Code size: 38 (0x26)
+				.maxstack 32
+				.locals init (
+					[0] object
+				)
+
+				IL_0000: ldarg.0
+				IL_0001: ldc.i4.1
+				IL_0002: ldelem.ref
+				IL_0003: castclass Modules.String_StartsWith_NestedParam/outer/Scope
+				IL_0008: ldfld object Modules.String_StartsWith_NestedParam/outer/Scope::s
+				IL_000d: stloc.0
+				IL_000e: ldloc.0
+				IL_000f: ldstr "startsWith"
+				IL_0014: ldc.i4.1
+				IL_0015: newarr [System.Runtime]System.Object
+				IL_001a: dup
+				IL_001b: ldc.i4.0
+				IL_001c: ldarg.1
+				IL_001d: stelem.ref
+				IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+				IL_0023: stloc.0
+				IL_0024: ldloc.0
+				IL_0025: ret
+			} // end of method inner::__js_call__
+
+		} // end of class inner
+
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -58,7 +120,7 @@
 			IL_0007: ldarg.1
 			IL_0008: stfld object Modules.String_StartsWith_NestedParam/outer/Scope::s
 			IL_000d: ldnull
-			IL_000e: ldftn object Modules.String_StartsWith_NestedParam/inner::__js_call__(object[], object)
+			IL_000e: ldftn object Modules.String_StartsWith_NestedParam/outer/inner::__js_call__(object[], object)
 			IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 			IL_0019: ldc.i4.2
 			IL_001a: newarr [System.Runtime]System.Object
@@ -81,69 +143,7 @@
 
 	} // end of class outer
 
-	.class nested public auto ansi abstract sealed beforefieldinit inner
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x2124
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
-
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				object[] scopes,
-				object p
-			) cil managed 
-		{
-			// Method begins at RVA 0x20e0
-			// Header size: 12
-			// Code size: 38 (0x26)
-			.maxstack 32
-			.locals init (
-				[0] object
-			)
-
-			IL_0000: ldarg.0
-			IL_0001: ldc.i4.1
-			IL_0002: ldelem.ref
-			IL_0003: castclass Modules.String_StartsWith_NestedParam/outer/Scope
-			IL_0008: ldfld object Modules.String_StartsWith_NestedParam/outer/Scope::s
-			IL_000d: stloc.0
-			IL_000e: ldloc.0
-			IL_000f: ldstr "startsWith"
-			IL_0014: ldc.i4.1
-			IL_0015: newarr [System.Runtime]System.Object
-			IL_001a: dup
-			IL_001b: ldc.i4.0
-			IL_001c: ldarg.1
-			IL_001d: stelem.ref
-			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-			IL_0023: stloc.0
-			IL_0024: ldloc.0
-			IL_0025: ret
-		} // end of method inner::__js_call__
-
-	} // end of class inner
-
-	.class nested public auto ansi beforefieldinit Scope
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Fields

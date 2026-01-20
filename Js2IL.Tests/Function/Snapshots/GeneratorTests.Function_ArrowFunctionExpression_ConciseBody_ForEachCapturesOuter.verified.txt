@@ -11,11 +11,26 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Scope
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Fields
 			.field public object x
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x213b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
 
 		} // end of class Scope
 
@@ -49,7 +64,7 @@
 
 	} // end of class ArrowFunction_L3C27
 
-	.class nested public auto ansi beforefieldinit Scope
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Fields
@@ -154,66 +169,6 @@
 	} // end of method Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::__js_module_init__
 
 } // end of class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter
-
-.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C27
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object __js_call__ (
-			object[] scopes,
-			object x
-		) cil managed 
-	{
-		// Method begins at RVA 0x2110
-		// Header size: 12
-		// Code size: 22 (0x16)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: ldarg.0
-		IL_0002: ldc.i4.0
-		IL_0003: ldelem.ref
-		IL_0004: castclass Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope
-		IL_0009: ldfld object Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope::'add'
-		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0013: stloc.0
-		IL_0014: ldloc.0
-		IL_0015: ret
-	} // end of method ArrowFunction_L3C27::__js_call__
-
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2132
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x213b
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Scope::.ctor
-
-} // end of class ArrowFunction_L3C27
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
