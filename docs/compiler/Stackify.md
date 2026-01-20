@@ -53,7 +53,7 @@ This is what Stackify decides.
 
 Stackify operates over the **LIR** (low-level IR) for a method (`MethodBodyIR`).
 
-In [Js2IL/IL/LIRToILCompiler.cs](../Js2IL/IL/LIRToILCompiler.cs), the compiler does:
+In [Js2IL/IL/LIRToILCompiler.cs](../../Js2IL/IL/LIRToILCompiler.cs), the compiler does:
 
 1. Various pre-passes (e.g. peephole optimizations)
 2. `Stackify.Analyze(MethodBody)`

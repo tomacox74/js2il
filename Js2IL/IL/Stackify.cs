@@ -28,7 +28,7 @@ internal readonly record struct StackifyResult(bool[] CanStackify)
 /// 5. The defining instruction can be emitted inline (i.e., CanEmitInline returns true)
 /// </summary>
 /// <remarks>
-/// For a detailed explanation (with examples), see docs/Stackify.md.
+/// For a detailed explanation (with examples), see docs/compiler/Stackify.md.
 /// </remarks>
 internal static class Stackify
 {

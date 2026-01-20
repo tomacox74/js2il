@@ -27,7 +27,7 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 /// - Coordinator discovers callables and populates CallableRegistry with signatures.
 /// - Phase 1 reserves callable tokens without compiling bodies.
 /// - Strict mode is enabled before Phase 2 so expression emission is lookup-only.
-/// - See docs/TwoPhaseCompilationPipeline.md for the full design.
+/// - See docs/compiler/TwoPhaseCompilationPipeline.md for the full design.
 /// </remarks>
 public sealed class TwoPhaseCompilationCoordinator
 {
