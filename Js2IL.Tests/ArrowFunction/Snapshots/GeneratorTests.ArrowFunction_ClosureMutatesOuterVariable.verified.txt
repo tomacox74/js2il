@@ -3,22 +3,88 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.ArrowFunction_ClosureMutatesOuterVariable
+.class private auto ansi beforefieldinit Modules.ArrowFunction_ClosureMutatesOuterVariable
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit createCounter
+	.class nested public auto ansi abstract sealed beforefieldinit createCounter
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_increment
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L7C23
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested private auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x21c6
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes
+				) cil managed 
+			{
+				// Method begins at RVA 0x2170
+				// Header size: 12
+				// Code size: 56 (0x38)
+				.maxstack 32
+				.locals init (
+					[0] object
+				)
+
+				IL_0000: ldarg.0
+				IL_0001: ldc.i4.1
+				IL_0002: ldelem.ref
+				IL_0003: castclass Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope
+				IL_0008: ldfld object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope::count
+				IL_000d: ldc.r8 1
+				IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_001b: stloc.0
+				IL_001c: ldarg.0
+				IL_001d: ldc.i4.1
+				IL_001e: ldelem.ref
+				IL_001f: castclass Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope
+				IL_0024: ldloc.0
+				IL_0025: stfld object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope::count
+				IL_002a: ldarg.0
+				IL_002b: ldc.i4.1
+				IL_002c: ldelem.ref
+				IL_002d: castclass Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope
+				IL_0032: ldfld object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope::count
+				IL_0037: ret
+			} // end of method ArrowFunction_L7C23::__js_call__
+
+		} // end of class ArrowFunction_L7C23
+
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object count
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x21bd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,19 +93,66 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_increment::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class ArrowFunction_increment
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object start
+			) cil managed 
+		{
+			// Method begins at RVA 0x2130
+			// Header size: 12
+			// Code size: 49 (0x31)
+			.maxstack 32
+			.locals init (
+				[0] class Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope,
+				[1] object
+			)
+
+			IL_0000: newobj instance void Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldarg.1
+			IL_0008: stfld object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/Scope::count
+			IL_000d: ldnull
+			IL_000e: ldftn object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter/ArrowFunction_L7C23::__js_call__(object[])
+			IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_0019: ldc.i4.2
+			IL_001a: newarr [System.Runtime]System.Object
+			IL_001f: dup
+			IL_0020: ldc.i4.0
+			IL_0021: ldarg.0
+			IL_0022: ldc.i4.0
+			IL_0023: ldelem.ref
+			IL_0024: stelem.ref
+			IL_0025: dup
+			IL_0026: ldc.i4.1
+			IL_0027: ldloc.0
+			IL_0028: stelem.ref
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_002e: stloc.1
+			IL_002f: ldloc.1
+			IL_0030: ret
+		} // end of method createCounter::__js_call__
+
+	} // end of class createCounter
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Fields
-		.field public object count
+		.field public object createCounter
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x21b4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -48,125 +161,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method createCounter::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class createCounter
+	} // end of class Scope
 
 
-	// Fields
-	.field public object createCounter
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method ArrowFunction_ClosureMutatesOuterVariable::.ctor
-
-} // end of class Scopes.ArrowFunction_ClosureMutatesOuterVariable
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_ClosureMutatesOuterVariable
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object createCounter (
-			object[] scopes,
-			object start
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 49 (0x31)
-		.maxstack 32
-		.locals init (
-			[0] class Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter,
-			[1] object
-		)
-
-		IL_0000: newobj instance void Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter::count
-		IL_000d: ldnull
-		IL_000e: ldftn object Functions.ArrowFunction_L7C23::ArrowFunction_L7C23(object[])
-		IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0019: ldc.i4.2
-		IL_001a: newarr [System.Runtime]System.Object
-		IL_001f: dup
-		IL_0020: ldc.i4.0
-		IL_0021: ldarg.0
-		IL_0022: ldc.i4.0
-		IL_0023: ldelem.ref
-		IL_0024: stelem.ref
-		IL_0025: dup
-		IL_0026: ldc.i4.1
-		IL_0027: ldloc.0
-		IL_0028: stelem.ref
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_002e: stloc.1
-		IL_002f: ldloc.1
-		IL_0030: ret
-	} // end of method ArrowFunction_ClosureMutatesOuterVariable::createCounter
-
-} // end of class Functions.ArrowFunction_ClosureMutatesOuterVariable
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L7C23
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L7C23 (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x20ac
-		// Header size: 12
-		// Code size: 56 (0x38)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.1
-		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter
-		IL_0008: ldfld object Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter::count
-		IL_000d: ldc.r8 1
-		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_001b: stloc.0
-		IL_001c: ldarg.0
-		IL_001d: ldc.i4.1
-		IL_001e: ldelem.ref
-		IL_001f: castclass Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter
-		IL_0024: ldloc.0
-		IL_0025: stfld object Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter::count
-		IL_002a: ldarg.0
-		IL_002b: ldc.i4.1
-		IL_002c: ldelem.ref
-		IL_002d: castclass Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter
-		IL_0032: ldfld object Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter::count
-		IL_0037: ret
-	} // end of method ArrowFunction_L7C23::ArrowFunction_L7C23
-
-} // end of class Functions.ArrowFunction_L7C23
-
-.class public auto ansi beforefieldinit Scripts.ArrowFunction_ClosureMutatesOuterVariable
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -174,21 +176,21 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20f0
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 211 (0xd3)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ArrowFunction_ClosureMutatesOuterVariable,
+			[0] class Modules.ArrowFunction_ClosureMutatesOuterVariable/Scope,
 			[1] object,
 			[2] object[],
 			[3] object
 		)
 
-		IL_0000: newobj instance void Scopes.ArrowFunction_ClosureMutatesOuterVariable::.ctor()
+		IL_0000: newobj instance void Modules.ArrowFunction_ClosureMutatesOuterVariable/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.ArrowFunction_ClosureMutatesOuterVariable::createCounter(object[], object)
+		IL_0007: ldftn object Modules.ArrowFunction_ClosureMutatesOuterVariable/createCounter::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -279,9 +281,9 @@
 		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00d1: pop
 		IL_00d2: ret
-	} // end of method ArrowFunction_ClosureMutatesOuterVariable::Main
+	} // end of method ArrowFunction_ClosureMutatesOuterVariable::__js_module_init__
 
-} // end of class Scripts.ArrowFunction_ClosureMutatesOuterVariable
+} // end of class Modules.ArrowFunction_ClosureMutatesOuterVariable
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -298,7 +300,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.ArrowFunction_ClosureMutatesOuterVariable::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.ArrowFunction_ClosureMutatesOuterVariable::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

@@ -3,21 +3,132 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_Then_ReturnsRejectedPromise
+.class private auto ansi beforefieldinit Modules.Promise_Then_ReturnsRejectedPromise
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_L1C24
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C25
 		extends [System.Runtime]System.Object
 	{
-		// Fields
-		.field public object x
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object x
 
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2130
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object x
+			) cil managed 
+		{
+			// Method begins at RVA 0x20e0
+			// Header size: 12
+			// Code size: 13 (0xd)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldstr "error from then"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: ret
+		} // end of method ArrowFunction_L1C25::__js_call__
+
+	} // end of class ArrowFunction_L1C25
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C71
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object e
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2139
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object e
+			) cil managed 
+		{
+			// Method begins at RVA 0x20fc
+			// Header size: 12
+			// Code size: 31 (0x1f)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.2
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldstr "Caught:"
+			IL_0012: stelem.ref
+			IL_0013: dup
+			IL_0014: ldc.i4.1
+			IL_0015: ldarg.1
+			IL_0016: stelem.ref
+			IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ret
+		} // end of method ArrowFunction_L1C71::__js_call__
+
+	} // end of class ArrowFunction_L1C71
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2127
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -26,121 +137,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_L1C24::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_L1C24
-
-	.class nested public auto ansi beforefieldinit ArrowFunction_L1C70
-		extends [System.Runtime]System.Object
-	{
-		// Fields
-		.field public object e
-
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2062
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method ArrowFunction_L1C70::.ctor
-
-	} // end of class ArrowFunction_L1C70
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Promise_Then_ReturnsRejectedPromise::.ctor
-
-} // end of class Scopes.Promise_Then_ReturnsRejectedPromise
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C25
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object ArrowFunction_L1C25 (
-			object[] scopes,
-			object x
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 13 (0xd)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldstr "error from then"
-		IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_000a: stloc.0
-		IL_000b: ldloc.0
-		IL_000c: ret
-	} // end of method ArrowFunction_L1C25::ArrowFunction_L1C25
-
-} // end of class Functions.ArrowFunction_L1C25
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C71
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L1C71 (
-			object[] scopes,
-			object e
-		) cil managed 
-	{
-		// Method begins at RVA 0x2088
-		// Header size: 12
-		// Code size: 31 (0x1f)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.2
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "Caught:"
-		IL_0012: stelem.ref
-		IL_0013: dup
-		IL_0014: ldc.i4.1
-		IL_0015: ldarg.1
-		IL_0016: stelem.ref
-		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_001c: stloc.0
-		IL_001d: ldloc.0
-		IL_001e: ret
-	} // end of method ArrowFunction_L1C71::ArrowFunction_L1C71
-
-} // end of class Functions.ArrowFunction_L1C71
-
-.class public auto ansi beforefieldinit Scripts.Promise_Then_ReturnsRejectedPromise
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -148,25 +152,25 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b4
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 131 (0x83)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_Then_ReturnsRejectedPromise,
+			[0] class Modules.Promise_Then_ReturnsRejectedPromise/Scope,
 			[1] object,
 			[2] object,
 			[3] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_Then_ReturnsRejectedPromise::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Then_ReturnsRejectedPromise/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 1
 		IL_000f: box [System.Runtime]System.Double
 		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
 		IL_0019: stloc.1
 		IL_001a: ldnull
-		IL_001b: ldftn object Functions.ArrowFunction_L1C25::ArrowFunction_L1C25(object[], object)
+		IL_001b: ldftn object Modules.Promise_Then_ReturnsRejectedPromise/ArrowFunction_L1C25::__js_call__(object[], object)
 		IL_0021: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0026: ldc.i4.1
 		IL_0027: newarr [System.Runtime]System.Object
@@ -189,7 +193,7 @@
 		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_004d: stloc.1
 		IL_004e: ldnull
-		IL_004f: ldftn object Functions.ArrowFunction_L1C71::ArrowFunction_L1C71(object[], object)
+		IL_004f: ldftn object Modules.Promise_Then_ReturnsRejectedPromise/ArrowFunction_L1C71::__js_call__(object[], object)
 		IL_0055: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_005a: ldc.i4.1
 		IL_005b: newarr [System.Runtime]System.Object
@@ -212,9 +216,9 @@
 		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_0081: pop
 		IL_0082: ret
-	} // end of method Promise_Then_ReturnsRejectedPromise::Main
+	} // end of method Promise_Then_ReturnsRejectedPromise::__js_module_init__
 
-} // end of class Scripts.Promise_Then_ReturnsRejectedPromise
+} // end of class Modules.Promise_Then_ReturnsRejectedPromise
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -223,7 +227,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2143
+		// Method begins at RVA 0x2142
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -231,7 +235,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Promise_Then_ReturnsRejectedPromise::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_Then_ReturnsRejectedPromise::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

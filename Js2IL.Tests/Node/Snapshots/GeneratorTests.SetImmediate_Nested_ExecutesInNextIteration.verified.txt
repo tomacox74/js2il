@@ -3,22 +3,76 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.SetImmediate_Nested_ExecutesInNextIteration
+.class private auto ansi beforefieldinit Modules.SetImmediate_Nested_ExecutesInNextIteration
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_L1C13
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C14
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit ArrowFunction_L3C17
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C18
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested private auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2139
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes
+				) cil managed 
+			{
+				// Method begins at RVA 0x2100
+				// Header size: 12
+				// Code size: 27 (0x1b)
+				.maxstack 32
+				.locals init (
+					[0] object
+				)
+
+				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0005: ldc.i4.1
+				IL_0006: newarr [System.Runtime]System.Object
+				IL_000b: dup
+				IL_000c: ldc.i4.0
+				IL_000d: ldstr "inner"
+				IL_0012: stelem.ref
+				IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0018: stloc.0
+				IL_0019: ldloc.0
+				IL_001a: ret
+			} // end of method ArrowFunction_L3C18::__js_call__
+
+		} // end of class ArrowFunction_L3C18
+
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x2130
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,16 +81,69 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method ArrowFunction_L3C17::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class ArrowFunction_L3C17
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x20a8
+			// Header size: 12
+			// Code size: 76 (0x4c)
+			.maxstack 32
+			.locals init (
+				[0] class Modules.SetImmediate_Nested_ExecutesInNextIteration/ArrowFunction_L1C14/Scope,
+				[1] object
+			)
+
+			IL_0000: newobj instance void Modules.SetImmediate_Nested_ExecutesInNextIteration/ArrowFunction_L1C14/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_000b: ldc.i4.1
+			IL_000c: newarr [System.Runtime]System.Object
+			IL_0011: dup
+			IL_0012: ldc.i4.0
+			IL_0013: ldstr "outer"
+			IL_0018: stelem.ref
+			IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_001e: pop
+			IL_001f: ldnull
+			IL_0020: ldftn object Modules.SetImmediate_Nested_ExecutesInNextIteration/ArrowFunction_L1C14/ArrowFunction_L3C18::__js_call__(object[])
+			IL_0026: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_002b: ldc.i4.1
+			IL_002c: newarr [System.Runtime]System.Object
+			IL_0031: dup
+			IL_0032: ldc.i4.0
+			IL_0033: ldarg.0
+			IL_0034: ldc.i4.0
+			IL_0035: ldelem.ref
+			IL_0036: stelem.ref
+			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_003c: stloc.1
+			IL_003d: ldloc.1
+			IL_003e: ldc.i4.0
+			IL_003f: newarr [System.Runtime]System.Object
+			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+			IL_0049: pop
+			IL_004a: ldnull
+			IL_004b: ret
+		} // end of method ArrowFunction_L1C14::__js_call__
+
+	} // end of class ArrowFunction_L1C14
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2127
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -45,119 +152,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_L1C13::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_L1C13
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method SetImmediate_Nested_ExecutesInNextIteration::.ctor
-
-} // end of class Scopes.SetImmediate_Nested_ExecutesInNextIteration
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C14
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object ArrowFunction_L1C14 (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 76 (0x4c)
-		.maxstack 32
-		.locals init (
-			[0] class Scopes.SetImmediate_Nested_ExecutesInNextIteration/ArrowFunction_L1C13,
-			[1] object
-		)
-
-		IL_0000: newobj instance void Scopes.SetImmediate_Nested_ExecutesInNextIteration/ArrowFunction_L1C13::.ctor()
-		IL_0005: stloc.0
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000b: ldc.i4.1
-		IL_000c: newarr [System.Runtime]System.Object
-		IL_0011: dup
-		IL_0012: ldc.i4.0
-		IL_0013: ldstr "outer"
-		IL_0018: stelem.ref
-		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_001e: pop
-		IL_001f: ldnull
-		IL_0020: ldftn object Functions.ArrowFunction_L3C18::ArrowFunction_L3C18(object[])
-		IL_0026: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_002b: ldc.i4.1
-		IL_002c: newarr [System.Runtime]System.Object
-		IL_0031: dup
-		IL_0032: ldc.i4.0
-		IL_0033: ldarg.0
-		IL_0034: ldc.i4.0
-		IL_0035: ldelem.ref
-		IL_0036: stelem.ref
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_003c: stloc.1
-		IL_003d: ldloc.1
-		IL_003e: ldc.i4.0
-		IL_003f: newarr [System.Runtime]System.Object
-		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0049: pop
-		IL_004a: ldnull
-		IL_004b: ret
-	} // end of method ArrowFunction_L1C14::ArrowFunction_L1C14
-
-} // end of class Functions.ArrowFunction_L1C14
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L3C18
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L3C18 (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x20c4
-		// Header size: 12
-		// Code size: 27 (0x1b)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "inner"
-		IL_0012: stelem.ref
-		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0018: stloc.0
-		IL_0019: ldloc.0
-		IL_001a: ret
-	} // end of method ArrowFunction_L3C18::ArrowFunction_L3C18
-
-} // end of class Functions.ArrowFunction_L3C18
-
-.class public auto ansi beforefieldinit Scripts.SetImmediate_Nested_ExecutesInNextIteration
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -165,19 +167,19 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20ec
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 73 (0x49)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.SetImmediate_Nested_ExecutesInNextIteration,
+			[0] class Modules.SetImmediate_Nested_ExecutesInNextIteration/Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.SetImmediate_Nested_ExecutesInNextIteration::.ctor()
+		IL_0000: newobj instance void Modules.SetImmediate_Nested_ExecutesInNextIteration/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.ArrowFunction_L1C14::ArrowFunction_L1C14(object[])
+		IL_0007: ldftn object Modules.SetImmediate_Nested_ExecutesInNextIteration/ArrowFunction_L1C14::__js_call__(object[])
 		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -202,9 +204,9 @@
 		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0047: pop
 		IL_0048: ret
-	} // end of method SetImmediate_Nested_ExecutesInNextIteration::Main
+	} // end of method SetImmediate_Nested_ExecutesInNextIteration::__js_module_init__
 
-} // end of class Scripts.SetImmediate_Nested_ExecutesInNextIteration
+} // end of class Modules.SetImmediate_Nested_ExecutesInNextIteration
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -213,7 +215,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2141
+		// Method begins at RVA 0x2142
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -221,7 +223,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.SetImmediate_Nested_ExecutesInNextIteration::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.SetImmediate_Nested_ExecutesInNextIteration::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

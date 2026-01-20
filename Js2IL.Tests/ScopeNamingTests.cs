@@ -33,7 +33,7 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public void Build_ArrowFunctionWithAssignment_UsesDescriptiveName()
+        public void Build_ArrowFunctionWithAssignment_UsesLocationBasedName()
         {
             // Arrange
             var code = @"
@@ -43,12 +43,17 @@ namespace Js2IL.Tests
             ";
             var ast = _parser.ParseJavaScript(code, "test.js");
 
+            var varDecl = (VariableDeclaration)ast.Body[0];
+            var declarator = (VariableDeclarator)varDecl.Declarations[0];
+            var arrowExpr = (ArrowFunctionExpression)declarator.Init!;
+            var expectedName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column + 1}";
+
             // Act
             var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             var arrowScope = scopeTree.Root.Children[0];
-            Assert.Equal("ArrowFunction_func", arrowScope.Name);
+            Assert.Equal(expectedName, arrowScope.Name);
         }
 
         [Fact]
@@ -81,14 +86,17 @@ namespace Js2IL.Tests
             ";
             var ast = _parser.ParseJavaScript(code, "test.js");
 
+            var exprStmt = (ExpressionStatement)ast.Body[0];
+            var call = (CallExpression)exprStmt.Expression;
+            var arrowExpr = (ArrowFunctionExpression)call.Arguments[0];
+            var expectedName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column + 1}";
+
             // Act
             var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             var arrowScope = scopeTree.Root.Children[0];
-            Assert.StartsWith("ArrowFunction", arrowScope.Name);
-            Assert.Contains("_L", arrowScope.Name); // Should contain line number like ArrowFunction1_L2C17
-            Assert.Contains("C", arrowScope.Name); // Should contain column number
+            Assert.Equal(expectedName, arrowScope.Name);
         }
     }
 }

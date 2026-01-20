@@ -59,6 +59,16 @@ public static class CompilerServices
         services.AddSingleton<Services.AssemblyGenerator>();
         services.AddSingleton<Services.BaseClassLibraryReferences>();
 
+        // Collect nested type relationships and emit NestedClass rows in sorted order at the end.
+        services.AddSingleton<Services.NestedTypeRelationshipRegistry>();
+            services.AddSingleton<Services.ModuleTypeMetadataRegistry>();
+
+        // Function type metadata (function declarations become nested types under Modules.<ModuleName>)
+        services.AddSingleton<Services.FunctionTypeMetadataRegistry>();
+
+        // Anonymous callable owner type metadata (arrows + function expressions)
+        services.AddSingleton<Services.AnonymousCallableTypeMetadataRegistry>();
+
         // CallableMetadataRegistry will be populated and queried by the IL generators in a future phase.
         // It is registered here so that downstream components can start depending on it without breaking changes
         // when the callable metadata discovery and registration pipeline is fully integrated.

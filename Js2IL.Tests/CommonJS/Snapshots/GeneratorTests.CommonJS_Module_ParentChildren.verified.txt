@@ -3,18 +3,40 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.CommonJS_Module_ParentChildren_Main
+.class private auto ansi beforefieldinit Modules.CommonJS_Module_ParentChildren_Main
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L16C33
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L16C33
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2466
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L16C33::.ctor
+
+		} // end of class Block_L16C33
+
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x245d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,118 +45,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L16C33::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Block_L16C33
-
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method CommonJS_Module_ParentChildren_Main::.ctor
-
-} // end of class Scopes.CommonJS_Module_ParentChildren_Main
-
-.class public auto ansi beforefieldinit Scopes.CommonJS_Module_ParentChildren_Child1
-	extends [System.Runtime]System.Object
-{
-	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L8C19
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x206b
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method Block_L8C19::.ctor
-
-	} // end of class Block_L8C19
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2062
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method CommonJS_Module_ParentChildren_Child1::.ctor
-
-} // end of class Scopes.CommonJS_Module_ParentChildren_Child1
-
-.class public auto ansi beforefieldinit Scopes.CommonJS_Module_ParentChildren_Child2
-	extends [System.Runtime]System.Object
-{
-	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L8C19
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x207d
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method Block_L8C19::.ctor
-
-	} // end of class Block_L8C19
-
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2074
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method CommonJS_Module_ParentChildren_Child2::.ctor
-
-} // end of class Scopes.CommonJS_Module_ParentChildren_Child2
-
-.class public auto ansi beforefieldinit Scripts.CommonJS_Module_ParentChildren_Main
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -142,12 +60,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2088
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 548 (0x224)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Module_ParentChildren_Main,
+			[0] class Modules.CommonJS_Module_ParentChildren_Main/Scope,
 			[1] object,
 			[2] object,
 			[3] object[],
@@ -156,7 +74,7 @@
 			[6] object
 		)
 
-		IL_0000: newobj instance void Scopes.CommonJS_Module_ParentChildren_Main::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Module_ParentChildren_Main/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
@@ -354,16 +272,60 @@
 		IL_021d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0222: pop
 		IL_0223: ret
-	} // end of method CommonJS_Module_ParentChildren_Main::Main
+	} // end of method CommonJS_Module_ParentChildren_Main::__js_module_init__
 
-} // end of class Scripts.CommonJS_Module_ParentChildren_Main
+} // end of class Modules.CommonJS_Module_ParentChildren_Main
 
-.class public auto ansi beforefieldinit Scripts.CommonJS_Module_ParentChildren_Child1
+.class private auto ansi beforefieldinit Modules.CommonJS_Module_ParentChildren_Child1
 	extends [System.Runtime]System.Object
 {
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L8C19
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2478
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L8C19::.ctor
+
+		} // end of class Block_L8C19
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x246f
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -371,18 +333,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x22b8
+		// Method begins at RVA 0x2280
 		// Header size: 12
 		// Code size: 225 (0xe1)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Module_ParentChildren_Child1,
+			[0] class Modules.CommonJS_Module_ParentChildren_Child1/Scope,
 			[1] object,
 			[2] bool,
 			[3] object
 		)
 
-		IL_0000: newobj instance void Scopes.CommonJS_Module_ParentChildren_Child1::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Module_ParentChildren_Child1/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.2
 		IL_0007: ldstr "parent"
@@ -465,16 +427,60 @@
 		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
 		IL_00df: pop
 		IL_00e0: ret
-	} // end of method CommonJS_Module_ParentChildren_Child1::Main
+	} // end of method CommonJS_Module_ParentChildren_Child1::__js_module_init__
 
-} // end of class Scripts.CommonJS_Module_ParentChildren_Child1
+} // end of class Modules.CommonJS_Module_ParentChildren_Child1
 
-.class public auto ansi beforefieldinit Scripts.CommonJS_Module_ParentChildren_Child2
+.class private auto ansi beforefieldinit Modules.CommonJS_Module_ParentChildren_Child2
 	extends [System.Runtime]System.Object
 {
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L8C19
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x248a
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L8C19::.ctor
+
+		} // end of class Block_L8C19
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2481
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -482,18 +488,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x23a8
+		// Method begins at RVA 0x2370
 		// Header size: 12
 		// Code size: 225 (0xe1)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Module_ParentChildren_Child2,
+			[0] class Modules.CommonJS_Module_ParentChildren_Child2/Scope,
 			[1] object,
 			[2] bool,
 			[3] object
 		)
 
-		IL_0000: newobj instance void Scopes.CommonJS_Module_ParentChildren_Child2::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Module_ParentChildren_Child2/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.2
 		IL_0007: ldstr "parent"
@@ -576,9 +582,9 @@
 		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
 		IL_00df: pop
 		IL_00e0: ret
-	} // end of method CommonJS_Module_ParentChildren_Child2::Main
+	} // end of method CommonJS_Module_ParentChildren_Child2::__js_module_init__
 
-} // end of class Scripts.CommonJS_Module_ParentChildren_Child2
+} // end of class Modules.CommonJS_Module_ParentChildren_Child2
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -587,7 +593,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2495
+		// Method begins at RVA 0x2493
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -595,7 +601,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.CommonJS_Module_ParentChildren_Main::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.CommonJS_Module_ParentChildren_Main::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

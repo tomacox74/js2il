@@ -3,18 +3,91 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Variable_ObjectDestructuring_Captured
+.class private auto ansi beforefieldinit Modules.Variable_ObjectDestructuring_Captured
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit compute
+	.class nested public auto ansi abstract sealed beforefieldinit compute
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21a4
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x215c
+			// Header size: 12
+			// Code size: 51 (0x33)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] float64,
+				[2] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.Variable_ObjectDestructuring_Captured/Scope
+			IL_0008: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
+			IL_000d: stloc.0
+			IL_000e: ldarg.0
+			IL_000f: ldc.i4.0
+			IL_0010: ldelem.ref
+			IL_0011: castclass Modules.Variable_ObjectDestructuring_Captured/Scope
+			IL_0016: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
+			IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0020: stloc.1
+			IL_0021: ldloc.1
+			IL_0022: ldloc.0
+			IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0028: mul
+			IL_0029: stloc.1
+			IL_002a: ldloc.1
+			IL_002b: box [System.Runtime]System.Double
+			IL_0030: stloc.2
+			IL_0031: ldloc.2
+			IL_0032: ret
+		} // end of method compute::__js_call__
+
+	} // end of class compute
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object a
+		.field public object b
+		.field public object compute
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x219b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,85 +96,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method compute::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class compute
+	} // end of class Scope
 
 
-	// Fields
-	.field public object a
-	.field public object b
-	.field public object compute
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Variable_ObjectDestructuring_Captured::.ctor
-
-} // end of class Scopes.Variable_ObjectDestructuring_Captured
-
-.class public auto ansi abstract sealed beforefieldinit Functions.Variable_ObjectDestructuring_Captured
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object compute (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 51 (0x33)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] float64,
-			[2] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.0
-		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.Variable_ObjectDestructuring_Captured
-		IL_0008: ldfld object Scopes.Variable_ObjectDestructuring_Captured::b
-		IL_000d: stloc.0
-		IL_000e: ldarg.0
-		IL_000f: ldc.i4.0
-		IL_0010: ldelem.ref
-		IL_0011: castclass Scopes.Variable_ObjectDestructuring_Captured
-		IL_0016: ldfld object Scopes.Variable_ObjectDestructuring_Captured::a
-		IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0020: stloc.1
-		IL_0021: ldloc.1
-		IL_0022: ldloc.0
-		IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0028: mul
-		IL_0029: stloc.1
-		IL_002a: ldloc.1
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: stloc.2
-		IL_0031: ldloc.2
-		IL_0032: ret
-	} // end of method Variable_ObjectDestructuring_Captured::compute
-
-} // end of class Functions.Variable_ObjectDestructuring_Captured
-
-.class public auto ansi beforefieldinit Scripts.Variable_ObjectDestructuring_Captured
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -109,17 +111,17 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20a4
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 255 (0xff)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Variable_ObjectDestructuring_Captured,
+			[0] class Modules.Variable_ObjectDestructuring_Captured/Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[2] object
 		)
 
-		IL_0000: newobj instance void Scopes.Variable_ObjectDestructuring_Captured::.ctor()
+		IL_0000: newobj instance void Modules.Variable_ObjectDestructuring_Captured/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
 		IL_000b: dup
@@ -149,12 +151,12 @@
 		IL_0060: ldloc.1
 		IL_0061: ldstr "a"
 		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_006b: stfld object Scopes.Variable_ObjectDestructuring_Captured::a
+		IL_006b: stfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
 		IL_0070: ldloc.0
 		IL_0071: ldloc.1
 		IL_0072: ldstr "b"
 		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_007c: stfld object Scopes.Variable_ObjectDestructuring_Captured::b
+		IL_007c: stfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
 		IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0086: ldc.i4.2
 		IL_0087: newarr [System.Runtime]System.Object
@@ -165,7 +167,7 @@
 		IL_0094: dup
 		IL_0095: ldc.i4.1
 		IL_0096: ldloc.0
-		IL_0097: ldfld object Scopes.Variable_ObjectDestructuring_Captured::a
+		IL_0097: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
 		IL_009c: stelem.ref
 		IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00a2: pop
@@ -179,12 +181,12 @@
 		IL_00b6: dup
 		IL_00b7: ldc.i4.1
 		IL_00b8: ldloc.0
-		IL_00b9: ldfld object Scopes.Variable_ObjectDestructuring_Captured::b
+		IL_00b9: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
 		IL_00be: stelem.ref
 		IL_00bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00c4: pop
 		IL_00c5: ldnull
-		IL_00c6: ldftn object Functions.Variable_ObjectDestructuring_Captured::compute(object[])
+		IL_00c6: ldftn object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(object[])
 		IL_00cc: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_00d1: ldc.i4.1
 		IL_00d2: newarr [System.Runtime]System.Object
@@ -208,9 +210,9 @@
 		IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00fd: pop
 		IL_00fe: ret
-	} // end of method Variable_ObjectDestructuring_Captured::Main
+	} // end of method Variable_ObjectDestructuring_Captured::__js_module_init__
 
-} // end of class Scripts.Variable_ObjectDestructuring_Captured
+} // end of class Modules.Variable_ObjectDestructuring_Captured
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -219,7 +221,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21af
+		// Method begins at RVA 0x21ad
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -227,7 +229,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Variable_ObjectDestructuring_Captured::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Variable_ObjectDestructuring_Captured::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

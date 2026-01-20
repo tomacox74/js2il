@@ -3,18 +3,69 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.SetImmediate_ExecutesCallback
+.class private auto ansi beforefieldinit Modules.SetImmediate_ExecutesCallback
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_logHello
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C18
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20d8
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x20a8
+			// Header size: 12
+			// Code size: 27 (0x1b)
+			.maxstack 32
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.1
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldstr "Hello, World!"
+			IL_0012: stelem.ref
+			IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0018: pop
+			IL_0019: ldnull
+			IL_001a: ret
+		} // end of method ArrowFunction_L1C18::__js_call__
+
+	} // end of class ArrowFunction_L1C18
+
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20cf
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,63 +74,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_logHello::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_logHello
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method SetImmediate_ExecutesCallback::.ctor
-
-} // end of class Scopes.SetImmediate_ExecutesCallback
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C18
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object ArrowFunction_L1C18 (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 27 (0x1b)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "Hello, World!"
-		IL_0012: stelem.ref
-		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0018: pop
-		IL_0019: ldnull
-		IL_001a: ret
-	} // end of method ArrowFunction_L1C18::ArrowFunction_L1C18
-
-} // end of class Functions.ArrowFunction_L1C18
-
-.class public auto ansi beforefieldinit Scripts.SetImmediate_ExecutesCallback
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -87,19 +89,19 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x208c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 73 (0x49)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.SetImmediate_ExecutesCallback,
+			[0] class Modules.SetImmediate_ExecutesCallback/Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.SetImmediate_ExecutesCallback::.ctor()
+		IL_0000: newobj instance void Modules.SetImmediate_ExecutesCallback/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.ArrowFunction_L1C18::ArrowFunction_L1C18(object[])
+		IL_0007: ldftn object Modules.SetImmediate_ExecutesCallback/ArrowFunction_L1C18::__js_call__(object[])
 		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -124,9 +126,9 @@
 		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0047: pop
 		IL_0048: ret
-	} // end of method SetImmediate_ExecutesCallback::Main
+	} // end of method SetImmediate_ExecutesCallback::__js_module_init__
 
-} // end of class Scripts.SetImmediate_ExecutesCallback
+} // end of class Modules.SetImmediate_ExecutesCallback
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -143,7 +145,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.SetImmediate_ExecutesCallback::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.SetImmediate_ExecutesCallback::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

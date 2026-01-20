@@ -3,32 +3,34 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Require_Path_Join_Basic
+.class private auto ansi beforefieldinit Modules.Require_Path_Join_Basic
 	extends [System.Runtime]System.Object
 {
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
 	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20df
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Require_Path_Join_Basic::.ctor
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
 
-} // end of class Scopes.Require_Path_Join_Basic
+	} // end of class Scope
 
-.class public auto ansi beforefieldinit Scripts.Require_Path_Join_Basic
-	extends [System.Runtime]System.Object
-{
+
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -36,19 +38,19 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x205c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 131 (0x83)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Require_Path_Join_Basic,
+			[0] class Modules.Require_Path_Join_Basic/Scope,
 			[1] object,
 			[2] object,
 			[3] object[],
 			[4] object
 		)
 
-		IL_0000: newobj instance void Scopes.Require_Path_Join_Basic::.ctor()
+		IL_0000: newobj instance void Modules.Require_Path_Join_Basic/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
@@ -105,9 +107,9 @@
 		IL_007c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0081: pop
 		IL_0082: ret
-	} // end of method Require_Path_Join_Basic::Main
+	} // end of method Require_Path_Join_Basic::__js_module_init__
 
-} // end of class Scripts.Require_Path_Join_Basic
+} // end of class Modules.Require_Path_Join_Basic
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -116,7 +118,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20eb
+		// Method begins at RVA 0x20e8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -124,7 +126,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Require_Path_Join_Basic::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Require_Path_Join_Basic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

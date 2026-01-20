@@ -3,7 +3,7 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_DefaultParameterValue_Method
+.class private auto ansi beforefieldinit Modules.Classes_DefaultParameterValue_Method
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit 'add'
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x250e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,18 +27,18 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method 'add'::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class add
+		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit multiply
+		.class nested private auto ansi beforefieldinit Scope_add
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x206b
+				// Method begins at RVA 0x2517
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -47,18 +47,18 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method multiply::.ctor
+			} // end of method Scope_add::.ctor
 
-		} // end of class multiply
+		} // end of class Scope_add
 
-		.class nested public auto ansi beforefieldinit greet
+		.class nested private auto ansi beforefieldinit Scope_multiply
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2074
+				// Method begins at RVA 0x2520
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -67,18 +67,18 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method greet::.ctor
+			} // end of method Scope_multiply::.ctor
 
-		} // end of class greet
+		} // end of class Scope_multiply
 
-		.class nested public auto ansi beforefieldinit calculate
+		.class nested private auto ansi beforefieldinit Scope_greet
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x207d
+				// Method begins at RVA 0x2529
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -87,16 +87,247 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method calculate::.ctor
+			} // end of method Scope_greet::.ctor
 
-		} // end of class calculate
+		} // end of class Scope_greet
+
+		.class nested private auto ansi beforefieldinit Scope_calculate
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2532
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_calculate::.ctor
+
+		} // end of class Scope_calculate
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2390
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Calculator::.ctor
+
+		.method public hidebysig 
+			instance object 'add' (
+				object a,
+				object b
+			) cil managed 
+		{
+			// Method begins at RVA 0x23a4
+			// Header size: 12
+			// Code size: 53 (0x35)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.2
+			IL_0001: brtrue IL_0016
+
+			IL_0006: ldc.r8 10
+			IL_000f: box [System.Runtime]System.Double
+			IL_0014: starg.s b
+
+			IL_0016: ldarg.1
+			IL_0017: ldarg.2
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_001d: stloc.0
+			IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0023: ldc.i4.1
+			IL_0024: newarr [System.Runtime]System.Object
+			IL_0029: dup
+			IL_002a: ldc.i4.0
+			IL_002b: ldloc.0
+			IL_002c: stelem.ref
+			IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0032: pop
+			IL_0033: ldnull
+			IL_0034: ret
+		} // end of method Calculator::'add'
+
+		.method public hidebysig 
+			instance object multiply (
+				object x,
+				object y,
+				object z
+			) cil managed 
+		{
+			// Method begins at RVA 0x2480
+			// Header size: 12
+			// Code size: 121 (0x79)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: brtrue IL_0016
+
+			IL_0006: ldc.r8 5
+			IL_000f: box [System.Runtime]System.Double
+			IL_0014: starg.s x
+
+			IL_0016: ldarg.2
+			IL_0017: brtrue IL_002c
+
+			IL_001c: ldc.r8 3
+			IL_0025: box [System.Runtime]System.Double
+			IL_002a: starg.s y
+
+			IL_002c: ldarg.3
+			IL_002d: brtrue IL_0042
+
+			IL_0032: ldc.r8 2
+			IL_003b: box [System.Runtime]System.Double
+			IL_0040: starg.s z
+
+			IL_0042: ldarg.1
+			IL_0043: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0048: stloc.0
+			IL_0049: ldloc.0
+			IL_004a: ldarg.2
+			IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0050: mul
+			IL_0051: stloc.0
+			IL_0052: ldloc.0
+			IL_0053: ldarg.3
+			IL_0054: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0059: mul
+			IL_005a: stloc.0
+			IL_005b: ldloc.0
+			IL_005c: box [System.Runtime]System.Double
+			IL_0061: stloc.1
+			IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0067: ldc.i4.1
+			IL_0068: newarr [System.Runtime]System.Object
+			IL_006d: dup
+			IL_006e: ldc.i4.0
+			IL_006f: ldloc.1
+			IL_0070: stelem.ref
+			IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0076: pop
+			IL_0077: ldnull
+			IL_0078: ret
+		} // end of method Calculator::multiply
+
+		.method public hidebysig 
+			instance object greet (
+				object name
+			) cil managed 
+		{
+			// Method begins at RVA 0x2444
+			// Header size: 12
+			// Code size: 48 (0x30)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: brtrue IL_000d
+
+			IL_0006: ldstr "World"
+			IL_000b: starg.s name
+
+			IL_000d: ldstr "Hello, "
+			IL_0012: ldarg.1
+			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0018: stloc.0
+			IL_0019: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001e: ldc.i4.1
+			IL_001f: newarr [System.Runtime]System.Object
+			IL_0024: dup
+			IL_0025: ldc.i4.0
+			IL_0026: ldloc.0
+			IL_0027: stelem.ref
+			IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_002d: pop
+			IL_002e: ldnull
+			IL_002f: ret
+		} // end of method Calculator::greet
+
+		.method public hidebysig 
+			instance object calculate (
+				object a,
+				object b,
+				object c
+			) cil managed 
+		{
+			// Method begins at RVA 0x23e8
+			// Header size: 12
+			// Code size: 77 (0x4d)
+			.maxstack 32
+			.locals init (
+				[0] float64
+			)
+
+			IL_0000: ldarg.2
+			IL_0001: brtrue IL_001f
+
+			IL_0006: ldarg.1
+			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000c: ldc.r8 2
+			IL_0015: mul
+			IL_0016: stloc.0
+			IL_0017: ldloc.0
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: starg.s b
+
+			IL_001f: ldarg.3
+			IL_0020: brtrue IL_0036
+
+			IL_0025: ldarg.1
+			IL_0026: ldarg.2
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_002c: pop
+			IL_002d: ldarg.1
+			IL_002e: ldarg.2
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0034: starg.s c
+
+			IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003b: ldc.i4.1
+			IL_003c: newarr [System.Runtime]System.Object
+			IL_0041: dup
+			IL_0042: ldc.i4.0
+			IL_0043: ldarg.3
+			IL_0044: stelem.ref
+			IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_004a: pop
+			IL_004b: ldnull
+			IL_004c: ret
+		} // end of method Calculator::calculate
+
+	} // end of class Calculator
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2505
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -105,245 +336,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Calculator::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Calculator
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Classes_DefaultParameterValue_Method::.ctor
-
-} // end of class Scopes.Classes_DefaultParameterValue_Method
-
-.class public auto ansi beforefieldinit Classes.Classes_DefaultParameterValue_Method.Calculator
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2088
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method Calculator::.ctor
-
-	.method public hidebysig 
-		instance object 'add' (
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x209c
-		// Header size: 12
-		// Code size: 53 (0x35)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.2
-		IL_0001: brtrue IL_0016
-
-		IL_0006: ldc.r8 10
-		IL_000f: box [System.Runtime]System.Double
-		IL_0014: starg.s b
-
-		IL_0016: ldarg.1
-		IL_0017: ldarg.2
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_001d: stloc.0
-		IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0023: ldc.i4.1
-		IL_0024: newarr [System.Runtime]System.Object
-		IL_0029: dup
-		IL_002a: ldc.i4.0
-		IL_002b: ldloc.0
-		IL_002c: stelem.ref
-		IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0032: pop
-		IL_0033: ldnull
-		IL_0034: ret
-	} // end of method Calculator::'add'
-
-	.method public hidebysig 
-		instance object multiply (
-			object x,
-			object y,
-			object z
-		) cil managed 
-	{
-		// Method begins at RVA 0x2178
-		// Header size: 12
-		// Code size: 121 (0x79)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: brtrue IL_0016
-
-		IL_0006: ldc.r8 5
-		IL_000f: box [System.Runtime]System.Double
-		IL_0014: starg.s x
-
-		IL_0016: ldarg.2
-		IL_0017: brtrue IL_002c
-
-		IL_001c: ldc.r8 3
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: starg.s y
-
-		IL_002c: ldarg.3
-		IL_002d: brtrue IL_0042
-
-		IL_0032: ldc.r8 2
-		IL_003b: box [System.Runtime]System.Double
-		IL_0040: starg.s z
-
-		IL_0042: ldarg.1
-		IL_0043: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0048: stloc.0
-		IL_0049: ldloc.0
-		IL_004a: ldarg.2
-		IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0050: mul
-		IL_0051: stloc.0
-		IL_0052: ldloc.0
-		IL_0053: ldarg.3
-		IL_0054: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0059: mul
-		IL_005a: stloc.0
-		IL_005b: ldloc.0
-		IL_005c: box [System.Runtime]System.Double
-		IL_0061: stloc.1
-		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0067: ldc.i4.1
-		IL_0068: newarr [System.Runtime]System.Object
-		IL_006d: dup
-		IL_006e: ldc.i4.0
-		IL_006f: ldloc.1
-		IL_0070: stelem.ref
-		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0076: pop
-		IL_0077: ldnull
-		IL_0078: ret
-	} // end of method Calculator::multiply
-
-	.method public hidebysig 
-		instance object greet (
-			object name
-		) cil managed 
-	{
-		// Method begins at RVA 0x213c
-		// Header size: 12
-		// Code size: 48 (0x30)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: brtrue IL_000d
-
-		IL_0006: ldstr "World"
-		IL_000b: starg.s name
-
-		IL_000d: ldstr "Hello, "
-		IL_0012: ldarg.1
-		IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0018: stloc.0
-		IL_0019: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_001e: ldc.i4.1
-		IL_001f: newarr [System.Runtime]System.Object
-		IL_0024: dup
-		IL_0025: ldc.i4.0
-		IL_0026: ldloc.0
-		IL_0027: stelem.ref
-		IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_002d: pop
-		IL_002e: ldnull
-		IL_002f: ret
-	} // end of method Calculator::greet
-
-	.method public hidebysig 
-		instance object calculate (
-			object a,
-			object b,
-			object c
-		) cil managed 
-	{
-		// Method begins at RVA 0x20e0
-		// Header size: 12
-		// Code size: 77 (0x4d)
-		.maxstack 32
-		.locals init (
-			[0] float64
-		)
-
-		IL_0000: ldarg.2
-		IL_0001: brtrue IL_001f
-
-		IL_0006: ldarg.1
-		IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000c: ldc.r8 2
-		IL_0015: mul
-		IL_0016: stloc.0
-		IL_0017: ldloc.0
-		IL_0018: box [System.Runtime]System.Double
-		IL_001d: starg.s b
-
-		IL_001f: ldarg.3
-		IL_0020: brtrue IL_0036
-
-		IL_0025: ldarg.1
-		IL_0026: ldarg.2
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002c: pop
-		IL_002d: ldarg.1
-		IL_002e: ldarg.2
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0034: starg.s c
-
-		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003b: ldc.i4.1
-		IL_003c: newarr [System.Runtime]System.Object
-		IL_0041: dup
-		IL_0042: ldc.i4.0
-		IL_0043: ldarg.3
-		IL_0044: stelem.ref
-		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_004a: pop
-		IL_004b: ldnull
-		IL_004c: ret
-	} // end of method Calculator::calculate
-
-} // end of class Classes.Classes_DefaultParameterValue_Method.Calculator
-
-.class public auto ansi beforefieldinit Scripts.Classes_DefaultParameterValue_Method
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -351,30 +351,30 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2200
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 819 (0x333)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_DefaultParameterValue_Method,
+			[0] class Modules.Classes_DefaultParameterValue_Method/Scope,
 			[1] object,
 			[2] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_DefaultParameterValue_Method::.ctor()
+		IL_0000: newobj instance void Modules.Classes_DefaultParameterValue_Method/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.Classes_DefaultParameterValue_Method.Calculator::.ctor()
+		IL_0006: newobj instance void Modules.Classes_DefaultParameterValue_Method/Calculator::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldc.i4.0
 		IL_000d: newarr [System.Runtime]System.Object
 		IL_0012: stloc.2
 		IL_0013: ldloc.1
-		IL_0014: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_0014: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_0019: dup
 		IL_001a: brfalse IL_002b
 
 		IL_001f: ldnull
-		IL_0020: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::greet(object)
+		IL_0020: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::greet(object)
 		IL_0025: pop
 		IL_0026: br IL_0039
 
@@ -393,14 +393,14 @@
 		IL_0046: stelem.ref
 		IL_0047: stloc.2
 		IL_0048: ldloc.1
-		IL_0049: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_0049: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_004e: dup
 		IL_004f: brfalse IL_0062
 
 		IL_0054: ldloc.2
 		IL_0055: ldc.i4.0
 		IL_0056: ldelem.ref
-		IL_0057: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::greet(object)
+		IL_0057: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::greet(object)
 		IL_005c: pop
 		IL_005d: br IL_0070
 
@@ -420,7 +420,7 @@
 		IL_0086: stelem.ref
 		IL_0087: stloc.2
 		IL_0088: ldloc.1
-		IL_0089: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_0089: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_008e: dup
 		IL_008f: brfalse IL_00a3
 
@@ -428,7 +428,7 @@
 		IL_0095: ldc.i4.0
 		IL_0096: ldelem.ref
 		IL_0097: ldnull
-		IL_0098: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::'add'(object, object)
+		IL_0098: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::'add'(object, object)
 		IL_009d: pop
 		IL_009e: br IL_00b1
 
@@ -453,7 +453,7 @@
 		IL_00d8: stelem.ref
 		IL_00d9: stloc.2
 		IL_00da: ldloc.1
-		IL_00db: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_00db: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_00e0: dup
 		IL_00e1: brfalse IL_00f7
 
@@ -463,7 +463,7 @@
 		IL_00e9: ldloc.2
 		IL_00ea: ldc.i4.1
 		IL_00eb: ldelem.ref
-		IL_00ec: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::'add'(object, object)
+		IL_00ec: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::'add'(object, object)
 		IL_00f1: pop
 		IL_00f2: br IL_0105
 
@@ -478,14 +478,14 @@
 		IL_0106: newarr [System.Runtime]System.Object
 		IL_010b: stloc.2
 		IL_010c: ldloc.1
-		IL_010d: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_010d: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_0112: dup
 		IL_0113: brfalse IL_0126
 
 		IL_0118: ldnull
 		IL_0119: ldnull
 		IL_011a: ldnull
-		IL_011b: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
+		IL_011b: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
 		IL_0120: pop
 		IL_0121: br IL_0134
 
@@ -505,7 +505,7 @@
 		IL_014a: stelem.ref
 		IL_014b: stloc.2
 		IL_014c: ldloc.1
-		IL_014d: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_014d: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_0152: dup
 		IL_0153: brfalse IL_0168
 
@@ -514,7 +514,7 @@
 		IL_015a: ldelem.ref
 		IL_015b: ldnull
 		IL_015c: ldnull
-		IL_015d: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
+		IL_015d: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
 		IL_0162: pop
 		IL_0163: br IL_0176
 
@@ -539,7 +539,7 @@
 		IL_019d: stelem.ref
 		IL_019e: stloc.2
 		IL_019f: ldloc.1
-		IL_01a0: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_01a0: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_01a5: dup
 		IL_01a6: brfalse IL_01bd
 
@@ -550,7 +550,7 @@
 		IL_01af: ldc.i4.1
 		IL_01b0: ldelem.ref
 		IL_01b1: ldnull
-		IL_01b2: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
+		IL_01b2: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
 		IL_01b7: pop
 		IL_01b8: br IL_01cb
 
@@ -580,7 +580,7 @@
 		IL_0203: stelem.ref
 		IL_0204: stloc.2
 		IL_0205: ldloc.1
-		IL_0206: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_0206: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_020b: dup
 		IL_020c: brfalse IL_0225
 
@@ -593,7 +593,7 @@
 		IL_0217: ldloc.2
 		IL_0218: ldc.i4.2
 		IL_0219: ldelem.ref
-		IL_021a: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
+		IL_021a: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::multiply(object, object, object)
 		IL_021f: pop
 		IL_0220: br IL_0233
 
@@ -613,7 +613,7 @@
 		IL_0249: stelem.ref
 		IL_024a: stloc.2
 		IL_024b: ldloc.1
-		IL_024c: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_024c: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_0251: dup
 		IL_0252: brfalse IL_0267
 
@@ -622,7 +622,7 @@
 		IL_0259: ldelem.ref
 		IL_025a: ldnull
 		IL_025b: ldnull
-		IL_025c: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::calculate(object, object, object)
+		IL_025c: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::calculate(object, object, object)
 		IL_0261: pop
 		IL_0262: br IL_0275
 
@@ -647,7 +647,7 @@
 		IL_029c: stelem.ref
 		IL_029d: stloc.2
 		IL_029e: ldloc.1
-		IL_029f: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_029f: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_02a4: dup
 		IL_02a5: brfalse IL_02bc
 
@@ -658,7 +658,7 @@
 		IL_02ae: ldc.i4.1
 		IL_02af: ldelem.ref
 		IL_02b0: ldnull
-		IL_02b1: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::calculate(object, object, object)
+		IL_02b1: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::calculate(object, object, object)
 		IL_02b6: pop
 		IL_02b7: br IL_02ca
 
@@ -688,7 +688,7 @@
 		IL_0302: stelem.ref
 		IL_0303: stloc.2
 		IL_0304: ldloc.1
-		IL_0305: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_0305: isinst Modules.Classes_DefaultParameterValue_Method/Calculator
 		IL_030a: dup
 		IL_030b: brfalse IL_0324
 
@@ -701,7 +701,7 @@
 		IL_0316: ldloc.2
 		IL_0317: ldc.i4.2
 		IL_0318: ldelem.ref
-		IL_0319: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::calculate(object, object, object)
+		IL_0319: callvirt instance object Modules.Classes_DefaultParameterValue_Method/Calculator::calculate(object, object, object)
 		IL_031e: pop
 		IL_031f: br IL_0332
 
@@ -713,9 +713,9 @@
 		IL_0331: pop
 
 		IL_0332: ret
-	} // end of method Classes_DefaultParameterValue_Method::Main
+	} // end of method Classes_DefaultParameterValue_Method::__js_module_init__
 
-} // end of class Scripts.Classes_DefaultParameterValue_Method
+} // end of class Modules.Classes_DefaultParameterValue_Method
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -724,7 +724,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x253f
+		// Method begins at RVA 0x253b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -732,7 +732,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_DefaultParameterValue_Method::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_DefaultParameterValue_Method::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

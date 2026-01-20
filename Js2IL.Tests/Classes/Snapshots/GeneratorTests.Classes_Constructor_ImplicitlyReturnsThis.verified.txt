@@ -3,7 +3,7 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_Constructor_ImplicitlyReturnsThis
+.class private auto ansi beforefieldinit Modules.Classes_Constructor_ImplicitlyReturnsThis
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x216f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,24 +27,49 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class constructor
+		} // end of class Scope
 
+		.class nested private auto ansi beforefieldinit Scope_ctor
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2178
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_ctor::.ctor
+
+		} // end of class Scope_ctor
+
+
+		// Fields
+		.field public float64 'value'
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Method begins at RVA 0x2120
+			// Header size: 12
+			// Code size: 22 (0x16)
+			.maxstack 32
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldc.r8 42
+			IL_0010: stfld float64 Modules.Classes_Constructor_ImplicitlyReturnsThis/Simple::'value'
+			IL_0015: ret
 		} // end of method Simple::.ctor
 
 	} // end of class Simple
@@ -53,14 +78,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2074
+				// Method begins at RVA 0x2181
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -69,16 +94,71 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class constructor
+		} // end of class Scope
+
+		.class nested private auto ansi beforefieldinit Scope_ctor
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x218a
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_ctor::.ctor
+
+		} // end of class Scope_ctor
 
 
+		// Fields
+		.field public object sum
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object a,
+				object b
+			) cil managed 
+		{
+			// Method begins at RVA 0x2144
+			// Header size: 12
+			// Code size: 22 (0x16)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.1
+			IL_0007: ldarg.2
+			IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_000d: stloc.0
+			IL_000e: ldarg.0
+			IL_000f: ldloc.0
+			IL_0010: stfld object Modules.Classes_Constructor_ImplicitlyReturnsThis/WithParams::sum
+			IL_0015: ret
+		} // end of method WithParams::.ctor
+
+	} // end of class WithParams
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x206b
+			// Method begins at RVA 0x2166
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -87,94 +167,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method WithParams::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class WithParams
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Classes_Constructor_ImplicitlyReturnsThis::.ctor
-
-} // end of class Scopes.Classes_Constructor_ImplicitlyReturnsThis
-
-.class public auto ansi beforefieldinit Classes.Classes_Constructor_ImplicitlyReturnsThis.Simple
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public float64 'value'
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2080
-		// Header size: 12
-		// Code size: 22 (0x16)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldc.r8 42
-		IL_0010: stfld float64 Classes.Classes_Constructor_ImplicitlyReturnsThis.Simple::'value'
-		IL_0015: ret
-	} // end of method Simple::.ctor
-
-} // end of class Classes.Classes_Constructor_ImplicitlyReturnsThis.Simple
-
-.class public auto ansi beforefieldinit Classes.Classes_Constructor_ImplicitlyReturnsThis.WithParams
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public object sum
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x20a4
-		// Header size: 12
-		// Code size: 22 (0x16)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.1
-		IL_0007: ldarg.2
-		IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_000d: stloc.0
-		IL_000e: ldarg.0
-		IL_000f: ldloc.0
-		IL_0010: stfld object Classes.Classes_Constructor_ImplicitlyReturnsThis.WithParams::sum
-		IL_0015: ret
-	} // end of method WithParams::.ctor
-
-} // end of class Classes.Classes_Constructor_ImplicitlyReturnsThis.WithParams
-
-.class public auto ansi beforefieldinit Scripts.Classes_Constructor_ImplicitlyReturnsThis
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -182,12 +182,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c8
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 195 (0xc3)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_Constructor_ImplicitlyReturnsThis,
+			[0] class Modules.Classes_Constructor_ImplicitlyReturnsThis/Scope,
 			[1] object,
 			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -197,9 +197,9 @@
 			[7] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_Constructor_ImplicitlyReturnsThis::.ctor()
+		IL_0000: newobj instance void Modules.Classes_Constructor_ImplicitlyReturnsThis/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.Classes_Constructor_ImplicitlyReturnsThis.Simple::.ctor()
+		IL_0006: newobj instance void Modules.Classes_Constructor_ImplicitlyReturnsThis/Simple::.ctor()
 		IL_000b: stloc.1
 		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0011: ldc.i4.1
@@ -246,7 +246,7 @@
 		IL_008a: box [System.Runtime]System.Double
 		IL_008f: ldc.r8 20
 		IL_0098: box [System.Runtime]System.Double
-		IL_009d: newobj instance void Classes.Classes_Constructor_ImplicitlyReturnsThis.WithParams::.ctor(object, object)
+		IL_009d: newobj instance void Modules.Classes_Constructor_ImplicitlyReturnsThis/WithParams::.ctor(object, object)
 		IL_00a2: stloc.2
 		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_00a8: ldc.i4.1
@@ -260,9 +260,9 @@
 		IL_00bc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00c1: pop
 		IL_00c2: ret
-	} // end of method Classes_Constructor_ImplicitlyReturnsThis::Main
+	} // end of method Classes_Constructor_ImplicitlyReturnsThis::__js_module_init__
 
-} // end of class Scripts.Classes_Constructor_ImplicitlyReturnsThis
+} // end of class Modules.Classes_Constructor_ImplicitlyReturnsThis
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -271,7 +271,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2197
+		// Method begins at RVA 0x2193
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -279,7 +279,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_Constructor_ImplicitlyReturnsThis::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_Constructor_ImplicitlyReturnsThis::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

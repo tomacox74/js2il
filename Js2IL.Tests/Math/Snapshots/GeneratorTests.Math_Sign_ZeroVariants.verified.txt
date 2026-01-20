@@ -3,185 +3,189 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Math_Sign_ZeroVariants
+.class private auto ansi beforefieldinit Modules.Math_Sign_ZeroVariants
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_out
+	.class nested public auto ansi abstract sealed beforefieldinit toStr
 		extends [System.Runtime]System.Object
 	{
-		// Fields
-		.field public object v
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2283
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
 
 		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object n
+			) cil managed 
 		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Method begins at RVA 0x21cc
+			// Header size: 12
+			// Code size: 131 (0x83)
+			.maxstack 32
+			.locals init (
+				[0] bool,
+				[1] object,
+				[2] float64,
+				[3] object,
+				[4] object,
+				[5] object,
+				[6] object
+			)
 
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method ArrowFunction_out::.ctor
+			IL_0000: ldarg.1
+			IL_0001: ldc.r8 0.0
+			IL_000a: box [System.Runtime]System.Double
+			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: box [System.Runtime]System.Boolean
+			IL_001b: stloc.1
+			IL_001c: ldloc.1
+			IL_001d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0022: stloc.0
+			IL_0023: ldloc.0
+			IL_0024: brfalse IL_0056
 
-	} // end of class ArrowFunction_out
+			IL_0029: ldc.r8 1
+			IL_0032: ldarg.1
+			IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0038: div
+			IL_0039: stloc.2
+			IL_003a: ldloc.2
+			IL_003b: ldc.r8 0.0
+			IL_0044: clt
+			IL_0046: stloc.0
+			IL_0047: ldloc.0
+			IL_0048: box [System.Runtime]System.Boolean
+			IL_004d: stloc.3
+			IL_004e: ldloc.3
+			IL_004f: stloc.s 5
+			IL_0051: br IL_0059
 
-	.class nested public auto ansi beforefieldinit toStr
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2062
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			IL_0056: ldloc.1
+			IL_0057: stloc.s 5
 
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method toStr::.ctor
+			IL_0059: ldloc.s 5
+			IL_005b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0060: stloc.0
+			IL_0061: ldloc.0
+			IL_0062: brfalse IL_0073
+
+			IL_0067: ldstr "-0"
+			IL_006c: stloc.s 6
+			IL_006e: br IL_0080
+
+			IL_0073: ldstr ""
+			IL_0078: ldarg.1
+			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_007e: stloc.s 6
+
+			IL_0080: ldloc.s 6
+			IL_0082: ret
+		} // end of method toStr::__js_call__
 
 	} // end of class toStr
 
-
-	// Fields
-	.field public object toStr
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C22
+		extends [System.Runtime]System.Object
 	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object v
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Math_Sign_ZeroVariants::.ctor
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x227a
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
 
-} // end of class Scopes.Math_Sign_ZeroVariants
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Math_Sign_ZeroVariants
-	extends [System.Runtime]System.Object
-{
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object v
+			) cil managed 
+		{
+			// Method begins at RVA 0x225c
+			// Header size: 12
+			// Code size: 9 (0x9)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Math::sign(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ret
+		} // end of method ArrowFunction_L3C22::__js_call__
+
+	} // end of class ArrowFunction_L3C22
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object toStr
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2271
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
 	// Methods
 	.method public hidebysig static 
-		object toStr (
-			object[] scopes,
-			object n
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 131 (0x83)
-		.maxstack 32
-		.locals init (
-			[0] bool,
-			[1] object,
-			[2] float64,
-			[3] object,
-			[4] object,
-			[5] object,
-			[6] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: ldc.r8 0.0
-		IL_000a: box [System.Runtime]System.Double
-		IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0014: stloc.0
-		IL_0015: ldloc.0
-		IL_0016: box [System.Runtime]System.Boolean
-		IL_001b: stloc.1
-		IL_001c: ldloc.1
-		IL_001d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0022: stloc.0
-		IL_0023: ldloc.0
-		IL_0024: brfalse IL_0056
-
-		IL_0029: ldc.r8 1
-		IL_0032: ldarg.1
-		IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0038: div
-		IL_0039: stloc.2
-		IL_003a: ldloc.2
-		IL_003b: ldc.r8 0.0
-		IL_0044: clt
-		IL_0046: stloc.0
-		IL_0047: ldloc.0
-		IL_0048: box [System.Runtime]System.Boolean
-		IL_004d: stloc.3
-		IL_004e: ldloc.3
-		IL_004f: stloc.s 5
-		IL_0051: br IL_0059
-
-		IL_0056: ldloc.1
-		IL_0057: stloc.s 5
-
-		IL_0059: ldloc.s 5
-		IL_005b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0060: stloc.0
-		IL_0061: ldloc.0
-		IL_0062: brfalse IL_0073
-
-		IL_0067: ldstr "-0"
-		IL_006c: stloc.s 6
-		IL_006e: br IL_0080
-
-		IL_0073: ldstr ""
-		IL_0078: ldarg.1
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_007e: stloc.s 6
-
-		IL_0080: ldloc.s 6
-		IL_0082: ret
-	} // end of method Math_Sign_ZeroVariants::toStr
-
-} // end of class Functions.Math_Sign_ZeroVariants
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L3C22
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L3C22 (
-			object[] scopes,
-			object v
-		) cil managed 
-	{
-		// Method begins at RVA 0x20fc
-		// Header size: 12
-		// Code size: 9 (0x9)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Math::sign(object)
-		IL_0006: stloc.0
-		IL_0007: ldloc.0
-		IL_0008: ret
-	} // end of method ArrowFunction_L3C22::ArrowFunction_L3C22
-
-} // end of class Functions.ArrowFunction_L3C22
-
-.class public auto ansi beforefieldinit Scripts.Math_Sign_ZeroVariants
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -189,12 +193,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 366 (0x16e)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Math_Sign_ZeroVariants,
+			[0] class Modules.Math_Sign_ZeroVariants/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] float64,
@@ -205,7 +209,7 @@
 			[8] class [JavaScriptRuntime]JavaScriptRuntime.Array
 		)
 
-		IL_0000: newobj instance void Scopes.Math_Sign_ZeroVariants::.ctor()
+		IL_0000: newobj instance void Modules.Math_Sign_ZeroVariants/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 0.0
 		IL_000f: ldc.r8 1
@@ -265,7 +269,7 @@
 		IL_00db: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_00e0: stloc.1
 		IL_00e1: ldnull
-		IL_00e2: ldftn object Functions.ArrowFunction_L3C22::ArrowFunction_L3C22(object[], object)
+		IL_00e2: ldftn object Modules.Math_Sign_ZeroVariants/ArrowFunction_L3C22::__js_call__(object[], object)
 		IL_00e8: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_00ed: ldc.i4.1
 		IL_00ee: newarr [System.Runtime]System.Object
@@ -285,7 +289,7 @@
 		IL_010a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
 		IL_010f: stloc.2
 		IL_0110: ldnull
-		IL_0111: ldftn object Functions.Math_Sign_ZeroVariants::toStr(object[], object)
+		IL_0111: ldftn object Modules.Math_Sign_ZeroVariants/toStr::__js_call__(object[], object)
 		IL_0117: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_011c: ldc.i4.1
 		IL_011d: newarr [System.Runtime]System.Object
@@ -323,9 +327,9 @@
 		IL_0167: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_016c: pop
 		IL_016d: ret
-	} // end of method Math_Sign_ZeroVariants::Main
+	} // end of method Math_Sign_ZeroVariants::__js_module_init__
 
-} // end of class Scripts.Math_Sign_ZeroVariants
+} // end of class Modules.Math_Sign_ZeroVariants
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -334,7 +338,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x228e
+		// Method begins at RVA 0x228c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -342,7 +346,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Math_Sign_ZeroVariants::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Math_Sign_ZeroVariants::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

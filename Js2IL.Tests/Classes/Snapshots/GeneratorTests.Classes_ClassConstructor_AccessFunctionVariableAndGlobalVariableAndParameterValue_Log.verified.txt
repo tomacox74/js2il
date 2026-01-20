@@ -3,11 +3,11 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
+.class private auto ansi beforefieldinit Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit testFunction
+	.class nested public auto ansi abstract sealed beforefieldinit testFunction
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -15,14 +15,14 @@
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested public auto ansi beforefieldinit constructor
+			.class nested private auto ansi beforefieldinit Scope
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x206b
+					// Method begins at RVA 0x214d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -31,16 +31,107 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method constructor::.ctor
+				} // end of method Scope::.ctor
 
-			} // end of class constructor
+			} // end of class Scope
 
+			.class nested private auto ansi beforefieldinit Scope_ctor
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2156
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope_ctor::.ctor
+
+			} // end of class Scope_ctor
+
+
+			// Fields
+			.field private object[] _scopes
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor (
+					object[] scopes,
+					object paramValue
+				) cil managed 
+			{
+				// Method begins at RVA 0x20c8
+				// Header size: 12
+				// Code size: 103 (0x67)
+				.maxstack 32
+				.locals init (
+					[0] object[]
+				)
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: ldarg.1
+				IL_0007: stloc.0
+				IL_0008: ldarg.0
+				IL_0009: ldloc.0
+				IL_000a: stfld object[] Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction/MyClass::_scopes
+				IL_000f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0014: ldc.i4.1
+				IL_0015: newarr [System.Runtime]System.Object
+				IL_001a: dup
+				IL_001b: ldc.i4.0
+				IL_001c: ldarg.1
+				IL_001d: ldc.i4.0
+				IL_001e: ldelem.ref
+				IL_001f: castclass Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/Scope
+				IL_0024: ldfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/Scope::GLOBAL_VALUE
+				IL_0029: stelem.ref
+				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_002f: pop
+				IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0035: ldc.i4.1
+				IL_0036: newarr [System.Runtime]System.Object
+				IL_003b: dup
+				IL_003c: ldc.i4.0
+				IL_003d: ldarg.1
+				IL_003e: ldc.i4.1
+				IL_003f: ldelem.ref
+				IL_0040: castclass Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction/Scope
+				IL_0045: ldfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction/Scope::FUNCTION_VALUE
+				IL_004a: stelem.ref
+				IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0050: pop
+				IL_0051: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0056: ldc.i4.1
+				IL_0057: newarr [System.Runtime]System.Object
+				IL_005c: dup
+				IL_005d: ldc.i4.0
+				IL_005e: ldarg.2
+				IL_005f: stelem.ref
+				IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0065: pop
+				IL_0066: ret
+			} // end of method MyClass::.ctor
+
+		} // end of class MyClass
+
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public string FUNCTION_VALUE
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x2144
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,19 +140,64 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method MyClass::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class MyClass
+		} // end of class Scope
 
 
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x208c
+			// Header size: 12
+			// Code size: 46 (0x2e)
+			.maxstack 32
+			.locals init (
+				[0] class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction/Scope,
+				[1] object
+			)
+
+			IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldstr "Hello from function"
+			IL_000c: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction/Scope::FUNCTION_VALUE
+			IL_0011: ldc.i4.2
+			IL_0012: newarr [System.Runtime]System.Object
+			IL_0017: dup
+			IL_0018: ldc.i4.0
+			IL_0019: ldarg.0
+			IL_001a: ldc.i4.0
+			IL_001b: ldelem.ref
+			IL_001c: stelem.ref
+			IL_001d: dup
+			IL_001e: ldc.i4.1
+			IL_001f: ldloc.0
+			IL_0020: stelem.ref
+			IL_0021: ldstr "Hello from parameter"
+			IL_0026: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction/MyClass::.ctor(object[], object)
+			IL_002b: stloc.1
+			IL_002c: ldnull
+			IL_002d: ret
+		} // end of method testFunction::__js_call__
+
+	} // end of class testFunction
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Fields
-		.field public string FUNCTION_VALUE
+		.field public string GLOBAL_VALUE
+		.field public object testFunction
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x213b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -70,150 +206,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method testFunction::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class testFunction
+	} // end of class Scope
 
 
-	// Fields
-	.field public string GLOBAL_VALUE
-	.field public object testFunction
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log::.ctor
-
-} // end of class Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log.MyClass
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field private object[] _scopes
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object[] scopes,
-			object paramValue
-		) cil managed 
-	{
-		// Method begins at RVA 0x2074
-		// Header size: 12
-		// Code size: 103 (0x67)
-		.maxstack 32
-		.locals init (
-			[0] object[]
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.1
-		IL_0007: stloc.0
-		IL_0008: ldarg.0
-		IL_0009: ldloc.0
-		IL_000a: stfld object[] Classes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log.MyClass::_scopes
-		IL_000f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0014: ldc.i4.1
-		IL_0015: newarr [System.Runtime]System.Object
-		IL_001a: dup
-		IL_001b: ldc.i4.0
-		IL_001c: ldarg.1
-		IL_001d: ldc.i4.0
-		IL_001e: ldelem.ref
-		IL_001f: castclass Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
-		IL_0024: ldfld string Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log::GLOBAL_VALUE
-		IL_0029: stelem.ref
-		IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_002f: pop
-		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0035: ldc.i4.1
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: dup
-		IL_003c: ldc.i4.0
-		IL_003d: ldarg.1
-		IL_003e: ldc.i4.1
-		IL_003f: ldelem.ref
-		IL_0040: castclass Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction
-		IL_0045: ldfld string Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction::FUNCTION_VALUE
-		IL_004a: stelem.ref
-		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0050: pop
-		IL_0051: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0056: ldc.i4.1
-		IL_0057: newarr [System.Runtime]System.Object
-		IL_005c: dup
-		IL_005d: ldc.i4.0
-		IL_005e: ldarg.2
-		IL_005f: stelem.ref
-		IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0065: pop
-		IL_0066: ret
-	} // end of method MyClass::.ctor
-
-} // end of class Classes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log.MyClass
-
-.class public auto ansi abstract sealed beforefieldinit Functions.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object testFunction (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x20e8
-		// Header size: 12
-		// Code size: 46 (0x2e)
-		.maxstack 32
-		.locals init (
-			[0] class Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction,
-			[1] object
-		)
-
-		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldstr "Hello from function"
-		IL_000c: stfld string Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction::FUNCTION_VALUE
-		IL_0011: ldc.i4.2
-		IL_0012: newarr [System.Runtime]System.Object
-		IL_0017: dup
-		IL_0018: ldc.i4.0
-		IL_0019: ldarg.0
-		IL_001a: ldc.i4.0
-		IL_001b: ldelem.ref
-		IL_001c: stelem.ref
-		IL_001d: dup
-		IL_001e: ldc.i4.1
-		IL_001f: ldloc.0
-		IL_0020: stelem.ref
-		IL_0021: ldstr "Hello from parameter"
-		IL_0026: newobj instance void Classes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log.MyClass::.ctor(object[], object)
-		IL_002b: stloc.1
-		IL_002c: ldnull
-		IL_002d: ret
-	} // end of method Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log::testFunction
-
-} // end of class Functions.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
-
-.class public auto ansi beforefieldinit Scripts.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -221,21 +221,21 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2124
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 46 (0x2e)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
+			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/Scope
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldstr "Hello from global"
-		IL_000c: stfld string Scopes.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log::GLOBAL_VALUE
+		IL_000c: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/Scope::GLOBAL_VALUE
 		IL_0011: ldnull
-		IL_0012: ldftn object Functions.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log::testFunction(object[])
+		IL_0012: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log/testFunction::__js_call__(object[])
 		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_001d: ldc.i4.1
 		IL_001e: newarr [System.Runtime]System.Object
@@ -246,9 +246,9 @@
 		IL_0027: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_002c: pop
 		IL_002d: ret
-	} // end of method Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log::Main
+	} // end of method Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log::__js_module_init__
 
-} // end of class Scripts.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
+} // end of class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -257,7 +257,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215e
+		// Method begins at RVA 0x215f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -265,7 +265,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

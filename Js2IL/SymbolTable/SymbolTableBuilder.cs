@@ -454,6 +454,31 @@ namespace Js2IL.SymbolTables
                             // Create a pseudo-scope for the method if we compile methods as functions later
                             var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
                             var methodScope = new Scope(mname, ScopeKind.Function, classScope, mfunc);
+
+                            // Author a distinct CLR type name for class member scopes so nested types don't collide.
+                            // Examples:
+                            // - constructor -> Scope_ctor
+                            // - get x() -> Scope_get_x
+                            // - set x(v) -> Scope_set_x
+                            // - foo() -> Scope_foo
+                            var sanitizedMemberName = SanitizeForMetadata(mname);
+                            if (string.Equals(mname, "constructor", StringComparison.Ordinal))
+                            {
+                                methodScope.DotNetTypeName = "Scope_ctor";
+                            }
+                            else if (mdef.Kind == PropertyKind.Get)
+                            {
+                                methodScope.DotNetTypeName = $"Scope_get_{sanitizedMemberName}";
+                            }
+                            else if (mdef.Kind == PropertyKind.Set)
+                            {
+                                methodScope.DotNetTypeName = $"Scope_set_{sanitizedMemberName}";
+                            }
+                            else
+                            {
+                                methodScope.DotNetTypeName = $"Scope_{sanitizedMemberName}";
+                            }
+
                             foreach (var p in mfunc.Params)
                             {
                                 if (p is Identifier pid)
@@ -748,10 +773,10 @@ namespace Js2IL.SymbolTables
                         break;
                     }
                     _visitedArrowFunctions.Add(arrowFunc);
-                    // Match arrow-function naming: ArrowFunction_<assignmentTarget> OR ArrowFunction_L{line}C{col}
-                    var arrowName = !string.IsNullOrEmpty(_currentAssignmentTarget)
-                        ? $"ArrowFunction_{_currentAssignmentTarget}"
-                        : $"ArrowFunction_L{arrowFunc.Location.Start.Line}C{arrowFunc.Location.Start.Column}";
+                    // Stable arrow-function naming: ArrowFunction_L{line}C{col1Based}
+                    // (use 1-based column to match SourceLocation conventions and tests)
+                    var col1Based = arrowFunc.Location.Start.Column + 1;
+                    var arrowName = $"ArrowFunction_L{arrowFunc.Location.Start.Line}C{col1Based}";
                     var arrowScope = new Scope(arrowName, ScopeKind.Function, currentScope, arrowFunc);
                     arrowScope.IsAsync = arrowFunc.Async;
                     if (arrowFunc.Async)

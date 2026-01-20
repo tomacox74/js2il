@@ -3,32 +3,34 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Global___dirname_PrintsDirectory
+.class private auto ansi beforefieldinit Modules.Global___dirname_PrintsDirectory
 	extends [System.Runtime]System.Object
 {
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
 	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2079
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Global___dirname_PrintsDirectory::.ctor
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
 
-} // end of class Scopes.Global___dirname_PrintsDirectory
+	} // end of class Scope
 
-.class public auto ansi beforefieldinit Scripts.Global___dirname_PrintsDirectory
-	extends [System.Runtime]System.Object
-{
+
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -36,15 +38,15 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x205c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 29 (0x1d)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.Global___dirname_PrintsDirectory
+			[0] class Modules.Global___dirname_PrintsDirectory/Scope
 		)
 
-		IL_0000: newobj instance void Scopes.Global___dirname_PrintsDirectory::.ctor()
+		IL_0000: newobj instance void Modules.Global___dirname_PrintsDirectory/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_000b: ldc.i4.1
@@ -56,9 +58,9 @@
 		IL_0016: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_001b: pop
 		IL_001c: ret
-	} // end of method Global___dirname_PrintsDirectory::Main
+	} // end of method Global___dirname_PrintsDirectory::__js_module_init__
 
-} // end of class Scripts.Global___dirname_PrintsDirectory
+} // end of class Modules.Global___dirname_PrintsDirectory
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -67,7 +69,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2085
+		// Method begins at RVA 0x2082
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -75,7 +77,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Global___dirname_PrintsDirectory::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Global___dirname_PrintsDirectory::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

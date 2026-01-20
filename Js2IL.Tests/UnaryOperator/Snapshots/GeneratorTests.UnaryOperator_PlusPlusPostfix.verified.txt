@@ -3,98 +3,462 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.UnaryOperator_PlusPlusPostfix
+.class private auto ansi beforefieldinit Modules.UnaryOperator_PlusPlusPostfix
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit logCase
+	.class nested public auto ansi abstract sealed beforefieldinit logCase
 		extends [System.Runtime]System.Object
 	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
 		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x23e5
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
 
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method logCase::.ctor
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object label,
+				object before,
+				object result,
+				object after
+			) cil managed 
+		{
+			// Method begins at RVA 0x23ac
+			// Header size: 12
+			// Code size: 36 (0x24)
+			.maxstack 32
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.4
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldarg.1
+			IL_000e: stelem.ref
+			IL_000f: dup
+			IL_0010: ldc.i4.1
+			IL_0011: ldarg.2
+			IL_0012: stelem.ref
+			IL_0013: dup
+			IL_0014: ldc.i4.2
+			IL_0015: ldarg.3
+			IL_0016: stelem.ref
+			IL_0017: dup
+			IL_0018: ldc.i4.3
+			IL_0019: ldarg.s after
+			IL_001b: stelem.ref
+			IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0021: pop
+			IL_0022: ldnull
+			IL_0023: ret
+		} // end of method logCase::__js_call__
 
 	} // end of class logCase
 
-	.class nested public auto ansi beforefieldinit capturedDouble
+	.class nested public auto ansi abstract sealed beforefieldinit capturedDouble
 		extends [System.Runtime]System.Object
 	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
 		{
-			// Method begins at RVA 0x2062
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x23ee
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x228c
+			// Header size: 12
+			// Code size: 129 (0x81)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] object,
+				[3] float64,
+				[4] object
+			)
 
 			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method capturedDouble::.ctor
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.UnaryOperator_PlusPlusPostfix/Scope
+			IL_0008: ldfld object Modules.UnaryOperator_PlusPlusPostfix/Scope::capturedGlobalDouble
+			IL_000d: stloc.0
+			IL_000e: ldarg.0
+			IL_000f: ldc.i4.0
+			IL_0010: ldelem.ref
+			IL_0011: castclass Modules.UnaryOperator_PlusPlusPostfix/Scope
+			IL_0016: ldfld object Modules.UnaryOperator_PlusPlusPostfix/Scope::capturedGlobalDouble
+			IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0020: stloc.3
+			IL_0021: ldloc.3
+			IL_0022: box [System.Runtime]System.Double
+			IL_0027: stloc.1
+			IL_0028: ldloc.3
+			IL_0029: ldc.r8 1
+			IL_0032: add
+			IL_0033: stloc.3
+			IL_0034: ldloc.3
+			IL_0035: box [System.Runtime]System.Double
+			IL_003a: stloc.s 4
+			IL_003c: ldarg.0
+			IL_003d: ldc.i4.0
+			IL_003e: ldelem.ref
+			IL_003f: castclass Modules.UnaryOperator_PlusPlusPostfix/Scope
+			IL_0044: ldloc.s 4
+			IL_0046: stfld object Modules.UnaryOperator_PlusPlusPostfix/Scope::capturedGlobalDouble
+			IL_004b: ldarg.0
+			IL_004c: ldc.i4.0
+			IL_004d: ldelem.ref
+			IL_004e: castclass Modules.UnaryOperator_PlusPlusPostfix/Scope
+			IL_0053: ldfld object Modules.UnaryOperator_PlusPlusPostfix/Scope::capturedGlobalDouble
+			IL_0058: stloc.2
+			IL_0059: ldnull
+			IL_005a: ldftn object Modules.UnaryOperator_PlusPlusPostfix/logCase::__js_call__(object[], object, object, object, object)
+			IL_0060: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
+			IL_0065: ldc.i4.1
+			IL_0066: newarr [System.Runtime]System.Object
+			IL_006b: dup
+			IL_006c: ldc.i4.0
+			IL_006d: ldarg.0
+			IL_006e: ldc.i4.0
+			IL_006f: ldelem.ref
+			IL_0070: stelem.ref
+			IL_0071: ldstr "captured-double"
+			IL_0076: ldloc.0
+			IL_0077: ldloc.1
+			IL_0078: ldloc.2
+			IL_0079: callvirt instance !5 class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4)
+			IL_007e: pop
+			IL_007f: ldnull
+			IL_0080: ret
+		} // end of method capturedDouble::__js_call__
 
 	} // end of class capturedDouble
 
-	.class nested public auto ansi beforefieldinit argDouble
+	.class nested public auto ansi abstract sealed beforefieldinit argDouble
 		extends [System.Runtime]System.Object
 	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
 		{
-			// Method begins at RVA 0x206b
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x23f7
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
 
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method argDouble::.ctor
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object n
+			) cil managed 
+		{
+			// Method begins at RVA 0x21d4
+			// Header size: 12
+			// Code size: 78 (0x4e)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] object,
+				[3] float64
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: stloc.0
+			IL_0002: ldarg.1
+			IL_0003: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0008: stloc.3
+			IL_0009: ldloc.3
+			IL_000a: box [System.Runtime]System.Double
+			IL_000f: stloc.1
+			IL_0010: ldloc.3
+			IL_0011: ldc.r8 1
+			IL_001a: add
+			IL_001b: stloc.3
+			IL_001c: ldloc.3
+			IL_001d: box [System.Runtime]System.Double
+			IL_0022: starg.s n
+			IL_0024: ldarg.1
+			IL_0025: stloc.2
+			IL_0026: ldnull
+			IL_0027: ldftn object Modules.UnaryOperator_PlusPlusPostfix/logCase::__js_call__(object[], object, object, object, object)
+			IL_002d: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
+			IL_0032: ldc.i4.1
+			IL_0033: newarr [System.Runtime]System.Object
+			IL_0038: dup
+			IL_0039: ldc.i4.0
+			IL_003a: ldarg.0
+			IL_003b: ldc.i4.0
+			IL_003c: ldelem.ref
+			IL_003d: stelem.ref
+			IL_003e: ldstr "arg-double"
+			IL_0043: ldloc.0
+			IL_0044: ldloc.1
+			IL_0045: ldloc.2
+			IL_0046: callvirt instance !5 class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4)
+			IL_004b: pop
+			IL_004c: ldnull
+			IL_004d: ret
+		} // end of method argDouble::__js_call__
 
 	} // end of class argDouble
 
-	.class nested public auto ansi beforefieldinit capturedString
+	.class nested public auto ansi abstract sealed beforefieldinit capturedString
 		extends [System.Runtime]System.Object
 	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
 		{
-			// Method begins at RVA 0x2074
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2400
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x231c
+			// Header size: 12
+			// Code size: 129 (0x81)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] object,
+				[3] float64,
+				[4] object
+			)
 
 			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method capturedString::.ctor
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.UnaryOperator_PlusPlusPostfix/Scope
+			IL_0008: ldfld object Modules.UnaryOperator_PlusPlusPostfix/Scope::capturedGlobalString
+			IL_000d: stloc.0
+			IL_000e: ldarg.0
+			IL_000f: ldc.i4.0
+			IL_0010: ldelem.ref
+			IL_0011: castclass Modules.UnaryOperator_PlusPlusPostfix/Scope
+			IL_0016: ldfld object Modules.UnaryOperator_PlusPlusPostfix/Scope::capturedGlobalString
+			IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0020: stloc.3
+			IL_0021: ldloc.3
+			IL_0022: box [System.Runtime]System.Double
+			IL_0027: stloc.1
+			IL_0028: ldloc.3
+			IL_0029: ldc.r8 1
+			IL_0032: add
+			IL_0033: stloc.3
+			IL_0034: ldloc.3
+			IL_0035: box [System.Runtime]System.Double
+			IL_003a: stloc.s 4
+			IL_003c: ldarg.0
+			IL_003d: ldc.i4.0
+			IL_003e: ldelem.ref
+			IL_003f: castclass Modules.UnaryOperator_PlusPlusPostfix/Scope
+			IL_0044: ldloc.s 4
+			IL_0046: stfld object Modules.UnaryOperator_PlusPlusPostfix/Scope::capturedGlobalString
+			IL_004b: ldarg.0
+			IL_004c: ldc.i4.0
+			IL_004d: ldelem.ref
+			IL_004e: castclass Modules.UnaryOperator_PlusPlusPostfix/Scope
+			IL_0053: ldfld object Modules.UnaryOperator_PlusPlusPostfix/Scope::capturedGlobalString
+			IL_0058: stloc.2
+			IL_0059: ldnull
+			IL_005a: ldftn object Modules.UnaryOperator_PlusPlusPostfix/logCase::__js_call__(object[], object, object, object, object)
+			IL_0060: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
+			IL_0065: ldc.i4.1
+			IL_0066: newarr [System.Runtime]System.Object
+			IL_006b: dup
+			IL_006c: ldc.i4.0
+			IL_006d: ldarg.0
+			IL_006e: ldc.i4.0
+			IL_006f: ldelem.ref
+			IL_0070: stelem.ref
+			IL_0071: ldstr "captured-string"
+			IL_0076: ldloc.0
+			IL_0077: ldloc.1
+			IL_0078: ldloc.2
+			IL_0079: callvirt instance !5 class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4)
+			IL_007e: pop
+			IL_007f: ldnull
+			IL_0080: ret
+		} // end of method capturedString::__js_call__
 
 	} // end of class capturedString
 
-	.class nested public auto ansi beforefieldinit argString
+	.class nested public auto ansi abstract sealed beforefieldinit argString
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2409
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object n
+			) cil managed 
+		{
+			// Method begins at RVA 0x2230
+			// Header size: 12
+			// Code size: 78 (0x4e)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] object,
+				[3] float64
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: stloc.0
+			IL_0002: ldarg.1
+			IL_0003: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0008: stloc.3
+			IL_0009: ldloc.3
+			IL_000a: box [System.Runtime]System.Double
+			IL_000f: stloc.1
+			IL_0010: ldloc.3
+			IL_0011: ldc.r8 1
+			IL_001a: add
+			IL_001b: stloc.3
+			IL_001c: ldloc.3
+			IL_001d: box [System.Runtime]System.Double
+			IL_0022: starg.s n
+			IL_0024: ldarg.1
+			IL_0025: stloc.2
+			IL_0026: ldnull
+			IL_0027: ldftn object Modules.UnaryOperator_PlusPlusPostfix/logCase::__js_call__(object[], object, object, object, object)
+			IL_002d: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
+			IL_0032: ldc.i4.1
+			IL_0033: newarr [System.Runtime]System.Object
+			IL_0038: dup
+			IL_0039: ldc.i4.0
+			IL_003a: ldarg.0
+			IL_003b: ldc.i4.0
+			IL_003c: ldelem.ref
+			IL_003d: stelem.ref
+			IL_003e: ldstr "arg-string"
+			IL_0043: ldloc.0
+			IL_0044: ldloc.1
+			IL_0045: ldloc.2
+			IL_0046: callvirt instance !5 class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4)
+			IL_004b: pop
+			IL_004c: ldnull
+			IL_004d: ret
+		} // end of method argString::__js_call__
+
+	} // end of class argString
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object logCase
+		.field public object capturedGlobalDouble
+		.field public object capturedDouble
+		.field public object argDouble
+		.field public object capturedGlobalString
+		.field public object capturedString
+		.field public object argString
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x207d
+			// Method begins at RVA 0x23dc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -103,344 +467,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method argString::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class argString
+	} // end of class Scope
 
-
-	// Fields
-	.field public object logCase
-	.field public object capturedGlobalDouble
-	.field public object capturedDouble
-	.field public object argDouble
-	.field public object capturedGlobalString
-	.field public object capturedString
-	.field public object argString
 
 	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method UnaryOperator_PlusPlusPostfix::.ctor
-
-} // end of class Scopes.UnaryOperator_PlusPlusPostfix
-
-.class public auto ansi abstract sealed beforefieldinit Functions.UnaryOperator_PlusPlusPostfix
-	extends [System.Runtime]System.Object
-{
-	// Methods
 	.method public hidebysig static 
-		object logCase (
-			object[] scopes,
-			object label,
-			object before,
-			object result,
-			object after
-		) cil managed 
-	{
-		// Method begins at RVA 0x2260
-		// Header size: 12
-		// Code size: 36 (0x24)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.4
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldarg.1
-		IL_000e: stelem.ref
-		IL_000f: dup
-		IL_0010: ldc.i4.1
-		IL_0011: ldarg.2
-		IL_0012: stelem.ref
-		IL_0013: dup
-		IL_0014: ldc.i4.2
-		IL_0015: ldarg.3
-		IL_0016: stelem.ref
-		IL_0017: dup
-		IL_0018: ldc.i4.3
-		IL_0019: ldarg.s after
-		IL_001b: stelem.ref
-		IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0021: pop
-		IL_0022: ldnull
-		IL_0023: ret
-	} // end of method UnaryOperator_PlusPlusPostfix::logCase
-
-	.method public hidebysig static 
-		object capturedDouble (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2140
-		// Header size: 12
-		// Code size: 129 (0x81)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] object,
-			[2] object,
-			[3] float64,
-			[4] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.0
-		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.UnaryOperator_PlusPlusPostfix
-		IL_0008: ldfld object Scopes.UnaryOperator_PlusPlusPostfix::capturedGlobalDouble
-		IL_000d: stloc.0
-		IL_000e: ldarg.0
-		IL_000f: ldc.i4.0
-		IL_0010: ldelem.ref
-		IL_0011: castclass Scopes.UnaryOperator_PlusPlusPostfix
-		IL_0016: ldfld object Scopes.UnaryOperator_PlusPlusPostfix::capturedGlobalDouble
-		IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0020: stloc.3
-		IL_0021: ldloc.3
-		IL_0022: box [System.Runtime]System.Double
-		IL_0027: stloc.1
-		IL_0028: ldloc.3
-		IL_0029: ldc.r8 1
-		IL_0032: add
-		IL_0033: stloc.3
-		IL_0034: ldloc.3
-		IL_0035: box [System.Runtime]System.Double
-		IL_003a: stloc.s 4
-		IL_003c: ldarg.0
-		IL_003d: ldc.i4.0
-		IL_003e: ldelem.ref
-		IL_003f: castclass Scopes.UnaryOperator_PlusPlusPostfix
-		IL_0044: ldloc.s 4
-		IL_0046: stfld object Scopes.UnaryOperator_PlusPlusPostfix::capturedGlobalDouble
-		IL_004b: ldarg.0
-		IL_004c: ldc.i4.0
-		IL_004d: ldelem.ref
-		IL_004e: castclass Scopes.UnaryOperator_PlusPlusPostfix
-		IL_0053: ldfld object Scopes.UnaryOperator_PlusPlusPostfix::capturedGlobalDouble
-		IL_0058: stloc.2
-		IL_0059: ldnull
-		IL_005a: ldftn object Functions.UnaryOperator_PlusPlusPostfix::logCase(object[], object, object, object, object)
-		IL_0060: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
-		IL_0065: ldc.i4.1
-		IL_0066: newarr [System.Runtime]System.Object
-		IL_006b: dup
-		IL_006c: ldc.i4.0
-		IL_006d: ldarg.0
-		IL_006e: ldc.i4.0
-		IL_006f: ldelem.ref
-		IL_0070: stelem.ref
-		IL_0071: ldstr "captured-double"
-		IL_0076: ldloc.0
-		IL_0077: ldloc.1
-		IL_0078: ldloc.2
-		IL_0079: callvirt instance !5 class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4)
-		IL_007e: pop
-		IL_007f: ldnull
-		IL_0080: ret
-	} // end of method UnaryOperator_PlusPlusPostfix::capturedDouble
-
-	.method public hidebysig static 
-		object argDouble (
-			object[] scopes,
-			object n
-		) cil managed 
-	{
-		// Method begins at RVA 0x2088
-		// Header size: 12
-		// Code size: 78 (0x4e)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] object,
-			[2] object,
-			[3] float64
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: stloc.0
-		IL_0002: ldarg.1
-		IL_0003: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0008: stloc.3
-		IL_0009: ldloc.3
-		IL_000a: box [System.Runtime]System.Double
-		IL_000f: stloc.1
-		IL_0010: ldloc.3
-		IL_0011: ldc.r8 1
-		IL_001a: add
-		IL_001b: stloc.3
-		IL_001c: ldloc.3
-		IL_001d: box [System.Runtime]System.Double
-		IL_0022: starg.s n
-		IL_0024: ldarg.1
-		IL_0025: stloc.2
-		IL_0026: ldnull
-		IL_0027: ldftn object Functions.UnaryOperator_PlusPlusPostfix::logCase(object[], object, object, object, object)
-		IL_002d: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
-		IL_0032: ldc.i4.1
-		IL_0033: newarr [System.Runtime]System.Object
-		IL_0038: dup
-		IL_0039: ldc.i4.0
-		IL_003a: ldarg.0
-		IL_003b: ldc.i4.0
-		IL_003c: ldelem.ref
-		IL_003d: stelem.ref
-		IL_003e: ldstr "arg-double"
-		IL_0043: ldloc.0
-		IL_0044: ldloc.1
-		IL_0045: ldloc.2
-		IL_0046: callvirt instance !5 class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4)
-		IL_004b: pop
-		IL_004c: ldnull
-		IL_004d: ret
-	} // end of method UnaryOperator_PlusPlusPostfix::argDouble
-
-	.method public hidebysig static 
-		object capturedString (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x21d0
-		// Header size: 12
-		// Code size: 129 (0x81)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] object,
-			[2] object,
-			[3] float64,
-			[4] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.0
-		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.UnaryOperator_PlusPlusPostfix
-		IL_0008: ldfld object Scopes.UnaryOperator_PlusPlusPostfix::capturedGlobalString
-		IL_000d: stloc.0
-		IL_000e: ldarg.0
-		IL_000f: ldc.i4.0
-		IL_0010: ldelem.ref
-		IL_0011: castclass Scopes.UnaryOperator_PlusPlusPostfix
-		IL_0016: ldfld object Scopes.UnaryOperator_PlusPlusPostfix::capturedGlobalString
-		IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0020: stloc.3
-		IL_0021: ldloc.3
-		IL_0022: box [System.Runtime]System.Double
-		IL_0027: stloc.1
-		IL_0028: ldloc.3
-		IL_0029: ldc.r8 1
-		IL_0032: add
-		IL_0033: stloc.3
-		IL_0034: ldloc.3
-		IL_0035: box [System.Runtime]System.Double
-		IL_003a: stloc.s 4
-		IL_003c: ldarg.0
-		IL_003d: ldc.i4.0
-		IL_003e: ldelem.ref
-		IL_003f: castclass Scopes.UnaryOperator_PlusPlusPostfix
-		IL_0044: ldloc.s 4
-		IL_0046: stfld object Scopes.UnaryOperator_PlusPlusPostfix::capturedGlobalString
-		IL_004b: ldarg.0
-		IL_004c: ldc.i4.0
-		IL_004d: ldelem.ref
-		IL_004e: castclass Scopes.UnaryOperator_PlusPlusPostfix
-		IL_0053: ldfld object Scopes.UnaryOperator_PlusPlusPostfix::capturedGlobalString
-		IL_0058: stloc.2
-		IL_0059: ldnull
-		IL_005a: ldftn object Functions.UnaryOperator_PlusPlusPostfix::logCase(object[], object, object, object, object)
-		IL_0060: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
-		IL_0065: ldc.i4.1
-		IL_0066: newarr [System.Runtime]System.Object
-		IL_006b: dup
-		IL_006c: ldc.i4.0
-		IL_006d: ldarg.0
-		IL_006e: ldc.i4.0
-		IL_006f: ldelem.ref
-		IL_0070: stelem.ref
-		IL_0071: ldstr "captured-string"
-		IL_0076: ldloc.0
-		IL_0077: ldloc.1
-		IL_0078: ldloc.2
-		IL_0079: callvirt instance !5 class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4)
-		IL_007e: pop
-		IL_007f: ldnull
-		IL_0080: ret
-	} // end of method UnaryOperator_PlusPlusPostfix::capturedString
-
-	.method public hidebysig static 
-		object argString (
-			object[] scopes,
-			object n
-		) cil managed 
-	{
-		// Method begins at RVA 0x20e4
-		// Header size: 12
-		// Code size: 78 (0x4e)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] object,
-			[2] object,
-			[3] float64
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: stloc.0
-		IL_0002: ldarg.1
-		IL_0003: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0008: stloc.3
-		IL_0009: ldloc.3
-		IL_000a: box [System.Runtime]System.Double
-		IL_000f: stloc.1
-		IL_0010: ldloc.3
-		IL_0011: ldc.r8 1
-		IL_001a: add
-		IL_001b: stloc.3
-		IL_001c: ldloc.3
-		IL_001d: box [System.Runtime]System.Double
-		IL_0022: starg.s n
-		IL_0024: ldarg.1
-		IL_0025: stloc.2
-		IL_0026: ldnull
-		IL_0027: ldftn object Functions.UnaryOperator_PlusPlusPostfix::logCase(object[], object, object, object, object)
-		IL_002d: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
-		IL_0032: ldc.i4.1
-		IL_0033: newarr [System.Runtime]System.Object
-		IL_0038: dup
-		IL_0039: ldc.i4.0
-		IL_003a: ldarg.0
-		IL_003b: ldc.i4.0
-		IL_003c: ldelem.ref
-		IL_003d: stelem.ref
-		IL_003e: ldstr "arg-string"
-		IL_0043: ldloc.0
-		IL_0044: ldloc.1
-		IL_0045: ldloc.2
-		IL_0046: callvirt instance !5 class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4)
-		IL_004b: pop
-		IL_004c: ldnull
-		IL_004d: ret
-	} // end of method UnaryOperator_PlusPlusPostfix::argString
-
-} // end of class Functions.UnaryOperator_PlusPlusPostfix
-
-.class public auto ansi beforefieldinit Scripts.UnaryOperator_PlusPlusPostfix
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -448,12 +482,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2290
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 373 (0x175)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.UnaryOperator_PlusPlusPostfix,
+			[0] class Modules.UnaryOperator_PlusPlusPostfix/Scope,
 			[1] float64,
 			[2] float64,
 			[3] object,
@@ -464,7 +498,7 @@
 			[8] float64
 		)
 
-		IL_0000: newobj instance void Scopes.UnaryOperator_PlusPlusPostfix::.ctor()
+		IL_0000: newobj instance void Modules.UnaryOperator_PlusPlusPostfix/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 3
 		IL_000f: stloc.1
@@ -482,7 +516,7 @@
 		IL_002e: box [System.Runtime]System.Double
 		IL_0033: stloc.s 7
 		IL_0035: ldnull
-		IL_0036: ldftn object Functions.UnaryOperator_PlusPlusPostfix::logCase(object[], object, object, object, object)
+		IL_0036: ldftn object Modules.UnaryOperator_PlusPlusPostfix/logCase::__js_call__(object[], object, object, object, object)
 		IL_003c: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
 		IL_0041: ldc.i4.1
 		IL_0042: newarr [System.Runtime]System.Object
@@ -499,9 +533,9 @@
 		IL_005b: ldloc.0
 		IL_005c: ldc.r8 3
 		IL_0065: box [System.Runtime]System.Double
-		IL_006a: stfld object Scopes.UnaryOperator_PlusPlusPostfix::capturedGlobalDouble
+		IL_006a: stfld object Modules.UnaryOperator_PlusPlusPostfix/Scope::capturedGlobalDouble
 		IL_006f: ldnull
-		IL_0070: ldftn object Functions.UnaryOperator_PlusPlusPostfix::capturedDouble(object[])
+		IL_0070: ldftn object Modules.UnaryOperator_PlusPlusPostfix/capturedDouble::__js_call__(object[])
 		IL_0076: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_007b: ldc.i4.1
 		IL_007c: newarr [System.Runtime]System.Object
@@ -512,7 +546,7 @@
 		IL_0085: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_008a: pop
 		IL_008b: ldnull
-		IL_008c: ldftn object Functions.UnaryOperator_PlusPlusPostfix::argDouble(object[], object)
+		IL_008c: ldftn object Modules.UnaryOperator_PlusPlusPostfix/argDouble::__js_call__(object[], object)
 		IL_0092: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0097: ldc.i4.1
 		IL_0098: newarr [System.Runtime]System.Object
@@ -552,7 +586,7 @@
 		IL_00ff: box [System.Runtime]System.Double
 		IL_0104: stloc.s 6
 		IL_0106: ldnull
-		IL_0107: ldftn object Functions.UnaryOperator_PlusPlusPostfix::logCase(object[], object, object, object, object)
+		IL_0107: ldftn object Modules.UnaryOperator_PlusPlusPostfix/logCase::__js_call__(object[], object, object, object, object)
 		IL_010d: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
 		IL_0112: ldc.i4.1
 		IL_0113: newarr [System.Runtime]System.Object
@@ -568,9 +602,9 @@
 		IL_012b: pop
 		IL_012c: ldloc.0
 		IL_012d: ldstr "3"
-		IL_0132: stfld object Scopes.UnaryOperator_PlusPlusPostfix::capturedGlobalString
+		IL_0132: stfld object Modules.UnaryOperator_PlusPlusPostfix/Scope::capturedGlobalString
 		IL_0137: ldnull
-		IL_0138: ldftn object Functions.UnaryOperator_PlusPlusPostfix::capturedString(object[])
+		IL_0138: ldftn object Modules.UnaryOperator_PlusPlusPostfix/capturedString::__js_call__(object[])
 		IL_013e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0143: ldc.i4.1
 		IL_0144: newarr [System.Runtime]System.Object
@@ -581,7 +615,7 @@
 		IL_014d: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_0152: pop
 		IL_0153: ldnull
-		IL_0154: ldftn object Functions.UnaryOperator_PlusPlusPostfix::argString(object[], object)
+		IL_0154: ldftn object Modules.UnaryOperator_PlusPlusPostfix/argString::__js_call__(object[], object)
 		IL_015a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_015f: ldc.i4.1
 		IL_0160: newarr [System.Runtime]System.Object
@@ -593,9 +627,9 @@
 		IL_016e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_0173: pop
 		IL_0174: ret
-	} // end of method UnaryOperator_PlusPlusPostfix::Main
+	} // end of method UnaryOperator_PlusPlusPostfix::__js_module_init__
 
-} // end of class Scripts.UnaryOperator_PlusPlusPostfix
+} // end of class Modules.UnaryOperator_PlusPlusPostfix
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -604,7 +638,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2411
+		// Method begins at RVA 0x2412
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -612,7 +646,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.UnaryOperator_PlusPlusPostfix::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.UnaryOperator_PlusPlusPostfix::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

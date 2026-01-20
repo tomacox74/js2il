@@ -3,6 +3,8 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using Js2IL.Services.ILGenerators;
+using Js2IL.Services.TwoPhaseCompilation;
+using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -58,14 +60,153 @@ namespace Js2IL.Services
             // there is 1 MethodBodyStreamEncoder for all methods in the assembly
             var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
 
-            // Generate .NET types from the scope tree (populates the injected VariableRegistry)
-            this.GenerateScopeTypes(modules, methodBodyStream);
+            // Phase 0: compute callable counts across all modules so we can assign stable
+            // future ctor MethodDef tokens for ALL scope types (regardless of module processing order).
+            var totalCallableMethods = modules._modules.Values.Sum(m => new CallableDiscovery(m.SymbolTable!).DiscoverAll().Count);
+            var totalModuleInitMethods = modules._modules.Values.Count;
 
-            // Compile the main script method
-            this.GenerateModules(modules, methodBodyStream);
+            // Scope types are generated before callables are compiled (so variable binding has FieldDef handles),
+            // but scope constructors are emitted later. We create a single TypeGenerator instance so it can
+            // remember deferred ctor plans across all modules.
+            var typeGenerator = new TypeGenerator(
+                _metadataBuilder,
+                _bclReferences,
+                methodBodyStream,
+                _serviceProvider.GetRequiredService<ModuleTypeMetadataRegistry>(),
+                _variableRegistry,
+                deferredCtorStartRow: _metadataBuilder.GetRowCount(TableIndex.MethodDef) + totalCallableMethods + totalModuleInitMethods + 1);
+
+            var moduleList = modules._modules.Values.ToList();
+
+            // Multi-module assemblies must keep TypeDef.MethodList monotonic across the entire TypeDef table.
+            // Additionally, nested types must have their enclosing TypeDef created earlier in the TypeDef table
+            // (otherwise some CLR loaders throw BadImageFormatException).
+            //
+            // To support nesting function-declaration owner types under the module type (Modules.<ModuleName>+<FunctionName>),
+            // we allocate/emits module init methods FIRST in the MethodDef table, then all callable MethodDefs.
+            // This allows module root TypeDefs to be created before callable-owner TypeDefs while keeping MethodList monotonic.
+
+            // Track expected MethodDef tokens for module init methods so we can validate emission order.
+            var expectedModuleInitHandles = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
+
+            // Reserve MethodDef row ids for module init methods first.
+            var methodDefBaseRow = _metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1;
+            var moduleInitMethodRow = methodDefBaseRow;
+            var moduleTypeRegistry = _serviceProvider.GetRequiredService<ModuleTypeMetadataRegistry>();
+            foreach (var module in moduleList)
+            {
+                var expectedInitHandle = MetadataTokens.MethodDefinitionHandle(moduleInitMethodRow++);
+                expectedModuleInitHandles[module.Name] = expectedInitHandle;
+
+                var moduleRootTypeBuilder = new TypeBuilder(_metadataBuilder, "Modules", module.Name);
+                var moduleTypeHandle = moduleRootTypeBuilder.AddTypeDefinition(
+                    TypeAttributes.NotPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
+                    _bclReferences.ObjectType,
+                    firstFieldOverride: null,
+                    firstMethodOverride: expectedInitHandle);
+
+                moduleTypeRegistry.Add(module.Name, moduleTypeHandle);
+            }
+
+            // Phase 1: Predeclare callable owner TypeDefs + class TypeDefs for ALL modules.
+            // Callable MethodDefs come AFTER module init MethodDefs.
+            var callableMethodDefBaseRow = methodDefBaseRow + totalModuleInitMethods;
+            foreach (var module in moduleList)
+            {
+                var symbolTable = module.SymbolTable!;
+                var coordinator = _serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
+
+                // Count callables for this module (deterministic; used for global MethodDef row assignment).
+                var callableCount = new CallableDiscovery(symbolTable).DiscoverAll().Count;
+
+                // Phase 1 (per module): allocate future MethodDef row ids for all callables.
+                // IMPORTANT: do this before declaring any owner TypeDefs so we can keep TypeDef.MethodList monotonic.
+                coordinator.PreallocateCallableMethodDefsForNesting(
+                    symbolTable,
+                    _metadataBuilder,
+                    methodDefBaseRowOverride: callableMethodDefBaseRow);
+
+                if (!moduleTypeRegistry.TryGet(module.Name, out var moduleTypeHandle) || moduleTypeHandle.IsNil)
+                {
+                    throw new InvalidOperationException($"Missing module type handle for module '{module.Name}' during callable-owner predeclaration.");
+                }
+
+                // Shared registries for nesting and class lookup
+                var classRegistry = _serviceProvider.GetRequiredService<ClassRegistry>();
+                var nestedTypeRegistry = _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>();
+
+                // Declare callable-owner TypeDefs that scope TypeDefs may nest under.
+                // NOTE: Do not declare class TypeDefs here; classes are declared by the planned two-phase
+                // compilation path (MainGenerator -> TwoPhaseCompilationCoordinator). Duplicating class
+                // declarations here corrupts TypeDef/MethodDef ordering and can cause CLR TypeLoadException.
+                coordinator.DeclareFunctionAndAnonymousOwnerTypesForNesting(
+                    symbolTable,
+                    _metadataBuilder,
+                    _bclReferences,
+                    moduleTypeHandleForNesting: moduleTypeHandle,
+                    nestedTypeRelationshipRegistry: nestedTypeRegistry,
+                    declareFunctionDeclarationOwnerTypes: true,
+                    declareAnonymousOwnerTypes: true);
+
+                // Predeclare class TypeDefs now (idempotent) so scope TypeDefs emitted in Phase 2 can nest
+                // under their correct owning class type. This is required for function-local classes when
+                // scopes are NestedPrivate.
+                var classesGenerator = new ClassesGenerator(
+                    _serviceProvider,
+                    _metadataBuilder,
+                    _bclReferences,
+                    classRegistry,
+                    nestedTypeRegistry,
+                    module.Name);
+                classesGenerator.DeclareClasses(symbolTable);
+
+                callableMethodDefBaseRow += callableCount;
+            }
+
+            // Phase 2: Emit scope TypeDefs for ALL modules (constructors deferred).
+            foreach (var module in moduleList)
+            {
+                var symbolTable = module.SymbolTable!;
+                typeGenerator.GenerateTypes(symbolTable);
+            }
+
+            // Phase 3: Compile module init methods now (after scope types, before callables).
+            // Module types were declared earlier with MethodList pointing at these MethodDefs.
+            foreach (var module in moduleList)
+            {
+                var methodDefinitionHandle = GenerateModule(module, methodBodyStream, module.Name);
+                if (!expectedModuleInitHandles.TryGetValue(module.Name, out var expectedInitHandle))
+                {
+                    throw new InvalidOperationException($"Missing expected module init handle for module '{module.Name}'.");
+                }
+                if (methodDefinitionHandle != expectedInitHandle)
+                {
+                    throw new InvalidOperationException(
+                        $"Module init MethodDef token mismatch for module '{module.Name}'. Expected 0x{MetadataTokens.GetToken(expectedInitHandle):X8}, got 0x{MetadataTokens.GetToken(methodDefinitionHandle):X8}.");
+                }
+                if (module == modules.rootModule)
+                {
+                    _mainScriptMethod = methodDefinitionHandle;
+                }
+            }
+
+            // Phase 4: Compile and emit callable MethodDefs for ALL modules.
+            foreach (var module in moduleList)
+            {
+                var symbolTable = module.SymbolTable!;
+                var mainGenerator = new MainGenerator(_serviceProvider, module.Name, _bclReferences, _metadataBuilder, methodBodyStream, symbolTable);
+                mainGenerator.DeclareClassesAndFunctions(symbolTable);
+            }
+
+            // Phase 5: Emit all deferred scope constructors in the exact TypeDef creation order.
+            typeGenerator.EmitDeferredScopeConstructors();
 
             // create the entry point for spining up the execution engine
             createEntryPoint(methodBodyStream);
+
+            // Emit NestedClass table rows in one globally sorted pass.
+            // This must happen after all TypeDefs have been created.
+            _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>().EmitAllSorted(_metadataBuilder);
 
             this.CreateAssembly(assemblyName, outputPath);
         }
@@ -83,18 +224,8 @@ namespace Js2IL.Services
         ///     public object globalVar;
         /// }
         /// </remarks>
-        private void GenerateScopeTypes(Modules modules, MethodBodyStreamEncoder methodBodyStream)
-        {
-            var typeGenerator = new TypeGenerator(_metadataBuilder, _bclReferences, methodBodyStream, _variableRegistry);
-
-            // Multi-module compilation: every module gets its own global scope type and registry entries.
-            // This avoids missing bindings for non-root modules and prevents collisions when different modules
-            // declare the same function/class names.
-            foreach (var module in modules._modules.Values)
-            {
-                typeGenerator.GenerateTypes(module.SymbolTable!);
-            }
-        }
+        // Scope type generation is orchestrated in Generate() so we can defer scope constructors
+        // until after callable method bodies have been emitted.
 
         private void GenerateModules(Modules modules, MethodBodyStreamEncoder methodBodyStream)
         {
@@ -114,16 +245,11 @@ namespace Js2IL.Services
             var paramCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
             var parameterNames = JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames;
 
-            // Declare classes/functions before compiling the module body so call sites can do token lookup (ldftn).
-            var mainGenerator = new MainGenerator(_serviceProvider, moduleName, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!);
-            
-            // Declare functions and classes first - this populates CallableRegistry with tokens
-            // which is needed for IR pipeline to emit function calls (ldftn)
-            mainGenerator.DeclareClassesAndFunctions(module.SymbolTable!);
+            var symbolTable = module.SymbolTable!;
 
-            // Now try IR pipeline for the main method body
+            // Now compile the module init method (IR pipeline).
             var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
-            var methodDefinitionHandle = methodCompiler.TryCompileMainMethod(module.Name, module.Ast, module.SymbolTable!.Root!, methodBodyStream);
+            var methodDefinitionHandle = methodCompiler.TryCompileMainMethod(module.Name, module.Ast, symbolTable.Root!, methodBodyStream);
             IR.IRPipelineMetrics.RecordMainMethodAttempt(!methodDefinitionHandle.IsNil);
             if (!methodDefinitionHandle.IsNil)
             {
@@ -201,12 +327,11 @@ namespace Js2IL.Services
             // Create the assembly metadata.
             var assemblyName = _metadataBuilder.GetOrAddString(name);
             var culture = _metadataBuilder.GetOrAddString("");
-            var publicKey = _metadataBuilder.GetOrAddBlob(StandardPublicKey);
             this._metadataBuilder.AddAssembly(
                 name: assemblyName,
                 version: new Version(1, 0, 0, 0),
                 culture: culture,
-                publicKey: publicKey,
+                publicKey: default,
                 flags: 0,
                 hashAlgorithm: AssemblyHashAlgorithm.None
             );

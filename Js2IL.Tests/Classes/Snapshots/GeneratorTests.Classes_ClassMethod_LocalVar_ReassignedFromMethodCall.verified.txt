@@ -3,7 +3,7 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
+.class private auto ansi beforefieldinit Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x21c5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,18 +27,18 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class constructor
+		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit getNext
+		.class nested private auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x206b
+				// Method begins at RVA 0x21ce
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -47,25 +47,75 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method getNext::.ctor
+			} // end of method Scope_ctor::.ctor
 
-		} // end of class getNext
+		} // end of class Scope_ctor
 
+		.class nested private auto ansi beforefieldinit Scope_getNext
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21d7
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_getNext::.ctor
+
+		} // end of class Scope_getNext
+
+
+		// Fields
+		.field public float64 'value'
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Method begins at RVA 0x20d4
+			// Header size: 12
+			// Code size: 22 (0x16)
+			.maxstack 32
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldc.r8 0.0
+			IL_0010: stfld float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::'value'
+			IL_0015: ret
 		} // end of method Counter::.ctor
+
+		.method public hidebysig 
+			instance object getNext () cil managed 
+		{
+			// Method begins at RVA 0x218c
+			// Header size: 12
+			// Code size: 36 (0x24)
+			.maxstack 32
+			.locals init (
+				[0] float64
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::'value'
+			IL_0006: ldc.r8 1
+			IL_000f: add
+			IL_0010: stloc.0
+			IL_0011: ldarg.0
+			IL_0012: ldloc.0
+			IL_0013: stfld float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::'value'
+			IL_0018: ldarg.0
+			IL_0019: ldfld float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::'value'
+			IL_001e: box [System.Runtime]System.Double
+			IL_0023: ret
+		} // end of method Counter::getNext
 
 	} // end of class Counter
 
@@ -73,14 +123,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x207d
+				// Method begins at RVA 0x21e0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -89,18 +139,18 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class constructor
+		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit compute
+		.class nested private auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2086
+				// Method begins at RVA 0x21e9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -109,16 +159,134 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method compute::.ctor
+			} // end of method Scope_ctor::.ctor
 
-		} // end of class compute
+		} // end of class Scope_ctor
 
+		.class nested private auto ansi beforefieldinit Scope_compute
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21f2
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_compute::.ctor
+
+		} // end of class Scope_compute
+
+
+		// Fields
+		.field public class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter counter
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2074
+			// Method begins at RVA 0x20b4
+			// Header size: 12
+			// Code size: 18 (0x12)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: newobj instance void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::.ctor()
+			IL_000c: stfld class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::counter
+			IL_0011: ret
+		} // end of method Calculator::.ctor
+
+		.method public hidebysig 
+			instance object compute () cil managed 
+		{
+			// Method begins at RVA 0x20f8
+			// Header size: 12
+			// Code size: 135 (0x87)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] float64,
+				[2] object[],
+				[3] object,
+				[4] object
+			)
+
+			IL_0000: ldc.r8 1
+			IL_0009: stloc.0
+			IL_000a: ldc.i4.0
+			IL_000b: newarr [System.Runtime]System.Object
+			IL_0010: stloc.2
+			IL_0011: ldarg.0
+			IL_0012: ldfld class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::counter
+			IL_0017: callvirt instance object Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::getNext()
+			IL_001c: stloc.3
+			IL_001d: ldloc.3
+			IL_001e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0023: stloc.0
+			IL_0024: ldloc.0
+			IL_0025: box [System.Runtime]System.Double
+			IL_002a: stloc.s 4
+			IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0031: ldc.i4.2
+			IL_0032: newarr [System.Runtime]System.Object
+			IL_0037: dup
+			IL_0038: ldc.i4.0
+			IL_0039: ldstr "factor after getNext:"
+			IL_003e: stelem.ref
+			IL_003f: dup
+			IL_0040: ldc.i4.1
+			IL_0041: ldloc.s 4
+			IL_0043: stelem.ref
+			IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0049: pop
+			IL_004a: ldloc.0
+			IL_004b: ldc.r8 2
+			IL_0054: mul
+			IL_0055: stloc.1
+			IL_0056: ldloc.1
+			IL_0057: box [System.Runtime]System.Double
+			IL_005c: stloc.s 4
+			IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0063: ldc.i4.2
+			IL_0064: newarr [System.Runtime]System.Object
+			IL_0069: dup
+			IL_006a: ldc.i4.0
+			IL_006b: ldstr "result:"
+			IL_0070: stelem.ref
+			IL_0071: dup
+			IL_0072: ldc.i4.1
+			IL_0073: ldloc.s 4
+			IL_0075: stelem.ref
+			IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_007b: pop
+			IL_007c: ldloc.1
+			IL_007d: box [System.Runtime]System.Double
+			IL_0082: stloc.s 4
+			IL_0084: ldloc.s 4
+			IL_0086: ret
+		} // end of method Calculator::compute
+
+	} // end of class Calculator
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x21bc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -127,182 +295,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Calculator::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Calculator
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::.ctor
-
-} // end of class Scopes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public float64 'value'
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20b0
-		// Header size: 12
-		// Code size: 22 (0x16)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldc.r8 0.0
-		IL_0010: stfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_0015: ret
-	} // end of method Counter::.ctor
-
-	.method public hidebysig 
-		instance object getNext () cil managed 
-	{
-		// Method begins at RVA 0x2168
-		// Header size: 12
-		// Code size: 36 (0x24)
-		.maxstack 32
-		.locals init (
-			[0] float64
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_0006: ldc.r8 1
-		IL_000f: add
-		IL_0010: stloc.0
-		IL_0011: ldarg.0
-		IL_0012: ldloc.0
-		IL_0013: stfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_0018: ldarg.0
-		IL_0019: ldfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_001e: box [System.Runtime]System.Double
-		IL_0023: ret
-	} // end of method Counter::getNext
-
-} // end of class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter counter
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2090
-		// Header size: 12
-		// Code size: 18 (0x12)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: newobj instance void Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::.ctor()
-		IL_000c: stfld class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::counter
-		IL_0011: ret
-	} // end of method Calculator::.ctor
-
-	.method public hidebysig 
-		instance object compute () cil managed 
-	{
-		// Method begins at RVA 0x20d4
-		// Header size: 12
-		// Code size: 135 (0x87)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] float64,
-			[2] object[],
-			[3] object,
-			[4] object
-		)
-
-		IL_0000: ldc.r8 1
-		IL_0009: stloc.0
-		IL_000a: ldc.i4.0
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: stloc.2
-		IL_0011: ldarg.0
-		IL_0012: ldfld class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::counter
-		IL_0017: callvirt instance object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::getNext()
-		IL_001c: stloc.3
-		IL_001d: ldloc.3
-		IL_001e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0023: stloc.0
-		IL_0024: ldloc.0
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: stloc.s 4
-		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0031: ldc.i4.2
-		IL_0032: newarr [System.Runtime]System.Object
-		IL_0037: dup
-		IL_0038: ldc.i4.0
-		IL_0039: ldstr "factor after getNext:"
-		IL_003e: stelem.ref
-		IL_003f: dup
-		IL_0040: ldc.i4.1
-		IL_0041: ldloc.s 4
-		IL_0043: stelem.ref
-		IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0049: pop
-		IL_004a: ldloc.0
-		IL_004b: ldc.r8 2
-		IL_0054: mul
-		IL_0055: stloc.1
-		IL_0056: ldloc.1
-		IL_0057: box [System.Runtime]System.Double
-		IL_005c: stloc.s 4
-		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0063: ldc.i4.2
-		IL_0064: newarr [System.Runtime]System.Object
-		IL_0069: dup
-		IL_006a: ldc.i4.0
-		IL_006b: ldstr "result:"
-		IL_0070: stelem.ref
-		IL_0071: dup
-		IL_0072: ldc.i4.1
-		IL_0073: ldloc.s 4
-		IL_0075: stelem.ref
-		IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007b: pop
-		IL_007c: ldloc.1
-		IL_007d: box [System.Runtime]System.Double
-		IL_0082: stloc.s 4
-		IL_0084: ldloc.s 4
-		IL_0086: ret
-	} // end of method Calculator::compute
-
-} // end of class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator
-
-.class public auto ansi beforefieldinit Scripts.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -310,30 +310,30 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2198
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 86 (0x56)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall,
+			[0] class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope,
 			[1] object,
 			[2] object,
 			[3] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::.ctor()
+		IL_0006: newobj instance void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldc.i4.0
 		IL_000d: newarr [System.Runtime]System.Object
 		IL_0012: stloc.3
 		IL_0013: ldloc.1
-		IL_0014: isinst Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator
+		IL_0014: isinst Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator
 		IL_0019: dup
 		IL_001a: brfalse IL_002a
 
-		IL_001f: callvirt instance object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::compute()
+		IL_001f: callvirt instance object Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::compute()
 		IL_0024: stloc.2
 		IL_0025: br IL_0038
 
@@ -358,9 +358,9 @@
 		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0054: pop
 		IL_0055: ret
-	} // end of method Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::Main
+	} // end of method Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::__js_module_init__
 
-} // end of class Scripts.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
+} // end of class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -369,7 +369,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21fa
+		// Method begins at RVA 0x21fb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -377,7 +377,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

@@ -10,7 +10,7 @@ public sealed class ModuleDefinition
     public required Acornima.Ast.Program Ast { get; set; }
     public required string Path { get; set; }
 
-    // Stable module id used for generated type names (e.g. Scripts.<Name>, Scopes.<Name>).
+    // Stable module id used for generated type names (e.g. Modules.<Name>, Scopes.<Name>).
     // Must match JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromSpecifier at runtime.
     public required string Name { get; set; }
 

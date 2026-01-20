@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -39,6 +40,30 @@ namespace Js2IL.Tests.ArrowFunction
         public Task ArrowFunction_SimpleExpression() { var testName = nameof(ArrowFunction_SimpleExpression); return GenerateTest(testName); }
 
         [Fact]
-        public Task ArrowFunction_ClosureMutatesOuterVariable() { var testName = nameof(ArrowFunction_ClosureMutatesOuterVariable); return GenerateTest(testName); }
+        public Task ArrowFunction_ClosureMutatesOuterVariable()
+        {
+            var testName = nameof(ArrowFunction_ClosureMutatesOuterVariable);
+
+            return GenerateTest(testName, verifyAssembly: (generatedAssembly) => {
+                var globalScript = generatedAssembly.GetType("Modules.ArrowFunction_ClosureMutatesOuterVariable", throwOnError: true)!;
+                Assert.True(globalScript.IsClass, "Expected globalScript to be a class.");
+                
+                var globalScope = globalScript.GetNestedType("Scope", BindingFlags.Public | BindingFlags.NonPublic)!;
+                Assert.True(globalScope.IsClass, "Expected globalScope to be a class");
+
+                var createCounterClass = globalScript.GetNestedType("createCounter", BindingFlags.Public | BindingFlags.NonPublic)!;
+                Assert.True(createCounterClass.IsClass, "Expected createCounter to be a class");
+
+                var createCounterScope = createCounterClass.GetNestedType("Scope", BindingFlags.Public | BindingFlags.NonPublic)!;
+                Assert.True(createCounterScope.IsClass);
+
+                var nestedArrowFunction = createCounterClass.GetNestedType("ArrowFunction_L7C23", BindingFlags.Public | BindingFlags.NonPublic)!;
+                Assert.True(nestedArrowFunction.IsClass, "Expected ArrowFunction_L7C23 to be a class");
+
+                // make sure there is no old Function.* types
+                var previousType = generatedAssembly.GetType("Functions.ArrowFunction_L7C23", throwOnError: false);
+                Assert.Null(previousType);
+            });
+        }
     }
 }

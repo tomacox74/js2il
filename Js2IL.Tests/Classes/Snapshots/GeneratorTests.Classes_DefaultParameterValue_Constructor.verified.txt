@@ -3,7 +3,7 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_DefaultParameterValue_Constructor
+.class private auto ansi beforefieldinit Modules.Classes_DefaultParameterValue_Constructor
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x246b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,18 +27,18 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class constructor
+		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit display
+		.class nested private auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x206b
+				// Method begins at RVA 0x2474
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -47,25 +47,108 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method display::.ctor
+			} // end of method Scope_ctor::.ctor
 
-		} // end of class display
+		} // end of class Scope_ctor
 
+		.class nested private auto ansi beforefieldinit Scope_display
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x247d
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_display::.ctor
+
+		} // end of class Scope_display
+
+
+		// Fields
+		.field public object name
+		.field public object age
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+			instance void .ctor (
+				object name,
+				object age
+			) cil managed 
 		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Method begins at RVA 0x2304
+			// Header size: 12
+			// Code size: 56 (0x38)
+			.maxstack 32
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.1
+			IL_0007: brtrue IL_0013
+
+			IL_000c: ldstr "Unknown"
+			IL_0011: starg.s name
+
+			IL_0013: ldarg.2
+			IL_0014: brtrue IL_0029
+
+			IL_0019: ldc.r8 0.0
+			IL_0022: box [System.Runtime]System.Double
+			IL_0027: starg.s age
+
+			IL_0029: ldarg.0
+			IL_002a: ldarg.1
+			IL_002b: stfld object Modules.Classes_DefaultParameterValue_Constructor/Person::name
+			IL_0030: ldarg.0
+			IL_0031: ldarg.2
+			IL_0032: stfld object Modules.Classes_DefaultParameterValue_Constructor/Person::age
+			IL_0037: ret
 		} // end of method Person::.ctor
+
+		.method public hidebysig 
+			instance object display () cil managed 
+		{
+			// Method begins at RVA 0x23cc
+			// Header size: 12
+			// Code size: 65 (0x41)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Person::name
+			IL_0006: ldstr " is "
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldarg.0
+			IL_0013: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Person::age
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_001d: stloc.0
+			IL_001e: ldloc.0
+			IL_001f: ldstr " years old"
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0029: stloc.0
+			IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_002f: ldc.i4.1
+			IL_0030: newarr [System.Runtime]System.Object
+			IL_0035: dup
+			IL_0036: ldc.i4.0
+			IL_0037: ldloc.0
+			IL_0038: stelem.ref
+			IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_003e: pop
+			IL_003f: ldnull
+			IL_0040: ret
+		} // end of method Person::display
 
 	} // end of class Person
 
@@ -73,14 +156,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x207d
+				// Method begins at RVA 0x2486
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -89,18 +172,18 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class constructor
+		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit volume
+		.class nested private auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2086
+				// Method begins at RVA 0x248f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -109,25 +192,125 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method volume::.ctor
+			} // end of method Scope_ctor::.ctor
 
-		} // end of class volume
+		} // end of class Scope_ctor
 
+		.class nested private auto ansi beforefieldinit Scope_volume
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2498
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_volume::.ctor
+
+		} // end of class Scope_volume
+
+
+		// Fields
+		.field public object width
+		.field public object height
+		.field public object depth
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+			instance void .ctor (
+				object width,
+				object height,
+				object depth
+			) cil managed 
 		{
-			// Method begins at RVA 0x2074
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Method begins at RVA 0x22b0
+			// Header size: 12
+			// Code size: 72 (0x48)
+			.maxstack 32
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.2
+			IL_0007: brtrue IL_001c
+
+			IL_000c: ldc.r8 20
+			IL_0015: box [System.Runtime]System.Double
+			IL_001a: starg.s height
+
+			IL_001c: ldarg.3
+			IL_001d: brtrue IL_0032
+
+			IL_0022: ldc.r8 5
+			IL_002b: box [System.Runtime]System.Double
+			IL_0030: starg.s depth
+
+			IL_0032: ldarg.0
+			IL_0033: ldarg.1
+			IL_0034: stfld object Modules.Classes_DefaultParameterValue_Constructor/Box::width
+			IL_0039: ldarg.0
+			IL_003a: ldarg.2
+			IL_003b: stfld object Modules.Classes_DefaultParameterValue_Constructor/Box::height
+			IL_0040: ldarg.0
+			IL_0041: ldarg.3
+			IL_0042: stfld object Modules.Classes_DefaultParameterValue_Constructor/Box::depth
+			IL_0047: ret
 		} // end of method Box::.ctor
+
+		.method public hidebysig 
+			instance object volume () cil managed 
+		{
+			// Method begins at RVA 0x2374
+			// Header size: 12
+			// Code size: 74 (0x4a)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] float64,
+				[2] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Box::width
+			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000b: stloc.0
+			IL_000c: ldarg.0
+			IL_000d: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Box::height
+			IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0017: stloc.1
+			IL_0018: ldloc.0
+			IL_0019: ldloc.1
+			IL_001a: mul
+			IL_001b: stloc.1
+			IL_001c: ldarg.0
+			IL_001d: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Box::depth
+			IL_0022: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0027: stloc.0
+			IL_0028: ldloc.1
+			IL_0029: ldloc.0
+			IL_002a: mul
+			IL_002b: stloc.0
+			IL_002c: ldloc.0
+			IL_002d: box [System.Runtime]System.Double
+			IL_0032: stloc.2
+			IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0038: ldc.i4.1
+			IL_0039: newarr [System.Runtime]System.Object
+			IL_003e: dup
+			IL_003f: ldc.i4.0
+			IL_0040: ldloc.2
+			IL_0041: stelem.ref
+			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0047: pop
+			IL_0048: ldnull
+			IL_0049: ret
+		} // end of method Box::volume
 
 	} // end of class Box
 
@@ -135,14 +318,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2098
+				// Method begins at RVA 0x24a1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -151,18 +334,18 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class constructor
+		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit area
+		.class nested private auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20a1
+				// Method begins at RVA 0x24aa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -171,16 +354,115 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method area::.ctor
+			} // end of method Scope_ctor::.ctor
 
-		} // end of class area
+		} // end of class Scope_ctor
+
+		.class nested private auto ansi beforefieldinit Scope_area
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x24b3
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_area::.ctor
+
+		} // end of class Scope_area
 
 
+		// Fields
+		.field public object width
+		.field public object height
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object width,
+				object height
+			) cil managed 
+		{
+			// Method begins at RVA 0x2348
+			// Header size: 12
+			// Code size: 30 (0x1e)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.2
+			IL_0007: brtrue IL_000f
+
+			IL_000c: ldarg.1
+			IL_000d: starg.s height
+
+			IL_000f: ldarg.0
+			IL_0010: ldarg.1
+			IL_0011: stfld object Modules.Classes_DefaultParameterValue_Constructor/Rectangle::width
+			IL_0016: ldarg.0
+			IL_0017: ldarg.2
+			IL_0018: stfld object Modules.Classes_DefaultParameterValue_Constructor/Rectangle::height
+			IL_001d: ret
+		} // end of method Rectangle::.ctor
+
+		.method public hidebysig 
+			instance object area () cil managed 
+		{
+			// Method begins at RVA 0x241c
+			// Header size: 12
+			// Code size: 58 (0x3a)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] float64,
+				[2] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Rectangle::width
+			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000b: stloc.0
+			IL_000c: ldarg.0
+			IL_000d: ldfld object Modules.Classes_DefaultParameterValue_Constructor/Rectangle::height
+			IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0017: stloc.1
+			IL_0018: ldloc.0
+			IL_0019: ldloc.1
+			IL_001a: mul
+			IL_001b: stloc.1
+			IL_001c: ldloc.1
+			IL_001d: box [System.Runtime]System.Double
+			IL_0022: stloc.2
+			IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0028: ldc.i4.1
+			IL_0029: newarr [System.Runtime]System.Object
+			IL_002e: dup
+			IL_002f: ldc.i4.0
+			IL_0030: ldloc.2
+			IL_0031: stelem.ref
+			IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0037: pop
+			IL_0038: ldnull
+			IL_0039: ret
+		} // end of method Rectangle::area
+
+	} // end of class Rectangle
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x208f
+			// Method begins at RVA 0x2462
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -189,296 +471,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Rectangle::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Rectangle
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Classes_DefaultParameterValue_Constructor::.ctor
-
-} // end of class Scopes.Classes_DefaultParameterValue_Constructor
-
-.class public auto ansi beforefieldinit Classes.Classes_DefaultParameterValue_Constructor.Person
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public object name
-	.field public object age
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object name,
-			object age
-		) cil managed 
-	{
-		// Method begins at RVA 0x2100
-		// Header size: 12
-		// Code size: 56 (0x38)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.1
-		IL_0007: brtrue IL_0013
-
-		IL_000c: ldstr "Unknown"
-		IL_0011: starg.s name
-
-		IL_0013: ldarg.2
-		IL_0014: brtrue IL_0029
-
-		IL_0019: ldc.r8 0.0
-		IL_0022: box [System.Runtime]System.Double
-		IL_0027: starg.s age
-
-		IL_0029: ldarg.0
-		IL_002a: ldarg.1
-		IL_002b: stfld object Classes.Classes_DefaultParameterValue_Constructor.Person::name
-		IL_0030: ldarg.0
-		IL_0031: ldarg.2
-		IL_0032: stfld object Classes.Classes_DefaultParameterValue_Constructor.Person::age
-		IL_0037: ret
-	} // end of method Person::.ctor
-
-	.method public hidebysig 
-		instance object display () cil managed 
-	{
-		// Method begins at RVA 0x21c8
-		// Header size: 12
-		// Code size: 65 (0x41)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Person::name
-		IL_0006: ldstr " is "
-		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0010: stloc.0
-		IL_0011: ldloc.0
-		IL_0012: ldarg.0
-		IL_0013: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Person::age
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_001d: stloc.0
-		IL_001e: ldloc.0
-		IL_001f: ldstr " years old"
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0029: stloc.0
-		IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002f: ldc.i4.1
-		IL_0030: newarr [System.Runtime]System.Object
-		IL_0035: dup
-		IL_0036: ldc.i4.0
-		IL_0037: ldloc.0
-		IL_0038: stelem.ref
-		IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003e: pop
-		IL_003f: ldnull
-		IL_0040: ret
-	} // end of method Person::display
-
-} // end of class Classes.Classes_DefaultParameterValue_Constructor.Person
-
-.class public auto ansi beforefieldinit Classes.Classes_DefaultParameterValue_Constructor.Box
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public object width
-	.field public object height
-	.field public object depth
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object width,
-			object height,
-			object depth
-		) cil managed 
-	{
-		// Method begins at RVA 0x20ac
-		// Header size: 12
-		// Code size: 72 (0x48)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.2
-		IL_0007: brtrue IL_001c
-
-		IL_000c: ldc.r8 20
-		IL_0015: box [System.Runtime]System.Double
-		IL_001a: starg.s height
-
-		IL_001c: ldarg.3
-		IL_001d: brtrue IL_0032
-
-		IL_0022: ldc.r8 5
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: starg.s depth
-
-		IL_0032: ldarg.0
-		IL_0033: ldarg.1
-		IL_0034: stfld object Classes.Classes_DefaultParameterValue_Constructor.Box::width
-		IL_0039: ldarg.0
-		IL_003a: ldarg.2
-		IL_003b: stfld object Classes.Classes_DefaultParameterValue_Constructor.Box::height
-		IL_0040: ldarg.0
-		IL_0041: ldarg.3
-		IL_0042: stfld object Classes.Classes_DefaultParameterValue_Constructor.Box::depth
-		IL_0047: ret
-	} // end of method Box::.ctor
-
-	.method public hidebysig 
-		instance object volume () cil managed 
-	{
-		// Method begins at RVA 0x2170
-		// Header size: 12
-		// Code size: 74 (0x4a)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] float64,
-			[2] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Box::width
-		IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000b: stloc.0
-		IL_000c: ldarg.0
-		IL_000d: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Box::height
-		IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0017: stloc.1
-		IL_0018: ldloc.0
-		IL_0019: ldloc.1
-		IL_001a: mul
-		IL_001b: stloc.1
-		IL_001c: ldarg.0
-		IL_001d: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Box::depth
-		IL_0022: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0027: stloc.0
-		IL_0028: ldloc.1
-		IL_0029: ldloc.0
-		IL_002a: mul
-		IL_002b: stloc.0
-		IL_002c: ldloc.0
-		IL_002d: box [System.Runtime]System.Double
-		IL_0032: stloc.2
-		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0038: ldc.i4.1
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldloc.2
-		IL_0041: stelem.ref
-		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0047: pop
-		IL_0048: ldnull
-		IL_0049: ret
-	} // end of method Box::volume
-
-} // end of class Classes.Classes_DefaultParameterValue_Constructor.Box
-
-.class public auto ansi beforefieldinit Classes.Classes_DefaultParameterValue_Constructor.Rectangle
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public object width
-	.field public object height
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object width,
-			object height
-		) cil managed 
-	{
-		// Method begins at RVA 0x2144
-		// Header size: 12
-		// Code size: 30 (0x1e)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.2
-		IL_0007: brtrue IL_000f
-
-		IL_000c: ldarg.1
-		IL_000d: starg.s height
-
-		IL_000f: ldarg.0
-		IL_0010: ldarg.1
-		IL_0011: stfld object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::width
-		IL_0016: ldarg.0
-		IL_0017: ldarg.2
-		IL_0018: stfld object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::height
-		IL_001d: ret
-	} // end of method Rectangle::.ctor
-
-	.method public hidebysig 
-		instance object area () cil managed 
-	{
-		// Method begins at RVA 0x2218
-		// Header size: 12
-		// Code size: 58 (0x3a)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] float64,
-			[2] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::width
-		IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000b: stloc.0
-		IL_000c: ldarg.0
-		IL_000d: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::height
-		IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0017: stloc.1
-		IL_0018: ldloc.0
-		IL_0019: ldloc.1
-		IL_001a: mul
-		IL_001b: stloc.1
-		IL_001c: ldloc.1
-		IL_001d: box [System.Runtime]System.Double
-		IL_0022: stloc.2
-		IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0028: ldc.i4.1
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: dup
-		IL_002f: ldc.i4.0
-		IL_0030: ldloc.2
-		IL_0031: stelem.ref
-		IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0037: pop
-		IL_0038: ldnull
-		IL_0039: ret
-	} // end of method Rectangle::area
-
-} // end of class Classes.Classes_DefaultParameterValue_Constructor.Rectangle
-
-.class public auto ansi beforefieldinit Scripts.Classes_DefaultParameterValue_Constructor
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -486,12 +486,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2260
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 595 (0x253)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_DefaultParameterValue_Constructor,
+			[0] class Modules.Classes_DefaultParameterValue_Constructor/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
@@ -503,21 +503,21 @@
 			[9] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_DefaultParameterValue_Constructor::.ctor()
+		IL_0000: newobj instance void Modules.Classes_DefaultParameterValue_Constructor/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
 		IL_0007: ldnull
-		IL_0008: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Person::.ctor(object, object)
+		IL_0008: newobj instance void Modules.Classes_DefaultParameterValue_Constructor/Person::.ctor(object, object)
 		IL_000d: stloc.1
 		IL_000e: ldc.i4.0
 		IL_000f: newarr [System.Runtime]System.Object
 		IL_0014: stloc.s 9
 		IL_0016: ldloc.1
-		IL_0017: isinst Classes.Classes_DefaultParameterValue_Constructor.Person
+		IL_0017: isinst Modules.Classes_DefaultParameterValue_Constructor/Person
 		IL_001c: dup
 		IL_001d: brfalse IL_002d
 
-		IL_0022: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Person::display()
+		IL_0022: callvirt instance object Modules.Classes_DefaultParameterValue_Constructor/Person::display()
 		IL_0027: pop
 		IL_0028: br IL_003c
 
@@ -530,17 +530,17 @@
 
 		IL_003c: ldstr "Alice"
 		IL_0041: ldnull
-		IL_0042: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Person::.ctor(object, object)
+		IL_0042: newobj instance void Modules.Classes_DefaultParameterValue_Constructor/Person::.ctor(object, object)
 		IL_0047: stloc.2
 		IL_0048: ldc.i4.0
 		IL_0049: newarr [System.Runtime]System.Object
 		IL_004e: stloc.s 9
 		IL_0050: ldloc.2
-		IL_0051: isinst Classes.Classes_DefaultParameterValue_Constructor.Person
+		IL_0051: isinst Modules.Classes_DefaultParameterValue_Constructor/Person
 		IL_0056: dup
 		IL_0057: brfalse IL_0067
 
-		IL_005c: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Person::display()
+		IL_005c: callvirt instance object Modules.Classes_DefaultParameterValue_Constructor/Person::display()
 		IL_0061: pop
 		IL_0062: br IL_0076
 
@@ -554,17 +554,17 @@
 		IL_0076: ldstr "Bob"
 		IL_007b: ldc.r8 25
 		IL_0084: box [System.Runtime]System.Double
-		IL_0089: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Person::.ctor(object, object)
+		IL_0089: newobj instance void Modules.Classes_DefaultParameterValue_Constructor/Person::.ctor(object, object)
 		IL_008e: stloc.3
 		IL_008f: ldc.i4.0
 		IL_0090: newarr [System.Runtime]System.Object
 		IL_0095: stloc.s 9
 		IL_0097: ldloc.3
-		IL_0098: isinst Classes.Classes_DefaultParameterValue_Constructor.Person
+		IL_0098: isinst Modules.Classes_DefaultParameterValue_Constructor/Person
 		IL_009d: dup
 		IL_009e: brfalse IL_00ae
 
-		IL_00a3: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Person::display()
+		IL_00a3: callvirt instance object Modules.Classes_DefaultParameterValue_Constructor/Person::display()
 		IL_00a8: pop
 		IL_00a9: br IL_00bd
 
@@ -579,17 +579,17 @@
 		IL_00c6: box [System.Runtime]System.Double
 		IL_00cb: ldnull
 		IL_00cc: ldnull
-		IL_00cd: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Box::.ctor(object, object, object)
+		IL_00cd: newobj instance void Modules.Classes_DefaultParameterValue_Constructor/Box::.ctor(object, object, object)
 		IL_00d2: stloc.s 4
 		IL_00d4: ldc.i4.0
 		IL_00d5: newarr [System.Runtime]System.Object
 		IL_00da: stloc.s 9
 		IL_00dc: ldloc.s 4
-		IL_00de: isinst Classes.Classes_DefaultParameterValue_Constructor.Box
+		IL_00de: isinst Modules.Classes_DefaultParameterValue_Constructor/Box
 		IL_00e3: dup
 		IL_00e4: brfalse IL_00f4
 
-		IL_00e9: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Box::volume()
+		IL_00e9: callvirt instance object Modules.Classes_DefaultParameterValue_Constructor/Box::volume()
 		IL_00ee: pop
 		IL_00ef: br IL_0104
 
@@ -605,17 +605,17 @@
 		IL_0112: ldc.r8 10
 		IL_011b: box [System.Runtime]System.Double
 		IL_0120: ldnull
-		IL_0121: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Box::.ctor(object, object, object)
+		IL_0121: newobj instance void Modules.Classes_DefaultParameterValue_Constructor/Box::.ctor(object, object, object)
 		IL_0126: stloc.s 5
 		IL_0128: ldc.i4.0
 		IL_0129: newarr [System.Runtime]System.Object
 		IL_012e: stloc.s 9
 		IL_0130: ldloc.s 5
-		IL_0132: isinst Classes.Classes_DefaultParameterValue_Constructor.Box
+		IL_0132: isinst Modules.Classes_DefaultParameterValue_Constructor/Box
 		IL_0137: dup
 		IL_0138: brfalse IL_0148
 
-		IL_013d: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Box::volume()
+		IL_013d: callvirt instance object Modules.Classes_DefaultParameterValue_Constructor/Box::volume()
 		IL_0142: pop
 		IL_0143: br IL_0158
 
@@ -632,17 +632,17 @@
 		IL_016f: box [System.Runtime]System.Double
 		IL_0174: ldc.r8 3
 		IL_017d: box [System.Runtime]System.Double
-		IL_0182: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Box::.ctor(object, object, object)
+		IL_0182: newobj instance void Modules.Classes_DefaultParameterValue_Constructor/Box::.ctor(object, object, object)
 		IL_0187: stloc.s 6
 		IL_0189: ldc.i4.0
 		IL_018a: newarr [System.Runtime]System.Object
 		IL_018f: stloc.s 9
 		IL_0191: ldloc.s 6
-		IL_0193: isinst Classes.Classes_DefaultParameterValue_Constructor.Box
+		IL_0193: isinst Modules.Classes_DefaultParameterValue_Constructor/Box
 		IL_0198: dup
 		IL_0199: brfalse IL_01a9
 
-		IL_019e: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Box::volume()
+		IL_019e: callvirt instance object Modules.Classes_DefaultParameterValue_Constructor/Box::volume()
 		IL_01a3: pop
 		IL_01a4: br IL_01b9
 
@@ -656,17 +656,17 @@
 		IL_01b9: ldc.r8 5
 		IL_01c2: box [System.Runtime]System.Double
 		IL_01c7: ldnull
-		IL_01c8: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Rectangle::.ctor(object, object)
+		IL_01c8: newobj instance void Modules.Classes_DefaultParameterValue_Constructor/Rectangle::.ctor(object, object)
 		IL_01cd: stloc.s 7
 		IL_01cf: ldc.i4.0
 		IL_01d0: newarr [System.Runtime]System.Object
 		IL_01d5: stloc.s 9
 		IL_01d7: ldloc.s 7
-		IL_01d9: isinst Classes.Classes_DefaultParameterValue_Constructor.Rectangle
+		IL_01d9: isinst Modules.Classes_DefaultParameterValue_Constructor/Rectangle
 		IL_01de: dup
 		IL_01df: brfalse IL_01ef
 
-		IL_01e4: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::area()
+		IL_01e4: callvirt instance object Modules.Classes_DefaultParameterValue_Constructor/Rectangle::area()
 		IL_01e9: pop
 		IL_01ea: br IL_01ff
 
@@ -681,17 +681,17 @@
 		IL_0208: box [System.Runtime]System.Double
 		IL_020d: ldc.r8 10
 		IL_0216: box [System.Runtime]System.Double
-		IL_021b: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Rectangle::.ctor(object, object)
+		IL_021b: newobj instance void Modules.Classes_DefaultParameterValue_Constructor/Rectangle::.ctor(object, object)
 		IL_0220: stloc.s 8
 		IL_0222: ldc.i4.0
 		IL_0223: newarr [System.Runtime]System.Object
 		IL_0228: stloc.s 9
 		IL_022a: ldloc.s 8
-		IL_022c: isinst Classes.Classes_DefaultParameterValue_Constructor.Rectangle
+		IL_022c: isinst Modules.Classes_DefaultParameterValue_Constructor/Rectangle
 		IL_0231: dup
 		IL_0232: brfalse IL_0242
 
-		IL_0237: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::area()
+		IL_0237: callvirt instance object Modules.Classes_DefaultParameterValue_Constructor/Rectangle::area()
 		IL_023c: pop
 		IL_023d: br IL_0252
 
@@ -703,9 +703,9 @@
 		IL_0251: pop
 
 		IL_0252: ret
-	} // end of method Classes_DefaultParameterValue_Constructor::Main
+	} // end of method Classes_DefaultParameterValue_Constructor::__js_module_init__
 
-} // end of class Scripts.Classes_DefaultParameterValue_Constructor
+} // end of class Modules.Classes_DefaultParameterValue_Constructor
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -714,7 +714,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x24bf
+		// Method begins at RVA 0x24bc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -722,7 +722,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_DefaultParameterValue_Constructor::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_DefaultParameterValue_Constructor::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

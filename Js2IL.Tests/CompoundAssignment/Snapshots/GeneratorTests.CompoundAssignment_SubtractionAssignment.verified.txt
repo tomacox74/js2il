@@ -3,18 +3,40 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.CompoundAssignment_SubtractionAssignment
+.class private auto ansi beforefieldinit Modules.CompoundAssignment_SubtractionAssignment
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L8C29
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L8C29
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2146
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L8C29::.ctor
+
+		} // end of class Block_L8C29
+
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x213d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,34 +45,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L8C29::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Block_L8C29
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method CompoundAssignment_SubtractionAssignment::.ctor
-
-} // end of class Scopes.CompoundAssignment_SubtractionAssignment
-
-.class public auto ansi beforefieldinit Scripts.CompoundAssignment_SubtractionAssignment
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -58,12 +60,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2064
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 225 (0xe1)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CompoundAssignment_SubtractionAssignment,
+			[0] class Modules.CompoundAssignment_SubtractionAssignment/Scope,
 			[1] float64,
 			[2] float64,
 			[3] float64,
@@ -71,7 +73,7 @@
 			[5] object
 		)
 
-		IL_0000: newobj instance void Scopes.CompoundAssignment_SubtractionAssignment::.ctor()
+		IL_0000: newobj instance void Modules.CompoundAssignment_SubtractionAssignment/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 10
 		IL_000f: stloc.1
@@ -162,9 +164,9 @@
 		IL_00da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00df: pop
 		IL_00e0: ret
-	} // end of method CompoundAssignment_SubtractionAssignment::Main
+	} // end of method CompoundAssignment_SubtractionAssignment::__js_module_init__
 
-} // end of class Scripts.CompoundAssignment_SubtractionAssignment
+} // end of class Modules.CompoundAssignment_SubtractionAssignment
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -173,7 +175,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2151
+		// Method begins at RVA 0x214f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -181,7 +183,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.CompoundAssignment_SubtractionAssignment::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.CompoundAssignment_SubtractionAssignment::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

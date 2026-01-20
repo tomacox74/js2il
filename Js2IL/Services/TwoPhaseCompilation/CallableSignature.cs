@@ -36,7 +36,7 @@ public sealed record CallableSignature
 {
     /// <summary>
     /// The .NET type that owns this callable method.
-    /// For function declarations: Functions.&lt;ModuleName&gt;
+    /// For function declarations: Modules.&lt;ModuleName&gt;.&lt;FunctionName&gt;
     /// For class methods: Classes.&lt;ModuleName&gt;.&lt;ClassName&gt;
     /// For arrows/function expressions: the enclosing owner type
     /// </summary>
@@ -67,8 +67,8 @@ public sealed record CallableSignature
     
     /// <summary>
     /// The IL method name for this callable.
-    /// For function declarations: the function name
-    /// For arrows/function expressions: ArrowFunction_L&lt;line&gt;C&lt;col&gt; or FunctionExpression_L&lt;line&gt;C&lt;col&gt;
+    /// For function declarations: __js_call__
+    /// For arrows/function expressions: __js_call__
     /// For class constructors: .ctor
     /// For class methods: the method name
     /// </summary>

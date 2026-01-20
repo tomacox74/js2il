@@ -3,18 +3,65 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_ClassProperty_DefaultAndLog
+.class private auto ansi beforefieldinit Modules.Classes_ClassProperty_DefaultAndLog
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
 	.class nested public auto ansi beforefieldinit Greeter
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20af
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Fields
+		.field public string message
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2088
+			// Header size: 12
+			// Code size: 18 (0x12)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldstr "Hi"
+			IL_000c: stfld string Modules.Classes_ClassProperty_DefaultAndLog/Greeter::message
+			IL_0011: ret
+		} // end of method Greeter::.ctor
+
+	} // end of class Greeter
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20a6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,59 +70,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Greeter::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Greeter
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Classes_ClassProperty_DefaultAndLog::.ctor
-
-} // end of class Scopes.Classes_ClassProperty_DefaultAndLog
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassProperty_DefaultAndLog.Greeter
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public string message
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 18 (0x12)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldstr "Hi"
-		IL_000c: stfld string Classes.Classes_ClassProperty_DefaultAndLog.Greeter::message
-		IL_0011: ret
-	} // end of method Greeter::.ctor
-
-} // end of class Classes.Classes_ClassProperty_DefaultAndLog.Greeter
-
-.class public auto ansi beforefieldinit Scripts.Classes_ClassProperty_DefaultAndLog
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -83,18 +85,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2084
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 44 (0x2c)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassProperty_DefaultAndLog,
+			[0] class Modules.Classes_ClassProperty_DefaultAndLog/Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassProperty_DefaultAndLog::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassProperty_DefaultAndLog/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.Classes_ClassProperty_DefaultAndLog.Greeter::.ctor()
+		IL_0006: newobj instance void Modules.Classes_ClassProperty_DefaultAndLog/Greeter::.ctor()
 		IL_000b: stloc.1
 		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0011: ldc.i4.1
@@ -108,9 +110,9 @@
 		IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_002a: pop
 		IL_002b: ret
-	} // end of method Classes_ClassProperty_DefaultAndLog::Main
+	} // end of method Classes_ClassProperty_DefaultAndLog::__js_module_init__
 
-} // end of class Scripts.Classes_ClassProperty_DefaultAndLog
+} // end of class Modules.Classes_ClassProperty_DefaultAndLog
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -119,7 +121,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20bc
+		// Method begins at RVA 0x20b8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -127,7 +129,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassProperty_DefaultAndLog::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_ClassProperty_DefaultAndLog::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

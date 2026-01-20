@@ -3,7 +3,7 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.BinaryOperator_EqualObjectPropertyVsMethodReturn
+.class private auto ansi beforefieldinit Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -11,18 +11,38 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit count
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21a8
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested private auto ansi beforefieldinit Scope_count
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested public auto ansi beforefieldinit Block_L7C31
+			.class nested private auto ansi beforefieldinit Block_L7C31
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x206b
+					// Method begins at RVA 0x21ba
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x21b1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,16 +69,76 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method count::.ctor
+			} // end of method Scope_count::.ctor
 
-		} // end of class count
+		} // end of class Scope_count
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2134
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Counter::.ctor
+
+		.method public hidebysig 
+			instance object count () cil managed 
+		{
+			// Method begins at RVA 0x2148
+			// Header size: 12
+			// Code size: 75 (0x4b)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] float64,
+				[2] object
+			)
+
+			IL_0000: ldc.r8 0.0
+			IL_0009: stloc.0
+			IL_000a: ldc.r8 0.0
+			IL_0013: stloc.1
+			// loop start (head: IL_0014)
+				IL_0014: ldloc.1
+				IL_0015: ldc.r8 10
+				IL_001e: clt
+				IL_0020: brfalse IL_0042
+
+				IL_0025: ldloc.0
+				IL_0026: ldc.r8 1
+				IL_002f: add
+				IL_0030: stloc.0
+				IL_0031: ldloc.1
+				IL_0032: ldc.r8 1
+				IL_003b: add
+				IL_003c: stloc.1
+				IL_003d: br IL_0014
+			// end loop
+
+			IL_0042: ldloc.0
+			IL_0043: box [System.Runtime]System.Double
+			IL_0048: stloc.2
+			IL_0049: ldloc.2
+			IL_004a: ret
+		} // end of method Counter::count
+
+	} // end of class Counter
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x219f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -67,94 +147,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Counter::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Counter
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method BinaryOperator_EqualObjectPropertyVsMethodReturn::.ctor
-
-} // end of class Scopes.BinaryOperator_EqualObjectPropertyVsMethodReturn
-
-.class public auto ansi beforefieldinit Classes.BinaryOperator_EqualObjectPropertyVsMethodReturn.Counter
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2074
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method Counter::.ctor
-
-	.method public hidebysig 
-		instance object count () cil managed 
-	{
-		// Method begins at RVA 0x2088
-		// Header size: 12
-		// Code size: 75 (0x4b)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] float64,
-			[2] object
-		)
-
-		IL_0000: ldc.r8 0.0
-		IL_0009: stloc.0
-		IL_000a: ldc.r8 0.0
-		IL_0013: stloc.1
-		// loop start (head: IL_0014)
-			IL_0014: ldloc.1
-			IL_0015: ldc.r8 10
-			IL_001e: clt
-			IL_0020: brfalse IL_0042
-
-			IL_0025: ldloc.0
-			IL_0026: ldc.r8 1
-			IL_002f: add
-			IL_0030: stloc.0
-			IL_0031: ldloc.1
-			IL_0032: ldc.r8 1
-			IL_003b: add
-			IL_003c: stloc.1
-			IL_003d: br IL_0014
-		// end loop
-
-		IL_0042: ldloc.0
-		IL_0043: box [System.Runtime]System.Double
-		IL_0048: stloc.2
-		IL_0049: ldloc.2
-		IL_004a: ret
-	} // end of method Counter::count
-
-} // end of class Classes.BinaryOperator_EqualObjectPropertyVsMethodReturn.Counter
-
-.class public auto ansi beforefieldinit Scripts.BinaryOperator_EqualObjectPropertyVsMethodReturn
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -162,12 +162,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e0
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 216 (0xd8)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_EqualObjectPropertyVsMethodReturn,
+			[0] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[2] object,
 			[3] object,
@@ -177,7 +177,7 @@
 			[7] object
 		)
 
-		IL_0000: newobj instance void Scopes.BinaryOperator_EqualObjectPropertyVsMethodReturn::.ctor()
+		IL_0000: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
 		IL_000b: dup
@@ -191,17 +191,17 @@
 		IL_0033: box [System.Runtime]System.Double
 		IL_0038: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
 		IL_003d: stloc.1
-		IL_003e: newobj instance void Classes.BinaryOperator_EqualObjectPropertyVsMethodReturn.Counter::.ctor()
+		IL_003e: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter::.ctor()
 		IL_0043: stloc.2
 		IL_0044: ldc.i4.0
 		IL_0045: newarr [System.Runtime]System.Object
 		IL_004a: stloc.s 5
 		IL_004c: ldloc.2
-		IL_004d: isinst Classes.BinaryOperator_EqualObjectPropertyVsMethodReturn.Counter
+		IL_004d: isinst Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter
 		IL_0052: dup
 		IL_0053: brfalse IL_0063
 
-		IL_0058: callvirt instance object Classes.BinaryOperator_EqualObjectPropertyVsMethodReturn.Counter::count()
+		IL_0058: callvirt instance object Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter::count()
 		IL_005d: stloc.3
 		IL_005e: br IL_0072
 
@@ -251,9 +251,9 @@
 		IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00d6: pop
 		IL_00d7: ret
-	} // end of method BinaryOperator_EqualObjectPropertyVsMethodReturn::Main
+	} // end of method BinaryOperator_EqualObjectPropertyVsMethodReturn::__js_module_init__
 
-} // end of class Scripts.BinaryOperator_EqualObjectPropertyVsMethodReturn
+} // end of class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -262,7 +262,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c4
+		// Method begins at RVA 0x21c3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -270,7 +270,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.BinaryOperator_EqualObjectPropertyVsMethodReturn::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

@@ -3,22 +3,73 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.ArrowFunction_SimpleExpression
+.class private auto ansi beforefieldinit Modules.ArrowFunction_SimpleExpression
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_add
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C13
 		extends [System.Runtime]System.Object
 	{
-		// Fields
-		.field public object a
-		.field public object b
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object a
+			.field public object b
 
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20f7
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object a,
+				object b
+			) cil managed 
+		{
+			// Method begins at RVA 0x20d8
+			// Header size: 12
+			// Code size: 10 (0xa)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
+			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0007: stloc.0
+			IL_0008: ldloc.0
+			IL_0009: ret
+		} // end of method ArrowFunction_L1C13::__js_call__
+
+	} // end of class ArrowFunction_L1C13
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20ee
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -27,63 +78,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_add::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_add
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method ArrowFunction_SimpleExpression::.ctor
-
-} // end of class Scopes.ArrowFunction_SimpleExpression
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C13
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object ArrowFunction_L1C13 (
-			object[] scopes,
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 10 (0xa)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: ldarg.2
-		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0007: stloc.0
-		IL_0008: ldloc.0
-		IL_0009: ret
-	} // end of method ArrowFunction_L1C13::ArrowFunction_L1C13
-
-} // end of class Functions.ArrowFunction_L1C13
-
-.class public auto ansi beforefieldinit Scripts.ArrowFunction_SimpleExpression
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -91,21 +93,21 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x207c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 123 (0x7b)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ArrowFunction_SimpleExpression,
+			[0] class Modules.ArrowFunction_SimpleExpression/Scope,
 			[1] object,
 			[2] object[],
 			[3] object
 		)
 
-		IL_0000: newobj instance void Scopes.ArrowFunction_SimpleExpression::.ctor()
+		IL_0000: newobj instance void Modules.ArrowFunction_SimpleExpression/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.ArrowFunction_L1C13::ArrowFunction_L1C13(object[], object, object)
+		IL_0007: ldftn object Modules.ArrowFunction_SimpleExpression/ArrowFunction_L1C13::__js_call__(object[], object, object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -152,9 +154,9 @@
 		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0079: pop
 		IL_007a: ret
-	} // end of method ArrowFunction_SimpleExpression::Main
+	} // end of method ArrowFunction_SimpleExpression::__js_module_init__
 
-} // end of class Scripts.ArrowFunction_SimpleExpression
+} // end of class Modules.ArrowFunction_SimpleExpression
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -163,7 +165,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2103
+		// Method begins at RVA 0x2100
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -171,7 +173,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.ArrowFunction_SimpleExpression::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.ArrowFunction_SimpleExpression::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

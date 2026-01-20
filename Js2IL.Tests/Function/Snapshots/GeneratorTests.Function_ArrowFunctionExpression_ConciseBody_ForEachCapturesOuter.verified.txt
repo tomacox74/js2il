@@ -3,21 +3,78 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter
+.class private auto ansi beforefieldinit Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_L3C26
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C27
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object x
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x213b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object x
+			) cil managed 
+		{
+			// Method begins at RVA 0x2110
+			// Header size: 12
+			// Code size: 22 (0x16)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldarg.0
+			IL_0002: ldc.i4.0
+			IL_0003: ldelem.ref
+			IL_0004: castclass Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope
+			IL_0009: ldfld object Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope::'add'
+			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0013: stloc.0
+			IL_0014: ldloc.0
+			IL_0015: ret
+		} // end of method ArrowFunction_L3C27::__js_call__
+
+	} // end of class ArrowFunction_L3C27
+
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Fields
-		.field public object x
+		.field public object 'add'
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2132
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -26,69 +83,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_L3C26::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_L3C26
+	} // end of class Scope
 
 
-	// Fields
-	.field public object 'add'
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::.ctor
-
-} // end of class Scopes.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L3C27
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object ArrowFunction_L3C27 (
-			object[] scopes,
-			object x
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 22 (0x16)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: ldarg.0
-		IL_0002: ldc.i4.0
-		IL_0003: ldelem.ref
-		IL_0004: castclass Scopes.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter
-		IL_0009: ldfld object Scopes.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::'add'
-		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0013: stloc.0
-		IL_0014: ldloc.0
-		IL_0015: ret
-	} // end of method ArrowFunction_L3C27::ArrowFunction_L3C27
-
-} // end of class Functions.ArrowFunction_L3C27
-
-.class public auto ansi beforefieldinit Scripts.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -96,24 +98,24 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2088
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 179 (0xb3)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter,
+			[0] class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope,
 			[1] object,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array
 		)
 
-		IL_0000: newobj instance void Scopes.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::.ctor()
+		IL_0000: newobj instance void Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldc.r8 1
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::'add'
+		IL_0015: stfld object Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope::'add'
 		IL_001a: ldnull
-		IL_001b: ldftn object Functions.ArrowFunction_L3C27::ArrowFunction_L3C27(object[], object)
+		IL_001b: ldftn object Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L3C27::__js_call__(object[], object)
 		IL_0021: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0026: ldc.i4.1
 		IL_0027: newarr [System.Runtime]System.Object
@@ -164,9 +166,9 @@
 		IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00b1: pop
 		IL_00b2: ret
-	} // end of method Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::Main
+	} // end of method Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::__js_module_init__
 
-} // end of class Scripts.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter
+} // end of class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -175,7 +177,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2147
+		// Method begins at RVA 0x2144
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -183,7 +185,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

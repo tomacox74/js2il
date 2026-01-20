@@ -3,22 +3,44 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.ControlFlow_ForIn_Break
+.class private auto ansi beforefieldinit Modules.ControlFlow_ForIn_Break
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L2C19
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Block_L4C17
+		.class nested private auto ansi beforefieldinit Block_L2C19
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested private auto ansi beforefieldinit Block_L4C17
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x213a
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L4C17::.ctor
+
+			} // end of class Block_L4C17
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x2131
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,16 +49,16 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L4C17::.ctor
+			} // end of method Block_L2C19::.ctor
 
-		} // end of class Block_L4C17
+		} // end of class Block_L2C19
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2128
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -45,34 +67,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L2C19::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Block_L2C19
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method ControlFlow_ForIn_Break::.ctor
-
-} // end of class Scopes.ControlFlow_ForIn_Break
-
-.class public auto ansi beforefieldinit Scripts.ControlFlow_ForIn_Break
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -80,12 +82,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x206c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 204 (0xcc)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_ForIn_Break,
+			[0] class Modules.ControlFlow_ForIn_Break/Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[2] object,
 			[3] float64,
@@ -95,7 +97,7 @@
 			[7] float64
 		)
 
-		IL_0000: newobj instance void Scopes.ControlFlow_ForIn_Break::.ctor()
+		IL_0000: newobj instance void Modules.ControlFlow_ForIn_Break/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
 		IL_000b: dup
@@ -160,9 +162,9 @@
 		// end loop
 
 		IL_00cb: ret
-	} // end of method ControlFlow_ForIn_Break::Main
+	} // end of method ControlFlow_ForIn_Break::__js_module_init__
 
-} // end of class Scripts.ControlFlow_ForIn_Break
+} // end of class Modules.ControlFlow_ForIn_Break
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -171,7 +173,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2144
+		// Method begins at RVA 0x2143
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -179,7 +181,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.ControlFlow_ForIn_Break::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.ControlFlow_ForIn_Break::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

@@ -12,6 +12,7 @@ using Js2IL.Services;
 using Js2IL.Services.TwoPhaseCompilation;
 using Microsoft.Extensions.DependencyInjection;
 using ScopesCallableKind = Js2IL.Services.ScopesAbi.CallableKind;
+using Js2IL.Utilities;
 
 namespace Js2IL;
 
@@ -90,14 +91,32 @@ internal sealed class JsMethodCompiler
     private readonly MemberReferenceRegistry _memberReferenceRegistry;
     private readonly BaseClassLibraryReferences _bclReferences;
     private readonly Services.VariableBindings.ScopeMetadataRegistry _scopeMetadataRegistry;
+    private readonly FunctionTypeMetadataRegistry _functionTypeMetadataRegistry;
+    private readonly AnonymousCallableTypeMetadataRegistry _anonymousCallableTypeMetadataRegistry;
+    private readonly Services.NestedTypeRelationshipRegistry _nestedTypeRelationshipRegistry;
+    private readonly Services.ModuleTypeMetadataRegistry _moduleTypeRegistry;
 
-    public JsMethodCompiler(MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, MemberReferenceRegistry memberReferenceRegistry, BaseClassLibraryReferences bclReferences, Services.VariableBindings.ScopeMetadataRegistry scopeMetadataRegistry, IServiceProvider serviceProvider)
+    public JsMethodCompiler(
+        MetadataBuilder metadataBuilder,
+        TypeReferenceRegistry typeReferenceRegistry,
+        MemberReferenceRegistry memberReferenceRegistry,
+        BaseClassLibraryReferences bclReferences,
+        Services.VariableBindings.ScopeMetadataRegistry scopeMetadataRegistry,
+        FunctionTypeMetadataRegistry functionTypeMetadataRegistry,
+        AnonymousCallableTypeMetadataRegistry anonymousCallableTypeMetadataRegistry,
+        Services.NestedTypeRelationshipRegistry nestedTypeRelationshipRegistry,
+        Services.ModuleTypeMetadataRegistry moduleTypeRegistry,
+        IServiceProvider serviceProvider)
     {
         _metadataBuilder = metadataBuilder;
         _typeReferenceRegistry = typeReferenceRegistry;
         _memberReferenceRegistry = memberReferenceRegistry;
         _bclReferences = bclReferences;
         _scopeMetadataRegistry = scopeMetadataRegistry;
+        _functionTypeMetadataRegistry = functionTypeMetadataRegistry;
+        _anonymousCallableTypeMetadataRegistry = anonymousCallableTypeMetadataRegistry;
+        _nestedTypeRelationshipRegistry = nestedTypeRelationshipRegistry;
+        _moduleTypeRegistry = moduleTypeRegistry;
         _serviceProvider = serviceProvider;
     }
 
@@ -417,7 +436,7 @@ internal sealed class JsMethodCompiler
         return CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }
 
-    public MethodDefinitionHandle TryCompileArrowFunction(string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
+    public MethodDefinitionHandle TryCompileArrowFunction(string typeName, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
         // Keep arrow-function IR support conservative for now; parameter destructuring for arrows
         // remains on the legacy path until snapshots are updated intentionally.
@@ -432,7 +451,7 @@ internal sealed class JsMethodCompiler
         }
 
         // Create the type builder for the arrow function
-        var arrowTypeBuilder = new TypeBuilder(_metadataBuilder, "Functions", methodName);
+        var arrowTypeBuilder = new TypeBuilder(_metadataBuilder, "Functions", typeName);
 
         // Build parameter descriptors: scopes array + JS parameters
         var parameters = new List<MethodParameterDescriptor>
@@ -516,8 +535,13 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
+        if (!_moduleTypeRegistry.TryGet(moduleName, out var moduleTypeHandle) || moduleTypeHandle.IsNil)
+        {
+            throw new InvalidOperationException($"Expected module type handle to be registered for module '{moduleName}', but none was found.");
+        }
+
         // create the tools we need to generate the module type and method
-        var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", moduleName);
+        var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Modules", moduleName);
 
         MethodParameterDescriptor[] parameters = [
             new MethodParameterDescriptor("exports", typeof(object)),
@@ -527,7 +551,7 @@ internal sealed class JsMethodCompiler
             new MethodParameterDescriptor("__dirname", typeof(string))
         ];
         var methodDescriptor = new MethodDescriptor(
-            "Main",
+            "__js_module_init__",
             programTypeBuilder,
             parameters);
 
@@ -536,12 +560,172 @@ internal sealed class JsMethodCompiler
 
         var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
-        // Define the Script main type via TypeBuilder
-        programTypeBuilder.AddTypeDefinition(
-            TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
-            _bclReferences.ObjectType);
+        // Establish all nesting relationships now that the module type exists.
+        // This is done in sorted order to satisfy ECMA-335 NestedClass table ordering.
+        EstablishModuleNesting(moduleName, moduleTypeHandle, scope);
 
         return methodDefinitionHandle;
+    }
+
+    private void EstablishModuleNesting(string moduleName, TypeDefinitionHandle moduleTypeHandle, Scope globalScope)
+    {
+        var relationships = new List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)>();
+
+        // Global scope nests under the module type: Modules.<ModuleName>.Scope
+        var globalKey = ScopeNaming.GetRegistryScopeName(globalScope);
+        if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(globalKey, out var globalScopeTypeHandle))
+        {
+            throw new InvalidOperationException($"Expected scope type handle to be registered for global scope '{globalKey}', but none was found.");
+        }
+        relationships.Add((globalScopeTypeHandle, moduleTypeHandle));
+
+        // Child scopes nest under their parent scope.
+        var visited = new HashSet<string>(StringComparer.Ordinal);
+        CollectScopeNestingRelationships(moduleName, globalScope, relationships, visited);
+
+        foreach (var rel in relationships.Distinct())
+        {
+            _nestedTypeRelationshipRegistry.Add(rel.Nested, rel.Enclosing);
+        }
+    }
+
+    private void CollectScopeNestingRelationships(
+        string moduleName,
+        Scope parentScope,
+        List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)> relationships,
+        HashSet<string> visited)
+    {
+        var parentKey = ScopeNaming.GetRegistryScopeName(parentScope);
+        if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(parentKey, out var parentTypeHandle))
+        {
+            // Parent scope may be empty and not registered; this is unexpected because TypeGenerator
+            // ensures all scopes get a type handle.
+            throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{parentKey}', but none was found.");
+        }
+
+        var parentScopeKey = ScopeNaming.GetRegistryScopeName(parentScope);
+
+        foreach (var child in parentScope.Children)
+        {
+            var childKey = ScopeNaming.GetRegistryScopeName(child);
+            if (!visited.Add(childKey))
+            {
+                continue;
+            }
+
+            if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(childKey, out var childTypeHandle))
+            {
+                throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{childKey}', but none was found.");
+            }
+
+            // Special case: class member scopes (ctor/get/set/method bodies) should be nested under the
+            // runtime class TypeDef as siblings of the class scope type.
+            //
+            // Desired layout:
+            //   <ClassName>
+            //     + Scope           (class lexical scope)
+            //     + Scope_ctor      (constructor body scope)
+            //     + Scope_get_x     (getter body scope)
+            //     + Scope_set_x     (setter body scope)
+            //     + Scope_method    (method body scope)
+            //
+            // rather than nesting those member scopes under <ClassName>+Scope.
+            if (parentScope.Kind == ScopeKind.Class
+                && child.Kind == ScopeKind.Function
+                && !string.IsNullOrWhiteSpace(child.DotNetTypeName)
+                && child.DotNetTypeName.StartsWith("Scope", StringComparison.Ordinal))
+            {
+                var classRegistry = _serviceProvider.GetService<Services.ClassRegistry>();
+                if (classRegistry != null)
+                {
+                    var registryClassName = GetRegistryClassName(parentScope);
+                    if (classRegistry.TryGet(registryClassName, out var classTypeHandle) && !classTypeHandle.IsNil)
+                    {
+                        relationships.Add((childTypeHandle, classTypeHandle));
+                        CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                        continue;
+                    }
+                }
+
+                // Fallback: if we can't resolve the runtime class TypeDef, keep legacy nesting.
+                relationships.Add((childTypeHandle, parentTypeHandle));
+                CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                continue;
+            }
+
+            // Special case: class scopes should be nested under their runtime class TypeDef.
+            // This keeps Modules.<Module>.Scope free of nested types and produces a clean layout:
+            //   Modules.<Module>+<ClassName>
+            //     + Scope
+            // rather than nesting the class scope under the parent scope type.
+            if (child.Kind == ScopeKind.Class)
+            {
+                var classRegistry = _serviceProvider.GetService<Services.ClassRegistry>();
+                if (classRegistry != null)
+                {
+                    var registryClassName = GetRegistryClassName(child);
+                    if (classRegistry.TryGet(registryClassName, out var classTypeHandle) && !classTypeHandle.IsNil)
+                    {
+                        relationships.Add((childTypeHandle, classTypeHandle));
+                        CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                        continue;
+                    }
+                }
+
+                // Fallback: if we can't resolve the runtime class TypeDef, keep legacy nesting.
+                relationships.Add((childTypeHandle, parentTypeHandle));
+                CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                continue;
+            }
+
+            // Special case: function declarations have a dedicated callable owner type.
+            // We nest the function's *scope type* under that owner type so IL reads as:
+            //   .class ... Modules.<Module>.<FunctionName>/Scope
+            // rather than:
+            //   .class ... Modules.<Module>.Scope/<FunctionName>
+            if (child.Kind == ScopeKind.Function && child.AstNode is FunctionDeclaration)
+            {
+                if (_functionTypeMetadataRegistry.TryGet(moduleName, child.Name, out var ownerTypeHandle) && !ownerTypeHandle.IsNil)
+                {
+                    relationships.Add((childTypeHandle, ownerTypeHandle));
+                }
+                else
+                {
+                    // Fallback: if the owner type isn't available for some reason, nest under the parent scope.
+                    relationships.Add((childTypeHandle, parentTypeHandle));
+                }
+            }
+            else if (child.Kind == ScopeKind.Function && child.AstNode is ArrowFunctionExpression)
+            {
+                // Arrow function scope type (named "Scope") nests under its anonymous callable owner type.
+                if (_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, parentScopeKey, child.Name, out var arrowOwner) && !arrowOwner.IsNil)
+                {
+                    relationships.Add((childTypeHandle, arrowOwner));
+                }
+                else
+                {
+                    relationships.Add((childTypeHandle, parentTypeHandle));
+                }
+            }
+            else if (child.Kind == ScopeKind.Function && child.AstNode is FunctionExpression)
+            {
+                // Function-expression scope type (named "Scope") nests under its anonymous callable owner type.
+                if (_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, parentScopeKey, child.Name, out var funcExprOwner) && !funcExprOwner.IsNil)
+                {
+                    relationships.Add((childTypeHandle, funcExprOwner));
+                }
+                else
+                {
+                    relationships.Add((childTypeHandle, parentTypeHandle));
+                }
+            }
+            else
+            {
+                relationships.Add((childTypeHandle, parentTypeHandle));
+            }
+
+            CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+        }
     }
 
     #endregion

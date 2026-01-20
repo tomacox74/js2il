@@ -3,21 +3,85 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.ArrowFunction_CapturesOuterVariable
+.class private auto ansi beforefieldinit Modules.ArrowFunction_CapturesOuterVariable
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_mul
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L2C13
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object x
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x210d
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object x
+			) cil managed 
+		{
+			// Method begins at RVA 0x20d8
+			// Header size: 12
+			// Code size: 32 (0x20)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.ArrowFunction_CapturesOuterVariable/Scope
+			IL_0008: ldfld float64 Modules.ArrowFunction_CapturesOuterVariable/Scope::n
+			IL_000d: stloc.0
+			IL_000e: ldarg.1
+			IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0014: ldloc.0
+			IL_0015: mul
+			IL_0016: stloc.0
+			IL_0017: ldloc.0
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: stloc.1
+			IL_001e: ldloc.1
+			IL_001f: ret
+		} // end of method ArrowFunction_L2C13::__js_call__
+
+	} // end of class ArrowFunction_L2C13
+
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Fields
-		.field public object x
+		.field public float64 n
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2104
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -26,76 +90,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_mul::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_mul
+	} // end of class Scope
 
 
-	// Fields
-	.field public float64 n
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method ArrowFunction_CapturesOuterVariable::.ctor
-
-} // end of class Scopes.ArrowFunction_CapturesOuterVariable
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L2C13
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object ArrowFunction_L2C13 (
-			object[] scopes,
-			object x
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 32 (0x20)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.0
-		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.ArrowFunction_CapturesOuterVariable
-		IL_0008: ldfld float64 Scopes.ArrowFunction_CapturesOuterVariable::n
-		IL_000d: stloc.0
-		IL_000e: ldarg.1
-		IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0014: ldloc.0
-		IL_0015: mul
-		IL_0016: stloc.0
-		IL_0017: ldloc.0
-		IL_0018: box [System.Runtime]System.Double
-		IL_001d: stloc.1
-		IL_001e: ldloc.1
-		IL_001f: ret
-	} // end of method ArrowFunction_L2C13::ArrowFunction_L2C13
-
-} // end of class Functions.ArrowFunction_L2C13
-
-.class public auto ansi beforefieldinit Scripts.ArrowFunction_CapturesOuterVariable
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -103,24 +105,24 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2090
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 121 (0x79)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ArrowFunction_CapturesOuterVariable,
+			[0] class Modules.ArrowFunction_CapturesOuterVariable/Scope,
 			[1] object,
 			[2] object[],
 			[3] object
 		)
 
-		IL_0000: newobj instance void Scopes.ArrowFunction_CapturesOuterVariable::.ctor()
+		IL_0000: newobj instance void Modules.ArrowFunction_CapturesOuterVariable/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldc.r8 5
-		IL_0010: stfld float64 Scopes.ArrowFunction_CapturesOuterVariable::n
+		IL_0010: stfld float64 Modules.ArrowFunction_CapturesOuterVariable/Scope::n
 		IL_0015: ldnull
-		IL_0016: ldftn object Functions.ArrowFunction_L2C13::ArrowFunction_L2C13(object[], object)
+		IL_0016: ldftn object Modules.ArrowFunction_CapturesOuterVariable/ArrowFunction_L2C13::__js_call__(object[], object)
 		IL_001c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0021: ldc.i4.1
 		IL_0022: newarr [System.Runtime]System.Object
@@ -162,9 +164,9 @@
 		IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0077: pop
 		IL_0078: ret
-	} // end of method ArrowFunction_CapturesOuterVariable::Main
+	} // end of method ArrowFunction_CapturesOuterVariable::__js_module_init__
 
-} // end of class Scripts.ArrowFunction_CapturesOuterVariable
+} // end of class Modules.ArrowFunction_CapturesOuterVariable
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -173,7 +175,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2115
+		// Method begins at RVA 0x2116
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -181,7 +183,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.ArrowFunction_CapturesOuterVariable::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.ArrowFunction_CapturesOuterVariable::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

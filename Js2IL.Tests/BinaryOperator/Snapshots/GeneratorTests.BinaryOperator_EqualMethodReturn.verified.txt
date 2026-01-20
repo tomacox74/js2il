@@ -3,7 +3,7 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.BinaryOperator_EqualMethodReturn
+.class private auto ansi beforefieldinit Modules.BinaryOperator_EqualMethodReturn
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit getValue
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x217b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,16 +27,67 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method getValue::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class getValue
+		} // end of class Scope
+
+		.class nested private auto ansi beforefieldinit Scope_getValue
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2184
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_getValue::.ctor
+
+		} // end of class Scope_getValue
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2148
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method TestClass::.ctor
+
+		.method public hidebysig 
+			instance float64 getValue () cil managed 
+		{
+			// Method begins at RVA 0x215c
+			// Header size: 12
+			// Code size: 10 (0xa)
+			.maxstack 32
+
+			IL_0000: ldc.r8 4
+			IL_0009: ret
+		} // end of method TestClass::getValue
+
+	} // end of class TestClass
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2172
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -45,65 +96,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method TestClass::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class TestClass
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method BinaryOperator_EqualMethodReturn::.ctor
-
-} // end of class Scopes.BinaryOperator_EqualMethodReturn
-
-.class public auto ansi beforefieldinit Classes.BinaryOperator_EqualMethodReturn.TestClass
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method TestClass::.ctor
-
-	.method public hidebysig 
-		instance float64 getValue () cil managed 
-	{
-		// Method begins at RVA 0x2080
-		// Header size: 12
-		// Code size: 10 (0xa)
-		.maxstack 32
-
-		IL_0000: ldc.r8 4
-		IL_0009: ret
-	} // end of method TestClass::getValue
-
-} // end of class Classes.BinaryOperator_EqualMethodReturn.TestClass
-
-.class public auto ansi beforefieldinit Scripts.BinaryOperator_EqualMethodReturn
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -111,12 +111,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2098
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 233 (0xe9)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_EqualMethodReturn,
+			[0] class Modules.BinaryOperator_EqualMethodReturn/Scope,
 			[1] object,
 			[2] object,
 			[3] float64,
@@ -125,19 +125,19 @@
 			[6] object
 		)
 
-		IL_0000: newobj instance void Scopes.BinaryOperator_EqualMethodReturn::.ctor()
+		IL_0000: newobj instance void Modules.BinaryOperator_EqualMethodReturn/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.BinaryOperator_EqualMethodReturn.TestClass::.ctor()
+		IL_0006: newobj instance void Modules.BinaryOperator_EqualMethodReturn/TestClass::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldc.i4.0
 		IL_000d: newarr [System.Runtime]System.Object
 		IL_0012: stloc.s 4
 		IL_0014: ldloc.1
-		IL_0015: isinst Classes.BinaryOperator_EqualMethodReturn.TestClass
+		IL_0015: isinst Modules.BinaryOperator_EqualMethodReturn/TestClass
 		IL_001a: dup
 		IL_001b: brfalse IL_0030
 
-		IL_0020: callvirt instance float64 Classes.BinaryOperator_EqualMethodReturn.TestClass::getValue()
+		IL_0020: callvirt instance float64 Modules.BinaryOperator_EqualMethodReturn/TestClass::getValue()
 		IL_0025: box [System.Runtime]System.Double
 		IL_002a: stloc.2
 		IL_002b: br IL_003f
@@ -215,9 +215,9 @@
 		IL_00e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00e7: pop
 		IL_00e8: ret
-	} // end of method BinaryOperator_EqualMethodReturn::Main
+	} // end of method BinaryOperator_EqualMethodReturn::__js_module_init__
 
-} // end of class Scripts.BinaryOperator_EqualMethodReturn
+} // end of class Modules.BinaryOperator_EqualMethodReturn
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -234,7 +234,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.BinaryOperator_EqualMethodReturn::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.BinaryOperator_EqualMethodReturn::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

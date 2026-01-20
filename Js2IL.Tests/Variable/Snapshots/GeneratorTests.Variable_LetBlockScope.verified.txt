@@ -3,18 +3,40 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Variable_LetBlockScope
+.class private auto ansi beforefieldinit Modules.Variable_LetBlockScope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L2C0
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L2C0
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20b4
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L2C0::.ctor
+
+		} // end of class Block_L2C0
+
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20ab
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,34 +45,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L2C0::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Block_L2C0
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Variable_LetBlockScope::.ctor
-
-} // end of class Scopes.Variable_LetBlockScope
-
-.class public auto ansi beforefieldinit Scripts.Variable_LetBlockScope
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -58,17 +60,17 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2064
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 79 (0x4f)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Variable_LetBlockScope,
+			[0] class Modules.Variable_LetBlockScope/Scope,
 			[1] float64,
 			[2] float64
 		)
 
-		IL_0000: newobj instance void Scopes.Variable_LetBlockScope::.ctor()
+		IL_0000: newobj instance void Modules.Variable_LetBlockScope/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 1
 		IL_000f: stloc.1
@@ -95,9 +97,9 @@
 		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_004d: pop
 		IL_004e: ret
-	} // end of method Variable_LetBlockScope::Main
+	} // end of method Variable_LetBlockScope::__js_module_init__
 
-} // end of class Scripts.Variable_LetBlockScope
+} // end of class Modules.Variable_LetBlockScope
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -106,7 +108,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20bf
+		// Method begins at RVA 0x20bd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -114,7 +116,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Variable_LetBlockScope::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Variable_LetBlockScope::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

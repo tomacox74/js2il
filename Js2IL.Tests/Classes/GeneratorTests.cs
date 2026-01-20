@@ -6,19 +6,45 @@ namespace Js2IL.Tests.Classes
     {
         public GeneratorTests() : base("Classes") { }
 
-        protected new Task GenerateTest(string testName, Action<VerifySettings>? configureSettings = null, string[]? additionalScripts = null, [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
-            => base.GenerateTest(testName, configureSettings, additionalScripts, sourceFilePath);
-
         // Minimal repro: bit-shift and Int32Array length in a class constructor
         // This triggers invalid IL patterns (conv/add on boxed objects) in current codegen
         [Fact]
         public Task Classes_BitShiftInCtor_Int32Array()
         {
             var testName = nameof(Classes_BitShiftInCtor_Int32Array);
-            return GenerateTest(testName);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType("Modules.Classes_BitShiftInCtor_Int32Array");
+                Assert.NotNull(moduleType);
+
+                // Module root type should be internal (non-public).
+                Assert.False(moduleType.IsPublic);
+                Assert.True(moduleType.IsNotPublic);
+
+                // Module root should contain the nested module scope type.
+                var flags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
+                var nestedScopeType = moduleType.GetNestedType("Scope", flags);
+                Assert.NotNull(nestedScopeType);
+            });
         }
 
-        [Fact] public Task Classes_ClassConstructor_AccessFunctionVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariable_Log); return GenerateTest(testName); }
+        [Fact]
+        public Task Classes_ClassConstructor_AccessFunctionVariable_Log()
+        {
+            var testName = nameof(Classes_ClassConstructor_AccessFunctionVariable_Log);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}");
+                Assert.NotNull(moduleType);
+
+                var flags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
+                var functionType = moduleType.GetNestedType("testFunction", flags);
+                Assert.NotNull(functionType);
+
+                var nestedClass = functionType.GetNestedType("MyClass", flags);
+                Assert.NotNull(nestedClass);
+            });
+        }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log); return GenerateTest(testName); }

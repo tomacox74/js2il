@@ -3,32 +3,34 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.String_TemplateLiteral_Basic
+.class private auto ansi beforefieldinit Modules.String_TemplateLiteral_Basic
 	extends [System.Runtime]System.Object
 {
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
 	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20bf
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method String_TemplateLiteral_Basic::.ctor
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
 
-} // end of class Scopes.String_TemplateLiteral_Basic
+	} // end of class Scope
 
-.class public auto ansi beforefieldinit Scripts.String_TemplateLiteral_Basic
-	extends [System.Runtime]System.Object
-{
+
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -36,19 +38,19 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x205c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 99 (0x63)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.String_TemplateLiteral_Basic,
+			[0] class Modules.String_TemplateLiteral_Basic/Scope,
 			[1] string,
 			[2] float64,
 			[3] string,
 			[4] string
 		)
 
-		IL_0000: newobj instance void Scopes.String_TemplateLiteral_Basic::.ctor()
+		IL_0000: newobj instance void Modules.String_TemplateLiteral_Basic/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "Alice"
 		IL_000b: stloc.1
@@ -83,9 +85,9 @@
 		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0061: pop
 		IL_0062: ret
-	} // end of method String_TemplateLiteral_Basic::Main
+	} // end of method String_TemplateLiteral_Basic::__js_module_init__
 
-} // end of class Scripts.String_TemplateLiteral_Basic
+} // end of class Modules.String_TemplateLiteral_Basic
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -94,7 +96,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20cb
+		// Method begins at RVA 0x20c8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -102,7 +104,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.String_TemplateLiteral_Basic::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.String_TemplateLiteral_Basic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

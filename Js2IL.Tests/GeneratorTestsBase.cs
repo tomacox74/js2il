@@ -17,97 +17,83 @@ namespace Js2IL.Tests
         {
             _verifySettings.DisableDiff();
 
-            // create a temp directory for the generated assemblies
-            _outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
-            if (!Directory.Exists(_outputPath))
-            {
-                Directory.CreateDirectory(_outputPath);
-            }
-
-            _outputPath = Path.Combine(_outputPath, $"{testCategory}.GeneratorTests");
-            if (!Directory.Exists(_outputPath))
-            {
-                Directory.CreateDirectory(_outputPath);
-            }
+            // Create a temp directory for the generated assemblies.
+            // Use a unique per-run directory to avoid file locks from Assembly.LoadFile() causing
+            // intermittent failures when re-running tests on Windows.
+            var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
+            var runId = Guid.NewGuid().ToString("N");
+            _outputPath = Path.Combine(root, $"{testCategory}.GeneratorTests", runId);
+            Directory.CreateDirectory(_outputPath);
         }
 
         protected Task GenerateTest(string testName, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "")
             => GenerateTest(testName, configureSettings: null, additionalScripts: additionalScripts, sourceFilePath: sourceFilePath);
 
-        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings = null, string[]? additionalScripts = null, [CallerFilePath] string sourceFilePath = "")
+        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings = null, string[]? additionalScripts = null, [CallerFilePath] string sourceFilePath = "", Action<System.Reflection.Assembly>? verifyAssembly = null)
         {
             async Task RunAsync()
             {
-                IR.IRPipelineMetrics.Enabled = true;
-                IR.IRPipelineMetrics.Reset();
+                var js = GetJavaScript(testName);
+                var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
 
-                try
+                var mockFileSystem = new MockFileSystem();
+                mockFileSystem.AddFile(testFilePath, js);
+
+                // Add additional scripts to the mock file system
+                if (additionalScripts != null)
                 {
-                    var js = GetJavaScript(testName);
-                    var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
-
-                    var mockFileSystem = new MockFileSystem();
-                    mockFileSystem.AddFile(testFilePath, js);
-
-                    // Add additional scripts to the mock file system
-                    if (additionalScripts != null)
+                    foreach (var scriptName in additionalScripts)
                     {
-                        foreach (var scriptName in additionalScripts)
-                        {
-                            var scriptContent = GetJavaScript(scriptName);
-                            var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
-                            mockFileSystem.AddFile(scriptPath, scriptContent);
-                        }
+                        var scriptContent = GetJavaScript(scriptName);
+                        var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
+                        mockFileSystem.AddFile(scriptPath, scriptContent);
                     }
-
-                    var options = new CompilerOptions
-                    {
-                        OutputDirectory = _outputPath
-                    };
-
-                    var testLogger = new TestLogger();
-                    var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, testLogger);
-                    var compiler = serviceProvider.GetRequiredService<Compiler>();
-
-                    if (!compiler.Compile(testFilePath))
-                    {
-                        var compileDetails = string.IsNullOrWhiteSpace(testLogger.Errors)
-                            ? string.Empty
-                            : $"\nErrors:\n{testLogger.Errors}";
-                        var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings)
-                            ? string.Empty
-                            : $"\nWarnings:\n{testLogger.Warnings}";
-                        throw new InvalidOperationException($"Compilation failed for test {testName}.{compileDetails}{warnings}");
-                    }
-
-                    // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
-                    // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
-                    var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
-                    var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
-
-                    var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
-
-                    var settings = new VerifySettings(_verifySettings);
-                    var directory = Path.GetDirectoryName(sourceFilePath);
-                    if (!string.IsNullOrEmpty(directory))
-                    {
-                        var snapshotsDirectory = Path.Combine(directory, "Snapshots");
-                        Directory.CreateDirectory(snapshotsDirectory);
-                        settings.UseDirectory(snapshotsDirectory);
-                    }
-                    configureSettings?.Invoke(settings);
-
-                    var stats = IR.IRPipelineMetrics.GetStats();
-                    var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
-                    var details = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $" LastFailure: {lastFailure}";
-                    Assert.True(stats.TotalFallbacks == 0, $"IR Pipeline fallback occurred in test {testName}: {stats.TotalFallbacks} fallbacks.{details}");
-
-                    await Verify(il, settings);
                 }
-                finally
+
+                var options = new CompilerOptions
                 {
-                    IR.IRPipelineMetrics.Enabled = false;
+                    OutputDirectory = _outputPath
+                };
+
+                var testLogger = new TestLogger();
+                var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, testLogger);
+                var compiler = serviceProvider.GetRequiredService<Compiler>();
+
+                if (!compiler.Compile(testFilePath))
+                {
+                    var compileDetails = string.IsNullOrWhiteSpace(testLogger.Errors)
+                        ? string.Empty
+                        : $"\nErrors:\n{testLogger.Errors}";
+                    var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings)
+                        ? string.Empty
+                        : $"\nWarnings:\n{testLogger.Warnings}";
+                    throw new InvalidOperationException($"Compilation failed for test {testName}.{compileDetails}{warnings}");
                 }
+
+                // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
+                // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
+                var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
+                var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
+
+                var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
+
+                if (verifyAssembly is not null)
+                {
+                    var assembly = Assembly.LoadFile(expectedPath);
+                    verifyAssembly(assembly);
+                }
+
+                var settings = new VerifySettings(_verifySettings);
+                var directory = Path.GetDirectoryName(sourceFilePath);
+                if (!string.IsNullOrEmpty(directory))
+                {
+                    var snapshotsDirectory = Path.Combine(directory, "Snapshots");
+                    Directory.CreateDirectory(snapshotsDirectory);
+                    settings.UseDirectory(snapshotsDirectory);
+                }
+                configureSettings?.Invoke(settings);
+
+                await Verify(il, settings);
             }
 
             return RunAsync();

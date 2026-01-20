@@ -3,18 +3,73 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Function_ReturnsStaticValueAndLogs
+.class private auto ansi beforefieldinit Modules.Function_ReturnsStaticValueAndLogs
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit returnsFive
+	.class nested public auto ansi abstract sealed beforefieldinit returnsFive
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20d9
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x209c
+			// Header size: 12
+			// Code size: 40 (0x28)
+			.maxstack 32
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.1
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldstr "Returning value"
+			IL_0012: stelem.ref
+			IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0018: pop
+			IL_0019: ldc.r8 5
+			IL_0022: box [System.Runtime]System.Double
+			IL_0027: ret
+		} // end of method returnsFive::__js_call__
+
+	} // end of class returnsFive
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object returnsFive
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20d0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,67 +78,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method returnsFive::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class returnsFive
+	} // end of class Scope
 
 
-	// Fields
-	.field public object returnsFive
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Function_ReturnsStaticValueAndLogs::.ctor
-
-} // end of class Scopes.Function_ReturnsStaticValueAndLogs
-
-.class public auto ansi abstract sealed beforefieldinit Functions.Function_ReturnsStaticValueAndLogs
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object returnsFive (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 40 (0x28)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "Returning value"
-		IL_0012: stelem.ref
-		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0018: pop
-		IL_0019: ldc.r8 5
-		IL_0022: box [System.Runtime]System.Double
-		IL_0027: ret
-	} // end of method Function_ReturnsStaticValueAndLogs::returnsFive
-
-} // end of class Functions.Function_ReturnsStaticValueAndLogs
-
-.class public auto ansi beforefieldinit Scripts.Function_ReturnsStaticValueAndLogs
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -91,19 +93,19 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2098
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 64 (0x40)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Function_ReturnsStaticValueAndLogs,
+			[0] class Modules.Function_ReturnsStaticValueAndLogs/Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.Function_ReturnsStaticValueAndLogs::.ctor()
+		IL_0000: newobj instance void Modules.Function_ReturnsStaticValueAndLogs/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Function_ReturnsStaticValueAndLogs::returnsFive(object[])
+		IL_0007: ldftn object Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object[])
 		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -127,9 +129,9 @@
 		IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_003e: pop
 		IL_003f: ret
-	} // end of method Function_ReturnsStaticValueAndLogs::Main
+	} // end of method Function_ReturnsStaticValueAndLogs::__js_module_init__
 
-} // end of class Scripts.Function_ReturnsStaticValueAndLogs
+} // end of class Modules.Function_ReturnsStaticValueAndLogs
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -138,7 +140,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e4
+		// Method begins at RVA 0x20e2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -146,7 +148,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Function_ReturnsStaticValueAndLogs::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Function_ReturnsStaticValueAndLogs::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

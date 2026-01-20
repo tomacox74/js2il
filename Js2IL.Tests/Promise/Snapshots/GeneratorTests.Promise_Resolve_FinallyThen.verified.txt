@@ -3,18 +3,138 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_Resolve_FinallyThen
+.class private auto ansi beforefieldinit Modules.Promise_Resolve_FinallyThen
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit ArrowFunction_L1C54
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C114
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object message
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2145
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object message
+			) cil managed 
+		{
+			// Method begins at RVA 0x20d8
+			// Header size: 12
+			// Code size: 31 (0x1f)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.2
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldstr "[then]"
+			IL_0012: stelem.ref
+			IL_0013: dup
+			IL_0014: ldc.i4.1
+			IL_0015: ldarg.1
+			IL_0016: stelem.ref
+			IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ret
+		} // end of method ArrowFunction_L1C114::__js_call__
+
+	} // end of class ArrowFunction_L1C114
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C55
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x213c
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x2104
+			// Header size: 12
+			// Code size: 35 (0x23)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.2
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldstr "[finally]"
+			IL_0012: stelem.ref
+			IL_0013: dup
+			IL_0014: ldc.i4.1
+			IL_0015: ldstr "Hello from finally"
+			IL_001a: stelem.ref
+			IL_001b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0020: stloc.0
+			IL_0021: ldloc.0
+			IL_0022: ret
+		} // end of method ArrowFunction_L1C55::__js_call__
+
+	} // end of class ArrowFunction_L1C55
+
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2133
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,130 +143,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method ArrowFunction_L1C54::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class ArrowFunction_L1C54
-
-	.class nested public auto ansi beforefieldinit ArrowFunction_L1C113
-		extends [System.Runtime]System.Object
-	{
-		// Fields
-		.field public object message
-
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2062
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method ArrowFunction_L1C113::.ctor
-
-	} // end of class ArrowFunction_L1C113
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Promise_Resolve_FinallyThen::.ctor
-
-} // end of class Scopes.Promise_Resolve_FinallyThen
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C114
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object ArrowFunction_L1C114 (
-			object[] scopes,
-			object message
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 31 (0x1f)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.2
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "[then]"
-		IL_0012: stelem.ref
-		IL_0013: dup
-		IL_0014: ldc.i4.1
-		IL_0015: ldarg.1
-		IL_0016: stelem.ref
-		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_001c: stloc.0
-		IL_001d: ldloc.0
-		IL_001e: ret
-	} // end of method ArrowFunction_L1C114::ArrowFunction_L1C114
-
-} // end of class Functions.ArrowFunction_L1C114
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C55
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L1C55 (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2098
-		// Header size: 12
-		// Code size: 35 (0x23)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.2
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "[finally]"
-		IL_0012: stelem.ref
-		IL_0013: dup
-		IL_0014: ldc.i4.1
-		IL_0015: ldstr "Hello from finally"
-		IL_001a: stelem.ref
-		IL_001b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0020: stloc.0
-		IL_0021: ldloc.0
-		IL_0022: ret
-	} // end of method ArrowFunction_L1C55::ArrowFunction_L1C55
-
-} // end of class Functions.ArrowFunction_L1C55
-
-.class public auto ansi beforefieldinit Scripts.Promise_Resolve_FinallyThen
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -154,24 +158,24 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c8
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 122 (0x7a)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_Resolve_FinallyThen,
+			[0] class Modules.Promise_Resolve_FinallyThen/Scope,
 			[1] object,
 			[2] object,
 			[3] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_Resolve_FinallyThen::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Resolve_FinallyThen/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "Hello from Promise.resolve"
 		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
 		IL_0010: stloc.1
 		IL_0011: ldnull
-		IL_0012: ldftn object Functions.ArrowFunction_L1C55::ArrowFunction_L1C55(object[])
+		IL_0012: ldftn object Modules.Promise_Resolve_FinallyThen/ArrowFunction_L1C55::__js_call__(object[])
 		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_001d: ldc.i4.1
 		IL_001e: newarr [System.Runtime]System.Object
@@ -194,7 +198,7 @@
 		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_0044: stloc.1
 		IL_0045: ldnull
-		IL_0046: ldftn object Functions.ArrowFunction_L1C114::ArrowFunction_L1C114(object[], object)
+		IL_0046: ldftn object Modules.Promise_Resolve_FinallyThen/ArrowFunction_L1C114::__js_call__(object[], object)
 		IL_004c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0051: ldc.i4.1
 		IL_0052: newarr [System.Runtime]System.Object
@@ -217,9 +221,9 @@
 		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_0078: pop
 		IL_0079: ret
-	} // end of method Promise_Resolve_FinallyThen::Main
+	} // end of method Promise_Resolve_FinallyThen::__js_module_init__
 
-} // end of class Scripts.Promise_Resolve_FinallyThen
+} // end of class Modules.Promise_Resolve_FinallyThen
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -236,7 +240,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Promise_Resolve_FinallyThen::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_Resolve_FinallyThen::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

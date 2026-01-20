@@ -3,32 +3,34 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.ControlFlow_Switch_Fallthrough
+.class private auto ansi beforefieldinit Modules.ControlFlow_Switch_Fallthrough
 	extends [System.Runtime]System.Object
 {
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
 	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20ff
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
 
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method ControlFlow_Switch_Fallthrough::.ctor
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
 
-} // end of class Scopes.ControlFlow_Switch_Fallthrough
+	} // end of class Scope
 
-.class public auto ansi beforefieldinit Scripts.ControlFlow_Switch_Fallthrough
-	extends [System.Runtime]System.Object
-{
+
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -36,18 +38,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x205c
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 163 (0xa3)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_Switch_Fallthrough,
+			[0] class Modules.ControlFlow_Switch_Fallthrough/Scope,
 			[1] float64,
 			[2] object,
 			[3] bool
 		)
 
-		IL_0000: newobj instance void Scopes.ControlFlow_Switch_Fallthrough::.ctor()
+		IL_0000: newobj instance void Modules.ControlFlow_Switch_Fallthrough/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 1
 		IL_000f: stloc.1
@@ -104,9 +106,9 @@
 		IL_00a1: pop
 
 		IL_00a2: ret
-	} // end of method ControlFlow_Switch_Fallthrough::Main
+	} // end of method ControlFlow_Switch_Fallthrough::__js_module_init__
 
-} // end of class Scripts.ControlFlow_Switch_Fallthrough
+} // end of class Modules.ControlFlow_Switch_Fallthrough
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -115,7 +117,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210b
+		// Method begins at RVA 0x2108
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -123,7 +125,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.ControlFlow_Switch_Fallthrough::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.ControlFlow_Switch_Fallthrough::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

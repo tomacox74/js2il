@@ -3,18 +3,40 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Environment_EnumerateProcessArgV
+.class private auto ansi beforefieldinit Modules.Environment_EnumerateProcessArgV
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L2C46
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L2C46
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x211c
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L2C46::.ctor
+
+		} // end of class Block_L2C46
+
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2113
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,34 +45,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L2C46::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Block_L2C46
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Environment_EnumerateProcessArgV::.ctor
-
-} // end of class Scopes.Environment_EnumerateProcessArgV
-
-.class public auto ansi beforefieldinit Scripts.Environment_EnumerateProcessArgV
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -58,17 +60,17 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2064
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 183 (0xb7)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Environment_EnumerateProcessArgV,
+			[0] class Modules.Environment_EnumerateProcessArgV/Scope,
 			[1] float64,
 			[2] object
 		)
 
-		IL_0000: newobj instance void Scopes.Environment_EnumerateProcessArgV::.ctor()
+		IL_0000: newobj instance void Modules.Environment_EnumerateProcessArgV/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_000b: ldc.i4.2
@@ -134,9 +136,9 @@
 		// end loop
 
 		IL_00b6: ret
-	} // end of method Environment_EnumerateProcessArgV::Main
+	} // end of method Environment_EnumerateProcessArgV::__js_module_init__
 
-} // end of class Scripts.Environment_EnumerateProcessArgV
+} // end of class Modules.Environment_EnumerateProcessArgV
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -145,7 +147,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2127
+		// Method begins at RVA 0x2125
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -153,7 +155,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Environment_EnumerateProcessArgV::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Environment_EnumerateProcessArgV::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

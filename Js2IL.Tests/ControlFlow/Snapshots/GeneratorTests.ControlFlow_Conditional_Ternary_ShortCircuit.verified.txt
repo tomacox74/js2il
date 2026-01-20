@@ -3,18 +3,85 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.ControlFlow_Conditional_Ternary_ShortCircuit
+.class private auto ansi beforefieldinit Modules.ControlFlow_Conditional_Ternary_ShortCircuit
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit bump
+	.class nested public auto ansi abstract sealed beforefieldinit bump
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2151
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x2104
+			// Header size: 12
+			// Code size: 56 (0x38)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope
+			IL_0008: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+			IL_000d: ldc.r8 1
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_001b: stloc.0
+			IL_001c: ldarg.0
+			IL_001d: ldc.i4.0
+			IL_001e: ldelem.ref
+			IL_001f: castclass Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope
+			IL_0024: ldloc.0
+			IL_0025: stfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+			IL_002a: ldarg.0
+			IL_002b: ldc.i4.0
+			IL_002c: ldelem.ref
+			IL_002d: castclass Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope
+			IL_0032: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+			IL_0037: ret
+		} // end of method bump::__js_call__
+
+	} // end of class bump
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object x
+		.field public object bump
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2148
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,79 +90,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method bump::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class bump
+	} // end of class Scope
 
 
-	// Fields
-	.field public object x
-	.field public object bump
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method ControlFlow_Conditional_Ternary_ShortCircuit::.ctor
-
-} // end of class Scopes.ControlFlow_Conditional_Ternary_ShortCircuit
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ControlFlow_Conditional_Ternary_ShortCircuit
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		object bump (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 56 (0x38)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldc.i4.0
-		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.ControlFlow_Conditional_Ternary_ShortCircuit
-		IL_0008: ldfld object Scopes.ControlFlow_Conditional_Ternary_ShortCircuit::x
-		IL_000d: ldc.r8 1
-		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_001b: stloc.0
-		IL_001c: ldarg.0
-		IL_001d: ldc.i4.0
-		IL_001e: ldelem.ref
-		IL_001f: castclass Scopes.ControlFlow_Conditional_Ternary_ShortCircuit
-		IL_0024: ldloc.0
-		IL_0025: stfld object Scopes.ControlFlow_Conditional_Ternary_ShortCircuit::x
-		IL_002a: ldarg.0
-		IL_002b: ldc.i4.0
-		IL_002c: ldelem.ref
-		IL_002d: castclass Scopes.ControlFlow_Conditional_Ternary_ShortCircuit
-		IL_0032: ldfld object Scopes.ControlFlow_Conditional_Ternary_ShortCircuit::x
-		IL_0037: ret
-	} // end of method ControlFlow_Conditional_Ternary_ShortCircuit::bump
-
-} // end of class Functions.ControlFlow_Conditional_Ternary_ShortCircuit
-
-.class public auto ansi beforefieldinit Scripts.ControlFlow_Conditional_Ternary_ShortCircuit
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -103,23 +105,23 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20a8
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 165 (0xa5)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_Conditional_Ternary_ShortCircuit,
+			[0] class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope,
 			[1] object,
 			[2] bool,
 			[3] object
 		)
 
-		IL_0000: newobj instance void Scopes.ControlFlow_Conditional_Ternary_ShortCircuit::.ctor()
+		IL_0000: newobj instance void Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldc.r8 0.0
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_Conditional_Ternary_ShortCircuit::x
+		IL_0015: stfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
 		IL_001a: ldc.r8 1
 		IL_0023: box [System.Runtime]System.Double
 		IL_0028: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
@@ -128,7 +130,7 @@
 		IL_002f: brfalse IL_0057
 
 		IL_0034: ldnull
-		IL_0035: ldftn object Functions.ControlFlow_Conditional_Ternary_ShortCircuit::bump(object[])
+		IL_0035: ldftn object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(object[])
 		IL_003b: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0040: ldc.i4.1
 		IL_0041: newarr [System.Runtime]System.Object
@@ -143,7 +145,7 @@
 		IL_0052: br IL_0075
 
 		IL_0057: ldnull
-		IL_0058: ldftn object Functions.ControlFlow_Conditional_Ternary_ShortCircuit::bump(object[])
+		IL_0058: ldftn object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(object[])
 		IL_005e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0063: ldc.i4.1
 		IL_0064: newarr [System.Runtime]System.Object
@@ -171,14 +173,14 @@
 		IL_0095: dup
 		IL_0096: ldc.i4.0
 		IL_0097: ldloc.0
-		IL_0098: ldfld object Scopes.ControlFlow_Conditional_Ternary_ShortCircuit::x
+		IL_0098: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
 		IL_009d: stelem.ref
 		IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00a3: pop
 		IL_00a4: ret
-	} // end of method ControlFlow_Conditional_Ternary_ShortCircuit::Main
+	} // end of method ControlFlow_Conditional_Ternary_ShortCircuit::__js_module_init__
 
-} // end of class Scripts.ControlFlow_Conditional_Ternary_ShortCircuit
+} // end of class Modules.ControlFlow_Conditional_Ternary_ShortCircuit
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -187,7 +189,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2159
+		// Method begins at RVA 0x215a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -195,7 +197,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.ControlFlow_Conditional_Ternary_ShortCircuit::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.ControlFlow_Conditional_Ternary_ShortCircuit::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

@@ -3,7 +3,7 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_ClassMethod_ParameterDestructuring
+.class private auto ansi beforefieldinit Modules.Classes_ClassMethod_ParameterDestructuring
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -11,7 +11,27 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit 'add'
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x26cc
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested private auto ansi beforefieldinit Scope_add
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -22,7 +42,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x26d5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -31,11 +51,11 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method 'add'::.ctor
+			} // end of method Scope_add::.ctor
 
-		} // end of class add
+		} // end of class Scope_add
 
-		.class nested public auto ansi beforefieldinit multiply
+		.class nested private auto ansi beforefieldinit Scope_multiply
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -46,7 +66,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x206b
+				// Method begins at RVA 0x26de
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -55,25 +75,118 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method multiply::.ctor
+			} // end of method Scope_multiply::.ctor
 
-		} // end of class multiply
+		} // end of class Scope_multiply
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Method begins at RVA 0x23e8
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ret
 		} // end of method Calculator::.ctor
+
+		.method public hidebysig 
+			instance object 'add' (
+				object $p0
+			) cil managed 
+		{
+			// Method begins at RVA 0x2424
+			// Header size: 12
+			// Code size: 67 (0x43)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: brfalse IL_0011
+
+			IL_0006: ldarg.1
+			IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_000c: brfalse IL_0021
+
+			IL_0011: ldarg.1
+			IL_0012: ldstr ""
+			IL_0017: ldstr "a"
+			IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+			IL_0021: ldarg.1
+			IL_0022: ldstr "a"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_002c: stloc.0
+			IL_002d: ldarg.1
+			IL_002e: ldstr "b"
+			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0038: stloc.1
+			IL_0039: ldloc.0
+			IL_003a: ldloc.1
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0040: stloc.2
+			IL_0041: ldloc.2
+			IL_0042: ret
+		} // end of method Calculator::'add'
+
+		.method public hidebysig 
+			instance object multiply (
+				object $p0
+			) cil managed 
+		{
+			// Method begins at RVA 0x2474
+			// Header size: 12
+			// Code size: 82 (0x52)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] float64,
+				[3] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: brfalse IL_0011
+
+			IL_0006: ldarg.1
+			IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_000c: brfalse IL_0021
+
+			IL_0011: ldarg.1
+			IL_0012: ldstr ""
+			IL_0017: ldstr "x"
+			IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+			IL_0021: ldarg.1
+			IL_0022: ldstr "x"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_002c: stloc.0
+			IL_002d: ldarg.1
+			IL_002e: ldstr "y"
+			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0038: stloc.1
+			IL_0039: ldloc.0
+			IL_003a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_003f: stloc.2
+			IL_0040: ldloc.2
+			IL_0041: ldloc.1
+			IL_0042: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0047: mul
+			IL_0048: stloc.2
+			IL_0049: ldloc.2
+			IL_004a: box [System.Runtime]System.Double
+			IL_004f: stloc.3
+			IL_0050: ldloc.3
+			IL_0051: ret
+		} // end of method Calculator::multiply
 
 	} // end of class Calculator
 
@@ -81,7 +194,27 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit formatPerson
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x26e7
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested private auto ansi beforefieldinit Scope_formatPerson
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -93,7 +226,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x207d
+				// Method begins at RVA 0x26f0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -102,11 +235,11 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method formatPerson::.ctor
+			} // end of method Scope_formatPerson::.ctor
 
-		} // end of class formatPerson
+		} // end of class Scope_formatPerson
 
-		.class nested public auto ansi beforefieldinit formatDate
+		.class nested private auto ansi beforefieldinit Scope_formatDate
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -118,7 +251,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2086
+				// Method begins at RVA 0x26f9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -127,25 +260,148 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method formatDate::.ctor
+			} // end of method Scope_formatDate::.ctor
 
-		} // end of class formatDate
+		} // end of class Scope_formatDate
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2074
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
+			// Method begins at RVA 0x2410
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ret
 		} // end of method Formatter::.ctor
+
+		.method public hidebysig 
+			instance object formatPerson (
+				object $p0
+			) cil managed 
+		{
+			// Method begins at RVA 0x263c
+			// Header size: 12
+			// Code size: 123 (0x7b)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] object,
+				[3] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: brfalse IL_0011
+
+			IL_0006: ldarg.1
+			IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_000c: brfalse IL_0021
+
+			IL_0011: ldarg.1
+			IL_0012: ldstr ""
+			IL_0017: ldstr "name"
+			IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+			IL_0021: ldarg.1
+			IL_0022: ldstr "name"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_002c: stloc.0
+			IL_002d: ldarg.1
+			IL_002e: ldstr "age"
+			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0038: stloc.1
+			IL_0039: ldarg.1
+			IL_003a: ldstr "city"
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0044: stloc.2
+			IL_0045: ldloc.0
+			IL_0046: ldstr " from "
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0050: stloc.3
+			IL_0051: ldloc.3
+			IL_0052: ldloc.2
+			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0058: stloc.3
+			IL_0059: ldloc.3
+			IL_005a: ldstr " (age: "
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0064: stloc.3
+			IL_0065: ldloc.3
+			IL_0066: ldloc.1
+			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_006c: stloc.3
+			IL_006d: ldloc.3
+			IL_006e: ldstr ")"
+			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0078: stloc.3
+			IL_0079: ldloc.3
+			IL_007a: ret
+		} // end of method Formatter::formatPerson
+
+		.method public hidebysig 
+			instance object formatDate (
+				object $p0
+			) cil managed 
+		{
+			// Method begins at RVA 0x25c0
+			// Header size: 12
+			// Code size: 111 (0x6f)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] object,
+				[3] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: brfalse IL_0011
+
+			IL_0006: ldarg.1
+			IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_000c: brfalse IL_0021
+
+			IL_0011: ldarg.1
+			IL_0012: ldstr ""
+			IL_0017: ldstr "year"
+			IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+			IL_0021: ldarg.1
+			IL_0022: ldstr "year"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_002c: stloc.0
+			IL_002d: ldarg.1
+			IL_002e: ldstr "month"
+			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0038: stloc.1
+			IL_0039: ldarg.1
+			IL_003a: ldstr "day"
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0044: stloc.2
+			IL_0045: ldloc.0
+			IL_0046: ldstr "-"
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0050: stloc.3
+			IL_0051: ldloc.3
+			IL_0052: ldloc.1
+			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0058: stloc.3
+			IL_0059: ldloc.3
+			IL_005a: ldstr "-"
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0064: stloc.3
+			IL_0065: ldloc.3
+			IL_0066: ldloc.2
+			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_006c: stloc.3
+			IL_006d: ldloc.3
+			IL_006e: ret
+		} // end of method Formatter::formatDate
 
 	} // end of class Formatter
 
@@ -153,7 +409,27 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit setConnection
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2702
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested private auto ansi beforefieldinit Scope_setConnection
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -165,7 +441,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2098
+				// Method begins at RVA 0x270b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -174,16 +450,147 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method setConnection::.ctor
+			} // end of method Scope_setConnection::.ctor
 
-		} // end of class setConnection
+		} // end of class Scope_setConnection
 
+
+		// Fields
+		.field public string url
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x208f
+			// Method begins at RVA 0x23fc
+			// Header size: 12
+			// Code size: 7 (0x7)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ret
+		} // end of method Config::.ctor
+
+		.method public hidebysig 
+			instance object setConnection (
+				object $p0
+			) cil managed 
+		{
+			// Method begins at RVA 0x24d4
+			// Header size: 12
+			// Code size: 224 (0xe0)
+			.maxstack 32
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] object,
+				[3] object,
+				[4] bool,
+				[5] object,
+				[6] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: brfalse IL_0011
+
+			IL_0006: ldarg.1
+			IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_000c: brfalse IL_0021
+
+			IL_0011: ldarg.1
+			IL_0012: ldstr ""
+			IL_0017: ldstr "host"
+			IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+			IL_0021: ldarg.1
+			IL_0022: ldstr "host"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_002c: stloc.3
+			IL_002d: ldloc.3
+			IL_002e: brtrue IL_003e
+
+			IL_0033: ldstr "localhost"
+			IL_0038: stloc.0
+			IL_0039: br IL_0040
+
+			IL_003e: ldloc.3
+			IL_003f: stloc.0
+
+			IL_0040: ldarg.1
+			IL_0041: ldstr "port"
+			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_004b: stloc.3
+			IL_004c: ldloc.3
+			IL_004d: brtrue IL_0066
+
+			IL_0052: ldc.r8 8080
+			IL_005b: box [System.Runtime]System.Double
+			IL_0060: stloc.1
+			IL_0061: br IL_0068
+
+			IL_0066: ldloc.3
+			IL_0067: stloc.1
+
+			IL_0068: ldarg.1
+			IL_0069: ldstr "secure"
+			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0073: stloc.3
+			IL_0074: ldloc.3
+			IL_0075: brtrue IL_0086
+
+			IL_007a: ldc.i4.0
+			IL_007b: box [System.Runtime]System.Boolean
+			IL_0080: stloc.2
+			IL_0081: br IL_0088
+
+			IL_0086: ldloc.3
+			IL_0087: stloc.2
+
+			IL_0088: ldloc.2
+			IL_0089: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_008e: stloc.s 4
+			IL_0090: ldloc.s 4
+			IL_0092: brfalse IL_00a3
+
+			IL_0097: ldstr "https://"
+			IL_009c: stloc.s 6
+			IL_009e: br IL_00aa
+
+			IL_00a3: ldstr "http://"
+			IL_00a8: stloc.s 6
+
+			IL_00aa: ldloc.s 6
+			IL_00ac: ldloc.0
+			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00b2: stloc.s 6
+			IL_00b4: ldloc.s 6
+			IL_00b6: ldstr ":"
+			IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00c0: stloc.s 6
+			IL_00c2: ldloc.s 6
+			IL_00c4: ldloc.1
+			IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00ca: stloc.s 6
+			IL_00cc: ldarg.0
+			IL_00cd: ldloc.s 6
+			IL_00cf: castclass [System.Runtime]System.String
+			IL_00d4: stfld string Modules.Classes_ClassMethod_ParameterDestructuring/Config::url
+			IL_00d9: ldarg.0
+			IL_00da: ldfld string Modules.Classes_ClassMethod_ParameterDestructuring/Config::url
+			IL_00df: ret
+		} // end of method Config::setConnection
+
+	} // end of class Config
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x26c3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -192,421 +599,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Config::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Config
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Classes_ClassMethod_ParameterDestructuring::.ctor
-
-} // end of class Scopes.Classes_ClassMethod_ParameterDestructuring
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20a4
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method Calculator::.ctor
-
-	.method public hidebysig 
-		instance object 'add' (
-			object $p0
-		) cil managed 
-	{
-		// Method begins at RVA 0x20e0
-		// Header size: 12
-		// Code size: 67 (0x43)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] object,
-			[2] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: brfalse IL_0011
-
-		IL_0006: ldarg.1
-		IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_000c: brfalse IL_0021
-
-		IL_0011: ldarg.1
-		IL_0012: ldstr ""
-		IL_0017: ldstr "a"
-		IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-
-		IL_0021: ldarg.1
-		IL_0022: ldstr "a"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_002c: stloc.0
-		IL_002d: ldarg.1
-		IL_002e: ldstr "b"
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0038: stloc.1
-		IL_0039: ldloc.0
-		IL_003a: ldloc.1
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0040: stloc.2
-		IL_0041: ldloc.2
-		IL_0042: ret
-	} // end of method Calculator::'add'
-
-	.method public hidebysig 
-		instance object multiply (
-			object $p0
-		) cil managed 
-	{
-		// Method begins at RVA 0x2130
-		// Header size: 12
-		// Code size: 82 (0x52)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] object,
-			[2] float64,
-			[3] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: brfalse IL_0011
-
-		IL_0006: ldarg.1
-		IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_000c: brfalse IL_0021
-
-		IL_0011: ldarg.1
-		IL_0012: ldstr ""
-		IL_0017: ldstr "x"
-		IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-
-		IL_0021: ldarg.1
-		IL_0022: ldstr "x"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_002c: stloc.0
-		IL_002d: ldarg.1
-		IL_002e: ldstr "y"
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0038: stloc.1
-		IL_0039: ldloc.0
-		IL_003a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_003f: stloc.2
-		IL_0040: ldloc.2
-		IL_0041: ldloc.1
-		IL_0042: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0047: mul
-		IL_0048: stloc.2
-		IL_0049: ldloc.2
-		IL_004a: box [System.Runtime]System.Double
-		IL_004f: stloc.3
-		IL_0050: ldloc.3
-		IL_0051: ret
-	} // end of method Calculator::multiply
-
-} // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_ParameterDestructuring.Formatter
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20cc
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method Formatter::.ctor
-
-	.method public hidebysig 
-		instance object formatPerson (
-			object $p0
-		) cil managed 
-	{
-		// Method begins at RVA 0x22f8
-		// Header size: 12
-		// Code size: 123 (0x7b)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] object,
-			[2] object,
-			[3] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: brfalse IL_0011
-
-		IL_0006: ldarg.1
-		IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_000c: brfalse IL_0021
-
-		IL_0011: ldarg.1
-		IL_0012: ldstr ""
-		IL_0017: ldstr "name"
-		IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-
-		IL_0021: ldarg.1
-		IL_0022: ldstr "name"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_002c: stloc.0
-		IL_002d: ldarg.1
-		IL_002e: ldstr "age"
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0038: stloc.1
-		IL_0039: ldarg.1
-		IL_003a: ldstr "city"
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0044: stloc.2
-		IL_0045: ldloc.0
-		IL_0046: ldstr " from "
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0050: stloc.3
-		IL_0051: ldloc.3
-		IL_0052: ldloc.2
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0058: stloc.3
-		IL_0059: ldloc.3
-		IL_005a: ldstr " (age: "
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0064: stloc.3
-		IL_0065: ldloc.3
-		IL_0066: ldloc.1
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_006c: stloc.3
-		IL_006d: ldloc.3
-		IL_006e: ldstr ")"
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0078: stloc.3
-		IL_0079: ldloc.3
-		IL_007a: ret
-	} // end of method Formatter::formatPerson
-
-	.method public hidebysig 
-		instance object formatDate (
-			object $p0
-		) cil managed 
-	{
-		// Method begins at RVA 0x227c
-		// Header size: 12
-		// Code size: 111 (0x6f)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] object,
-			[2] object,
-			[3] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: brfalse IL_0011
-
-		IL_0006: ldarg.1
-		IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_000c: brfalse IL_0021
-
-		IL_0011: ldarg.1
-		IL_0012: ldstr ""
-		IL_0017: ldstr "year"
-		IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-
-		IL_0021: ldarg.1
-		IL_0022: ldstr "year"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_002c: stloc.0
-		IL_002d: ldarg.1
-		IL_002e: ldstr "month"
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0038: stloc.1
-		IL_0039: ldarg.1
-		IL_003a: ldstr "day"
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0044: stloc.2
-		IL_0045: ldloc.0
-		IL_0046: ldstr "-"
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0050: stloc.3
-		IL_0051: ldloc.3
-		IL_0052: ldloc.1
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0058: stloc.3
-		IL_0059: ldloc.3
-		IL_005a: ldstr "-"
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0064: stloc.3
-		IL_0065: ldloc.3
-		IL_0066: ldloc.2
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_006c: stloc.3
-		IL_006d: ldloc.3
-		IL_006e: ret
-	} // end of method Formatter::formatDate
-
-} // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Formatter
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_ParameterDestructuring.Config
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public string url
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x20b8
-		// Header size: 12
-		// Code size: 7 (0x7)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
-	} // end of method Config::.ctor
-
-	.method public hidebysig 
-		instance object setConnection (
-			object $p0
-		) cil managed 
-	{
-		// Method begins at RVA 0x2190
-		// Header size: 12
-		// Code size: 224 (0xe0)
-		.maxstack 32
-		.locals init (
-			[0] object,
-			[1] object,
-			[2] object,
-			[3] object,
-			[4] bool,
-			[5] object,
-			[6] object
-		)
-
-		IL_0000: ldarg.1
-		IL_0001: brfalse IL_0011
-
-		IL_0006: ldarg.1
-		IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_000c: brfalse IL_0021
-
-		IL_0011: ldarg.1
-		IL_0012: ldstr ""
-		IL_0017: ldstr "host"
-		IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-
-		IL_0021: ldarg.1
-		IL_0022: ldstr "host"
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_002c: stloc.3
-		IL_002d: ldloc.3
-		IL_002e: brtrue IL_003e
-
-		IL_0033: ldstr "localhost"
-		IL_0038: stloc.0
-		IL_0039: br IL_0040
-
-		IL_003e: ldloc.3
-		IL_003f: stloc.0
-
-		IL_0040: ldarg.1
-		IL_0041: ldstr "port"
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_004b: stloc.3
-		IL_004c: ldloc.3
-		IL_004d: brtrue IL_0066
-
-		IL_0052: ldc.r8 8080
-		IL_005b: box [System.Runtime]System.Double
-		IL_0060: stloc.1
-		IL_0061: br IL_0068
-
-		IL_0066: ldloc.3
-		IL_0067: stloc.1
-
-		IL_0068: ldarg.1
-		IL_0069: ldstr "secure"
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0073: stloc.3
-		IL_0074: ldloc.3
-		IL_0075: brtrue IL_0086
-
-		IL_007a: ldc.i4.0
-		IL_007b: box [System.Runtime]System.Boolean
-		IL_0080: stloc.2
-		IL_0081: br IL_0088
-
-		IL_0086: ldloc.3
-		IL_0087: stloc.2
-
-		IL_0088: ldloc.2
-		IL_0089: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_008e: stloc.s 4
-		IL_0090: ldloc.s 4
-		IL_0092: brfalse IL_00a3
-
-		IL_0097: ldstr "https://"
-		IL_009c: stloc.s 6
-		IL_009e: br IL_00aa
-
-		IL_00a3: ldstr "http://"
-		IL_00a8: stloc.s 6
-
-		IL_00aa: ldloc.s 6
-		IL_00ac: ldloc.0
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00b2: stloc.s 6
-		IL_00b4: ldloc.s 6
-		IL_00b6: ldstr ":"
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00c0: stloc.s 6
-		IL_00c2: ldloc.s 6
-		IL_00c4: ldloc.1
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00ca: stloc.s 6
-		IL_00cc: ldarg.0
-		IL_00cd: ldloc.s 6
-		IL_00cf: castclass [System.Runtime]System.String
-		IL_00d4: stfld string Classes.Classes_ClassMethod_ParameterDestructuring.Config::url
-		IL_00d9: ldarg.0
-		IL_00da: ldfld string Classes.Classes_ClassMethod_ParameterDestructuring.Config::url
-		IL_00df: ret
-	} // end of method Config::setConnection
-
-} // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Config
-
-.class public auto ansi beforefieldinit Scripts.Classes_ClassMethod_ParameterDestructuring
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -614,12 +614,12 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2380
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 905 (0x389)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_ParameterDestructuring,
+			[0] class Modules.Classes_ClassMethod_ParameterDestructuring/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
@@ -627,9 +627,9 @@
 			[5] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassMethod_ParameterDestructuring::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassMethod_ParameterDestructuring/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::.ctor()
+		IL_0006: newobj instance void Modules.Classes_ClassMethod_ParameterDestructuring/Calculator::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldc.i4.1
 		IL_000d: newarr [System.Runtime]System.Object
@@ -649,14 +649,14 @@
 		IL_004b: stelem.ref
 		IL_004c: stloc.s 4
 		IL_004e: ldloc.1
-		IL_004f: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
+		IL_004f: isinst Modules.Classes_ClassMethod_ParameterDestructuring/Calculator
 		IL_0054: dup
 		IL_0055: brfalse IL_006a
 
 		IL_005a: ldloc.s 4
 		IL_005c: ldc.i4.0
 		IL_005d: ldelem.ref
-		IL_005e: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::'add'(object)
+		IL_005e: callvirt instance object Modules.Classes_ClassMethod_ParameterDestructuring/Calculator::'add'(object)
 		IL_0063: stloc.s 5
 		IL_0065: br IL_007a
 
@@ -694,14 +694,14 @@
 		IL_00cf: stelem.ref
 		IL_00d0: stloc.s 4
 		IL_00d2: ldloc.1
-		IL_00d3: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
+		IL_00d3: isinst Modules.Classes_ClassMethod_ParameterDestructuring/Calculator
 		IL_00d8: dup
 		IL_00d9: brfalse IL_00ee
 
 		IL_00de: ldloc.s 4
 		IL_00e0: ldc.i4.0
 		IL_00e1: ldelem.ref
-		IL_00e2: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::multiply(object)
+		IL_00e2: callvirt instance object Modules.Classes_ClassMethod_ParameterDestructuring/Calculator::multiply(object)
 		IL_00e7: stloc.s 5
 		IL_00e9: br IL_00fe
 
@@ -721,7 +721,7 @@
 		IL_010d: stelem.ref
 		IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0113: pop
-		IL_0114: newobj instance void Classes.Classes_ClassMethod_ParameterDestructuring.Formatter::.ctor()
+		IL_0114: newobj instance void Modules.Classes_ClassMethod_ParameterDestructuring/Formatter::.ctor()
 		IL_0119: stloc.2
 		IL_011a: ldc.i4.1
 		IL_011b: newarr [System.Runtime]System.Object
@@ -744,14 +744,14 @@
 		IL_0160: stelem.ref
 		IL_0161: stloc.s 4
 		IL_0163: ldloc.2
-		IL_0164: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Formatter
+		IL_0164: isinst Modules.Classes_ClassMethod_ParameterDestructuring/Formatter
 		IL_0169: dup
 		IL_016a: brfalse IL_017f
 
 		IL_016f: ldloc.s 4
 		IL_0171: ldc.i4.0
 		IL_0172: ldelem.ref
-		IL_0173: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Formatter::formatPerson(object)
+		IL_0173: callvirt instance object Modules.Classes_ClassMethod_ParameterDestructuring/Formatter::formatPerson(object)
 		IL_0178: stloc.s 5
 		IL_017a: br IL_018f
 
@@ -794,14 +794,14 @@
 		IL_01fd: stelem.ref
 		IL_01fe: stloc.s 4
 		IL_0200: ldloc.2
-		IL_0201: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Formatter
+		IL_0201: isinst Modules.Classes_ClassMethod_ParameterDestructuring/Formatter
 		IL_0206: dup
 		IL_0207: brfalse IL_021c
 
 		IL_020c: ldloc.s 4
 		IL_020e: ldc.i4.0
 		IL_020f: ldelem.ref
-		IL_0210: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Formatter::formatDate(object)
+		IL_0210: callvirt instance object Modules.Classes_ClassMethod_ParameterDestructuring/Formatter::formatDate(object)
 		IL_0215: stloc.s 5
 		IL_0217: br IL_022c
 
@@ -821,7 +821,7 @@
 		IL_023b: stelem.ref
 		IL_023c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0241: pop
-		IL_0242: newobj instance void Classes.Classes_ClassMethod_ParameterDestructuring.Config::.ctor()
+		IL_0242: newobj instance void Modules.Classes_ClassMethod_ParameterDestructuring/Config::.ctor()
 		IL_0247: stloc.3
 		IL_0248: ldc.i4.1
 		IL_0249: newarr [System.Runtime]System.Object
@@ -835,14 +835,14 @@
 		IL_0265: stelem.ref
 		IL_0266: stloc.s 4
 		IL_0268: ldloc.3
-		IL_0269: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Config
+		IL_0269: isinst Modules.Classes_ClassMethod_ParameterDestructuring/Config
 		IL_026e: dup
 		IL_026f: brfalse IL_0284
 
 		IL_0274: ldloc.s 4
 		IL_0276: ldc.i4.0
 		IL_0277: ldelem.ref
-		IL_0278: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Config::setConnection(object)
+		IL_0278: callvirt instance object Modules.Classes_ClassMethod_ParameterDestructuring/Config::setConnection(object)
 		IL_027d: stloc.s 5
 		IL_027f: br IL_0294
 
@@ -884,14 +884,14 @@
 		IL_02f1: stelem.ref
 		IL_02f2: stloc.s 4
 		IL_02f4: ldloc.3
-		IL_02f5: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Config
+		IL_02f5: isinst Modules.Classes_ClassMethod_ParameterDestructuring/Config
 		IL_02fa: dup
 		IL_02fb: brfalse IL_0310
 
 		IL_0300: ldloc.s 4
 		IL_0302: ldc.i4.0
 		IL_0303: ldelem.ref
-		IL_0304: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Config::setConnection(object)
+		IL_0304: callvirt instance object Modules.Classes_ClassMethod_ParameterDestructuring/Config::setConnection(object)
 		IL_0309: stloc.s 5
 		IL_030b: br IL_0320
 
@@ -919,14 +919,14 @@
 		IL_0343: stelem.ref
 		IL_0344: stloc.s 4
 		IL_0346: ldloc.3
-		IL_0347: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Config
+		IL_0347: isinst Modules.Classes_ClassMethod_ParameterDestructuring/Config
 		IL_034c: dup
 		IL_034d: brfalse IL_0362
 
 		IL_0352: ldloc.s 4
 		IL_0354: ldc.i4.0
 		IL_0355: ldelem.ref
-		IL_0356: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Config::setConnection(object)
+		IL_0356: callvirt instance object Modules.Classes_ClassMethod_ParameterDestructuring/Config::setConnection(object)
 		IL_035b: stloc.s 5
 		IL_035d: br IL_0372
 
@@ -947,9 +947,9 @@
 		IL_0382: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0387: pop
 		IL_0388: ret
-	} // end of method Classes_ClassMethod_ParameterDestructuring::Main
+	} // end of method Classes_ClassMethod_ParameterDestructuring::__js_module_init__
 
-} // end of class Scripts.Classes_ClassMethod_ParameterDestructuring
+} // end of class Modules.Classes_ClassMethod_ParameterDestructuring
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -958,7 +958,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2715
+		// Method begins at RVA 0x2714
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -966,7 +966,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassMethod_ParameterDestructuring::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_ClassMethod_ParameterDestructuring::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

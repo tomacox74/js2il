@@ -3,18 +3,40 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.ControlFlow_ForLoop_GreaterThanOrEqual
+.class private auto ansi beforefieldinit Modules.ControlFlow_ForLoop_GreaterThanOrEqual
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L1C29
+	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L1C29
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20b7
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L1C29::.ctor
+
+		} // end of class Block_L1C29
+
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x20ae
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -23,34 +45,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L1C29::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Block_L1C29
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method ControlFlow_ForLoop_GreaterThanOrEqual::.ctor
-
-} // end of class Scopes.ControlFlow_ForLoop_GreaterThanOrEqual
-
-.class public auto ansi beforefieldinit Scripts.ControlFlow_ForLoop_GreaterThanOrEqual
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -58,17 +60,17 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2064
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 82 (0x52)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_ForLoop_GreaterThanOrEqual,
+			[0] class Modules.ControlFlow_ForLoop_GreaterThanOrEqual/Scope,
 			[1] float64,
 			[2] object
 		)
 
-		IL_0000: newobj instance void Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::.ctor()
+		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_GreaterThanOrEqual/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 0.0
 		IL_000f: stloc.1
@@ -100,9 +102,9 @@
 		// end loop
 
 		IL_0051: ret
-	} // end of method ControlFlow_ForLoop_GreaterThanOrEqual::Main
+	} // end of method ControlFlow_ForLoop_GreaterThanOrEqual::__js_module_init__
 
-} // end of class Scripts.ControlFlow_ForLoop_GreaterThanOrEqual
+} // end of class Modules.ControlFlow_ForLoop_GreaterThanOrEqual
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -111,7 +113,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c2
+		// Method begins at RVA 0x20c0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -119,7 +121,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.ControlFlow_ForLoop_GreaterThanOrEqual::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.ControlFlow_ForLoop_GreaterThanOrEqual::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

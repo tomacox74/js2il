@@ -3,7 +3,7 @@
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod
+.class private auto ansi beforefieldinit Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit constructor
+		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2062
+				// Method begins at RVA 0x21a1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,18 +27,18 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method constructor::.ctor
+			} // end of method Scope::.ctor
 
-		} // end of class constructor
+		} // end of class Scope
 
-		.class nested public auto ansi beforefieldinit 'add'
+		.class nested private auto ansi beforefieldinit Scope_ctor
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x206b
+				// Method begins at RVA 0x21aa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -47,22 +47,42 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method 'add'::.ctor
+			} // end of method Scope_ctor::.ctor
 
-		} // end of class add
+		} // end of class Scope_ctor
 
-		.class nested public auto ansi beforefieldinit addRange
+		.class nested private auto ansi beforefieldinit Scope_add
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21b3
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_add::.ctor
+
+		} // end of class Scope_add
+
+		.class nested private auto ansi beforefieldinit Scope_addRange
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested public auto ansi beforefieldinit Block_L9C37
+			.class nested private auto ansi beforefieldinit Block_L9C37
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x207d
+					// Method begins at RVA 0x21c5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -80,7 +100,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2074
+				// Method begins at RVA 0x21bc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -89,18 +109,18 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method addRange::.ctor
+			} // end of method Scope_addRange::.ctor
 
-		} // end of class addRange
+		} // end of class Scope_addRange
 
-		.class nested public auto ansi beforefieldinit log
+		.class nested private auto ansi beforefieldinit Scope_log
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2086
+				// Method begins at RVA 0x21ce
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -109,16 +129,133 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method log::.ctor
+			} // end of method Scope_log::.ctor
 
-		} // end of class log
+		} // end of class Scope_log
 
 
+		// Fields
+		.field public object total
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object start
+			) cil managed 
+		{
+			// Method begins at RVA 0x20e4
+			// Header size: 12
+			// Code size: 14 (0xe)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldarg.1
+			IL_0008: stfld object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::total
+			IL_000d: ret
+		} // end of method Accumulator::.ctor
+
+		.method public hidebysig 
+			instance object 'add' (
+				object n
+			) cil managed 
+		{
+			// Method begins at RVA 0x214c
+			// Header size: 12
+			// Code size: 22 (0x16)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::total
+			IL_0006: ldarg.1
+			IL_0007: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_000c: stloc.0
+			IL_000d: ldarg.0
+			IL_000e: ldloc.0
+			IL_000f: stfld object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::total
+			IL_0014: ldnull
+			IL_0015: ret
+		} // end of method Accumulator::'add'
+
+		.method public hidebysig 
+			instance object addRange (
+				object count
+			) cil managed 
+		{
+			// Method begins at RVA 0x2100
+			// Header size: 12
+			// Code size: 61 (0x3d)
+			.maxstack 32
+			.locals init (
+				[0] float64,
+				[1] object
+			)
+
+			IL_0000: ldc.r8 1
+			IL_0009: stloc.0
+			// loop start (head: IL_000a)
+				IL_000a: ldloc.0
+				IL_000b: ldarg.1
+				IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0011: cgt
+				IL_0013: ldc.i4.0
+				IL_0014: ceq
+				IL_0016: brfalse IL_003b
+
+				IL_001b: ldloc.0
+				IL_001c: box [System.Runtime]System.Double
+				IL_0021: stloc.1
+				IL_0022: ldarg.0
+				IL_0023: ldloc.1
+				IL_0024: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::'add'(object)
+				IL_0029: pop
+				IL_002a: ldloc.0
+				IL_002b: ldc.r8 1
+				IL_0034: add
+				IL_0035: stloc.0
+				IL_0036: br IL_000a
+			// end loop
+
+			IL_003b: ldnull
+			IL_003c: ret
+		} // end of method Accumulator::addRange
+
+		.method public hidebysig 
+			instance object log () cil managed 
+		{
+			// Method begins at RVA 0x2170
+			// Header size: 12
+			// Code size: 28 (0x1c)
+			.maxstack 32
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.1
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldarg.0
+			IL_000e: ldfld object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::total
+			IL_0013: stelem.ref
+			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0019: pop
+			IL_001a: ldnull
+			IL_001b: ret
+		} // end of method Accumulator::log
+
+	} // end of class Accumulator
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x2198
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -127,151 +264,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Accumulator::.ctor
+		} // end of method Scope::.ctor
 
-	} // end of class Accumulator
+	} // end of class Scope
 
 
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Classes_ClassMethod_ForLoop_CallsAnotherMethod::.ctor
-
-} // end of class Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod
-
-.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public object total
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object start
-		) cil managed 
-	{
-		// Method begins at RVA 0x2090
-		// Header size: 12
-		// Code size: 14 (0xe)
-		.maxstack 32
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::total
-		IL_000d: ret
-	} // end of method Accumulator::.ctor
-
-	.method public hidebysig 
-		instance object 'add' (
-			object n
-		) cil managed 
-	{
-		// Method begins at RVA 0x20f8
-		// Header size: 12
-		// Code size: 22 (0x16)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
-
-		IL_0000: ldarg.0
-		IL_0001: ldfld object Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::total
-		IL_0006: ldarg.1
-		IL_0007: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_000c: stloc.0
-		IL_000d: ldarg.0
-		IL_000e: ldloc.0
-		IL_000f: stfld object Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::total
-		IL_0014: ldnull
-		IL_0015: ret
-	} // end of method Accumulator::'add'
-
-	.method public hidebysig 
-		instance object addRange (
-			object count
-		) cil managed 
-	{
-		// Method begins at RVA 0x20ac
-		// Header size: 12
-		// Code size: 61 (0x3d)
-		.maxstack 32
-		.locals init (
-			[0] float64,
-			[1] object
-		)
-
-		IL_0000: ldc.r8 1
-		IL_0009: stloc.0
-		// loop start (head: IL_000a)
-			IL_000a: ldloc.0
-			IL_000b: ldarg.1
-			IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0011: cgt
-			IL_0013: ldc.i4.0
-			IL_0014: ceq
-			IL_0016: brfalse IL_003b
-
-			IL_001b: ldloc.0
-			IL_001c: box [System.Runtime]System.Double
-			IL_0021: stloc.1
-			IL_0022: ldarg.0
-			IL_0023: ldloc.1
-			IL_0024: callvirt instance object Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::'add'(object)
-			IL_0029: pop
-			IL_002a: ldloc.0
-			IL_002b: ldc.r8 1
-			IL_0034: add
-			IL_0035: stloc.0
-			IL_0036: br IL_000a
-		// end loop
-
-		IL_003b: ldnull
-		IL_003c: ret
-	} // end of method Accumulator::addRange
-
-	.method public hidebysig 
-		instance object log () cil managed 
-	{
-		// Method begins at RVA 0x211c
-		// Header size: 12
-		// Code size: 28 (0x1c)
-		.maxstack 32
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldarg.0
-		IL_000e: ldfld object Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::total
-		IL_0013: stelem.ref
-		IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0019: pop
-		IL_001a: ldnull
-		IL_001b: ret
-	} // end of method Accumulator::log
-
-} // end of class Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator
-
-.class public auto ansi beforefieldinit Scripts.Classes_ClassMethod_ForLoop_CallsAnotherMethod
-	extends [System.Runtime]System.Object
-{
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -279,21 +279,21 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2144
+		// Method begins at RVA 0x2050
 		// Header size: 12
 		// Code size: 135 (0x87)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod,
+			[0] class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Scope,
 			[1] object,
 			[2] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 0.0
 		IL_000f: box [System.Runtime]System.Double
-		IL_0014: newobj instance void Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::.ctor(object)
+		IL_0014: newobj instance void Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::.ctor(object)
 		IL_0019: stloc.1
 		IL_001a: ldc.i4.1
 		IL_001b: newarr [System.Runtime]System.Object
@@ -304,14 +304,14 @@
 		IL_0030: stelem.ref
 		IL_0031: stloc.2
 		IL_0032: ldloc.1
-		IL_0033: isinst Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator
+		IL_0033: isinst Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator
 		IL_0038: dup
 		IL_0039: brfalse IL_004c
 
 		IL_003e: ldloc.2
 		IL_003f: ldc.i4.0
 		IL_0040: ldelem.ref
-		IL_0041: callvirt instance object Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::addRange(object)
+		IL_0041: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::addRange(object)
 		IL_0046: pop
 		IL_0047: br IL_005a
 
@@ -326,11 +326,11 @@
 		IL_005b: newarr [System.Runtime]System.Object
 		IL_0060: stloc.2
 		IL_0061: ldloc.1
-		IL_0062: isinst Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator
+		IL_0062: isinst Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator
 		IL_0067: dup
 		IL_0068: brfalse IL_0078
 
-		IL_006d: callvirt instance object Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::log()
+		IL_006d: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::log()
 		IL_0072: pop
 		IL_0073: br IL_0086
 
@@ -342,9 +342,9 @@
 		IL_0085: pop
 
 		IL_0086: ret
-	} // end of method Classes_ClassMethod_ForLoop_CallsAnotherMethod::Main
+	} // end of method Classes_ClassMethod_ForLoop_CallsAnotherMethod::__js_module_init__
 
-} // end of class Scripts.Classes_ClassMethod_ForLoop_CallsAnotherMethod
+} // end of class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -361,7 +361,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassMethod_ForLoop_CallsAnotherMethod::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

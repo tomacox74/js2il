@@ -6,6 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
+using Js2IL.Utilities;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +17,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly MetadataBuilder _metadata;
         private readonly BaseClassLibraryReferences _bcl;
         private readonly ClassRegistry _classRegistry;
+        private readonly NestedTypeRelationshipRegistry _nestedTypeRelationshipRegistry;
         private readonly string _moduleName;
 
         private readonly IServiceProvider _serviceProvider;
@@ -25,12 +27,14 @@ namespace Js2IL.Services.ILGenerators
             MetadataBuilder metadata,
             BaseClassLibraryReferences bcl,
             ClassRegistry classRegistry,
+            NestedTypeRelationshipRegistry nestedTypeRelationshipRegistry,
             string moduleName)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
             _bcl = bcl ?? throw new ArgumentNullException(nameof(bcl));
             _classRegistry = classRegistry ?? throw new ArgumentNullException(nameof(classRegistry));
+            _nestedTypeRelationshipRegistry = nestedTypeRelationshipRegistry ?? throw new ArgumentNullException(nameof(nestedTypeRelationshipRegistry));
             _moduleName = moduleName ?? throw new ArgumentNullException(nameof(moduleName));
         }
 
@@ -65,19 +69,130 @@ namespace Js2IL.Services.ILGenerators
         public void DeclareClasses(SymbolTable table)
         {
             if (table == null) throw new ArgumentNullException(nameof(table));
-            EmitClassesRecursiveTwoPhase(table.Root);
+
+            // When compiling a JS "module" (a single entry file), the generated module root type is
+            // Modules.<ModuleName>. Top-level JS classes should be nested under that module type.
+            // This keeps reflection names module-qualified (Modules.<Module>+<ClassName>) and avoids
+            // emitting a parallel top-level namespace like Classes.<ModuleName>.<ClassName>.
+            var moduleTypeRegistry = _serviceProvider.GetRequiredService<ModuleTypeMetadataRegistry>();
+            moduleTypeRegistry.TryGet(_moduleName, out var moduleTypeHandle);
+
+            EmitClassesRecursiveTwoPhase(table.Root, moduleTypeHandle);
         }
 
-        private void EmitClassesRecursiveTwoPhase(Scope scope)
+        private bool TryResolveEnclosingTypeForClass(Scope classScope, TypeDefinitionHandle moduleTypeHandle, out TypeDefinitionHandle parentType)
+        {
+            parentType = default;
+
+            // Walk up to find the nearest enclosing callable owner type. If none, fall back to
+            // module root type for global/module-scope classes.
+            for (var current = classScope.Parent; current != null; current = current.Parent)
+            {
+                if (current.Kind == ScopeKind.Global)
+                {
+                    if (!moduleTypeHandle.IsNil)
+                    {
+                        parentType = moduleTypeHandle;
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                if (current.Kind != ScopeKind.Function)
+                {
+                    continue;
+                }
+
+                // Function declarations have a stable owner type: Modules.<Module>+<FunctionName>
+                if (current.AstNode is FunctionDeclaration)
+                {
+                    var functionTypes = _serviceProvider.GetRequiredService<FunctionTypeMetadataRegistry>();
+                    var fd = (FunctionDeclaration)current.AstNode;
+                    var functionName = (fd.Id as Identifier)?.Name ?? current.Name;
+
+                    if (!functionTypes.TryGet(_moduleName, functionName, out var ownerType) || ownerType.IsNil)
+                    {
+                        // Owner type not yet declared (planned pipeline may defer this). Declare it now so
+                        // nested classes can be emitted under it.
+                        var callables = _serviceProvider.GetRequiredService<CallableRegistry>();
+                        if (!callables.TryGetCallableIdForAstNode(fd, out var callable))
+                        {
+                            return false;
+                        }
+
+                        if (!callables.TryGetDeclaredToken(callable, out var tok) || tok.Kind != HandleKind.MethodDefinition)
+                        {
+                            return false;
+                        }
+
+                        var expected = (MethodDefinitionHandle)tok;
+                        if (expected.IsNil)
+                        {
+                            return false;
+                        }
+
+                        // Owner type will be nested under the module TypeDef later via NestedClass rows.
+                        var tb = new TypeBuilder(_metadata, string.Empty, functionName);
+                        ownerType = tb.AddTypeDefinition(
+                            TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+                            _bcl.ObjectType,
+                            firstFieldOverride: null,
+                            firstMethodOverride: expected);
+
+                        functionTypes.Add(_moduleName, functionName, ownerType);
+                    }
+
+                    parentType = ownerType;
+                    return true;
+                }
+
+                // Arrow functions and function expressions have an anonymous owner type recorded in the registry.
+                if (current.AstNode is ArrowFunctionExpression or FunctionExpression)
+                {
+                    var anon = _serviceProvider.GetService<AnonymousCallableTypeMetadataRegistry>();
+                    if (anon != null)
+                    {
+                        var declaringScope = current.Parent != null
+                            ? ScopeNaming.GetRegistryScopeName(current.Parent)
+                            : _moduleName;
+
+                        if (anon.TryGetOwnerTypeHandle(_moduleName, declaringScope, current.Name, out var anonOwner)
+                            && !anonOwner.IsNil)
+                        {
+                            parentType = anonOwner;
+                            return true;
+                        }
+                    }
+
+                    // If we can't resolve the anonymous owner type, keep legacy behavior.
+                    return false;
+                }
+
+                // Some function-like scopes (e.g., class methods) do not have separate owner types.
+                // Keep legacy behavior in that case.
+                return false;
+            }
+
+            return false;
+        }
+
+        private void EmitClassesRecursiveTwoPhase(Scope scope, TypeDefinitionHandle moduleTypeHandle)
         {
             foreach (var child in scope.Children)
             {
                 if (child.Kind == ScopeKind.Class && child.AstNode is ClassDeclaration cdecl)
                 {
-                    DeclareClassTwoPhase(child, cdecl, parentType: default);
+                    // Nest module-scope classes under Modules.<ModuleName>, and function-local classes
+                    // under the enclosing function owner type.
+                    var parentType = TryResolveEnclosingTypeForClass(child, moduleTypeHandle, out var resolved)
+                        ? resolved
+                        : default;
+
+                    DeclareClassTwoPhase(child, cdecl, parentType);
                 }
 
-                EmitClassesRecursiveTwoPhase(child);
+                EmitClassesRecursiveTwoPhase(child, moduleTypeHandle);
             }
         }
 
@@ -89,7 +204,18 @@ namespace Js2IL.Services.ILGenerators
             var registryClassName = GetRegistryClassName(classScope);
             var declaringScopeName = GetClassDeclaringScopeName(classScope);
 
-            var ns = classScope.DotNetNamespace ?? "Classes";
+            // Idempotency: classes may be predeclared in an earlier pass to stabilize TypeDef ordering.
+            // If already declared, skip emitting a duplicate TypeDef/fields.
+            if (_classRegistry.TryGet(registryClassName, out var existingTypeDef) && !existingTypeDef.IsNil)
+            {
+                return existingTypeDef;
+            }
+
+            // Registry key can remain stable (based on DotNetNamespace/DotNetTypeName), but the emitted
+            // CLR type layout should reflect nesting when parentType is provided.
+            var ns = parentType.IsNil
+                ? (classScope.DotNetNamespace ?? "Classes")
+                : string.Empty;
             var name = classScope.DotNetTypeName ?? classScope.Name;
             var tb = new TypeBuilder(_metadata, ns, name);
 
@@ -428,7 +554,7 @@ namespace Js2IL.Services.ILGenerators
             var typeHandle = tb.AddTypeDefinition(typeAttrs, _bcl.ObjectType, firstFieldOverride: null, firstMethodOverride: ctorMethodDef);
             if (!parentType.IsNil)
             {
-                _metadata.AddNestedType(typeHandle, parentType);
+                _nestedTypeRelationshipRegistry.Add(typeHandle, parentType);
             }
             _classRegistry.Register(registryClassName, typeHandle);
 
