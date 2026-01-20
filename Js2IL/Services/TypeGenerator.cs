@@ -23,7 +23,6 @@ namespace Js2IL.Services
         private readonly ModuleTypeMetadataRegistry _moduleTypeRegistry;
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes;
         private readonly Dictionary<string, List<FieldDefinitionHandle>> _scopeFields;
-        private readonly Dictionary<string, MethodDefinitionHandle> _scopeConstructors;
         private readonly VariableRegistry _variableRegistry;
         private readonly int _deferredCtorStartRow;
         private int _nextDeferredCtorRow;
@@ -44,7 +43,6 @@ namespace Js2IL.Services
             _variableRegistry = variableRegistry;
             _scopeTypes = new Dictionary<string, TypeDefinitionHandle>();
             _scopeFields = new Dictionary<string, List<FieldDefinitionHandle>>();
-            _scopeConstructors = new Dictionary<string, MethodDefinitionHandle>();
             _deferredCtorStartRow = deferredCtorStartRow;
             _nextDeferredCtorRow = deferredCtorStartRow;
             _deferredCtorPlan = new List<(string, string, string, bool, bool, MethodDefinitionHandle)>();
@@ -133,21 +131,8 @@ namespace Js2IL.Services
             _scopeFields[scopeKey] = new List<FieldDefinitionHandle>();
             var scopeFields = _scopeFields[scopeKey];
 
-            // Determine if this function scope contains nested functions
-            bool hasNestedFunctions = scope.Children.Any(c => c.Kind == ScopeKind.Function);
-            
             // Check if this is an arrow function scope (arrow functions always need parameter fields for closure semantics)
             bool isArrowFunction = scope.AstNode is Acornima.Ast.ArrowFunctionExpression;
-            
-            // Check if this scope has parameters with default values
-            Acornima.Ast.NodeList<Acornima.Ast.Node>? paramList = scope.AstNode switch
-            {
-                Acornima.Ast.FunctionDeclaration fd => fd.Params,
-                Acornima.Ast.FunctionExpression fe => fe.Params,
-                Acornima.Ast.ArrowFunctionExpression af => af.Params,
-                _ => null
-            };
-            bool hasDefaultParameters = paramList.HasValue && paramList.Value.Any(p => p is Acornima.Ast.AssignmentPattern);
 
             foreach (var binding in scope.Bindings.Values)
             {
@@ -317,43 +302,6 @@ namespace Js2IL.Services
         }
 
         /// <summary>
-        /// Recursively collects all nesting relationships from the scope tree.
-        /// </summary>
-        private void CollectNestingRelationships(Scope scope, List<(TypeDefinitionHandle, TypeDefinitionHandle)> relationships)
-        {
-            // For each child scope, collect the nesting relationship
-            foreach (var childScope in scope.Children)
-            {
-                var parentTypeHandle = _scopeTypes[GetRegistryScopeName(scope)];
-                var nestedTypeHandle = _scopeTypes[GetRegistryScopeName(childScope)];
-                
-                relationships.Add((nestedTypeHandle, parentTypeHandle));
-                
-                // Recursively collect child relationships
-                CollectNestingRelationships(childScope, relationships);
-            }
-        }
-
-        /// <summary>
-        /// Phase 3: Establishes nesting relationships after all types are created.
-        /// </summary>
-        private void CreateNestingRelationships(Scope scope)
-        {
-            // For each child scope, establish the nesting relationship
-            foreach (var childScope in scope.Children)
-            {
-                var parentTypeHandle = _scopeTypes[GetRegistryScopeName(scope)];
-                var nestedTypeHandle = _scopeTypes[GetRegistryScopeName(childScope)];
-                
-                // Establish the nesting relationship
-                _metadataBuilder.AddNestedType(nestedTypeHandle, parentTypeHandle);
-                
-                // Recursively process child relationships
-                CreateNestingRelationships(childScope);
-            }
-        }
-
-        /// <summary>
         /// Creates a single type definition for a scope.
         /// All fields must already exist. All types are created as top-level types.
         /// </summary>
@@ -408,7 +356,6 @@ namespace Js2IL.Services
             // Store the type handle and constructor for later reference
             var scopeKey = GetRegistryScopeName(scope);
             _scopeTypes[scopeKey] = typeHandle;
-            _scopeConstructors[scopeKey] = ctorHandle;
             // Register the scope type immediately so even scopes without variables can be instantiated later.
             _variableRegistry.EnsureScopeType(scopeKey, typeHandle);
 
@@ -513,21 +460,9 @@ namespace Js2IL.Services
 
             // Add each binding as a variable in the registry
             int fieldIndex = 0;
-            // Determine if this scope contains nested functions (controls whether parameters get fields)
-            bool hasNestedFunctions = scope.Children.Any(c => c.Kind == ScopeKind.Function);
-            
+
             // Check if this is an arrow function scope (arrow functions always need parameter fields)
             bool isArrowFunction = scope.AstNode is Acornima.Ast.ArrowFunctionExpression;
-            
-            // Check if this scope has parameters with default values (must match CreateTypeFields logic)
-            Acornima.Ast.NodeList<Acornima.Ast.Node>? paramList = scope.AstNode switch
-            {
-                Acornima.Ast.FunctionDeclaration fd => fd.Params,
-                Acornima.Ast.FunctionExpression fe => fe.Params,
-                Acornima.Ast.ArrowFunctionExpression af => af.Params,
-                _ => null
-            };
-            bool hasDefaultParameters = paramList.HasValue && paramList.Value.Any(p => p is Acornima.Ast.AssignmentPattern);
             
             foreach (var binding in scope.Bindings)
             {
@@ -615,21 +550,6 @@ namespace Js2IL.Services
             {
                 PopulateVariableRegistry(childScope);
             }
-        }
-
-        private bool DoesShadowParentVariable(Scope scope, string variableName)
-        {
-            // Check if this variable exists in any parent scope
-            var currentScope = scope.Parent;
-            while (currentScope != null)
-            {
-                if (currentScope.Bindings.ContainsKey(variableName))
-                {
-                    return true;
-                }
-                currentScope = currentScope.Parent;
-            }
-            return false;
         }
     }
 }
