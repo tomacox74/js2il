@@ -20,7 +20,6 @@ namespace Js2IL.Services
         private readonly MetadataBuilder _metadataBuilder;
         private readonly BaseClassLibraryReferences _bclReferences;
         private readonly MethodBodyStreamEncoder _methodBodyStream;
-        private readonly ModuleTypeMetadataRegistry _moduleTypeRegistry;
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes;
         private readonly Dictionary<string, List<FieldDefinitionHandle>> _scopeFields;
         private readonly VariableRegistry _variableRegistry;
@@ -32,14 +31,12 @@ namespace Js2IL.Services
             MetadataBuilder metadataBuilder,
             BaseClassLibraryReferences bclReferences,
             MethodBodyStreamEncoder methodBodyStream,
-            ModuleTypeMetadataRegistry moduleTypeRegistry,
             VariableRegistry variableRegistry,
             int deferredCtorStartRow)
         {
             _metadataBuilder = metadataBuilder;
             _bclReferences = bclReferences;
             _methodBodyStream = methodBodyStream;
-            _moduleTypeRegistry = moduleTypeRegistry;
             _variableRegistry = variableRegistry;
             _scopeTypes = new Dictionary<string, TypeDefinitionHandle>();
             _scopeFields = new Dictionary<string, List<FieldDefinitionHandle>>();
@@ -57,6 +54,10 @@ namespace Js2IL.Services
             // Phase 1: Create all scope types (depth-first) for every scope discovered by the SymbolTable.
             // SymbolTable already contains scopes for function declarations, function expressions, arrow functions,
             // class methods, block scopes, etc. We rely on that being exhaustive and treat all of them uniformly.
+            //
+            // NOTE: This phase intentionally does NOT establish NestedClass relationships.
+            // Nesting relationships are recorded later once module and callable-owner TypeDefs exist
+            // (see JsMethodCompiler.EstablishModuleNesting and NestedTypeRelationshipRegistry).
             CreateAllTypes(symbolTable.Root, symbolTable.Root.Name);
 
             // Phase 2: Populate the variable registry (fields + metadata for every binding).
@@ -251,20 +252,9 @@ namespace Js2IL.Services
             var isGlobalScope = scope.Kind == ScopeKind.Global;
             var rootTypeName = isGlobalScope ? "Scope" : typeName;
 
-            // Global scope is nested under module type: Modules.<ModuleName>.Scope
-            TypeDefinitionHandle? enclosingModuleType = null;
-            if (isGlobalScope)
-            {
-                if (!_moduleTypeRegistry.TryGet(typeName, out var moduleTypeHandle) || moduleTypeHandle.IsNil)
-                {
-                    throw new InvalidOperationException(
-                        $"Expected module type handle to be registered for module '{typeName}', but none was found.");
-                }
-                enclosingModuleType = moduleTypeHandle;
-            }
-
-            var rootNamespace = isGlobalScope ? "" : "Scopes";
-            var parentType = CreateScopeType(scope, enclosingModuleType, rootTypeName, rootNamespace, isNestedType: isGlobalScope);
+            // All scope types are emitted with nested visibility; actual nesting relationships are
+            // established later in a single sorted pass via NestedTypeRelationshipRegistry.
+            var parentType = CreateScopeType(scope, rootTypeName);
             
             // Now create child types as nested types (skip duplicates by name under the same parent)
             var seenChildNames = new HashSet<string>();
@@ -285,7 +275,7 @@ namespace Js2IL.Services
         private TypeDefinitionHandle CreateAllTypesNested(Scope scope, string typeName, TypeDefinitionHandle parentType)
         {
             // First, recursively create all child types (depth-first)
-            var currentType = CreateScopeType(scope, parentType, typeName, "");
+            var currentType = CreateScopeType(scope, typeName);
             
             // Now create child types as nested types of this type (dedupe by name under this parent)
             var seenChildNames = new HashSet<string>();
@@ -305,25 +295,12 @@ namespace Js2IL.Services
         /// Creates a single type definition for a scope.
         /// All fields must already exist. All types are created as top-level types.
         /// </summary>
-        private TypeDefinitionHandle CreateScopeType(
-            Scope scope,
-            TypeDefinitionHandle? parentType,
-            string typeName,
-            string namespaceString,
-            bool isNestedType = false)
+        private TypeDefinitionHandle CreateScopeType(Scope scope, string typeName)
         {
-            var isNested = parentType.HasValue || isNestedType;
-
-            // Set appropriate visibility: Public for top-level types, NestedPrivate for nested types.
-            // NOTE: This is expected to break some execution tests because other generated types legitimately
-            // reference scope types (e.g., closure bind sites and cross-type captures). We are intentionally
-            // tightening visibility to observe the resulting runtime failures.
-            var typeAttributes = isNested
-                ? TypeAttributes.NestedPrivate | TypeAttributes.Class | TypeAttributes.BeforeFieldInit
-                : TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
-
-            // For nested types, use empty namespace; for top-level types, use the provided namespace
-            var actualNamespace = isNested ? "" : namespaceString;
+            // Scope types are always nested types in metadata. The specific enclosing TypeDef is resolved
+            // later (once module + callable-owner + class TypeDefs exist) and emitted via NestedClass rows.
+            var typeAttributes = TypeAttributes.NestedPrivate | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
+            var actualNamespace = string.Empty;
 
             // Initialize TypeBuilder for this type (handles field/method tracking and first-method/field invariants)
             var tb = new TypeBuilder(_metadataBuilder, actualNamespace, typeName);
