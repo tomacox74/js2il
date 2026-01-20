@@ -6,7 +6,7 @@ It is intentionally **implementation-oriented** (what JS2IL emits today) and **n
 
 It complements the deeper closure ABI design in:
 
-- [docs/CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md)
+- [docs/compiler/CapturedVariables_ScopesABI.md](compiler/CapturedVariables_ScopesABI.md)
 - [docs/compiler/TwoPhaseCompilationPipeline.md](compiler/TwoPhaseCompilationPipeline.md)
 
 ## Index
@@ -280,7 +280,7 @@ Ordering (ideal/current direction):
 - `scopes[0]` = global/module scope instance
 - increasing indices move inward toward the callee’s nearest lexical ancestor
 
-This is specified in detail in [docs/CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md).
+This is specified in detail in [docs/compiler/CapturedVariables_ScopesABI.md](compiler/CapturedVariables_ScopesABI.md).
 
 ---
 
@@ -443,7 +443,7 @@ A typical shape of emitted artifacts:
 <a id="related-implementation-references"></a>
 ## Related implementation references
 
-- Closure ABI and scopes-array conventions: [docs/CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md)
+- Closure ABI and scopes-array conventions: [docs/compiler/CapturedVariables_ScopesABI.md](compiler/CapturedVariables_ScopesABI.md)
 - Two-phase compilation and callable identity/token preallocation: [docs/compiler/TwoPhaseCompilationPipeline.md](compiler/TwoPhaseCompilationPipeline.md)
 - Module init + scope/class nesting: [Js2IL/JsMethodCompiler.cs](../Js2IL/JsMethodCompiler.cs) (`TryCompileMainMethod`, `EstablishModuleNesting`)
 - IR lowering + normalization (AST→HIR→LIR→IL): [Js2IL/JsMethodCompiler.cs](../Js2IL/JsMethodCompiler.cs) (`TryLowerASTToLIR`), [Js2IL/IR/LIR/LIRIntrinsicNormalization.cs](../Js2IL/IR/LIR/LIRIntrinsicNormalization.cs), [Js2IL/IR/LIR/LIRTypeNormalization.cs](../Js2IL/IR/LIR/LIRTypeNormalization.cs)

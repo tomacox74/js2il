@@ -110,4 +110,4 @@ Rejected because JS2IL’s runtime model and ABI differs:
 
 ## References
 
-- [Synchronous Generator Lowering Spec](../SynchronousGenerators_LoweringSpec.md)
+- [Synchronous Generator Lowering Spec](../compiler/SynchronousGenerators_LoweringSpec.md)
