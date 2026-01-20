@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- Generates docs/NodeSupport.md from docs/NodeSupport.json.
+ Generates docs/nodejs/NodeSupport.md from docs/nodejs/NodeSupport.json.
 */
 const fs = require('fs');
 const path = require('path');
@@ -125,8 +125,8 @@ function renderLimitations(ns) {
 
 function main() {
   const repoRoot = path.resolve(__dirname, '..');
-  const jsonPath = path.join(repoRoot, 'docs', 'NodeSupport.json');
-  const outPath = path.join(repoRoot, 'docs', 'NodeSupport.md');
+  const jsonPath = path.join(repoRoot, 'docs', 'nodejs', 'NodeSupport.json');
+  const outPath = path.join(repoRoot, 'docs', 'nodejs', 'NodeSupport.md');
   const ns = readJson(jsonPath);
 
   const parts = [];
