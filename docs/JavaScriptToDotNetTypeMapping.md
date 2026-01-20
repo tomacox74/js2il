@@ -400,7 +400,7 @@ JS2IL’s runtime `require(...)` performs a small amount of normalization and re
 
 In other words, local-module resolution is “CommonJS-like” and path-based, while Node built-in module resolution is name-based (from the `[NodeModule]` registry).
 
-For the current supported set, see `docs/NodeSupport.md` / `docs/NodeSupport.json`.
+For the current supported set, see `docs/nodejs/NodeSupport.md` / `docs/nodejs/NodeSupport.json`.
 
 ---
 

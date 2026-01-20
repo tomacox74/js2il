@@ -61,7 +61,7 @@ Note: “present in the registry” means JS2IL can recognize the identifier as 
 Node module shims are tracked separately from ECMA-262 language features. Registered modules currently include:
 - `child_process`, `fs`, `fs/promises`, `os`, `path`, `perf_hooks`, `process`
 
-See [docs/NodeSupport.md](../NodeSupport.md) for the Node-side coverage view.
+See [docs/nodejs/NodeSupport.md](../nodejs/NodeSupport.md) for the Node-side coverage view.
 
 ### Known intrinsic gaps explicitly called out elsewhere
 
