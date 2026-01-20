@@ -54,6 +54,73 @@ internal sealed class LIRToILCompiler
         returnType.Type().Object();
     }
 
+    private BlobHandle BuildMethodSignature(MethodDescriptor methodDescriptor)
+    {
+        var methodParameters = methodDescriptor.Parameters;
+
+        var sigBuilder = new BlobBuilder();
+        new BlobEncoder(sigBuilder)
+            .MethodSignature(isInstanceMethod: !methodDescriptor.IsStatic)
+            .Parameters(methodParameters.Count, returnType =>
+            {
+                if (methodDescriptor.ReturnsVoid)
+                {
+                    returnType.Void();
+                }
+                else
+                {
+                    EmitReturnType(returnType, methodDescriptor.ReturnClrType);
+                }
+            }, parameters =>
+            {
+                for (int i = 0; i < methodParameters.Count; i++)
+                {
+                    var parameterDefinition = methodParameters[i];
+
+                    if (parameterDefinition.ParameterType == typeof(object))
+                    {
+                        parameters.AddParameter().Type().Object();
+                    }
+                    else if (parameterDefinition.ParameterType == typeof(string))
+                    {
+                        parameters.AddParameter().Type().String();
+                    }
+                    else if (parameterDefinition.ParameterType.IsArray
+                        && parameterDefinition.ParameterType.GetElementType() == typeof(object))
+                    {
+                        parameters.AddParameter().Type().SZArray().Object();
+                    }
+                    else
+                    {
+                        var typeRef = _typeReferenceRegistry.GetOrAdd(parameterDefinition.ParameterType!);
+                        parameters.AddParameter().Type().Type(typeRef, false);
+                    }
+                }
+            });
+
+        return _metadataBuilder.GetOrAddBlob(sigBuilder);
+    }
+
+    private static MethodAttributes ComputeMethodAttributes(MethodDescriptor methodDescriptor)
+    {
+        MethodAttributes methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
+
+        if (string.Equals(methodDescriptor.Name, ".ctor", StringComparison.Ordinal))
+        {
+            methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+        }
+        else if (string.Equals(methodDescriptor.Name, ".cctor", StringComparison.Ordinal))
+        {
+            methodAttributes = MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+        }
+        else if (methodDescriptor.IsStatic)
+        {
+            methodAttributes |= MethodAttributes.Static;
+        }
+
+        return methodAttributes;
+    }
+
     private Type GetDeclaredScopeFieldClrType(string scopeName, string fieldName)
     {
         if (TryGetAsyncScopeBaseFieldClrType(fieldName, out var asyncFieldType))
@@ -358,44 +425,7 @@ internal sealed class LIRToILCompiler
         _compiled = true;
         _methodBody = methodBody;
 
-        var methodParameters = methodDescriptor.Parameters;
-
-        // Build method signature
-        var sigBuilder = new BlobBuilder();
-        new BlobEncoder(sigBuilder)
-            .MethodSignature(isInstanceMethod: !methodDescriptor.IsStatic)
-            .Parameters(methodParameters.Count, returnType =>
-            {
-                if (methodDescriptor.ReturnsVoid)
-                    returnType.Void();
-                else
-                    EmitReturnType(returnType, methodDescriptor.ReturnClrType);
-            }, parameters =>
-            {
-                for (int i = 0; i < methodParameters.Count; i++)
-                {
-                    var parameterDefinition = methodParameters[i];
-
-                    if (parameterDefinition.ParameterType == typeof(object))
-                    {
-                        parameters.AddParameter().Type().Object();
-                    }
-                    else if (parameterDefinition.ParameterType == typeof(string))
-                    {
-                        parameters.AddParameter().Type().String();
-                    }
-                    else if (parameterDefinition.ParameterType.IsArray && parameterDefinition.ParameterType.GetElementType() == typeof(object))
-                    {
-                        parameters.AddParameter().Type().SZArray().Object();
-                    }
-                    else
-                    {
-                        var typeRef = _typeReferenceRegistry.GetOrAdd(parameterDefinition.ParameterType!);
-                        parameters.AddParameter().Type().Type(typeRef, false);
-                    }
-                }
-            });
-        var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+        var methodSig = BuildMethodSignature(methodDescriptor);
 
         // Compile body
         if (!TryCompileMethodBodyToIL(methodDescriptor, methodBodyStreamEncoder, out var bodyOffset))
@@ -403,20 +433,7 @@ internal sealed class LIRToILCompiler
             return null;
         }
 
-        MethodAttributes methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
-
-        if (string.Equals(methodDescriptor.Name, ".ctor", StringComparison.Ordinal))
-        {
-            methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
-        }
-        else if (string.Equals(methodDescriptor.Name, ".cctor", StringComparison.Ordinal))
-        {
-            methodAttributes = MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
-        }
-        else if (methodDescriptor.IsStatic)
-        {
-            methodAttributes |= MethodAttributes.Static;
-        }
+        var methodAttributes = ComputeMethodAttributes(methodDescriptor);
 
         var result = new CompiledCallableBody
         {
@@ -426,7 +443,7 @@ internal sealed class LIRToILCompiler
             Attributes = methodAttributes,
             Signature = methodSig,
             BodyOffset = bodyOffset,
-            ParameterNames = methodParameters.Select(p => p.Name).ToArray()
+            ParameterNames = methodDescriptor.Parameters.Select(p => p.Name).ToArray()
         };
         result.Validate();
         return result;
@@ -448,45 +465,8 @@ internal sealed class LIRToILCompiler
         _methodBody = methodBody;
 
         var programTypeBuilder = methodDescriptor.TypeBuilder;
-        var methodParameters = methodDescriptor.Parameters;
 
-        // Create the method signature for the Main method with parameters
-        var sigBuilder = new BlobBuilder();
-        new BlobEncoder(sigBuilder)
-            .MethodSignature(isInstanceMethod: !methodDescriptor.IsStatic)
-            .Parameters(methodParameters.Count, returnType =>
-            {
-                if (methodDescriptor.ReturnsVoid)
-                    returnType.Void();
-                else
-                    EmitReturnType(returnType, methodDescriptor.ReturnClrType);
-            }, parameters =>
-            {
-                for (int i = 0; i < methodParameters.Count; i++)
-                {
-                    var parameterDefinition = methodParameters[i];
-
-                    if (parameterDefinition.ParameterType == typeof(object))
-                    {
-                        parameters.AddParameter().Type().Object();
-                    }
-                    else if (parameterDefinition.ParameterType == typeof(string))
-                    {
-                        parameters.AddParameter().Type().String();
-                    }
-                    else if (parameterDefinition.ParameterType.IsArray && parameterDefinition.ParameterType.GetElementType() == typeof(object))
-                    {
-                        parameters.AddParameter().Type().SZArray().Object();
-                    }
-                    else
-                    {
-                        // Assume it's a type reference
-                        var typeRef = _typeReferenceRegistry.GetOrAdd(parameterDefinition.ParameterType!);
-                        parameters.AddParameter().Type().Type(typeRef, false);
-                    }
-                }
-            });
-        var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+        var methodSig = BuildMethodSignature(methodDescriptor);
 
         // Compile the method body to IL
         if (!TryCompileMethodBodyToIL(methodDescriptor, methodBodyStreamEncoder, out var bodyOffset))
@@ -495,22 +475,9 @@ internal sealed class LIRToILCompiler
             return default;
         }
 
-        var parameterNames = methodParameters.Select(p => p.Name).ToArray();
+        var parameterNames = methodDescriptor.Parameters.Select(p => p.Name).ToArray();
 
-        MethodAttributes methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
-
-        if (string.Equals(methodDescriptor.Name, ".ctor", StringComparison.Ordinal))
-        {
-            methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
-        }
-        else if (string.Equals(methodDescriptor.Name, ".cctor", StringComparison.Ordinal))
-        {
-            methodAttributes = MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
-        }
-        else if (methodDescriptor.IsStatic)
-        {
-            methodAttributes |= MethodAttributes.Static;
-        }
+        var methodAttributes = ComputeMethodAttributes(methodDescriptor);
 
         var methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
             methodAttributes,
@@ -3750,6 +3717,54 @@ internal sealed class LIRToILCompiler
 
     #region Temp/Local Variable Management
 
+    private void EmitLocalType(SignatureTypeEncoder typeEncoder, ValueStorage storage, bool allowUnboxedJsNull)
+    {
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
+        {
+            typeEncoder.Boolean();
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+        {
+            typeEncoder.Double();
+            return;
+        }
+
+        if (allowUnboxedJsNull && storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(JavaScriptRuntime.JsNull))
+        {
+            var typeRef = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull));
+            typeEncoder.Type(typeRef, false);
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
+        {
+            typeEncoder.String();
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.Reference
+            && storage.ClrType != null
+            && storage.ClrType.IsArray
+            && storage.ClrType.GetElementType() == typeof(object))
+        {
+            typeEncoder.SZArray().Object();
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
+        {
+            // Preserve known runtime reference types for declared variables (e.g., JavaScriptRuntime.Array)
+            // so later lowering/emission can take advantage of typed locals.
+            var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
+            typeEncoder.Type(typeRef, false);
+            return;
+        }
+
+        typeEncoder.Object();
+    }
+
     private StandaloneSignatureHandle CreateLocalVariablesSignature(TempLocalAllocation allocation)
     {
         int varCount = MethodBody.VariableNames.Count;
@@ -3781,74 +3796,15 @@ internal sealed class LIRToILCompiler
         // Variable locals (shifted by scope local count)
         for (int i = 0; i < varCount; i++)
         {
-            var typeEncoder = localEncoder.AddVariable().Type();
-
             var storage = MethodBody.VariableStorages[i];
-            if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
-            {
-                typeEncoder.Boolean();
-            }
-            else if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
-            {
-                typeEncoder.Double();
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
-            {
-                typeEncoder.String();
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType.IsArray && storage.ClrType.GetElementType() == typeof(object))
-            {
-                typeEncoder.SZArray().Object();
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
-            {
-                // Preserve known runtime reference types for declared variables (e.g., JavaScriptRuntime.Array)
-                // so later lowering/emission can take advantage of typed locals.
-                var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
-                typeEncoder.Type(typeRef, false);
-            }
-            else
-            {
-                typeEncoder.Object();
-            }
+            EmitLocalType(localEncoder.AddVariable().Type(), storage, allowUnboxedJsNull: false);
         }
 
         // Then temp locals
         for (int i = 0; i < allocation.SlotStorages.Count; i++)
         {
             var storage = allocation.SlotStorages[i];
-            var typeEncoder = localEncoder.AddVariable().Type();
-
-            if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
-            {
-                typeEncoder.Double();
-            }
-            else if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
-            {
-                typeEncoder.Boolean();
-            }
-            else if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(JavaScriptRuntime.JsNull))
-            {
-                var typeRef = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull));
-                typeEncoder.Type(typeRef, false);
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
-            {
-                typeEncoder.String();
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType.IsArray && storage.ClrType.GetElementType() == typeof(object))
-            {
-                typeEncoder.SZArray().Object();
-            }
-            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
-            {
-                var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
-                typeEncoder.Type(typeRef, false);
-            }
-            else
-            {
-                typeEncoder.Object();
-            }
+            EmitLocalType(localEncoder.AddVariable().Type(), storage, allowUnboxedJsNull: true);
         }
 
         var signature = _metadataBuilder.AddStandaloneSignature(_metadataBuilder.GetOrAddBlob(localSig));
