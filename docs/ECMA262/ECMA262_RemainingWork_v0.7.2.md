@@ -65,7 +65,7 @@ See [docs/NodeSupport.md](../NodeSupport.md) for the Node-side coverage view.
 
 ### Known intrinsic gaps explicitly called out elsewhere
 
-From [docs/LoweringPipeline_Migration_PunchList.md](../LoweringPipeline_Migration_PunchList.md):
+From [docs/archive/LoweringPipeline_Migration_PunchList.md](../archive/LoweringPipeline_Migration_PunchList.md):
 - **Callable-only intrinsics (no `new`)**: `String(x)`, `Number(x)`, `Boolean(x)` are supported, but other callable-only intrinsics are not yet supported: `Date(...)`, `RegExp(...)`, `Error(...)`, `Array(...)`, `Object(...)`, `Symbol(...)`, `BigInt(...)`.
 
 ## Detailed list (Partially Supported + Not Yet Supported)
