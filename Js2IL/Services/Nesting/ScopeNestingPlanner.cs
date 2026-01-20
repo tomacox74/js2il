@@ -65,10 +65,8 @@ internal sealed class ScopeNestingPlanner
         List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)> relationships,
         HashSet<string> visited)
     {
-        var parentKey = ScopeNaming.GetRegistryScopeName(parentScope);
-        var parentTypeHandle = GetScopeTypeHandleOrThrow(parentKey);
-
         var parentScopeKey = ScopeNaming.GetRegistryScopeName(parentScope);
+        var parentTypeHandle = GetScopeTypeHandleOrThrow(parentScopeKey);
 
         foreach (var child in parentScope.Children)
         {
@@ -100,7 +98,7 @@ internal sealed class ScopeNestingPlanner
                 var classRegistry = _serviceProvider.GetService<ClassRegistry>();
                 if (classRegistry != null)
                 {
-                    var registryClassName = GetRegistryClassName(parentScope);
+                    var registryClassName = ScopeNaming.GetRegistryClassName(parentScope);
                     if (classRegistry.TryGet(registryClassName, out var classTypeHandle) && !classTypeHandle.IsNil)
                     {
                         relationships.Add((childTypeHandle, classTypeHandle));
@@ -125,7 +123,7 @@ internal sealed class ScopeNestingPlanner
                 var classRegistry = _serviceProvider.GetService<ClassRegistry>();
                 if (classRegistry != null)
                 {
-                    var registryClassName = GetRegistryClassName(child);
+                    var registryClassName = ScopeNaming.GetRegistryClassName(child);
                     if (classRegistry.TryGet(registryClassName, out var classTypeHandle) && !classTypeHandle.IsNil)
                     {
                         relationships.Add((childTypeHandle, classTypeHandle));
@@ -190,10 +188,4 @@ internal sealed class ScopeNestingPlanner
         }
     }
 
-    private static string GetRegistryClassName(Scope classScope)
-    {
-        var ns = classScope.DotNetNamespace ?? "Classes";
-        var name = classScope.DotNetTypeName ?? classScope.Name;
-        return $"{ns}.{name}";
-    }
 }

@@ -218,7 +218,7 @@ internal sealed class JsMethodCompiler
     {
         if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
 
-        var className = GetRegistryClassName(classScope);
+        var className = ScopeNaming.GetRegistryClassName(classScope);
         var funcExpr = methodDef.Value as FunctionExpression;
         var methodScope = funcExpr != null ? symbolTable.FindScopeByAstNode(funcExpr) : null;
         methodScope ??= classScope;
@@ -350,13 +350,6 @@ internal sealed class JsMethodCompiler
         };
 
         return CreateILCompiler().TryCompileCallableBody(callable, expectedMethodDef, methodDescriptor, lirMethod!, methodBodyStreamEncoder);
-    }
-
-    private static string GetRegistryClassName(Scope classScope)
-    {
-        var ns = classScope.DotNetNamespace ?? "Classes";
-        var name = classScope.DotNetTypeName ?? classScope.Name;
-        return $"{ns}.{name}";
     }
 
     public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
