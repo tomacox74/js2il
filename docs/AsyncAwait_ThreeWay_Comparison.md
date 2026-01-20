@@ -153,5 +153,5 @@ function f() {
 
 ## 8) References (Internal)
 
-- Async lowering spec: [docs/AsyncAwait_LoweringSpec.md](AsyncAwait_LoweringSpec.md)
-- Try/catch strategy: [docs/CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md)
+- Async lowering spec: [docs/compiler/AsyncAwait_LoweringSpec.md](compiler/AsyncAwait_LoweringSpec.md)
+- Try/catch strategy: [docs/compiler/CapturedVariables_ScopesABI.md](compiler/CapturedVariables_ScopesABI.md)
