@@ -3783,40 +3783,33 @@ internal sealed class LIRToILCompiler
         {
             var typeEncoder = localEncoder.AddVariable().Type();
 
-            if (i < MethodBody.VariableStorages.Count)
+            var storage = MethodBody.VariableStorages[i];
+            if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
             {
-                var storage = MethodBody.VariableStorages[i];
-                if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
-                {
-                    typeEncoder.Boolean();
-                }
-                else if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
-                {
-                    typeEncoder.Double();
-                }
-                else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
-                {
-                    typeEncoder.String();
-                }
-                else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType.IsArray && storage.ClrType.GetElementType() == typeof(object))
-                {
-                    typeEncoder.SZArray().Object();
-                }
-                else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
-                {
-                    // Preserve known runtime reference types for declared variables (e.g., JavaScriptRuntime.Array)
-                    // so later lowering/emission can take advantage of typed locals.
-                    var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
-                    typeEncoder.Type(typeRef, false);
-                }
-                else
-                {
-                    typeEncoder.Object();
-                }
+                typeEncoder.Boolean();
+            }
+            else if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+            {
+                typeEncoder.Double();
+            }
+            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
+            {
+                typeEncoder.String();
+            }
+            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType.IsArray && storage.ClrType.GetElementType() == typeof(object))
+            {
+                typeEncoder.SZArray().Object();
+            }
+            else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
+            {
+                // Preserve known runtime reference types for declared variables (e.g., JavaScriptRuntime.Array)
+                // so later lowering/emission can take advantage of typed locals.
+                var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
+                typeEncoder.Type(typeRef, false);
             }
             else
             {
-                typeEncoder.Double();
+                typeEncoder.Object();
             }
         }
 
