@@ -1,3 +1,5 @@
+> Archived: migration complete. Kept for historical reference.
+
 # Lowering Pipeline Migration Punch List (AST → HIR → LIR → IL)
 
 ## Purpose
