@@ -206,15 +206,20 @@ internal sealed class LIRToILCompiler
         return true;
     }
 
-    private void EmitBoxIfNeededForTypedScopeFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
+    private void EmitCastOrBoxAfterTypedFieldLoad(
+        Type fieldClrType,
+        ValueStorage targetStorage,
+        InstructionEncoder ilEncoder,
+        bool allowReferenceNarrowingCast)
     {
-        // If the field is reference-typed (often object) but the consumer expects a more specific
+        // If the loaded value is reference-typed (often object) but the consumer expects a more specific
         // reference type (e.g., JavaScriptRuntime.Array), insert a castclass.
-        if (!fieldClrType.IsValueType &&
-            targetStorage.Kind == ValueStorageKind.Reference &&
-            targetStorage.ClrType != null &&
-            targetStorage.ClrType != typeof(object) &&
-            fieldClrType != targetStorage.ClrType)
+        if (allowReferenceNarrowingCast
+            && !fieldClrType.IsValueType
+            && targetStorage.Kind == ValueStorageKind.Reference
+            && targetStorage.ClrType != null
+            && targetStorage.ClrType != typeof(object)
+            && fieldClrType != targetStorage.ClrType)
         {
             ilEncoder.OpCode(ILOpCode.Castclass);
             ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(targetStorage.ClrType));
@@ -239,6 +244,11 @@ internal sealed class LIRToILCompiler
             ilEncoder.OpCode(ILOpCode.Box);
             ilEncoder.Token(_bclReferences.BooleanType);
         }
+    }
+
+    private void EmitBoxIfNeededForTypedScopeFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
+    {
+        EmitCastOrBoxAfterTypedFieldLoad(fieldClrType, targetStorage, ilEncoder, allowReferenceNarrowingCast: true);
     }
 
     private static Type GetDeclaredUserClassFieldClrType(
@@ -292,26 +302,7 @@ internal sealed class LIRToILCompiler
 
     private void EmitBoxIfNeededForTypedUserClassFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
     {
-        if (!fieldClrType.IsValueType)
-        {
-            return;
-        }
-
-        if (targetStorage.Kind == ValueStorageKind.UnboxedValue && targetStorage.ClrType == fieldClrType)
-        {
-            return;
-        }
-
-        if (fieldClrType == typeof(double))
-        {
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(_bclReferences.DoubleType);
-        }
-        else if (fieldClrType == typeof(bool))
-        {
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(_bclReferences.BooleanType);
-        }
+        EmitCastOrBoxAfterTypedFieldLoad(fieldClrType, targetStorage, ilEncoder, allowReferenceNarrowingCast: false);
     }
 
     private void EmitLoadTempAsDouble(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
