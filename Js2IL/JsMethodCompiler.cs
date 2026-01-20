@@ -218,7 +218,7 @@ internal sealed class JsMethodCompiler
     {
         if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
 
-        var className = GetRegistryClassName(classScope);
+        var className = ScopeNaming.GetRegistryClassName(classScope);
         var funcExpr = methodDef.Value as FunctionExpression;
         var methodScope = funcExpr != null ? symbolTable.FindScopeByAstNode(funcExpr) : null;
         methodScope ??= classScope;
@@ -350,13 +350,6 @@ internal sealed class JsMethodCompiler
         };
 
         return CreateILCompiler().TryCompileCallableBody(callable, expectedMethodDef, methodDescriptor, lirMethod!, methodBodyStreamEncoder);
-    }
-
-    private static string GetRegistryClassName(Scope classScope)
-    {
-        var ns = classScope.DotNetNamespace ?? "Classes";
-        var name = classScope.DotNetTypeName ?? classScope.Name;
-        return $"{ns}.{name}";
     }
 
     public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
@@ -562,170 +555,18 @@ internal sealed class JsMethodCompiler
 
         // Establish all nesting relationships now that the module type exists.
         // This is done in sorted order to satisfy ECMA-335 NestedClass table ordering.
-        EstablishModuleNesting(moduleName, moduleTypeHandle, scope);
+        var nestingPlanner = new Services.Nesting.ScopeNestingPlanner(
+            _scopeMetadataRegistry,
+            _functionTypeMetadataRegistry,
+            _anonymousCallableTypeMetadataRegistry,
+            _serviceProvider);
+
+        foreach (var (nested, enclosing) in nestingPlanner.PlanModuleNesting(moduleName, moduleTypeHandle, scope))
+        {
+            _nestedTypeRelationshipRegistry.Add(nested, enclosing);
+        }
 
         return methodDefinitionHandle;
-    }
-
-    private void EstablishModuleNesting(string moduleName, TypeDefinitionHandle moduleTypeHandle, Scope globalScope)
-    {
-        var relationships = new List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)>();
-
-        // Global scope nests under the module type: Modules.<ModuleName>.Scope
-        var globalKey = ScopeNaming.GetRegistryScopeName(globalScope);
-        if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(globalKey, out var globalScopeTypeHandle))
-        {
-            throw new InvalidOperationException($"Expected scope type handle to be registered for global scope '{globalKey}', but none was found.");
-        }
-        relationships.Add((globalScopeTypeHandle, moduleTypeHandle));
-
-        // Child scopes nest under their parent scope.
-        var visited = new HashSet<string>(StringComparer.Ordinal);
-        CollectScopeNestingRelationships(moduleName, globalScope, relationships, visited);
-
-        foreach (var rel in relationships.Distinct())
-        {
-            _nestedTypeRelationshipRegistry.Add(rel.Nested, rel.Enclosing);
-        }
-    }
-
-    private void CollectScopeNestingRelationships(
-        string moduleName,
-        Scope parentScope,
-        List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)> relationships,
-        HashSet<string> visited)
-    {
-        var parentKey = ScopeNaming.GetRegistryScopeName(parentScope);
-        if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(parentKey, out var parentTypeHandle))
-        {
-            // Parent scope may be empty and not registered; this is unexpected because TypeGenerator
-            // ensures all scopes get a type handle.
-            throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{parentKey}', but none was found.");
-        }
-
-        var parentScopeKey = ScopeNaming.GetRegistryScopeName(parentScope);
-
-        foreach (var child in parentScope.Children)
-        {
-            var childKey = ScopeNaming.GetRegistryScopeName(child);
-            if (!visited.Add(childKey))
-            {
-                continue;
-            }
-
-            if (!_scopeMetadataRegistry.TryGetScopeTypeHandle(childKey, out var childTypeHandle))
-            {
-                throw new InvalidOperationException($"Expected scope type handle to be registered for scope '{childKey}', but none was found.");
-            }
-
-            // Special case: class member scopes (ctor/get/set/method bodies) should be nested under the
-            // runtime class TypeDef as siblings of the class scope type.
-            //
-            // Desired layout:
-            //   <ClassName>
-            //     + Scope           (class lexical scope)
-            //     + Scope_ctor      (constructor body scope)
-            //     + Scope_get_x     (getter body scope)
-            //     + Scope_set_x     (setter body scope)
-            //     + Scope_method    (method body scope)
-            //
-            // rather than nesting those member scopes under <ClassName>+Scope.
-            if (parentScope.Kind == ScopeKind.Class
-                && child.Kind == ScopeKind.Function
-                && !string.IsNullOrWhiteSpace(child.DotNetTypeName)
-                && child.DotNetTypeName.StartsWith("Scope", StringComparison.Ordinal))
-            {
-                var classRegistry = _serviceProvider.GetService<Services.ClassRegistry>();
-                if (classRegistry != null)
-                {
-                    var registryClassName = GetRegistryClassName(parentScope);
-                    if (classRegistry.TryGet(registryClassName, out var classTypeHandle) && !classTypeHandle.IsNil)
-                    {
-                        relationships.Add((childTypeHandle, classTypeHandle));
-                        CollectScopeNestingRelationships(moduleName, child, relationships, visited);
-                        continue;
-                    }
-                }
-
-                // Fallback: if we can't resolve the runtime class TypeDef, keep legacy nesting.
-                relationships.Add((childTypeHandle, parentTypeHandle));
-                CollectScopeNestingRelationships(moduleName, child, relationships, visited);
-                continue;
-            }
-
-            // Special case: class scopes should be nested under their runtime class TypeDef.
-            // This keeps Modules.<Module>.Scope free of nested types and produces a clean layout:
-            //   Modules.<Module>+<ClassName>
-            //     + Scope
-            // rather than nesting the class scope under the parent scope type.
-            if (child.Kind == ScopeKind.Class)
-            {
-                var classRegistry = _serviceProvider.GetService<Services.ClassRegistry>();
-                if (classRegistry != null)
-                {
-                    var registryClassName = GetRegistryClassName(child);
-                    if (classRegistry.TryGet(registryClassName, out var classTypeHandle) && !classTypeHandle.IsNil)
-                    {
-                        relationships.Add((childTypeHandle, classTypeHandle));
-                        CollectScopeNestingRelationships(moduleName, child, relationships, visited);
-                        continue;
-                    }
-                }
-
-                // Fallback: if we can't resolve the runtime class TypeDef, keep legacy nesting.
-                relationships.Add((childTypeHandle, parentTypeHandle));
-                CollectScopeNestingRelationships(moduleName, child, relationships, visited);
-                continue;
-            }
-
-            // Special case: function declarations have a dedicated callable owner type.
-            // We nest the function's *scope type* under that owner type so IL reads as:
-            //   .class ... Modules.<Module>.<FunctionName>/Scope
-            // rather than:
-            //   .class ... Modules.<Module>.Scope/<FunctionName>
-            if (child.Kind == ScopeKind.Function && child.AstNode is FunctionDeclaration)
-            {
-                if (_functionTypeMetadataRegistry.TryGet(moduleName, child.Name, out var ownerTypeHandle) && !ownerTypeHandle.IsNil)
-                {
-                    relationships.Add((childTypeHandle, ownerTypeHandle));
-                }
-                else
-                {
-                    // Fallback: if the owner type isn't available for some reason, nest under the parent scope.
-                    relationships.Add((childTypeHandle, parentTypeHandle));
-                }
-            }
-            else if (child.Kind == ScopeKind.Function && child.AstNode is ArrowFunctionExpression)
-            {
-                // Arrow function scope type (named "Scope") nests under its anonymous callable owner type.
-                if (_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, parentScopeKey, child.Name, out var arrowOwner) && !arrowOwner.IsNil)
-                {
-                    relationships.Add((childTypeHandle, arrowOwner));
-                }
-                else
-                {
-                    relationships.Add((childTypeHandle, parentTypeHandle));
-                }
-            }
-            else if (child.Kind == ScopeKind.Function && child.AstNode is FunctionExpression)
-            {
-                // Function-expression scope type (named "Scope") nests under its anonymous callable owner type.
-                if (_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, parentScopeKey, child.Name, out var funcExprOwner) && !funcExprOwner.IsNil)
-                {
-                    relationships.Add((childTypeHandle, funcExprOwner));
-                }
-                else
-                {
-                    relationships.Add((childTypeHandle, parentTypeHandle));
-                }
-            }
-            else
-            {
-                relationships.Add((childTypeHandle, parentTypeHandle));
-            }
-
-            CollectScopeNestingRelationships(moduleName, child, relationships, visited);
-        }
     }
 
     #endregion

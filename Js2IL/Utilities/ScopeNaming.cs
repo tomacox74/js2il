@@ -1,3 +1,4 @@
+using System;
 using Js2IL.SymbolTables;
 
 namespace Js2IL.Utilities;
@@ -26,5 +27,13 @@ internal static class ScopeNaming
 
         var moduleName = GetModuleName(scope);
         return $"{moduleName}/{scope.GetQualifiedName()}";
+    }
+
+    public static string GetRegistryClassName(Scope classScope)
+    {
+        if (classScope == null) throw new ArgumentNullException(nameof(classScope));
+        var ns = classScope.DotNetNamespace ?? "Classes";
+        var name = classScope.DotNetTypeName ?? classScope.Name;
+        return $"{ns}.{name}";
     }
 }
