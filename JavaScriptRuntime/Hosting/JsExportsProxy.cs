@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Js2IL.Runtime;
@@ -52,7 +50,7 @@ internal class JsExportsProxy : DispatchProxy
             if (targetMethod.Name.StartsWith("get_", StringComparison.Ordinal))
             {
                 var name = targetMethod.Name.Substring(4);
-                return runtime.Invoke(() => ConvertReturn(GetExportMember(runtime.Exports, name), targetMethod.ReturnType));
+                return runtime.Invoke(() => ConvertReturn(ExportMemberResolver.GetExportMember(runtime.Exports, name), targetMethod.ReturnType));
             }
 
             if (targetMethod.Name.StartsWith("set_", StringComparison.Ordinal))
@@ -72,13 +70,13 @@ internal class JsExportsProxy : DispatchProxy
         return runtime.Invoke(() =>
         {
             var exportName = targetMethod.Name;
-            var callable = GetExportMember(runtime.Exports, exportName);
+            var callable = ExportMemberResolver.GetExportMember(runtime.Exports, exportName);
             if (callable is not Delegate d)
             {
                 throw new MissingMethodException($"Export '{exportName}' is not a callable function.");
             }
 
-            var result = InvokeJsDelegate(d, args ?? Array.Empty<object?>());
+            var result = ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
             return ConvertReturn(result, targetMethod.ReturnType);
         });
     }
@@ -93,132 +91,6 @@ internal class JsExportsProxy : DispatchProxy
             nameof(Equals) => ReferenceEquals(this, args != null && args.Length > 0 ? args[0] : null),
             _ => null,
         };
-    }
-
-    private static object? GetExportMember(object? exports, string contractName)
-    {
-        if (exports == null)
-        {
-            throw new InvalidOperationException("Module exports is null.");
-        }
-
-        // Try the exact name first, then a common .NET->JS convention (Foo -> foo).
-        foreach (var candidate in GetNameCandidates(contractName))
-        {
-            // Fast path: exports as dictionary (typical for JS objects surfaced to .NET).
-            if (exports is IDictionary<string, object?> dict && dict.TryGetValue(candidate, out var value))
-            {
-                return value;
-            }
-
-            // Fallback: reflection over a CLR type that represents exports.
-            var type = exports.GetType();
-            var prop = type.GetProperty(candidate, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-            if (prop != null)
-            {
-                return prop.GetValue(exports);
-            }
-
-            var field = type.GetField(candidate, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-            if (field != null)
-            {
-                return field.GetValue(exports);
-            }
-        }
-
-        throw new MissingMemberException($"Export '{contractName}' not found.");
-    }
-
-    private static void SetExportMember(object? exports, string contractName, object? value)
-    {
-        if (exports == null)
-        {
-            throw new InvalidOperationException("Module exports is null.");
-        }
-
-        // Same candidate strategy as GetExportMember.
-        foreach (var candidate in GetNameCandidates(contractName))
-        {
-            // If exports is a dictionary, assignment is straightforward.
-            if (exports is IDictionary<string, object?> dict)
-            {
-                dict[candidate] = value;
-                return;
-            }
-
-            // Otherwise attempt to set a CLR property/field representing the export.
-            var type = exports.GetType();
-            var prop = type.GetProperty(candidate, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-            if (prop != null && prop.CanWrite)
-            {
-                prop.SetValue(exports, value);
-                return;
-            }
-
-            var field = type.GetField(candidate, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-            if (field != null)
-            {
-                field.SetValue(exports, value);
-                return;
-            }
-        }
-
-        throw new MissingMemberException($"Export '{contractName}' not found.");
-    }
-
-    private static IEnumerable<string> GetNameCandidates(string contractName)
-    {
-        // Exact match first (interface method/property name).
-        yield return contractName;
-
-        // Convenience: allow PascalCase contract members to bind to camelCase JS members.
-        if (contractName.Length > 0)
-        {
-            yield return char.ToLowerInvariant(contractName[0]) + contractName.Substring(1);
-        }
-    }
-
-    private static object? InvokeJsDelegate(Delegate d, object?[] args)
-    {
-        var parameters = d.Method.GetParameters();
-        if (parameters.Length == 0)
-        {
-            return d.DynamicInvoke(Array.Empty<object?>());
-        }
-
-        // Adapter for compiler-emitted callables:
-        // JS2IL often emits a leading `object[] scopes` parameter for closure resolution.
-        var invokeArgs = new object?[parameters.Length];
-
-        var argIndex = 0;
-        if (parameters[0].ParameterType == typeof(object[]))
-        {
-            // For direct export calls, there is no parent-scope chain to pass.
-            invokeArgs[0] = Array.Empty<object>();
-            argIndex = 1;
-        }
-
-        // Copy provided args; extra interface args are ignored, missing args become null.
-        for (var i = 0; i < args.Length && argIndex < invokeArgs.Length; i++, argIndex++)
-        {
-            invokeArgs[argIndex] = args[i];
-        }
-
-        // Fill missing args with null.
-        while (argIndex < invokeArgs.Length)
-        {
-            invokeArgs[argIndex++] = null;
-        }
-
-        try
-        {
-            return d.DynamicInvoke(invokeArgs);
-        }
-        catch (TargetInvocationException tie) when (tie.InnerException != null)
-        {
-            // Surface the underlying runtime exception rather than the reflection wrapper.
-            throw tie.InnerException;
-        }
     }
 
     private static object? ConvertReturn(object? value, Type returnType)
@@ -244,10 +116,28 @@ internal class JsExportsProxy : DispatchProxy
         // Enum projection: Convert underlying numeric/string to enum value.
         if (returnType.IsEnum)
         {
-            return Enum.ToObject(returnType, value);
+            try
+            {
+                return Enum.ToObject(returnType, value);
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidCastException or FormatException or OverflowException)
+            {
+                throw new InvalidCastException(
+                    $"Failed to convert return value '{value}' ({value.GetType().FullName}) to enum '{returnType.FullName}'.",
+                    ex);
+            }
         }
 
         // Last resort: use standard .NET conversions (e.g. boxed number -> int/double).
-        return Convert.ChangeType(value, returnType);
+        try
+        {
+            return Convert.ChangeType(value, returnType);
+        }
+        catch (Exception ex) when (ex is InvalidCastException or FormatException or OverflowException)
+        {
+            throw new InvalidCastException(
+                $"Failed to convert return value '{value}' ({value.GetType().FullName}) to '{returnType.FullName}'.",
+                ex);
+        }
     }
 }

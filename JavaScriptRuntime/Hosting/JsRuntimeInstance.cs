@@ -13,6 +13,8 @@ namespace Js2IL.Runtime;
 /// </summary>
 internal sealed class JsRuntimeInstance : IDisposable
 {
+    private static readonly TimeSpan DisposeJoinTimeout = TimeSpan.FromSeconds(10);
+
     // Cross-thread work queue used to marshal calls onto the dedicated script thread.
     private readonly BlockingCollection<IWorkItem> _queue = new();
 
@@ -91,7 +93,18 @@ internal sealed class JsRuntimeInstance : IDisposable
 
         // Marshal onto the script thread; the worker completes the TCS when done.
         var tcs = new TaskCompletionSource<TResult>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _queue.Add(new WorkItem<TResult>(func, tcs), _shutdown.Token);
+        try
+        {
+            _queue.Add(new WorkItem<TResult>(func, tcs), _shutdown.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            throw new ObjectDisposedException(nameof(JsRuntimeInstance));
+        }
+        catch (InvalidOperationException)
+        {
+            throw new ObjectDisposedException(nameof(JsRuntimeInstance));
+        }
         return tcs.Task.GetAwaiter().GetResult();
     }
 
@@ -112,11 +125,22 @@ internal sealed class JsRuntimeInstance : IDisposable
         }
 
         var tcs = new TaskCompletionSource<object?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _queue.Add(new WorkItem<object?>(() =>
+        try
         {
-            action();
-            return null;
-        }, tcs), _shutdown.Token);
+            _queue.Add(new WorkItem<object?>(() =>
+            {
+                action();
+                return null;
+            }, tcs), _shutdown.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            throw new ObjectDisposedException(nameof(JsRuntimeInstance));
+        }
+        catch (InvalidOperationException)
+        {
+            throw new ObjectDisposedException(nameof(JsRuntimeInstance));
+        }
 
         // Sync wait to preserve a simple synchronous API surface for callers.
         _ = tcs.Task.GetAwaiter().GetResult();
@@ -137,7 +161,7 @@ internal sealed class JsRuntimeInstance : IDisposable
         // Avoid self-join if Dispose is called from within the script thread.
         if (Thread.CurrentThread.ManagedThreadId != _thread.ManagedThreadId)
         {
-            _thread.Join(TimeSpan.FromSeconds(10));
+            _ = _thread.Join(DisposeJoinTimeout);
         }
 
         // This type intentionally has no finalizer (it would be unsafe to block/join on the finalizer thread).
