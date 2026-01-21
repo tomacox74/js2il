@@ -57,13 +57,7 @@ internal class JsExportsProxy : DispatchProxy
 
             if (targetMethod.Name.StartsWith("set_", StringComparison.Ordinal))
             {
-                var name = targetMethod.Name.Substring(4);
-                var value = args != null && args.Length > 0 ? args[0] : null;
-                runtime.Invoke(() =>
-                {
-                    SetExportMember(runtime.Exports, name, value);
-                });
-                return null;
+                throw new NotSupportedException("Exports are read-only via the hosting API.");
             }
         }
 
