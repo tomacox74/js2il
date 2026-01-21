@@ -56,7 +56,7 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
 
-        using var exportsObj = (IDisposable)Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "math");
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "math");
         dynamic exports = exportsObj;
 
         Assert.Equal("1.0.0", (string)exports.version);

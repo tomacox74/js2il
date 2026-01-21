@@ -71,7 +71,7 @@ public static class JsEngine
     /// <summary>
     /// Dynamic / reflection-friendly form: returns a dynamic exports proxy (also <see cref="IDisposable"/>).
     /// </summary>
-    public static object LoadModule(Assembly compiledAssembly, string moduleId)
+    public static IDisposable LoadModule(Assembly compiledAssembly, string moduleId)
     {
         ArgumentNullException.ThrowIfNull(compiledAssembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
