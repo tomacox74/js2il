@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
+using JavaScriptRuntime.CommonJS;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -132,26 +133,17 @@ namespace Js2IL.Tests
         {
             var expected = new HashSet<string>(StringComparer.Ordinal)
             {
-                GetModuleIdForManifest(rootScriptPath, rootScriptPath)
+                ModuleName.GetModuleIdForManifestFromPath(rootScriptPath, rootScriptPath)
             };
 
-            if (additionalScripts != null)
-            {
-                foreach (var scriptName in additionalScripts)
-                {
-                    // The test harness writes additional scripts into the same output folder.
-                    var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
-                    expected.Add(GetModuleIdForManifest(scriptPath, rootScriptPath));
-                }
-            }
+            expected.UnionWith((additionalScripts ?? System.Array.Empty<string>())
+                .Select(scriptName => Path.Combine(_outputPath, $"{scriptName}.js"))
+                .Select(scriptPath => ModuleName.GetModuleIdForManifestFromPath(scriptPath, rootScriptPath)));
 
             var actual = ReadCompiledModuleIdsFromManifest(assemblyPath);
 
             Assert.NotEmpty(actual);
-            foreach (var moduleId in expected)
-            {
-                Assert.Contains(moduleId, actual);
-            }
+            Assert.All(expected, moduleId => Assert.Contains(moduleId, actual));
         }
 
         private static IReadOnlyCollection<string> ReadCompiledModuleIdsFromManifest(string assemblyPath)
@@ -216,28 +208,5 @@ namespace Js2IL.Tests
             return false;
         }
 
-        private static string GetModuleIdForManifest(string modulePath, string rootModulePath)
-        {
-            // Mirror the compiler's manifest behavior: relative path from root module directory,
-            // normalized to forward slashes, with extension removed. (No sanitization.)
-            var rootFullPath = Path.GetFullPath(rootModulePath);
-            var rootDirectory = Path.GetDirectoryName(rootFullPath) ?? ".";
-
-            var moduleFullPath = Path.GetFullPath(modulePath);
-            var relative = Path.GetRelativePath(rootDirectory, moduleFullPath);
-            relative = relative.Replace('\\', '/');
-
-            if (relative.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
-            {
-                relative = relative.Substring(0, relative.Length - 3);
-            }
-            else
-            {
-                relative = Path.ChangeExtension(relative.Replace('/', Path.DirectorySeparatorChar), null) ?? relative;
-                relative = relative.Replace('\\', '/');
-            }
-
-            return relative;
-        }
     }
 }

@@ -360,7 +360,7 @@ namespace Js2IL.Services
 
             foreach (var module in modules._modules.Values)
             {
-                var moduleId = GetModuleIdForManifest(module.Path, rootModulePath);
+                var moduleId = JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdForManifestFromPath(module.Path, rootModulePath);
                 var valueBlob = CreateSingleStringCustomAttributeValue(moduleId);
 
                 _metadataBuilder.AddCustomAttribute(
@@ -368,31 +368,6 @@ namespace Js2IL.Services
                     constructor: ctorRef,
                     value: valueBlob);
             }
-        }
-
-        private static string GetModuleIdForManifest(string modulePath, string rootModulePath)
-        {
-            // Mirror JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromPath but stop BEFORE sanitization
-            // so we keep path-like ids ("a/b") for host-facing discovery.
-            var rootFullPath = Path.GetFullPath(rootModulePath);
-            var rootDirectory = Path.GetDirectoryName(rootFullPath) ?? ".";
-
-            var moduleFullPath = Path.GetFullPath(modulePath);
-            var relative = Path.GetRelativePath(rootDirectory, moduleFullPath);
-            relative = relative.Replace('\\', '/');
-
-            if (relative.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
-            {
-                relative = relative.Substring(0, relative.Length - 3);
-            }
-            else
-            {
-                // Path.ChangeExtension handles removing extension, but keep forward slashes.
-                relative = Path.ChangeExtension(relative.Replace('/', Path.DirectorySeparatorChar), null) ?? relative;
-                relative = relative.Replace('\\', '/');
-            }
-
-            return relative;
         }
 
         private BlobHandle CreateSingleStringCustomAttributeValue(string value)
