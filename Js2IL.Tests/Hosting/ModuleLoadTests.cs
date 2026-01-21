@@ -9,6 +9,8 @@ namespace Js2IL.Tests.Hosting;
 
 public class ModuleLoadTests
 {
+    private const string HostingJavaScriptResourcePrefix = "Js2IL.Tests.Hosting.JavaScript.";
+
     public interface IMathExports : IDisposable
     {
         string Version { get; }
@@ -42,15 +44,7 @@ public class ModuleLoadTests
     [Fact]
     public void JsEngine_LoadModule_AllowsCallingExports()
     {
-        var js = @"
-const version = ""1.0.0"";
-function add(x, y) {
-  return x + y;
-}
-module.exports = { version, add };
-";
-
-        using var module = CompileAndLoadModuleAssembly("math", js);
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
         using var exports = Js2IL.Runtime.JsEngine.LoadModule<IMathExports>(module.Assembly, "math");
 
         Assert.Equal("1.0.0", exports.Version);
@@ -60,15 +54,7 @@ module.exports = { version, add };
     [Fact]
     public void JsEngine_LoadModule_Dynamic_AllowsCallingExports()
     {
-        var js = @"
-const version = ""1.0.0"";
-function add(x, y) {
-  return x + y;
-}
-module.exports = { version, add };
-";
-
-        using var module = CompileAndLoadModuleAssembly("math", js);
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
 
         using var exportsObj = (IDisposable)Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "math");
         dynamic exports = exportsObj;
@@ -77,14 +63,84 @@ module.exports = { version, add };
         Assert.Equal(3.0, (double)exports.add(1, 2));
     }
 
-    private static CompiledModuleAssembly CompileAndLoadModuleAssembly(string moduleName, string js)
+    [Fact]
+    public void JsEngine_GetModuleIds_ReturnsExpectedModuleIds()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResources(
+            rootModuleName: "main",
+            rootScriptResourcePath: "main.js",
+            additionalFiles: new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["calculator/index.js"] = "calculator/index.js"
+            });
+
+        var moduleIds = Js2IL.Runtime.JsEngine.GetModuleIds(module.Assembly);
+
+        Assert.Equal(new[] { "calculator/index", "main" }, moduleIds);
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenModuleThrowsDuringInitialization_PropagatesException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("boom", "boom.js");
+
+        var ex = Assert.ThrowsAny<Exception>(() => Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "boom"));
+        Assert.Contains("boom", ex.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string LoadHostingJavaScript(string resourcePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(resourcePath);
+
+        var normalized = resourcePath.Trim().Replace('\\', '/');
+        var resourceName = HostingJavaScriptResourcePrefix + normalized.Replace("/", ".");
+
+        var assembly = typeof(ModuleLoadTests).Assembly;
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        if (stream == null)
+        {
+            var candidates = assembly.GetManifestResourceNames()
+                .Where(n => n.StartsWith(HostingJavaScriptResourcePrefix, StringComparison.Ordinal))
+                .Order(StringComparer.Ordinal)
+                .ToArray();
+
+            throw new InvalidOperationException(
+                $"Could not find embedded resource '{resourceName}' for script '{resourcePath}'. " +
+                $"Available Hosting JavaScript resources: {string.Join(", ", candidates)}");
+        }
+
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
+    }
+
+    private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResource(string moduleName, string scriptResourcePath)
+    {
+        return CompileAndLoadModuleAssemblyFromResources(
+            rootModuleName: moduleName,
+            rootScriptResourcePath: scriptResourcePath,
+            additionalFiles: new Dictionary<string, string>(StringComparer.Ordinal));
+    }
+
+    private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResources(
+        string rootModuleName,
+        string rootScriptResourcePath,
+        IReadOnlyDictionary<string, string> additionalFiles)
     {
         var outputDir = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "ModuleLoad", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(outputDir);
 
-        var filePath = Path.Combine(outputDir, moduleName + ".js");
+        var rootJs = LoadHostingJavaScript(rootScriptResourcePath);
+
+        var filePath = Path.Combine(outputDir, rootModuleName + ".js");
         var mockFs = new MockFileSystem();
-        mockFs.AddFile(filePath, js);
+        mockFs.AddFile(filePath, rootJs);
+
+        foreach (var kvp in additionalFiles)
+        {
+            var fullPath = Path.Combine(outputDir, kvp.Key.Replace('/', Path.DirectorySeparatorChar));
+            var content = LoadHostingJavaScript(kvp.Value);
+            mockFs.AddFile(fullPath, content);
+        }
 
         var options = new CompilerOptions { OutputDirectory = outputDir };
         var logger = new TestLogger();
@@ -93,11 +149,11 @@ module.exports = { version, add };
 
         Assert.True(compiler.Compile(filePath), logger.Errors);
 
-        var compiledPath = Path.Combine(outputDir, moduleName + ".dll");
+        var compiledPath = Path.Combine(outputDir, rootModuleName + ".dll");
         Assert.True(File.Exists(compiledPath), $"Expected compiled output at '{compiledPath}'");
 
         var jsRuntimeAsm = typeof(EnvironmentProvider).Assembly;
-        var uniquePath = Path.Combine(outputDir, moduleName + ".run-" + Guid.NewGuid().ToString("N") + ".dll");
+        var uniquePath = Path.Combine(outputDir, rootModuleName + ".run-" + Guid.NewGuid().ToString("N") + ".dll");
         File.Copy(compiledPath, uniquePath, overwrite: true);
 
         var alc = new HostingTestAssemblyLoadContext(jsRuntimeAsm, outputDir);
