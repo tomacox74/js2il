@@ -5,6 +5,41 @@ namespace Js2IL.Runtime;
 public static class JsEngine
 {
     /// <summary>
+    /// Returns module ids present in a compiled JS2IL assembly.
+    /// Prefer this over scanning types directly; compiled assemblies emitted by JS2IL include
+    /// an assembly-level manifest via <see cref="JsCompiledModuleAttribute"/>.
+    /// </summary>
+    public static IReadOnlyList<string> GetModuleIds(Assembly compiledAssembly)
+    {
+        ArgumentNullException.ThrowIfNull(compiledAssembly);
+
+        var fromManifest = compiledAssembly
+            .GetCustomAttributes<JsCompiledModuleAttribute>()
+            .Select(a => a.ModuleId)
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+
+        if (fromManifest.Length != 0)
+        {
+            return fromManifest;
+        }
+
+        // Back-compat: older compiled assemblies won't have the manifest.
+        // Fall back to listing type names in well-known namespaces.
+        // NOTE: these are sanitized ids (e.g. "calculator_index") and may not match original path-like ids.
+        return compiledAssembly
+            .GetTypes()
+            .Where(t => string.Equals(t.Namespace, "Modules", StringComparison.Ordinal) || string.Equals(t.Namespace, "Scripts", StringComparison.Ordinal))
+            .Where(t => t.IsClass && !t.IsNested)
+            .Select(t => t.Name)
+            .Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    /// <summary>
     /// Loads a module using metadata associated with <typeparamref name="TExports"/>.
     /// This requires <see cref="JsModuleAttribute"/> to be present on <typeparamref name="TExports"/>.
     /// </summary>

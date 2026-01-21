@@ -2,6 +2,7 @@
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
+using System.Text;
 using Js2IL.Services.ILGenerators;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
@@ -21,6 +22,8 @@ namespace Js2IL.Services
         public MetadataBuilder _metadataBuilder;
         private BlobBuilder _ilBuilder = new BlobBuilder();
         private MethodDefinitionHandle _entryPoint;
+
+        private AssemblyDefinitionHandle _assemblyDefinition;
 
         private MethodDefinitionHandle _mainScriptMethod;
         private BaseClassLibraryReferences _bclReferences;
@@ -49,6 +52,8 @@ namespace Js2IL.Services
         public void Generate(Modules modules, string assemblyName, string outputPath)
         {
             createAssemblyMetadata(assemblyName);
+
+            EmitCompiledModuleManifest(modules);
 
             // Add the <Module> type first (as required by .NET metadata) using TypeBuilder
             var moduleTypeBuilder = new TypeBuilder(_metadataBuilder, "", "<Module>");
@@ -326,7 +331,7 @@ namespace Js2IL.Services
             // Create the assembly metadata.
             var assemblyName = _metadataBuilder.GetOrAddString(name);
             var culture = _metadataBuilder.GetOrAddString("");
-            this._metadataBuilder.AddAssembly(
+            _assemblyDefinition = this._metadataBuilder.AddAssembly(
                 name: assemblyName,
                 version: new Version(1, 0, 0, 0),
                 culture: culture,
@@ -336,6 +341,108 @@ namespace Js2IL.Services
             );
 
             _metadataBuilder.AddModule(0, assemblyName, _metadataBuilder.GetOrAddGuid(Guid.NewGuid()), default, default);
+        }
+
+        private void EmitCompiledModuleManifest(Modules modules)
+        {
+            // Emit a simple assembly-level manifest describing module ids.
+            // This preserves human-friendly ids like "calculator/index" which cannot be recovered from
+            // the sanitized CLR type name (e.g. Modules.calculator_index).
+            if (_assemblyDefinition.IsNil)
+            {
+                throw new InvalidOperationException("Assembly definition handle not initialized.");
+            }
+
+            var ctorRef = _bclReferences.JsCompiledModuleAttribute_Ctor_Ref;
+
+            // Root module path is used as the base for stable relative module ids.
+            var rootModulePath = modules.rootModule.Path;
+
+            foreach (var module in modules._modules.Values)
+            {
+                var moduleId = GetModuleIdForManifest(module.Path, rootModulePath);
+                var valueBlob = CreateSingleStringCustomAttributeValue(moduleId);
+
+                _metadataBuilder.AddCustomAttribute(
+                    parent: _assemblyDefinition,
+                    constructor: ctorRef,
+                    value: valueBlob);
+            }
+        }
+
+        private static string GetModuleIdForManifest(string modulePath, string rootModulePath)
+        {
+            // Mirror JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromPath but stop BEFORE sanitization
+            // so we keep path-like ids ("a/b") for host-facing discovery.
+            var rootFullPath = Path.GetFullPath(rootModulePath);
+            var rootDirectory = Path.GetDirectoryName(rootFullPath) ?? ".";
+
+            var moduleFullPath = Path.GetFullPath(modulePath);
+            var relative = Path.GetRelativePath(rootDirectory, moduleFullPath);
+            relative = relative.Replace('\\', '/');
+
+            if (relative.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
+            {
+                relative = relative.Substring(0, relative.Length - 3);
+            }
+            else
+            {
+                // Path.ChangeExtension handles removing extension, but keep forward slashes.
+                relative = Path.ChangeExtension(relative.Replace('/', Path.DirectorySeparatorChar), null) ?? relative;
+                relative = relative.Replace('\\', '/');
+            }
+
+            return relative;
+        }
+
+        private BlobHandle CreateSingleStringCustomAttributeValue(string value)
+        {
+            // ECMA-335 CustomAttribute blob format:
+            // - prolog: 0x0001 (UInt16)
+            // - fixed args: SerString
+            // - named args count: UInt16 (0)
+            var blob = new BlobBuilder();
+            blob.WriteUInt16(0x0001);
+            WriteSerString(blob, value);
+            blob.WriteUInt16(0);
+            return _metadataBuilder.GetOrAddBlob(blob);
+        }
+
+        private static void WriteSerString(BlobBuilder blob, string value)
+        {
+            // SerString: (null -> 0xFF) else: compressed length + UTF8 bytes
+            // For our manifest, value is always non-null.
+            var utf8 = Encoding.UTF8.GetBytes(value);
+            WriteCompressedUInt32(blob, (uint)utf8.Length);
+            blob.WriteBytes(utf8);
+        }
+
+        private static void WriteCompressedUInt32(BlobBuilder blob, uint value)
+        {
+            // ECMA-335 II.23.2 Blobs and signatures (compressed unsigned integer)
+            if (value <= 0x7Fu)
+            {
+                blob.WriteByte((byte)value);
+                return;
+            }
+
+            if (value <= 0x3FFFu)
+            {
+                blob.WriteByte((byte)((value >> 8) | 0x80u));
+                blob.WriteByte((byte)(value & 0xFFu));
+                return;
+            }
+
+            if (value <= 0x1FFFFFFFu)
+            {
+                blob.WriteByte((byte)((value >> 24) | 0xC0u));
+                blob.WriteByte((byte)((value >> 16) & 0xFFu));
+                blob.WriteByte((byte)((value >> 8) & 0xFFu));
+                blob.WriteByte((byte)(value & 0xFFu));
+                return;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(value), "Value too large for compressed integer encoding.");
         }
 
         private void CreateAssembly(string name, string outputPath)
