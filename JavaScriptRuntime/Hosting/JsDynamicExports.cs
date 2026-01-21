@@ -6,7 +6,7 @@ namespace Js2IL.Runtime;
 /// Reflection/dynamic-friendly exports proxy.
 /// Member access and invocations are marshalled onto the owning runtime thread.
 /// </summary>
-public sealed class JsDynamicExports : DynamicObject, IDisposable
+internal sealed class JsDynamicExports : DynamicObject, IDisposable
 {
     private readonly JsRuntimeInstance _runtime;
 
