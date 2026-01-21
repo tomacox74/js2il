@@ -17,6 +17,12 @@ public sealed class JsDynamicExports : DynamicObject, IDisposable
 
     public void Dispose() => _runtime.Dispose();
 
+    /// <summary>
+    /// Waits for the runtime's dedicated script thread to terminate.
+    /// Intended for diagnostics/tests; normal callers should rely on <see cref="Dispose"/>.
+    /// </summary>
+    public bool WaitForShutdown(TimeSpan timeout) => _runtime.WaitForShutdown(timeout);
+
     public object? Get(string name)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);

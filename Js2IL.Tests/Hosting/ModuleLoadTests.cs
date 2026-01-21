@@ -87,6 +87,19 @@ public class ModuleLoadTests
     }
 
     [Fact]
+    public void JsEngine_LoadModule_WhenDisposed_ShutsDownScriptThread()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
+
+        var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "math");
+        var exports = Assert.IsType<Js2IL.Runtime.JsDynamicExports>(exportsObj);
+
+        exports.Dispose();
+
+        Assert.True(exports.WaitForShutdown(TimeSpan.FromSeconds(2)));
+    }
+
+    [Fact]
     public void JsEngine_GetModuleIds_ReturnsExpectedModuleIds()
     {
         using var module = CompileAndLoadModuleAssemblyFromResources(
