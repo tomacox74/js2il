@@ -1,3 +1,1 @@
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("Js2IL.Tests")]
+// Intentionally left blank. InternalsVisibleTo is declared in JavaScriptRuntime.csproj.
