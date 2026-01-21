@@ -6,7 +6,7 @@ namespace Js2IL.Runtime;
 /// Reflection/dynamic-friendly exports proxy.
 /// Member access and invocations are marshalled onto the owning runtime thread.
 /// </summary>
-public sealed class JsDynamicExports : DynamicObject, IDisposable
+internal sealed class JsDynamicExports : DynamicObject, IDisposable
 {
     private readonly JsRuntimeInstance _runtime;
 
@@ -16,6 +16,12 @@ public sealed class JsDynamicExports : DynamicObject, IDisposable
     }
 
     public void Dispose() => _runtime.Dispose();
+
+    /// <summary>
+    /// Waits for the runtime's dedicated script thread to terminate.
+    /// Intended for diagnostics/tests; normal callers should rely on <see cref="Dispose"/>.
+    /// </summary>
+    internal bool WaitForShutdown(TimeSpan timeout) => _runtime.WaitForShutdown(timeout);
 
     public object? Get(string name)
     {

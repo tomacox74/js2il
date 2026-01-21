@@ -56,11 +56,47 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
 
-        using var exportsObj = (IDisposable)Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "math");
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "math");
         dynamic exports = exportsObj;
 
         Assert.Equal("1.0.0", (string)exports.version);
         Assert.Equal(3.0, (double)exports.add(1, 2));
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_AllowsCallingExports_FromAnotherThread()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IMathExports>(module.Assembly, "math");
+
+        // Validate cross-thread marshalling: calls from any host thread should execute on the script thread.
+        var result = Task.Run(() => exports.Add(1, 2)).GetAwaiter().GetResult();
+        Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenDisposed_ThrowsObjectDisposedExceptionOnFurtherCalls()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IMathExports>(module.Assembly, "math");
+
+        exports.Dispose();
+
+        _ = Assert.Throws<ObjectDisposedException>(() => exports.Add(1, 2));
+        _ = Assert.Throws<ObjectDisposedException>(() => _ = exports.Version);
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenDisposed_ShutsDownScriptThread()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
+
+        var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "math");
+        var exports = Assert.IsType<Js2IL.Runtime.JsDynamicExports>(exportsObj);
+
+        exports.Dispose();
+
+        Assert.True(exports.WaitForShutdown(TimeSpan.FromSeconds(2)));
     }
 
     [Fact]

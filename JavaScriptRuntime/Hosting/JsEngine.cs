@@ -9,7 +9,7 @@ public static class JsEngine
     /// Prefer this over scanning types directly; compiled assemblies emitted by JS2IL include
     /// an assembly-level manifest via <see cref="JsCompiledModuleAttribute"/>.
     /// </summary>
-    public static IReadOnlyList<string> GetModuleIds(Assembly compiledAssembly)
+    internal static IReadOnlyList<string> GetModuleIds(Assembly compiledAssembly)
     {
         ArgumentNullException.ThrowIfNull(compiledAssembly);
 
@@ -71,7 +71,7 @@ public static class JsEngine
     /// <summary>
     /// Dynamic / reflection-friendly form: returns a dynamic exports proxy (also <see cref="IDisposable"/>).
     /// </summary>
-    public static object LoadModule(Assembly compiledAssembly, string moduleId)
+    public static IDisposable LoadModule(Assembly compiledAssembly, string moduleId)
     {
         ArgumentNullException.ThrowIfNull(compiledAssembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
