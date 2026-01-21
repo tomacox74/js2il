@@ -8,6 +8,10 @@ All notable changes to this project are documented here.
 - Object literal enhancements: spread properties (`{ ...x }`), computed keys (`{ [expr]: value }`), shorthand properties (`{ a }`), and method definitions (`{ m() { ... } }`) (fixes #290, #291, #292).
 - Synchronous generators (MVP): `function*` + `yield` lowered to a state machine with iterator-style `next()` semantics. Limitations: `yield*` and `async function*` are not supported yet; `throw/return` propagation through `try/finally` is not fully implemented (PR #388).
 
+### Changed
+- Hosting: reduced public API surface for module discovery and dynamic exports projection (kept internal for now).
+- Hosting: dynamic `JsEngine.LoadModule(Assembly, string)` now returns `IDisposable` to encourage deterministic cleanup.
+
 ## v0.7.2 - 2026-01-17
 
 ### Fixed

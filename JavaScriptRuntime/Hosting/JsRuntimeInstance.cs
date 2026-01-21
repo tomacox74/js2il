@@ -16,7 +16,8 @@ internal sealed class JsRuntimeInstance : IDisposable
     private static readonly TimeSpan DisposeJoinTimeout = TimeSpan.FromSeconds(10);
 
     // Signals when the script thread has fully exited (ThreadMain finally block).
-    private readonly ManualResetEventSlim _terminated = new(initialState: false);
+    // Using a TaskCompletionSource avoids allocating/disposal of an underlying WaitHandle.
+    private readonly TaskCompletionSource _terminated = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     // Cross-thread work queue used to marshal calls onto the dedicated script thread.
     private readonly BlockingCollection<IWorkItem> _queue = new();
@@ -172,7 +173,7 @@ internal sealed class JsRuntimeInstance : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    internal bool IsShutdown => _terminated.IsSet;
+    internal bool IsShutdown => _terminated.Task.IsCompleted;
 
     internal bool WaitForShutdown(TimeSpan timeout)
     {
@@ -182,7 +183,7 @@ internal sealed class JsRuntimeInstance : IDisposable
             return false;
         }
 
-        return _terminated.Wait(timeout);
+        return _terminated.Task.Wait(timeout);
     }
 
     private void ThreadMain(Assembly compiledAssembly, string moduleSpecifier)
@@ -238,7 +239,7 @@ internal sealed class JsRuntimeInstance : IDisposable
             GlobalThis.ServiceProvider = null;
 
             // Mark thread termination before disposing shared resources.
-            _terminated.Set();
+            _terminated.TrySetResult();
 
             // Release managed resources once the owning script thread is done using them.
             _queue.Dispose();
