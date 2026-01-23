@@ -26,9 +26,6 @@ internal class JsHandleProxy : DispatchProxy
             throw new ArgumentNullException(nameof(targetMethod));
         }
 
-        var runtime = _runtime ?? throw new ObjectDisposedException(nameof(JsHandleProxy));
-        var target = _target ?? throw new ObjectDisposedException(nameof(JsHandleProxy));
-
         if (targetMethod.DeclaringType == typeof(IDisposable) && targetMethod.Name == nameof(IDisposable.Dispose))
         {
             DisposeHandle();
@@ -39,6 +36,9 @@ internal class JsHandleProxy : DispatchProxy
         {
             throw new ObjectDisposedException(targetMethod.DeclaringType?.FullName ?? nameof(JsHandleProxy));
         }
+
+        var runtime = _runtime ?? throw new ObjectDisposedException(nameof(JsHandleProxy));
+        var target = _target ?? throw new ObjectDisposedException(nameof(JsHandleProxy));
 
         if (targetMethod.DeclaringType == typeof(object))
         {
@@ -78,7 +78,13 @@ internal class JsHandleProxy : DispatchProxy
 
     private void DisposeHandle()
     {
-        Interlocked.Exchange(ref _disposed, 1);
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+        {
+            return;
+        }
+
+        Interlocked.Exchange(ref _runtime, null);
+        Interlocked.Exchange(ref _target, null);
     }
 
     private object? HandleObjectMethod(MethodInfo targetMethod, object?[]? args)
@@ -115,9 +121,6 @@ internal class JsConstructorProxy : DispatchProxy
             throw new ArgumentNullException(nameof(targetMethod));
         }
 
-        var runtime = _runtime ?? throw new ObjectDisposedException(nameof(JsConstructorProxy));
-        var constructor = _constructor ?? throw new ObjectDisposedException(nameof(JsConstructorProxy));
-
         if (targetMethod.DeclaringType == typeof(IDisposable) && targetMethod.Name == nameof(IDisposable.Dispose))
         {
             DisposeHandle();
@@ -128,6 +131,9 @@ internal class JsConstructorProxy : DispatchProxy
         {
             throw new ObjectDisposedException(targetMethod.DeclaringType?.FullName ?? nameof(JsConstructorProxy));
         }
+
+        var runtime = _runtime ?? throw new ObjectDisposedException(nameof(JsConstructorProxy));
+        var constructor = _constructor ?? throw new ObjectDisposedException(nameof(JsConstructorProxy));
 
         if (targetMethod.DeclaringType == typeof(object))
         {
@@ -155,7 +161,13 @@ internal class JsConstructorProxy : DispatchProxy
 
     private void DisposeHandle()
     {
-        Interlocked.Exchange(ref _disposed, 1);
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+        {
+            return;
+        }
+
+        Interlocked.Exchange(ref _runtime, null);
+        Interlocked.Exchange(ref _constructor, null);
     }
 
     private object? HandleObjectMethod(MethodInfo targetMethod, object?[]? args)

@@ -52,8 +52,9 @@ public class ExecutionTests
     {
         using var exports = LoadExports(out _);
         using var constructor = exports.Counter;
-        using var counter = constructor.Construct(10);
-        using var created = exports.CreateCounter(2);
+
+        var counter = constructor.Construct(10);
+        var created = exports.CreateCounter(2);
 
         Assert.Equal(15, counter.Add(5));
         Assert.Equal(15, counter.GetValue());

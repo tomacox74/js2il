@@ -7,20 +7,42 @@ namespace Js2IL.Runtime;
 
 internal static class ExportMemberResolver
 {
-    private static object?[] NormalizeArgs(object?[] args)
+    private static object[] NormalizeArgs(object?[] args)
     {
         if (args.Length == 0)
         {
-            return Array.Empty<object?>();
+            return Array.Empty<object>();
         }
 
-        var normalized = new object?[args.Length];
+        object[]? normalized = null;
         for (var i = 0; i < args.Length; i++)
         {
-            normalized[i] = NormalizeArg(args[i]);
+            var original = args[i];
+            var converted = NormalizeArg(original);
+
+            if (!ReferenceEquals(converted, original))
+            {
+                if (normalized == null)
+                {
+                    normalized = new object[args.Length];
+
+                    for (var j = 0; j < i; j++)
+                    {
+                        normalized[j] = args[j]!;
+                    }
+                }
+
+                normalized[i] = converted!;
+                continue;
+            }
+
+            if (normalized != null)
+            {
+                normalized[i] = original!;
+            }
         }
 
-        return normalized;
+        return normalized ?? (object[])(object)args;
     }
 
     private static object? NormalizeArg(object? arg)
@@ -34,7 +56,7 @@ internal static class ExportMemberResolver
         // Normalize common CLR numeric primitives to double so arithmetic behaves as expected.
         return arg switch
         {
-            double d => d,
+            double => arg,
             float f => (double)f,
             decimal m => (double)m,
 
@@ -112,7 +134,7 @@ internal static class ExportMemberResolver
 
     public static object? InvokeJsDelegate(Delegate d, object?[] args)
     {
-        args = NormalizeArgs(args);
+        var callArgs = NormalizeArgs(args);
 
         var parameters = d.Method.GetParameters();
         if (parameters.Length == 0)
@@ -129,9 +151,9 @@ internal static class ExportMemberResolver
             argIndex = 1;
         }
 
-        for (var i = 0; i < args.Length && argIndex < invokeArgs.Length; i++, argIndex++)
+        for (var i = 0; i < callArgs.Length && argIndex < invokeArgs.Length; i++, argIndex++)
         {
-            invokeArgs[argIndex] = args[i];
+            invokeArgs[argIndex] = callArgs[i];
         }
 
         while (argIndex < invokeArgs.Length)
@@ -154,11 +176,11 @@ internal static class ExportMemberResolver
         ArgumentNullException.ThrowIfNull(target);
         ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
 
-        args = NormalizeArgs(args);
+        var callArgs = NormalizeArgs(args);
 
         foreach (var candidate in GetNameCandidates(methodName))
         {
-            if (TryInvokeMethod(target, candidate, args, out var result))
+            if (TryInvokeMethod(target, candidate, callArgs, out var result))
             {
                 return result;
             }
@@ -171,55 +193,11 @@ internal static class ExportMemberResolver
     {
         ArgumentNullException.ThrowIfNull(constructor);
 
-        args = NormalizeArgs(args);
-
-        if (constructor is Delegate d)
-        {
-            return InvokeJsDelegate(d, args);
-        }
-
-        if (constructor is Type type)
-        {
-            if (TryInvokeStaticConstruct(type, args, out var constructed))
-            {
-                return constructed;
-            }
-
-            if (TryInvokeConstructor(type, args, out constructed))
-            {
-                return constructed;
-            }
-
-            throw new MissingMethodException($"No matching constructor found for '{type.FullName}'.");
-        }
-
-        if (constructor is ConstructorInfo ctorInfo)
-        {
-            if (TryBuildInvokeArgs(ctorInfo.GetParameters(), args, out var invokeArgs))
-            {
-                return ctorInfo.Invoke(invokeArgs);
-            }
-
-            throw new MissingMethodException($"No matching constructor found for '{ctorInfo.DeclaringType?.FullName}'.");
-        }
-
-        if (constructor is MethodInfo methodInfo)
-        {
-            if (TryBuildInvokeArgs(methodInfo.GetParameters(), args, out var invokeArgs))
-            {
-                return methodInfo.Invoke(null, invokeArgs);
-            }
-        }
-
-        if (TryInvokeMethod(constructor, "Construct", args, out var result))
-        {
-            return result;
-        }
-
-        throw new MissingMethodException($"Export '{constructor.GetType().FullName}' is not constructible.");
+        var callArgs = NormalizeArgs(args);
+        return JavaScriptRuntime.Object.ConstructValue(constructor, callArgs);
     }
 
-    private static bool TryInvokeMethod(object target, string methodName, object?[] args, out object? result)
+    private static bool TryInvokeMethod(object target, string methodName, object[] args, out object? result)
     {
         var methods = target.GetType()
             .GetMethods(BindingFlags.Instance | BindingFlags.Public)
@@ -229,7 +207,14 @@ internal static class ExportMemberResolver
         {
             if (TryBuildInvokeArgs(method.GetParameters(), args, out var invokeArgs))
             {
-                result = method.Invoke(target, invokeArgs);
+                try
+                {
+                    result = method.Invoke(target, invokeArgs);
+                }
+                catch (TargetInvocationException tie) when (tie.InnerException != null)
+                {
+                    throw tie.InnerException;
+                }
                 return true;
             }
         }
@@ -238,40 +223,7 @@ internal static class ExportMemberResolver
         return false;
     }
 
-    private static bool TryInvokeStaticConstruct(Type type, object?[] args, out object? result)
-    {
-        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static)
-            .Where(m => string.Equals(m.Name, "Construct", StringComparison.OrdinalIgnoreCase));
-
-        foreach (var method in methods)
-        {
-            if (TryBuildInvokeArgs(method.GetParameters(), args, out var invokeArgs))
-            {
-                result = method.Invoke(null, invokeArgs);
-                return true;
-            }
-        }
-
-        result = null;
-        return false;
-    }
-
-    private static bool TryInvokeConstructor(Type type, object?[] args, out object? result)
-    {
-        foreach (var ctor in type.GetConstructors(BindingFlags.Public | BindingFlags.Instance))
-        {
-            if (TryBuildInvokeArgs(ctor.GetParameters(), args, out var invokeArgs))
-            {
-                result = ctor.Invoke(invokeArgs);
-                return true;
-            }
-        }
-
-        result = null;
-        return false;
-    }
-
-    private static bool TryBuildInvokeArgs(ParameterInfo[] parameters, object?[] args, out object?[] invokeArgs)
+    private static bool TryBuildInvokeArgs(ParameterInfo[] parameters, object[] args, out object?[] invokeArgs)
     {
         if (parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]))
         {
