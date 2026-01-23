@@ -1,5 +1,5 @@
+using Js2IL.IL;
 using Js2IL.Services;
-using System.Reflection;
 using System.Reflection.Metadata;
 
 namespace Js2IL.IR;
@@ -197,7 +197,7 @@ internal static class LIRMemberCallNormalization
                 continue;
             }
 
-            foreach (var used in EnumerateTemps(methodBody.Instructions[i]))
+            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(methodBody.Instructions[i]))
             {
                 if (used.Index == temp.Index)
                 {
@@ -207,56 +207,5 @@ internal static class LIRMemberCallNormalization
         }
 
         return false;
-    }
-
-    private static IEnumerable<TempVariable> EnumerateTemps(LIRInstruction instruction)
-    {
-        // Conservative reflection-based enumerator for TempVariable-bearing instruction properties.
-        // This avoids having to manually maintain a giant switch over all instruction shapes.
-        var type = instruction.GetType();
-        foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-        {
-            object? value;
-            try
-            {
-                value = prop.GetValue(instruction);
-            }
-            catch
-            {
-                continue;
-            }
-
-            if (value == null)
-            {
-                continue;
-            }
-
-            if (value is TempVariable tv)
-            {
-                yield return tv;
-                continue;
-            }
-
-            if (prop.PropertyType == typeof(TempVariable?))
-            {
-                var ntv = (TempVariable?)value;
-                if (ntv.HasValue)
-                {
-                    yield return ntv.Value;
-                }
-
-                continue;
-            }
-
-            if (value is IEnumerable<TempVariable> list)
-            {
-                foreach (var t in list)
-                {
-                    yield return t;
-                }
-
-                continue;
-            }
-        }
     }
 }
