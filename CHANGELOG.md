@@ -4,17 +4,19 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.7.3 - 2026-01-23
+
 ### Added
 - Object literal enhancements: spread properties (`{ ...x }`), computed keys (`{ [expr]: value }`), shorthand properties (`{ a }`), and method definitions (`{ m() { ... } }`) (fixes #290, #291, #292).
 - Synchronous generators (MVP): `function*` + `yield` lowered to a state machine with iterator-style `next()` semantics. Limitations: `yield*` and `async function*` are not supported yet; `throw/return` propagation through `try/finally` is not fully implemented (PR #388).
 - Hosting: initial library hosting API scaffold (`JsEngine.LoadModule(...)`) with one dedicated script thread per runtime instance, cross-thread marshalling, and deterministic disposal boundaries (fixes #402).
 - Hosting: compiled-module discovery via a compiler-emitted manifest (`JsCompiledModuleAttribute`) plus runtime discovery API and tests covering discovery and module init failure propagation (fixes #403).
 - Hosting: compiler-generated strongly-typed contracts for CommonJS `module.exports` (including nested exports objects and exported classes via `IJsConstructor<T>`), enabling `JsEngine.LoadModule<TExports>()` without passing an assembly or module id (fixes #426).
-
 ### Changed
 - Hosting: reduced public API surface for module discovery and dynamic exports projection (kept internal for now).
 - Hosting: dynamic `JsEngine.LoadModule(Assembly, string)` now returns `IDisposable` to encourage deterministic cleanup.
-
 ### Performance
 - Reduced allocations in early-bound member calls by normalizing eligible dynamic member calls into direct typed calls (avoids building `object[]` args on the fast path) (PR #433).
 - Reduced casts/guards for user-class `new` expressions by emitting strongly-typed locals for `newobj` results when constructor return override is not possible (PR #433).
