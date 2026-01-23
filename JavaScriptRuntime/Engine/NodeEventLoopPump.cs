@@ -74,7 +74,7 @@ public sealed class NodeEventLoopPump
             _macro.Dequeue().Invoke();
         }
 
-        DrainMicrotasksToCompletion();
+        DrainMicrotasks();
     }
 
     public void WaitForWorkOrNextTimer(int maxWaitMs = 50)
@@ -103,7 +103,7 @@ public sealed class NodeEventLoopPump
             callback.Invoke();
 
             // Promise reactions are modeled as microtasks. Run a microtask checkpoint after each callback.
-            DrainMicrotasksToCompletion();
+            DrainMicrotasks();
         }
     }
 
@@ -118,9 +118,12 @@ public sealed class NodeEventLoopPump
         }
     }
 
-    private void DrainMicrotasksToCompletion()
+    private void DrainMicrotasks(int max = 1024)
     {
-        while (_state.TryDequeueMicrotask(out var action) && action != null)
+        // We intentionally bound the number of microtasks drained in one checkpoint.
+        // This preserves forward progress for timers/macrotasks and avoids starvation.
+        int ticks = 0;
+        while (ticks++ < max && _state.TryDequeueMicrotask(out var action) && action != null)
         {
             action.Invoke();
         }

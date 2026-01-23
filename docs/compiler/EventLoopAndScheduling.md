@@ -39,7 +39,7 @@ Given that, JS2IL’s goal is:
 Concretely, JS2IL makes the following compatibility guarantees:
 
 - **Promise reactions are enqueued as Jobs/microtasks.** When a Promise settles, its reactions are queued onto the microtask queue (see TriggerPromiseReactions, ECMA-262 §27.2.1.8).
-- **Microtask checkpoints run to completion.** After each callback that JS2IL treats as a host “task” (e.g., a `setImmediate` callback or a due timer callback), the pump drains the microtask queue until it is empty before running the next task. This matches the common expectation that “microtasks run before the next macrotask”.
+- **Microtask checkpoints are bounded to avoid starvation.** After each callback that JS2IL treats as a host “task” (e.g., a `setImmediate` callback or a due timer callback), the pump drains a bounded number of microtasks before continuing. This preserves forward progress for timers/macrotasks in long microtask chains.
 
 Note that the APIs `setTimeout`/`setInterval`/`setImmediate` are host-defined (not standardized by ECMA-262), so the exact ordering between timer/immediate phases is ultimately a host-compatibility choice rather than a spec requirement.
 
@@ -89,7 +89,7 @@ Each `RunOneIteration()` performs the following steps (simplified):
 1) Drain a bounded number of immediates
 2) Promote at most one due timer to the macro queue (rescheduling intervals immediately)
 3) Execute at most one macro callback
-4) Drain microtasks until empty
+4) Drain a bounded number of microtasks
 
 Additionally, a microtask checkpoint runs after each immediate callback.
 
