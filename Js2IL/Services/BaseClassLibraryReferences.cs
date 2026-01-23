@@ -52,6 +52,9 @@ namespace Js2IL.Services
         public MemberReferenceHandle JsCompiledModuleAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsCompiledModuleAttribute), new[] { typeof(string) });
 
+        public MemberReferenceHandle JsModuleAttribute_Ctor_Ref =>
+            _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsModuleAttribute), new[] { typeof(string) });
+
         public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
         {
             if (!_funcTypesByParamCount.TryGetValue(jsParamCount, out var funcType))
