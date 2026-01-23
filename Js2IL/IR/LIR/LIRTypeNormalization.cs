@@ -20,6 +20,50 @@ internal static class LIRTypeNormalization
             return;
         }
 
+        // Stamp result temps from `new <UserClass>(...)` with the constructed CLR type handle when safe.
+        // This enables strongly-typed locals for materialized temps and allows the IL emitter to
+        // avoid redundant castclass instructions.
+        //
+        // Skip classes with PL5.4a ctor-return override semantics: the result temp may be overwritten
+        // with an arbitrary value (not necessarily an instance of the constructed CLR type).
+        foreach (var instr in methodBody.Instructions)
+        {
+            if (instr is not LIRNewUserClass newUserClass)
+            {
+                continue;
+            }
+
+            if (newUserClass.Result.Index < 0 || newUserClass.Result.Index >= methodBody.TempStorages.Count)
+            {
+                continue;
+            }
+
+            if (!classRegistry.TryGet(newUserClass.RegistryClassName, out var constructedTypeHandle) || constructedTypeHandle.IsNil)
+            {
+                continue;
+            }
+
+            if (classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out _))
+            {
+                continue;
+            }
+
+            var storage = GetTempStorage(methodBody, newUserClass.Result);
+            if (storage.Kind == ValueStorageKind.Reference)
+            {
+                storage = storage with { TypeHandle = constructedTypeHandle };
+                SetTempStorage(methodBody, newUserClass.Result, storage);
+
+                // If this temp is pinned to a declared variable slot, keep the variable storage in sync
+                // so the local signature also becomes strongly typed.
+                var slot = GetTempVariableSlot(methodBody, newUserClass.Result);
+                if (slot >= 0 && slot < methodBody.VariableStorages.Count)
+                {
+                    methodBody.VariableStorages[slot] = storage;
+                }
+            }
+        }
+
         for (int i = 0; i < methodBody.Instructions.Count - 1; i++)
         {
             // Peephole: Object.NormalizeForOfIterable(x) where x is already a known iterable.

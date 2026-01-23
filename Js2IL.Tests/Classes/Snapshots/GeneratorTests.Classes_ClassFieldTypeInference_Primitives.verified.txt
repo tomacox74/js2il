@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2183
+				// Method begins at RVA 0x2137
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218c
+				// Method begins at RVA 0x2140
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2195
+				// Method begins at RVA 0x2149
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -81,7 +81,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2120
+			// Method begins at RVA 0x20d4
 			// Header size: 12
 			// Code size: 40 (0x28)
 			.maxstack 32
@@ -103,7 +103,7 @@
 		.method public hidebysig 
 			instance object increment () cil managed 
 		{
-			// Method begins at RVA 0x2154
+			// Method begins at RVA 0x2108
 			// Header size: 12
 			// Code size: 26 (0x1a)
 			.maxstack 32
@@ -132,7 +132,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217a
+			// Method begins at RVA 0x212e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -158,90 +158,57 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 194 (0xc2)
+		// Code size: 120 (0x78)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.Classes_ClassFieldTypeInference_Primitives/Scope,
-			[1] object,
-			[2] object[]
+			[1] class Modules.Classes_ClassFieldTypeInference_Primitives/Counter
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Modules.Classes_ClassFieldTypeInference_Primitives/Counter::.ctor()
 		IL_000b: stloc.1
-		IL_000c: ldc.i4.0
-		IL_000d: newarr [System.Runtime]System.Object
-		IL_0012: stloc.2
+		IL_000c: ldloc.1
+		IL_000d: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
+		IL_0012: pop
 		IL_0013: ldloc.1
-		IL_0014: isinst Modules.Classes_ClassFieldTypeInference_Primitives/Counter
-		IL_0019: dup
-		IL_001a: brfalse IL_002a
-
-		IL_001f: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
-		IL_0024: pop
-		IL_0025: br IL_0038
-
-		IL_002a: pop
-		IL_002b: ldloc.1
-		IL_002c: ldstr "increment"
-		IL_0031: ldloc.2
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0037: pop
-
-		IL_0038: ldc.i4.0
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: stloc.2
-		IL_003f: ldloc.1
-		IL_0040: isinst Modules.Classes_ClassFieldTypeInference_Primitives/Counter
-		IL_0045: dup
-		IL_0046: brfalse IL_0056
-
-		IL_004b: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
-		IL_0050: pop
-		IL_0051: br IL_0064
-
-		IL_0056: pop
-		IL_0057: ldloc.1
-		IL_0058: ldstr "increment"
-		IL_005d: ldloc.2
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0063: pop
-
-		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0069: ldc.i4.1
-		IL_006a: newarr [System.Runtime]System.Object
-		IL_006f: dup
-		IL_0070: ldc.i4.0
-		IL_0071: ldloc.1
-		IL_0072: ldstr "value"
-		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_007c: stelem.ref
-		IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0082: pop
-		IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0088: ldc.i4.1
-		IL_0089: newarr [System.Runtime]System.Object
-		IL_008e: dup
-		IL_008f: ldc.i4.0
-		IL_0090: ldloc.1
-		IL_0091: ldstr "name"
-		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_009b: stelem.ref
-		IL_009c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a1: pop
-		IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a7: ldc.i4.1
-		IL_00a8: newarr [System.Runtime]System.Object
-		IL_00ad: dup
-		IL_00ae: ldc.i4.0
-		IL_00af: ldloc.1
-		IL_00b0: ldstr "active"
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00ba: stelem.ref
-		IL_00bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c0: pop
-		IL_00c1: ret
+		IL_0014: callvirt instance object Modules.Classes_ClassFieldTypeInference_Primitives/Counter::increment()
+		IL_0019: pop
+		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001f: ldc.i4.1
+		IL_0020: newarr [System.Runtime]System.Object
+		IL_0025: dup
+		IL_0026: ldc.i4.0
+		IL_0027: ldloc.1
+		IL_0028: ldstr "value"
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0032: stelem.ref
+		IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0038: pop
+		IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003e: ldc.i4.1
+		IL_003f: newarr [System.Runtime]System.Object
+		IL_0044: dup
+		IL_0045: ldc.i4.0
+		IL_0046: ldloc.1
+		IL_0047: ldstr "name"
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0051: stelem.ref
+		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0057: pop
+		IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005d: ldc.i4.1
+		IL_005e: newarr [System.Runtime]System.Object
+		IL_0063: dup
+		IL_0064: ldc.i4.0
+		IL_0065: ldloc.1
+		IL_0066: ldstr "active"
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0070: stelem.ref
+		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0076: pop
+		IL_0077: ret
 	} // end of method Classes_ClassFieldTypeInference_Primitives::__js_module_init__
 
 } // end of class Modules.Classes_ClassFieldTypeInference_Primitives
@@ -253,7 +220,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219e
+		// Method begins at RVA 0x2152
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

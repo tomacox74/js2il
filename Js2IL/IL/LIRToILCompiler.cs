@@ -531,76 +531,6 @@ internal sealed class LIRToILCompiler
             }
         }
 
-        // Precompute object[] argument counts for temps produced by LIRBuildArray.
-        // NOTE: This only covers arrays created by LIRBuildArray; if the args array flows from elsewhere
-        // (e.g., passed through a temp without a defining LIRBuildArray), the fast-path below will not apply.
-        var buildArrayElementCounts = new Dictionary<int, int>();
-        foreach (var instr in MethodBody.Instructions.OfType<LIRBuildArray>())
-        {
-            if (instr.Result.Index >= 0)
-            {
-                buildArrayElementCounts[instr.Result.Index] = instr.Elements.Count;
-            }
-        }
-
-        // Precompute known user-class receiver types for temps.
-        // This allows the LIRCallMember fast-path to omit redundant `isinst` checks when the receiver
-        // is already statically known to be of the target user-class type (e.g., loaded from a strongly
-        // typed user-class field).
-        var knownUserClassReceiverTypeHandles = new Dictionary<int, EntityHandle>();
-        var classRegistryForKnownReceivers = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
-        if (classRegistryForKnownReceivers != null)
-        {
-            foreach (var instruction in MethodBody.Instructions)
-            {
-                switch (instruction)
-                {
-                    case LIRLoadUserClassInstanceField loadInstanceField:
-                        if (loadInstanceField.Result.Index >= 0
-                            && TryGetDeclaredUserClassFieldTypeHandle(
-                                classRegistryForKnownReceivers,
-                                loadInstanceField.RegistryClassName,
-                                loadInstanceField.FieldName,
-                                loadInstanceField.IsPrivateField,
-                                isStaticField: false,
-                                out var fieldTypeHandle))
-                        {
-                            knownUserClassReceiverTypeHandles[loadInstanceField.Result.Index] = fieldTypeHandle;
-                        }
-                        break;
-
-                    case LIRCopyTemp copyTemp:
-                        if (copyTemp.Destination.Index >= 0
-                            && knownUserClassReceiverTypeHandles.TryGetValue(copyTemp.Source.Index, out var srcHandle))
-                        {
-                            knownUserClassReceiverTypeHandles[copyTemp.Destination.Index] = srcHandle;
-                        }
-                        break;
-                }
-            }
-        }
-
-        // The LIRCallMember fast-path may index into the same arguments array multiple times to unpack
-        // direct arguments for callvirt. If Stackify inlined the LIRBuildArray, repeatedly loading the
-        // temp would re-materialize the array on each element access.
-        // To keep the fast-path efficient, force materialization only for call-sites where we can
-        // conservatively prove the fast-path will be emitted.
-        var classRegistryForMemberFastPath = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
-        if (classRegistryForMemberFastPath != null)
-        {
-            foreach (var callMember in MethodBody.Instructions.OfType<LIRCallMember>())
-            {
-                var argsTempIndex = callMember.ArgumentsArray.Index;
-                if (argsTempIndex >= 0
-                    && argsTempIndex < shouldMaterialize.Length
-                    && buildArrayElementCounts.TryGetValue(argsTempIndex, out var argCount)
-                    && classRegistryForMemberFastPath.TryResolveUniqueInstanceMethod(callMember.MethodName, argCount, out _, out _, out _, out _, out _))
-                {
-                    shouldMaterialize[argsTempIndex] = true;
-                }
-            }
-        }
-
         var allocation = TempLocalAllocator.Allocate(MethodBody, shouldMaterialize);
 
         // Pre-create IL labels for all LIR labels
@@ -808,7 +738,7 @@ internal sealed class LIRToILCompiler
                     continue;
             }
 
-            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, buildArrayElementCounts, knownUserClassReceiverTypeHandles, labelMap))
+            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, labelMap))
             {
                 // Failed to compile instruction
                 IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
@@ -932,8 +862,6 @@ internal sealed class LIRToILCompiler
         InstructionEncoder ilEncoder,
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor,
-        Dictionary<int, int> buildArrayElementCounts,
-        Dictionary<int, EntityHandle> knownUserClassReceiverTypeHandles,
         Dictionary<int, LabelHandle> labelMap)
     {
         switch (instruction)
@@ -2729,159 +2657,7 @@ internal sealed class LIRToILCompiler
 
             case LIRCallMember callMember:
                 {
-                    // Fast-path: if the method name+arity uniquely identifies a user-defined class instance method,
-                    // emit: isinst <Class>, brfalse fallback, unpack args from object[] and callvirt directly.
-                    // Fallback preserves existing runtime dispatch semantics.
-                    // NOTE: This fast-path only triggers when the args array temp is known to come from LIRBuildArray.
-                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
-                    if (classRegistry != null
-                        && buildArrayElementCounts.TryGetValue(callMember.ArgumentsArray.Index, out var argCount)
-                        && classRegistry.TryResolveUniqueInstanceMethod(callMember.MethodName, argCount, out _, out var receiverTypeHandle, out var directMethodHandle, out var directReturnClrType, out var maxParamCount))
-                    {
-                        // If the receiver is already known to be of the resolved user-class type, we can
-                        // emit the direct call without the `isinst` guard and runtime-dispatch fallback.
-                        // This avoids redundant type-tests in cases like strongly typed fields.
-                        if (callMember.Receiver.Index >= 0
-                            && knownUserClassReceiverTypeHandles.TryGetValue(callMember.Receiver.Index, out var knownReceiverHandle)
-                            && knownReceiverHandle.Equals(receiverTypeHandle))
-                        {
-                            // Load receiver as its known type (avoid forcing object so a typed ldfld can stay typed).
-                            if (IsMaterialized(callMember.Receiver, allocation))
-                            {
-                                EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
-                                ilEncoder.OpCode(ILOpCode.Castclass);
-                                ilEncoder.Token(receiverTypeHandle);
-                            }
-                            else
-                            {
-                                EmitLoadTemp(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
-                            }
-
-                            int directJsParamCount = maxParamCount;
-                            int directArgsToPass = Math.Min(argCount, directJsParamCount);
-                            for (int i = 0; i < directArgsToPass; i++)
-                            {
-                                EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
-                                ilEncoder.LoadConstantI4(i);
-                                ilEncoder.OpCode(ILOpCode.Ldelem_ref);
-                            }
-
-                            for (int i = directArgsToPass; i < directJsParamCount; i++)
-                            {
-                                ilEncoder.OpCode(ILOpCode.Ldnull);
-                            }
-
-                            ilEncoder.OpCode(ILOpCode.Callvirt);
-                            ilEncoder.Token(directMethodHandle);
-
-                            if (IsMaterialized(callMember.Result, allocation))
-                            {
-                                var resultStorage = GetTempStorage(callMember.Result);
-                                if (resultStorage.Kind == ValueStorageKind.Reference
-                                    && resultStorage.ClrType == typeof(object)
-                                    && directReturnClrType != typeof(object)
-                                    && directReturnClrType.IsValueType)
-                                {
-                                    ilEncoder.OpCode(ILOpCode.Box);
-                                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(directReturnClrType));
-                                }
-                            }
-
-                            if (IsMaterialized(callMember.Result, allocation))
-                            {
-                                EmitStoreTemp(callMember.Result, ilEncoder, allocation);
-                            }
-                            else
-                            {
-                                ilEncoder.OpCode(ILOpCode.Pop);
-                            }
-
-                            break;
-                        }
-
-                        var fallbackLabel = ilEncoder.DefineLabel();
-                        var doneLabel = ilEncoder.DefineLabel();
-
-                        // Receiver type-test
-                        EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Isinst);
-                        ilEncoder.Token(receiverTypeHandle);
-                        ilEncoder.OpCode(ILOpCode.Dup);
-                        ilEncoder.Branch(ILOpCode.Brfalse, fallbackLabel);
-
-                        // Direct call path (typed receiver on stack)
-                        int jsParamCount = maxParamCount;
-                        int argsToPass = Math.Min(argCount, jsParamCount);
-                        for (int i = 0; i < argsToPass; i++)
-                        {
-                            // The arguments array temp is forced materialized for fast-path call-sites in
-                            // TryCompileMethodBodyToIL, so this is typically just an ldloc.
-                            EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
-                            ilEncoder.LoadConstantI4(i);
-                            ilEncoder.OpCode(ILOpCode.Ldelem_ref);
-                        }
-
-                        for (int i = argsToPass; i < jsParamCount; i++)
-                        {
-                            ilEncoder.OpCode(ILOpCode.Ldnull);
-                        }
-
-                        ilEncoder.OpCode(ILOpCode.Callvirt);
-                        ilEncoder.Token(directMethodHandle);
-
-                        if (IsMaterialized(callMember.Result, allocation))
-                        {
-                            var resultStorage = GetTempStorage(callMember.Result);
-                            if (resultStorage.Kind == ValueStorageKind.Reference
-                                && resultStorage.ClrType == typeof(object)
-                                && directReturnClrType != typeof(object)
-                                && directReturnClrType.IsValueType)
-                            {
-                                ilEncoder.OpCode(ILOpCode.Box);
-                                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(directReturnClrType));
-                            }
-                        }
-
-                        if (IsMaterialized(callMember.Result, allocation))
-                        {
-                            EmitStoreTemp(callMember.Result, ilEncoder, allocation);
-                        }
-                        else
-                        {
-                            ilEncoder.OpCode(ILOpCode.Pop);
-                        }
-
-                        ilEncoder.Branch(ILOpCode.Br, doneLabel);
-
-                        // Fallback: pop null typed receiver and do runtime dispatch
-                        ilEncoder.MarkLabel(fallbackLabel);
-                        ilEncoder.OpCode(ILOpCode.Pop);
-
-                        EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.Ldstr(_metadataBuilder, callMember.MethodName);
-                        EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
-
-                        var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Object),
-                            nameof(JavaScriptRuntime.Object.CallMember),
-                            new[] { typeof(object), typeof(string), typeof(object[]) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(callMemberRef);
-
-                        if (IsMaterialized(callMember.Result, allocation))
-                        {
-                            EmitStoreTemp(callMember.Result, ilEncoder, allocation);
-                        }
-                        else
-                        {
-                            ilEncoder.OpCode(ILOpCode.Pop);
-                        }
-
-                        ilEncoder.MarkLabel(doneLabel);
-                        break;
-                    }
-
-                    // Default: runtime dispatcher
+                    // Runtime dispatcher member call.
                     EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.Ldstr(_metadataBuilder, callMember.MethodName);
                     EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
@@ -2901,6 +2677,18 @@ internal sealed class LIRToILCompiler
                     {
                         ilEncoder.OpCode(ILOpCode.Pop);
                     }
+                    break;
+                }
+
+            case LIRCallTypedMember callTyped:
+                {
+                    EmitCallTypedMemberNoFallback(callTyped, ilEncoder, allocation, methodDescriptor);
+                    break;
+                }
+
+            case LIRCallTypedMemberWithFallback callTypedFallback:
+                {
+                    EmitCallTypedMemberWithFallback(callTypedFallback, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
 
@@ -3756,6 +3544,14 @@ internal sealed class LIRToILCompiler
             return;
         }
 
+        if (storage.Kind == ValueStorageKind.Reference && !storage.TypeHandle.IsNil)
+        {
+            // Preserve known reference types represented only by metadata handles
+            // (e.g., user-defined JS classes compiled as TypeDefinitionHandles).
+            typeEncoder.Type(storage.TypeHandle, false);
+            return;
+        }
+
         if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
         {
             // Preserve known runtime reference types for declared variables (e.g., JavaScriptRuntime.Array)
@@ -4484,6 +4280,18 @@ internal sealed class LIRToILCompiler
                         new[] { typeof(object), typeof(string), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
+                    break;
+                }
+
+            case LIRCallTypedMember callTyped:
+                {
+                    EmitCallTypedMemberNoFallback(callTyped, ilEncoder, allocation, methodDescriptor);
+                    break;
+                }
+
+            case LIRCallTypedMemberWithFallback callTypedFallback:
+                {
+                    EmitCallTypedMemberWithFallback(callTypedFallback, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
 
@@ -5372,6 +5180,145 @@ internal sealed class LIRToILCompiler
             EmitLoadTempAsObject(args[i], ilEncoder, allocation, methodDescriptor);
             ilEncoder.OpCode(ILOpCode.Stelem_ref);
         }
+    }
+
+    private void EmitCallTypedMemberNoFallback(
+        LIRCallTypedMember instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        // Receiver: if already proven to be the resolved user-class type (e.g., stored in a typed local),
+        // avoid the redundant cast.
+        var receiverStorage = GetTempStorage(instruction.Receiver);
+        if (receiverStorage.Kind == ValueStorageKind.Reference
+            && !receiverStorage.TypeHandle.IsNil
+            && receiverStorage.TypeHandle.Equals(instruction.ReceiverTypeHandle))
+        {
+            EmitLoadTemp(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+        }
+        else
+        {
+            EmitLoadTempAsObject(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(instruction.ReceiverTypeHandle);
+        }
+
+        // Match the declared signature (ignore extra args, pad missing args with null).
+        int jsParamCount = instruction.MaxParamCount;
+        int argsToPass = Math.Min(instruction.Arguments.Count, jsParamCount);
+
+        for (int i = 0; i < argsToPass; i++)
+        {
+            EmitLoadTempAsObject(instruction.Arguments[i], ilEncoder, allocation, methodDescriptor);
+        }
+
+        for (int i = argsToPass; i < jsParamCount; i++)
+        {
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+        }
+
+        ilEncoder.OpCode(ILOpCode.Callvirt);
+        ilEncoder.Token(instruction.MethodHandle);
+
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            var resultStorage = GetTempStorage(instruction.Result);
+            if (resultStorage.Kind == ValueStorageKind.Reference
+                && resultStorage.ClrType == typeof(object)
+                && instruction.ReturnClrType != typeof(object)
+                && instruction.ReturnClrType.IsValueType)
+            {
+                ilEncoder.OpCode(ILOpCode.Box);
+                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(instruction.ReturnClrType));
+            }
+
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+    }
+
+    private void EmitCallTypedMemberWithFallback(
+        LIRCallTypedMemberWithFallback instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var fallbackLabel = ilEncoder.DefineLabel();
+        var doneLabel = ilEncoder.DefineLabel();
+
+        // Receiver type-test
+        EmitLoadTempAsObject(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.OpCode(ILOpCode.Isinst);
+        ilEncoder.Token(instruction.ReceiverTypeHandle);
+        ilEncoder.OpCode(ILOpCode.Dup);
+        ilEncoder.Branch(ILOpCode.Brfalse, fallbackLabel);
+
+        // Direct call path (typed receiver on stack)
+        int jsParamCount = instruction.MaxParamCount;
+        int argsToPass = Math.Min(instruction.Arguments.Count, jsParamCount);
+        for (int i = 0; i < argsToPass; i++)
+        {
+            EmitLoadTempAsObject(instruction.Arguments[i], ilEncoder, allocation, methodDescriptor);
+        }
+
+        for (int i = argsToPass; i < jsParamCount; i++)
+        {
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+        }
+
+        ilEncoder.OpCode(ILOpCode.Callvirt);
+        ilEncoder.Token(instruction.MethodHandle);
+
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            var resultStorage = GetTempStorage(instruction.Result);
+            if (resultStorage.Kind == ValueStorageKind.Reference
+                && resultStorage.ClrType == typeof(object)
+                && instruction.ReturnClrType != typeof(object)
+                && instruction.ReturnClrType.IsValueType)
+            {
+                ilEncoder.OpCode(ILOpCode.Box);
+                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(instruction.ReturnClrType));
+            }
+
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+
+        ilEncoder.Branch(ILOpCode.Br, doneLabel);
+
+        // Fallback: pop null typed receiver and do runtime dispatch
+        ilEncoder.MarkLabel(fallbackLabel);
+        ilEncoder.OpCode(ILOpCode.Pop);
+
+        EmitLoadTempAsObject(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.Ldstr(_metadataBuilder, instruction.MethodName);
+        EmitObjectArrayFromTemps(instruction.Arguments, ilEncoder, allocation, methodDescriptor);
+
+        var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.Object),
+            nameof(JavaScriptRuntime.Object.CallMember),
+            new[] { typeof(object), typeof(string), typeof(object[]) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(callMemberRef);
+
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+
+        ilEncoder.MarkLabel(doneLabel);
     }
 
     /// <summary>

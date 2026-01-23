@@ -648,6 +648,10 @@ internal sealed class JsMethodCompiler
         // This keeps the LIR->IL compiler simpler and avoids fragile late pattern-matching.
         LIRIntrinsicNormalization.Normalize(lirMethod!, classRegistry);
 
+        // Normalize generic member calls into explicit early-bound typed member call instructions when provably safe.
+        // This keeps the LIR->IL compiler focused on IL mechanics rather than type-directed rewrites.
+        LIRMemberCallNormalization.Normalize(lirMethod!, classRegistry);
+
         // Normalize generic LIR patterns into more explicit typed forms when provably safe.
         // This keeps LIR->IL focused on IL mechanics rather than type-directed rewrites.
         LIRTypeNormalization.Normalize(lirMethod!, classRegistry);

@@ -13,7 +13,7 @@ public enum ValueStorageKind
     Reference
 }
 
-public sealed record ValueStorage(ValueStorageKind Kind, Type? ClrType = null);
+public sealed record ValueStorage(ValueStorageKind Kind, Type? ClrType = null, EntityHandle TypeHandle = default);
 
 public abstract record LIRInstruction;
 
@@ -125,6 +125,42 @@ public record LIRCallFunctionValue(TempVariable FunctionValue, TempVariable Scop
 /// Emits: call JavaScriptRuntime.Object.CallMember(object receiver, string methodName, object[]? args)
 /// </summary>
 public record LIRCallMember(TempVariable Receiver, string MethodName, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a uniquely-resolved user-defined class instance method on a receiver value.
+///
+/// This instruction represents an early-bound direct <c>callvirt</c> to a known MethodDefinitionHandle.
+/// The receiver is assumed to be of <paramref name="ReceiverTypeHandle"/> at runtime.
+///
+/// Arguments are JS arguments (boxed as object). Extra args are ignored; missing args are padded with null.
+/// </summary>
+public record LIRCallTypedMember(
+    TempVariable Receiver,
+    EntityHandle ReceiverTypeHandle,
+    MethodDefinitionHandle MethodHandle,
+    Type ReturnClrType,
+    int MaxParamCount,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a uniquely-resolved user-defined class instance method on a receiver value, with a runtime-dispatch fallback.
+///
+/// Semantics:
+/// - If receiver <c>isinst</c> <paramref name="ReceiverTypeHandle"/>, callvirt <paramref name="MethodHandle"/>.
+/// - Otherwise, fall back to <see cref="JavaScriptRuntime.Object.CallMember(object, string, object[])"/>.
+///
+/// Arguments are JS arguments (boxed as object). Extra args are ignored; missing args are padded with null.
+/// </summary>
+public record LIRCallTypedMemberWithFallback(
+    TempVariable Receiver,
+    string MethodName,
+    EntityHandle ReceiverTypeHandle,
+    MethodDefinitionHandle MethodHandle,
+    Type ReturnClrType,
+    int MaxParamCount,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Constructs an object from a constructor value where the constructor is not statically known.

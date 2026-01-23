@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a8
+				// Method begins at RVA 0x2184
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21ba
+					// Method begins at RVA 0x2196
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b1
+				// Method begins at RVA 0x218d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2134
+			// Method begins at RVA 0x2110
 			// Header size: 12
 			// Code size: 7 (0x7)
 			.maxstack 32
@@ -91,7 +91,7 @@
 		.method public hidebysig 
 			instance object count () cil managed 
 		{
-			// Method begins at RVA 0x2148
+			// Method begins at RVA 0x2124
 			// Header size: 12
 			// Code size: 75 (0x4b)
 			.maxstack 32
@@ -138,7 +138,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219f
+			// Method begins at RVA 0x217b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -164,17 +164,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 216 (0xd8)
+		// Code size: 177 (0xb1)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
-			[2] object,
+			[2] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter,
 			[3] object,
 			[4] object,
-			[5] object[],
-			[6] bool,
-			[7] object
+			[5] bool,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope::.ctor()
@@ -193,64 +192,48 @@
 		IL_003d: stloc.1
 		IL_003e: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter::.ctor()
 		IL_0043: stloc.2
-		IL_0044: ldc.i4.0
-		IL_0045: newarr [System.Runtime]System.Object
-		IL_004a: stloc.s 5
-		IL_004c: ldloc.2
-		IL_004d: isinst Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter
-		IL_0052: dup
-		IL_0053: brfalse IL_0063
-
-		IL_0058: callvirt instance object Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter::count()
-		IL_005d: stloc.3
-		IL_005e: br IL_0072
-
-		IL_0063: pop
-		IL_0064: ldloc.2
-		IL_0065: ldstr "count"
-		IL_006a: ldloc.s 5
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0071: stloc.3
-
-		IL_0072: ldloc.1
-		IL_0073: ldc.r8 10
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_0081: stloc.s 4
-		IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0088: ldc.i4.1
-		IL_0089: newarr [System.Runtime]System.Object
-		IL_008e: dup
-		IL_008f: ldc.i4.0
-		IL_0090: ldloc.3
-		IL_0091: stelem.ref
-		IL_0092: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0097: pop
-		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009d: ldc.i4.1
-		IL_009e: newarr [System.Runtime]System.Object
-		IL_00a3: dup
-		IL_00a4: ldc.i4.0
-		IL_00a5: ldloc.s 4
-		IL_00a7: stelem.ref
-		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ad: pop
-		IL_00ae: ldloc.3
-		IL_00af: ldloc.s 4
-		IL_00b1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_00b6: stloc.s 6
-		IL_00b8: ldloc.s 6
-		IL_00ba: box [System.Runtime]System.Boolean
-		IL_00bf: stloc.s 7
-		IL_00c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c6: ldc.i4.1
-		IL_00c7: newarr [System.Runtime]System.Object
-		IL_00cc: dup
-		IL_00cd: ldc.i4.0
-		IL_00ce: ldloc.s 7
-		IL_00d0: stelem.ref
-		IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00d6: pop
-		IL_00d7: ret
+		IL_0044: ldloc.2
+		IL_0045: callvirt instance object Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter::count()
+		IL_004a: stloc.3
+		IL_004b: ldloc.1
+		IL_004c: ldc.r8 10
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_005a: stloc.s 4
+		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0061: ldc.i4.1
+		IL_0062: newarr [System.Runtime]System.Object
+		IL_0067: dup
+		IL_0068: ldc.i4.0
+		IL_0069: ldloc.3
+		IL_006a: stelem.ref
+		IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0070: pop
+		IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0076: ldc.i4.1
+		IL_0077: newarr [System.Runtime]System.Object
+		IL_007c: dup
+		IL_007d: ldc.i4.0
+		IL_007e: ldloc.s 4
+		IL_0080: stelem.ref
+		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0086: pop
+		IL_0087: ldloc.3
+		IL_0088: ldloc.s 4
+		IL_008a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_008f: stloc.s 5
+		IL_0091: ldloc.s 5
+		IL_0093: box [System.Runtime]System.Boolean
+		IL_0098: stloc.s 6
+		IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009f: ldc.i4.1
+		IL_00a0: newarr [System.Runtime]System.Object
+		IL_00a5: dup
+		IL_00a6: ldc.i4.0
+		IL_00a7: ldloc.s 6
+		IL_00a9: stelem.ref
+		IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00af: pop
+		IL_00b0: ret
 	} // end of method BinaryOperator_EqualObjectPropertyVsMethodReturn::__js_module_init__
 
 } // end of class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn
@@ -262,7 +245,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c3
+		// Method begins at RVA 0x219f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
