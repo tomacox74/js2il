@@ -1,3 +1,7 @@
+using JavaScriptRuntime;
+using System.Reflection;
+using System.Threading.Tasks;
+
 namespace Js2IL.Runtime;
 
 internal static class JsReturnConverter
@@ -6,6 +10,43 @@ internal static class JsReturnConverter
     {
         ArgumentNullException.ThrowIfNull(runtime);
         ArgumentNullException.ThrowIfNull(returnType);
+
+        if (returnType == typeof(Task))
+        {
+            if (value is Promise p)
+            {
+                return JsPromiseTaskInterop.ToTask(p);
+            }
+
+            // If the JS side returns a non-promise value but the contract expects a Task,
+            // treat it as already-completed.
+            return Task.CompletedTask;
+        }
+
+        if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))
+        {
+            var resultType = returnType.GetGenericArguments()[0];
+
+            if (value is Promise p)
+            {
+                var method = typeof(JsPromiseTaskInterop)
+                    .GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Single(m => m.Name == nameof(JsPromiseTaskInterop.ToTask)
+                                 && m.IsGenericMethodDefinition
+                                 && m.GetParameters().Length == 2
+                                 && m.GetParameters()[0].ParameterType == typeof(JsRuntimeInstance)
+                                 && m.GetParameters()[1].ParameterType == typeof(Promise))
+                    .MakeGenericMethod(resultType);
+                return method.Invoke(null, new object?[] { runtime, p });
+            }
+
+            var converted = ConvertReturn(runtime, value, resultType);
+            var fromResult = typeof(Task)
+                .GetMethods()
+                .Single(m => m.Name == nameof(Task.FromResult) && m.IsGenericMethodDefinition)
+                .MakeGenericMethod(resultType);
+            return fromResult.Invoke(null, new[] { converted });
+        }
 
         if (returnType == typeof(void))
         {
