@@ -322,7 +322,7 @@ Recommended behavior:
 
 Modules commonly have path-like ids (e.g., `calculator/index`). Generated contract names should avoid collisions while remaining pleasant to use.
 
-Generated contract namespaces should default to being prefixed with the **compiled assembly name**.
+Generated contract namespaces should default to being prefixed with `Js2IL.` + the **compiled assembly name**.
 
 Notes:
 
@@ -331,11 +331,11 @@ Notes:
 
 Recommended convention:
 
-1. Root namespace is `<AssemblyName>`.
+1. Root namespace is `Js2IL.<AssemblyName>`.
 2. The “entry module” exports interface is `I<AssemblyName>Exports`.
-      - Example: `foo.IFooExports`
+      - Example: `Js2IL.foo.IFooExports`
 3. For non-entry modules (including `require(...)` dependencies), use:
-      - namespace: `<AssemblyName>.<ModuleName>`
+      - namespace: `Js2IL.<AssemblyName>.<ModuleName>`
       - exports interface: `I<ModuleName>Exports`
 4. `<ModuleName>` is derived from the module id:
       - split on `/` and `\\`
@@ -344,13 +344,13 @@ Recommended convention:
 
 Examples (within `foo.dll`):
 
-- entry module → `foo.IFooExports`
-- module id `calculator/index` → `foo.Calculator.ICalculatorExports`
-- module id `calculator/advanced` → `foo.Calculator.IAdvancedExports`
+- entry module → `Js2IL.foo.IFooExports`
+- module id `calculator/index` → `Js2IL.foo.Calculator.ICalculatorExports`
+- module id `calculator/advanced` → `Js2IL.foo.Calculator.IAdvancedExports`
 
 Exports for `require(...)` dependencies follow the same rule:
 
-- `<AssemblyName>.<ModuleName>.I<ModuleName>Exports`
+- `Js2IL.<AssemblyName>.<ModuleName>.I<ModuleName>Exports`
 
  This is preferred over `calculator.IIndexExports` because:
 

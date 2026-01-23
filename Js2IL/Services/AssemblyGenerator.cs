@@ -4,6 +4,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using Js2IL.Services.ILGenerators;
+using Js2IL.Services.Contracts;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
@@ -207,6 +208,14 @@ namespace Js2IL.Services
 
             // create the entry point for spining up the execution engine
             createEntryPoint(methodBodyStream);
+
+            // Emit strongly-typed hosting contracts for module.exports (interfaces) if enabled.
+            var options = _serviceProvider.GetRequiredService<CompilerOptions>();
+            if (options.GenerateModuleExportContracts)
+            {
+                new ModuleExportsContractEmitter(_metadataBuilder, _bclReferences)
+                    .Emit(modules, assemblyName);
+            }
 
             // Emit NestedClass table rows in one globally sorted pass.
             // This must happen after all TypeDefs have been created.
