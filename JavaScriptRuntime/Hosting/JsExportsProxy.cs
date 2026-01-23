@@ -50,7 +50,11 @@ internal class JsExportsProxy : DispatchProxy
             if (targetMethod.Name.StartsWith("get_", StringComparison.Ordinal))
             {
                 var name = targetMethod.Name.Substring(4);
-                return runtime.Invoke(() => ConvertReturn(ExportMemberResolver.GetExportMember(runtime.Exports, name), targetMethod.ReturnType));
+                return runtime.Invoke(() =>
+                {
+                    var value = ExportMemberResolver.GetExportMember(runtime.Exports, name);
+                    return JsReturnConverter.ConvertReturn(runtime, value, targetMethod.ReturnType);
+                });
             }
 
             if (targetMethod.Name.StartsWith("set_", StringComparison.Ordinal))
@@ -77,7 +81,7 @@ internal class JsExportsProxy : DispatchProxy
             }
 
             var result = ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
-            return ConvertReturn(result, targetMethod.ReturnType);
+            return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
         });
     }
 
@@ -93,51 +97,4 @@ internal class JsExportsProxy : DispatchProxy
         };
     }
 
-    private static object? ConvertReturn(object? value, Type returnType)
-    {
-        // Void-returning interface methods ignore JS return values.
-        if (returnType == typeof(void))
-        {
-            return null;
-        }
-
-        // Null maps to default(T) for value types, null for reference types.
-        if (value == null)
-        {
-            return returnType.IsValueType ? Activator.CreateInstance(returnType) : null;
-        }
-
-        // If already assignable, return as-is.
-        if (returnType.IsInstanceOfType(value))
-        {
-            return value;
-        }
-
-        // Enum projection: Convert underlying numeric/string to enum value.
-        if (returnType.IsEnum)
-        {
-            try
-            {
-                return Enum.ToObject(returnType, value);
-            }
-            catch (Exception ex) when (ex is ArgumentException or InvalidCastException or FormatException or OverflowException)
-            {
-                throw new InvalidCastException(
-                    $"Failed to convert return value '{value}' ({value.GetType().FullName}) to enum '{returnType.FullName}'.",
-                    ex);
-            }
-        }
-
-        // Last resort: use standard .NET conversions (e.g. boxed number -> int/double).
-        try
-        {
-            return Convert.ChangeType(value, returnType);
-        }
-        catch (Exception ex) when (ex is InvalidCastException or FormatException or OverflowException)
-        {
-            throw new InvalidCastException(
-                $"Failed to convert return value '{value}' ({value.GetType().FullName}) to '{returnType.FullName}'.",
-                ex);
-        }
-    }
 }

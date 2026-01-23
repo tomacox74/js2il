@@ -117,7 +117,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test module.parent and module.children relationships
             return GenerateTest(
-                "CommonJS_Module_ParentChildren_Main",
+                nameof(CommonJS_Module_ParentChildren),
                 new[]
                 {
                     "CommonJS_Module_ParentChildren_Child1",
@@ -130,7 +130,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing and calling a function exported from another module
             return GenerateTest(
-                "CommonJS_Export_Function_Main",
+                nameof(CommonJS_Export_Function),
                 new[] { "CommonJS_Export_Function_Lib" });
         }
 
@@ -139,7 +139,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing an object with function properties (issue #156 repro)
             return GenerateTest(
-                "CommonJS_Export_ObjectWithFunctions_Main",
+                nameof(CommonJS_Export_ObjectWithFunctions),
                 new[] { "CommonJS_Export_ObjectWithFunctions_Lib" });
         }
 
@@ -148,7 +148,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing and instantiating a class from another module
             return GenerateTest(
-                "CommonJS_Export_Class_Main",
+                nameof(CommonJS_Export_Class),
                 new[] { "CommonJS_Export_Class_Lib" });
         }
 
@@ -157,7 +157,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing a class with constructor parameters from another module
             return GenerateTest(
-                "CommonJS_Export_ClassWithConstructor_Main",
+                nameof(CommonJS_Export_ClassWithConstructor),
                 new[] { "CommonJS_Export_ClassWithConstructor_Lib" });
         }
 
@@ -166,7 +166,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing nested literal objects with fields and methods
             return GenerateTest(
-                "CommonJS_Export_NestedObjects_Main",
+                nameof(CommonJS_Export_NestedObjects),
                 new[] { "CommonJS_Export_NestedObjects_Lib" });
         }
 
@@ -175,7 +175,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Issue #167 repro: imported object contains functions that capture module/function scope.
             return GenerateTest(
-                "CommonJS_Export_ObjectWithClosure_Main",
+                nameof(CommonJS_Export_ObjectWithClosure),
                 new[] { "CommonJS_Export_ObjectWithClosure_Lib" });
         }
     }

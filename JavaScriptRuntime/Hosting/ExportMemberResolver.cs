@@ -1,39 +1,121 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Globalization;
 
 namespace Js2IL.Runtime;
 
 internal static class ExportMemberResolver
 {
-    public static object? GetExportMember(object? exports, string contractName)
+    private static object[] NormalizeArgs(object?[] args)
+    {
+        if (args.Length == 0)
+        {
+            return Array.Empty<object>();
+        }
+
+        object[]? normalized = null;
+        for (var i = 0; i < args.Length; i++)
+        {
+            var original = args[i];
+            var converted = NormalizeArg(original);
+
+            if (!ReferenceEquals(converted, original))
+            {
+                if (normalized == null)
+                {
+                    normalized = new object[args.Length];
+
+                    for (var j = 0; j < i; j++)
+                    {
+                        normalized[j] = args[j]!;
+                    }
+                }
+
+                normalized[i] = converted!;
+                continue;
+            }
+
+            if (normalized != null)
+            {
+                normalized[i] = original!;
+            }
+        }
+
+        return normalized ?? (object[])(object)args;
+    }
+
+    private static object? NormalizeArg(object? arg)
+    {
+        if (arg is null)
+        {
+            return null;
+        }
+
+        // JS numbers are represented as System.Double throughout the runtime.
+        // Normalize common CLR numeric primitives to double so arithmetic behaves as expected.
+        return arg switch
+        {
+            double => arg,
+            float f => (double)f,
+            decimal m => (double)m,
+
+            sbyte or byte or short or ushort or int or uint or long or ulong
+                => Convert.ToDouble(arg, CultureInfo.InvariantCulture),
+
+            char c => c.ToString(),
+            _ => arg,
+        };
+    }
+
+    public static bool TryGetExportMember(object? exports, string contractName, out object? value)
     {
         if (exports == null)
         {
-            throw new InvalidOperationException("Module exports is null.");
+            value = null;
+            return false;
         }
 
         foreach (var candidate in GetNameCandidates(contractName))
         {
-            if (exports is IDictionary<string, object?> dict && dict.TryGetValue(candidate, out var value))
+            if (exports is IDictionary<string, object?> dict && dict.TryGetValue(candidate, out value))
             {
-                return value;
+                return true;
             }
 
             var type = exports.GetType();
             var prop = type.GetProperty(candidate, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
             if (prop != null)
             {
-                return prop.GetValue(exports);
+                value = prop.GetValue(exports);
+                return true;
             }
 
             var field = type.GetField(candidate, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
             if (field != null)
             {
-                return field.GetValue(exports);
+                value = field.GetValue(exports);
+                return true;
             }
         }
 
-        throw new MissingMemberException($"Export '{contractName}' not found.");
+        value = null;
+        return false;
+    }
+
+    public static object? GetExportMember(object? exports, string contractName)
+    {
+        if (!TryGetExportMember(exports, contractName, out var value))
+        {
+            if (exports == null)
+            {
+                throw new InvalidOperationException("Module exports is null.");
+            }
+
+            throw new MissingMemberException($"Export '{contractName}' not found.");
+        }
+
+        return value;
     }
 
     public static IEnumerable<string> GetNameCandidates(string contractName)
@@ -52,6 +134,8 @@ internal static class ExportMemberResolver
 
     public static object? InvokeJsDelegate(Delegate d, object?[] args)
     {
+        var callArgs = NormalizeArgs(args);
+
         var parameters = d.Method.GetParameters();
         if (parameters.Length == 0)
         {
@@ -67,9 +151,9 @@ internal static class ExportMemberResolver
             argIndex = 1;
         }
 
-        for (var i = 0; i < args.Length && argIndex < invokeArgs.Length; i++, argIndex++)
+        for (var i = 0; i < callArgs.Length && argIndex < invokeArgs.Length; i++, argIndex++)
         {
-            invokeArgs[argIndex] = args[i];
+            invokeArgs[argIndex] = callArgs[i];
         }
 
         while (argIndex < invokeArgs.Length)
@@ -85,5 +169,85 @@ internal static class ExportMemberResolver
         {
             throw tie.InnerException;
         }
+    }
+
+    public static object? InvokeInstanceMethod(object target, string methodName, object?[] args)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
+
+        var callArgs = NormalizeArgs(args);
+
+        foreach (var candidate in GetNameCandidates(methodName))
+        {
+            if (TryInvokeMethod(target, candidate, callArgs, out var result))
+            {
+                return result;
+            }
+        }
+
+        throw new MissingMethodException($"Member method '{methodName}' not found on '{target.GetType().FullName}'.");
+    }
+
+    public static object? Construct(object constructor, object?[] args)
+    {
+        ArgumentNullException.ThrowIfNull(constructor);
+
+        var callArgs = NormalizeArgs(args);
+        return JavaScriptRuntime.Object.ConstructValue(constructor, callArgs);
+    }
+
+    private static bool TryInvokeMethod(object target, string methodName, object[] args, out object? result)
+    {
+        var methods = target.GetType()
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Where(m => string.Equals(m.Name, methodName, StringComparison.OrdinalIgnoreCase));
+
+        foreach (var method in methods)
+        {
+            if (TryBuildInvokeArgs(method.GetParameters(), args, out var invokeArgs))
+            {
+                try
+                {
+                    result = method.Invoke(target, invokeArgs);
+                }
+                catch (TargetInvocationException tie) when (tie.InnerException != null)
+                {
+                    throw tie.InnerException;
+                }
+                return true;
+            }
+        }
+
+        result = null;
+        return false;
+    }
+
+    private static bool TryBuildInvokeArgs(ParameterInfo[] parameters, object[] args, out object?[] invokeArgs)
+    {
+        if (parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]))
+        {
+            invokeArgs = new object?[] { args };
+            return true;
+        }
+
+        if (args.Length > parameters.Length)
+        {
+            invokeArgs = Array.Empty<object?>();
+            return false;
+        }
+
+        invokeArgs = new object?[parameters.Length];
+        for (var i = 0; i < args.Length; i++)
+        {
+            invokeArgs[i] = args[i];
+        }
+
+        for (var i = args.Length; i < parameters.Length; i++)
+        {
+            invokeArgs[i] = parameters[i].HasDefaultValue ? Type.Missing : null;
+        }
+
+        return true;
     }
 }

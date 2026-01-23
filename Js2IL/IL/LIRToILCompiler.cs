@@ -1023,6 +1023,32 @@ internal sealed class LIRToILCompiler
                 TryEmitStackValueInstruction((LIRConstNull)instruction, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(((LIRConstNull)instruction).Result, ilEncoder, allocation);
                 break;
+
+            case LIRGetUserClassType getUserClassType:
+                if (!IsMaterialized(getUserClassType.Result, allocation))
+                {
+                    break;
+                }
+                {
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry == null || !classRegistry.TryGet(getUserClassType.RegistryClassName, out var typeDef))
+                    {
+                        throw new InvalidOperationException($"Class not found in registry: '{getUserClassType.RegistryClassName}'");
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Ldtoken);
+                    ilEncoder.Token(typeDef);
+
+                    var getTypeFromHandle = _memberRefRegistry.GetOrAddMethod(
+                        typeof(Type),
+                        nameof(Type.GetTypeFromHandle),
+                        parameterTypes: new[] { typeof(RuntimeTypeHandle) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(getTypeFromHandle);
+
+                    EmitStoreTemp(getUserClassType.Result, ilEncoder, allocation);
+                }
+                break;
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
                 if (!IsMaterialized(getIntrinsicGlobal.Result, allocation))
                 {
@@ -2632,6 +2658,29 @@ internal sealed class LIRToILCompiler
                     if (IsMaterialized(callValue.Result, allocation))
                     {
                         EmitStoreTemp(callValue.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
+            case LIRConstructValue constructValue:
+                {
+                    EmitLoadTempAsObject(constructValue.ConstructorValue, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(constructValue.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+                    var mref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.ConstructValue),
+                        new[] { typeof(object), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(mref);
+
+                    if (IsMaterialized(constructValue.Result, allocation))
+                    {
+                        EmitStoreTemp(constructValue.Result, ilEncoder, allocation);
                     }
                     else
                     {

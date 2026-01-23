@@ -34,6 +34,80 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Implements JavaScript <c>new ctor(...args)</c> semantics for cases where the constructor
+        /// is not statically known at compile time (e.g. <c>const C = require('...'); new C()</c>).
+        ///
+        /// Supported constructor value shapes:
+        /// - <see cref="Type"/>: invokes a public instance constructor (reflection).
+        /// - <see cref="Delegate"/>: invokes via <see cref="Closure.InvokeWithArgs"/> (scopes are empty for now).
+        /// - <see cref="System.Dynamic.ExpandoObject"/> with a callable <c>Construct</c> property.
+        /// - Any object with a public instance method named <c>Construct</c>.
+        ///
+        /// Note: This is intentionally minimal; it enables CommonJS export/import patterns where
+        /// constructor values cross module boundaries.
+        /// </summary>
+        public static object? ConstructValue(object constructor, object[]? args)
+        {
+            if (constructor == null) throw new ArgumentNullException(nameof(constructor));
+
+            var callArgs = args ?? System.Array.Empty<object>();
+
+            if (constructor is Type type)
+            {
+                try
+                {
+                    return Activator.CreateInstance(type, callArgs);
+                }
+                catch (TargetInvocationException tie) when (tie.InnerException != null)
+                {
+                    throw tie.InnerException;
+                }
+            }
+
+            if (constructor is Delegate del)
+            {
+                return Closure.InvokeWithArgs(del, System.Array.Empty<object>(), callArgs);
+            }
+
+            if (constructor is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                if (dict.TryGetValue("Construct", out var constructValue) && constructValue is Delegate constructDel)
+                {
+                    return Closure.InvokeWithArgs(constructDel, System.Array.Empty<object>(), callArgs);
+                }
+            }
+
+            // Generic reflection fallback: instance method named Construct(...)
+            try
+            {
+                var method = constructor.GetType().GetMethod("Construct", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                if (method != null)
+                {
+                    var parameters = method.GetParameters();
+                    if (parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]))
+                    {
+                        return method.Invoke(constructor, new object?[] { callArgs });
+                    }
+
+                    // Otherwise, pass as individual arguments (pad missing with null)
+                    var invokeArgs = new object?[parameters.Length];
+                    for (int i = 0; i < invokeArgs.Length; i++)
+                    {
+                        invokeArgs[i] = i < callArgs.Length ? callArgs[i] : null;
+                    }
+                    return method.Invoke(constructor, invokeArgs);
+                }
+            }
+            catch (TargetInvocationException tie) when (tie.InnerException != null)
+            {
+                throw tie.InnerException;
+            }
+
+            throw new NotSupportedException($"Value is not constructible: {constructor.GetType().FullName}");
+        }
+
+        /// <summary>
         /// Generic member-call dispatcher. Given a receiver object, a method name, and arguments,
         /// selects and invokes an appropriate implementation based on runtime type:
         ///  - If receiver is a .NET string, dispatch to JavaScriptRuntime.String static helpers

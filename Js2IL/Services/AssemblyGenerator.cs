@@ -260,6 +260,13 @@ namespace Js2IL.Services
                 return methodDefinitionHandle;
             }
 
+            var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
+            if (!string.IsNullOrWhiteSpace(lastFailure))
+            {
+                throw new NotSupportedException(
+                    $"IR pipeline could not compile module '{moduleName}' main method.\nIR failure: {lastFailure}");
+            }
+
             throw new NotSupportedException(
                 $"IR pipeline could not compile module '{moduleName}' main method.");
         }

@@ -259,6 +259,39 @@ Notes:
 - `JsEngine` is in JavaScriptRuntime and is shared across the process/AppDomain.
 - `moduleId` is resolved against modules compiled into the **specified/inferred compiled assembly**, not “the assembly containing JsEngine”.
 
+### Exception types (proposed)
+
+The hosting API should expose a small, stable set of exception types that C# consumers can depend on, while allowing the compiler/runtime implementation to evolve internally.
+
+**Design goal:** internal runtime/compiler exceptions should be *translated at the hosting boundary* into public, documented exception types.
+
+Proposed public exception contract:
+
+- `JsRuntimeException : Exception`
+      - Base type for all exceptions intentionally surfaced by the hosting API.
+      - Should include helpful context when available (module id, export/member name, etc.).
+
+- `JsModuleLoadException : JsRuntimeException`
+      - Thrown when a module cannot be loaded/evaluated via `JsEngine.LoadModule(...)`.
+      - Examples: module id not found in compiled assembly, module evaluation failed.
+
+- `JsContractProjectionException : JsRuntimeException`
+      - Thrown when `module.exports` cannot be projected onto the requested contract type.
+      - Examples: missing export member, export type mismatch (e.g. expected function but got object).
+
+- `JsInvocationException : JsRuntimeException`
+      - Thrown when a call through a hosting proxy fails (exported function call, instance method call, constructor call).
+      - The underlying cause should be preserved in `InnerException`.
+
+- `JsErrorException : JsRuntimeException`
+      - Represents a JavaScript `Error` (or other thrown JS value) that was raised during module evaluation or invocation.
+      - Should carry JS-facing details when available (message, name, stack).
+
+Notes:
+
+- The exact mapping/translation behavior is tracked as a separate implementation issue.
+- This document proposes the stable API surface; it does not require the internal exception representation to match 1:1.
+
 ### How does `LoadModule<TExports>()` find the module?
 
 `LoadModule<TExports>()` requires that `TExports` is a generated exports contract type and can provide module identity

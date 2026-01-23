@@ -387,11 +387,16 @@ namespace Js2IL.Utilities.Ecma335
             else if (type == typeof(byte)) encoder.Byte();
             else if (type == typeof(short)) encoder.Int16();
             else if (type == typeof(IntPtr)) encoder.IntPtr();
+            else if (type == typeof(RuntimeTypeHandle))
+            {
+                var bclTypeReference = _typeRefRegistry.GetOrAdd(type);
+                encoder.Type(bclTypeReference, isValueType: true);
+            }
             // Arrays
             else if (type == typeof(object[])) encoder.SZArray().Object();
             else if (type == typeof(string[])) encoder.SZArray().String();
             // Common BCL types (should we just open it up for all types)
-            else if (type == typeof(Action) || type == typeof(System.Reflection.MethodBase))
+            else if (type == typeof(Type) || type == typeof(Action) || type == typeof(System.Reflection.MethodBase))
             {
                 var bclTypeReference = _typeRefRegistry.GetOrAdd(type);
                 encoder.Type(bclTypeReference, isValueType: false);
