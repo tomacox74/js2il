@@ -3544,6 +3544,14 @@ internal sealed class LIRToILCompiler
             return;
         }
 
+        if (storage.Kind == ValueStorageKind.Reference && !storage.TypeHandle.IsNil)
+        {
+            // Preserve known reference types represented only by metadata handles
+            // (e.g., user-defined JS classes compiled as TypeDefinitionHandles).
+            typeEncoder.Type(storage.TypeHandle, false);
+            return;
+        }
+
         if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
         {
             // Preserve known runtime reference types for declared variables (e.g., JavaScriptRuntime.Array)
@@ -5180,10 +5188,21 @@ internal sealed class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        // Receiver: load as object then cast to the resolved user-class type.
-        EmitLoadTempAsObject(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
-        ilEncoder.OpCode(ILOpCode.Castclass);
-        ilEncoder.Token(instruction.ReceiverTypeHandle);
+        // Receiver: if already proven to be the resolved user-class type (e.g., stored in a typed local),
+        // avoid the redundant cast.
+        var receiverStorage = GetTempStorage(instruction.Receiver);
+        if (receiverStorage.Kind == ValueStorageKind.Reference
+            && !receiverStorage.TypeHandle.IsNil
+            && receiverStorage.TypeHandle.Equals(instruction.ReceiverTypeHandle))
+        {
+            EmitLoadTemp(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+        }
+        else
+        {
+            EmitLoadTempAsObject(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(instruction.ReceiverTypeHandle);
+        }
 
         // Match the declared signature (ignore extra args, pad missing args with null).
         int jsParamCount = instruction.MaxParamCount;

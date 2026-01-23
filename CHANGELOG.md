@@ -14,6 +14,10 @@ All notable changes to this project are documented here.
 - Hosting: reduced public API surface for module discovery and dynamic exports projection (kept internal for now).
 - Hosting: dynamic `JsEngine.LoadModule(Assembly, string)` now returns `IDisposable` to encourage deterministic cleanup.
 
+### Performance
+- Reduced allocations in early-bound member calls by normalizing eligible dynamic member calls into direct typed calls (avoids building `object[]` args on the fast path) (PR #433).
+- Reduced casts/guards for user-class `new` expressions by emitting strongly-typed locals for `newobj` results when constructor return override is not possible (PR #433).
+
 ## v0.7.2 - 2026-01-17
 
 ### Fixed

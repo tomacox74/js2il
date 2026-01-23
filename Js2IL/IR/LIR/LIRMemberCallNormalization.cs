@@ -36,6 +36,18 @@ internal static class LIRMemberCallNormalization
         {
             switch (instruction)
             {
+                case LIRNewUserClass newUserClass:
+                    // `new C(...)` produces an instance of the generated CLR type *unless* the
+                    // constructor has PL5.4a ctor-return override semantics, in which case the
+                    // result temp may be overwritten to an arbitrary value.
+                    if (newUserClass.Result.Index >= 0
+                        && classRegistry.TryGet(newUserClass.RegistryClassName, out var constructedTypeHandle)
+                        && !classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out _))
+                    {
+                        knownUserClassReceiverTypeHandles[newUserClass.Result.Index] = constructedTypeHandle;
+                    }
+                    break;
+
                 case LIRLoadUserClassInstanceField loadInstanceField:
                     if (loadInstanceField.Result.Index >= 0
                         && TryGetDeclaredUserClassFieldTypeHandle(

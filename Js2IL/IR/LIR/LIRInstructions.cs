@@ -13,7 +13,7 @@ public enum ValueStorageKind
     Reference
 }
 
-public sealed record ValueStorage(ValueStorageKind Kind, Type? ClrType = null);
+public sealed record ValueStorage(ValueStorageKind Kind, Type? ClrType = null, EntityHandle TypeHandle = default);
 
 public abstract record LIRInstruction;
 
