@@ -2932,6 +2932,22 @@ public sealed class HIRToLIRLowerer
                         return true;
                     }
 
+                    // Class declarations are compiled separately (as CLR types) and are not SSA-assigned.
+                    // When a class identifier is used as a value (e.g., `module.exports = MyClass`),
+                    // lower it to a runtime System.Type so it can cross module boundaries.
+                    if (varExpr.Name.BindingInfo.DeclarationNode is ClassDeclaration classDecl)
+                    {
+                        if (!TryGetRegistryClassNameForClassDeclaration(classDecl, out var registryClassName))
+                        {
+                            return false;
+                        }
+
+                        resultTempVar = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                        return true;
+                    }
+
                     IRPipelineMetrics.RecordFailureIfUnset(
                         $"HIR->LIR: no storage for variable '{binding.Name}' (kind={binding.Kind}, captured={binding.IsCaptured}, hasEnv={_environmentLayout != null}, scope='{_scope?.GetQualifiedName() ?? "<null>"}')");
                     return false;
@@ -3113,19 +3129,23 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = default;
 
-        if (newExpr.Callee is not HIRVariableExpression calleeVar)
-        {
-            return false;
-        }
+        // Prefer the existing fast-paths for statically known constructors.
+        // If those don't apply, fall back to dynamic construction via JavaScriptRuntime.Object.ConstructValue.
+        var calleeVar = newExpr.Callee as HIRVariableExpression;
 
         // User-defined class: `new ClassName(...)`
         // Note: top-level classes live in the global scope but still have a declaration node.
-        if (calleeVar.Name.BindingInfo.DeclarationNode is ClassDeclaration declaredClass)
+        if (calleeVar != null && calleeVar.Name.BindingInfo.DeclarationNode is ClassDeclaration declaredClass)
         {
             return TryLowerNewUserDefinedClass(declaredClass, newExpr.Arguments, out resultTempVar);
         }
 
-        var ctorName = calleeVar.Name.Name;
+        var ctorName = calleeVar?.Name.Name;
+
+        if (ctorName == null)
+        {
+            return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+        }
 
         // PL3.3a: built-in Error types
         if (BuiltInErrorTypes.IsBuiltInErrorTypeName(ctorName))
@@ -3292,7 +3312,65 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
-        return false;
+        // Dynamic/new-on-value fallback: supports patterns like
+        //   const C = require('./lib'); new C(...)
+        // and, in general, new expressions where the constructor is not statically known.
+        return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+    }
+
+    private bool TryLowerDynamicNewExpression(HIRNewExpression newExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (!TryLowerExpression(newExpr.Callee, out var ctorTemp))
+        {
+            return false;
+        }
+        ctorTemp = EnsureObject(ctorTemp);
+
+        var argTemps = new List<TempVariable>(newExpr.Arguments.Count);
+        foreach (var arg in newExpr.Arguments)
+        {
+            if (!TryLowerExpression(arg, out var argTemp))
+            {
+                return false;
+            }
+            argTemps.Add(EnsureObject(argTemp));
+        }
+
+        var argsArrayTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBuildArray(argTemps, argsArrayTemp));
+        DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstructValue(ctorTemp, argsArrayTemp, resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
+    private bool TryGetRegistryClassNameForClassDeclaration(ClassDeclaration classDecl, out string registryClassName)
+    {
+        registryClassName = string.Empty;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        var rootScope = _scope;
+        while (rootScope.Parent != null)
+        {
+            rootScope = rootScope.Parent;
+        }
+
+        var classScope = FindScopeByDeclarationNode(classDecl, rootScope);
+        if (classScope == null)
+        {
+            return false;
+        }
+
+        registryClassName = $"{(classScope.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
+        return true;
     }
 
     private bool TryLowerNewUserDefinedClass(ClassDeclaration classDecl, IReadOnlyList<HIRExpression> args, out TempVariable resultTempVar)

@@ -1210,6 +1210,7 @@ class HIRMethodBuilder
                 // PL3.3: NewExpression support in IR pipeline.
                 // - PL3.3a: built-in Error types
                 // - PL3.3b: user-defined classes
+                // - PL3.3c: dynamic/new-on-value (e.g., const C = require('...'); new C(...))
                 // - PL3.3d: Array constructor semantics
                 // - PL3.3e/f: String/Boolean/Number constructor sugar
                 // - PL3.3g: intrinsic runtime constructors (Date/RegExp/Set/Promise/Int32Array/etc.)
@@ -1221,12 +1222,6 @@ class HIRMethodBuilder
                 var newCalleeSymbol = _currentScope.FindSymbol(newCalleeId.Name);
                 if (newCalleeSymbol.Kind != BindingKind.Global)
                 {
-                    // User-defined class ctor: allow only when the binding is a ClassDeclaration.
-                    if (newCalleeSymbol.BindingInfo.DeclarationNode is not ClassDeclaration)
-                    {
-                        return false;
-                    }
-
                     var userArgs = new List<HIRExpression>();
                     foreach (var arg in newExpr.Arguments)
                     {
@@ -1236,6 +1231,9 @@ class HIRMethodBuilder
                         }
                         userArgs.Add(argHirExpr!);
                     }
+
+                    // If this is a user-defined class declaration, lowering will take the direct class ctor fast-path.
+                    // Otherwise, lowering will fall back to dynamic construction (runtime ConstructValue).
 
                     hirExpr = new HIRNewExpression(new HIRVariableExpression(newCalleeSymbol), userArgs);
                     return true;

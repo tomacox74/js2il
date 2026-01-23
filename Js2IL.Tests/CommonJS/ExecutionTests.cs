@@ -117,7 +117,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test module.parent and module.children relationships
             return ExecutionTest(
-                "CommonJS_Module_ParentChildren_Main",
+                nameof(CommonJS_Module_ParentChildren),
                 additionalScripts: new[]
                 {
                     "CommonJS_Module_ParentChildren_Child1",
@@ -130,7 +130,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing and calling a function exported from another module
             return ExecutionTest(
-                "CommonJS_Export_Function_Main",
+                nameof(CommonJS_Export_Function),
                 additionalScripts: new[] { "CommonJS_Export_Function_Lib" });
         }
 
@@ -139,7 +139,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing an object with function properties (issue #156 repro)
             return ExecutionTest(
-                "CommonJS_Export_ObjectWithFunctions_Main",
+                nameof(CommonJS_Export_ObjectWithFunctions),
                 additionalScripts: new[] { "CommonJS_Export_ObjectWithFunctions_Lib" });
         }
 
@@ -148,7 +148,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing and instantiating a class from another module
             return ExecutionTest(
-                "CommonJS_Export_Class_Main",
+                nameof(CommonJS_Export_Class),
                 additionalScripts: new[] { "CommonJS_Export_Class_Lib" });
         }
 
@@ -157,7 +157,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing a class with constructor parameters from another module
             return ExecutionTest(
-                "CommonJS_Export_ClassWithConstructor_Main",
+                nameof(CommonJS_Export_ClassWithConstructor),
                 additionalScripts: new[] { "CommonJS_Export_ClassWithConstructor_Lib" });
         }
 
@@ -166,7 +166,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing nested literal objects with fields and methods
             return ExecutionTest(
-                "CommonJS_Export_NestedObjects_Main",
+                nameof(CommonJS_Export_NestedObjects),
                 additionalScripts: new[] { "CommonJS_Export_NestedObjects_Lib" });
         }
 
@@ -175,7 +175,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Issue #167 repro: imported object contains functions that capture module/function scope.
             return ExecutionTest(
-                "CommonJS_Export_ObjectWithClosure_Main",
+                nameof(CommonJS_Export_ObjectWithClosure),
                 additionalScripts: new[] { "CommonJS_Export_ObjectWithClosure_Lib" });
         }
     }

@@ -29,6 +29,13 @@ public record LIRConstUndefined(TempVariable Result) : LIRInstruction;
 
 public record LIRConstNull(TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// Loads a user-defined JavaScript class declaration as a runtime <see cref="System.Type"/> object.
+/// This enables using a class identifier in expression position (e.g., exporting it via CommonJS).
+/// IL emitter: <c>ldtoken &lt;class&gt;</c>, <c>call Type.GetTypeFromHandle</c>
+/// </summary>
+public record LIRGetUserClassType(string RegistryClassName, TempVariable Result) : LIRInstruction;
+
 public record LIRGetIntrinsicGlobal(string Name, TempVariable Result) : LIRInstruction;
 
 public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
@@ -118,6 +125,12 @@ public record LIRCallFunctionValue(TempVariable FunctionValue, TempVariable Scop
 /// Emits: call JavaScriptRuntime.Object.CallMember(object receiver, string methodName, object[]? args)
 /// </summary>
 public record LIRCallMember(TempVariable Receiver, string MethodName, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Constructs an object from a constructor value where the constructor is not statically known.
+/// Emits: call JavaScriptRuntime.Object.ConstructValue(object constructor, object[]? args)
+/// </summary>
+public record LIRConstructValue(TempVariable ConstructorValue, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a user-defined JavaScript class instance method directly on the implicit 'this'.

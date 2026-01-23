@@ -404,6 +404,11 @@ internal static class TempLocalAllocator
                 yield return callValue.ScopesArray;
                 yield return callValue.ArgumentsArray;
                 break;
+
+            case LIRConstructValue constructValue:
+                yield return constructValue.ConstructorValue;
+                yield return constructValue.ArgumentsArray;
+                break;
             case LIRCallMember callMember:
                 yield return callMember.Receiver;
                 yield return callMember.ArgumentsArray;
@@ -597,6 +602,9 @@ internal static class TempLocalAllocator
             case LIRConstNull c:
                 defined = c.Result;
                 return true;
+            case LIRGetUserClassType t:
+                defined = t.Result;
+                return true;
             case LIRGetIntrinsicGlobal g:
                 defined = g.Result;
                 return true;
@@ -635,6 +643,10 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCallIntrinsicStatic callStatic:
                 defined = callStatic.Result;
+                return true;
+
+            case LIRConstructValue constructValue:
+                defined = constructValue.Result;
                 return true;
 
             case LIRCallIntrinsicStaticVoid:
