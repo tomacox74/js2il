@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x217b
+				// Method begins at RVA 0x2177
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2184
+				// Method begins at RVA 0x2180
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2148
+			// Method begins at RVA 0x2144
 			// Header size: 12
 			// Code size: 7 (0x7)
 			.maxstack 32
@@ -69,7 +69,7 @@
 		.method public hidebysig 
 			instance float64 getValue () cil managed 
 		{
-			// Method begins at RVA 0x215c
+			// Method begins at RVA 0x2158
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 32
@@ -87,7 +87,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2172
+			// Method begins at RVA 0x216e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -113,108 +113,105 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 233 (0xe9)
+		// Code size: 229 (0xe5)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.BinaryOperator_EqualMethodReturn/Scope,
 			[1] object,
 			[2] object,
 			[3] float64,
-			[4] object[],
-			[5] bool,
-			[6] object
+			[4] bool,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_EqualMethodReturn/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Modules.BinaryOperator_EqualMethodReturn/TestClass::.ctor()
 		IL_000b: stloc.1
-		IL_000c: ldc.i4.0
-		IL_000d: newarr [System.Runtime]System.Object
-		IL_0012: stloc.s 4
-		IL_0014: ldloc.1
-		IL_0015: isinst Modules.BinaryOperator_EqualMethodReturn/TestClass
-		IL_001a: dup
-		IL_001b: brfalse IL_0030
+		IL_000c: ldloc.1
+		IL_000d: isinst Modules.BinaryOperator_EqualMethodReturn/TestClass
+		IL_0012: dup
+		IL_0013: brfalse IL_0028
 
-		IL_0020: callvirt instance float64 Modules.BinaryOperator_EqualMethodReturn/TestClass::getValue()
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: stloc.2
-		IL_002b: br IL_003f
+		IL_0018: callvirt instance float64 Modules.BinaryOperator_EqualMethodReturn/TestClass::getValue()
+		IL_001d: box [System.Runtime]System.Double
+		IL_0022: stloc.2
+		IL_0023: br IL_003b
 
-		IL_0030: pop
-		IL_0031: ldloc.1
-		IL_0032: ldstr "getValue"
-		IL_0037: ldloc.s 4
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_003e: stloc.2
+		IL_0028: pop
+		IL_0029: ldloc.1
+		IL_002a: ldstr "getValue"
+		IL_002f: ldc.i4.0
+		IL_0030: newarr [System.Runtime]System.Object
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_003a: stloc.2
 
-		IL_003f: ldc.r8 4
-		IL_0048: stloc.3
-		IL_0049: ldloc.2
-		IL_004a: ldloc.3
-		IL_004b: box [System.Runtime]System.Double
-		IL_0050: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_0055: stloc.s 5
-		IL_0057: ldloc.s 5
-		IL_0059: box [System.Runtime]System.Boolean
-		IL_005e: stloc.s 6
-		IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0065: ldc.i4.2
-		IL_0066: newarr [System.Runtime]System.Object
-		IL_006b: dup
-		IL_006c: ldc.i4.0
-		IL_006d: ldstr "methodResult == literalValue:"
-		IL_0072: stelem.ref
-		IL_0073: dup
-		IL_0074: ldc.i4.1
-		IL_0075: ldloc.s 6
-		IL_0077: stelem.ref
-		IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007d: pop
-		IL_007e: ldloc.3
-		IL_007f: box [System.Runtime]System.Double
-		IL_0084: ldloc.2
-		IL_0085: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_008a: stloc.s 5
-		IL_008c: ldloc.s 5
-		IL_008e: box [System.Runtime]System.Boolean
-		IL_0093: stloc.s 6
-		IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009a: ldc.i4.2
-		IL_009b: newarr [System.Runtime]System.Object
-		IL_00a0: dup
-		IL_00a1: ldc.i4.0
-		IL_00a2: ldstr "literalValue == methodResult:"
-		IL_00a7: stelem.ref
-		IL_00a8: dup
-		IL_00a9: ldc.i4.1
-		IL_00aa: ldloc.s 6
-		IL_00ac: stelem.ref
-		IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b2: pop
-		IL_00b3: ldloc.2
-		IL_00b4: ldloc.3
-		IL_00b5: box [System.Runtime]System.Double
-		IL_00ba: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00bf: stloc.s 5
-		IL_00c1: ldloc.s 5
-		IL_00c3: box [System.Runtime]System.Boolean
-		IL_00c8: stloc.s 6
-		IL_00ca: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cf: ldc.i4.2
-		IL_00d0: newarr [System.Runtime]System.Object
-		IL_00d5: dup
-		IL_00d6: ldc.i4.0
-		IL_00d7: ldstr "methodResult === literalValue:"
-		IL_00dc: stelem.ref
-		IL_00dd: dup
-		IL_00de: ldc.i4.1
-		IL_00df: ldloc.s 6
-		IL_00e1: stelem.ref
-		IL_00e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e7: pop
-		IL_00e8: ret
+		IL_003b: ldc.r8 4
+		IL_0044: stloc.3
+		IL_0045: ldloc.2
+		IL_0046: ldloc.3
+		IL_0047: box [System.Runtime]System.Double
+		IL_004c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_0051: stloc.s 4
+		IL_0053: ldloc.s 4
+		IL_0055: box [System.Runtime]System.Boolean
+		IL_005a: stloc.s 5
+		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0061: ldc.i4.2
+		IL_0062: newarr [System.Runtime]System.Object
+		IL_0067: dup
+		IL_0068: ldc.i4.0
+		IL_0069: ldstr "methodResult == literalValue:"
+		IL_006e: stelem.ref
+		IL_006f: dup
+		IL_0070: ldc.i4.1
+		IL_0071: ldloc.s 5
+		IL_0073: stelem.ref
+		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0079: pop
+		IL_007a: ldloc.3
+		IL_007b: box [System.Runtime]System.Double
+		IL_0080: ldloc.2
+		IL_0081: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_0086: stloc.s 4
+		IL_0088: ldloc.s 4
+		IL_008a: box [System.Runtime]System.Boolean
+		IL_008f: stloc.s 5
+		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0096: ldc.i4.2
+		IL_0097: newarr [System.Runtime]System.Object
+		IL_009c: dup
+		IL_009d: ldc.i4.0
+		IL_009e: ldstr "literalValue == methodResult:"
+		IL_00a3: stelem.ref
+		IL_00a4: dup
+		IL_00a5: ldc.i4.1
+		IL_00a6: ldloc.s 5
+		IL_00a8: stelem.ref
+		IL_00a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ae: pop
+		IL_00af: ldloc.2
+		IL_00b0: ldloc.3
+		IL_00b1: box [System.Runtime]System.Double
+		IL_00b6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00bb: stloc.s 4
+		IL_00bd: ldloc.s 4
+		IL_00bf: box [System.Runtime]System.Boolean
+		IL_00c4: stloc.s 5
+		IL_00c6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cb: ldc.i4.2
+		IL_00cc: newarr [System.Runtime]System.Object
+		IL_00d1: dup
+		IL_00d2: ldc.i4.0
+		IL_00d3: ldstr "methodResult === literalValue:"
+		IL_00d8: stelem.ref
+		IL_00d9: dup
+		IL_00da: ldc.i4.1
+		IL_00db: ldloc.s 5
+		IL_00dd: stelem.ref
+		IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00e3: pop
+		IL_00e4: ret
 	} // end of method BinaryOperator_EqualMethodReturn::__js_module_init__
 
 } // end of class Modules.BinaryOperator_EqualMethodReturn
@@ -226,7 +223,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x218d
+		// Method begins at RVA 0x2189
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

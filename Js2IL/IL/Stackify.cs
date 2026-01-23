@@ -471,6 +471,12 @@ internal static class Stackify
             case LIRCallMember:
                 return false;
 
+            // LIRCallTypedMember and LIRCallTypedMemberWithFallback perform direct callvirt to a generated class method.
+            // Like other calls, they must never be inlined/re-emitted by Stackify.
+            case LIRCallTypedMember:
+            case LIRCallTypedMemberWithFallback:
+                return false;
+
             // LIRCallUserClassInstanceMethod performs a direct callvirt to a generated class method.
             // Like other calls, it must never be inlined/re-emitted by Stackify.
             case LIRCallUserClassInstanceMethod:
@@ -715,6 +721,15 @@ internal static class Stackify
             case LIRCallMember:
                 // receiver + methodName + argsArray -> result
                 return (3, 1);
+
+            // Typed member call without fallback: receiver + N args -> result
+            case LIRCallTypedMember callTyped:
+                return (1 + callTyped.Arguments.Count, 1);
+
+            // Typed member call with fallback: receiver + N args -> result
+            // (The fallback path allocates an args array, but the LIR-level operands are still receiver+args.)
+            case LIRCallTypedMemberWithFallback callTypedFallback:
+                return (1 + callTypedFallback.Arguments.Count, 1);
 
             // Return: consumes return value
             case LIRReturn:

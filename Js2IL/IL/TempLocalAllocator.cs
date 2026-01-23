@@ -414,6 +414,22 @@ internal static class TempLocalAllocator
                 yield return callMember.ArgumentsArray;
                 break;
 
+            case LIRCallTypedMember callTyped:
+                yield return callTyped.Receiver;
+                foreach (var arg in callTyped.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
+
+            case LIRCallTypedMemberWithFallback callTypedFallback:
+                yield return callTypedFallback.Receiver;
+                foreach (var arg in callTypedFallback.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
+
             case LIRCallUserClassInstanceMethod callUserClass:
                 foreach (var arg in callUserClass.Arguments)
                 {
@@ -788,6 +804,14 @@ internal static class TempLocalAllocator
 
             case LIRCallMember callMember:
                 defined = callMember.Result;
+                return true;
+
+            case LIRCallTypedMember callTyped:
+                defined = callTyped.Result;
+                return true;
+
+            case LIRCallTypedMemberWithFallback callTypedFallback:
+                defined = callTypedFallback.Result;
                 return true;
 
             case LIRCallUserClassInstanceMethod callUserClass:
