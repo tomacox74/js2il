@@ -19,7 +19,6 @@ public class Engine
 
     public void Execute([NotNull] ModuleMainDelegate scriptEntryPoint)
     {
-        var previousSynchronizationContext = SynchronizationContext.Current;
         try
         {
             // Validate caller provided a valid entry point delegate.
@@ -28,7 +27,7 @@ public class Engine
 
             // Configure per-thread services and install the Node-like synchronization context.
             // This enables timers/microtasks and other async behavior to run deterministically on this thread.
-            var (serviceProvider, ctx) = ConfigureServiceProviderForCurrentThread(
+            var serviceProvider = ConfigureServiceProviderForCurrentThread(
                 modulesAssembly: scriptEntryPoint.Method.Module.Assembly);
 
             // Execute the script using the CommonJS module system.
@@ -37,7 +36,7 @@ public class Engine
             moduleExecutor.Execute(scriptEntryPoint);
 
             // Drain microtasks and timers until no more work remains.
-            RunEventLoopUntilIdle(ctx, waitForTimers: true);
+            RunEventLoopUntilIdle(serviceProvider.Resolve<NodeEventLoopPump>(), waitForTimers: true);
         }
         finally
         {
@@ -45,13 +44,10 @@ public class Engine
             // TODO: change globalthis to be a instance
             GlobalThis.ServiceProvider = null;
             _serviceProviderOverride.Value = null;
-
-            // Restore whatever synchronization context the host had installed before JS2IL.
-            SynchronizationContext.SetSynchronizationContext(previousSynchronizationContext);
         }
     }
 
-    internal static (ServiceContainer ServiceProvider, NodeSychronizationContext Context) ConfigureServiceProviderForCurrentThread(Assembly modulesAssembly)
+    internal static ServiceContainer ConfigureServiceProviderForCurrentThread(Assembly modulesAssembly)
     {
         ArgumentNullException.ThrowIfNull(modulesAssembly);
 
@@ -67,15 +63,10 @@ public class Engine
         // Use the test override if present; otherwise construct the default runtime container.
         var serviceProvider = _serviceProviderOverride.Value ?? RuntimeServices.BuildServiceProvider();
 
-        // Install the Node-style synchronization context for this thread.
-        // This becomes the central scheduler for microtasks, timers, and other queued work.
-        var ctx = serviceProvider.Resolve<NodeSychronizationContext>();
-        SynchronizationContext.SetSynchronizationContext(ctx);
-
-        // Register the context as both microtask scheduler and general scheduler.
-        // These abstractions allow generators/runtime to schedule work without depending directly on the concrete context.
-        serviceProvider.RegisterInstance<IMicrotaskScheduler>(ctx);
-        serviceProvider.RegisterInstance<IScheduler>(ctx);
+        // Resolve scheduler/event-loop singletons via DI so other services can depend on them.
+        // Note: ServiceContainer manages singleton instances per-container.
+        _ = serviceProvider.Resolve<NodeSchedulerState>();
+        var eventLoop = serviceProvider.Resolve<NodeEventLoopPump>();
 
         // Expose the service provider via GlobalThis (current design uses global state).
         GlobalThis.ServiceProvider = serviceProvider;
@@ -83,22 +74,29 @@ public class Engine
         // Provide the compiled modules assembly for runtime dependency/module resolution.
         serviceProvider.Resolve<LocalModulesAssembly>().ModulesAssembly = modulesAssembly;
 
-        return (serviceProvider, ctx);
+        return serviceProvider;
     }
 
-    internal static void RunEventLoopUntilIdle(NodeSychronizationContext ctx, bool waitForTimers)
+    internal static void RunEventLoopUntilIdle(NodeEventLoopPump ctx, bool waitForTimers)
     {
         ArgumentNullException.ThrowIfNull(ctx);
 
-        // Run queued work until the context reports there is nothing left to do.
-        // If waitForTimers is true, we also block until the next timer/work becomes available between iterations.
-        while (ctx.HasPendingWork())
+        if (waitForTimers)
         {
-            ctx.RunOneIteration();
-            if (waitForTimers)
+            // Drain everything, including future timers (blocking between ticks).
+            while (ctx.HasPendingWork())
             {
+                ctx.RunOneIteration();
                 ctx.WaitForWorkOrNextTimer();
             }
+            return;
+        }
+
+        // Drain only work that is runnable *now* (microtasks, immediates, macrotasks,
+        // and timers that are already due). Do not busy-loop waiting for future timers.
+        while (ctx.HasPendingWorkNow())
+        {
+            ctx.RunOneIteration();
         }
     }
 }
