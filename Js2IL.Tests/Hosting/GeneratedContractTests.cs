@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Threading.Tasks;
 using JavaScriptRuntime;
 using Js2IL.Services;
 using Js2IL.Tests;
@@ -76,6 +77,42 @@ public class GeneratedContractTests
         ((IDisposable)counterObj!).Dispose();
         var tie = Assert.Throws<TargetInvocationException>(() => addDelta.Invoke(counterObj, new object?[] { 1.0 }));
         Assert.IsType<ObjectDisposedException>(tie.InnerException);
+    }
+
+    [Fact]
+    public async Task GeneratedContracts_AsyncExport_ProjectsAsTaskOfT_AndIsAwaitable()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            rootModuleName: "hostingAsync",
+            scriptResourcePath: "Hosting_TypedExports_Async.js");
+
+        var contractType = module.Assembly
+            .GetTypes()
+            .Single(t => t.IsInterface
+                      && t.GetCustomAttribute<Js2IL.Runtime.JsModuleAttribute>()?.ModuleId == "hostingAsync");
+
+        var addAsync = contractType.GetMethod("AddAsync", BindingFlags.Public | BindingFlags.Instance);
+        Assert.NotNull(addAsync);
+        Assert.Equal(typeof(Task<double>), addAsync!.ReturnType);
+
+        var loadNoArgs = typeof(Js2IL.Runtime.JsEngine)
+            .GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Single(m => m.Name == nameof(Js2IL.Runtime.JsEngine.LoadModule)
+                      && m.IsGenericMethodDefinition
+                      && m.GetParameters().Length == 0);
+
+        var exportsObj = loadNoArgs.MakeGenericMethod(contractType).Invoke(null, null);
+        Assert.NotNull(exportsObj);
+
+        using var exports = (IDisposable)exportsObj!;
+
+        var taskObj = addAsync.Invoke(exportsObj, new object?[] { 1.0, 2.0 });
+        var task = Assert.IsType<Task<double>>(taskObj);
+
+        var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(2)));
+        Assert.Same(task, completed);
+
+        Assert.Equal(3.0, await task);
     }
 
     private sealed class CompiledModuleAssembly : IDisposable

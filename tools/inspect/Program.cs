@@ -40,6 +40,18 @@ class Program
             return ListTypeDefinitions(args[1]);
         }
 
+        if (args.Length >= 2 && (string.Equals(args[0], "--assemblyrefs", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(args[0], "--refs", StringComparison.OrdinalIgnoreCase)))
+        {
+            return ListAssemblyReferences(args[1]);
+        }
+
+        if (args.Length >= 2 && (string.Equals(args[0], "--identity", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(args[0], "--asmname", StringComparison.OrdinalIgnoreCase)))
+        {
+            return DumpAssemblyIdentity(args[1]);
+        }
+
         if (args.Length >= 1 && (string.Equals(args[0], "--metadata-members", StringComparison.OrdinalIgnoreCase) ||
                                  string.Equals(args[0], "--members", StringComparison.OrdinalIgnoreCase)))
         {
@@ -517,6 +529,56 @@ class Program
                 $"firstField=0x{firstFieldToken:X8} firstMethod=0x{firstMethodToken:X8}");
         }
 
+        return 0;
+    }
+
+    private static int ListAssemblyReferences(string assemblyPath)
+    {
+        assemblyPath = Path.GetFullPath(assemblyPath);
+        Console.WriteLine("Listing AssemblyRefs for: " + assemblyPath);
+
+        using var stream = File.OpenRead(assemblyPath);
+        using var peReader = new PEReader(stream);
+        if (!peReader.HasMetadata)
+        {
+            Console.WriteLine("PE file has no metadata.");
+            return 2;
+        }
+
+        var reader = peReader.GetMetadataReader();
+        foreach (var handle in reader.AssemblyReferences)
+        {
+            var aref = reader.GetAssemblyReference(handle);
+            var name = reader.GetString(aref.Name);
+            var version = aref.Version;
+
+            string pkt;
+            if (aref.PublicKeyOrToken.IsNil)
+            {
+                pkt = "";
+            }
+            else
+            {
+                var bytes = reader.GetBlobBytes(aref.PublicKeyOrToken);
+                pkt = string.Concat(bytes.Select(b => b.ToString("x2")));
+            }
+
+            Console.WriteLine($"{name}, Version={version}, PKT={pkt}");
+        }
+
+        return 0;
+    }
+
+    private static int DumpAssemblyIdentity(string assemblyPath)
+    {
+        assemblyPath = Path.GetFullPath(assemblyPath);
+        var an = AssemblyName.GetAssemblyName(assemblyPath);
+        var pktBytes = an.GetPublicKeyToken();
+        var pkt = pktBytes == null || pktBytes.Length == 0
+            ? ""
+            : string.Concat(pktBytes.Select(b => b.ToString("x2")));
+
+        Console.WriteLine($"{an.Name}, Version={an.Version}, Culture={(an.CultureName ?? "neutral")}, PKT={pkt}");
         return 0;
     }
 

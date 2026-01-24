@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <JavaScriptRuntimePackageVersion>0.7.3</JavaScriptRuntimePackageVersion>
+    <ModuleName>HostedCounterModule</ModuleName>
+    <ModuleProj>$(MSBuildProjectDirectory)\..\compiler\HostedCounterModule.proj</ModuleProj>
+    <ModuleDll>$(MSBuildProjectDirectory)\..\compiler\out\$(ModuleName).dll</ModuleDll>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JavaScriptRuntime" Version="$(JavaScriptRuntimePackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="$(ModuleName)">
+      <HintPath>$(ModuleDll)</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="BuildHostedModule" BeforeTargets="ResolveAssemblyReferences">
+    <MSBuild Projects="$(ModuleProj)" Targets="Build" />
+  </Target>
+
+  <Target Name="CopyHostedModuleToOutput" AfterTargets="Build" DependsOnTargets="BuildHostedModule"
+          Inputs="$(ModuleDll)" Outputs="$(TargetDir)$(ModuleName).dll">
+    <Copy SourceFiles="$(ModuleDll)" DestinationFiles="$(TargetDir)$(ModuleName).dll" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

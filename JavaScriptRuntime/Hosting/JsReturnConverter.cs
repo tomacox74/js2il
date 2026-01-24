@@ -33,7 +33,7 @@ internal static class JsReturnConverter
         {
             if (value is Promise p)
             {
-                return JsPromiseTaskInterop.ToTask(p);
+                return JsPromiseTaskInterop.ToTask(runtime, p);
             }
 
             // If the JS side returns a non-promise value but the contract expects a Task,
