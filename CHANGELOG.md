@@ -6,8 +6,6 @@ All notable changes to this project are documented here.
 
 - Hosting: project JavaScript `Promise` return values to C# `Task`/`Task<T>` for typed exports and handles (enables `await` without deadlocks).
 
-_Nothing yet._
-
 ## v0.7.3 - 2026-01-23
 
 ### Added

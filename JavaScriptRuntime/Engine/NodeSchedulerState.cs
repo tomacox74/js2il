@@ -44,7 +44,7 @@ internal struct ImmediateEntry : IEquatable<ImmediateEntry>
 /// </summary>
 public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler
 {
-    private static long _nextTimerId = 0;
+    private long _nextTimerId = 0;
     private long _nextImmediateId = 0;
 
     private readonly object _immediateLock = new();

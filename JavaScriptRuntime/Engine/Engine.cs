@@ -66,7 +66,7 @@ public class Engine
         // Resolve scheduler/event-loop singletons via DI so other services can depend on them.
         // Note: ServiceContainer manages singleton instances per-container.
         _ = serviceProvider.Resolve<NodeSchedulerState>();
-        var eventLoop = serviceProvider.Resolve<NodeEventLoopPump>();
+        _ = serviceProvider.Resolve<NodeEventLoopPump>();
 
         // Expose the service provider via GlobalThis (current design uses global state).
         GlobalThis.ServiceProvider = serviceProvider;
