@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- Hosting: project JavaScript `Promise` return values to C# `Task`/`Task<T>` for typed exports and handles (enables `await` without deadlocks).
 
 ## v0.7.3 - 2026-01-23
 
@@ -511,7 +511,7 @@ _Note: This is experimental infrastructure. Full feature parity with the legacy 
 - **Runtime Organization**: Renamed `GlobalVariables` to `GlobalThis` and introduced `ModuleIntrinsics` class for better separation of global scope vs module-level intrinsics
 - **Event Loop Foundation**: Added scaffolding for future async/event loop support:
   - `Engine.Execute()` method as placeholder for event loop integration
-  - `SynchronizationContext` infrastructure for async execution coordination
+  - Thread-safe scheduler state + single-threaded event loop pump for async coordination
 ### Fixed
 - **Metadata Generation**: Generic method signatures now correctly use generic type parameters (!0, !1, !2) instead of concrete types, fixing `System.MissingMethodException` for `Func<...>.Invoke` methods
 - **IL Correctness**: Eliminated potential metadata corruption from duplicate assembly/type/member references

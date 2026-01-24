@@ -34,7 +34,7 @@ internal sealed class JsRuntimeInstance : IDisposable
 
     // Service provider/sync context are thread-affine and created inside ThreadMain.
     private ServiceContainer? _serviceProvider;
-    private NodeSychronizationContext? _ctx;
+    private NodeEventLoopPump? _eventLoop;
 
     // Exports returned by CommonJS module evaluation (require(...) result).
     private object? _exports;
@@ -200,9 +200,9 @@ internal sealed class JsRuntimeInstance : IDisposable
             }
 
             // Configure engine services *for this thread*; the sync context/event loop are thread-affine.
-            var (serviceProvider, ctx) = Engine.ConfigureServiceProviderForCurrentThread(compiledAssembly);
+            var serviceProvider = Engine.ConfigureServiceProviderForCurrentThread(compiledAssembly);
             _serviceProvider = serviceProvider;
-            _ctx = ctx;
+            _eventLoop = serviceProvider.Resolve<NodeEventLoopPump>();
 
             // Load/evaluate the entry module (CommonJS require) and capture its exports.
             var require = _serviceProvider.Resolve<Require>();
@@ -210,17 +210,27 @@ internal sealed class JsRuntimeInstance : IDisposable
 
             // Drain microtasks/queued work produced during module evaluation.
             // Timers are intentionally not awaited during initialization.
-            Engine.RunEventLoopUntilIdle(_ctx, waitForTimers: false);
+            Engine.RunEventLoopUntilIdle(_eventLoop, waitForTimers: false);
 
             // Signal successful initialization after module evaluation completes.
             _initialized.TrySetResult();
 
-            // Process cross-thread invocations serially; after each item, pump the event loop
-            // so promise continuations and pending tasks can run between invocations.
-            foreach (var item in _queue.GetConsumingEnumerable(_shutdown.Token))
+            // Process cross-thread invocations serially, while also pumping the JS event loop
+            // (including timers) even when the host is idle. This avoids deadlocks where a
+            // Promise resolves via setTimeout/setInterval but no new host invocations arrive.
+            while (!_shutdown.IsCancellationRequested)
             {
-                item.Execute();
-                Engine.RunEventLoopUntilIdle(_ctx, waitForTimers: false);
+                int waitMs = _eventLoop.GetWaitForWorkOrNextTimerMilliseconds(maxWaitMs: 50);
+
+                if (_queue.TryTake(out var item, waitMs, _shutdown.Token))
+                {
+                    item.Execute();
+                    Engine.RunEventLoopUntilIdle(_eventLoop, waitForTimers: false);
+                    continue;
+                }
+
+                // Timeout: give the event loop a chance to run due timers/microtasks.
+                Engine.RunEventLoopUntilIdle(_eventLoop, waitForTimers: false);
             }
         }
         catch (OperationCanceledException)

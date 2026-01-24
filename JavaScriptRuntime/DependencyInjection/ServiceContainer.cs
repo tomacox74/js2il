@@ -115,12 +115,26 @@ public class ServiceContainer
 
             // Determine the actual type to instantiate
             var implementationType = ResolveImplementationType(serviceType);
+
+            // If the implementation type was already created under a different service key
+            // (e.g., resolved previously via an interface), reuse that singleton.
+            if (_singletons.TryGetValue(implementationType, out var existingImplementation))
+            {
+                _singletons[serviceType] = existingImplementation;
+                return existingImplementation;
+            }
             
             // Create the instance with constructor injection
             var instance = CreateInstance(implementationType);
             
-            // Store as singleton
+            // Store as singleton (under both service and implementation types) so resolving by
+            // interface or concrete type returns the same instance.
             _singletons[serviceType] = instance;
+
+            if (implementationType != serviceType)
+            {
+                _singletons[implementationType] = instance;
+            }
             
             return instance;
         }

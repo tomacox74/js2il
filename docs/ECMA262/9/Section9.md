@@ -20,7 +20,7 @@ _This section is split into subsection documents for readability._
 | 9.2 | PrivateEnvironment Records | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-privateenvironment-records) | [Section9_2.md](Section9_2.md) |
 | 9.3 | Realms | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-code-realms) | [Section9_3.md](Section9_3.md) |
 | 9.4 | Execution Contexts | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-execution-contexts) | [Section9_4.md](Section9_4.md) |
-| 9.5 | Jobs and Host Operations to Enqueue Jobs | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-jobs) | [Section9_5.md](Section9_5.md) |
+| 9.5 | Jobs and Host Operations to Enqueue Jobs | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-jobs) | [Section9_5.md](Section9_5.md) |
 | 9.6 | Agents | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-agents) | [Section9_6.md](Section9_6.md) |
 | 9.7 | Agent Clusters | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-agent-clusters) | [Section9_7.md](Section9_7.md) |
 | 9.8 | Forward Progress | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-forward-progress) | [Section9_8.md](Section9_8.md) |

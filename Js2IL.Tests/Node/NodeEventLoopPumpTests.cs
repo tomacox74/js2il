@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Js2IL.Tests.Node
 {
-    public class NodeSynchronizationContextTests
+    public class NodeEventLoopPumpTests
     {
         /// <summary>
         /// Regression test for the bug where canceled intervals would cause the event loop to hang.
@@ -37,8 +37,9 @@ namespace Js2IL.Tests.Node
                     }
                 });
 
-            var ctx = new NodeSychronizationContext(mockTickSource, mockWaitHandle);
-            var scheduler = (IScheduler)ctx;
+            var schedulerState = new NodeSchedulerState(mockTickSource, mockWaitHandle);
+            var eventLoop = new NodeEventLoopPump(schedulerState, mockTickSource, mockWaitHandle);
+            var scheduler = (IScheduler)schedulerState;
 
             var callbackCount = 0;
             object? intervalHandle = null;
@@ -68,16 +69,16 @@ namespace Js2IL.Tests.Node
             // Let's simulate the event loop:
             
             int iterations = 0;
-            while (ctx.HasPendingWork() && iterations < 50)
+            while (eventLoop.HasPendingWork() && iterations < 50)
             {
-                ctx.RunOneIteration();
-                ctx.WaitForWorkOrNextTimer();
+                eventLoop.RunOneIteration();
+                eventLoop.WaitForWorkOrNextTimer();
                 iterations++;
             }
 
             // Assert
             Assert.Equal(1, callbackCount); // Callback should have run exactly once
-            Assert.False(ctx.HasPendingWork()); // No pending work should remain
+            Assert.False(eventLoop.HasPendingWork()); // No pending work should remain
             Assert.True(iterations < 50, $"Event loop took too many iterations ({iterations}), possible bug");
         }
 
@@ -98,23 +99,24 @@ namespace Js2IL.Tests.Node
                     // is removed even though it's not due yet
                 });
 
-            var ctx = new NodeSychronizationContext(mockTickSource, mockWaitHandle);
-            var scheduler = (IScheduler)ctx;
+            var schedulerState = new NodeSchedulerState(mockTickSource, mockWaitHandle);
+            var eventLoop = new NodeEventLoopPump(schedulerState, mockTickSource, mockWaitHandle);
+            var scheduler = (IScheduler)schedulerState;
 
             // Schedule an interval 1 hour in the future
             var handle = scheduler.ScheduleInterval(() => { }, TimeSpan.FromHours(1));
             
-            Assert.True(ctx.HasPendingWork()); // Timer is pending
+            Assert.True(eventLoop.HasPendingWork()); // Timer is pending
 
             // Cancel it
             scheduler.CancelInterval(handle);
 
             // Act - Run one iteration (this should clean up the canceled interval)
-            ctx.RunOneIteration();
+            eventLoop.RunOneIteration();
 
             // Assert - HasPendingWork should now be false because the canceled interval
             // was removed even though it wasn't due yet
-            Assert.False(ctx.HasPendingWork());
+            Assert.False(eventLoop.HasPendingWork());
         }
 
         /// <summary>
@@ -129,8 +131,9 @@ namespace Js2IL.Tests.Node
                 onSet: () => { },
                 onWaitOne: (ms) => mockTickSource.Increment(TimeSpan.FromMilliseconds(ms)));
 
-            var ctx = new NodeSychronizationContext(mockTickSource, mockWaitHandle);
-            var scheduler = (IScheduler)ctx;
+            var schedulerState = new NodeSchedulerState(mockTickSource, mockWaitHandle);
+            var eventLoop = new NodeEventLoopPump(schedulerState, mockTickSource, mockWaitHandle);
+            var scheduler = (IScheduler)schedulerState;
 
             var handles = new object[3];
             var counts = new int[3];
@@ -150,17 +153,18 @@ namespace Js2IL.Tests.Node
 
             // Act
             int iterations = 0;
-            while (ctx.HasPendingWork() && iterations < 10)
+            while (eventLoop.HasPendingWork() && iterations < 10)
             {
-                ctx.RunOneIteration();
+                eventLoop.RunOneIteration();
                 iterations++;
             }
 
             // Assert
-            Assert.False(ctx.HasPendingWork());
+            Assert.False(eventLoop.HasPendingWork());
             Assert.Equal(0, counts[0]); // No callbacks should have run
             Assert.Equal(0, counts[1]);
             Assert.Equal(0, counts[2]);
         }
     }
 }
+

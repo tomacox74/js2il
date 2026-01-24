@@ -26,7 +26,10 @@ public class RuntimeServices
         // Register default engine dependencies
         container.Register<EngineCore.ITickSource, EngineCore.TickSource>();
         container.Register<EngineCore.IWaitHandle, EngineCore.WaitHandle>();
-        container.Register<EngineCore.NodeSychronizationContext>();
+        container.Register<EngineCore.NodeSchedulerState>();
+        container.Register<EngineCore.NodeEventLoopPump>();
+        container.Register<EngineCore.IMicrotaskScheduler, EngineCore.NodeSchedulerState>();
+        container.Register<EngineCore.IScheduler, EngineCore.NodeSchedulerState>();
         container.Register<CommonJS.Require>();
         container.Register<LocalModulesAssembly>();
         container.Register<IEnvironment, DefaultEnvironment>();

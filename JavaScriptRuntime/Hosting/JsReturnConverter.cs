@@ -1,11 +1,67 @@
+using JavaScriptRuntime;
+using System.Collections.Concurrent;
+using System.Reflection;
+using System.Threading.Tasks;
+
 namespace Js2IL.Runtime;
 
 internal static class JsReturnConverter
 {
+    private static readonly MethodInfo PromiseToTaskOpenGeneric = typeof(JsPromiseTaskInterop)
+        .GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+        .Single(m => m.Name == nameof(JsPromiseTaskInterop.ToTask)
+                     && m.IsGenericMethodDefinition
+                     && m.GetParameters().Length == 2
+                     && m.GetParameters()[0].ParameterType == typeof(JsRuntimeInstance)
+                     && m.GetParameters()[1].ParameterType == typeof(Promise));
+
+    private static readonly MethodInfo TaskFromResultOpenGeneric = typeof(Task)
+        .GetMethods(BindingFlags.Static | BindingFlags.Public)
+        .Single(m => m.Name == nameof(Task.FromResult)
+                     && m.IsGenericMethodDefinition
+                     && m.GetParameters().Length == 1);
+
+    private static readonly ConcurrentDictionary<Type, MethodInfo> PromiseToTaskByResultType = new();
+    private static readonly ConcurrentDictionary<Type, MethodInfo> TaskFromResultByResultType = new();
+
     internal static object? ConvertReturn(JsRuntimeInstance runtime, object? value, Type returnType)
     {
         ArgumentNullException.ThrowIfNull(runtime);
         ArgumentNullException.ThrowIfNull(returnType);
+
+        if (returnType == typeof(Task))
+        {
+            if (value is Promise p)
+            {
+                return JsPromiseTaskInterop.ToTask(p);
+            }
+
+            // If the JS side returns a non-promise value but the contract expects a Task,
+            // treat it as already-completed.
+            return Task.CompletedTask;
+        }
+
+        if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))
+        {
+            var resultType = returnType.GetGenericArguments()[0];
+
+            if (value is Promise p)
+            {
+                var method = PromiseToTaskByResultType.GetOrAdd(
+                    resultType,
+                    t => PromiseToTaskOpenGeneric.MakeGenericMethod(t));
+
+                return method.Invoke(null, new object?[] { runtime, p });
+            }
+
+            var converted = ConvertReturn(runtime, value, resultType);
+
+            var fromResult = TaskFromResultByResultType.GetOrAdd(
+                resultType,
+                t => TaskFromResultOpenGeneric.MakeGenericMethod(t));
+
+            return fromResult.Invoke(null, new[] { converted });
+        }
 
         if (returnType == typeof(void))
         {

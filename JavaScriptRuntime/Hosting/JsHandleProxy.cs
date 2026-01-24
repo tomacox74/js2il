@@ -63,12 +63,6 @@ internal class JsHandleProxy : DispatchProxy
             }
         }
 
-        if (targetMethod.ReturnType == typeof(Task) ||
-            (targetMethod.ReturnType.IsGenericType && targetMethod.ReturnType.GetGenericTypeDefinition() == typeof(Task<>)))
-        {
-            throw new NotSupportedException("Task-returning handles are not supported yet (Promise-to-Task projection pending).");
-        }
-
         return runtime.Invoke(() =>
         {
             var result = ExportMemberResolver.InvokeInstanceMethod(target, targetMethod.Name, args ?? Array.Empty<object?>());

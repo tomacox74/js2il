@@ -63,13 +63,6 @@ internal class JsExportsProxy : DispatchProxy
             }
         }
 
-        // Contract note: JS Promises are not projected to Task yet.
-        if (targetMethod.ReturnType == typeof(Task) ||
-            (targetMethod.ReturnType.IsGenericType && targetMethod.ReturnType.GetGenericTypeDefinition() == typeof(Task<>)))
-        {
-            throw new NotSupportedException("Task-returning exports are not supported yet (Promise-to-Task projection pending).");
-        }
-
         // Default path: method name maps to an exported callable function.
         return runtime.Invoke(() =>
         {
