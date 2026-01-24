@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - Hosting: project JavaScript `Promise` return values to C# `Task`/`Task<T>` for typed exports and handles (enables `await` without deadlocks).
+- Runtime/spec: implement ECMA-262 §9.5.1–§9.5.3 JobCallback host operations and integrate them into Promise job scheduling (fixes #435).
 
 ## v0.7.3 - 2026-01-23
 
