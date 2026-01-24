@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace Js2IL.Runtime;
 
@@ -84,7 +85,9 @@ public static class JsEngine
         }
         catch (Exception ex)
         {
-            throw JsHostingExceptionTranslator.TranslateModuleLoad(ex, compiledAssembly, moduleId);
+            var translated = JsHostingExceptionTranslator.TranslateModuleLoad(ex, compiledAssembly, moduleId);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
         }
     }
 
@@ -112,7 +115,9 @@ public static class JsEngine
         }
         catch (Exception ex)
         {
-            throw JsHostingExceptionTranslator.TranslateModuleLoad(ex, compiledAssembly, moduleId, contractType: typeof(TExports));
+            var translated = JsHostingExceptionTranslator.TranslateModuleLoad(ex, compiledAssembly, moduleId, contractType: typeof(TExports));
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
         }
     }
 }

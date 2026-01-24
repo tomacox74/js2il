@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -60,7 +61,9 @@ internal class JsHandleProxy : DispatchProxy
                 }
                 catch (Exception ex)
                 {
-                    throw JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: name, contractType: targetMethod.DeclaringType);
+                    var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: name, contractType: targetMethod.DeclaringType);
+                    ExceptionDispatchInfo.Capture(translated).Throw();
+                    throw;
                 }
             }
 
@@ -81,7 +84,9 @@ internal class JsHandleProxy : DispatchProxy
         }
         catch (Exception ex)
         {
-            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: methodName, contractType: targetMethod.DeclaringType);
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: methodName, contractType: targetMethod.DeclaringType);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
         }
     }
 
@@ -171,7 +176,9 @@ internal class JsConstructorProxy : DispatchProxy
         }
         catch (Exception ex)
         {
-            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: nameof(IJsConstructor<IJsHandle>.Construct), contractType: targetMethod.DeclaringType);
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: nameof(IJsConstructor<IJsHandle>.Construct), contractType: targetMethod.DeclaringType);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
         }
     }
 

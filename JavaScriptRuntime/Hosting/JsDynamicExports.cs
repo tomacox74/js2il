@@ -1,4 +1,5 @@
 using System.Dynamic;
+using System.Runtime.ExceptionServices;
 
 namespace Js2IL.Runtime;
 
@@ -32,7 +33,9 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         }
         catch (Exception ex)
         {
-            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: name, contractType: null);
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: name, contractType: null);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
         }
     }
 
@@ -54,7 +57,9 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         }
         catch (Exception ex)
         {
-            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: name, contractType: null);
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: name, contractType: null);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
         }
     }
 
@@ -72,7 +77,9 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         }
         catch (Exception ex)
         {
-            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: binder.Name, contractType: null);
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: binder.Name, contractType: null);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
         }
     }
 
@@ -99,7 +106,9 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         }
         catch (Exception ex)
         {
-            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: binder.Name, contractType: null);
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: binder.Name, contractType: null);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
         }
     }
 

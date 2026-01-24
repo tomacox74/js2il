@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace Js2IL.Runtime;
 
@@ -60,7 +61,9 @@ internal class JsExportsProxy : DispatchProxy
                 }
                 catch (Exception ex)
                 {
-                    throw JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: name, contractType: targetMethod.DeclaringType);
+                    var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: name, contractType: targetMethod.DeclaringType);
+                    ExceptionDispatchInfo.Capture(translated).Throw();
+                    throw;
                 }
             }
 
@@ -88,7 +91,9 @@ internal class JsExportsProxy : DispatchProxy
         }
         catch (Exception ex)
         {
-            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: exportName, contractType: targetMethod.DeclaringType);
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: exportName, contractType: targetMethod.DeclaringType);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
         }
     }
 

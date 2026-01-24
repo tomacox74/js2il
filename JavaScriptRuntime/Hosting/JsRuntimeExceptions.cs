@@ -105,6 +105,8 @@ internal static class JsHostingExceptionTranslator
         ArgumentNullException.ThrowIfNull(compiledAssembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
 
+        moduleId = moduleId.Trim();
+
         var ex = Unwrap(exception);
 
         // Keep common argument/lifetime exceptions as-is.
