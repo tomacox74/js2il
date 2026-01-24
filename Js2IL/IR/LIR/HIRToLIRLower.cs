@@ -513,6 +513,43 @@ public sealed class HIRToLIRLowerer
         return count;
     }
 
+    private static bool ContainsYieldExpression(Acornima.Ast.Node node, Acornima.Ast.Node functionBoundaryNode)
+    {
+        bool found = false;
+
+        void Walk(Acornima.Ast.Node? n)
+        {
+            if (n == null || found)
+            {
+                return;
+            }
+
+            if (n is Acornima.Ast.YieldExpression)
+            {
+                found = true;
+                return;
+            }
+
+            // Do not traverse into nested function boundaries.
+            if (n is Acornima.Ast.FunctionDeclaration or Acornima.Ast.FunctionExpression or Acornima.Ast.ArrowFunctionExpression)
+            {
+                if (!ReferenceEquals(n, functionBoundaryNode))
+                {
+                    return;
+                }
+            }
+
+            foreach (var child in n.ChildNodes)
+            {
+                Walk(child);
+                if (found) return;
+            }
+        }
+
+        Walk(node);
+        return found;
+    }
+
     internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null)
     {
         lirMethod = null;
@@ -3993,9 +4030,28 @@ public sealed class HIRToLIRLowerer
                     return false;
                 }
 
+                // Resumable static class methods (async/generator) follow the js2il calling convention and
+                // require a leading scopes array.
+                // Use an ABI-compatible empty scopes array (1-element array with null) for now.
+                TempVariable? scopesArgTemp = null;
+                bool needsScopesArg = memberFunc.Async
+                    || memberFunc.Generator
+                    || (memberFunc.Body != null && ContainsYieldExpression(memberFunc.Body, memberFunc));
+                if (needsScopesArg)
+                {
+                    scopesArgTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), scopesArgTemp.Value));
+                    DefineTempStorage(scopesArgTemp.Value, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+                }
+
                 // Lower all arguments (evaluate extras for side effects, but only pass up to declared param count).
                 var declaredParamCount = memberFunc.Params.Count;
-                var callArgTemps = new List<TempVariable>(declaredParamCount);
+                var callArgTemps = new List<TempVariable>(declaredParamCount + (scopesArgTemp.HasValue ? 1 : 0));
+
+                if (scopesArgTemp.HasValue)
+                {
+                    callArgTemps.Add(scopesArgTemp.Value);
+                }
 
                 for (int i = 0; i < callExpr.Arguments.Length; i++)
                 {
@@ -4014,7 +4070,8 @@ public sealed class HIRToLIRLowerer
                 }
 
                 // Pad missing args with undefined (null) to match the declared signature.
-                while (callArgTemps.Count < declaredParamCount)
+                var expectedArgs = declaredParamCount + (scopesArgTemp.HasValue ? 1 : 0);
+                while (callArgTemps.Count < expectedArgs)
                 {
                     var undefTemp = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefTemp));
@@ -4108,7 +4165,7 @@ public sealed class HIRToLIRLowerer
                 && calleePropAccess.Object is HIRThisExpression
                 && TryGetEnclosingClassRegistryName(out var currentClass)
                 && currentClass != null
-                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out var methodReturnClrType, out _, out var maxParamCount))
+                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out var methodReturnClrType, out var hasScopesParam, out _, out var maxParamCount))
             {
                 var argTemps = new List<TempVariable>();
                 foreach (var argExpr in callExpr.Arguments)
@@ -4125,6 +4182,7 @@ public sealed class HIRToLIRLowerer
                     currentClass,
                     calleePropAccess.PropertyName,
                     methodHandle,
+                    hasScopesParam,
                     maxParamCount,
                     argTemps,
                     resultTempVar));

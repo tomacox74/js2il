@@ -138,6 +138,7 @@ public record LIRCallTypedMember(
     TempVariable Receiver,
     EntityHandle ReceiverTypeHandle,
     MethodDefinitionHandle MethodHandle,
+    bool HasScopesParameter,
     Type ReturnClrType,
     int MaxParamCount,
     IReadOnlyList<TempVariable> Arguments,
@@ -157,6 +158,7 @@ public record LIRCallTypedMemberWithFallback(
     string MethodName,
     EntityHandle ReceiverTypeHandle,
     MethodDefinitionHandle MethodHandle,
+    bool HasScopesParameter,
     Type ReturnClrType,
     int MaxParamCount,
     IReadOnlyList<TempVariable> Arguments,
@@ -178,6 +180,7 @@ public record LIRCallUserClassInstanceMethod(
     string RegistryClassName,
     string MethodName,
     MethodDefinitionHandle MethodHandle,
+    bool HasScopesParameter,
     int MaxParamCount,
     IReadOnlyList<TempVariable> Arguments,
     TempVariable Result) : LIRInstruction;

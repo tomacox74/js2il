@@ -121,6 +121,17 @@ internal sealed class LIRToILCompiler
         return methodAttributes;
     }
 
+    private static int GetIlArgIndexForScopesArray(MethodDescriptor methodDescriptor)
+    {
+        if (!methodDescriptor.HasScopesParameter)
+        {
+            throw new InvalidOperationException("Expected a scopes parameter but methodDescriptor.HasScopesParameter is false");
+        }
+
+        // Static: arg0 = scopes. Instance: arg0 = this, arg1 = scopes.
+        return methodDescriptor.IsStatic ? 0 : 1;
+    }
+
     private Type GetDeclaredScopeFieldClrType(string scopeName, string fieldName)
     {
         if (TryGetAsyncScopeBaseFieldClrType(fieldName, out var asyncFieldType))
@@ -773,7 +784,7 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(getResolveRef);
                     
                     // Call it with undefined: Closure.InvokeWithArgs(resolve, scopes, [null])
-                    ilEncoder.LoadArgument(0); // scopes array
+                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
                     // Build 1-element array with null (undefined)
                     ilEncoder.LoadConstantI4(1);
                     ilEncoder.OpCode(ILOpCode.Newarr);
@@ -2326,7 +2337,7 @@ internal sealed class LIRToILCompiler
                         
                         // Call it with the return value: Closure.InvokeWithArgs(resolve, scopes, argsArray)
                         // Build a 1-element array containing the return value
-                        ilEncoder.LoadArgument(0); // scopes array
+                        EmitLoadScopesArray(ilEncoder, methodDescriptor);
                         ilEncoder.LoadConstantI4(1);
                         ilEncoder.OpCode(ILOpCode.Newarr);
                         ilEncoder.Token(_bclReferences.ObjectType);
@@ -2399,7 +2410,7 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(getRejectRef);
 
                     // Call it with the rejection reason: Closure.InvokeWithArgs(reject, scopes, argsArray)
-                    ilEncoder.LoadArgument(0); // scopes array
+                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
                     ilEncoder.LoadConstantI4(1);
                     ilEncoder.OpCode(ILOpCode.Newarr);
                     ilEncoder.Token(_bclReferences.ObjectType);
@@ -2626,6 +2637,12 @@ internal sealed class LIRToILCompiler
 
                     // Receiver is implicit 'this'
                     ilEncoder.OpCode(ILOpCode.Ldarg_0);
+
+                    // Async class methods use the standard js2il calling convention and expect a leading scopes array.
+                    if (callUserClass.HasScopesParameter)
+                    {
+                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                    }
 
                     // Match the declared signature (ignore extra args, pad missing args with null).
                     int jsParamCount = callUserClass.MaxParamCount;
@@ -2964,9 +2981,9 @@ internal sealed class LIRToILCompiler
                         var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
                         var scopeName = createScope.Scope.Name;
                         
-                        // Check if arg.0[0] is our scope type (isinst leaves typed ref or null)
-                        // ldarg.0, ldc.i4.0, ldelem.ref, isinst ScopeType
-                        ilEncoder.LoadArgument(0);
+                        // Check if scopes[0] is our scope type (isinst leaves typed ref or null)
+                        // ldarg scopes, ldc.i4.0, ldelem.ref, isinst ScopeType
+                        EmitLoadScopesArray(ilEncoder, methodDescriptor);
                         ilEncoder.LoadConstantI4(0);
                         ilEncoder.OpCode(ILOpCode.Ldelem_ref);
                         ilEncoder.OpCode(ILOpCode.Isinst);
@@ -2987,19 +3004,19 @@ internal sealed class LIRToILCompiler
                         ilEncoder.StoreLocal(0);
                         
                         // Build modified scopes array using runtime helper:
-                        // starg.0 = Promise.PrependScopeToArray(leafScope, arg.0)
+                        // scopes = Promise.PrependScopeToArray(leafScope, scopes)
                         ilEncoder.LoadLocal(0);  // leafScope
-                        ilEncoder.LoadArgument(0); // parentScopes (original arg.0)
+                        EmitLoadScopesArray(ilEncoder, methodDescriptor); // parentScopes
                         var prependRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.Promise),
                             nameof(JavaScriptRuntime.Promise.PrependScopeToArray),
                             parameterTypes: new[] { typeof(object), typeof(object[]) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(prependRef);
-                        ilEncoder.StoreArgument(0); // arg.0 = modified scopes array
+                        ilEncoder.StoreArgument(GetIlArgIndexForScopesArray(methodDescriptor)); // scopes = modified scopes array
                         
                         // Initialize _moveNext = Closure.Bind(delegate, scopesArray)
-                        // Note: arg.0 now contains the modified scopes array with leaf scope at [0]
+                        // Note: scopes now contains the modified scopes array with leaf scope at [0]
                         ilEncoder.LoadLocal(0);  // for stfld _moveNext later
                         
                         var callableId = MethodBody.CallableId;
@@ -3008,17 +3025,24 @@ internal sealed class LIRToILCompiler
                         {
                             var methodHandle = (MethodDefinitionHandle)token;
                             
-                            // Create delegate: ldnull, ldftn, newobj Func<object[], object, ...>::.ctor
+                            // Create delegate: ldnull/ldthis, ldftn, newobj Func<object[], object, ...>::.ctor
                             // Use the JS parameter count so the delegate signature matches the async method.
                             int jsParamCount = callableId.JsParamCount;
-                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                            if (methodDescriptor.IsStatic)
+                            {
+                                ilEncoder.OpCode(ILOpCode.Ldnull);
+                            }
+                            else
+                            {
+                                ilEncoder.LoadArgument(0);
+                            }
                             ilEncoder.OpCode(ILOpCode.Ldftn);
                             ilEncoder.Token(methodHandle);
                             ilEncoder.OpCode(ILOpCode.Newobj);
                             ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
                             
                             // Load modified scopes array
-                            ilEncoder.LoadArgument(0);
+                            ilEncoder.LoadArgument(GetIlArgIndexForScopesArray(methodDescriptor));
                             
                             // Call Closure.Bind(delegate, scopes)
                             var bindRef = _memberRefRegistry.GetOrAddMethod(
@@ -3056,13 +3080,20 @@ internal sealed class LIRToILCompiler
                         // Generators: this method is both the factory (called as a JS function)
                         // and the step method (called by GeneratorObject on next/throw/return).
                         // Detect step calls by checking if scopes[0] is our leaf scope type.
+                        if (!methodDescriptor.HasScopesParameter)
+                        {
+                            throw new InvalidOperationException("Generator methods must use the js2il ABI and declare a leading scopes parameter.");
+                        }
+
+                        int scopesArgIndex = GetIlArgIndexForScopesArray(methodDescriptor);
+
                         var scopeTypeHandle = ResolveScopeTypeHandle(
                             createScope.Scope.Name,
                             "LIRCreateLeafScopeInstance instruction (generator)");
                         var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
 
                         // ldarg.0, ldc.i4.0, ldelem.ref, isinst ScopeType
-                        ilEncoder.LoadArgument(0);
+                        ilEncoder.LoadArgument(scopesArgIndex);
                         ilEncoder.LoadConstantI4(0);
                         ilEncoder.OpCode(ILOpCode.Ldelem_ref);
                         ilEncoder.OpCode(ILOpCode.Isinst);
@@ -3082,14 +3113,14 @@ internal sealed class LIRToILCompiler
 
                         // Build modified scopes array with leaf at [0]
                         ilEncoder.LoadLocal(0); // leafScope
-                        ilEncoder.LoadArgument(0); // parent scopes
+                        ilEncoder.LoadArgument(scopesArgIndex); // parent scopes
                         var prependRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.Promise),
                             nameof(JavaScriptRuntime.Promise.PrependScopeToArray),
                             parameterTypes: new[] { typeof(object), typeof(object[]) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(prependRef);
-                        ilEncoder.StoreArgument(0); // arg.0 = modified scopes
+                        ilEncoder.StoreArgument(scopesArgIndex); // scopes = modified scopes array
 
                         // Build step delegate (to this method) and bind to the modified scopes array
                         var callableId = MethodBody.CallableId
@@ -3105,14 +3136,22 @@ internal sealed class LIRToILCompiler
                         int jsParamCount = callableId.JsParamCount;
 
                         // ldnull, ldftn <method>, newobj FuncCtor
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                        if (methodDescriptor.IsStatic)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
+                        else
+                        {
+                            // Closed delegate for instance generator methods: capture 'this'
+                            ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                        }
                         ilEncoder.OpCode(ILOpCode.Ldftn);
                         ilEncoder.Token(methodHandle);
                         ilEncoder.OpCode(ILOpCode.Newobj);
                         ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
 
                         // Closure.Bind(delegate, scopes)
-                        ilEncoder.LoadArgument(0);
+                        ilEncoder.LoadArgument(scopesArgIndex);
                         var bindRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.Closure),
                             nameof(JavaScriptRuntime.Closure.Bind),
@@ -3121,7 +3160,7 @@ internal sealed class LIRToILCompiler
                         ilEncoder.Token(bindRef);
 
                         // Push scopes array (ctor arg 2)
-                        ilEncoder.LoadArgument(0);
+                        ilEncoder.LoadArgument(scopesArgIndex);
 
                         // Build args array (ctor arg 3)
                         ilEncoder.LoadConstantI4(jsParamCount);
@@ -3131,7 +3170,7 @@ internal sealed class LIRToILCompiler
                         {
                             ilEncoder.OpCode(ILOpCode.Dup);
                             ilEncoder.LoadConstantI4(i);
-                            ilEncoder.LoadArgument(i + 1); // arg.0 is scopes
+                            ilEncoder.LoadArgument(GetIlArgIndexForJsParameter(methodDescriptor, i));
                             ilEncoder.OpCode(ILOpCode.Stelem_ref);
                         }
 
@@ -3350,8 +3389,8 @@ internal sealed class LIRToILCompiler
                         // awaited value
                         EmitLoadTemp(awaitInstr.AwaitedValue, ilEncoder, allocation, methodDescriptor);
 
-                        // scopesArray (ldarg.0, which is the scopes parameter)
-                        ilEncoder.LoadArgument(0);
+                        // scopesArray
+                        EmitLoadScopesArray(ilEncoder, methodDescriptor);
 
                         // resultFieldName
                         ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(resultFieldName));
@@ -4304,6 +4343,11 @@ internal sealed class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Ldarg_0);
 
+                    if (callUserClass.HasScopesParameter)
+                    {
+                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                    }
+
                     int jsParamCount = callUserClass.MaxParamCount;
                     int argsToPass = Math.Min(callUserClass.Arguments.Count, jsParamCount);
                     for (int i = 0; i < argsToPass; i++)
@@ -4776,6 +4820,34 @@ internal sealed class LIRToILCompiler
         }
     }
 
+            private void EmitLoadScopesArrayOrEmpty(InstructionEncoder ilEncoder, MethodDescriptor methodDescriptor)
+            {
+                if (methodDescriptor.HasScopesParameter || (!methodDescriptor.IsStatic && methodDescriptor.ScopesFieldHandle.HasValue))
+                {
+                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
+                    return;
+                }
+
+                // If this method has a leaf scope instance in local 0, use that as the parent
+                // scopes array. This is important for resumables (async/generators) because
+                // their leaf scope is prepended to the parent scopes, and the runtime expects
+                // at least the global/module scope to be present at index 1 after prepending.
+                if (MethodBody.NeedsLeafScopeLocal)
+                {
+                    ilEncoder.LoadConstantI4(1);
+                    ilEncoder.OpCode(ILOpCode.Newarr);
+                    ilEncoder.Token(_bclReferences.ObjectType);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.LoadConstantI4(0);
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                    return;
+                }
+
+                // ABI fallback: 1-element array with null.
+                EmitEmptyScopesArray(ilEncoder);
+            }
+
     /// <summary>
     /// Emits IL to load a scope instance from the specified source.
     /// </summary>
@@ -5204,6 +5276,12 @@ internal sealed class LIRToILCompiler
             ilEncoder.Token(instruction.ReceiverTypeHandle);
         }
 
+        // Async class methods follow the js2il ABI and take a leading scopes array parameter.
+        if (instruction.HasScopesParameter)
+        {
+            EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+        }
+
         // Match the declared signature (ignore extra args, pad missing args with null).
         int jsParamCount = instruction.MaxParamCount;
         int argsToPass = Math.Min(instruction.Arguments.Count, jsParamCount);
@@ -5258,6 +5336,11 @@ internal sealed class LIRToILCompiler
         ilEncoder.Branch(ILOpCode.Brfalse, fallbackLabel);
 
         // Direct call path (typed receiver on stack)
+        if (instruction.HasScopesParameter)
+        {
+            EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+        }
+
         int jsParamCount = instruction.MaxParamCount;
         int argsToPass = Math.Min(instruction.Arguments.Count, jsParamCount);
         for (int i = 0; i < argsToPass; i++)

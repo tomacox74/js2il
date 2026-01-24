@@ -231,19 +231,33 @@ internal static class ExportMemberResolver
             return true;
         }
 
-        if (args.Length > parameters.Length)
+        // Resumable callables (async/generator) follow the js2il ABI and take a leading scopes array.
+        // Hosting calls do not carry scopes, so supply an ABI-compatible empty scopes array.
+        var scopesOffset = 0;
+        if (parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]))
+        {
+            scopesOffset = 1;
+        }
+
+        if (args.Length > (parameters.Length - scopesOffset))
         {
             invokeArgs = Array.Empty<object?>();
             return false;
         }
 
         invokeArgs = new object?[parameters.Length];
-        for (var i = 0; i < args.Length; i++)
+
+        if (scopesOffset == 1)
         {
-            invokeArgs[i] = args[i];
+            invokeArgs[0] = Array.Empty<object>();
         }
 
-        for (var i = args.Length; i < parameters.Length; i++)
+        for (var i = 0; i < args.Length; i++)
+        {
+            invokeArgs[i + scopesOffset] = args[i];
+        }
+
+        for (var i = args.Length + scopesOffset; i < parameters.Length; i++)
         {
             invokeArgs[i] = parameters[i].HasDefaultValue ? Type.Missing : null;
         }
