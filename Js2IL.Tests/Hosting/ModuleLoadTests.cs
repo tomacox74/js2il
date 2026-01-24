@@ -120,8 +120,82 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("boom", "boom.js");
 
-        var ex = Assert.ThrowsAny<Exception>(() => Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "boom"));
-        Assert.Contains("boom", ex.ToString(), StringComparison.OrdinalIgnoreCase);
+        var ex = Assert.Throws<Js2IL.Runtime.JsModuleLoadException>(() => Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "boom"));
+        Assert.Equal("boom", ex.ModuleId);
+
+        var jsError = Assert.IsType<Js2IL.Runtime.JsErrorException>(ex.InnerException);
+        Assert.Equal("Error", jsError.JsName);
+        Assert.Contains("boom", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public interface IMissingMemberExports : IDisposable
+    {
+        string DoesNotExist { get; }
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenExportMemberMissing_ThrowsJsContractProjectionException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IMissingMemberExports>(module.Assembly, "math");
+
+        var ex = Assert.Throws<Js2IL.Runtime.JsContractProjectionException>(() => _ = exports.DoesNotExist);
+        Assert.Equal("math", ex.ModuleId);
+        Assert.Equal("DoesNotExist", ex.MemberName);
+    }
+
+    public interface IWrongShapeExports : IDisposable
+    {
+        double Version();
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenExportExpectedFunctionButWasNot_ThrowsJsContractProjectionException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IWrongShapeExports>(module.Assembly, "math");
+
+        var ex = Assert.Throws<Js2IL.Runtime.JsContractProjectionException>(() => _ = exports.Version());
+        Assert.Equal("math", ex.ModuleId);
+        Assert.Equal("Version", ex.MemberName);
+    }
+
+    public interface IThrowingExports : IDisposable
+    {
+        void Boom();
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenInvocationThrowsJsError_ThrowsJsInvocationExceptionWithInnerJsError()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("throws", "throws.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IThrowingExports>(module.Assembly, "throws");
+
+        var ex = Assert.Throws<Js2IL.Runtime.JsInvocationException>(() => exports.Boom());
+        Assert.Equal("throws", ex.ModuleId);
+        Assert.Equal("Boom", ex.MemberName);
+
+        var jsError = Assert.IsType<Js2IL.Runtime.JsErrorException>(ex.InnerException);
+        Assert.Equal("Error", jsError.JsName);
+        Assert.Contains("boom", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public interface IThrowValueExports : IDisposable
+    {
+        void ThrowValue();
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenInvocationThrowsNonErrorValue_ThrowsJsInvocationExceptionWithThrownValue()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("throwValue", "throwValue.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IThrowValueExports>(module.Assembly, "throwValue");
+
+        var ex = Assert.Throws<Js2IL.Runtime.JsInvocationException>(() => exports.ThrowValue());
+        var jsError = Assert.IsType<Js2IL.Runtime.JsErrorException>(ex.InnerException);
+
+        Assert.NotNull(jsError.ThrownValue);
+        Assert.Equal(123.0, Convert.ToDouble(jsError.ThrownValue));
     }
 
     private static string LoadHostingJavaScript(string resourcePath)

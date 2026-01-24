@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace Js2IL.Runtime;
 
@@ -50,9 +51,10 @@ public static class JsEngine
         var moduleAttr = contractType.GetCustomAttribute<JsModuleAttribute>();
         if (moduleAttr == null)
         {
-            throw new InvalidOperationException(
+            throw new JsContractProjectionException(
                 $"{contractType.FullName} does not have {nameof(JsModuleAttribute)}. " +
-                $"Call {nameof(LoadModule)}<{contractType.Name}>(moduleId) or {nameof(LoadModule)}(compiledAssembly, moduleId) instead.");
+                $"Call {nameof(LoadModule)}<{contractType.Name}>(moduleId) or {nameof(LoadModule)}(compiledAssembly, moduleId) instead.",
+                contractType: contractType);
         }
 
         return LoadModule<TExports>(contractType.Assembly, moduleAttr.ModuleId);
@@ -76,8 +78,17 @@ public static class JsEngine
         ArgumentNullException.ThrowIfNull(compiledAssembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
 
-        var runtime = new JsRuntimeInstance(compiledAssembly, moduleId);
-        return new JsDynamicExports(runtime);
+        try
+        {
+            var runtime = new JsRuntimeInstance(compiledAssembly, moduleId);
+            return new JsDynamicExports(runtime);
+        }
+        catch (Exception ex)
+        {
+            var translated = JsHostingExceptionTranslator.TranslateModuleLoad(ex, compiledAssembly, moduleId);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
+        }
     }
 
     public static TExports LoadModule<TExports>(Assembly compiledAssembly, string moduleId)
@@ -88,12 +99,25 @@ public static class JsEngine
 
         if (!typeof(IDisposable).IsAssignableFrom(typeof(TExports)))
         {
-            throw new NotSupportedException($"{typeof(TExports).FullName} must implement IDisposable so the module runtime can be shut down deterministically.");
+            throw new JsContractProjectionException(
+                $"{typeof(TExports).FullName} must implement IDisposable so the module runtime can be shut down deterministically.",
+                moduleId: moduleId,
+                contractType: typeof(TExports),
+                compiledAssemblyName: compiledAssembly.GetName().Name);
         }
 
-        var runtime = new JsRuntimeInstance(compiledAssembly, moduleId);
-        var proxy = DispatchProxy.Create<TExports, JsExportsProxy>();
-        ((JsExportsProxy)(object)proxy).Initialize(runtime);
-        return proxy;
+        try
+        {
+            var runtime = new JsRuntimeInstance(compiledAssembly, moduleId);
+            var proxy = DispatchProxy.Create<TExports, JsExportsProxy>();
+            ((JsExportsProxy)(object)proxy).Initialize(runtime);
+            return proxy;
+        }
+        catch (Exception ex)
+        {
+            var translated = JsHostingExceptionTranslator.TranslateModuleLoad(ex, compiledAssembly, moduleId, contractType: typeof(TExports));
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
+        }
     }
 }

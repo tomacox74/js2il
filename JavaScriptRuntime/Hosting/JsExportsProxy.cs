@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace Js2IL.Runtime;
 
@@ -50,11 +51,20 @@ internal class JsExportsProxy : DispatchProxy
             if (targetMethod.Name.StartsWith("get_", StringComparison.Ordinal))
             {
                 var name = targetMethod.Name.Substring(4);
-                return runtime.Invoke(() =>
+                try
                 {
-                    var value = ExportMemberResolver.GetExportMember(runtime.Exports, name);
-                    return JsReturnConverter.ConvertReturn(runtime, value, targetMethod.ReturnType);
-                });
+                    return runtime.Invoke(() =>
+                    {
+                        var value = ExportMemberResolver.GetExportMember(runtime.Exports, name);
+                        return JsReturnConverter.ConvertReturn(runtime, value, targetMethod.ReturnType);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: name, contractType: targetMethod.DeclaringType);
+                    ExceptionDispatchInfo.Capture(translated).Throw();
+                    throw;
+                }
             }
 
             if (targetMethod.Name.StartsWith("set_", StringComparison.Ordinal))
@@ -64,18 +74,27 @@ internal class JsExportsProxy : DispatchProxy
         }
 
         // Default path: method name maps to an exported callable function.
-        return runtime.Invoke(() =>
+        var exportName = targetMethod.Name;
+        try
         {
-            var exportName = targetMethod.Name;
-            var callable = ExportMemberResolver.GetExportMember(runtime.Exports, exportName);
-            if (callable is not Delegate d)
+            return runtime.Invoke(() =>
             {
-                throw new MissingMethodException($"Export '{exportName}' is not a callable function.");
-            }
+                var callable = ExportMemberResolver.GetExportMember(runtime.Exports, exportName);
+                if (callable is not Delegate d)
+                {
+                    throw new MissingMethodException($"Export '{exportName}' is not a callable function.");
+                }
 
-            var result = ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
-            return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
-        });
+                var result = ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
+                return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
+            });
+        }
+        catch (Exception ex)
+        {
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: exportName, contractType: targetMethod.DeclaringType);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
+        }
     }
 
     private object? HandleObjectMethod(MethodInfo targetMethod, object?[]? args)

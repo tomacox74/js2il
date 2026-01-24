@@ -35,7 +35,9 @@ public class ExecutionTests
     {
         using var exports = LoadExports(out _);
 
-        Assert.ThrowsAny<Error>(() => exports.Fail());
+        var ex = Assert.Throws<JsInvocationException>(() => exports.Fail());
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        _ = Assert.IsType<Error>(jsError.InnerException);
     }
 
     [Fact]
