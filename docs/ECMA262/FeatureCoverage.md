@@ -211,7 +211,7 @@ This file is auto-generated from FeatureCoverage.json.
 | Number::bitwiseXOR | Supported |  |  | 6.1.6.1.18 |
 
 
-#### [Number::bitwiseOR ( x, y )](https://tc39.es/ecma262/#sec-number-bitwiseor)
+#### [Number::bitwiseOR ( x, y )](https://tc36.es/ecma262/#sec-number-bitwiseor)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
@@ -412,6 +412,38 @@ This file is auto-generated from FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Well-Known Intrinsic Objects | Partially Supported |  |  | 6.1.7.4 |
+
+
+## [Executable Code and Execution Contexts](https://tc39.es/ecma262/#sec-executable-code-and-execution-contexts)
+
+### [Jobs and Host Operations to Enqueue Jobs](https://tc39.es/ecma262/#sec-jobs)
+
+#### [JobCallback Records](https://tc39.es/ecma262/#sec-jobcallback-records)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| JobCallback Records | Supported | `Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js` | Implemented as an internal JobCallback record carrying a callback plus a host-defined context slot (currently null/empty). Used by Promise reaction job scheduling so future host-defined context/realm data can be threaded without changing observable behavior. | 9.5.1 |
+
+
+#### [HostMakeJobCallback ( callback )](https://tc39.es/ecma262/#sec-hostmakejobcallback)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| HostMakeJobCallback | Supported | `Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js` | Default host behavior: wraps a callback into a JobCallback record with an empty HostDefined field. | 9.5.2 |
+
+
+#### [HostCallJobCallback ( jobCallback , V , argumentsList )](https://tc39.es/ecma262/#sec-hostcalljobcallback)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| HostCallJobCallback | Supported | `Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js` | Default host behavior: invokes the stored callback. Parameters (V, argumentsList) are accepted for spec-shape compatibility; JS2IL currently models Promise jobs as parameterless Actions. | 9.5.3 |
+
+
+#### [HostEnqueuePromiseJob ( job , realm )](https://tc39.es/ecma262/#sec-hostenqueuepromisejob)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| HostEnqueuePromiseJob | Supported | `Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js` | Promise reaction jobs are enqueued onto the runtime microtask queue (IMicrotaskScheduler) and executed by the event loop pump. | 9.5.4 |
 
 
 ## [ECMAScript Language: Expressions](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
@@ -826,7 +858,11 @@ This file is auto-generated from FeatureCoverage.json.
 | try/finally (no catch) | Partially Supported | `Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch.js`<br>`Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch_Throw.js`<br>`Js2IL.Tests/TryCatch/JavaScript/TryFinally_Return.js` | Finally emission is in place and executes on normal and return exits. Execution test for unhandled throw is skipped pending top-level unhandled Error semantics; generator snapshot verifies structure. | 14.16.1 |
 
 
-## [ECMAScript Language: Classes](https://tc39.es/ecma262/#sec-ecmascript-language-classes)
+## [ECMAScript Language: Functions and Classes](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes)
+
+### [Parameter Lists](https://tc39.es/ecma262/#sec-parameter-lists)
+
+### [Function Definitions](https://tc39.es/ecma262/#sec-function-definitions)
 
 ### [Class Definitions](https://tc39.es/ecma262/#sec-class-definitions)
 
@@ -834,19 +870,23 @@ This file is auto-generated from FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Class declaration (empty) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js` |  | 15.1.1 |
-| Instance method (declare and call) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js` |  | 15.1.1 |
-| Instance method implicit fallthrough return is undefined | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_Method_DefaultReturnUndefined.js` | Class/instance methods that reach the end without an explicit return evaluate to JS undefined (represented as CLR null), matching ECMAScript semantics. | 15.1.1 |
-| Static method (declare and call) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js` |  | 15.1.1 |
-| Instance field initializer (public property default) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js` | Emitted by assigning defaults in the generated .ctor. | 15.1.1 |
-| Static field initializer (static property default) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js` | Emitted as a static field initialized in a synthesized .cctor; accessed via ldsfld. | 15.1.1 |
-| Constructor with parameter and this.field assignment; method reads field | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_Param_Field_Log.js` |  | 15.1.1 |
-| Constructor with multiple parameters; method uses fields | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js` | Covers multi-parameter constructors and arithmetic in instance methods. | 15.1.1 |
-| Constructor return value override semantics | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ExplicitReturnThis.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js` | Implements ECMAScript constructor behavior: `new C()` returns the constructed instance unless the constructor explicitly returns an object/function (which overrides). Returning a primitive does not override. | 15.1.1 |
-| Private instance field (#) with helper method access | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js` | Generated as a private .NET field with a mangled name; accessible only within the class. | 15.1.1 |
-| Class methods and constructors accessing ancestor scope variables (global, function, block) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessGlobalVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log.js` | Class methods and constructors can now access variables from all ancestor scopes (global, function, block), not just the global scope. Implementation walks the scope tree from the class's parent scope to root, building a complete ancestor chain. The scope array is passed as an argument to methods/constructors, enabling proper multi-level scope access. Supports regular functions, arrow functions, and constructor parameters. Fixed parameter indexing for constructors: when scopes are present, arg0=this, arg1=scopes[], parameters start at arg2. | 15.1.1 |
-| Constructor default parameters | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Constructor.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_ParameterDestructuring.js` | Class constructors support default parameter values and destructuring with defaults. Call sites validate argument count against min/max parameter bounds and pad missing optional arguments with ldnull. Default values are applied using starg IL pattern when arguments are null. Object destructuring parameters support default values (e.g., constructor({host="localhost", port=8080})) with conditional IL generation. | 15.1.1 |
-| Instance method default parameters | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Method.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js` | Class instance methods support default parameter values and destructuring with defaults. Methods are registered in ClassRegistry with min/max parameter counts. Call sites validate argument count ranges and pad missing optional parameters with ldnull before callvirt. Object destructuring parameters support default values with conditional IL generation. | 15.1.1 |
+| Class declaration (empty) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js` |  | 15.7.1 |
+| Instance method (declare and call) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js` |  | 15.7.1 |
+| Instance method implicit fallthrough return is undefined | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_Method_DefaultReturnUndefined.js` | Class/instance methods that reach the end without an explicit return evaluate to JS undefined (represented as CLR null), matching ECMAScript semantics. | 15.7.1 |
+| Static method (declare and call) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js` |  | 15.7.1 |
+| Async instance method (async m() { await ... }) | Supported | `Js2IL.Tests/Async/JavaScript/Async_ClassMethod_SimpleAwait.js`<br>`Js2IL.Tests/Async/JavaScript/Async_ClassMethod_MultipleAwaits.js`<br>`Js2IL.Tests/Async/JavaScript/Async_ClassMethod_WithThis.js`<br>`Js2IL.Tests/Async/JavaScript/Async_ClassMethod_CallsOtherAsync.js` | Async class instance methods are compiled as resumable state machines and return a Promise; supports await points, multiple awaits, and correct this binding across suspension/resumption. | 15.7.1 |
+| Async static method (static async m() { await ... }) | Supported | `Js2IL.Tests/Async/JavaScript/Async_StaticMethod_SimpleAwait.js` | Async class static methods are compiled as resumable state machines and return a Promise. | 15.7.1 |
+| Generator instance method (*m() { yield ... }) | Supported | `Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_SimpleYield.js`<br>`Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_YieldAssign.js`<br>`Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_WithThis.js` | Generator class instance methods compile to a synchronous generator state machine and return a GeneratorObject; supports yield points and correct this binding across next() calls. yield* delegation remains unsupported (see Generator Function Definitions section). | 15.7.1 |
+| Generator static method (static *m() { yield ... }) | Supported | `Js2IL.Tests/Generator/JavaScript/Generator_StaticMethod_SimpleYield.js` | Generator class static methods compile to a synchronous generator state machine and return a GeneratorObject. yield* delegation remains unsupported (see Generator Function Definitions section). | 15.7.1 |
+| Instance field initializer (public property default) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js` | Emitted by assigning defaults in the generated .ctor. | 15.7.1 |
+| Static field initializer (static property default) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js` | Emitted as a static field initialized in a synthesized .cctor; accessed via ldsfld. | 15.7.1 |
+| Constructor with parameter and this.field assignment; method reads field | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_Param_Field_Log.js` |  | 15.7.1 |
+| Constructor with multiple parameters; method uses fields | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js` | Covers multi-parameter constructors and arithmetic in instance methods. | 15.7.1 |
+| Constructor return value override semantics | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ExplicitReturnThis.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js` | Implements ECMAScript constructor behavior: `new C()` returns the constructed instance unless the constructor explicitly returns an object/function (which overrides). Returning a primitive does not override. | 15.7.1 |
+| Private instance field (#) with helper method access | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js` | Generated as a private .NET field with a mangled name; accessible only within the class. | 15.7.1 |
+| Class methods and constructors accessing ancestor scope variables (global, function, block) | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessGlobalVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log.js` | Class methods and constructors can now access variables from all ancestor scopes (global, function, block), not just the global scope. Implementation walks the scope tree from the class's parent scope to root, building a complete ancestor chain. The scope array is passed as an argument to methods/constructors, enabling proper multi-level scope access. Supports regular functions, arrow functions, and constructor parameters. Fixed parameter indexing for constructors: when scopes are present, arg0=this, arg1=scopes[], parameters start at arg2. | 15.7.1 |
+| Constructor default parameters | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Constructor.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_ParameterDestructuring.js` | Class constructors support default parameter values and destructuring with defaults. Call sites validate argument count against min/max parameter bounds and pad missing optional arguments with ldnull. Default values are applied using starg IL pattern when arguments are null. Object destructuring parameters support default values (e.g., constructor({host="localhost", port=8080})) with conditional IL generation. | 15.7.1 |
+| Instance method default parameters | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Method.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js` | Class instance methods support default parameter values and destructuring with defaults. Methods are registered in ClassRegistry with min/max parameter counts. Call sites validate argument count ranges and pad missing optional parameters with ldnull before callvirt. Object destructuring parameters support default values with conditional IL generation. | 15.7.1 |
 
 
 ### [Async Function Definitions](https://tc39.es/ecma262/#sec-async-function-definitions)
@@ -867,10 +907,10 @@ This file is auto-generated from FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Generator function declaration/expression (function*) | Partially Supported | `Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js` | MVP support for synchronous generators compiled via lowering to a state machine. Known limitations: yield* is not supported; async generators are rejected; throw/return through try/finally is not fully implemented. | 15.6.1 |
-| yield expression | Supported | `Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js` | Supports yielding values and resumption via next(). yield* is not supported. | 15.6.1 |
-| yield* delegation | Not Yet Supported |  | Explicitly rejected in validator (MVP limitation). | 15.6.1 |
-| async generator functions (async function*) | Not Yet Supported |  | Explicitly rejected in validator (not implemented). | 15.6.1 |
+| Generator function declaration/expression (function*) | Partially Supported | `Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js` | MVP support for synchronous generators compiled via lowering to a state machine. Known limitations: yield* is not supported; async generators are rejected; throw/return through try/finally is not fully implemented. | 15.5.1 |
+| yield expression | Supported | `Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js` | Supports yielding values and resumption via next(). yield* is not supported. | 15.5.1 |
+| yield* delegation | Not Yet Supported |  | Explicitly rejected in validator (MVP limitation). | 15.5.1 |
+| async generator functions (async function*) | Not Yet Supported |  | Explicitly rejected in validator (not implemented). | 15.5.1 |
 
 
 ## [The Global Object](https://tc39.es/ecma262/#sec-global-object)
