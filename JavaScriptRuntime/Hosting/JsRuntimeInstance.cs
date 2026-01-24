@@ -15,6 +15,9 @@ internal sealed class JsRuntimeInstance : IDisposable
 {
     private static readonly TimeSpan DisposeJoinTimeout = TimeSpan.FromSeconds(10);
 
+    internal string ModuleId { get; }
+    internal string? CompiledAssemblyName { get; }
+
     // Signals when the script thread has fully exited (ThreadMain finally block).
     // Using a TaskCompletionSource avoids allocating/disposal of an underlying WaitHandle.
     private readonly TaskCompletionSource _terminated = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -47,8 +50,11 @@ internal sealed class JsRuntimeInstance : IDisposable
         ArgumentNullException.ThrowIfNull(compiledAssembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
 
+        ModuleId = moduleId.Trim();
+        CompiledAssemblyName = compiledAssembly.GetName().Name;
+
         // Treat bare specifiers as local modules by default ("foo" -> "./foo").
-        var normalized = NormalizeLocalModuleSpecifier(moduleId);
+        var normalized = NormalizeLocalModuleSpecifier(ModuleId);
 
         _thread = new Thread(() => ThreadMain(compiledAssembly, normalized))
         {
@@ -56,7 +62,7 @@ internal sealed class JsRuntimeInstance : IDisposable
             // This does not affect scheduling/priority; it only affects process shutdown semantics.
             // We may make this configurable in the future.
             IsBackground = true,
-            Name = $"Js2IL.ScriptThread[{compiledAssembly.GetName().Name}:{normalized}]"
+            Name = $"Js2IL.ScriptThread[{CompiledAssemblyName}:{normalized}]"
         };
 
         _thread.Start();

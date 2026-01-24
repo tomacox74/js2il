@@ -26,22 +26,36 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
     public object? Get(string name)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        return _runtime.Invoke(() => ExportMemberResolver.GetExportMember(_runtime.Exports, name));
+        try
+        {
+            return _runtime.Invoke(() => ExportMemberResolver.GetExportMember(_runtime.Exports, name));
+        }
+        catch (Exception ex)
+        {
+            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: name, contractType: null);
+        }
     }
 
     public object? Invoke(string name, params object?[] args)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        return _runtime.Invoke(() =>
+        try
         {
-            var callable = ExportMemberResolver.GetExportMember(_runtime.Exports, name);
-            if (callable is not Delegate d)
+            return _runtime.Invoke(() =>
             {
-                throw new MissingMethodException($"Export '{name}' is not a callable function.");
-            }
+                var callable = ExportMemberResolver.GetExportMember(_runtime.Exports, name);
+                if (callable is not Delegate d)
+                {
+                    throw new MissingMethodException($"Export '{name}' is not a callable function.");
+                }
 
-            return ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
-        });
+                return ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
+            });
+        }
+        catch (Exception ex)
+        {
+            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: name, contractType: null);
+        }
     }
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
@@ -55,6 +69,10 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         {
             result = null;
             return false;
+        }
+        catch (Exception ex)
+        {
+            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: binder.Name, contractType: null);
         }
     }
 
@@ -78,6 +96,10 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         {
             result = null;
             return false;
+        }
+        catch (Exception ex)
+        {
+            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: binder.Name, contractType: null);
         }
     }
 

@@ -50,11 +50,18 @@ internal class JsHandleProxy : DispatchProxy
             if (targetMethod.Name.StartsWith("get_", StringComparison.Ordinal))
             {
                 var name = targetMethod.Name.Substring(4);
-                return runtime.Invoke(() =>
+                try
                 {
-                    var value = ExportMemberResolver.GetExportMember(target, name);
-                    return JsReturnConverter.ConvertReturn(runtime, value, targetMethod.ReturnType);
-                });
+                    return runtime.Invoke(() =>
+                    {
+                        var value = ExportMemberResolver.GetExportMember(target, name);
+                        return JsReturnConverter.ConvertReturn(runtime, value, targetMethod.ReturnType);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: name, contractType: targetMethod.DeclaringType);
+                }
             }
 
             if (targetMethod.Name.StartsWith("set_", StringComparison.Ordinal))
@@ -63,11 +70,19 @@ internal class JsHandleProxy : DispatchProxy
             }
         }
 
-        return runtime.Invoke(() =>
+        var methodName = targetMethod.Name;
+        try
         {
-            var result = ExportMemberResolver.InvokeInstanceMethod(target, targetMethod.Name, args ?? Array.Empty<object?>());
-            return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
-        });
+            return runtime.Invoke(() =>
+            {
+                var result = ExportMemberResolver.InvokeInstanceMethod(target, methodName, args ?? Array.Empty<object?>());
+                return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
+            });
+        }
+        catch (Exception ex)
+        {
+            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: methodName, contractType: targetMethod.DeclaringType);
+        }
     }
 
     private void DisposeHandle()
@@ -139,18 +154,25 @@ internal class JsConstructorProxy : DispatchProxy
             throw new MissingMethodException($"Constructor proxy does not support method '{targetMethod.Name}'.");
         }
 
-        return runtime.Invoke(() =>
+        try
         {
-            // DispatchProxy passes method arguments as an object?[] with one entry per parameter.
-            // For a params method like Construct(params object?[] args), that means:
-            //   args.Length == 1 and args[0] is the actual params array.
-            var ctorArgs = (args != null && args.Length == 1 && args[0] is object?[] a)
-                ? a
-                : (args ?? Array.Empty<object?>());
+            return runtime.Invoke(() =>
+            {
+                // DispatchProxy passes method arguments as an object?[] with one entry per parameter.
+                // For a params method like Construct(params object?[] args), that means:
+                //   args.Length == 1 and args[0] is the actual params array.
+                var ctorArgs = (args != null && args.Length == 1 && args[0] is object?[] a)
+                    ? a
+                    : (args ?? Array.Empty<object?>());
 
-            var result = ExportMemberResolver.Construct(constructor, ctorArgs);
-            return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
-        });
+                var result = ExportMemberResolver.Construct(constructor, ctorArgs);
+                return JsReturnConverter.ConvertReturn(runtime, result, targetMethod.ReturnType);
+            });
+        }
+        catch (Exception ex)
+        {
+            throw JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: nameof(IJsConstructor<IJsHandle>.Construct), contractType: targetMethod.DeclaringType);
+        }
     }
 
     private void DisposeHandle()
