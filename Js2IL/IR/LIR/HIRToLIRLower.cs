@@ -531,12 +531,10 @@ public sealed class HIRToLIRLowerer
             }
 
             // Do not traverse into nested function boundaries.
-            if (n is Acornima.Ast.FunctionDeclaration or Acornima.Ast.FunctionExpression or Acornima.Ast.ArrowFunctionExpression)
+            if (n is Acornima.Ast.FunctionDeclaration or Acornima.Ast.FunctionExpression or Acornima.Ast.ArrowFunctionExpression
+                && !ReferenceEquals(n, functionBoundaryNode))
             {
-                if (!ReferenceEquals(n, functionBoundaryNode))
-                {
-                    return;
-                }
+                return;
             }
 
             foreach (var child in n.ChildNodes)

@@ -703,12 +703,10 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Do not traverse into nested function boundaries.
-                if (n is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression)
+                if (n is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression
+                    && !ReferenceEquals(n, functionBoundaryNode))
                 {
-                    if (!ReferenceEquals(n, functionBoundaryNode))
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 foreach (var child in n.ChildNodes)
