@@ -73,8 +73,19 @@ namespace Js2IL.Utilities.Ecma335
         {
             if (assemblyName.StartsWith("System.", StringComparison.Ordinal))
             {
-                // Use the BCL version from the current runtime
-                return typeof(object).Assembly.GetName().Version ?? new Version(1, 0, 0, 0);
+                // Prefer the version from the actual assembly being referenced.
+                // Using System.Private.CoreLib's version works for many cases, but it can cause
+                // mismatches when consumers reference the generated assembly at compile-time.
+                try
+                {
+                    var bclAsm = Assembly.Load(new AssemblyName(assemblyName));
+                    return bclAsm.GetName().Version ?? new Version(1, 0, 0, 0);
+                }
+                catch
+                {
+                    // Fallback: Use the BCL version from the current runtime.
+                    return typeof(object).Assembly.GetName().Version ?? new Version(1, 0, 0, 0);
+                }
             }
 
             if (assemblyName.Equals("JavaScriptRuntime", StringComparison.Ordinal))
@@ -100,12 +111,14 @@ namespace Js2IL.Utilities.Ecma335
         {
             if (assemblyName.StartsWith("System.", StringComparison.Ordinal))
             {
-                // Use the BCL public key token
-                var publicKeyToken = typeof(object).Assembly.GetName().GetPublicKeyToken();
-                if (publicKeyToken != null && publicKeyToken.Length > 0)
-                {
-                    return _metadataBuilder.GetOrAddBlob(publicKeyToken);
-                }
+                // IMPORTANT:
+                // JS2IL emits assemblies intended to be referenced by normal SDK-style projects.
+                // Those projects compile against reference assemblies in Microsoft.NETCore.App.Ref,
+                // where System.* assemblies are strong-named with the standard Microsoft token
+                // (b03f5f7f11d50a3a). Using the runtime token (e.g. System.Private.CoreLib's 7cec...)
+                // causes CS0012 when the generated assembly is referenced at compile-time.
+                var bclToken = new byte[] { 0xB0, 0x3F, 0x5F, 0x7F, 0x11, 0xD5, 0x0A, 0x3A };
+                return _metadataBuilder.GetOrAddBlob(bclToken);
             }
 
             // JavaScriptRuntime and unknown assemblies: no public key token

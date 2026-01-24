@@ -1,0 +1,24 @@
+<Project>
+
+  <PropertyGroup>
+    <ModuleName>HostedCounterModule</ModuleName>
+    <JavaScriptFile>$(MSBuildThisFileDirectory)JavaScript\HostedCounterModule.js</JavaScriptFile>
+    <OutputDir>$(MSBuildThisFileDirectory)out</OutputDir>
+
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\'))</RepoRoot>
+    <LocalJs2ILProject>$(RepoRoot)Js2IL\Js2IL.csproj</LocalJs2ILProject>
+  </PropertyGroup>
+
+  <Target Name="Build">
+    <MakeDir Directories="$(OutputDir)" />
+      <Exec Condition="Exists('$(LocalJs2ILProject)')"
+        Command="dotnet run --project &quot;$(LocalJs2ILProject)&quot; -- &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot;" />
+      <Exec Condition="!Exists('$(LocalJs2ILProject)')"
+        Command="js2il &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot;" />
+  </Target>
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(OutputDir)" />
+  </Target>
+
+</Project>

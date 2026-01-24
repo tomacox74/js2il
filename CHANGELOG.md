@@ -5,6 +5,9 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - Hosting: project JavaScript `Promise` return values to C# `Task`/`Task<T>` for typed exports and handles (enables `await` without deadlocks).
+- Hosting: compiler-generated contracts now project `async` exports as `Task`/`Task<T>`.
+- Samples: add .NET library hosting samples (`samples/Hosting.Basic` and `samples/Hosting.Typed`) showing `JsEngine.LoadModule<TExports>()` with generated contracts only (fixes #406).
+- Packaging/docs: ship `samples/**` inside the `js2il` tool NuGet and document how to extract and run them.
 - Runtime/spec: implement ECMA-262 §9.5.1–§9.5.3 JobCallback host operations and integrate them into Promise job scheduling (fixes #435).
 
 ## v0.7.3 - 2026-01-23

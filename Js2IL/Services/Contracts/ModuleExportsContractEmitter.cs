@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
+using System.Threading.Tasks;
 using Acornima;
 using Acornima.Ast;
 using Js2IL.SymbolTables;
@@ -543,16 +544,19 @@ internal sealed class ModuleExportsContractEmitter
 
     private sealed record ContractMethod(string Name, IReadOnlyList<string> ParamNames, IReadOnlyList<TypeOrHandle> ParamTypes, TypeOrHandle ReturnType);
 
-    private readonly record struct TypeOrHandle(Type? ClrType, EntityHandle? Handle, TypeReferenceHandle? OpenGenericTypeRef, EntityHandle? GenericArg)
+    private readonly record struct TypeOrHandle(Type? ClrType, EntityHandle? Handle, TypeReferenceHandle? OpenGenericTypeRef, EntityHandle? GenericArgHandle, Type? GenericArgClrType)
     {
-        public static TypeOrHandle FromClr(Type type) => new(type, null, null, null);
-        public static TypeOrHandle FromHandle(EntityHandle handle) => new(null, handle, null, null);
+        public static TypeOrHandle FromClr(Type type) => new(type, null, null, null, null);
+        public static TypeOrHandle FromHandle(EntityHandle handle) => new(null, handle, null, null, null);
 
         public static TypeOrHandle FromGenericInstantiation(TypeReferenceHandle openGenericTypeRef, EntityHandle genericArg)
-            => new(null, null, openGenericTypeRef, genericArg);
+            => new(null, null, openGenericTypeRef, genericArg, null);
+
+        public static TypeOrHandle FromGenericInstantiation(TypeReferenceHandle openGenericTypeRef, Type genericArgClrType)
+            => new(null, null, openGenericTypeRef, null, genericArgClrType);
     }
 
-    private static ContractMethod BuildContractMethodFromFunction(
+    private ContractMethod BuildContractMethodFromFunction(
         string methodName,
         Node functionNode,
         TopLevelIndex? topLevelIndex,
@@ -574,13 +578,14 @@ internal sealed class ModuleExportsContractEmitter
             }
         }
 
-        var returnType = InferReturnTypeFromFunction(functionNode, topLevelIndex, classFields, instanceInterfacesByClassName, ensureClassInstanceInterface);
+        var baseReturnType = InferReturnTypeFromFunction(functionNode, topLevelIndex, classFields, instanceInterfacesByClassName, ensureClassInstanceInterface);
+        var returnType = WrapReturnTypeForAsyncFunction(functionNode, baseReturnType);
 
         // Very conservative parameter typing: if the return type is numeric, assume numeric params.
         var paramTypes = new List<TypeOrHandle>(paramNames.Count);
         for (var i = 0; i < paramNames.Count; i++)
         {
-            if (returnType.ClrType == typeof(double))
+            if (baseReturnType.ClrType == typeof(double))
             {
                 paramTypes.Add(TypeOrHandle.FromClr(typeof(double)));
             }
@@ -591,6 +596,43 @@ internal sealed class ModuleExportsContractEmitter
         }
 
         return new ContractMethod(methodName, paramNames, paramTypes, returnType);
+    }
+
+    private TypeOrHandle WrapReturnTypeForAsyncFunction(Node functionNode, TypeOrHandle baseReturnType)
+    {
+        var isAsync = functionNode switch
+        {
+            FunctionDeclaration fd => fd.Async,
+            FunctionExpression fe => fe.Async,
+            ArrowFunctionExpression af => af.Async,
+            _ => false
+        };
+
+        if (!isAsync)
+        {
+            return baseReturnType;
+        }
+
+        // JS async functions always return a Promise.
+        // Hosting contracts should expose that as Task/Task<T>.
+        if (baseReturnType.ClrType == typeof(void))
+        {
+            return TypeOrHandle.FromClr(typeof(Task));
+        }
+
+        var taskOfT = _typeRefs.GetOrAdd(typeof(Task<>));
+
+        if (baseReturnType.ClrType != null)
+        {
+            return TypeOrHandle.FromGenericInstantiation(taskOfT, baseReturnType.ClrType);
+        }
+
+        if (baseReturnType.Handle.HasValue)
+        {
+            return TypeOrHandle.FromGenericInstantiation(taskOfT, baseReturnType.Handle.Value);
+        }
+
+        return TypeOrHandle.FromGenericInstantiation(taskOfT, typeof(object));
     }
 
     private static IEnumerable<Node> GetFunctionParams(Node functionNode)
@@ -837,10 +879,20 @@ internal sealed class ModuleExportsContractEmitter
 
     private void EncodeParamType(SignatureTypeEncoder encoder, TypeOrHandle type)
     {
-        if (type.OpenGenericTypeRef.HasValue && type.GenericArg.HasValue)
+        if (type.OpenGenericTypeRef.HasValue && (type.GenericArgHandle.HasValue || type.GenericArgClrType != null))
         {
             var inst = encoder.GenericInstantiation(type.OpenGenericTypeRef.Value, genericArgumentCount: 1, isValueType: false);
-            inst.AddArgument().Type(type.GenericArg.Value, isValueType: false);
+            var arg = inst.AddArgument();
+
+            if (type.GenericArgHandle.HasValue)
+            {
+                arg.Type(type.GenericArgHandle.Value, isValueType: false);
+            }
+            else
+            {
+                // At this point, type.GenericArgClrType is guaranteed non-null by the condition above.
+                EncodeParamType(arg, TypeOrHandle.FromClr(type.GenericArgClrType!));
+            }
             return;
         }
 
@@ -850,6 +902,13 @@ internal sealed class ModuleExportsContractEmitter
             if (type.ClrType == typeof(string)) { encoder.String(); return; }
             if (type.ClrType == typeof(double)) { encoder.Double(); return; }
             if (type.ClrType == typeof(bool)) { encoder.Boolean(); return; }
+
+            // Non-primitive reference types (e.g., Task)
+            if (!type.ClrType.IsGenericType)
+            {
+                encoder.Type(_typeRefs.GetOrAdd(type.ClrType), isValueType: false);
+                return;
+            }
 
             encoder.Object();
             return;

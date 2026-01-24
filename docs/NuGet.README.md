@@ -87,6 +87,27 @@ Notes:
 - Use `-V` to print extra diagnostics.
 - File an issue with a minimal JS sample if you suspect a bug.
 
+## Samples
+
+This package ships a small set of C# hosting samples under `samples/`.
+
+To validate the samples from the `.nupkg`:
+
+```powershell
+# Download the package (replace VERSION)
+$version = "VERSION"
+$url = "https://api.nuget.org/v3-flatcontainer/js2il/$version/js2il.$version.nupkg"
+Invoke-WebRequest -Uri $url -OutFile "js2il.$version.nupkg"
+
+# Extract it (a .nupkg is a zip; Expand-Archive expects a .zip extension)
+Copy-Item "js2il.$version.nupkg" "js2il.$version.zip" -Force
+Expand-Archive -Path "js2il.$version.zip" -DestinationPath "js2il_pkg" -Force
+
+# Build + run a sample
+dotnet build .\js2il_pkg\samples\Hosting.Basic\host
+dotnet run --project .\js2il_pkg\samples\Hosting.Basic\host
+```
+
 ## Links
 
 - Source, issues, docs: https://github.com/tomacox74/js2il
