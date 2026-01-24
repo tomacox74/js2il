@@ -221,7 +221,24 @@ internal sealed class JsMethodCompiler
         var className = ScopeNaming.GetRegistryClassName(classScope);
         var funcExpr = methodDef.Value as FunctionExpression;
         var methodScope = funcExpr != null ? symbolTable.FindScopeByAstNode(funcExpr) : null;
+        // Some symbol table shapes attach the scope to the MethodDefinition rather than the FunctionExpression.
+        methodScope ??= symbolTable.FindScopeByAstNode(methodDef);
+
+        // Last-resort fallback: locate the method's function scope by name under the class scope.
+        if (methodScope == null && methodDef.Key is Identifier methodNameIdent)
+        {
+            methodScope = classScope.Children.FirstOrDefault(s =>
+                s.Kind == ScopeKind.Function
+                && string.Equals(s.Name, methodNameIdent.Name, StringComparison.Ordinal));
+        }
+
         methodScope ??= classScope;
+
+        // Resumable class methods (async/generator) require the standard js2il calling convention
+        // (leading scopes array) for state machine emission.
+        bool isAsyncMethod = methodScope?.IsAsync == true || funcExpr?.Async == true;
+        bool isGeneratorMethod = methodScope?.IsGenerator == true || funcExpr?.Generator == true;
+        var hasScopesParameter = isAsyncMethod || isGeneratorMethod;
 
         FieldDefinitionHandle? scopesFieldHandle = null;
         if (!methodDef.Static && hasScopes)
@@ -239,10 +256,10 @@ internal sealed class JsMethodCompiler
             expectedMethodDef: expectedMethodDef,
             ilMethodName: clrMethodName,
             node: methodDef,
-            scope: methodScope,
+            scope: methodScope!,
             methodBodyStreamEncoder: methodBodyStreamEncoder,
             isInstanceMethod: !methodDef.Static,
-            hasScopesParameter: false,
+            hasScopesParameter: hasScopesParameter,
             scopesFieldHandle: scopesFieldHandle,
             returnsVoid: false,
             callableKindOverride: callableKindOverride);
@@ -253,7 +270,7 @@ internal sealed class JsMethodCompiler
         }
 
         throw new NotSupportedException(
-            $"IR pipeline could not compile class method body for callable '{callable}' (node={methodDef.Type}, scope='{methodScope.GetQualifiedName()}').");
+            $"IR pipeline could not compile class method body for callable '{callable}' (node={methodDef.Type}, scope='{methodScope!.GetQualifiedName()}').");
     }
 
     /// <summary>
@@ -341,10 +358,12 @@ internal sealed class JsMethodCompiler
             ReturnsVoid = returnsVoid,
             ReturnClrType = returnsVoid
                 ? typeof(void)
-                : (((scope.Kind == ScopeKind.Function && scope.Parent?.Kind == ScopeKind.Class)
-                        ? scope.StableReturnClrType
-                        : null)
-                    ?? typeof(object)),
+                : (lirMethod.IsGenerator
+                    ? typeof(object)
+                    : (((scope.Kind == ScopeKind.Function && scope.Parent?.Kind == ScopeKind.Class)
+                            ? scope.StableReturnClrType
+                            : null)
+                        ?? typeof(object))),
             ScopesFieldHandle = scopesFieldHandle,
             IsConstructor = callableKind == ScopesCallableKind.Constructor
         };

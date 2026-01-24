@@ -1,4 +1,4 @@
-﻿# Section 27.2: Promise Objects
+# Section 27.2: Promise Objects
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 

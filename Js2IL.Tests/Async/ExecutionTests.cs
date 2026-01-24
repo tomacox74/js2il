@@ -44,5 +44,20 @@ namespace Js2IL.Tests.Async
 
         [Fact]
         public Task Async_TryFinally_ReturnPreservedThroughAwait() { var testName = nameof(Async_TryFinally_ReturnPreservedThroughAwait); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ClassMethod_SimpleAwait() { var testName = nameof(Async_ClassMethod_SimpleAwait); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ClassMethod_WithThis() { var testName = nameof(Async_ClassMethod_WithThis); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_StaticMethod_SimpleAwait() { var testName = nameof(Async_StaticMethod_SimpleAwait); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ClassMethod_MultipleAwaits() { var testName = nameof(Async_ClassMethod_MultipleAwaits); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ClassMethod_CallsOtherAsync() { var testName = nameof(Async_ClassMethod_CallsOtherAsync); return ExecutionTest(testName); }
     }
 }

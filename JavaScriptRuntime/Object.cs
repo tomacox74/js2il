@@ -1091,11 +1091,24 @@ namespace JavaScriptRuntime
                 throw new NotSupportedException($"Method not found: {type.FullName}.{methodName}");
             }
 
+            var srcArgs = args ?? System.Array.Empty<object>();
+
+            // Prefer js2il-style methods with a leading scopes array: (object[] scopes, [object x N])
             MethodInfo? chosen = methods.FirstOrDefault(mi =>
             {
                 var ps = mi.GetParameters();
+                return ps.Length == 1 + srcArgs.Length && ps.Length >= 1 && ps[0].ParameterType == typeof(object[]);
+            });
+
+            // Next: prefer a single-parameter params object[] method
+            chosen ??= methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
                 return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
-            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == (args?.Length ?? 0));
+            });
+
+            // Next: exact parameter count match
+            chosen ??= methods.FirstOrDefault(mi => mi.GetParameters().Length == srcArgs.Length);
 
             if (chosen == null)
             {
@@ -1105,6 +1118,7 @@ namespace JavaScriptRuntime
 
             var psChosen = chosen.GetParameters();
             var expectsParamsArray = psChosen.Length == 1 && psChosen[0].ParameterType == typeof(object[]);
+            var expectsLeadingScopes = psChosen.Length >= 2 && psChosen[0].ParameterType == typeof(object[]);
             var empty = System.Array.Empty<object>();
 
             // Helper to coerce primitive numeric CLR types to JS number (double)
@@ -1127,19 +1141,90 @@ namespace JavaScriptRuntime
                 }
             }
 
-            var src = args ?? empty;
+            var src = srcArgs;
+
+            // Resolve scopes for js2il-style calls.
+            object[] ResolveScopesArray(object target)
+            {
+                try
+                {
+                    var scopesField = target.GetType().GetField("_scopes", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                    if (scopesField?.GetValue(target) is object[] s && s.Length > 0)
+                    {
+                        return s;
+                    }
+                }
+                catch
+                {
+                    // ignore and fall back
+                }
+
+                // ABI-compatible default: 1-element array with null.
+                return new object[] { null! };
+            }
 
             // JavaScript semantics: extra args are ignored (unless the target explicitly accepts params object[]).
             // Also ensure we never write past the end of the argument array.
-            var coerced = expectsParamsArray ? new object[src.Length] : new object[psChosen.Length];
-            var copyCount = expectsParamsArray ? src.Length : System.Math.Min(src.Length, coerced.Length);
-            for (int i = 0; i < copyCount; i++)
+            if (expectsParamsArray && !expectsLeadingScopes)
             {
-                coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
+                var coerced = new object[src.Length];
+                for (int i = 0; i < src.Length; i++)
+                {
+                    coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
+                }
+
+                var previousThis = RuntimeServices.SetCurrentThis(instance);
+                try
+                {
+                    return chosen.Invoke(instance, new object?[] { coerced });
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
             }
 
-            object?[] invokeArgs = expectsParamsArray ? new object?[] { coerced } : coerced;
-            return chosen.Invoke(instance, invokeArgs);
+            if (expectsLeadingScopes)
+            {
+                var scopes = ResolveScopesArray(instance);
+                var coerced = new object[psChosen.Length];
+                coerced[0] = scopes;
+
+                var copyCount = System.Math.Min(src.Length, psChosen.Length - 1);
+                for (int i = 0; i < copyCount; i++)
+                {
+                    coerced[i + 1] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
+                }
+
+                var previousThis = RuntimeServices.SetCurrentThis(instance);
+                try
+                {
+                    return chosen.Invoke(instance, coerced);
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+
+            {
+                var coerced = new object[psChosen.Length];
+                var copyCount = System.Math.Min(src.Length, coerced.Length);
+                for (int i = 0; i < copyCount; i++)
+                {
+                    coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
+                }
+
+                var previousThis = RuntimeServices.SetCurrentThis(instance);
+                try
+                {
+                    return chosen.Invoke(instance, coerced);
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
         }
 
         /// <summary>

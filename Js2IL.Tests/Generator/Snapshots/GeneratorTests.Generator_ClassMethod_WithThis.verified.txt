@@ -1,0 +1,347 @@
+﻿// IL code: Generator_ClassMethod_WithThis
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Generator_ClassMethod_WithThis
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Counter
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2234
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested private auto ansi beforefieldinit Scope_ctor
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x223d
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_ctor::.ctor
+
+		} // end of class Scope_ctor
+
+		.class nested private auto ansi beforefieldinit Scope_getCountLater
+			extends [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2246
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_getCountLater::.ctor
+
+		} // end of class Scope_getCountLater
+
+
+		// Fields
+		.field public float64 count
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2124
+			// Header size: 12
+			// Code size: 22 (0x16)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldc.r8 7
+			IL_0010: stfld float64 Modules.Generator_ClassMethod_WithThis/Counter::count
+			IL_0015: ret
+		} // end of method Counter::.ctor
+
+		.method public hidebysig 
+			instance object getCountLater (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x2148
+			// Header size: 12
+			// Code size: 215 (0xd7)
+			.maxstack 32
+			.locals init (
+				[0] class Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater,
+				[1] bool
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: isinst Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater
+			IL_0008: dup
+			IL_0009: brtrue IL_003d
+
+			IL_000e: pop
+			IL_000f: newobj instance void Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater::.ctor()
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: ldarg.1
+			IL_0017: call object[] [JavaScriptRuntime]JavaScriptRuntime.Promise::PrependScopeToArray(object, object[])
+			IL_001c: starg.s scopes
+			IL_001e: ldarg.0
+			IL_001f: ldftn instance object Modules.Generator_ClassMethod_WithThis/Counter::getCountLater(object[])
+			IL_0025: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_002a: ldarg.1
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_0030: ldarg.1
+			IL_0031: ldc.i4.0
+			IL_0032: newarr [System.Runtime]System.Object
+			IL_0037: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::.ctor(object, object[], object[])
+			IL_003c: ret
+
+			IL_003d: stloc.0
+			IL_003e: ldloc.0
+			IL_003f: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_started
+			IL_0044: stloc.1
+			IL_0045: ldloc.1
+			IL_0046: brtrue IL_0052
+
+			IL_004b: ldloc.0
+			IL_004c: ldc.i4.1
+			IL_004d: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_started
+
+			IL_0052: ldloc.0
+			IL_0053: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
+			IL_0058: switch (IL_0065, IL_0081)
+
+			IL_0065: ldloc.0
+			IL_0066: ldc.i4.1
+			IL_0067: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
+			IL_006c: ldc.r8 0.0
+			IL_0075: box [System.Runtime]System.Double
+			IL_007a: ldc.i4.0
+			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_0080: ret
+
+			IL_0081: ldloc.0
+			IL_0082: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasReturn
+			IL_0087: brfalse IL_00a0
+
+			IL_008c: ldloc.0
+			IL_008d: ldc.i4.1
+			IL_008e: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_0093: ldloc.0
+			IL_0094: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_returnValue
+			IL_0099: ldc.i4.1
+			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_009f: ret
+
+			IL_00a0: ldloc.0
+			IL_00a1: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
+			IL_00a6: brfalse IL_00be
+
+			IL_00ab: ldloc.0
+			IL_00ac: ldc.i4.0
+			IL_00ad: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
+			IL_00b2: ldloc.0
+			IL_00b3: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_resumeException
+			IL_00b8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_00bd: throw
+
+			IL_00be: ldloc.0
+			IL_00bf: ldc.i4.1
+			IL_00c0: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_00c5: ldarg.0
+			IL_00c6: ldfld float64 Modules.Generator_ClassMethod_WithThis/Counter::count
+			IL_00cb: box [System.Runtime]System.Double
+			IL_00d0: ldc.i4.1
+			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_00d6: ret
+		} // end of method Counter::getCountLater
+
+	} // end of class Counter
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x222b
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 198 (0xc6)
+		.maxstack 32
+		.locals init (
+			[0] class Modules.Generator_ClassMethod_WithThis/Scope,
+			[1] class Modules.Generator_ClassMethod_WithThis/Counter,
+			[2] object,
+			[3] object,
+			[4] object
+		)
+
+		IL_0000: newobj instance void Modules.Generator_ClassMethod_WithThis/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void Modules.Generator_ClassMethod_WithThis/Counter::.ctor()
+		IL_000b: stloc.1
+		IL_000c: ldloc.1
+		IL_000d: ldc.i4.1
+		IL_000e: newarr [System.Runtime]System.Object
+		IL_0013: dup
+		IL_0014: ldc.i4.0
+		IL_0015: ldloc.0
+		IL_0016: stelem.ref
+		IL_0017: callvirt instance object Modules.Generator_ClassMethod_WithThis/Counter::getCountLater(object[])
+		IL_001c: stloc.2
+		IL_001d: ldnull
+		IL_001e: stloc.3
+		IL_001f: ldloc.2
+		IL_0020: ldstr "next"
+		IL_0025: ldc.i4.0
+		IL_0026: newarr [System.Runtime]System.Object
+		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0030: stloc.3
+		IL_0031: ldloc.3
+		IL_0032: ldstr "value"
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003c: stloc.s 4
+		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0043: ldc.i4.4
+		IL_0044: newarr [System.Runtime]System.Object
+		IL_0049: dup
+		IL_004a: ldc.i4.0
+		IL_004b: ldstr "t1:"
+		IL_0050: stelem.ref
+		IL_0051: dup
+		IL_0052: ldc.i4.1
+		IL_0053: ldloc.s 4
+		IL_0055: stelem.ref
+		IL_0056: dup
+		IL_0057: ldc.i4.2
+		IL_0058: ldstr "done:"
+		IL_005d: stelem.ref
+		IL_005e: dup
+		IL_005f: ldc.i4.3
+		IL_0060: ldloc.3
+		IL_0061: ldstr "done"
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_006b: stelem.ref
+		IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0071: pop
+		IL_0072: ldloc.2
+		IL_0073: ldstr "next"
+		IL_0078: ldc.i4.0
+		IL_0079: newarr [System.Runtime]System.Object
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0083: stloc.3
+		IL_0084: ldloc.3
+		IL_0085: ldstr "value"
+		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_008f: stloc.s 4
+		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0096: ldc.i4.4
+		IL_0097: newarr [System.Runtime]System.Object
+		IL_009c: dup
+		IL_009d: ldc.i4.0
+		IL_009e: ldstr "t2:"
+		IL_00a3: stelem.ref
+		IL_00a4: dup
+		IL_00a5: ldc.i4.1
+		IL_00a6: ldloc.s 4
+		IL_00a8: stelem.ref
+		IL_00a9: dup
+		IL_00aa: ldc.i4.2
+		IL_00ab: ldstr "done:"
+		IL_00b0: stelem.ref
+		IL_00b1: dup
+		IL_00b2: ldc.i4.3
+		IL_00b3: ldloc.3
+		IL_00b4: ldstr "done"
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00be: stelem.ref
+		IL_00bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00c4: pop
+		IL_00c5: ret
+	} // end of method Generator_ClassMethod_WithThis::__js_module_init__
+
+} // end of class Modules.Generator_ClassMethod_WithThis
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x224f
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Generator_ClassMethod_WithThis::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -110,6 +110,7 @@ internal static class LIRMemberCallNormalization
                     out var receiverTypeHandle,
                     out var methodHandle,
                     out var returnClrType,
+                    out var hasScopesParam,
                     out var maxParamCount))
             {
                 continue;
@@ -121,13 +122,14 @@ internal static class LIRMemberCallNormalization
                 && knownReceiverHandle.Equals(receiverTypeHandle))
             {
                 methodBody.Instructions[i] = new LIRCallTypedMember(
-                    Receiver: callMember.Receiver,
-                    ReceiverTypeHandle: receiverTypeHandle,
-                    MethodHandle: methodHandle,
-                    ReturnClrType: returnClrType,
-                    MaxParamCount: maxParamCount,
-                    Arguments: buildInfo.Elements,
-                    Result: callMember.Result);
+                    callMember.Receiver,
+                    receiverTypeHandle,
+                    methodHandle,
+                    hasScopesParam,
+                    returnClrType,
+                    maxParamCount,
+                    buildInfo.Elements,
+                    callMember.Result);
 
                 indicesToRemove.Add(buildInfo.DefIndex);
                 continue;
@@ -135,14 +137,15 @@ internal static class LIRMemberCallNormalization
 
             // Otherwise: emit guarded early-bound call with fallback to runtime dispatch.
             methodBody.Instructions[i] = new LIRCallTypedMemberWithFallback(
-                Receiver: callMember.Receiver,
-                MethodName: callMember.MethodName,
-                ReceiverTypeHandle: receiverTypeHandle,
-                MethodHandle: methodHandle,
-                ReturnClrType: returnClrType,
-                MaxParamCount: maxParamCount,
-                Arguments: buildInfo.Elements,
-                Result: callMember.Result);
+                callMember.Receiver,
+                callMember.MethodName,
+                receiverTypeHandle,
+                methodHandle,
+                hasScopesParam,
+                returnClrType,
+                maxParamCount,
+                buildInfo.Elements,
+                callMember.Result);
 
             indicesToRemove.Add(buildInfo.DefIndex);
         }

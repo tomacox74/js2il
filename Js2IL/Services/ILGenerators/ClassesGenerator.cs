@@ -20,6 +20,8 @@ namespace Js2IL.Services.ILGenerators
         private readonly NestedTypeRelationshipRegistry _nestedTypeRelationshipRegistry;
         private readonly string _moduleName;
 
+        private SymbolTable? _activeSymbolTable;
+
         private readonly IServiceProvider _serviceProvider;
 
         public ClassesGenerator(
@@ -70,6 +72,8 @@ namespace Js2IL.Services.ILGenerators
         {
             if (table == null) throw new ArgumentNullException(nameof(table));
 
+            _activeSymbolTable = table;
+
             // When compiling a JS "module" (a single entry file), the generated module root type is
             // Modules.<ModuleName>. Top-level JS classes should be nested under that module type.
             // This keeps reflection names module-qualified (Modules.<Module>+<ClassName>) and avoids
@@ -78,6 +82,8 @@ namespace Js2IL.Services.ILGenerators
             moduleTypeRegistry.TryGet(_moduleName, out var moduleTypeHandle);
 
             EmitClassesRecursiveTwoPhase(table.Root, moduleTypeHandle);
+
+            _activeSymbolTable = null;
         }
 
         private bool TryResolveEnclosingTypeForClass(Scope classScope, TypeDefinitionHandle moduleTypeHandle, out TypeDefinitionHandle parentType)
@@ -599,22 +605,51 @@ namespace Js2IL.Services.ILGenerators
                 var minParams = funcExpr != null ? CountRequiredParameters(funcExpr.Params) : 0;
 
                 // Determine an inferred stable return type (if any) from the method scope.
-                // This is conservative and may be null; default ABI remains object.
-                Type returnClrType = typeof(object);
+                // Generator methods always return a GeneratorObject (boxed as object), regardless of
+                // yielded/returned JS value types.
+                Scope? methodScope = null;
                 if (funcExpr != null)
                 {
-                    Scope? methodScope = null;
-                    foreach (var child in classScope.Children)
+                    // Prefer the symbol table indexer (handles cases where the scope is attached
+                    // to MethodDefinition rather than FunctionExpression).
+                    methodScope = _activeSymbolTable?.FindScopeByAstNode(funcExpr)
+                        ?? _activeSymbolTable?.FindScopeByAstNode(member);
+
+                    // Fallback: scan direct children.
+                    if (methodScope == null)
                     {
-                        if (child.Kind == ScopeKind.Function && ReferenceEquals(child.AstNode, funcExpr))
+                        foreach (var child in classScope.Children)
                         {
-                            methodScope = child;
-                            break;
+                            if (child.Kind != ScopeKind.Function)
+                            {
+                                continue;
+                            }
+
+                            if (ReferenceEquals(child.AstNode, funcExpr) || ReferenceEquals(child.AstNode, member))
+                            {
+                                methodScope = child;
+                                break;
+                            }
                         }
                     }
 
-                    returnClrType = methodScope?.StableReturnClrType ?? typeof(object);
+                    // Last-resort fallback by name under the class scope.
+                    if (methodScope == null && member.Key is Identifier ident)
+                    {
+                        methodScope = classScope.Children.FirstOrDefault(s =>
+                            s.Kind == ScopeKind.Function
+                            && string.Equals(s.Name, ident.Name, StringComparison.Ordinal));
+                    }
                 }
+
+                bool isGeneratorMethod = (funcExpr != null && funcExpr.Body != null && ContainsYieldExpression(funcExpr.Body, funcExpr))
+                    || methodScope?.IsGenerator == true
+                    || funcExpr?.Generator == true;
+                bool isAsyncMethod = methodScope?.IsAsync == true || funcExpr?.Async == true;
+
+                Type returnClrType = isGeneratorMethod
+                    ? typeof(object)
+                    : (methodScope?.StableReturnClrType ?? typeof(object));
 
                 var clrName = member.Kind switch
                 {
@@ -623,11 +658,16 @@ namespace Js2IL.Services.ILGenerators
                     _ => memberName
                 };
 
+                // Resumable class methods (async/generator) require the standard js2il calling convention
+                // (leading object[] scopes) so the state machine can bind/resume correctly.
+                // We keep ClassRegistry min/max counts as JS parameter counts (excluding scopes).
+                var hasScopesParam = isAsyncMethod || isGeneratorMethod;
+
                 var sig = MethodBuilder.BuildMethodSignature(
                     _metadata,
                     isInstance: true,
-                    paramCount: jsParamCount,
-                    hasScopesParam: false,
+                    paramCount: hasScopesParam ? jsParamCount + 1 : jsParamCount,
+                    hasScopesParam: hasScopesParam,
                     returnsVoid: false,
                     returnClrType: returnClrType);
 
@@ -637,11 +677,47 @@ namespace Js2IL.Services.ILGenerators
                     (MethodDefinitionHandle)methodToken,
                     sig,
                     returnClrType,
+                    hasScopesParam,
                     minParams,
                     jsParamCount);
             }
 
             return typeHandle;
+        }
+
+        private static bool ContainsYieldExpression(Node node, Node functionBoundaryNode)
+        {
+            bool found = false;
+
+            void Walk(Node? n)
+            {
+                if (n == null || found)
+                {
+                    return;
+                }
+
+                if (n is YieldExpression)
+                {
+                    found = true;
+                    return;
+                }
+
+                // Do not traverse into nested function boundaries.
+                if (n is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression
+                    && !ReferenceEquals(n, functionBoundaryNode))
+                {
+                    return;
+                }
+
+                foreach (var child in n.ChildNodes)
+                {
+                    Walk(child);
+                    if (found) return;
+                }
+            }
+
+            Walk(node);
+            return found;
         }
 
         private static string ManglePrivateFieldName(string name)

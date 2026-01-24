@@ -455,6 +455,19 @@ namespace Js2IL.SymbolTables
                             var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
                             var methodScope = new Scope(mname, ScopeKind.Function, classScope, mfunc);
 
+                            // Class methods can be async/generators; propagate these flags so type generation
+                            // and IL lowering can emit the correct state-machine fields.
+                            methodScope.IsAsync = mfunc.Async;
+                            if (mfunc.Async)
+                            {
+                                methodScope.AwaitPointCount = CountAwaitExpressions(mfunc.Body);
+                            }
+                            methodScope.IsGenerator = mfunc.Generator;
+                            if (mfunc.Generator)
+                            {
+                                methodScope.YieldPointCount = CountYieldExpressions(mfunc.Body);
+                            }
+
                             // Author a distinct CLR type name for class member scopes so nested types don't collide.
                             // Examples:
                             // - constructor -> Scope_ctor

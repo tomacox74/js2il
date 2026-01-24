@@ -390,7 +390,7 @@
             {
               "paragraph": "6.1.6.1.19",
               "title": "Number::bitwiseOR ( x, y )",
-              "url": "https://tc39.es/ecma262/#sec-number-bitwiseor",
+              "url": "https://tc36.es/ecma262/#sec-number-bitwiseor",
               "features": [
                 {
                   "feature": "Number::bitwiseOR",
@@ -2160,16 +2160,28 @@
     },
     {
       "section": "15",
-      "title": "ECMAScript Language: Classes",
-      "url": "https://tc39.es/ecma262/#sec-ecmascript-language-classes",
+      "title": "ECMAScript Language: Functions and Classes",
+      "url": "https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes",
       "subsections": [
         {
           "subsection": "15.1",
+          "title": "Parameter Lists",
+          "url": "https://tc39.es/ecma262/#sec-parameter-lists",
+          "paragraphs": []
+        },
+        {
+          "subsection": "15.2",
+          "title": "Function Definitions",
+          "url": "https://tc39.es/ecma262/#sec-function-definitions",
+          "paragraphs": []
+        },
+        {
+          "subsection": "15.7",
           "title": "Class Definitions",
           "url": "https://tc39.es/ecma262/#sec-class-definitions",
           "paragraphs": [
             {
-              "paragraph": "15.1.1",
+              "paragraph": "15.7.1",
               "title": "Basic class features",
               "url": "https://tc39.es/ecma262/#sec-class-definitions",
               "features": [
@@ -2204,6 +2216,43 @@
                     "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js"
                   ],
                   "notes": ""
+                },
+                {
+                  "feature": "Async instance method (async m() { await ... })",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_SimpleAwait.js",
+                    "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_MultipleAwaits.js",
+                    "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_WithThis.js",
+                    "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_CallsOtherAsync.js"
+                  ],
+                  "notes": "Async class instance methods are compiled as resumable state machines and return a Promise; supports await points, multiple awaits, and correct this binding across suspension/resumption."
+                },
+                {
+                  "feature": "Async static method (static async m() { await ... })",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Async/JavaScript/Async_StaticMethod_SimpleAwait.js"
+                  ],
+                  "notes": "Async class static methods are compiled as resumable state machines and return a Promise."
+                },
+                {
+                  "feature": "Generator instance method (*m() { yield ... })",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_SimpleYield.js",
+                    "Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_YieldAssign.js",
+                    "Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_WithThis.js"
+                  ],
+                  "notes": "Generator class instance methods compile to a synchronous generator state machine and return a GeneratorObject; supports yield points and correct this binding across next() calls. yield* delegation remains unsupported (see Generator Function Definitions section)."
+                },
+                {
+                  "feature": "Generator static method (static *m() { yield ... })",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Generator/JavaScript/Generator_StaticMethod_SimpleYield.js"
+                  ],
+                  "notes": "Generator class static methods compile to a synchronous generator state machine and return a GeneratorObject. yield* delegation remains unsupported (see Generator Function Definitions section)."
                 },
                 {
                   "feature": "Instance field initializer (public property default)",
@@ -2336,17 +2385,17 @@
       ]
     },
     {
-      "section": "15.6",
+      "section": "15.5",
       "title": "Generator Function Definitions",
       "url": "https://tc39.es/ecma262/#sec-generator-function-definitions",
       "subsections": [
         {
-          "subsection": "15.6",
+          "subsection": "15.5",
           "title": "Generator Function Definitions",
           "url": "https://tc39.es/ecma262/#sec-generator-function-definitions",
           "paragraphs": [
             {
-              "paragraph": "15.6.1",
+              "paragraph": "15.5.1",
               "title": "Generator functions (function* / yield)",
               "url": "https://tc39.es/ecma262/#sec-generator-function-definitions",
               "features": [
