@@ -5,6 +5,54 @@ namespace JavaScriptRuntime
 {
     public static class Closure
     {
+        // Bind a function delegate (object-typed) to a fixed scopes array AND a fixed set of JS arguments.
+        // Returns a Func<object[], object> suitable for AsyncScope._moveNext (resume invokes with scopes only).
+        public static object BindMoveNext(object target, object[] boundScopes, object?[] boundArgs)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
+            if (boundArgs == null) throw new ArgumentNullException(nameof(boundArgs));
+
+            if (target is Func<object[], object> f0)
+            {
+                return (Func<object[], object>)(_ => f0(boundScopes));
+            }
+
+            var a1 = boundArgs.Length > 0 ? boundArgs[0] : null;
+            var a2 = boundArgs.Length > 1 ? boundArgs[1] : null;
+            var a3 = boundArgs.Length > 2 ? boundArgs[2] : null;
+            var a4 = boundArgs.Length > 3 ? boundArgs[3] : null;
+            var a5 = boundArgs.Length > 4 ? boundArgs[4] : null;
+            var a6 = boundArgs.Length > 5 ? boundArgs[5] : null;
+
+            if (target is Func<object[], object?, object> f1)
+            {
+                return (Func<object[], object>)(_ => f1(boundScopes, a1));
+            }
+            if (target is Func<object[], object?, object?, object> f2)
+            {
+                return (Func<object[], object>)(_ => f2(boundScopes, a1, a2));
+            }
+            if (target is Func<object[], object?, object?, object?, object> f3)
+            {
+                return (Func<object[], object>)(_ => f3(boundScopes, a1, a2, a3));
+            }
+            if (target is Func<object[], object?, object?, object?, object?, object> f4)
+            {
+                return (Func<object[], object>)(_ => f4(boundScopes, a1, a2, a3, a4));
+            }
+            if (target is Func<object[], object?, object?, object?, object?, object?, object> f5)
+            {
+                return (Func<object[], object>)(_ => f5(boundScopes, a1, a2, a3, a4, a5));
+            }
+            if (target is Func<object[], object?, object?, object?, object?, object?, object?, object> f6)
+            {
+                return (Func<object[], object>)(_ => f6(boundScopes, a1, a2, a3, a4, a5, a6));
+            }
+
+            throw new ArgumentException("Unsupported delegate type for MoveNext binding", nameof(target));
+        }
+
         // Bind a function delegate (object-typed) to a fixed scopes array.
         // Supports Func<object[], object> and Func<object[], object, object>.
         public static object Bind(object target, object[] boundScopes)

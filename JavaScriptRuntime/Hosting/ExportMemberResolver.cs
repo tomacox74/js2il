@@ -7,6 +7,14 @@ namespace Js2IL.Runtime;
 
 internal static class ExportMemberResolver
 {
+    private static object[] CreateDefaultScopes(object? seed)
+    {
+        // Resumable callables assume scopes[0] exists (they probe it for the state-machine scope).
+        // When hosting invokes them directly, there may be no scopes array to thread through.
+        // Seed with a single entry so scopes[0] is in-range; use the instance/closure target when available.
+        return new object[] { seed! };
+    }
+
     private static object[] NormalizeArgs(object?[] args)
     {
         if (args.Length == 0)
@@ -147,7 +155,7 @@ internal static class ExportMemberResolver
         var argIndex = 0;
         if (parameters[0].ParameterType == typeof(object[]))
         {
-            invokeArgs[0] = Array.Empty<object>();
+            invokeArgs[0] = CreateDefaultScopes(d.Target);
             argIndex = 1;
         }
 
@@ -205,7 +213,7 @@ internal static class ExportMemberResolver
 
         foreach (var method in methods)
         {
-            if (TryBuildInvokeArgs(method.GetParameters(), args, out var invokeArgs))
+            if (TryBuildInvokeArgs(method.GetParameters(), args, target, out var invokeArgs))
             {
                 try
                 {
@@ -223,9 +231,13 @@ internal static class ExportMemberResolver
         return false;
     }
 
-    private static bool TryBuildInvokeArgs(ParameterInfo[] parameters, object[] args, out object?[] invokeArgs)
+    private static bool TryBuildInvokeArgs(ParameterInfo[] parameters, object[] args, object? target, out object?[] invokeArgs)
     {
-        if (parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]))
+        // Support varargs-style CLR methods like Foo(object[] args) by passing the entire argument list.
+        // But do NOT treat the js2il ABI scopes parameter (object[] scopes) as varargs.
+        if (parameters.Length == 1
+            && parameters[0].ParameterType == typeof(object[])
+            && !string.Equals(parameters[0].Name, "scopes", StringComparison.OrdinalIgnoreCase))
         {
             invokeArgs = new object?[] { args };
             return true;
@@ -249,7 +261,7 @@ internal static class ExportMemberResolver
 
         if (scopesOffset == 1)
         {
-            invokeArgs[0] = Array.Empty<object>();
+            invokeArgs[0] = CreateDefaultScopes(target);
         }
 
         for (var i = 0; i < args.Length; i++)

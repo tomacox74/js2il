@@ -3042,15 +3042,43 @@ internal sealed class LIRToILCompiler
                             ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
                             
                             // Load modified scopes array
-                            ilEncoder.LoadArgument(GetIlArgIndexForScopesArray(methodDescriptor));
-                            
-                            // Call Closure.Bind(delegate, scopes)
-                            var bindRef = _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.Closure),
-                                nameof(JavaScriptRuntime.Closure.Bind),
-                                parameterTypes: new[] { typeof(object), typeof(object[]) });
-                            ilEncoder.OpCode(ILOpCode.Call);
-                            ilEncoder.Token(bindRef);
+                            var scopesArgIndex = GetIlArgIndexForScopesArray(methodDescriptor);
+                            ilEncoder.LoadArgument(scopesArgIndex);
+
+                            if (jsParamCount == 0)
+                            {
+                                // Call Closure.Bind(delegate, scopes)
+                                var bindRef = _memberRefRegistry.GetOrAddMethod(
+                                    typeof(JavaScriptRuntime.Closure),
+                                    nameof(JavaScriptRuntime.Closure.Bind),
+                                    parameterTypes: new[] { typeof(object), typeof(object[]) });
+                                ilEncoder.OpCode(ILOpCode.Call);
+                                ilEncoder.Token(bindRef);
+                            }
+                            else
+                            {
+                                // Call Closure.BindMoveNext(delegate, scopes, boundArgs)
+                                // Build boundArgs = new object[jsParamCount] filled from method arguments (excluding scopes).
+                                ilEncoder.LoadConstantI4(jsParamCount);
+                                ilEncoder.OpCode(ILOpCode.Newarr);
+                                ilEncoder.Token(_bclReferences.ObjectType);
+
+                                var firstJsArgIndex = scopesArgIndex + 1;
+                                for (var i = 0; i < jsParamCount; i++)
+                                {
+                                    ilEncoder.OpCode(ILOpCode.Dup);
+                                    ilEncoder.LoadConstantI4(i);
+                                    ilEncoder.LoadArgument(firstJsArgIndex + i);
+                                    ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                                }
+
+                                var bindMoveNextRef = _memberRefRegistry.GetOrAddMethod(
+                                    typeof(JavaScriptRuntime.Closure),
+                                    nameof(JavaScriptRuntime.Closure.BindMoveNext),
+                                    parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                                ilEncoder.OpCode(ILOpCode.Call);
+                                ilEncoder.Token(bindMoveNextRef);
+                            }
                         }
                         else
                         {
