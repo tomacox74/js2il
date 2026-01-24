@@ -888,13 +888,10 @@ internal sealed class ModuleExportsContractEmitter
             {
                 arg.Type(type.GenericArgHandle.Value, isValueType: false);
             }
-            else if (type.GenericArgClrType != null)
-            {
-                EncodeParamType(arg, TypeOrHandle.FromClr(type.GenericArgClrType));
-            }
             else
             {
-                arg.Object();
+                // At this point, type.GenericArgClrType is guaranteed non-null by the condition above.
+                EncodeParamType(arg, TypeOrHandle.FromClr(type.GenericArgClrType!));
             }
             return;
         }
