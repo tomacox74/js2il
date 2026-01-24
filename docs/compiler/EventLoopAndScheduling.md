@@ -41,6 +41,12 @@ Concretely, JS2IL makes the following compatibility guarantees:
 - **Promise reactions are enqueued as Jobs/microtasks.** When a Promise settles, its reactions are queued onto the microtask queue (see TriggerPromiseReactions, ECMA-262 §27.2.1.8).
 - **Microtask checkpoints are bounded to avoid starvation.** After each callback that JS2IL treats as a host “task” (e.g., a `setImmediate` callback or a due timer callback), the pump drains a bounded number of microtasks before continuing. This preserves forward progress for timers/macrotasks in long microtask chains.
 
+JS2IL also implements the JobCallback host abstractions used by the spec to carry host-defined context alongside scheduled Jobs:
+
+- **JobCallback Records** (ECMA-262 §9.5.1)
+- **HostMakeJobCallback** (ECMA-262 §9.5.2)
+- **HostCallJobCallback** (ECMA-262 §9.5.3)
+
 Note that the APIs `setTimeout`/`setInterval`/`setImmediate` are host-defined (not standardized by ECMA-262), so the exact ordering between timer/immediate phases is ultimately a host-compatibility choice rather than a spec requirement.
 
 Note:

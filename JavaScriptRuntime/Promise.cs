@@ -497,9 +497,11 @@ public sealed class Promise
             throw new InvalidOperationException("No microtask scheduler available");
         }
 
+        var jobCallback = JavaScriptRuntime.EngineCore.HostJobCallbacks.HostMakeJobCallback(() => ProcessReaction(reaction));
+
         scheduler.QueueMicrotask(() =>
         {
-            ProcessReaction(reaction);
+            JavaScriptRuntime.EngineCore.HostJobCallbacks.HostCallJobCallback(jobCallback, v: null, argumentsList: System.Array.Empty<object?>());
         });
     }
 

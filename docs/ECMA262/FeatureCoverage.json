@@ -769,6 +769,84 @@
       ]
     },
     {
+      "section": "9",
+      "title": "Executable Code and Execution Contexts",
+      "url": "https://tc39.es/ecma262/#sec-executable-code-and-execution-contexts",
+      "subsections": [
+        {
+          "subsection": "9.5",
+          "title": "Jobs and Host Operations to Enqueue Jobs",
+          "url": "https://tc39.es/ecma262/#sec-jobs",
+          "paragraphs": [
+            {
+              "paragraph": "9.5.1",
+              "title": "JobCallback Records",
+              "url": "https://tc39.es/ecma262/#sec-jobcallback-records",
+              "features": [
+                {
+                  "feature": "JobCallback Records",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+                  ],
+                  "notes": "Implemented as an internal JobCallback record carrying a callback plus a host-defined context slot (currently null/empty). Used by Promise reaction job scheduling so future host-defined context/realm data can be threaded without changing observable behavior."
+                }
+              ]
+            },
+            {
+              "paragraph": "9.5.2",
+              "title": "HostMakeJobCallback ( callback )",
+              "url": "https://tc39.es/ecma262/#sec-hostmakejobcallback",
+              "features": [
+                {
+                  "feature": "HostMakeJobCallback",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+                  ],
+                  "notes": "Default host behavior: wraps a callback into a JobCallback record with an empty HostDefined field."
+                }
+              ]
+            },
+            {
+              "paragraph": "9.5.3",
+              "title": "HostCallJobCallback ( jobCallback , V , argumentsList )",
+              "url": "https://tc39.es/ecma262/#sec-hostcalljobcallback",
+              "features": [
+                {
+                  "feature": "HostCallJobCallback",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+                  ],
+                  "notes": "Default host behavior: invokes the stored callback. Parameters (V, argumentsList) are accepted for spec-shape compatibility; JS2IL currently models Promise jobs as parameterless Actions."
+                }
+              ]
+            },
+            {
+              "paragraph": "9.5.4",
+              "title": "HostEnqueuePromiseJob ( job , realm )",
+              "url": "https://tc39.es/ecma262/#sec-hostenqueuepromisejob",
+              "features": [
+                {
+                  "feature": "HostEnqueuePromiseJob",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+                  ],
+                  "notes": "Promise reaction jobs are enqueued onto the runtime microtask queue (IMicrotaskScheduler) and executed by the event loop pump."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "section": "13",
       "title": "ECMAScript Language: Expressions",
       "url": "https://tc39.es/ecma262/#sec-ecmascript-language-expressions",
