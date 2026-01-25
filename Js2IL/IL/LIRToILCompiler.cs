@@ -1493,7 +1493,7 @@ internal sealed class LIRToILCompiler
                     var ctorDef = (MethodDefinitionHandle)token;
 
                     int argc = newUserClass.Arguments.Count;
-                    if (argc < newUserClass.MinArgCount || argc > newUserClass.MaxArgCount)
+                    if (argc < newUserClass.MinArgCount)
                     {
                         var expectedMinArgs = newUserClass.MinArgCount;
                         var expectedMaxArgs = newUserClass.MaxArgCount;
@@ -1517,12 +1517,15 @@ internal sealed class LIRToILCompiler
                         EmitLoadTemp(scopesTemp, ilEncoder, allocation, methodDescriptor);
                     }
 
-                    foreach (var arg in newUserClass.Arguments)
+                    // In JavaScript, extra constructor arguments are evaluated (side effects) but ignored.
+                    // LIR lowering already evaluates all arguments; here we only pass the declared maximum.
+                    int argsToPass = Math.Min(argc, newUserClass.MaxArgCount);
+                    for (int i = 0; i < argsToPass; i++)
                     {
-                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(newUserClass.Arguments[i], ilEncoder, allocation, methodDescriptor);
                     }
 
-                    int paddingNeeded = newUserClass.MaxArgCount - argc;
+                    int paddingNeeded = newUserClass.MaxArgCount - argsToPass;
                     for (int i = 0; i < paddingNeeded; i++)
                     {
                         ilEncoder.OpCode(ILOpCode.Ldnull);

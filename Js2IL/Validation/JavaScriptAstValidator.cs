@@ -557,13 +557,11 @@ public class JavaScriptAstValidator : IAstValidator
 
     private void ValidatePropertyDefinition(Node node, ValidationResult result)
     {
-        if (node is PropertyDefinition pdef)
+        if (node is PropertyDefinition pdef
+            && (pdef.Computed || (pdef.Key is not Identifier && pdef.Key is not PrivateIdentifier)))
         {
-            if (pdef.Computed || (pdef.Key is not Identifier && pdef.Key is not PrivateIdentifier))
-            {
-                result.Errors.Add($"Computed/non-identifier class field names are not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-            }
+            result.Errors.Add($"Computed/non-identifier class field names are not yet supported (line {node.Location.Start.Line})");
+            result.IsValid = false;
         }
     }
 

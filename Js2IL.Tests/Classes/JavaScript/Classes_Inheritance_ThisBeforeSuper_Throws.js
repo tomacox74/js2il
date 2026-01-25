@@ -7,7 +7,7 @@ class B {
 class D extends B {
   constructor() {
     try {
-      this.y = 1;
+      this.y = 1; // In derived constructors, `this` is not usable before calling super().
       console.log("no-throw");
     } catch (e) {
       console.log(e.name);

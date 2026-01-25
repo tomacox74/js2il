@@ -615,6 +615,22 @@ namespace Js2IL.Services.ILGenerators
 
             // Register constructor signature for call-site validation.
             var ctorParamCount = (ctorMember?.Value as FunctionExpression)?.Params.Count ?? 0;
+            if (ctorMember == null && cdecl.SuperClass is Identifier superClassId)
+            {
+                // Default derived constructors in JS accept arguments and forward them to super(...).
+                // We approximate by matching the base constructor's max parameter count when resolvable.
+                var baseScope = FindClassScope(classScope, superClassId.Name);
+                if (baseScope?.AstNode is ClassDeclaration baseDecl)
+                {
+                    var baseCtor = baseDecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+                        .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                    if (baseCtor?.Value is FunctionExpression baseCtorFunc
+                        && !baseCtorFunc.Params.Any(p => p is RestElement))
+                    {
+                        ctorParamCount = baseCtorFunc.Params.Count;
+                    }
+                }
+            }
             var ctorTotalParamCount = classNeedsParentScopes ? ctorParamCount + 1 : ctorParamCount;
             var ctorSig = MethodBuilder.BuildMethodSignature(
                 _metadata,

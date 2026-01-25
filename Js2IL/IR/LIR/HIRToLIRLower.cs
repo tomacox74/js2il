@@ -3607,6 +3607,15 @@ public sealed class HIRToLIRLowerer
                 }
             }
         }
+        else if (_classRegistry != null
+            && _classRegistry.TryGetConstructor(registryClassName, out _, out _, out var ctorMinArgs, out var ctorMaxArgs))
+        {
+            // For synthetic/implicit constructors there is no AST parameter list.
+            // Use the registered constructor signature to decide how many args are accepted/padded.
+            minArgs = ctorMinArgs;
+            maxArgs = ctorMaxArgs;
+            jsParamCount = ctorMaxArgs;
+        }
 
         // Build a stable CallableId for the constructor so LIR remains AST-free.
         // This mirrors CallableDiscovery.DiscoverClass.

@@ -128,12 +128,68 @@ public static class HIRBuilder
 
                     var isDerivedConstructor = enclosingClassDecl.SuperClass != null;
 
+                    static int GetMaxSuperCtorArgCount(Scope classScope, ClassDeclaration classDecl)
+                    {
+                        if (classDecl.SuperClass is not Identifier superId)
+                        {
+                            return 0;
+                        }
+
+                        var superSymbol = classScope.FindSymbol(superId.Name);
+                        if (superSymbol.BindingInfo.DeclarationNode is not ClassDeclaration baseDecl)
+                        {
+                            return 0;
+                        }
+
+                        var baseCtor = baseDecl.Body.Body
+                            .OfType<Acornima.Ast.MethodDefinition>()
+                            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+
+                        if (baseCtor?.Value is not FunctionExpression baseCtorFunc)
+                        {
+                            return 0;
+                        }
+
+                        // If the base constructor uses rest parameters, we can't represent that
+                        // in the IR pipeline today.
+                        if (baseCtorFunc.Params.Any(p => p is RestElement))
+                        {
+                            return 0;
+                        }
+
+                        return baseCtorFunc.Params.Count;
+                    }
+
+                    // Default derived constructors in JS forward received args to super(...).
+                    // We approximate by synthesizing N parameters (N = base ctor max param count when resolvable)
+                    // and passing them through to the implicit super call.
+                    var parameterPatterns = new List<HIRPattern>();
+                    var superArgs = new List<HIRExpression>();
+                    if (isDerivedConstructor)
+                    {
+                        var argCount = GetMaxSuperCtorArgCount(enclosingClassScope, enclosingClassDecl);
+                        for (int i = 0; i < argCount; i++)
+                        {
+                            var paramName = $"__arg{i}";
+                            if (!scope.Bindings.TryGetValue(paramName, out var binding))
+                            {
+                                binding = new BindingInfo(paramName, BindingKind.Var, classBody);
+                                scope.Bindings[paramName] = binding;
+                            }
+
+                            scope.Parameters.Add(paramName);
+                            var sym = new Symbol(binding);
+                            parameterPatterns.Add(new HIRIdentifierPattern(sym));
+                            superArgs.Add(new HIRVariableExpression(sym));
+                        }
+                    }
+
                     // Derived constructors must call super() before accessing `this`.
                     // For implicit constructors in derived classes, insert an implicit super() call.
                     if (isDerivedConstructor)
                     {
                         ctorStatements.Add(new HIRExpressionStatement(
-                            new HIRCallExpression(new HIRSuperExpression(), Array.Empty<HIRExpression>())));
+                            new HIRCallExpression(new HIRSuperExpression(), superArgs.ToArray())));
                     }
 
                     // Store scopes array to this._scopes if constructor has scopes parameter.
@@ -189,7 +245,7 @@ public static class HIRBuilder
                     // Empty user body.
                     method = new HIRMethod
                     {
-                        Parameters = Array.Empty<HIRPattern>(),
+                        Parameters = parameterPatterns,
                         Body = new HIRBlock(ctorStatements)
                     };
 
