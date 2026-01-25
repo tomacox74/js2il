@@ -309,5 +309,108 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncfromsynciteratorcontinuation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "27.1.1",
+        "feature": "Promise constructor (executor), Promise.resolve, Promise.reject",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-promise-constructor",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_Executor_Resolved.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Executor_Rejected.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Thenable_Resolve_Immediate.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Thenable_Resolve_Delayed.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Thenable_Reject.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Thenable_NonFunctionThen.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Thenable_Nested.js"
+        ],
+        "notes": "Constructor accepts an executor delegate and supports the basic resolve/reject fast-paths and dynamic delegate invocation used in tests. Promise.resolve/reject create already-settled Promise instances, including thenable assimilation (Promise.resolve adopts thenables, handles non-function then properties, and supports nested thenables)."
+      },
+      {
+        "clause": "27.1.1",
+        "feature": "Promise.withResolvers()",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-promise-constructor",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Resolve.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Reject.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Idempotent.js"
+        ],
+        "notes": "Implements `Promise.withResolvers()` returning `{ promise, resolve, reject }` (resolve/reject are functions that settle the associated promise)."
+      },
+      {
+        "clause": "27.1.2",
+        "feature": "Promise.prototype.then / catch / finally",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-promise.prototype.then",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Reject_Then.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_ThenFinally.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Reject_FinallyCatch.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_FinallyThen.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_FinallyThrows.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Then_ReturnsResolvedPromise.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Then_ReturnsRejectedPromise.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Thenable_Returned_FromHandler.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Catch_ReturnsResolvedPromise.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Catch_ReturnsRejectedPromise.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsResolvedPromise.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsRejectedPromise.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsThenable_PassThrough_Fulfilled.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsThenable_PassThrough_Rejected.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+        ],
+        "notes": "Implements `then`, `catch`, and `finally` with microtask scheduling support. Handlers support Promise/thenable return assimilation. `finally` handlers are treated as observers: non-Promise return values do not alter the settled result, while returned Promises/thenables are awaited and propagated (fixed earlier bug where Promise returns from finally were masked). Tests include chaining, thenable returns, and then/catch/finally interactions."
+      },
+      {
+        "clause": "27.1.3",
+        "feature": "Promise.all",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-promise.all",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_All_AllResolved.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_All_OneRejected.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_All_EmptyArray.js"
+        ],
+        "notes": "Returns a Promise that resolves when all input promises resolve (with an array of results), or rejects when any input promise rejects (with the first rejection reason)."
+      },
+      {
+        "clause": "27.1.3",
+        "feature": "Promise.allSettled",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-promise.all",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_MixedResults.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_AllResolved.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_AllRejected.js"
+        ],
+        "notes": "Returns a Promise that resolves when all input promises have settled (fulfilled or rejected), with an array of outcome objects containing status and value/reason."
+      },
+      {
+        "clause": "27.1.3",
+        "feature": "Promise.any",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-promise.all",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_Any_FirstResolved.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Any_AllRejected.js"
+        ],
+        "notes": "Returns a Promise that resolves as soon as any input promise resolves, or rejects with an AggregateError if all input promises reject."
+      },
+      {
+        "clause": "27.1.3",
+        "feature": "Promise.race",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-promise.all",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_Race_FirstResolved.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Race_FirstRejected.js"
+        ],
+        "notes": "Returns a Promise that settles as soon as any input promise settles (resolves or rejects), with the same value or reason."
+      }
+    ]
+  }
 }

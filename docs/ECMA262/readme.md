@@ -105,11 +105,10 @@ but that should only be used when explicitly requested.
 
 ## Feature coverage markdown
 
-Feature coverage is tracked in JSON and rendered to markdown:
+Feature-level support tracking lives alongside the subsection docs.
 
-- input: docs/ECMA262/FeatureCoverage.json
-- generator: scripts/ECMA262/generateFeatureCoverage.js
-- run: `node scripts/ECMA262/generateFeatureCoverage.js`
+- Add/update support metadata under `support.entries` in the relevant subsection JSON file(s) (e.g. `docs/ECMA262/27/Section27_1.json`).
+- Regenerate the subsection markdown using `node scripts/ECMA262/generateEcma262SectionMarkdown.js --section <section.subsection>`.
 
 ## Repo-local linking
 

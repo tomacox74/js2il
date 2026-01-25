@@ -39,5 +39,43 @@
       "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "15.5.1",
+        "feature": "async generator functions (async function*)",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
+        "notes": "Explicitly rejected in validator (not implemented)."
+      },
+      {
+        "clause": "15.5.1",
+        "feature": "Generator function declaration/expression (function*)",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js"
+        ],
+        "notes": "MVP support for synchronous generators compiled via lowering to a state machine. Known limitations: yield* is not supported; async generators are rejected; throw/return through try/finally is not fully implemented."
+      },
+      {
+        "clause": "15.5.1",
+        "feature": "yield expression",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js"
+        ],
+        "notes": "Supports yielding values and resumption via next(). yield* is not supported."
+      },
+      {
+        "clause": "15.5.1",
+        "feature": "yield* delegation",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
+        "notes": "Explicitly rejected in validator (MVP limitation)."
+      }
+    ]
+  }
 }

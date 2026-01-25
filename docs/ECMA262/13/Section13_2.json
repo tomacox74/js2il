@@ -183,5 +183,225 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-grouping-operator-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "13.2.1",
+        "feature": "Const reassignment throws TypeError",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-let-and-const-declarations",
+        "testScripts": [
+          "Js2IL.Tests/Variable/JavaScript/Variable_ConstReassignmentError.js"
+        ],
+        "notes": "Assignment to a const Identifier and ++/-- on const emit a runtime TypeError; error is catchable via try/catch."
+      },
+      {
+        "clause": "13.2.1",
+        "feature": "let/const",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-let-and-const-declarations",
+        "testScripts": [
+          "Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_LetShadowing.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_LetNestedShadowingChain.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_LetFunctionNestedShadowing.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_ConstSimple.js"
+        ],
+        "notes": "Block scoping, shadowing chain, nested function capture, and simple const initialization implemented. Temporal dead zone access error (Variable_TemporalDeadZoneAccess.js) and reads before initialization are still pending."
+      },
+      {
+        "clause": "13.2.1.1",
+        "feature": "var",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-variable-statement",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js",
+          "Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js",
+          "Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js"
+        ]
+      },
+      {
+        "clause": "13.2.2",
+        "feature": "Destructuring in variable declarations (object/array patterns, defaults, rest, nested)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-destructuring-binding-patterns",
+        "testScripts": [
+          "Js2IL.Tests/Node/JavaScript/PerfHooks_PerformanceNow_Basic.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Basic.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_WithDefaults.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Captured.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Rest.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_ArrayDestructuring_Basic.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_ArrayDestructuring_DefaultsAndRest.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_NestedDestructuring_Defaults.js"
+        ],
+        "notes": "Supports object and array binding patterns in variable declarators (const/let/var), including nested patterns, default values, and rest elements/properties. The initializer is evaluated once, then bindings are populated via JavaScriptRuntime.Object.GetItem (string keys for objects, numeric indices for arrays). Object rest ({ a, ...rest }) uses JavaScriptRuntime.Object.Rest to create a new object excluding the bound keys; array rest ([a, ...rest]) builds a new JavaScriptRuntime.Array from the remaining indices. Handles both uncaptured variables (stored in IL locals) and captured variables (stored in scope fields), including cases where destructured bindings are captured by nested functions. Limitations: computed keys in patterns are not yet supported."
+      },
+      {
+        "clause": "13.2.2",
+        "feature": "Object destructuring in class constructor/method parameters",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-destructuring-binding-patterns",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_ParameterDestructuring.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js"
+        ],
+        "notes": "Class constructors and instance methods support object destructuring parameters with full default value support (e.g., constructor({host=\"localhost\", port=8080})). Uses the same conditional IL generation as functions/arrows. Shared implementation in MethodBuilder.EmitObjectPatternParameterDestructuring handles all function types uniformly. Supports shorthand, aliasing, and default values. Limitations: no nested patterns, no rest properties, no array patterns."
+      },
+      {
+        "clause": "13.2.2",
+        "feature": "Object destructuring in function/arrow parameters — basic",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-destructuring-binding-patterns",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_ParameterDestructuring_Object.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js"
+        ],
+        "notes": "Supports object binding patterns in formal parameters for function declarations and arrow functions, including shorthand (e.g., {a,b}), aliasing (e.g., { a: x }), and default values (e.g., {host=\"localhost\", port=8080}). Default values use conditional IL generation with brfalse branching: property is retrieved, if null the default expression is evaluated, otherwise the retrieved value is used. Limitations: no nested patterns, no rest properties, and no array patterns in parameters. Properties are retrieved via JavaScriptRuntime.Object.GetProperty and bound into the function scope before body execution."
+      },
+      {
+        "clause": "13.2.3",
+        "feature": "Arrow functions",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_SimpleExpression.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_BlockBody_Return.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionCallsGlobalFunction.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_NestedFunctionAccessesMultipleScopes.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_CapturesOuterVariable.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js"
+        ],
+        "notes": "Covers expression- and block-bodied arrows, multiple parameters, nested functions, closure capture across scopes (including returning functions that capture globals/locals), and default parameter values. Not yet supported: rest parameters, lexical this/arguments semantics, and spread at call sites."
+      },
+      {
+        "clause": "13.2.3",
+        "feature": "Function declarations",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js"
+        ],
+        "notes": "Hoisted and initialized before top-level statement evaluation so functions can call each other by name prior to IIFE invocation."
+      },
+      {
+        "clause": "13.2.3 (Function expressions)",
+        "feature": "Function expressions (anonymous)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_IIFE_Classic.js"
+        ],
+        "notes": "Emitted as static methods with delegate creation and closure binding as needed; supports immediate invocation patterns (IIFE)."
+      },
+      {
+        "clause": "13.2.3 (Function expressions)",
+        "feature": "Named function expressions (internal self-binding for recursion)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js"
+        ],
+        "notes": "On first entry, the internal name is eagerly bound to a self-delegate via JavaScriptRuntime.Closure.CreateSelfDelegate(MethodBase, int), enabling recursion from within the function body."
+      },
+      {
+        "clause": "13.2.3.1",
+        "feature": "Default parameters",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-definitions-runtime-semantics-evaluation",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_DefaultParameterValue.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js"
+        ],
+        "notes": "Default parameter values are supported for function declarations, function expressions, and arrow functions. Supports literal defaults (numbers, strings, booleans) and expression defaults that reference previous parameters (e.g., function f(a, b = a * 2)). Implemented using starg IL pattern when arguments are null. Call sites validate argument count ranges and pad missing optional parameters with ldnull."
+      },
+      {
+        "clause": "13.2.3.1",
+        "feature": "Rest parameters",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-definitions-runtime-semantics-evaluation"
+      },
+      {
+        "clause": "13.2.4.1",
+        "feature": "Array literal basic construction",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-array-initializer",
+        "testScripts": [
+          "Js2IL.Tests/Literals/JavaScript/ArrayLiteral.js"
+        ],
+        "notes": "Covers creation, element access, and length property. See also verified output in Literals/GeneratorTests.ArrayLiteral.verified.txt."
+      },
+      {
+        "clause": "13.2.4.1",
+        "feature": "Array literal spread (copy elements)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-array-initializer",
+        "testScripts": [
+          "Js2IL.Tests/Literals/JavaScript/Array_Spread_Copy.js"
+        ],
+        "notes": "Spread elements in array literals are emitted via JavaScriptRuntime.Array.PushRange; supports copying from another array."
+      },
+      {
+        "clause": "13.2.5",
+        "feature": "Spread syntax",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-argument-lists-runtime-semantics-argumentlistevaluation"
+      },
+      {
+        "clause": "13.2.5.1",
+        "feature": "Object literal basic construction",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
+        "testScripts": [
+          "Js2IL.Tests/Literals/JavaScript/ObjectLiteral.js"
+        ],
+        "notes": "Covers creation and property access. See also verified output in Literals/GeneratorTests.ObjectLiteral.verified.txt."
+      },
+      {
+        "clause": "13.2.5.1",
+        "feature": "Object literal computed property keys ({ [expr]: value })",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js"
+        ],
+        "notes": "Lowered as sequential JavaScriptRuntime.Object.SetItem(target, key, value) calls to preserve left-to-right evaluation order and key coercion to string."
+      },
+      {
+        "clause": "13.2.5.1",
+        "feature": "Object literal method definitions ({ m() { ... } })",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js"
+        ],
+        "notes": "Method definitions are lowered as property assignments whose values are compiled function delegates; calls via member dispatch bind 'this' using RuntimeServices.SetCurrentThis."
+      },
+      {
+        "clause": "13.2.5.1",
+        "feature": "Object literal shorthand properties ({ a })",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js"
+        ],
+        "notes": "Shorthand properties are parsed and lowered the same as explicit properties ({ a: a })."
+      },
+      {
+        "clause": "13.2.5.1",
+        "feature": "Object literal spread properties ({ ...x })",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js"
+        ],
+        "notes": "Lowered as: create empty ExpandoObject, then apply members in order. Spread members call JavaScriptRuntime.Object.SpreadInto(target, source). Null/undefined sources are ignored."
+      }
+    ]
+  }
 }

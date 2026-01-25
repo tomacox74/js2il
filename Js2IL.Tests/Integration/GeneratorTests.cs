@@ -7,9 +7,6 @@ namespace Js2IL.Tests.Integration
         public GeneratorTests() : base("Integration") { }
 
         [Fact]
-        public Task Compile_Scripts_GenerateFeatureCoverage() => GenerateTest(nameof(Compile_Scripts_GenerateFeatureCoverage));
-
-        [Fact]
         public Task Compile_Scripts_GenerateNodeSupportMd() => GenerateTest(nameof(Compile_Scripts_GenerateNodeSupportMd));
 
         [Fact]

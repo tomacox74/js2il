@@ -49,5 +49,53 @@
   "reference": {
     "mode": "stub",
     "note": "_Intentionally not included here. Use the tc39.es links above as the normative reference._"
+  },
+  "support": {
+    "entries": [
+      {
+        "clause": "9.5.1",
+        "feature": "JobCallback Records",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-jobcallback-records",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+        ],
+        "notes": "Implemented as an internal JobCallback record carrying a callback plus a host-defined context slot (currently null/empty). Used by Promise reaction job scheduling so future host-defined context/realm data can be threaded without changing observable behavior."
+      },
+      {
+        "clause": "9.5.2",
+        "feature": "HostMakeJobCallback",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-hostmakejobcallback",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+        ],
+        "notes": "Default host behavior: wraps a callback into a JobCallback record with an empty HostDefined field."
+      },
+      {
+        "clause": "9.5.3",
+        "feature": "HostCallJobCallback",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-hostcalljobcallback",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+        ],
+        "notes": "Default host behavior: invokes the stored callback. Parameters (V, argumentsList) are accepted for spec-shape compatibility; JS2IL currently models Promise jobs as parameterless Actions."
+      },
+      {
+        "clause": "9.5.4",
+        "feature": "HostEnqueuePromiseJob",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-hostenqueuepromisejob",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
+          "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+        ],
+        "notes": "Promise reaction jobs are enqueued onto the runtime microtask queue (IMicrotaskScheduler) and executed by the event loop pump."
+      }
+    ]
   }
 }

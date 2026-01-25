@@ -130,7 +130,66 @@ function asSpecLink(url) {
   return `[tc39.es](${url})`;
 }
 
-function render(doc, sectionClause) {
+function escapePipes(text) {
+  return String(text ?? '').replace(/\|/g, '\\|');
+}
+
+function formatTableCellText(text) {
+  return escapePipes(String(text ?? '')).replace(/\r?\n/g, '<br>');
+}
+
+function toPosixPath(p) {
+  return String(p ?? '').replace(/\\/g, '/');
+}
+
+function formatTestScriptLink(scriptPath, mdDir, repoRootDir) {
+  const raw = String(scriptPath ?? '').trim();
+  if (!raw) return '';
+
+  const posix = toPosixPath(raw);
+  const isLikelyJsFile = posix.toLowerCase().endsWith('.js');
+  const abs = path.isAbsolute(posix) ? posix : path.resolve(repoRootDir, posix);
+  const exists = isLikelyJsFile && fs.existsSync(abs);
+
+  // If we can't resolve it to a real repo file, fall back to code formatting.
+  if (!exists) {
+    return `\`${escapePipes(posix)}\``;
+  }
+
+  const rel = toPosixPath(path.relative(mdDir, abs));
+  const label = path.basename(posix);
+  return `[` + "`" + escapePipes(label) + "`" + `](${rel})`;
+}
+
+function formatTestScriptsCell(testScripts, mdDir, repoRootDir) {
+  if (!Array.isArray(testScripts) || testScripts.length === 0) return '';
+  return testScripts
+    .map((s) => formatTestScriptLink(s, mdDir, repoRootDir))
+    .filter((s) => s && s.length > 0)
+    .join('<br>');
+}
+
+function getSpecUrlForClause(doc, clause) {
+  if (!doc || typeof doc !== 'object') return '';
+  if (doc.clause === clause && typeof doc.specUrl === 'string') return doc.specUrl;
+
+  const subs = Array.isArray(doc.subclauses) ? doc.subclauses : [];
+  for (const s of subs) {
+    if (!s || typeof s !== 'object') continue;
+    if (s.clause === clause && typeof s.specUrl === 'string') return s.specUrl;
+  }
+
+  const support = doc.support && typeof doc.support === 'object' ? doc.support : null;
+  const entries = support && Array.isArray(support.entries) ? support.entries : [];
+  for (const e of entries) {
+    if (!e || typeof e !== 'object') continue;
+    if (e.clause === clause && typeof e.specUrl === 'string' && e.specUrl.trim().length > 0) return e.specUrl;
+  }
+
+  return '';
+}
+
+function render(doc, sectionClause, mdPath, repoRootDir) {
   const clause = requireString(doc, 'clause');
   const title = requireString(doc, 'title');
   const status = requireString(doc, 'status');
@@ -185,6 +244,51 @@ function render(doc, sectionClause) {
     }
 
     lines.push('');
+  }
+
+  const support = doc.support && typeof doc.support === 'object' ? doc.support : null;
+  const supportEntries = support && Array.isArray(support.entries) ? support.entries : [];
+  if (supportEntries.length > 0) {
+    const mdDir = path.dirname(mdPath);
+    const entriesByClause = new Map();
+    for (const e of supportEntries) {
+      if (!e || typeof e !== 'object') continue;
+      const ec = requireString(e, 'clause');
+      const ef = requireString(e, 'feature');
+      const es = requireString(e, 'status');
+      validateStatus(es);
+      const list = entriesByClause.get(ec) || [];
+      list.push(e);
+      entriesByClause.set(ec, list);
+    }
+
+    const sortedClauses = [...entriesByClause.keys()].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+    lines.push('## Support');
+    lines.push('');
+    lines.push('Feature-level support tracking with test script references.');
+    lines.push('');
+
+    for (const c of sortedClauses) {
+      const url = getSpecUrlForClause(doc, c);
+      lines.push(`### ${c}${url ? ` (${asSpecLink(url)})` : ''}`);
+      lines.push('');
+      lines.push('| Feature name | Status | Test scripts | Notes |');
+      lines.push('|---|---|---|---|');
+
+      const list = entriesByClause.get(c) || [];
+      list.sort((a, b) => String(a.feature || '').localeCompare(String(b.feature || ''), undefined, { numeric: true }));
+      for (const e of list) {
+        const feature = requireString(e, 'feature');
+        const es = requireString(e, 'status');
+        validateStatus(es);
+        const scripts = formatTestScriptsCell(e.testScripts, mdDir, repoRootDir);
+        const notes = formatTableCellText(e.notes || '');
+        lines.push(`| ${formatTableCellText(feature)} | ${formatTableCellText(es)} | ${scripts} | ${notes} |`);
+      }
+
+      lines.push('');
+    }
   }
 
   const ref = doc.reference && typeof doc.reference === 'object' ? doc.reference : null;
@@ -265,7 +369,8 @@ function main() {
   }
 
   const doc = JSON.parse(readText(jsonPath));
-  const lines = render(doc, `${parsed.parent}.${parsed.sub}`);
+  const repoRootDir = path.resolve(__dirname, '..', '..');
+  const lines = render(doc, `${parsed.parent}.${parsed.sub}`, mdPath, repoRootDir);
   const changed = writeTextPreserveEol(mdPath, lines);
 
   console.log(`${changed ? 'Generated' : 'Up-to-date'} ${path.relative(path.resolve(__dirname, '..', '..'), mdPath)}`);

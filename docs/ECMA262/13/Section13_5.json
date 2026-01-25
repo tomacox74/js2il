@@ -99,5 +99,231 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-logical-not-operator-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "13.5.1",
+        "feature": "Binary + (Addition)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-additive-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js",
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddStringNumber.js",
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddStringString.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js"
+        ],
+        "notes": "Fast-path string concat; general '+' follows JS coercion via runtime helper."
+      },
+      {
+        "clause": "13.5.2",
+        "feature": "Binary - (Subtraction)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-subtraction-operator",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_SubNumberNumber.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
+        ],
+        "notes": "Numeric subtraction; matches JS semantics for non-numeric via coercion helpers where applicable."
+      },
+      {
+        "clause": "13.5.3",
+        "feature": "Binary * (Multiplication)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-multiplicative-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_MulNumberNumber.js"
+        ]
+      },
+      {
+        "clause": "13.5.3",
+        "feature": "Binary / (Division)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-multiplicative-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_DivNumberNumber.js"
+        ]
+      },
+      {
+        "clause": "13.5.3",
+        "feature": "Binary % (Remainder)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-multiplicative-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_ModNumberNumber.js"
+        ]
+      },
+      {
+        "clause": "13.5.4",
+        "feature": "Binary ** (Exponentiation)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-exp-operator",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_ExpNumberNumber.js"
+        ]
+      },
+      {
+        "clause": "13.5.6",
+        "feature": "Binary & (Bitwise AND)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-binary-bitwise-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_BitwiseAndNumberNumber.js"
+        ]
+      },
+      {
+        "clause": "13.5.6",
+        "feature": "Binary ^ (Bitwise XOR)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-binary-bitwise-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_BitwiseXorNumberNumber.js"
+        ]
+      },
+      {
+        "clause": "13.5.6",
+        "feature": "Binary | (Bitwise OR)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-binary-bitwise-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_BitwiseOrNumberNumber.js"
+        ]
+      },
+      {
+        "clause": "13.5.7",
+        "feature": "Binary << (Left shift)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-left-shift-operator",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LeftShiftNumberNumber.js"
+        ]
+      },
+      {
+        "clause": "13.5.7",
+        "feature": "Binary >> (Signed right shift)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-left-shift-operator",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_RightShiftNumberNumber.js"
+        ]
+      },
+      {
+        "clause": "13.5.7",
+        "feature": "Binary >>> (Unsigned right shift)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-left-shift-operator",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_UnsignedRightShiftNumberNumber.js"
+        ]
+      },
+      {
+        "clause": "13.5.8",
+        "feature": "Binary < (Less than)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-relational-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js"
+        ]
+      },
+      {
+        "clause": "13.5.8",
+        "feature": "Binary <= (Less than or equal)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-relational-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js"
+        ]
+      },
+      {
+        "clause": "13.5.8",
+        "feature": "Binary > (Greater than)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-relational-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js"
+        ]
+      },
+      {
+        "clause": "13.5.8",
+        "feature": "Binary >= (Greater than or equal)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-relational-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js"
+        ]
+      },
+      {
+        "clause": "13.5.9",
+        "feature": "Binary != (Inequality)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-equality-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotEqual.js"
+        ],
+        "notes": "Value result emitted via Ceq inversion; conditional form branches with bne.un. Unboxing/coercion rules mirror equality operator handling for numbers/booleans."
+      },
+      {
+        "clause": "13.5.9",
+        "feature": "Binary !== (Strict inequality)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-equality-operators",
+        "notes": "Implemented alongside != in the IL generator (value + branching). Dedicated tests to be added; semantics match JavaScript strict inequality (no type coercion)."
+      },
+      {
+        "clause": "13.5.9",
+        "feature": "Binary == (Equality)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-equality-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js",
+          "Js2IL.Tests/Function/JavaScript/Function_IsEven_CompareResultToTrue.js"
+        ],
+        "notes": "Covers numeric and boolean equality, including comparisons against literals and function-returned booleans with selective boxing/unboxing. See also generator snapshot: Js2IL.Tests/BinaryOperator/GeneratorTests.BinaryOperator_EqualBoolean.verified.txt."
+      },
+      {
+        "clause": "13.5.10",
+        "feature": "Binary && (Logical AND) with short-circuit",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-binary-logical-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_Value.js",
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_ShortCircuit.js"
+        ],
+        "notes": "Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited."
+      },
+      {
+        "clause": "13.5.10",
+        "feature": "Binary || (Logical OR) with short-circuit",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-binary-logical-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_Value.js",
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_ShortCircuit.js"
+        ],
+        "notes": "Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. Recent fixes ensure strict-equality patterns (e.g. `id === 1024 || id === 2047`) correctly handle captured/boxed variables by performing ToNumber conversion when the variable type is unknown, preventing incorrect direct object-to-number `ceq` comparisons."
+      },
+      {
+        "clause": "13.5.10",
+        "feature": "Binary in (property existence on object)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-binary-logical-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js"
+        ],
+        "notes": "Implements key in obj via JavaScriptRuntime.Object.HasPropertyIn. Supports own properties on ExpandoObject/object literals and numeric/string keys; does not yet traverse prototype chain or throw TypeError for non-object RHS beyond null/undefined."
+      },
+      {
+        "clause": "13.5.16",
+        "feature": "Conditional operator (?:)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-conditional-operator",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary_ShortCircuit.js"
+        ],
+        "notes": "Expression-level branching with both arms coerced to object where needed; only the selected arm is evaluated. Verified via generator and execution tests in ControlFlow subgroup."
+      }
+    ]
+  }
 }

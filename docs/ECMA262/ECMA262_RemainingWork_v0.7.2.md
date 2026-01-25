@@ -3,9 +3,8 @@
 This document summarizes **ECMA-262 language features that are not yet fully supported** by JS2IL as of **v0.7.2 (2026-01-17)**.
 
 Basis:
-- Source of truth: [docs/ECMA262/FeatureCoverage.json](FeatureCoverage.json)
-- This report lists anything marked `Partially Supported` or `Not Yet Supported` in that file.
-- If a feature is not tracked in the coverage file yet, it will not appear here.
+- Source of truth: per-subsection JSON docs under `docs/ECMA262/**/Section*.json` (see `support.entries`).
+- This document has not been regenerated since moving feature coverage into subsection JSON; treat counts/sections below as historical.
 
 If you want a **clause-by-clause** view of ECMA-262 (language + built-ins), see:
 - [docs/ECMA262/Index.md](Index.md)
@@ -35,7 +34,7 @@ Remaining work by spec section (count of non-supported rows):
 
 ## Intrinsics & built-ins (runtime surface)
 
-The “Detailed list” below is driven strictly by the tracked rows in [docs/ECMA262/FeatureCoverage.json](FeatureCoverage.json). That file is not yet an exhaustive per-method inventory of every built-in.
+The “Detailed list” below was previously driven by a dedicated feature-coverage file. That file has been removed in favor of `support.entries` embedded into subsection JSON.
 
 This section enumerates the **current runtime intrinsic surface area** so it’s easier to reason about “what exists at all” vs. “what is spec-complete”.
 
@@ -155,5 +154,5 @@ Formatting:
 
 ---
 
-When [docs/ECMA262/FeatureCoverage.json](FeatureCoverage.json) is updated, this document should be refreshed so scheduling data stays accurate.
+When `support.entries` data in the subsection JSON docs changes, this document should be refreshed so scheduling data stays accurate.
 

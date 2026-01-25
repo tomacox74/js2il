@@ -195,5 +195,74 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-hostfinalizeimportmeta"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "13.3.1",
+        "feature": "NewExpression for built-in Array constructor (new Array()/new Array(n)/new Array(a,b,...))",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
+        "testScripts": [
+          "Js2IL.Tests/Array/JavaScript/Array_New_Length.js",
+          "Js2IL.Tests/Array/JavaScript/Array_New_MultipleArgs.js"
+        ],
+        "notes": "Supported in the new IR pipeline for global (non-shadowed) Array. Lowered via JavaScriptRuntime.Array::Construct(object[] args) to preserve JS Array constructor semantics."
+      },
+      {
+        "clause": "13.3.1",
+        "feature": "NewExpression for built-in Boolean/Number constructors as primitive sugar (new Boolean(x), new Number(x))",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
+        "testScripts": [
+          "Js2IL.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js",
+          "Js2IL.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js"
+        ],
+        "notes": "Supported in the new IR pipeline for global (non-shadowed) Boolean/Number. Lowered to primitive coercions (TypeUtilities.ToBoolean/ToNumber)."
+      },
+      {
+        "clause": "13.3.1",
+        "feature": "NewExpression for built-in Error types (Error/TypeError/RangeError/ReferenceError/SyntaxError/URIError/EvalError/AggregateError)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
+        "testScripts": [
+          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js"
+        ],
+        "notes": "Supported in the new IR pipeline for global (non-shadowed) built-in Error identifiers with 0 or 1 argument. When provided, the message is coerced to string. User-defined constructors / classes and member-expression callees (e.g., new obj.Ctor()) are not yet supported in the IR pipeline."
+      },
+      {
+        "clause": "13.3.1",
+        "feature": "NewExpression for built-in String constructor as primitive sugar (new String()/new String(x))",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_New_Sugar.js"
+        ],
+        "notes": "Supported in the new IR pipeline for global (non-shadowed) String. Lowered to primitive string conversion (DotNet2JSConversions.ToString)."
+      },
+      {
+        "clause": "13.3.1",
+        "feature": "NewExpression for constructible runtime intrinsics (e.g., Date, Int32Array)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
+        "testScripts": [
+          "Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js"
+        ],
+        "notes": "Supported in the new IR pipeline for global (non-shadowed) intrinsic identifiers registered in JavaScriptRuntime.IntrinsicObjectRegistry that are constructible classes. Currently limited to 0–2 constructor arguments."
+      },
+      {
+        "clause": "13.3.6",
+        "feature": "Primitive conversion callables: String(x), Number(x), Boolean(x)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-calls",
+        "testScripts": [
+          "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_String_Callable.js",
+          "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js",
+          "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js"
+        ],
+        "notes": "Supports the callable form (no new) for global (non-shadowed) String/Number/Boolean. Semantics match JS: no-arg returns default (\"\" / +0 / false); extra arguments are evaluated for side effects but ignored. Conversions are implemented via JavaScriptRuntime.TypeUtilities (ToString/ToNumber/ToBoolean); Number(undefined) yields NaN (undefined represented as CLR null)."
+      }
+    ]
+  }
 }

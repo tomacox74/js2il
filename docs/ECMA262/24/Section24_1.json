@@ -183,5 +183,63 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-%mapiteratorprototype%-%symbol.tostringtag%"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "24.1.3.1",
+        "feature": "String.prototype.startsWith",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.startswith",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js"
+        ],
+        "notes": "Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed)."
+      },
+      {
+        "clause": "24.1.3.2",
+        "feature": "String.prototype.includes",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.includes",
+        "notes": "Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.)"
+      },
+      {
+        "clause": "24.1.3.3",
+        "feature": "String.prototype.endsWith",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.endswith",
+        "notes": "Implemented in JavaScriptRuntime.String and wired via IL generator for definite string receivers. Supports optional end position. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.)"
+      },
+      {
+        "clause": "24.1.3.4",
+        "feature": "String.prototype.split",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.split",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_Split_Basic.js"
+        ],
+        "notes": "Supports string and regular-expression separators and optional limit. Implemented via JavaScriptRuntime.String.Split and returned as JavaScriptRuntime.Array. Separator omitted or undefined returns [input]. Empty string separator splits into individual UTF-16 code units."
+      },
+      {
+        "clause": "24.1.3.5",
+        "feature": "String.prototype.replace (regex literal, string replacement)",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.replace",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js"
+        ],
+        "notes": "Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator."
+      },
+      {
+        "clause": "24.1.4",
+        "feature": "String.prototype.localeCompare (numeric compare)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.localecompare",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_LocaleCompare_Numeric.js"
+        ],
+        "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
+      }
+    ]
+  }
 }

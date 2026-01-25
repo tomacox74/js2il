@@ -15,5 +15,19 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-canonicalizekeyedcollectionkey"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "24.5.1",
+        "feature": "JSON.parse",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-json.parse",
+        "testScripts": [
+          "Js2IL.Tests/JSONRuntimeTests.cs"
+        ],
+        "notes": "Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double."
+      }
+    ]
+  }
 }
