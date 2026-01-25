@@ -922,9 +922,28 @@ public sealed class HIRToLIRLowerer
 
     private bool TryBuildScopesArrayForClassConstructor(Scope classScope, TempVariable resultTemp)
     {
-        if (classScope.ReferencesParentScopeVariables)
+        // If the class constructor ABI requires a scopes array, prefer building the full
+        // callee layout so derived classes can pass through the scope chain needed by base classes.
+        // (e.g., class Derived extends Base where Base captures outer variables).
+        if (_environmentLayoutBuilder != null)
         {
-            return TryBuildScopesArrayFromLayout(classScope, CallableKind.Constructor, resultTemp);
+            try
+            {
+                var calleeLayout = _environmentLayoutBuilder.Build(classScope, CallableKind.Constructor);
+                // Only accept the callee layout when it actually includes non-global parent slots.
+                // Some class scopes don't directly reference parent vars, but still need a scopes
+                // array due to base-class captures; in that case, the class layout can be just
+                // [global], which is insufficient.
+                if (calleeLayout.ScopeChain.Slots.Count > 1
+                    && TryBuildScopesArrayFromLayout(classScope, CallableKind.Constructor, resultTemp))
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                // Fall through to the conservative fallback.
+            }
         }
 
         // Preserve ABI expectation that scopes[0] is the global/module scope when available.
@@ -953,6 +972,24 @@ public sealed class HIRToLIRLowerer
                 $"HIR->LIR: failed mapping global scope '{moduleName}' for class ctor scopes; calleeClass='{classScope.GetQualifiedName()}', caller='{caller}', callerScopesSource={callerScopesSource}, callerChain=[{callerChain}]"
             );
             return false;
+        }
+
+        // If the caller has a leaf scope instance (e.g., we're inside a function and the class is
+        // nested), include it as scopes[1]. This is required when base class methods access
+        // captured variables via the stored _scopes array.
+        var declaringScope = classScope.Parent;
+        var declaringLeafScopeName = declaringScope != null
+            ? ScopeNaming.GetRegistryScopeName(declaringScope)
+            : moduleName;
+
+        if (!string.Equals(declaringLeafScopeName, moduleName, StringComparison.Ordinal))
+        {
+            var leafSlot = new ScopeSlot(Index: 1, ScopeName: declaringLeafScopeName, ScopeId: new ScopeId(declaringLeafScopeName));
+            if (TryMapScopeSlotToSource(leafSlot, out var leafSlotSource))
+            {
+                _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource, leafSlotSource }, resultTemp));
+                return true;
+            }
         }
 
         _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
@@ -3513,6 +3550,14 @@ public sealed class HIRToLIRLowerer
         var registryClassName = $"{(classScope.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
 
         bool needsScopes = DoesClassNeedParentScopes(classDecl, classScope);
+
+        // If the registered constructor ABI includes a leading scopes array (e.g., because the
+        // class or its base class needs parent scopes), ensure call-sites pass it.
+        if (_classRegistry != null
+            && _classRegistry.TryGetConstructor(registryClassName, out _, out var ctorHasScopesParam, out _, out _))
+        {
+            needsScopes = ctorHasScopesParam;
+        }
         TempVariable? scopesTemp = null;
         if (needsScopes)
         {

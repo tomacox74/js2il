@@ -388,7 +388,9 @@ public class ValidatorTests
     [Fact]
     public void Validate_SuperExpression_ReportsError()
     {
-        var js = "class Parent { foo() {} } class Child extends Parent { foo() { super.foo(); } }";
+        // super is only supported in derived class methods/constructors.
+        // Using it in a non-derived class should be rejected by validation.
+        var js = "class NotDerived { foo() { super.foo(); } }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
@@ -423,6 +425,46 @@ public class ValidatorTests
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("Getter"));
+    }
+
+    [Fact]
+    public void Validate_ClassPrivateMethod_ReportsError()
+    {
+        var js = @"class Foo { #m() { return 1; } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Private methods"));
+    }
+
+    [Fact]
+    public void Validate_ClassComputedMethodName_ReportsError()
+    {
+        var js = @"class Foo { ['m']() { return 1; } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Computed/non-identifier method names"));
+    }
+
+    [Fact]
+    public void Validate_ClassComputedFieldName_ReportsError()
+    {
+        var js = @"class Foo { ['x'] = 1; }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Computed/non-identifier class field names"));
+    }
+
+    [Fact]
+    public void Validate_ClassStaticBlock_ReportsError()
+    {
+        var js = @"class Foo { static { console.log('hi'); } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Class static blocks"));
     }
 
     [Fact]

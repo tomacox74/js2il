@@ -57,5 +57,8 @@ namespace Js2IL.Tests.Async
 
         [Fact]
         public Task Async_ClassMethod_CallsOtherAsync() { var testName = nameof(Async_ClassMethod_CallsOtherAsync); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Async_Inheritance_SuperAsyncMethod() { var testName = nameof(Async_Inheritance_SuperAsyncMethod); return GenerateTest(testName); }
     }
 }

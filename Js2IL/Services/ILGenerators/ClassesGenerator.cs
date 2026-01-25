@@ -625,8 +625,10 @@ namespace Js2IL.Services.ILGenerators
             var ctorMinUserParams = ctorMember?.Value is FunctionExpression ctorFuncExpr
                 ? CountRequiredParameters(ctorFuncExpr.Params)
                 : 0;
-            var ctorMinTotalParams = classNeedsParentScopes ? ctorMinUserParams + 1 : ctorMinUserParams;
-            _classRegistry.RegisterConstructor(registryClassName, ctorMethodDef, ctorSig, classNeedsParentScopes, ctorMinTotalParams, ctorTotalParamCount);
+
+            // Keep ClassRegistry min/max parameter counts as JS argument counts (excluding scopes),
+            // consistent with instance method registration and with LIR lowering/IL emission.
+            _classRegistry.RegisterConstructor(registryClassName, ctorMethodDef, ctorSig, classNeedsParentScopes, ctorMinUserParams, ctorParamCount);
 
             // Register instance methods (tokens are preallocated in Phase 1, bodies emitted in Phase 2).
             foreach (var member in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>().Where(m => m.Key is Identifier))

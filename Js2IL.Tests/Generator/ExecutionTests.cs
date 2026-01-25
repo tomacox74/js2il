@@ -22,5 +22,8 @@ namespace Js2IL.Tests.Generator
 
         [Fact]
         public Task Generator_StaticMethod_SimpleYield() { var testName = nameof(Generator_StaticMethod_SimpleYield); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Generator_Inheritance_SuperIteratorMethod() { var testName = nameof(Generator_Inheritance_SuperIteratorMethod); return ExecutionTest(testName); }
     }
 }
