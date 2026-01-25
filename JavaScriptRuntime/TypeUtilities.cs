@@ -1,5 +1,6 @@
 using System;
 using System.Dynamic;
+using System.Numerics;
 
 namespace JavaScriptRuntime
 {
@@ -79,7 +80,9 @@ namespace JavaScriptRuntime
                 case long: return "number";
                 case short: return "number";
                 case byte: return "number";
+                case BigInteger: return "bigint";
                 case JsNull: return "object"; // JS null reports as 'object'
+                case JavaScriptRuntime.Symbol: return "symbol";
             }
             if (value is ExpandoObject) return "object";
             if (value is Array) return "object";

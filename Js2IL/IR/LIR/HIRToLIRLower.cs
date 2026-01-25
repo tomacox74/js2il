@@ -3592,6 +3592,47 @@ public sealed class HIRToLIRLowerer
                     return true;
                 }
 
+                // PL8.7 / #305: Callable-only intrinsics: Symbol([description]) and BigInt(value)
+                if (string.Equals(name, "Symbol", StringComparison.Ordinal))
+                {
+                    if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var symbolArgs))
+                    {
+                        return false;
+                    }
+
+                    if (symbolArgs.Count == 0)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Symbol", "Call", Array.Empty<TempVariable>(), resultTempVar));
+                    }
+                    else
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Symbol", "Call", new[] { symbolArgs[0] }, resultTempVar));
+                    }
+
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+
+                if (string.Equals(name, "BigInt", StringComparison.Ordinal))
+                {
+                    if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var bigIntArgs))
+                    {
+                        return false;
+                    }
+
+                    if (bigIntArgs.Count == 0)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("BigInt", "Call", Array.Empty<TempVariable>(), resultTempVar));
+                    }
+                    else
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("BigInt", "Call", new[] { bigIntArgs[0] }, resultTempVar));
+                    }
+
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+
                 var intrinsicInfo = JavaScriptRuntime.IntrinsicObjectRegistry.GetInfo(name);
                 if (intrinsicInfo != null && intrinsicInfo.CallKind != JavaScriptRuntime.IntrinsicCallKind.None)
                 {
@@ -3686,25 +3727,20 @@ public sealed class HIRToLIRLowerer
                 // Distinct from `new String(...)` sugar handled in NewExpression lowering.
                 if (string.Equals(globalFunctionName, "String", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (callExpr.Arguments.Length > 1)
+                    if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var args))
                     {
                         return false;
                     }
 
                     // String() with no args returns empty string.
-                    if (callExpr.Arguments.Length == 0)
+                    if (args.Count == 0)
                     {
                         _methodBodyIR.Instructions.Add(new LIRConstString(string.Empty, resultTempVar));
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
                         return true;
                     }
 
-                    if (!TryLowerExpression(callExpr.Arguments[0], out var argTemp))
-                    {
-                        return false;
-                    }
-
-                    var source = EnsureObject(argTemp);
+                    var source = EnsureObject(args[0]);
                     _methodBodyIR.Instructions.Add(new LIRConvertToString(source, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
                     return true;
@@ -3712,25 +3748,20 @@ public sealed class HIRToLIRLowerer
 
                 if (string.Equals(globalFunctionName, "Number", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (callExpr.Arguments.Length > 1)
+                    if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var args))
                     {
                         return false;
                     }
 
                     // Number() with no args returns +0.
-                    if (callExpr.Arguments.Length == 0)
+                    if (args.Count == 0)
                     {
                         _methodBodyIR.Instructions.Add(new LIRConstNumber(0.0, resultTempVar));
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                         return true;
                     }
 
-                    if (!TryLowerExpression(callExpr.Arguments[0], out var argTemp))
-                    {
-                        return false;
-                    }
-
-                    var source = EnsureObject(argTemp);
+                    var source = EnsureObject(args[0]);
                     _methodBodyIR.Instructions.Add(new LIRConvertToNumber(source, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                     return true;
@@ -3738,27 +3769,62 @@ public sealed class HIRToLIRLowerer
 
                 if (string.Equals(globalFunctionName, "Boolean", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (callExpr.Arguments.Length > 1)
+                    if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var args))
                     {
                         return false;
                     }
 
                     // Boolean() with no args returns false.
-                    if (callExpr.Arguments.Length == 0)
+                    if (args.Count == 0)
                     {
                         _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, resultTempVar));
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                         return true;
                     }
 
-                    if (!TryLowerExpression(callExpr.Arguments[0], out var argTemp))
+                    var source = EnsureObject(args[0]);
+                    _methodBodyIR.Instructions.Add(new LIRConvertToBoolean(source, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+
+                if (string.Equals(globalFunctionName, "Symbol", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var args))
                     {
                         return false;
                     }
 
-                    var source = EnsureObject(argTemp);
-                    _methodBodyIR.Instructions.Add(new LIRConvertToBoolean(source, resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    if (args.Count == 0)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Symbol", "Call", Array.Empty<TempVariable>(), resultTempVar));
+                    }
+                    else
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Symbol", "Call", new[] { args[0] }, resultTempVar));
+                    }
+
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+
+                if (string.Equals(globalFunctionName, "BigInt", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var args))
+                    {
+                        return false;
+                    }
+
+                    if (args.Count == 0)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("BigInt", "Call", Array.Empty<TempVariable>(), resultTempVar));
+                    }
+                    else
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("BigInt", "Call", new[] { args[0] }, resultTempVar));
+                    }
+
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     return true;
                 }
 
