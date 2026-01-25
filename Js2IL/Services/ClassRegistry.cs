@@ -27,7 +27,7 @@ namespace Js2IL.Services
         // Cache per-class constructor definition + signature + parameter count so call sites can reuse
         // and validate instead of rebuilding duplicate member references.
         // MinParamCount = required params (no defaults), MaxParamCount = all params (including defaults)
-        private readonly Dictionary<string, (MethodDefinitionHandle Ctor, BlobHandle Signature, int MinParamCount, int MaxParamCount)> _constructors = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, (MethodDefinitionHandle Ctor, BlobHandle Signature, bool HasScopesParam, int MinParamCount, int MaxParamCount)> _constructors = new(StringComparer.Ordinal);
         // Track instance methods: className -> methodName -> (MethodDef, Signature, ReturnClrType, HasScopesParam, MinParams, MaxParams)
         // NOTE: Min/MaxParamCount are JS parameter counts (do NOT include scopes), kept for call-site validation/padding.
         private readonly Dictionary<string, Dictionary<string, (MethodDefinitionHandle Method, BlobHandle Signature, Type ReturnClrType, bool HasScopesParam, int MinParamCount, int MaxParamCount)>> _methods = new(StringComparer.Ordinal);
@@ -265,20 +265,22 @@ namespace Js2IL.Services
             return false;
         }
 
-        public void RegisterConstructor(string className, MethodDefinitionHandle ctorHandle, BlobHandle signature, int minParamCount, int maxParamCount)
+        public void RegisterConstructor(string className, MethodDefinitionHandle ctorHandle, BlobHandle signature, bool hasScopesParam, int minParamCount, int maxParamCount)
         {
             if (string.IsNullOrEmpty(className)) return;
-            _constructors[className] = (ctorHandle, signature, minParamCount, maxParamCount);
+            _constructors[className] = (ctorHandle, signature, hasScopesParam, minParamCount, maxParamCount);
         }
 
-        public bool TryGetConstructor(string className, out MethodDefinitionHandle ctorHandle, out int minParamCount, out int maxParamCount)
+        public bool TryGetConstructor(string className, out MethodDefinitionHandle ctorHandle, out bool hasScopesParam, out int minParamCount, out int maxParamCount)
         {
             ctorHandle = default;
+            hasScopesParam = false;
             minParamCount = 0;
             maxParamCount = 0;
             if (_constructors.TryGetValue(className, out var info))
             {
                 ctorHandle = info.Ctor;
+                hasScopesParam = info.HasScopesParam;
                 minParamCount = info.MinParamCount;
                 maxParamCount = info.MaxParamCount;
                 return true;

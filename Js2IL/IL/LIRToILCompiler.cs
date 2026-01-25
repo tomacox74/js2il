@@ -553,8 +553,9 @@ internal sealed class LIRToILCompiler
             labelMap[lirLabel.LabelId] = ilEncoder.DefineLabel();
         }
 
-        // For constructors, emit base System.Object::.ctor() call before any body instructions
-        if (methodDescriptor.IsConstructor)
+        // For constructors, emit base System.Object::.ctor() call before any body instructions.
+        // Derived constructors (class extends ...) must call the base constructor via `super(...)`.
+        if (methodDescriptor.IsConstructor && !methodDescriptor.IsDerivedConstructor)
         {
             ilEncoder.OpCode(ILOpCode.Ldarg_0);
             ilEncoder.Call(_bclReferences.Object_Ctor_Ref);
@@ -2672,6 +2673,78 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallUserClassBaseConstructor callBaseCtor:
+                {
+                    if (callBaseCtor.ConstructorHandle.IsNil)
+                    {
+                        throw new InvalidOperationException($"Cannot emit base constructor call for '{callBaseCtor.BaseRegistryClassName}' - missing ctor token");
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+
+                    if (callBaseCtor.HasScopesParameter)
+                    {
+                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                    }
+
+                    int jsParamCount = callBaseCtor.MaxParamCount;
+                    int argsToPass = Math.Min(callBaseCtor.Arguments.Count, jsParamCount);
+                    for (int i = 0; i < argsToPass; i++)
+                    {
+                        EmitLoadTemp(callBaseCtor.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(callBaseCtor.ConstructorHandle);
+                    break;
+                }
+
+            case LIRCallUserClassBaseInstanceMethod callBaseMethod:
+                {
+                    if (callBaseMethod.MethodHandle.IsNil)
+                    {
+                        throw new InvalidOperationException($"Cannot emit base method call for '{callBaseMethod.BaseRegistryClassName}.{callBaseMethod.MethodName}' - missing method token");
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+
+                    if (callBaseMethod.HasScopesParameter)
+                    {
+                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                    }
+
+                    int jsParamCount = callBaseMethod.MaxParamCount;
+                    int argsToPass = Math.Min(callBaseMethod.Arguments.Count, jsParamCount);
+                    for (int i = 0; i < argsToPass; i++)
+                    {
+                        EmitLoadTemp(callBaseMethod.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(callBaseMethod.MethodHandle);
+
+                    if (IsMaterialized(callBaseMethod.Result, allocation))
+                    {
+                        EmitStoreTemp(callBaseMethod.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+
+                    break;
+                }
+
             case LIRCallMember callMember:
                 {
                     // Runtime dispatcher member call.
@@ -4390,6 +4463,68 @@ internal sealed class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(callUserClass.MethodHandle);
+                    break;
+                }
+
+            case LIRCallUserClassBaseConstructor callBaseCtor:
+                {
+                    if (callBaseCtor.ConstructorHandle.IsNil)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized base constructor call for '{callBaseCtor.BaseRegistryClassName}' - missing ctor token");
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+
+                    if (callBaseCtor.HasScopesParameter)
+                    {
+                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                    }
+
+                    int jsParamCount = callBaseCtor.MaxParamCount;
+                    int argsToPass = Math.Min(callBaseCtor.Arguments.Count, jsParamCount);
+                    for (int i = 0; i < argsToPass; i++)
+                    {
+                        EmitLoadTemp(callBaseCtor.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(callBaseCtor.ConstructorHandle);
+                    break;
+                }
+
+            case LIRCallUserClassBaseInstanceMethod callBaseMethod:
+                {
+                    if (callBaseMethod.MethodHandle.IsNil)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized base method call for '{callBaseMethod.BaseRegistryClassName}.{callBaseMethod.MethodName}' - missing method token");
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+
+                    if (callBaseMethod.HasScopesParameter)
+                    {
+                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                    }
+
+                    int jsParamCount = callBaseMethod.MaxParamCount;
+                    int argsToPass = Math.Min(callBaseMethod.Arguments.Count, jsParamCount);
+                    for (int i = 0; i < argsToPass; i++)
+                    {
+                        EmitLoadTemp(callBaseMethod.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(callBaseMethod.MethodHandle);
                     break;
                 }
 

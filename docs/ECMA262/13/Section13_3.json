@@ -262,6 +262,33 @@
           "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js"
         ],
         "notes": "Supports the callable form (no new) for global (non-shadowed) String/Number/Boolean. Semantics match JS: no-arg returns default (\"\" / +0 / false); extra arguments are evaluated for side effects but ignored. Conversions are implemented via JavaScriptRuntime.TypeUtilities (ToString/ToNumber/ToBoolean); Number(undefined) yields NaN (undefined represented as CLR null)."
+      },
+      {
+        "clause": "13.3.7",
+        "feature": "super(...) calls base constructor in derived constructors",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-super-keyword",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
+        ]
+      },
+      {
+        "clause": "13.3.7",
+        "feature": "super.m(...) base method calls",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-super-keyword",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+        ]
+      },
+      {
+        "clause": "13.3.7",
+        "feature": "Using this before super throws ReferenceError in derived constructors",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-super-keyword",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js"
+        ]
       }
     ]
   }

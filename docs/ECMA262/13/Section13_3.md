@@ -64,3 +64,11 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | Primitive conversion callables: String(x), Number(x), Boolean(x) | Supported | [`PrimitiveConversion_String_Callable.js`](../../../Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_String_Callable.js)<br>[`PrimitiveConversion_Number_Callable.js`](../../../Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js)<br>[`PrimitiveConversion_Boolean_Callable.js`](../../../Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js) | Supports the callable form (no new) for global (non-shadowed) String/Number/Boolean. Semantics match JS: no-arg returns default ("" / +0 / false); extra arguments are evaluated for side effects but ignored. Conversions are implemented via JavaScriptRuntime.TypeUtilities (ToString/ToNumber/ToBoolean); Number(undefined) yields NaN (undefined represented as CLR null). |
 
+### 13.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-super-keyword))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| super.m(...) base method calls | Supported | [`Classes_Inheritance_SuperMethodCall.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js) |  |
+| super(...) calls base constructor in derived constructors | Supported | [`Classes_Inheritance_SuperConstructor_Args.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js) |  |
+| Using this before super throws ReferenceError in derived constructors | Supported | [`Classes_Inheritance_ThisBeforeSuper_Throws.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js) |  |
+

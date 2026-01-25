@@ -256,6 +256,55 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
+            // If this is a derived class (extends), ensure it can pass scopes to the base class constructor
+            // when the base class requires it.
+            EntityHandle baseTypeHandle = _bcl.ObjectType;
+            if (cdecl.SuperClass is Identifier superId)
+            {
+                var baseScope = FindClassScope(classScope, superId.Name);
+                if (baseScope != null)
+                {
+                    // Resolve CLR base type.
+                    var baseRegistryName = GetRegistryClassName(baseScope);
+                    if (_classRegistry.TryGet(baseRegistryName, out var baseTypeDef) && !baseTypeDef.IsNil)
+                    {
+                        baseTypeHandle = baseTypeDef;
+                    }
+
+                    // Propagate base scope requirements.
+                    bool baseNeedsParentScopes = baseScope.ReferencesParentScopeVariables;
+                    if (!baseNeedsParentScopes && baseScope.AstNode is ClassDeclaration baseDecl)
+                    {
+                        var baseCtor = baseDecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+                            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                        if (baseCtor?.Value is FunctionExpression baseCtorExpr)
+                        {
+                            baseNeedsParentScopes = ShouldCreateMethodScopeInstance(baseCtorExpr, baseScope);
+                        }
+
+                        if (!baseNeedsParentScopes)
+                        {
+                            foreach (var method in baseDecl.Body.Body
+                                .OfType<Acornima.Ast.MethodDefinition>()
+                                .Where(m => m.Value is FunctionExpression && (m.Key as Identifier)?.Name != "constructor"))
+                            {
+                                var funcExpr = (FunctionExpression)method.Value;
+                                if (ShouldCreateMethodScopeInstance(funcExpr, baseScope))
+                                {
+                                    baseNeedsParentScopes = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (baseNeedsParentScopes)
+                    {
+                        classNeedsParentScopes = true;
+                    }
+                }
+            }
+
             // Fields (instance + static)
             var declaredFieldNames = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
 
@@ -557,7 +606,7 @@ namespace Js2IL.Services.ILGenerators
             var ctorMethodDef = (MethodDefinitionHandle)ctorToken;
 
             // Declare the TypeDef now. Use the preallocated ctor MethodDef as the MethodList pointer.
-            var typeHandle = tb.AddTypeDefinition(typeAttrs, _bcl.ObjectType, firstFieldOverride: null, firstMethodOverride: ctorMethodDef);
+            var typeHandle = tb.AddTypeDefinition(typeAttrs, baseTypeHandle, firstFieldOverride: null, firstMethodOverride: ctorMethodDef);
             if (!parentType.IsNil)
             {
                 _nestedTypeRelationshipRegistry.Add(typeHandle, parentType);
@@ -577,7 +626,7 @@ namespace Js2IL.Services.ILGenerators
                 ? CountRequiredParameters(ctorFuncExpr.Params)
                 : 0;
             var ctorMinTotalParams = classNeedsParentScopes ? ctorMinUserParams + 1 : ctorMinUserParams;
-            _classRegistry.RegisterConstructor(registryClassName, ctorMethodDef, ctorSig, ctorMinTotalParams, ctorTotalParamCount);
+            _classRegistry.RegisterConstructor(registryClassName, ctorMethodDef, ctorSig, classNeedsParentScopes, ctorMinTotalParams, ctorTotalParamCount);
 
             // Register instance methods (tokens are preallocated in Phase 1, bodies emitted in Phase 2).
             foreach (var member in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>().Where(m => m.Key is Identifier))

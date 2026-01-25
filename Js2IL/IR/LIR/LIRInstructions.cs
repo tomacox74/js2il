@@ -186,6 +186,31 @@ public record LIRCallUserClassInstanceMethod(
     TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls the base class constructor from a derived class constructor (i.e., JavaScript <c>super(...)</c>).
+/// The receiver is implicit 'this'.
+/// Emits: ldarg.0, [optional scopes], [args], call instance void &lt;Base&gt;::.ctor(...)
+/// </summary>
+public record LIRCallUserClassBaseConstructor(
+    string BaseRegistryClassName,
+    MethodDefinitionHandle ConstructorHandle,
+    bool HasScopesParameter,
+    int MaxParamCount,
+    IReadOnlyList<TempVariable> Arguments) : LIRInstruction;
+
+/// <summary>
+/// Calls a base class instance method directly on the implicit 'this' (i.e., JavaScript <c>super.m(...)</c>).
+/// Uses non-virtual dispatch (IL <c>call</c>) to ensure the base method is invoked.
+/// </summary>
+public record LIRCallUserClassBaseInstanceMethod(
+    string BaseRegistryClassName,
+    string MethodName,
+    MethodDefinitionHandle MethodHandle,
+    bool HasScopesParameter,
+    int MaxParamCount,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Calls a declared callable directly via its MethodDefinitionHandle (resolved via CallableRegistry).
 /// This is intended for cases where runtime dispatch isn't appropriate (e.g., user-defined class static method calls).
 /// The argument list must match the target method signature.

@@ -75,6 +75,13 @@ sealed record MethodDescriptor
     /// When true, the IL emitter will prepend a base System.Object::.ctor() call.
     /// </summary>
     public bool IsConstructor { get; set; } = false;
+
+    /// <summary>
+    /// True if this constructor belongs to a derived class (i.e., the class has an extends clause).
+    /// When true, the IL emitter must NOT prepend System.Object::.ctor(); the base constructor
+    /// should be invoked via an explicit or synthesized <c>super(...)</c> call.
+    /// </summary>
+    public bool IsDerivedConstructor { get; set; } = false;
 }
 
 /// <summary>
@@ -163,7 +170,8 @@ internal sealed class JsMethodCompiler
             hasScopesParameter: needsScopes,
             scopesFieldHandle: null,
             returnsVoid: true,
-            callableKindOverride: ScopesCallableKind.Constructor);
+            callableKindOverride: ScopesCallableKind.Constructor,
+            isDerivedConstructor: classDecl.SuperClass != null);
 
         if (irBody != null)
         {
@@ -288,7 +296,8 @@ internal sealed class JsMethodCompiler
         bool hasScopesParameter,
         FieldDefinitionHandle? scopesFieldHandle,
         bool returnsVoid = false,
-        ScopesCallableKind? callableKindOverride = null)
+        ScopesCallableKind? callableKindOverride = null,
+        bool isDerivedConstructor = false)
     {
         // Extract params/body from supported node shapes
         NodeList<Node>? functionParams = null;
@@ -330,7 +339,7 @@ internal sealed class JsMethodCompiler
 
         var callableKind = callableKindOverride ?? inferredKind;
 
-        if (!TryLowerASTToLIR(bodyNode, scope, callableKind, hasScopesParameter, out var lirMethod, callableId: callable))
+        if (!TryLowerASTToLIR(bodyNode, scope, callableKind, hasScopesParameter, out var lirMethod, callableId: callable, isDerivedConstructor: isDerivedConstructor))
         {
             return null;
         }
@@ -365,7 +374,8 @@ internal sealed class JsMethodCompiler
                             : null)
                         ?? typeof(object))),
             ScopesFieldHandle = scopesFieldHandle,
-            IsConstructor = callableKind == ScopesCallableKind.Constructor
+            IsConstructor = callableKind == ScopesCallableKind.Constructor,
+            IsDerivedConstructor = callableKind == ScopesCallableKind.Constructor && isDerivedConstructor
         };
 
         return CreateILCompiler().TryCompileCallableBody(callable, expectedMethodDef, methodDescriptor, lirMethod!, methodBodyStreamEncoder);
@@ -530,6 +540,7 @@ internal sealed class JsMethodCompiler
         methodDescriptor.IsStatic = false;
         methodDescriptor.ReturnsVoid = true;
         methodDescriptor.IsConstructor = true;
+        methodDescriptor.IsDerivedConstructor = constructorScope.Parent?.AstNode is ClassDeclaration cd && cd.SuperClass != null;
 
         // Note: This won't produce valid constructor IL yet because we need:
         // 1. Base constructor call (ldarg.0 + call System.Object::.ctor)
@@ -628,7 +639,7 @@ internal sealed class JsMethodCompiler
         });
     }
 
-    private bool TryLowerASTToLIR(Node node, Scope scope, ScopesCallableKind callableKind, bool hasScopesParameter, out MethodBodyIR? methodBody, CallableId? callableId = null)
+    private bool TryLowerASTToLIR(Node node, Scope scope, ScopesCallableKind callableKind, bool hasScopesParameter, out MethodBodyIR? methodBody, CallableId? callableId = null, bool isDerivedConstructor = false)
     {
         methodBody = null;
 
@@ -657,7 +668,7 @@ internal sealed class JsMethodCompiler
         }
 
         var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
-        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable, isGenerator: isGeneratorCallable, callableId: callableId))
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable, isGenerator: isGeneratorCallable, callableId: callableId, isDerivedConstructor: isDerivedConstructor))
         {
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;

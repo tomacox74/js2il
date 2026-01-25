@@ -297,6 +297,44 @@
         "testScripts": [
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js"
         ]
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Class inheritance via extends (class B extends A)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+        ],
+        "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Derived constructors: super(...) base constructor call",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
+        ]
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Derived constructors: this before super throws ReferenceError",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js"
+        ]
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "super.m(...) base method call",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+        ]
       }
     ]
   }

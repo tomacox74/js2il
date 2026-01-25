@@ -37,15 +37,48 @@ public class JavaScriptAstValidator : IAstValidator
         // Validate generator/yield usage - yield is only valid inside generator functions.
         ValidateGenerators(ast, result);
         
-        // Track contexts where 'this' is supported.
+        // Track contexts where 'this' and 'super' are supported.
         var contextStack = new Stack<ValidationContext>();
-        contextStack.Push(new ValidationContext { AllowsThis = false, ScopeOwner = null, MethodDefinitionFunctionValue = null });
+        contextStack.Push(new ValidationContext
+        {
+            AllowsThis = false,
+            AllowsSuper = false,
+            ScopeOwner = null,
+            MethodDefinitionFunctionValue = null,
+            InDerivedClass = false
+        });
         
         // Visit all nodes in the AST
         var walker = new AstWalker();
         walker.VisitWithContext(ast, node =>
         {
             var currentContext = contextStack.Peek();
+
+            // Track when we're inside a derived class (class with an extends clause).
+            if (node is ClassDeclaration cd)
+            {
+                contextStack.Push(new ValidationContext
+                {
+                    AllowsThis = currentContext.AllowsThis,
+                    AllowsSuper = currentContext.AllowsSuper,
+                    ScopeOwner = cd,
+                    MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
+                    InObjectPattern = currentContext.InObjectPattern,
+                    InDerivedClass = cd.SuperClass != null
+                });
+            }
+            else if (node is ClassExpression ce)
+            {
+                contextStack.Push(new ValidationContext
+                {
+                    AllowsThis = currentContext.AllowsThis,
+                    AllowsSuper = currentContext.AllowsSuper,
+                    ScopeOwner = ce,
+                    MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
+                    InObjectPattern = currentContext.InObjectPattern,
+                    InDerivedClass = ce.SuperClass != null
+                });
+            }
 
             // Track when we're inside an object binding pattern (destructuring).
             // We currently support object patterns but do not support computed keys inside them.
@@ -54,9 +87,11 @@ public class JavaScriptAstValidator : IAstValidator
                 contextStack.Push(new ValidationContext
                 {
                     AllowsThis = currentContext.AllowsThis,
+                    AllowsSuper = currentContext.AllowsSuper,
                     ScopeOwner = node,
                     MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
-                    InObjectPattern = true
+                    InObjectPattern = true,
+                    InDerivedClass = currentContext.InDerivedClass
                 });
             }
             
@@ -66,9 +101,12 @@ public class JavaScriptAstValidator : IAstValidator
                 contextStack.Push(new ValidationContext
                 {
                     AllowsThis = true,
+                    // Allow super in class methods/constructors only when we're inside a derived class.
+                    AllowsSuper = currentContext.InDerivedClass,
                     ScopeOwner = methodDef,
                     // Track the function expression that is the method body so we don't treat it as nested
-                    MethodDefinitionFunctionValue = methodDef.Value
+                    MethodDefinitionFunctionValue = methodDef.Value,
+                    InDerivedClass = currentContext.InDerivedClass
                 });
             }
             // Push new context for functions (exclude the method body itself).
@@ -78,8 +116,11 @@ public class JavaScriptAstValidator : IAstValidator
                 contextStack.Push(new ValidationContext
                 {
                     AllowsThis = node is not ArrowFunctionExpression,
+                    AllowsSuper = false,
                     ScopeOwner = node,
                     MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue
+                    ,
+                    InDerivedClass = currentContext.InDerivedClass
                 });
             }
             
@@ -137,8 +178,12 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.Super:
-                    result.Errors.Add($"The 'super' keyword is not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // Support super in derived class methods/constructors.
+                    if (!currentContext.AllowsSuper)
+                    {
+                        result.Errors.Add($"The 'super' keyword is not yet supported in this context (line {node.Location.Start.Line})");
+                        result.IsValid = false;
+                    }
                     break;
 
                 case NodeType.ThisExpression:
@@ -566,10 +611,12 @@ public class JavaScriptAstValidator : IAstValidator
     private class ValidationContext
     {
         public bool AllowsThis { get; set; }
+        public bool AllowsSuper { get; set; }
         public Node? ScopeOwner { get; set; }
         // Track the FunctionExpression that is the direct body of a MethodDefinition
         // so we don't incorrectly treat it as a nested function
         public Node? MethodDefinitionFunctionValue { get; set; }
         public bool InObjectPattern { get; set; }
+        public bool InDerivedClass { get; set; }
     }
 }
