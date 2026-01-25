@@ -6,7 +6,7 @@
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 15.7 | Class Definitions | Supported | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions) |
+| 15.7 | Class Definitions | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions) |
 
 ## Subclauses
 
@@ -21,13 +21,13 @@
 | 15.7.7 | Static Semantics: AllPrivateIdentifiersValid | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-allprivateidentifiersvalid) |
 | 15.7.8 | Static Semantics: PrivateBoundIdentifiers | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-privateboundidentifiers) |
 | 15.7.9 | Static Semantics: ContainsArguments | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-containsarguments) |
-| 15.7.10 | Runtime Semantics: ClassFieldDefinitionEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation) |
+| 15.7.10 | Runtime Semantics: ClassFieldDefinitionEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation) |
 | 15.7.11 | Runtime Semantics: ClassStaticBlockDefinitionEvaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classstaticblockdefinitionevaluation) |
 | 15.7.12 | Runtime Semantics: EvaluateClassStaticBlockBody | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody) |
-| 15.7.13 | Runtime Semantics: ClassElementEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation) |
-| 15.7.14 | Runtime Semantics: ClassDefinitionEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation) |
-| 15.7.15 | Runtime Semantics: BindingClassDeclarationEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-bindingclassdeclarationevaluation) |
-| 15.7.16 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions-runtime-semantics-evaluation) |
+| 15.7.13 | Runtime Semantics: ClassElementEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation) |
+| 15.7.14 | Runtime Semantics: ClassDefinitionEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation) |
+| 15.7.15 | Runtime Semantics: BindingClassDeclarationEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-bindingclassdeclarationevaluation) |
+| 15.7.16 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions-runtime-semantics-evaluation) |
 
 ## Support
 

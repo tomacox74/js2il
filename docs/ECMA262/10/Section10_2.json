@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "10.2",
   "title": "ECMAScript Function Objects",
-  "status": "Untracked",
+  "status": "Partially Supported",
   "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-function-objects",
   "parent": {
     "clause": "10"
@@ -12,98 +12,149 @@
     {
       "clause": "10.2.1",
       "title": "[[Call]] ( thisArgument , argumentsList )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist"
     },
     {
       "clause": "10.2.1.1",
       "title": "PrepareForOrdinaryCall ( F , newTarget )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-prepareforordinarycall"
     },
     {
       "clause": "10.2.1.2",
       "title": "OrdinaryCallBindThis ( F , calleeContext , thisArgument )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinarycallbindthis"
     },
     {
       "clause": "10.2.1.3",
       "title": "Runtime Semantics: EvaluateBody",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluatebody"
     },
     {
       "clause": "10.2.1.4",
       "title": "OrdinaryCallEvaluateBody ( F , argumentsList )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinarycallevaluatebody"
     },
     {
       "clause": "10.2.2",
       "title": "[[Construct]] ( argumentsList , newTarget )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-function-objects-construct-argumentslist-newtarget"
     },
     {
       "clause": "10.2.3",
       "title": "OrdinaryFunctionCreate ( functionPrototype , sourceText , ParameterList , Body , thisMode , env , privateEnv )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinaryfunctioncreate"
     },
     {
       "clause": "10.2.4",
       "title": "AddRestrictedFunctionProperties ( F , realm )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-addrestrictedfunctionproperties"
     },
     {
       "clause": "10.2.4.1",
       "title": "%ThrowTypeError% ( )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-%throwtypeerror%"
     },
     {
       "clause": "10.2.5",
       "title": "MakeConstructor ( F [ , writablePrototype [ , prototype ] ] )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-makeconstructor"
     },
     {
       "clause": "10.2.6",
       "title": "MakeClassConstructor ( F )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-makeclassconstructor"
     },
     {
       "clause": "10.2.7",
       "title": "MakeMethod ( F , homeObject )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-makemethod"
     },
     {
       "clause": "10.2.8",
       "title": "DefineMethodProperty ( homeObject , key , closure , enumerable )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-definemethodproperty"
     },
     {
       "clause": "10.2.9",
       "title": "SetFunctionName ( F , name [ , prefix ] )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-setfunctionname"
     },
     {
       "clause": "10.2.10",
       "title": "SetFunctionLength ( F , length )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-setfunctionlength"
     },
     {
       "clause": "10.2.11",
       "title": "FunctionDeclarationInstantiation ( func , argumentsList )",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-functiondeclarationinstantiation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "10.2.1",
+        "feature": "Calling functions with parameters and return values",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js",
+          "Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionWithMultipleParameters.js",
+          "Js2IL.Tests/Function/JavaScript/Function_ReturnsStaticValueAndLogs.js"
+        ],
+        "notes": "Supports basic calling convention and return semantics for supported language subset. Full argument object semantics and strict-mode differences are not implemented."
+      },
+      {
+        "clause": "10.2.1",
+        "feature": "this binding for methods and non-arrow functions",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-prepareforordinarycall",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ReturnsThis_IsSelf_Log.js"
+        ],
+        "notes": "Supports this binding for object-literal and class method calls. Arrow-function lexical this and strict-mode edge cases may differ from spec."
+      },
+      {
+        "clause": "10.2.2",
+        "feature": "Constructing with class constructors (new) and constructor return override",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-function-objects-construct-argumentslist-newtarget",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js",
+          "Js2IL.Tests/CommonJS/JavaScript/CommonJS_Export_ClassWithConstructor.js"
+        ],
+        "notes": "Supports constructor calls for supported class subset. newTarget/super/inheritance and many exotic construction behaviors are not implemented."
+      },
+      {
+        "clause": "10.2.11",
+        "feature": "Closures and function declaration instantiation",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-functiondeclarationinstantiation",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_ClosureMutatesOuterVariable.js",
+          "Js2IL.Tests/Function/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js",
+          "Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js"
+        ],
+        "notes": "Closure semantics are implemented via scope-as-class instances and parent scope capture. Arguments object aliasing and several environment-record details are not implemented."
+      }
+    ]
+  }
 }
