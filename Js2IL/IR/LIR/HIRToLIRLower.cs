@@ -17,6 +17,8 @@ public sealed class HIRToLIRLowerer
     private readonly Js2IL.Services.ClassRegistry? _classRegistry;
     private readonly CallableKind _callableKind;
     private readonly bool _isAsync;
+    private readonly bool _isDerivedConstructor;
+    private bool _superConstructorCalled;
 
     private int _tempVarCounter = 0;
     private int _labelCounter = 0;
@@ -72,7 +74,7 @@ public sealed class HIRToLIRLowerer
 
     private readonly bool _isGenerator;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, bool isAsync = false, bool isGenerator = false)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
@@ -81,6 +83,7 @@ public sealed class HIRToLIRLowerer
         _callableKind = callableKind;
         _isAsync = isAsync;
         _isGenerator = isGenerator;
+        _isDerivedConstructor = isDerivedConstructor;
         InitializeParameters(parameters);
     }
 
@@ -548,7 +551,7 @@ public sealed class HIRToLIRLowerer
         return found;
     }
 
-    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null)
+    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null, bool isDerivedConstructor = false)
     {
         lirMethod = null;
 
@@ -573,7 +576,7 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, isAsync, isGenerator);
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, isAsync, isGenerator, isDerivedConstructor);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)
@@ -683,6 +686,62 @@ public sealed class HIRToLIRLowerer
         }
 
         return false;
+    }
+
+    private bool TryGetEnclosingBaseClassRegistryName(out string? baseRegistryClassName)
+    {
+        baseRegistryClassName = null;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        var current = _scope;
+        while (current != null && current.Kind != ScopeKind.Class)
+        {
+            current = current.Parent;
+        }
+
+        if (current == null)
+        {
+            return false;
+        }
+
+        var superExpr = current.AstNode switch
+        {
+            ClassDeclaration cd => cd.SuperClass,
+            ClassExpression ce => ce.SuperClass,
+            _ => null
+        };
+
+        if (superExpr is not Identifier superId)
+        {
+            return false;
+        }
+
+        var superSymbol = current.FindSymbol(superId.Name);
+        if (superSymbol.BindingInfo.DeclarationNode is not ClassDeclaration baseDecl || baseDecl.Id == null)
+        {
+            return false;
+        }
+
+        var declaringScope = FindDeclaringScope(superSymbol.BindingInfo);
+        if (declaringScope == null)
+        {
+            return false;
+        }
+
+        var baseClassScope = declaringScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Class && string.Equals(s.Name, baseDecl.Id.Name, StringComparison.Ordinal));
+        if (baseClassScope == null)
+        {
+            return false;
+        }
+
+        var ns = baseClassScope.DotNetNamespace ?? "Classes";
+        var name = baseClassScope.DotNetTypeName ?? baseClassScope.Name;
+        baseRegistryClassName = $"{ns}.{name}";
+        return true;
     }
 
     /// <summary>
@@ -863,9 +922,28 @@ public sealed class HIRToLIRLowerer
 
     private bool TryBuildScopesArrayForClassConstructor(Scope classScope, TempVariable resultTemp)
     {
-        if (classScope.ReferencesParentScopeVariables)
+        // If the class constructor ABI requires a scopes array, prefer building the full
+        // callee layout so derived classes can pass through the scope chain needed by base classes.
+        // (e.g., class Derived extends Base where Base captures outer variables).
+        if (_environmentLayoutBuilder != null)
         {
-            return TryBuildScopesArrayFromLayout(classScope, CallableKind.Constructor, resultTemp);
+            try
+            {
+                var calleeLayout = _environmentLayoutBuilder.Build(classScope, CallableKind.Constructor);
+                // Only accept the callee layout when it actually includes non-global parent slots.
+                // Some class scopes don't directly reference parent vars, but still need a scopes
+                // array due to base-class captures; in that case, the class layout can be just
+                // [global], which is insufficient.
+                if (calleeLayout.ScopeChain.Slots.Count > 1
+                    && TryBuildScopesArrayFromLayout(classScope, CallableKind.Constructor, resultTemp))
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                // Fall through to the conservative fallback.
+            }
         }
 
         // Preserve ABI expectation that scopes[0] is the global/module scope when available.
@@ -894,6 +972,24 @@ public sealed class HIRToLIRLowerer
                 $"HIR->LIR: failed mapping global scope '{moduleName}' for class ctor scopes; calleeClass='{classScope.GetQualifiedName()}', caller='{caller}', callerScopesSource={callerScopesSource}, callerChain=[{callerChain}]"
             );
             return false;
+        }
+
+        // If the caller has a leaf scope instance (e.g., we're inside a function and the class is
+        // nested), include it as scopes[1]. This is required when base class methods access
+        // captured variables via the stored _scopes array.
+        var declaringScope = classScope.Parent;
+        var declaringLeafScopeName = declaringScope != null
+            ? ScopeNaming.GetRegistryScopeName(declaringScope)
+            : moduleName;
+
+        if (!string.Equals(declaringLeafScopeName, moduleName, StringComparison.Ordinal))
+        {
+            var leafSlot = new ScopeSlot(Index: 1, ScopeName: declaringLeafScopeName, ScopeId: new ScopeId(declaringLeafScopeName));
+            if (TryMapScopeSlotToSource(leafSlot, out var leafSlotSource))
+            {
+                _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource, leafSlotSource }, resultTemp));
+                return true;
+            }
         }
 
         _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
@@ -2647,10 +2743,29 @@ public sealed class HIRToLIRLowerer
                     return false;
                 }
 
+                // Derived class constructors must call super() before accessing `this`.
+                if (_callableKind == CallableKind.Constructor && _isDerivedConstructor && !_superConstructorCalled)
+                {
+                    var errTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRNewBuiltInError("ReferenceError", Message: null, errTemp));
+                    DefineTempStorage(errTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    _methodBodyIR.Instructions.Add(new LIRThrow(errTemp));
+
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+
                 resultTempVar = CreateTempVariable();
                 _methodBodyIR.Instructions.Add(new LIRLoadThis(resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
+
+            case HIRSuperExpression:
+                // `super` is only meaningful as the callee of a call expression (super(...))
+                // or as the receiver in property access (super.m).
+                return false;
 
             case HIRLiteralExpression literal:
                 // All literals allocate a new SSA value.
@@ -3435,6 +3550,14 @@ public sealed class HIRToLIRLowerer
         var registryClassName = $"{(classScope.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
 
         bool needsScopes = DoesClassNeedParentScopes(classDecl, classScope);
+
+        // If the registered constructor ABI includes a leading scopes array (e.g., because the
+        // class or its base class needs parent scopes), ensure call-sites pass it.
+        if (_classRegistry != null
+            && _classRegistry.TryGetConstructor(registryClassName, out _, out var ctorHasScopesParam, out _, out _))
+        {
+            needsScopes = ctorHasScopesParam;
+        }
         TempVariable? scopesTemp = null;
         if (needsScopes)
         {
@@ -3484,6 +3607,15 @@ public sealed class HIRToLIRLowerer
                 }
             }
         }
+        else if (_classRegistry != null
+            && _classRegistry.TryGetConstructor(registryClassName, out _, out _, out var ctorMinArgs, out var ctorMaxArgs))
+        {
+            // For synthetic/implicit constructors there is no AST parameter list.
+            // Use the registered constructor signature to decide how many args are accepted/padded.
+            minArgs = ctorMinArgs;
+            maxArgs = ctorMaxArgs;
+            jsParamCount = ctorMaxArgs;
+        }
 
         // Build a stable CallableId for the constructor so LIR remains AST-free.
         // This mirrors CallableDiscovery.DiscoverClass.
@@ -3526,6 +3658,75 @@ public sealed class HIRToLIRLowerer
     private bool TryLowerCallExpression(HIRCallExpression callExpr, out TempVariable resultTempVar)
     {
         resultTempVar = CreateTempVariable();
+
+        // Case 0: super(...) call in a derived class constructor.
+        if (callExpr.Callee is HIRSuperExpression)
+        {
+            if (_callableKind != CallableKind.Constructor || !_isDerivedConstructor)
+            {
+                return false;
+            }
+
+            if (_superConstructorCalled)
+            {
+                return false;
+            }
+
+            if (_classRegistry == null)
+            {
+                return false;
+            }
+
+            if (!TryGetEnclosingBaseClassRegistryName(out var baseRegistryClassName) || baseRegistryClassName == null)
+            {
+                return false;
+            }
+
+            if (!_classRegistry.TryGetConstructor(baseRegistryClassName, out var baseCtorHandle, out var baseCtorHasScopesParam, out var _, out var baseCtorMaxParamCount))
+            {
+                return false;
+            }
+
+            var callArgs = new List<TempVariable>();
+
+            // Lower JS arguments (extras are evaluated for side effects, but ignored).
+            for (int i = 0; i < callExpr.Arguments.Length; i++)
+            {
+                if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
+                {
+                    return false;
+                }
+
+                if (i < baseCtorMaxParamCount)
+                {
+                    callArgs.Add(EnsureObject(argTemp));
+                }
+            }
+
+            // Pad missing args with undefined (null).
+            while (callArgs.Count < baseCtorMaxParamCount)
+            {
+                var undefTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefTemp));
+                DefineTempStorage(undefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                callArgs.Add(undefTemp);
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCallUserClassBaseConstructor(
+                baseRegistryClassName,
+                baseCtorHandle,
+                baseCtorHasScopesParam,
+                baseCtorMaxParamCount,
+                callArgs));
+
+            // After super() the constructor is considered initialized.
+            _superConstructorCalled = true;
+
+            // In JS, super(...) returns the derived `this` value.
+            _methodBodyIR.Instructions.Add(new LIRLoadThis(resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
 
         // Case 1: User-defined function call (callee is a variable referencing a function)
         if (callExpr.Callee is HIRVariableExpression funcVarExpr)
@@ -3985,6 +4186,53 @@ public sealed class HIRToLIRLowerer
         if (callExpr.Callee is not HIRPropertyAccessExpression calleePropAccess)
         {
             return false;
+        }
+
+        // Case 2.0: super.m(...) call in a derived class method.
+        if (_classRegistry != null
+            && calleePropAccess.Object is HIRSuperExpression
+            && TryGetEnclosingBaseClassRegistryName(out var baseClass)
+            && baseClass != null
+            && _classRegistry.TryGetMethod(baseClass, calleePropAccess.PropertyName, out var baseMethodHandle, out _, out var baseReturnClrType, out var baseHasScopesParam, out _, out var baseMaxParamCount))
+        {
+            var argTemps = new List<TempVariable>();
+            foreach (var argExpr in callExpr.Arguments)
+            {
+                if (!TryLowerExpression(argExpr, out var argTempVar))
+                {
+                    return false;
+                }
+
+                argTemps.Add(EnsureObject(argTempVar));
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCallUserClassBaseInstanceMethod(
+                baseClass,
+                calleePropAccess.PropertyName,
+                baseMethodHandle,
+                baseHasScopesParam,
+                baseMaxParamCount,
+                argTemps,
+                resultTempVar));
+
+            if (baseReturnClrType == typeof(double))
+            {
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            }
+            else if (baseReturnClrType == typeof(bool))
+            {
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            }
+            else if (baseReturnClrType == typeof(string))
+            {
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            }
+            else
+            {
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
+
+            return true;
         }
 
         // Case 2b: Intrinsic static method call (e.g., Array.isArray, Math.abs, JSON.parse)

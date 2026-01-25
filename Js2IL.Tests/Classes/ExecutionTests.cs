@@ -161,5 +161,14 @@ namespace Js2IL.Tests.Classes
             var testName = nameof(Classes_Method_DefaultReturnUndefined);
             return ExecutionTest(testName);
         }
+
+        // #293/#294: inheritance + super semantics
+        [Fact] public Task Classes_Inheritance_SuperConstructor_Args() { var testName = nameof(Classes_Inheritance_SuperConstructor_Args); return ExecutionTest(testName); }
+        [Fact] public Task Classes_Inheritance_ThisBeforeSuper_Throws() { var testName = nameof(Classes_Inheritance_ThisBeforeSuper_Throws); return ExecutionTest(testName); }
+        [Fact] public Task Classes_Inheritance_SuperMethodCall() { var testName = nameof(Classes_Inheritance_SuperMethodCall); return ExecutionTest(testName); }
+
+        // Additional coverage: captured scopes and nested derived class
+        [Fact] public Task Classes_Inheritance_SuperCapturedScopeVar() { var testName = nameof(Classes_Inheritance_SuperCapturedScopeVar); return ExecutionTest(testName); }
+        [Fact] public Task Classes_Inheritance_NestedClassExtendsGlobal() { var testName = nameof(Classes_Inheritance_NestedClassExtendsGlobal); return ExecutionTest(testName); }
     }
 }

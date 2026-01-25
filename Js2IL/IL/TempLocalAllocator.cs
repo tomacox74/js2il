@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Js2IL.IR;
 
@@ -34,7 +35,7 @@ internal readonly record struct TempLocalAllocation(int[] TempToSlot, IReadOnlyL
 /// </summary>
 internal static class TempLocalAllocator
 {
-    private readonly record struct StorageKey(ValueStorageKind Kind, Type? ClrType);
+    private readonly record struct StorageKey(ValueStorageKind Kind, Type? ClrType, EntityHandle TypeHandle);
 
     public static TempLocalAllocation Allocate(MethodBodyIR methodBody, bool[]? shouldMaterializeTemp = null)
     {
@@ -89,7 +90,7 @@ internal static class TempLocalAllocator
                 }
 
                 var usedStorage = GetTempStorage(methodBody, used);
-                var key = new StorageKey(usedStorage.Kind, usedStorage.ClrType);
+                var key = new StorageKey(usedStorage.Kind, usedStorage.ClrType, usedStorage.TypeHandle);
                 if (!freeByKey.TryGetValue(key, out var stack))
                 {
                     stack = new Stack<int>();
@@ -110,7 +111,7 @@ internal static class TempLocalAllocator
                 !(defined.Index < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[defined.Index] >= 0))
             {
                 var storage = GetTempStorage(methodBody, defined);
-                var key = new StorageKey(storage.Kind, storage.ClrType);
+                var key = new StorageKey(storage.Kind, storage.ClrType, storage.TypeHandle);
 
                 int slot;
                 if (freeByKey.TryGetValue(key, out var stack) && stack.Count > 0)
@@ -434,6 +435,20 @@ internal static class TempLocalAllocator
                 foreach (var arg in callUserClass.Arguments)
                 {
                     yield return arg;
+                }
+                break;
+
+            case LIRCallUserClassBaseConstructor callBaseCtor:
+                foreach (var a in callBaseCtor.Arguments)
+                {
+                    yield return a;
+                }
+                break;
+
+            case LIRCallUserClassBaseInstanceMethod callBaseMethod:
+                foreach (var a in callBaseMethod.Arguments)
+                {
+                    yield return a;
                 }
                 break;
             case LIRBuildScopesArray:
@@ -817,6 +832,14 @@ internal static class TempLocalAllocator
             case LIRCallUserClassInstanceMethod callUserClass:
                 defined = callUserClass.Result;
                 return true;
+
+            case LIRCallUserClassBaseInstanceMethod callBaseMethod:
+                defined = callBaseMethod.Result;
+                return true;
+
+            case LIRCallUserClassBaseConstructor:
+                defined = default;
+                return false;
 
             case LIRCreateBoundArrowFunction createArrow:
                 defined = createArrow.Result;

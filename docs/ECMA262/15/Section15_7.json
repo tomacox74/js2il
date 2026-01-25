@@ -5,6 +5,7 @@
   "title": "Class Definitions",
   "status": "Partially Supported",
   "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+  "intro": "JS2IL supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), and public/private instance/static fields with initializers. Limitations: class static blocks are not supported; class getters/setters are rejected; computed method/field names and private methods are rejected.",
   "parent": {
     "clause": "15"
   },
@@ -12,55 +13,55 @@
     {
       "clause": "15.7.1",
       "title": "Static Semantics: Early Errors",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-class-definitions-static-semantics-early-errors"
     },
     {
       "clause": "15.7.2",
       "title": "Static Semantics: ClassElementKind",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementkind"
     },
     {
       "clause": "15.7.3",
       "title": "Static Semantics: ConstructorMethod",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-constructormethod"
     },
     {
       "clause": "15.7.4",
       "title": "Static Semantics: IsStatic",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-isstatic"
     },
     {
       "clause": "15.7.5",
       "title": "Static Semantics: NonConstructorElements",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-nonconstructorelements"
     },
     {
       "clause": "15.7.6",
       "title": "Static Semantics: PrototypePropertyNameList",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-prototypepropertynamelist"
     },
     {
       "clause": "15.7.7",
       "title": "Static Semantics: AllPrivateIdentifiersValid",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-allprivateidentifiersvalid"
     },
     {
       "clause": "15.7.8",
       "title": "Static Semantics: PrivateBoundIdentifiers",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-privateboundidentifiers"
     },
     {
       "clause": "15.7.9",
       "title": "Static Semantics: ContainsArguments",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-containsarguments"
     },
     {
@@ -72,13 +73,13 @@
     {
       "clause": "15.7.11",
       "title": "Runtime Semantics: ClassStaticBlockDefinitionEvaluation",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classstaticblockdefinitionevaluation"
     },
     {
       "clause": "15.7.12",
       "title": "Runtime Semantics: EvaluateClassStaticBlockBody",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody"
     },
     {
@@ -296,6 +297,130 @@
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js"
+        ]
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Class inheritance via extends (class B extends A)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+        ],
+        "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods."
+      },
+      {
+        "clause": "15.7.2",
+        "feature": "Class elements: methods vs. fields vs. constructors",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementkind",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
+        ],
+        "notes": "JS2IL supports constructors, identifier-named methods, and identifier/private-identifier fields. Limitations: class accessors, private methods, computed names, and static blocks are not supported."
+      },
+      {
+        "clause": "15.7.3",
+        "feature": "ConstructorMethod: explicit and implicit constructors",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-constructormethod",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
+        ],
+        "notes": "Supports explicit constructors and synthesizes implicit constructors (including derived implicit super() insertion)."
+      },
+      {
+        "clause": "15.7.4",
+        "feature": "IsStatic: static methods and fields",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-isstatic",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js",
+          "Js2IL.Tests/Async/JavaScript/Async_StaticMethod_SimpleAwait.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_StaticMethod_SimpleYield.js"
+        ]
+      },
+      {
+        "clause": "15.7.7",
+        "feature": "AllPrivateIdentifiersValid: private field access this.#name",
+        "status": "Partially Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-allprivateidentifiersvalid",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
+        ],
+        "notes": "Valid programs using declared private fields compile and run. Invalid private identifier usage is not fully validated per spec; some cases fail during compilation when registry resolution cannot find the field."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Derived constructors: super(...) base constructor call",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
+        ]
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Derived constructors: this before super throws ReferenceError",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js"
+        ]
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "super.m(...) base method call",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+        ]
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Private methods (#m() {})",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/ValidatorTests.cs"
+        ],
+        "notes": "Validator rejects private methods; JS2IL currently supports private fields, but not private methods/accessors."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Computed method names (class C { ['m']() {} })",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/ValidatorTests.cs"
+        ],
+        "notes": "Only identifier-named methods are registered in the ClassRegistry."
+      },
+      {
+        "clause": "15.7.10",
+        "feature": "Computed field names (class C { ['x'] = 1 })",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation",
+        "testScripts": [
+          "Js2IL.Tests/ValidatorTests.cs"
+        ],
+        "notes": "Only identifier/private-identifier field definitions are emitted as .NET fields."
+      },
+      {
+        "clause": "15.7.11",
+        "feature": "Class static blocks (static { ... })",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classstaticblockdefinitionevaluation",
+        "testScripts": [
+          "Js2IL.Tests/ValidatorTests.cs"
         ]
       }
     ]

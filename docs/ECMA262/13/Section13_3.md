@@ -4,63 +4,91 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
+JS2IL supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, and `super` in derived class constructors/methods). However, several spec features in this section are still not implemented (notably optional chaining, dynamic `import()`, tagged templates, and meta properties like `new.target` / `import.meta`).
+
+Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, not a full mechanistic implementation of every spec abstract operation.
+
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 13.3 | Left-Hand-Side Expressions | Supported | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions) |
+| 13.3 | Left-Hand-Side Expressions | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 13.3.1 | Static Semantics | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics) |
-| 13.3.1.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions-static-semantics-early-errors) |
-| 13.3.2 | Property Accessors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-property-accessors) |
-| 13.3.2.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-property-accessors-runtime-semantics-evaluation) |
-| 13.3.3 | EvaluatePropertyAccessWithExpressionKey ( baseValue , expression , strict ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-property-access-with-expression-key) |
-| 13.3.4 | EvaluatePropertyAccessWithIdentifierKey ( baseValue , identifierName , strict ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-property-access-with-identifier-key) |
-| 13.3.5 | The new Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-new-operator) |
-| 13.3.5.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-new-operator-runtime-semantics-evaluation) |
-| 13.3.5.1.1 | EvaluateNew ( constructExpr , arguments ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-evaluatenew) |
-| 13.3.6 | Function Calls | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-function-calls) |
-| 13.3.6.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-function-calls-runtime-semantics-evaluation) |
-| 13.3.6.2 | EvaluateCall ( func , ref , arguments , tailPosition ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-evaluatecall) |
-| 13.3.7 | The super Keyword | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-super-keyword) |
-| 13.3.7.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-super-keyword-runtime-semantics-evaluation) |
-| 13.3.7.2 | GetSuperConstructor ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-getsuperconstructor) |
-| 13.3.7.3 | MakeSuperPropertyReference ( actualThis , propertyKey , strict ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-makesuperpropertyreference) |
-| 13.3.8 | Argument Lists | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-argument-lists) |
-| 13.3.8.1 | Runtime Semantics: ArgumentListEvaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-argumentlistevaluation) |
-| 13.3.9 | Optional Chains | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-optional-chains) |
-| 13.3.9.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-evaluation) |
-| 13.3.9.2 | Runtime Semantics: ChainEvaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-chain-evaluation) |
-| 13.3.10 | Import Calls | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-import-calls) |
-| 13.3.10.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-import-call-runtime-semantics-evaluation) |
-| 13.3.10.2 | EvaluateImportCall ( specifierExpression [ , optionsExpression ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-import-call) |
-| 13.3.10.3 | ContinueDynamicImport ( promiseCapability , moduleCompletion ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ContinueDynamicImport) |
-| 13.3.11 | Tagged Templates | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates) |
-| 13.3.11.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates-runtime-semantics-evaluation) |
-| 13.3.12 | Meta Properties | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties) |
-| 13.3.12.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties-runtime-semantics-evaluation) |
-| 13.3.12.1.1 | HostGetImportMetaProperties ( moduleRecord ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-hostgetimportmetaproperties) |
-| 13.3.12.1.2 | HostFinalizeImportMeta ( importMeta , moduleRecord ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-hostfinalizeimportmeta) |
+| 13.3.1 | Static Semantics | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics) |
+| 13.3.1.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions-static-semantics-early-errors) |
+| 13.3.2 | Property Accessors | Supported | [tc39.es](https://tc39.es/ecma262/#sec-property-accessors) |
+| 13.3.2.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-property-accessors-runtime-semantics-evaluation) |
+| 13.3.3 | EvaluatePropertyAccessWithExpressionKey ( baseValue , expression , strict ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-property-access-with-expression-key) |
+| 13.3.4 | EvaluatePropertyAccessWithIdentifierKey ( baseValue , identifierName , strict ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-property-access-with-identifier-key) |
+| 13.3.5 | The new Operator | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-new-operator) |
+| 13.3.5.1 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-new-operator-runtime-semantics-evaluation) |
+| 13.3.5.1.1 | EvaluateNew ( constructExpr , arguments ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluatenew) |
+| 13.3.6 | Function Calls | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-calls) |
+| 13.3.6.1 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-calls-runtime-semantics-evaluation) |
+| 13.3.6.2 | EvaluateCall ( func , ref , arguments , tailPosition ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluatecall) |
+| 13.3.7 | The super Keyword | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-super-keyword) |
+| 13.3.7.1 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-super-keyword-runtime-semantics-evaluation) |
+| 13.3.7.2 | GetSuperConstructor ( ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-getsuperconstructor) |
+| 13.3.7.3 | MakeSuperPropertyReference ( actualThis , propertyKey , strict ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-makesuperpropertyreference) |
+| 13.3.8 | Argument Lists | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-argument-lists) |
+| 13.3.8.1 | Runtime Semantics: ArgumentListEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-argumentlistevaluation) |
+| 13.3.9 | Optional Chains | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-optional-chains) |
+| 13.3.9.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-evaluation) |
+| 13.3.9.2 | Runtime Semantics: ChainEvaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-chain-evaluation) |
+| 13.3.10 | Import Calls | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-import-calls) |
+| 13.3.10.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-import-call-runtime-semantics-evaluation) |
+| 13.3.10.2 | EvaluateImportCall ( specifierExpression [ , optionsExpression ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-import-call) |
+| 13.3.10.3 | ContinueDynamicImport ( promiseCapability , moduleCompletion ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ContinueDynamicImport) |
+| 13.3.11 | Tagged Templates | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates) |
+| 13.3.11.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates-runtime-semantics-evaluation) |
+| 13.3.12 | Meta Properties | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties) |
+| 13.3.12.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties-runtime-semantics-evaluation) |
+| 13.3.12.1.1 | HostGetImportMetaProperties ( moduleRecord ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-hostgetimportmetaproperties) |
+| 13.3.12.1.2 | HostFinalizeImportMeta ( importMeta , moduleRecord ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-hostfinalizeimportmeta) |
 
 ## Support
 
 Feature-level support tracking with test script references.
 
-### 13.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics))
+### 13.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-property-accessors))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Property access and assignment: obj.prop / obj[prop] (including computed keys) | Supported | [`Variable_AssignmentTargets_MemberAndIndex.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js) | MemberExpression lowering supports both identifier and computed forms, and supports both read and write targets. `super.prop` as a *value* (non-call) is not supported; only `super.m(...)` is supported for base-method calls. |
+
+### 13.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-new-operator))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | NewExpression for built-in Array constructor (new Array()/new Array(n)/new Array(a,b,...)) | Supported | [`Array_New_Length.js`](../../../Js2IL.Tests/Array/JavaScript/Array_New_Length.js)<br>[`Array_New_MultipleArgs.js`](../../../Js2IL.Tests/Array/JavaScript/Array_New_MultipleArgs.js) | Supported in the new IR pipeline for global (non-shadowed) Array. Lowered via JavaScriptRuntime.Array::Construct(object[] args) to preserve JS Array constructor semantics. |
 | NewExpression for built-in Boolean/Number constructors as primitive sugar (new Boolean(x), new Number(x)) | Supported | [`NewExpression_Boolean_Sugar.js`](../../../Js2IL.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js)<br>[`NewExpression_Number_Sugar.js`](../../../Js2IL.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js) | Supported in the new IR pipeline for global (non-shadowed) Boolean/Number. Lowered to primitive coercions (TypeUtilities.ToBoolean/ToNumber). |
-| NewExpression for built-in Error types (Error/TypeError/RangeError/ReferenceError/SyntaxError/URIError/EvalError/AggregateError) | Supported | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js) | Supported in the new IR pipeline for global (non-shadowed) built-in Error identifiers with 0 or 1 argument. When provided, the message is coerced to string. User-defined constructors / classes and member-expression callees (e.g., new obj.Ctor()) are not yet supported in the IR pipeline. |
+| NewExpression for built-in Error types (Error/TypeError/RangeError/ReferenceError/SyntaxError/URIError/EvalError/AggregateError) | Supported | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js) | Supported in the new IR pipeline for global (non-shadowed) built-in Error identifiers with 0 or 1 argument. When provided, the message is coerced to string. Spread arguments in `new` are not supported. |
 | NewExpression for built-in String constructor as primitive sugar (new String()/new String(x)) | Supported | [`String_New_Sugar.js`](../../../Js2IL.Tests/String/JavaScript/String_New_Sugar.js) | Supported in the new IR pipeline for global (non-shadowed) String. Lowered to primitive string conversion (DotNet2JSConversions.ToString). |
 | NewExpression for constructible runtime intrinsics (e.g., Date, Int32Array) | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js)<br>[`Int32Array_Construct_Length.js`](../../../Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js) | Supported in the new IR pipeline for global (non-shadowed) intrinsic identifiers registered in JavaScriptRuntime.IntrinsicObjectRegistry that are constructible classes. Currently limited to 0–2 constructor arguments. |
+| NewExpression for user-defined classes (new Ctor(...)) | Supported | [`Classes_DeclareEmptyClass.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`Classes_ClassConstructor_WithMultipleParameters.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js) | User-defined classes are lowered to direct CLR construction of the generated type, including scope-array wiring for closures in constructors/methods. Spread arguments in `new` are not supported. `new.target` semantics are not implemented. |
+| NewExpression where the constructor is a runtime value (new valueCtor(...)) | Supported |  | When the constructor is not statically known, JS2IL lowers to a runtime dispatch (`JavaScriptRuntime.Object.ConstructValue`) by packing arguments into an object[]. Spread arguments in `new` are not supported. |
 
 ### 13.3.6 ([tc39.es](https://tc39.es/ecma262/#sec-function-calls))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
+| CallExpression on property access: receiver.method(...) (typed intrinsics and generic member dispatch) | Supported | [`Classes_ClassMethod_CallsAnotherMethod.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_CallsAnotherMethod.js)<br>[`TryCatch_CallMember_MissingMethod_IsTypeError.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js) | Supports intrinsic static calls (e.g., Math.abs) and dynamic member calls via runtime dispatcher when receiver type is not statically known. Spread in call arguments is rejected by validation (not supported). |
+| CallExpression: user-defined function calls and indirect calls via function values | Supported | [`Function_GlobalFunctionCallsGlobalFunction.js`](../../../Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionCallsGlobalFunction.js)<br>[`Function_CallViaVariable_Reassignment.js`](../../../Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js) | Covers direct function bindings and runtime dispatch for non-binding callee values (closures stored in variables). Spread in call arguments is rejected by validation (not supported). |
 | Primitive conversion callables: String(x), Number(x), Boolean(x) | Supported | [`PrimitiveConversion_String_Callable.js`](../../../Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_String_Callable.js)<br>[`PrimitiveConversion_Number_Callable.js`](../../../Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js)<br>[`PrimitiveConversion_Boolean_Callable.js`](../../../Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js) | Supports the callable form (no new) for global (non-shadowed) String/Number/Boolean. Semantics match JS: no-arg returns default ("" / +0 / false); extra arguments are evaluated for side effects but ignored. Conversions are implemented via JavaScriptRuntime.TypeUtilities (ToString/ToNumber/ToBoolean); Number(undefined) yields NaN (undefined represented as CLR null). |
+
+### 13.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-super-keyword))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| super.m(...) base method calls | Supported | [`Classes_Inheritance_SuperMethodCall.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js)<br>[`Async_Inheritance_SuperAsyncMethod.js`](../../../Js2IL.Tests/Async/JavaScript/Async_Inheritance_SuperAsyncMethod.js)<br>[`Generator_Inheritance_SuperIteratorMethod.js`](../../../Js2IL.Tests/Generator/JavaScript/Generator_Inheritance_SuperIteratorMethod.js) | Supported only for the base-method call form. Property reads/writes like `super.x` / `super[x]` are not yet supported. |
+| super(...) calls base constructor in derived constructors | Supported | [`Classes_Inheritance_SuperConstructor_Args.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js) | Supported for derived class constructors. `new.target` and other meta-property semantics are not implemented. |
+| Using this before super throws ReferenceError in derived constructors | Supported | [`Classes_Inheritance_ThisBeforeSuper_Throws.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js) |  |
+
+### 13.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-argument-lists))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Argument lists without spread | Partially Supported |  | Normal argument lists are supported; spread in CallExpression arguments is not yet supported and is rejected during validation. |
 

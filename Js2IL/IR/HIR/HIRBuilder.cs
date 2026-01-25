@@ -124,12 +124,78 @@ public static class HIRBuilder
                     }
 
                     var registryClassName = GetRegistryClassName(enclosingClassScope);
-                    var ctorBuilder = new HIRMethodBuilder(scope);
+                    var ctorStatements = new List<HIRStatement>();
+
+                    var isDerivedConstructor = enclosingClassDecl.SuperClass != null;
+
+                    static int GetMaxSuperCtorArgCount(Scope classScope, ClassDeclaration classDecl)
+                    {
+                        if (classDecl.SuperClass is not Identifier superId)
+                        {
+                            return 0;
+                        }
+
+                        var superSymbol = classScope.FindSymbol(superId.Name);
+                        if (superSymbol.BindingInfo.DeclarationNode is not ClassDeclaration baseDecl)
+                        {
+                            return 0;
+                        }
+
+                        var baseCtor = baseDecl.Body.Body
+                            .OfType<Acornima.Ast.MethodDefinition>()
+                            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+
+                        if (baseCtor?.Value is not FunctionExpression baseCtorFunc)
+                        {
+                            return 0;
+                        }
+
+                        // If the base constructor uses rest parameters, we can't represent that
+                        // in the IR pipeline today.
+                        if (baseCtorFunc.Params.Any(p => p is RestElement))
+                        {
+                            return 0;
+                        }
+
+                        return baseCtorFunc.Params.Count;
+                    }
+
+                    // Default derived constructors in JS forward received args to super(...).
+                    // We approximate by synthesizing N parameters (N = base ctor max param count when resolvable)
+                    // and passing them through to the implicit super call.
+                    var parameterPatterns = new List<HIRPattern>();
+                    var superArgs = new List<HIRExpression>();
+                    if (isDerivedConstructor)
+                    {
+                        var argCount = GetMaxSuperCtorArgCount(enclosingClassScope, enclosingClassDecl);
+                        for (int i = 0; i < argCount; i++)
+                        {
+                            var paramName = $"__arg{i}";
+                            if (!scope.Bindings.TryGetValue(paramName, out var binding))
+                            {
+                                binding = new BindingInfo(paramName, BindingKind.Var, classBody);
+                                scope.Bindings[paramName] = binding;
+                            }
+
+                            scope.Parameters.Add(paramName);
+                            var sym = new Symbol(binding);
+                            parameterPatterns.Add(new HIRIdentifierPattern(sym));
+                            superArgs.Add(new HIRVariableExpression(sym));
+                        }
+                    }
+
+                    // Derived constructors must call super() before accessing `this`.
+                    // For implicit constructors in derived classes, insert an implicit super() call.
+                    if (isDerivedConstructor)
+                    {
+                        ctorStatements.Add(new HIRExpressionStatement(
+                            new HIRCallExpression(new HIRSuperExpression(), superArgs.ToArray())));
+                    }
 
                     // Store scopes array to this._scopes if constructor has scopes parameter.
                     if (hasScopesParameter)
                     {
-                        ctorBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                        ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
                         {
                             RegistryClassName = registryClassName,
                             FieldName = "_scopes",
@@ -154,7 +220,7 @@ public static class HIRBuilder
 
                         if (element.Key is PrivateIdentifier priv)
                         {
-                            ctorBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                            ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
                             {
                                 RegistryClassName = registryClassName,
                                 FieldName = priv.Name,
@@ -165,7 +231,7 @@ public static class HIRBuilder
                         }
                         else if (element.Key is Identifier pid)
                         {
-                            ctorBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                            ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
                             {
                                 RegistryClassName = registryClassName,
                                 FieldName = pid.Name,
@@ -177,7 +243,13 @@ public static class HIRBuilder
                     }
 
                     // Empty user body.
-                    return ctorBuilder.TryParseStatements(Array.Empty<Statement>(), Array.Empty<HIRPattern>(), out method);
+                    method = new HIRMethod
+                    {
+                        Parameters = parameterPatterns,
+                        Body = new HIRBlock(ctorStatements)
+                    };
+
+                    return true;
                 }
 
             case Acornima.Ast.MethodDefinition classMethodDef:
@@ -248,10 +320,13 @@ public static class HIRBuilder
                     }
 
                     var registryClassName = GetRegistryClassName(enclosingClassScope);
+                    var isDerivedConstructor = enclosingClassDecl.SuperClass != null;
+
+                    var initStatements = new List<HIRStatement>();
 
                     if (hasScopesParameter)
                     {
-                        funcExprBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                        initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
                         {
                             RegistryClassName = registryClassName,
                             FieldName = "_scopes",
@@ -274,7 +349,7 @@ public static class HIRBuilder
 
                         if (element.Key is PrivateIdentifier priv)
                         {
-                            funcExprBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                            initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
                             {
                                 RegistryClassName = registryClassName,
                                 FieldName = priv.Name,
@@ -285,7 +360,7 @@ public static class HIRBuilder
                         }
                         else if (element.Key is Identifier pid)
                         {
-                            funcExprBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                            initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
                             {
                                 RegistryClassName = registryClassName,
                                 FieldName = pid.Name,
@@ -295,6 +370,41 @@ public static class HIRBuilder
                             });
                         }
                     }
+
+                    if (!funcExprBuilder.TryParseStatementsToList(funcBlock.Body, out var bodyStatements))
+                    {
+                        method = null!;
+                        return false;
+                    }
+
+                    if (isDerivedConstructor)
+                    {
+                        // Insert initializers after the first direct super(...) call.
+                        var superCallIndex = bodyStatements.FindIndex(s =>
+                            s is HIRExpressionStatement es
+                            && es.Expression is HIRCallExpression ce
+                            && ce.Callee is HIRSuperExpression);
+
+                        if (superCallIndex < 0)
+                        {
+                            method = null!;
+                            return false;
+                        }
+
+                        bodyStatements.InsertRange(superCallIndex + 1, initStatements);
+                    }
+                    else
+                    {
+                        bodyStatements.InsertRange(0, initStatements);
+                    }
+
+                    method = new HIRMethod
+                    {
+                        Parameters = funcParams,
+                        Body = new HIRBlock(bodyStatements)
+                    };
+
+                    return true;
                 }
 
                 return funcExprBuilder.TryParseStatements(funcBlock.Body, funcParams, out method);
@@ -389,6 +499,23 @@ class HIRMethodBuilder
         _statements.Add(statement);
     }
 
+    public bool TryParseStatementsToList([In, NotNull] IEnumerable<Acornima.Ast.Statement> statements, out List<HIRStatement> hirStatements)
+    {
+        hirStatements = new List<HIRStatement>(_statements.Count + 16);
+        hirStatements.AddRange(_statements);
+
+        foreach (var statement in statements)
+        {
+            if (!TryParseStatement(statement, out var hirStatement))
+            {
+                return false;
+            }
+            hirStatements.Add(hirStatement!);
+        }
+
+        return true;
+    }
+
     public bool TryParseExpressionForPrologue([In, NotNull] Acornima.Ast.Expression expression, out HIRExpression? hirExpression)
     {
         return TryParseExpression(expression, out hirExpression);
@@ -398,18 +525,15 @@ class HIRMethodBuilder
     {
         method = null;
 
-        foreach (var statement in statements)
+        if (!TryParseStatementsToList(statements, out var hirStatements))
         {
-            if (!TryParseStatement(statement, out var hirStatement))
-            {
-                return false;
-            }
-            _statements.Add(hirStatement!);
+            return false;
         }
+
         method = new HIRMethod
         {
             Parameters = parameters,
-            Body = new HIRBlock(_statements)
+            Body = new HIRBlock(hirStatements)
         };
 
         return true;
@@ -1110,6 +1234,10 @@ class HIRMethodBuilder
                     return false;
                 }
                 hirExpr = new HIRThisExpression();
+                return true;
+
+            case Super:
+                hirExpr = new HIRSuperExpression();
                 return true;
 
             case TemplateLiteral templateLiteral:
