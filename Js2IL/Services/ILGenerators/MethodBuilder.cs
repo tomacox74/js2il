@@ -17,7 +17,8 @@ namespace Js2IL.Services.ILGenerators
             int paramCount,
             bool hasScopesParam,
             bool returnsVoid,
-            Type? returnClrType = null)
+            Type? returnClrType = null,
+            EntityHandle returnTypeHandle = default)
         {
             if (hasScopesParam && paramCount == 0)
             {
@@ -38,6 +39,13 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
+                        if (!returnTypeHandle.IsNil)
+                        {
+                            // Non-BCL reference return type (e.g., user-defined JS class TypeDef)
+                            returnType.Type().Type(returnTypeHandle, isValueType: false);
+                            return;
+                        }
+
                         var t = returnClrType ?? typeof(object);
                         if (t == typeof(double))
                         {

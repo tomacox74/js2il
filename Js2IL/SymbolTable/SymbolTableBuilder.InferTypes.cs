@@ -31,6 +31,8 @@ public partial class SymbolTableBuilder
         // a single stable primitive return (bool/double) with no control-flow ambiguity.
         if (scope.Kind == ScopeKind.Function)
         {
+            // Reset per-run inferred markers.
+            scope.StableReturnIsThis = false;
             scope.StableReturnClrType = InferStableReturnClrTypeForCallableScope(scope);
         }
 
@@ -56,7 +58,7 @@ public partial class SymbolTableBuilder
                 return null;
             }
 
-            return InferStableReturnClrTypeFromBlockBody(funcExpr, body);
+            return InferStableReturnClrTypeFromBlockBody(callableScope, funcExpr, body);
         }
 
         if (callableScope.AstNode is FunctionDeclaration funcDecl)
@@ -66,7 +68,7 @@ public partial class SymbolTableBuilder
                 return null;
             }
 
-            return InferStableReturnClrTypeFromBlockBody(funcDecl, body);
+            return InferStableReturnClrTypeFromBlockBody(callableScope, funcDecl, body);
         }
 
         if (callableScope.AstNode is ArrowFunctionExpression arrowExpr)
@@ -80,13 +82,13 @@ public partial class SymbolTableBuilder
                     : null;
             }
 
-            return InferStableReturnClrTypeFromBlockBody(arrowExpr, body);
+            return InferStableReturnClrTypeFromBlockBody(callableScope, arrowExpr, body);
         }
 
         return null;
     }
 
-    private Type? InferStableReturnClrTypeFromBlockBody(Node functionBoundaryNode, BlockStatement body)
+    private Type? InferStableReturnClrTypeFromBlockBody(Scope callableScope, Node functionBoundaryNode, BlockStatement body)
     {
         // Bail out on try/finally/catch: return epilogues in lowering are currently object-typed.
         bool hasTry = false;
@@ -143,6 +145,16 @@ public partial class SymbolTableBuilder
         var onlyReturn = returns[0];
         if (onlyReturn.Argument == null)
         {
+            return null;
+        }
+
+        // Special-case: class instance methods that return `this`.
+        // We record this separately from StableReturnClrType because the target CLR type is a user-defined
+        // generated TypeDef (not representable as a System.Type at inference time).
+        if (callableScope.Parent?.Kind == ScopeKind.Class
+            && onlyReturn.Argument is ThisExpression)
+        {
+            callableScope.StableReturnIsThis = true;
             return null;
         }
 

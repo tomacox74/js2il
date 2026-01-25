@@ -1309,9 +1309,26 @@ public sealed class HIRToLIRLowerer
                     else if (returnStmt.Expression != null)
                     {
                         // Lower the return expression
-                        if (!TryLowerExpression(returnStmt.Expression, out returnTempVar))
+                        // Special-case: if we inferred `return this` for a class method, keep it typed as the
+                        // user-defined class (metadata TypeDef handle) so the return matches the class-typed ABI.
+                        if (_scope?.StableReturnIsThis == true
+                            && returnStmt.Expression is HIRThisExpression
+                            && _classRegistry != null
+                            && TryGetEnclosingClassRegistryName(out var registryClassName)
+                            && registryClassName != null
+                            && _classRegistry.TryGet(registryClassName, out var thisTypeHandle)
+                            && !thisTypeHandle.IsNil)
                         {
-                            return false;
+                            returnTempVar = CreateTempVariable();
+                            _methodBodyIR.Instructions.Add(new LIRLoadThis(returnTempVar));
+                            DefineTempStorage(returnTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object), thisTypeHandle));
+                        }
+                        else
+                        {
+                            if (!TryLowerExpression(returnStmt.Expression, out returnTempVar))
+                            {
+                                return false;
+                            }
                         }
 
                         // Default ABI returns object. If we inferred a stable return type for this callable,
@@ -1329,7 +1346,7 @@ public sealed class HIRToLIRLowerer
                         {
                             returnTempVar = EnsureBoolean(returnTempVar);
                         }
-                        else
+                        else if (_scope?.StableReturnIsThis != true)
                         {
                             returnTempVar = EnsureObject(returnTempVar);
                         }
@@ -4193,7 +4210,7 @@ public sealed class HIRToLIRLowerer
             && calleePropAccess.Object is HIRSuperExpression
             && TryGetEnclosingBaseClassRegistryName(out var baseClass)
             && baseClass != null
-            && _classRegistry.TryGetMethod(baseClass, calleePropAccess.PropertyName, out var baseMethodHandle, out _, out var baseReturnClrType, out var baseHasScopesParam, out _, out var baseMaxParamCount))
+            && _classRegistry.TryGetMethod(baseClass, calleePropAccess.PropertyName, out var baseMethodHandle, out _, out var baseReturnClrType, out var baseReturnTypeHandle, out var baseHasScopesParam, out _, out var baseMaxParamCount))
         {
             var argTemps = new List<TempVariable>();
             foreach (var argExpr in callExpr.Arguments)
@@ -4215,7 +4232,11 @@ public sealed class HIRToLIRLowerer
                 argTemps,
                 resultTempVar));
 
-            if (baseReturnClrType == typeof(double))
+            if (!baseReturnTypeHandle.IsNil)
+            {
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object), baseReturnTypeHandle));
+            }
+            else if (baseReturnClrType == typeof(double))
             {
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
             }
@@ -4477,7 +4498,7 @@ public sealed class HIRToLIRLowerer
                 && calleePropAccess.Object is HIRThisExpression
                 && TryGetEnclosingClassRegistryName(out var currentClass)
                 && currentClass != null
-                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out var methodReturnClrType, out var hasScopesParam, out _, out var maxParamCount))
+                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out var methodReturnClrType, out var methodReturnTypeHandle, out var hasScopesParam, out _, out var maxParamCount))
             {
                 var argTemps = new List<TempVariable>();
                 foreach (var argExpr in callExpr.Arguments)
@@ -4500,7 +4521,11 @@ public sealed class HIRToLIRLowerer
                     resultTempVar));
 
                 // Propagate typed return storage when available.
-                if (methodReturnClrType == typeof(double))
+                if (!methodReturnTypeHandle.IsNil)
+                {
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object), methodReturnTypeHandle));
+                }
+                else if (methodReturnClrType == typeof(double))
                 {
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 }

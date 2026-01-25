@@ -714,9 +714,23 @@ namespace Js2IL.Services.ILGenerators
                     || funcExpr?.Generator == true;
                 bool isAsyncMethod = methodScope?.IsAsync == true || funcExpr?.Async == true;
 
-                Type returnClrType = isGeneratorMethod
-                    ? typeof(object)
-                    : (methodScope?.StableReturnClrType ?? typeof(object));
+                EntityHandle returnTypeHandle = default;
+                Type returnClrType = typeof(object);
+                if (isGeneratorMethod)
+                {
+                    // Generator methods always return a GeneratorObject boxed as object.
+                    returnClrType = typeof(object);
+                }
+                else if (methodScope?.StableReturnIsThis == true)
+                {
+                    // `return this` => class-typed return.
+                    returnTypeHandle = typeHandle;
+                    returnClrType = typeof(object);
+                }
+                else
+                {
+                    returnClrType = methodScope?.StableReturnClrType ?? typeof(object);
+                }
 
                 var clrName = member.Kind switch
                 {
@@ -736,7 +750,8 @@ namespace Js2IL.Services.ILGenerators
                     paramCount: hasScopesParam ? jsParamCount + 1 : jsParamCount,
                     hasScopesParam: hasScopesParam,
                     returnsVoid: false,
-                    returnClrType: returnClrType);
+                    returnClrType: returnClrType,
+                    returnTypeHandle: returnTypeHandle);
 
                 _classRegistry.RegisterMethod(
                     registryClassName,
@@ -744,6 +759,7 @@ namespace Js2IL.Services.ILGenerators
                     (MethodDefinitionHandle)methodToken,
                     sig,
                     returnClrType,
+                    returnTypeHandle,
                     hasScopesParam,
                     minParams,
                     jsParamCount);
