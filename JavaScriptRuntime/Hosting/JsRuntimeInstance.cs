@@ -147,6 +147,11 @@ internal sealed class JsRuntimeInstance : IDisposable
         {
             throw new ObjectDisposedException(nameof(JsRuntimeInstance));
         }
+        catch (ObjectDisposedException)
+        {
+            // The queue can be disposed by the script thread during shutdown.
+            throw new ObjectDisposedException(nameof(JsRuntimeInstance));
+        }
         catch (InvalidOperationException)
         {
             throw new ObjectDisposedException(nameof(JsRuntimeInstance));
@@ -165,8 +170,27 @@ internal sealed class JsRuntimeInstance : IDisposable
         }
 
         // Stop accepting work and wake the consuming enumerable.
-        _shutdown.Cancel();
-        _queue.CompleteAdding();
+        try
+        {
+            _shutdown.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // If the runtime thread already terminated, it may have disposed the CTS.
+        }
+
+        try
+        {
+            _queue.CompleteAdding();
+        }
+        catch (ObjectDisposedException)
+        {
+            // If the runtime thread already terminated, it may have disposed the queue.
+        }
+        catch (InvalidOperationException)
+        {
+            // Already marked complete.
+        }
 
         // Avoid self-join if Dispose is called from within the script thread.
         if (Thread.CurrentThread.ManagedThreadId != _thread.ManagedThreadId)
