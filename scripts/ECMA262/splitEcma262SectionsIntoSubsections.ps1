@@ -7,7 +7,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 # This script is kept as a thin wrapper for backwards compatibility.
-# The implementation now lives in: scripts/splitEcma262SectionsIntoSubsections.js
+# The implementation now lives in: scripts/ECMA262/splitEcma262SectionsIntoSubsections.js
 
 $scriptPath = Join-Path $PSScriptRoot "splitEcma262SectionsIntoSubsections.js"
 

@@ -6,8 +6,8 @@
  * - You can point it at an HTML file you already have (e.g. saved from tc39.es).
  *
  * Usage:
- *   node scripts/extractEcma262SectionHtml.js --section 27.3 --in control-abstraction-objects.html --out Section27_3.html
- *   node scripts/extractEcma262SectionHtml.js --section 27.3 --url https://tc39.es/ecma262/multipage/control-abstraction-objects.html --out Section27_3.html
+ *   node scripts/ECMA262/extractEcma262SectionHtml.js --section 27.3 --in control-abstraction-objects.html --out Section27_3.html
+ *   node scripts/ECMA262/extractEcma262SectionHtml.js --section 27.3 --url https://tc39.es/ecma262/multipage/control-abstraction-objects.html --out Section27_3.html
  *
  * Options:
  *   --section, -s   Section number to extract (e.g. 27.3)
@@ -442,9 +442,9 @@ function printHelp() {
   console.log('You can also fetch the input HTML from the web using Node\'s built-in fetch/https.');
   console.log('');
   console.log('Usage:');
-  console.log('  node scripts/extractEcma262SectionHtml.js --section 27.3 --in <input.html> --out <output.html>');
-  console.log('  node scripts/extractEcma262SectionHtml.js --section 27.3 --url <https://...> --out <output.html>');
-  console.log('  node scripts/extractEcma262SectionHtml.js --section 27.3 --auto --out <output.html>');
+  console.log('  node scripts/ECMA262/extractEcma262SectionHtml.js --section 27.3 --in <input.html> --out <output.html>');
+  console.log('  node scripts/ECMA262/extractEcma262SectionHtml.js --section 27.3 --url <https://...> --out <output.html>');
+  console.log('  node scripts/ECMA262/extractEcma262SectionHtml.js --section 27.3 --auto --out <output.html>');
   console.log('');
   console.log('Options:');
   console.log('  --section, -s   Section number to extract (e.g. 27.3)');

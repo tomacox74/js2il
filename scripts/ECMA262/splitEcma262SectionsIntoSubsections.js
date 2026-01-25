@@ -16,7 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DEFAULT_ROOT = path.resolve(__dirname, '..', 'docs', 'ECMA262');
+const DEFAULT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'ECMA262');
 const AUTO_GENERATED_MARKER = '<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->';
 
 function parseArgs(argv) {

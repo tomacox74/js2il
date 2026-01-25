@@ -1,12 +1,12 @@
 /*
  * Convert an extracted ECMA-262 multipage HTML fragment (typically produced by
- * scripts/extractEcma262SectionHtml.js --no-wrap) into a Markdown approximation.
+ * scripts/ECMA262/extractEcma262SectionHtml.js --no-wrap) into a Markdown approximation.
  *
  * This uses `turndown` to convert HTML to Markdown, with a few custom rules to
  * better handle ecmarkup elements and code blocks.
  *
  * Usage:
- *   node scripts/convertEcmaExtractHtmlToMarkdown.js --in test_output/ecma262-27.3.html --out test_output/ecma262-27.3.md
+ *   node scripts/ECMA262/convertEcmaExtractHtmlToMarkdown.js --in test_output/ecma262-27.3.html --out test_output/ecma262-27.3.md
  */
 
 'use strict';

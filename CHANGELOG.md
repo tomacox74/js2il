@@ -683,7 +683,7 @@ Docs
 Changed
 - Runtime: qualify BCL Math usages to global::System.Math in String/Array to avoid name collision with JavaScriptRuntime.Math.
 - IL generation diagnostics: centralized all NotSupportedException throwing through ILEmitHelpers (BinaryOperators, ILMethodGenerator, ILExpressionGenerator, JavaScriptFunctionGenerator) to enrich messages with source file:line:column when AST node info is available.
-- Tooling/docs: compiled scripts/generateFeatureCoverage.js with js2il and used the generated DLL to update docs.
+- Tooling/docs: compiled scripts/ECMA262/generateFeatureCoverage.js with js2il and used the generated DLL to update docs.
 - Class scope architecture: all class method scope types are now generated; instantiation controlled by a lightweight heuristic to avoid unnecessary objects while enabling closures.
 - IL generation: removed experimental class / method scope warnings; snapshots updated accordingly.
 - Dispatch: unified dynamic instance member calls through the generic dispatcher (string/array/host) reducing special-cases; refined call-on-expression handling (e.g., obj.method() where obj is an expression).
@@ -723,7 +723,7 @@ Changed
 
 Fixed
 - Node perf_hooks: stabilized PerfHooks_PerformanceNow_Basic (generator + execution). Direct typed calls to PerfHooks.get_performance() and Performance.now(); elapsed time check matches runtime semantics. Updated generator snapshot to align with current IL.
-- Metadata: deduplicate JavaScriptRuntime AssemblyReference entries by caching a single AssemblyReferenceHandle per emitted assembly (per MetadataBuilder). This eliminates multiple runtime AssemblyRef rows in generated DLLs and reduces metadata bloat. Verified on a compiled sample (scripts/generateFeatureCoverage.js) via a small Reflection.Metadata checker.
+- Metadata: deduplicate JavaScriptRuntime AssemblyReference entries by caching a single AssemblyReferenceHandle per emitted assembly (per MetadataBuilder). This eliminates multiple runtime AssemblyRef rows in generated DLLs and reduces metadata bloat. Verified on a compiled sample (scripts/ECMA262/generateFeatureCoverage.js) via a small Reflection.Metadata checker.
 - Generator: avoid AccessViolation at CastHelpers.StelemRef by fixing once-only boxing before Stelem_ref when constructing object[] for call sites.
 - Tests: resolved Verify newline mismatch in Date execution snapshots.
 
@@ -734,7 +734,7 @@ Docs
 - Updated ECMAScript 2025 feature coverage to include Date constructor, Date.now, Date.parse, Date.prototype.getTime, and Date.prototype.toISOString; regenerated docs/ECMA262/FeatureCoverage.md.
 
 Tooling
-- Compiled scripts/generateFeatureCoverage.js with js2il; emitted generateFeatureCoverage.dll and runtimeconfig.json next to the script for faster local runs.
+- Compiled scripts/ECMA262/generateFeatureCoverage.js with js2il; emitted generateFeatureCoverage.dll and runtimeconfig.json next to the script for faster local runs.
 
 Tests
 - Added/updated Node generator and execution tests around perf_hooks performance.now; snapshots aligned with typed-call IL.
@@ -799,7 +799,7 @@ Added
 - Control flow: for-of over arrays and strings using JavaScriptRuntime.Object.GetLength and GetItem; execution and generator tests.
 - Operators: compound assignment "+=" for identifiers via runtime Operators.Add (full JS coercion); execution and generator tests.
 - Node interop: process.argv exposure and enumeration in execution environment; added Environment_EnumerateProcessArgV test.
-- Integration: long-running compile test that parses and emits scripts/generateFeatureCoverage.js (skipped in CI by default).
+- Integration: long-running compile test that parses and emits scripts/ECMA262/generateFeatureCoverage.js (skipped in CI by default).
 
 Changed
 - Codegen: centralized call emission in ILExpressionGenerator; it now dispatches member/host/intrinsic calls.
@@ -824,7 +824,7 @@ Tests
 - New Array subgroup with execution and generator tests: length, empty length, sort basic, map basic. Targeted isEven test remains green.
 - Added execution and generator tests for: array spread literal copy, String.startsWith, String.localeCompare, string "+=" append, and ControlFlow for-of over arrays/strings. Updated verified snapshots accordingly.
 - Added Node execution test for process argv enumeration (Environment_EnumerateProcessArgV).
- - Added Integration test (Compile_Scripts_GenerateFeatureCoverage) that compiles scripts/generateFeatureCoverage.js; marked [Skip] to avoid CI runtime cost.
+ - Added Integration test (Compile_Scripts_GenerateFeatureCoverage) that compiles scripts/ECMA262/generateFeatureCoverage.js; marked [Skip] to avoid CI runtime cost.
 
 ## v0.1.1 - 2025-08-29
 

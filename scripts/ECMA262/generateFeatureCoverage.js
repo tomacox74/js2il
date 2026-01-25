@@ -2,8 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const jsonPath = path.join(__dirname, '../docs/ECMA262/FeatureCoverage.json');
-const mdPath = path.join(__dirname, '../docs/ECMA262/FeatureCoverage.md');
+const jsonPath = path.join(__dirname, '../../docs/ECMA262/FeatureCoverage.json');
+const mdPath = path.join(__dirname, '../../docs/ECMA262/FeatureCoverage.md');
 
 function link(title, url) {
   return url ? `[${title}](${url})` : title;
