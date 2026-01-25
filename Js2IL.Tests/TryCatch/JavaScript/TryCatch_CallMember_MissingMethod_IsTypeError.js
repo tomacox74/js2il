@@ -1,7 +1,7 @@
 const stringObject = "abc";
 
 try {
-  stringObject.match();
+  stringObject.doesNotExist();
 } catch (e) {
   console.log(e.name);
   console.log(e.message);
