@@ -138,7 +138,7 @@ namespace JavaScriptRuntime
 
                 if (candidates.Count == 0)
                 {
-                    throw new NotSupportedException($"Host intrinsic method not found: String.{methodName}");
+                    throw new TypeError($"String.{methodName} is not a function");
                 }
 
                 // Prefer exact-arity overloads (receiver + provided args). Only fall back to
@@ -160,7 +160,7 @@ namespace JavaScriptRuntime
 
                 if (chosen == null)
                 {
-                    throw new NotSupportedException($"No compatible overload found for String.{methodName} with {jsArgCount} argument(s)");
+                    throw new TypeError($"String.{methodName} is not a function");
                 }
 
                 var ps = chosen.GetParameters();
@@ -204,7 +204,7 @@ namespace JavaScriptRuntime
                     .ToList();
                 if (methods.Count == 0)
                 {
-                    throw new NotSupportedException($"Method not found: {type.FullName}.{methodName}");
+                    throw new TypeError($"{methodName} is not a function");
                 }
                 // Prefer params object[] first, else exact arg count
                 var chosen = methods.FirstOrDefault(mi =>
@@ -244,9 +244,9 @@ namespace JavaScriptRuntime
                             RuntimeServices.SetCurrentThis(previousThis);
                         }
                     }
-                    throw new NotSupportedException($"Property '{methodName}' on object is not callable (type: {propValue.GetType().FullName})");
+                    throw new TypeError($"{methodName} is not a function");
                 }
-                throw new NotSupportedException($"Property not found on object: {methodName}");
+                throw new TypeError($"{methodName} is not a function");
             }
 
             // 3b) Host object properties may also contain function delegates.
@@ -1088,7 +1088,7 @@ namespace JavaScriptRuntime
 
             if (methods.Count == 0)
             {
-                throw new NotSupportedException($"Method not found: {type.FullName}.{methodName}");
+                throw new TypeError($"{methodName} is not a function");
             }
 
             var srcArgs = args ?? System.Array.Empty<object>();
