@@ -53,6 +53,12 @@ sealed record MethodDescriptor
     public Type ReturnClrType { get; set; } = typeof(object);
 
     /// <summary>
+    /// Optional metadata handle for a non-BCL reference return type (e.g., a user-defined JS class TypeDef).
+    /// When set, IL signature emission uses this handle instead of <see cref="ReturnClrType"/>.
+    /// </summary>
+    public EntityHandle ReturnTypeHandle { get; set; } = default;
+
+    /// <summary>
     /// Only class instance methods are not static currently, so we default to static.
     /// </summary>
     public bool IsStatic {get; set; } = true;
@@ -373,10 +379,29 @@ internal sealed class JsMethodCompiler
                             ? scope.StableReturnClrType
                             : null)
                         ?? typeof(object))),
+            ReturnTypeHandle = default,
             ScopesFieldHandle = scopesFieldHandle,
             IsConstructor = callableKind == ScopesCallableKind.Constructor,
             IsDerivedConstructor = callableKind == ScopesCallableKind.Constructor && isDerivedConstructor
         };
+
+        // Allow class instance methods that `return this` to have a class-typed IL signature.
+        // This enables fluent call chains without boxing back to object.
+        if (!returnsVoid
+            && !lirMethod.IsGenerator
+            && scope.Kind == ScopeKind.Function
+            && scope.Parent?.Kind == ScopeKind.Class
+            && scope.StableReturnIsThis)
+        {
+            var classScope = scope.Parent;
+            var classRegistry = _serviceProvider.GetRequiredService<Services.ClassRegistry>();
+            var registryClassName = $"{classScope.DotNetNamespace ?? SymbolTableBuilder.DefaultClassesNamespace}.{classScope.DotNetTypeName ?? classScope.Name}";
+            if (classRegistry.TryGet(registryClassName, out var classTypeDef) && !classTypeDef.IsNil)
+            {
+                methodDescriptor.ReturnTypeHandle = classTypeDef;
+                methodDescriptor.ReturnClrType = typeof(object);
+            }
+        }
 
         return CreateILCompiler().TryCompileCallableBody(callable, expectedMethodDef, methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }

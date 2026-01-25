@@ -51,6 +51,18 @@ public partial class SymbolTableBuilder
             return null;
         }
 
+        // Class methods are commonly represented as MethodDefinition scopes (not FunctionExpression),
+        // with the actual function body living on MethodDefinition.Value.
+        if (callableScope.AstNode is MethodDefinition md && md.Value is FunctionExpression mfunc)
+        {
+            if (mfunc.Body is not BlockStatement mbody)
+            {
+                return null;
+            }
+
+            return InferStableReturnClrTypeFromBlockBody(callableScope, mfunc, mbody);
+        }
+
         if (callableScope.AstNode is FunctionExpression funcExpr)
         {
             if (funcExpr.Body is not BlockStatement body)
@@ -133,6 +145,17 @@ public partial class SymbolTableBuilder
 
         if (hasTry)
         {
+            return null;
+        }
+
+        // Stable `return this` inference for class instance methods.
+        // If every return statement returns `this` (and there are no bare returns), we can safely
+        // treat the callable as returning the receiver type for chaining.
+        if (callableScope.Parent?.Kind == ScopeKind.Class
+            && returns.Count > 0
+            && returns.All(r => r.Argument is ThisExpression))
+        {
+            callableScope.StableReturnIsThis = true;
             return null;
         }
 

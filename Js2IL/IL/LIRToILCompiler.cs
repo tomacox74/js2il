@@ -30,8 +30,14 @@ internal sealed class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
-    private static void EmitReturnType(ReturnTypeEncoder returnType, Type clrReturnType)
+    private static void EmitReturnType(ReturnTypeEncoder returnType, Type clrReturnType, EntityHandle returnTypeHandle = default)
     {
+        if (!returnTypeHandle.IsNil)
+        {
+            returnType.Type().Type(returnTypeHandle, isValueType: false);
+            return;
+        }
+
         if (clrReturnType == typeof(double))
         {
             returnType.Type().Double();
@@ -69,7 +75,7 @@ internal sealed class LIRToILCompiler
                 }
                 else
                 {
-                    EmitReturnType(returnType, methodDescriptor.ReturnClrType);
+                    EmitReturnType(returnType, methodDescriptor.ReturnClrType, methodDescriptor.ReturnTypeHandle);
                 }
             }, parameters =>
             {

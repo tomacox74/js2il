@@ -110,11 +110,18 @@ internal static class LIRMemberCallNormalization
                     out var receiverTypeHandle,
                     out var methodHandle,
                     out var returnClrType,
+                    out var returnTypeHandle,
                     out var hasScopesParam,
                     out var maxParamCount))
             {
                 continue;
             }
+
+                // If the resolved method is known to return the receiver type (i.e. `return this`-style),
+                // then a proven-typed receiver implies a proven-typed result as well.
+                // This enables early-binding for chained calls without runtime type tests.
+                var resolvedReceiverEntityHandle = (EntityHandle)receiverTypeHandle;
+                bool resultIsReceiverType = !returnTypeHandle.IsNil && returnTypeHandle.Equals(resolvedReceiverEntityHandle);
 
             // Receiver-proven typed case: emit direct early-bound call without runtime-dispatch fallback.
             if (callMember.Receiver.Index >= 0
@@ -130,6 +137,11 @@ internal static class LIRMemberCallNormalization
                     maxParamCount,
                     buildInfo.Elements,
                     callMember.Result);
+
+                if (resultIsReceiverType && callMember.Result.Index >= 0)
+                {
+                    knownUserClassReceiverTypeHandles[callMember.Result.Index] = resolvedReceiverEntityHandle;
+                }
 
                 indicesToRemove.Add(buildInfo.DefIndex);
                 continue;

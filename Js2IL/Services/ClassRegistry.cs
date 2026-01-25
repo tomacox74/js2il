@@ -358,6 +358,7 @@ namespace Js2IL.Services
             out TypeDefinitionHandle typeHandle,
             out MethodDefinitionHandle methodHandle,
             out Type returnClrType,
+            out EntityHandle returnTypeHandle,
             out bool hasScopesParam,
             out int maxParamCount)
         {
@@ -365,6 +366,7 @@ namespace Js2IL.Services
             typeHandle = default;
             methodHandle = default;
             returnClrType = typeof(object);
+            returnTypeHandle = default;
             hasScopesParam = false;
             maxParamCount = 0;
 
@@ -377,6 +379,7 @@ namespace Js2IL.Services
             MethodDefinitionHandle matchMethod = default;
             int matchMaxParams = 0;
             Type matchReturnClrType = typeof(object);
+            EntityHandle matchReturnTypeHandle = default;
             bool matchHasScopesParam = false;
 
             foreach (var kvp in _methods)
@@ -405,6 +408,7 @@ namespace Js2IL.Services
                 matchMethod = info.Method;
                 matchMaxParams = info.MaxParamCount;
                 matchReturnClrType = info.ReturnClrType;
+                matchReturnTypeHandle = info.ReturnTypeHandle;
                 matchHasScopesParam = info.HasScopesParam;
             }
 
@@ -422,6 +426,7 @@ namespace Js2IL.Services
             typeHandle = resolvedType;
             methodHandle = matchMethod;
             returnClrType = matchReturnClrType;
+            returnTypeHandle = matchReturnTypeHandle;
             hasScopesParam = matchHasScopesParam;
             maxParamCount = matchMaxParams;
             return true;
