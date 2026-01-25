@@ -125,6 +125,14 @@ internal static class Stackify
     /// </summary>
     private static bool CanStackifyBetween(MethodBodyIR methodBody, int defIndex, int useIndex, TempVariable targetTemp)
     {
+        // IMPORTANT: for side-effectful instructions like calls, stackifying is only safe when
+        // the use immediately follows the definition. Otherwise we'd be delaying execution until
+        // the load site, which can reorder side effects relative to intervening instructions.
+        //
+        // The direct adjacency case below is safe because the call would execute at the same
+        // program point (just without an intervening local store/load).
+        var defInstrForTemp = methodBody.Instructions[defIndex];
+
         // Direct adjacency: def immediately followed by use - always stackable
         if (useIndex == defIndex + 1)
         {
@@ -140,6 +148,12 @@ internal static class Stackify
             {
                 return true;
             }
+        }
+
+        // Do not allow non-adjacent stackification for call results.
+        if (defInstrForTemp is LIRCallTypedMember)
+        {
+            return false;
         }
 
         // Special-case: receiver temps for intrinsic instance calls (e.g., console.log).
@@ -471,9 +485,14 @@ internal static class Stackify
             case LIRCallMember:
                 return false;
 
-            // LIRCallTypedMember and LIRCallTypedMemberWithFallback perform direct callvirt to a generated class method.
-            // Like other calls, they must never be inlined/re-emitted by Stackify.
+            // LIRCallTypedMember performs a direct callvirt to a generated class method.
+            // This can be stackified ONLY for the immediate def->use case (enforced in CanStackifyBetween).
+            // LIRToILCompiler must also skip emitting the defining instruction when stackified,
+            // otherwise the call would execute twice.
             case LIRCallTypedMember:
+                return true;
+
+            // Fallback form expands to a small control-flow sequence (labels/branches), not safe to inline.
             case LIRCallTypedMemberWithFallback:
                 return false;
 

@@ -117,11 +117,11 @@ internal static class LIRMemberCallNormalization
                 continue;
             }
 
-                // If the resolved method is known to return the receiver type (i.e. `return this`-style),
-                // then a proven-typed receiver implies a proven-typed result as well.
-                // This enables early-binding for chained calls without runtime type tests.
-                var resolvedReceiverEntityHandle = (EntityHandle)receiverTypeHandle;
-                bool resultIsReceiverType = !returnTypeHandle.IsNil && returnTypeHandle.Equals(resolvedReceiverEntityHandle);
+            // If the resolved method is known to return the receiver type (i.e. `return this`-style),
+            // then a proven-typed receiver implies a proven-typed result as well.
+            // This enables early-binding for chained calls without runtime type tests.
+            var resolvedReceiverEntityHandle = (EntityHandle)receiverTypeHandle;
+            bool resultIsReceiverType = !returnTypeHandle.IsNil && returnTypeHandle.Equals(resolvedReceiverEntityHandle);
 
             // Receiver-proven typed case: emit direct early-bound call without runtime-dispatch fallback.
             if (callMember.Receiver.Index >= 0
@@ -141,6 +141,16 @@ internal static class LIRMemberCallNormalization
                 if (resultIsReceiverType && callMember.Result.Index >= 0)
                 {
                     knownUserClassReceiverTypeHandles[callMember.Result.Index] = resolvedReceiverEntityHandle;
+
+                    // Also propagate the proven type handle into the temp's storage so IL emission can avoid
+                    // redundant castclass when the result is used as a typed receiver (including stackified temps).
+                    if (callMember.Result.Index < methodBody.TempStorages.Count)
+                    {
+                        methodBody.TempStorages[callMember.Result.Index] = new ValueStorage(
+                            ValueStorageKind.Reference,
+                            typeof(object),
+                            resolvedReceiverEntityHandle);
+                    }
                 }
 
                 indicesToRemove.Add(buildInfo.DefIndex);
