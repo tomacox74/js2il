@@ -5,6 +5,57 @@
   "type": "object",
   "additionalProperties": false,
   "required": ["clause", "title", "status", "specUrl"],
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": ["Untracked", "Not Yet Supported", "Partially Supported", "Supported"],
+      "description": "Support status used throughout docs."
+    },
+    "supportEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clause", "feature", "status"],
+      "properties": {
+        "clause": {
+          "type": "string",
+          "pattern": "^\\d+(\\.\\d+)+$",
+          "description": "Spec clause number for the feature (can be deeper than the subsection, e.g. '6.1.4.1')."
+        },
+        "feature": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Feature name."
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "testScripts": {
+          "type": "array",
+          "description": "Optional list of JS test scripts that exercise this feature.",
+          "items": { "type": "string" }
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional notes about support status, limitations, or behavior."
+        },
+        "specUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Optional tc39.es link for the specific clause."
+        }
+      }
+    },
+    "support": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/supportEntry" }
+        }
+      }
+    }
+  },
   "properties": {
     "$schema": {
       "type": "string"
@@ -23,9 +74,7 @@
       "minLength": 1
     },
     "status": {
-      "type": "string",
-      "enum": ["Untracked", "Not Yet Supported", "Partially Supported", "Supported"],
-      "description": "Support status used throughout docs."
+      "$ref": "#/$defs/status"
     },
     "specUrl": {
       "type": "string",
@@ -69,8 +118,7 @@
             "minLength": 1
           },
           "status": {
-            "type": "string",
-            "enum": ["Untracked", "Not Yet Supported", "Partially Supported", "Supported"]
+            "$ref": "#/$defs/status"
           },
           "specUrl": {
             "type": "string",
@@ -78,6 +126,10 @@
           }
         }
       }
+    },
+    "support": {
+      "$ref": "#/$defs/support",
+      "description": "Optional feature-level support/test metadata."
     },
     "reference": {
       "type": "object",

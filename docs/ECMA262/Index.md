@@ -4,7 +4,7 @@ Clause index of ECMA-262 (tc39.es) cross-labeled using JS2IL current coverage tr
 
 Important:
 - Lists clause numbers/titles/links only (no spec text).
-- Status comes from FeatureCoverage.json.
+- Status comes from the per-section JSON docs (e.g. `docs/ECMA262/**/Section*.json`).
 - `Untracked` means not represented in the coverage matrix yet, not necessarily unsupported.
 
 ## Summary

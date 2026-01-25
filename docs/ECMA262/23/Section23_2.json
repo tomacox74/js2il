@@ -435,5 +435,42 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-typedarray-instances"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "23.2.1.1",
+        "feature": "Int32Array from array-like (copy and ToInt32 coercion)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray-objects",
+        "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
+          "Js2IL.Tests/TypedArray/Snapshots/ExecutionTests.Int32Array_FromArray_CopyAndCoerce.verified.txt"
+        ],
+        "notes": "Copies from array-like and coerces values using ToInt32-style truncation; NaN/Infinity/±0 become 0."
+      },
+      {
+        "clause": "23.2.1.1",
+        "feature": "Int32Array: new Int32Array(length), length, index get/set (basic)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray-objects",
+        "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
+          "Js2IL.Tests/TypedArray/Snapshots/ExecutionTests.Int32Array_Construct_Length.verified.txt"
+        ],
+        "notes": "Minimal typed array: exposes numeric length, supports indexing; out-of-bounds reads return 0 and out-of-bounds writes are ignored."
+      },
+      {
+        "clause": "23.2.1.1",
+        "feature": "Int32Array.prototype.set(source[, offset])",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray-objects",
+        "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js",
+          "Js2IL.Tests/TypedArray/Snapshots/ExecutionTests.Int32Array_Set_FromArray_WithOffset.verified.txt"
+        ],
+        "notes": "Copies elements from array-like or another Int32Array with optional offset; elements are coerced via ToInt32; offset < 0 treated as 0; copies stop at destination length."
+      }
+    ]
+  }
 }

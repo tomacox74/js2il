@@ -49,7 +49,7 @@ JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to nat
 - Confirm that all generator tests are now passing.
 - Commit the changes with a descriptive message.
 - Update changelog.md if necessary.
-- Update docs\ECMA262\FeatureCoverage.json if it is a new javascript feature supported. Run `node scripts/ECMA262/generateFeatureCoverage.js` to regenerate the markdown file with the same name as the JSON file.
+- Update the relevant `docs\ECMA262\**\Section*_*.json` subsection doc(s) (use `support.entries` for feature-level support details). Run `node scripts/ECMA262/generateEcma262SectionMarkdown.js --section <section.subsection>` to regenerate the markdown.
 - Update docs\nodejs\NodeSupport.json if it is a new node feature supported. Run `node scripts/generateNodeSupportMd.js` to regenerate the markdown file with the same name as the JSON file.
 - Create and a coomit with the documentation updates.
 - Create a PR with all the changes back to master.

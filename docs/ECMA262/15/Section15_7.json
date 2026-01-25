@@ -109,5 +109,195 @@
   "reference": {
     "mode": "stub",
     "note": "_Intentionally not included here. Use the tc39.es links above as the normative reference._"
+  },
+  "support": {
+    "entries": [
+      {
+        "clause": "15.7.1",
+        "feature": "Async instance method (async m() { await ... })",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_SimpleAwait.js",
+          "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_MultipleAwaits.js",
+          "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_WithThis.js",
+          "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_CallsOtherAsync.js"
+        ],
+        "notes": "Async class instance methods are compiled as resumable state machines and return a Promise; supports await points, multiple awaits, and correct this binding across suspension/resumption."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Async static method (static async m() { await ... })",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Async/JavaScript/Async_StaticMethod_SimpleAwait.js"
+        ],
+        "notes": "Async class static methods are compiled as resumable state machines and return a Promise."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Class declaration (empty)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js"
+        ]
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Class methods and constructors accessing ancestor scope variables (global, function, block)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessGlobalVariable_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariable_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariable_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariable_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariable_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log.js"
+        ],
+        "notes": "Class methods and constructors can now access variables from all ancestor scopes (global, function, block), not just the global scope. Implementation walks the scope tree from the class's parent scope to root, building a complete ancestor chain. The scope array is passed as an argument to methods/constructors, enabling proper multi-level scope access. Supports regular functions, arrow functions, and constructor parameters. Fixed parameter indexing for constructors: when scopes are present, arg0=this, arg1=scopes[], parameters start at arg2."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Constructor default parameters",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Constructor.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_ParameterDestructuring.js"
+        ],
+        "notes": "Class constructors support default parameter values and destructuring with defaults. Call sites validate argument count against min/max parameter bounds and pad missing optional arguments with ldnull. Default values are applied using starg IL pattern when arguments are null. Object destructuring parameters support default values (e.g., constructor({host=\"localhost\", port=8080})) with conditional IL generation."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Constructor return value override semantics",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ExplicitReturnThis.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js"
+        ],
+        "notes": "Implements ECMAScript constructor behavior: `new C()` returns the constructed instance unless the constructor explicitly returns an object/function (which overrides). Returning a primitive does not override."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Constructor with multiple parameters; method uses fields",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
+        ],
+        "notes": "Covers multi-parameter constructors and arithmetic in instance methods."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Constructor with parameter and this.field assignment; method reads field",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_Param_Field_Log.js"
+        ]
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Generator instance method (*m() { yield ... })",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_SimpleYield.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_YieldAssign.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_WithThis.js"
+        ],
+        "notes": "Generator class instance methods compile to a synchronous generator state machine and return a GeneratorObject; supports yield points and correct this binding across next() calls. yield* delegation remains unsupported (see Generator Function Definitions section)."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Generator static method (static *m() { yield ... })",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Generator/JavaScript/Generator_StaticMethod_SimpleYield.js"
+        ],
+        "notes": "Generator class static methods compile to a synchronous generator state machine and return a GeneratorObject. yield* delegation remains unsupported (see Generator Function Definitions section)."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Instance field initializer (public property default)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js"
+        ],
+        "notes": "Emitted by assigning defaults in the generated .ctor."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Instance method (declare and call)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js"
+        ]
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Instance method default parameters",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Method.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js"
+        ],
+        "notes": "Class instance methods support default parameter values and destructuring with defaults. Methods are registered in ClassRegistry with min/max parameter counts. Call sites validate argument count ranges and pad missing optional parameters with ldnull before callvirt. Object destructuring parameters support default values with conditional IL generation."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Instance method implicit fallthrough return is undefined",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_Method_DefaultReturnUndefined.js"
+        ],
+        "notes": "Class/instance methods that reach the end without an explicit return evaluate to JS undefined (represented as CLR null), matching ECMAScript semantics."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Private instance field (#) with helper method access",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
+        ],
+        "notes": "Generated as a private .NET field with a mangled name; accessible only within the class."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Static field initializer (static property default)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
+        ],
+        "notes": "Emitted as a static field initialized in a synthesized .cctor; accessed via ldsfld."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Static method (declare and call)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js"
+        ]
+      }
+    ]
   }
 }

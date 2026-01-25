@@ -39,5 +39,36 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-definitions-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "15.8.1",
+        "feature": "async function (no await)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-async-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Async/JavaScript/Async_HelloWorld.js",
+          "Js2IL.Tests/Async/JavaScript/Async_ReturnValue.js"
+        ],
+        "notes": "Async functions without await expressions compile successfully. Return values are wrapped in Promise.resolve()."
+      },
+      {
+        "clause": "15.8.1",
+        "feature": "await expression",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-async-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Async/JavaScript/Async_SimpleAwait.js",
+          "Js2IL.Tests/Async/JavaScript/Async_TryCatch_AwaitReject.js",
+          "Js2IL.Tests/Async/JavaScript/Async_TryFinally_AwaitInFinally_Normal.js",
+          "Js2IL.Tests/Async/JavaScript/Async_TryCatchFinally_AwaitInFinally_OnReject.js",
+          "Js2IL.Tests/Async/JavaScript/Async_TryFinally_PreservesExceptionThroughAwait.js",
+          "Js2IL.Tests/Async/JavaScript/Async_TryFinally_FinallyThrowOverridesOriginal.js",
+          "Js2IL.Tests/Async/JavaScript/Async_TryFinally_ReturnPreservedThroughAwait.js"
+        ],
+        "notes": "Full state machine implementation with suspension/resumption. Each await point stores _asyncState, schedules promise.then() continuation via SetupAwaitContinuation, and returns. On resume, the state switch dispatches to the appropriate label and loads the awaited result from a scope field. Scope persistence handled via PrependScopeToArray. Await rejection inside try/catch resumes into the catch block via pending-exception storage. Await in finally is supported, including correct completion semantics across suspension (preserve throw/return through awaited finally, and allow finally throws to override prior completion)."
+      }
+    ]
+  }
 }

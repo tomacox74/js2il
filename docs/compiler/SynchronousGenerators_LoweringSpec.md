@@ -46,7 +46,7 @@ Primary ECMA-262 sections relevant to synchronous generators:
 
 Coverage tracking reference:
 
-- [docs/ECMA262/FeatureCoverage.md](ECMA262/FeatureCoverage.md)
+- [docs/ECMA262/Index.md](ECMA262/Index.md)
 
 ## 4. Semantics Summary
 
