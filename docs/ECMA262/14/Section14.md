@@ -16,8 +16,8 @@ _This section is split into subsection documents for readability._
 
 | Subsection | Title | Status | Spec | Document |
 |---:|---|---|---|---|
-| 14.1 | Statement Semantics | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-statement-semantics) | [Section14_1.md](Section14_1.md) |
-| 14.2 | Block | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-block) | [Section14_2.md](Section14_2.md) |
+| 14.1 | Statement Semantics | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-statement-semantics) | [Section14_1.md](Section14_1.md) |
+| 14.2 | Block | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-block) | [Section14_2.md](Section14_2.md) |
 | 14.3 | Declarations and the Variable Statement | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-declarations-and-the-variable-statement) | [Section14_3.md](Section14_3.md) |
 | 14.4 | Empty Statement | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-empty-statement) | [Section14_4.md](Section14_4.md) |
 | 14.5 | Expression Statement | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-expression-statement) | [Section14_5.md](Section14_5.md) |
