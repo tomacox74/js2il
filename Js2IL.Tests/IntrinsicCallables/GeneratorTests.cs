@@ -36,5 +36,17 @@ namespace Js2IL.Tests.IntrinsicCallables
         {
             return GenerateTest(nameof(IntrinsicCallables_ParseInt_Basic));
         }
+
+        [Fact]
+        public Task IntrinsicCallables_Symbol_Callable_Basic()
+        {
+            return GenerateTest(nameof(IntrinsicCallables_Symbol_Callable_Basic));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_BigInt_Callable_Basic()
+        {
+            return GenerateTest(nameof(IntrinsicCallables_BigInt_Callable_Basic));
+        }
     }
 }
