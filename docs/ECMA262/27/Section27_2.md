@@ -54,7 +54,7 @@
 
 ## Reference: Converted Spec Text
 
-_Converted from `test_output/ecma262-27.2.html` via `scripts/convertEcmaExtractHtmlToMarkdown.js`._
+_Converted from `test_output/ecma262-27.2.html` via `scripts/ECMA262/convertEcmaExtractHtmlToMarkdown.js`._
 
 <details>
 <summary>Show converted ECMA-262 §27.2 text</summary>

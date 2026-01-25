@@ -2,7 +2,7 @@
  * Generates docs/ECMA262/<section>/Section<section>_<sub>.md from a sibling JSON file.
  *
  * Usage:
- *   node scripts/generateEcma262SectionMarkdown.js --section 15.7
+ *   node scripts/ECMA262/generateEcma262SectionMarkdown.js --section 15.7
  *
  * Input:
  *   docs/ECMA262/15/Section15_7.json
@@ -15,7 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DEFAULT_ROOT = path.resolve(__dirname, '..', 'docs', 'ECMA262');
+const DEFAULT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'ECMA262');
 const AUTO_GENERATED_MARKER = '<!-- AUTO-GENERATED: generateEcma262SectionMarkdown.js -->';
 
 function parseArgs(argv) {
@@ -95,7 +95,7 @@ function writeTextPreserveEol(filePath, lines) {
 function usage() {
   console.log('Generate a subsection markdown file from its JSON description.');
   console.log('');
-  console.log('  node scripts/generateEcma262SectionMarkdown.js --section 15.7');
+   console.log('  node scripts/ECMA262/generateEcma262SectionMarkdown.js --section 15.7');
   console.log('');
   console.log('Options:');
   console.log('  --section, -s   Clause to generate (e.g. 15.7)');
@@ -202,14 +202,14 @@ function render(doc, sectionClause) {
     } else if (mode === 'embedded') {
       const convertedFromHtml = requireString(ref, 'convertedFromHtml');
       const specMarkdownPath = requireString(ref, 'specMarkdownPath');
-      const embeddedPath = path.resolve(__dirname, '..', specMarkdownPath);
+      const embeddedPath = path.resolve(__dirname, '..', '..', specMarkdownPath);
       if (!fs.existsSync(embeddedPath)) {
         throw new Error(`reference.specMarkdownPath not found: ${specMarkdownPath}`);
       }
 
       lines.push('## Reference: Converted Spec Text');
       lines.push('');
-      lines.push(`_Converted from \`${convertedFromHtml}\` via \`scripts/convertEcmaExtractHtmlToMarkdown.js\`._`);
+      lines.push(`_Converted from \`${convertedFromHtml}\` via \`scripts/ECMA262/convertEcmaExtractHtmlToMarkdown.js\`._`);
       lines.push('');
       lines.push('<details>');
       const summary =
@@ -268,7 +268,7 @@ function main() {
   const lines = render(doc, `${parsed.parent}.${parsed.sub}`);
   const changed = writeTextPreserveEol(mdPath, lines);
 
-  console.log(`${changed ? 'Generated' : 'Up-to-date'} ${path.relative(path.resolve(__dirname, '..'), mdPath)}`);
+  console.log(`${changed ? 'Generated' : 'Up-to-date'} ${path.relative(path.resolve(__dirname, '..', '..'), mdPath)}`);
 }
 
 if (require.main === module) {
