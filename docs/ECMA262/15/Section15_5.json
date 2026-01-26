@@ -80,7 +80,7 @@
           "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js",
           "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js"
         ],
-        "notes": "Supports delegation to arrays/strings/typed arrays via NormalizeForOfIterable, and to nested js2il generator objects with next/throw/return forwarding. Arbitrary user-defined iterators (custom next/return/throw objects) are not fully implemented yet."
+        "notes": "Supports delegation to normalized indexables (arrays/strings/typed arrays) via NormalizeForOfIterable, and to nested js2il GeneratorObject instances with next/throw/return forwarding. Limitations: delegation to arbitrary user-defined iterators (custom next/return/throw objects) is not implemented; the normalized indexable path does not currently perform full iterator-protocol closing (IteratorClose/iterator.return) when the delegating generator is stopped via return()/throw(); throw/return propagation through try/finally remains incomplete."
       }
     ]
   }
