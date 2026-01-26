@@ -91,9 +91,11 @@ internal static class Stackify
                 continue;
             }
 
-            // Only instructions that can be emitted inline are candidates
-            // This prevents marking temps that require materialization (like LIRBuildScopesArray)
-            if (!CanEmitInline(instr, methodBody, defInstruction))
+            // Only instructions that can be emitted inline are candidates.
+            // Exception: certain side-effectful instructions (currently: LIRCallTypedMember)
+            // can be stackified when the single use is *immediately* after the definition,
+            // and the IL emitter defers execution to that use site (so it is not re-emitted).
+            if (!CanEmitInline(instr, methodBody, defInstruction) && instr is not LIRCallTypedMember)
             {
                 continue;
             }
@@ -125,14 +127,6 @@ internal static class Stackify
     /// </summary>
     private static bool CanStackifyBetween(MethodBodyIR methodBody, int defIndex, int useIndex, TempVariable targetTemp)
     {
-        // IMPORTANT: for side-effectful instructions like calls, stackifying is only safe when
-        // the use immediately follows the definition. Otherwise we'd be delaying execution until
-        // the load site, which can reorder side effects relative to intervening instructions.
-        //
-        // The direct adjacency case below is safe because the call would execute at the same
-        // program point (just without an intervening local store/load).
-        var defInstrForTemp = methodBody.Instructions[defIndex];
-
         // Direct adjacency: def immediately followed by use - always stackable
         if (useIndex == defIndex + 1)
         {
@@ -150,7 +144,12 @@ internal static class Stackify
             }
         }
 
-        // Do not allow non-adjacent stackification for call results.
+        // IMPORTANT: for side-effectful instructions like calls, stackifying is only safe when
+        // the use immediately follows the definition. Otherwise we'd be delaying execution until
+        // the load site, which can reorder side effects relative to intervening instructions.
+        // The direct adjacency case above is safe because the call would execute at the same
+        // program point (just without an intervening local store/load).
+        var defInstrForTemp = methodBody.Instructions[defIndex];
         if (defInstrForTemp is LIRCallTypedMember)
         {
             return false;
@@ -485,12 +484,11 @@ internal static class Stackify
             case LIRCallMember:
                 return false;
 
-            // LIRCallTypedMember performs a direct callvirt to a generated class method.
-            // This can be stackified ONLY for the immediate def->use case (enforced in CanStackifyBetween).
-            // LIRToILCompiler must also skip emitting the defining instruction when stackified,
-            // otherwise the call would execute twice.
+            // LIRCallTypedMember is side-effectful and must never be considered inlineable/re-emittable.
+            // Stackification support for immediate fluent chaining is handled explicitly in Analyze
+            // (and must be paired with IL emission that defers execution to the single use site).
             case LIRCallTypedMember:
-                return true;
+                return false;
 
             // Fallback form expands to a small control-flow sequence (labels/branches), not safe to inline.
             case LIRCallTypedMemberWithFallback:
