@@ -30,8 +30,14 @@ internal sealed class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
-    private static void EmitReturnType(ReturnTypeEncoder returnType, Type clrReturnType)
+    private static void EmitReturnType(ReturnTypeEncoder returnType, Type clrReturnType, EntityHandle returnTypeHandle = default)
     {
+        if (!returnTypeHandle.IsNil)
+        {
+            returnType.Type().Type(returnTypeHandle, isValueType: false);
+            return;
+        }
+
         if (clrReturnType == typeof(double))
         {
             returnType.Type().Double();
@@ -69,7 +75,7 @@ internal sealed class LIRToILCompiler
                 }
                 else
                 {
-                    EmitReturnType(returnType, methodDescriptor.ReturnClrType);
+                    EmitReturnType(returnType, methodDescriptor.ReturnClrType, methodDescriptor.ReturnTypeHandle);
                 }
             }, parameters =>
             {
@@ -750,7 +756,7 @@ internal sealed class LIRToILCompiler
                     continue;
             }
 
-            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, labelMap))
+            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, labelMap, stackifyResult))
             {
                 // Failed to compile instruction
                 IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
@@ -874,7 +880,8 @@ internal sealed class LIRToILCompiler
         InstructionEncoder ilEncoder,
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor,
-        Dictionary<int, LabelHandle> labelMap)
+        Dictionary<int, LabelHandle> labelMap,
+        StackifyResult stackifyResult)
     {
         switch (instruction)
         {
@@ -2775,6 +2782,13 @@ internal sealed class LIRToILCompiler
 
             case LIRCallTypedMember callTyped:
                 {
+                    // If Stackify marked this result as stackable, defer emission to the single use site.
+                    // This avoids spilling the call result into an object local and then re-casting it.
+                    if (!IsMaterialized(callTyped.Result, allocation) && stackifyResult.IsStackable(callTyped.Result))
+                    {
+                        break;
+                    }
+
                     EmitCallTypedMemberNoFallback(callTyped, ilEncoder, allocation, methodDescriptor);
                     break;
                 }
@@ -4428,7 +4442,9 @@ internal sealed class LIRToILCompiler
 
             case LIRCallTypedMember callTyped:
                 {
-                    EmitCallTypedMemberNoFallback(callTyped, ilEncoder, allocation, methodDescriptor);
+                    // Inline the typed call (no fallback) and leave the result on the stack.
+                    EmitCallTypedMemberNoFallbackCore(callTyped, ilEncoder, allocation, methodDescriptor);
+                    EmitBoxIfNeededForTypedCallResult(temp, callTyped.ReturnClrType, ilEncoder);
                     break;
                 }
 
@@ -5426,6 +5442,38 @@ internal sealed class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
+        EmitCallTypedMemberNoFallbackCore(instruction, ilEncoder, allocation, methodDescriptor);
+
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            EmitBoxIfNeededForTypedCallResult(instruction.Result, instruction.ReturnClrType, ilEncoder);
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+    }
+
+    private void EmitBoxIfNeededForTypedCallResult(TempVariable resultTemp, Type returnClrType, InstructionEncoder ilEncoder)
+    {
+        var resultStorage = GetTempStorage(resultTemp);
+        if (resultStorage.Kind == ValueStorageKind.Reference
+            && resultStorage.ClrType == typeof(object)
+            && returnClrType != typeof(object)
+            && returnClrType.IsValueType)
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(returnClrType));
+        }
+    }
+
+    private void EmitCallTypedMemberNoFallbackCore(
+        LIRCallTypedMember instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
         // Receiver: if already proven to be the resolved user-class type (e.g., stored in a typed local),
         // avoid the redundant cast.
         var receiverStorage = GetTempStorage(instruction.Receiver);
@@ -5464,25 +5512,6 @@ internal sealed class LIRToILCompiler
 
         ilEncoder.OpCode(ILOpCode.Callvirt);
         ilEncoder.Token(instruction.MethodHandle);
-
-        if (IsMaterialized(instruction.Result, allocation))
-        {
-            var resultStorage = GetTempStorage(instruction.Result);
-            if (resultStorage.Kind == ValueStorageKind.Reference
-                && resultStorage.ClrType == typeof(object)
-                && instruction.ReturnClrType != typeof(object)
-                && instruction.ReturnClrType.IsValueType)
-            {
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(instruction.ReturnClrType));
-            }
-
-            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
-        }
-        else
-        {
-            ilEncoder.OpCode(ILOpCode.Pop);
-        }
     }
 
     private void EmitCallTypedMemberWithFallback(

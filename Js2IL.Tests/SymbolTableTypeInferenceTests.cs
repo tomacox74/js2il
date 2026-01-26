@@ -2,6 +2,8 @@ using Acornima;
 using Acornima.Ast;
 using Js2IL.SymbolTables;
 using Js2IL.Services;
+using System.IO;
+using System.Reflection;
 using System.Linq;
 using Xunit;
 
@@ -370,6 +372,29 @@ public class SymbolTableTypeInferenceTests
 
         Assert.NotNull(methodScope);
         Assert.Equal(expectedReturnType, methodScope!.StableReturnClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableReturnIsThis_PrimeJavaScript_RunSieve()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var classScope = FindClassScope(symbolTable.Root, "PrimeSieve");
+        Assert.NotNull(classScope);
+
+        var methodScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Class
+            && string.Equals(s.Name, "runSieve", StringComparison.Ordinal));
+
+        Assert.NotNull(methodScope);
+        Assert.True(methodScope!.StableReturnIsThis);
     }
 
     private static Js2IL.SymbolTables.Scope? FindFirstScope(Js2IL.SymbolTables.Scope scope, Func<Js2IL.SymbolTables.Scope, bool> predicate)

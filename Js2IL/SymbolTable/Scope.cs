@@ -42,6 +42,14 @@ public class Scope
     /// When null, the callable returns <see cref="object"/> (JavaScript value) in IL.
     /// </summary>
     public Type? StableReturnClrType { get; set; }
+
+    /// <summary>
+    /// True when this callable is a class instance method and we can conservatively prove
+    /// it returns the implicit receiver via <c>return this;</c>.
+    /// This enables emitting a class-typed return signature (rather than <see cref="object"/>)
+    /// so chained calls can lower to direct user-class calls.
+    /// </summary>
+    public bool StableReturnIsThis { get; set; }
     // Names of parameters (for function scopes) so we can avoid generating backing fields for them.
     public HashSet<string> Parameters { get; } = new();
     /// <summary>
