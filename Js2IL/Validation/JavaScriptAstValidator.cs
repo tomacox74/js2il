@@ -396,12 +396,6 @@ public class JavaScriptAstValidator : IAstValidator
                     result.Errors.Add($"The 'yield' keyword is only valid inside generator functions (line {node.Location.Start.Line})");
                     result.IsValid = false;
                 }
-                else if (ye.Delegate)
-                {
-                    // Phase 1: yield* not yet supported.
-                    result.Errors.Add($"The 'yield*' form is not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
-                }
             }
 
             // Walk children (reflection-based, consistent with ValidateAsyncAwait)

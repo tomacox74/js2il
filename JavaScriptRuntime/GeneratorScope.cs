@@ -11,6 +11,14 @@ public class GeneratorScope
     public bool _started;
     public bool _done;
 
+    // yield* delegation state
+    // _yieldStarMode: 0 = not delegating, 1 = indexable (NormalizeForOfIterable), 2 = iterator (GeneratorObject)
+    // Stored as double to match the compiler's numeric constant model.
+    public double _yieldStarMode;
+    public object? _yieldStarTarget;
+    public double _yieldStarIndex;
+    public double _yieldStarLength;
+
     // Resume protocol inputs
     public object? _resumeValue;
     public object? _resumeException;

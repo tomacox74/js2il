@@ -25,5 +25,17 @@ namespace Js2IL.Tests.Generator
 
         [Fact]
         public Task Generator_Inheritance_SuperIteratorMethod() { var testName = nameof(Generator_Inheritance_SuperIteratorMethod); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Generator_YieldStar_ArrayBasic() { var testName = nameof(Generator_YieldStar_ArrayBasic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Generator_YieldStar_NestedGenerator() { var testName = nameof(Generator_YieldStar_NestedGenerator); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Generator_YieldStar_PassNextValue() { var testName = nameof(Generator_YieldStar_PassNextValue); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Generator_YieldStar_ReturnForwards() { var testName = nameof(Generator_YieldStar_ReturnForwards); return GenerateTest(testName); }
     }
 }

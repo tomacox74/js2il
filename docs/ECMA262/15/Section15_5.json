@@ -57,7 +57,7 @@
         "testScripts": [
           "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js"
         ],
-        "notes": "MVP support for synchronous generators compiled via lowering to a state machine. Known limitations: yield* is not supported; async generators are rejected; throw/return through try/finally is not fully implemented."
+        "notes": "MVP support for synchronous generators compiled via lowering to a state machine. Known limitations: async generators are rejected; throw/return propagation through try/finally is not fully implemented."
       },
       {
         "clause": "15.5.1",
@@ -67,14 +67,20 @@
         "testScripts": [
           "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js"
         ],
-        "notes": "Supports yielding values and resumption via next(). yield* is not supported."
+        "notes": "Supports yielding values and resumption via next()."
       },
       {
         "clause": "15.5.1",
         "feature": "yield* delegation",
-        "status": "Not Yet Supported",
+        "status": "Partially Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
-        "notes": "Explicitly rejected in validator (MVP limitation)."
+        "testScripts": [
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js"
+        ],
+        "notes": "Supports delegation to arrays/strings/typed arrays via NormalizeForOfIterable, and to nested js2il generator objects with next/throw/return forwarding. Arbitrary user-defined iterators (custom next/return/throw objects) are not fully implemented yet."
       }
     ]
   }
