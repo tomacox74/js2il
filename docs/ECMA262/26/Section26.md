@@ -18,4 +18,3 @@ _This section is split into subsection documents for readability._
 |---:|---|---|---|---|
 | 26.1 | WeakRef Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-weak-ref-objects) | [Section26_1.md](Section26_1.md) |
 | 26.2 | FinalizationRegistry Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-finalization-registry-objects) | [Section26_2.md](Section26_2.md) |
-

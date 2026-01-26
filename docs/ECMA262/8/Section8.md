@@ -22,4 +22,3 @@ _This section is split into subsection documents for readability._
 | 8.4 | Function Name Inference | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-function-name-inference) | [Section8_4.md](Section8_4.md) |
 | 8.5 | Contains | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-contains) | [Section8_5.md](Section8_5.md) |
 | 8.6 | Miscellaneous | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-miscellaneous) | [Section8_6.md](Section8_6.md) |
-

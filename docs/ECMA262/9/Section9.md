@@ -10,7 +10,7 @@ _This section is split into subsection documents for readability._
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 9 | Executable Code and Execution Contexts | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-executable-code-and-execution-contexts) |
+| 9 | Executable Code and Execution Contexts | Supported | [tc39.es](https://tc39.es/ecma262/#sec-executable-code-and-execution-contexts) |
 
 ## Subsections
 
@@ -29,4 +29,3 @@ _This section is split into subsection documents for readability._
 | 9.11 | AddToKeptObjects ( value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#AddToKeptObjects) | [Section9_11.md](Section9_11.md) |
 | 9.12 | CleanupFinalizationRegistry ( finalizationRegistry ) | Untracked | [tc39.es](https://tc39.es/ecma262/#CleanupFinalizationRegistry) | [Section9_12.md](Section9_12.md) |
 | 9.13 | CanBeHeldWeakly ( v ) | Untracked | [tc39.es](https://tc39.es/ecma262/#CanBeHeldWeakly) | [Section9_13.md](Section9_13.md) |
-

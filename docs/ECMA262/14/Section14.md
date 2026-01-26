@@ -32,4 +32,3 @@ _This section is split into subsection documents for readability._
 | 14.14 | The throw Statement | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-throw-statement) | [Section14_14.md](Section14_14.md) |
 | 14.15 | The try Statement | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-try-statement) | [Section14_15.md](Section14_15.md) |
 | 14.16 | The debugger Statement | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-debugger-statement) | [Section14_16.md](Section14_16.md) |
-

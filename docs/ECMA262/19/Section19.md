@@ -20,4 +20,3 @@ _This section is split into subsection documents for readability._
 | 19.2 | Function Properties of the Global Object | Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-properties-of-the-global-object) | [Section19_2.md](Section19_2.md) |
 | 19.3 | Constructor Properties of the Global Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object) | [Section19_3.md](Section19_3.md) |
 | 19.4 | Other Properties of the Global Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-other-properties-of-the-global-object) | [Section19_4.md](Section19_4.md) |
-

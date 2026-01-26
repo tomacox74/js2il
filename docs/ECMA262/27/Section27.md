@@ -23,4 +23,3 @@ _This section is split into subsection documents for readability._
 | 27.5 | Generator Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-generator-objects) | [Section27_5.md](Section27_5.md) |
 | 27.6 | AsyncGenerator Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-objects) | [Section27_6.md](Section27_6.md) |
 | 27.7 | AsyncFunction Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-async-function-objects) | [Section27_7.md](Section27_7.md) |
-
