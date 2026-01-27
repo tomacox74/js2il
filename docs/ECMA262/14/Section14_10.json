@@ -12,8 +12,32 @@
     {
       "clause": "14.10.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-return-statement-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "14.10.1",
+        "feature": "return statement (with value)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-return-statement-runtime-semantics-evaluation",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_ReturnsStaticValueAndLogs.js"
+        ]
+      },
+      {
+        "clause": "14.10.1",
+        "feature": "return statement (finally executes)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-return-statement-runtime-semantics-evaluation",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js",
+          "Js2IL.Tests/TryCatch/JavaScript/TryFinally_Return.js"
+        ],
+        "notes": "Return exits the current function while ensuring finally blocks execute on the way out."
+      }
+    ]
+  }
 }

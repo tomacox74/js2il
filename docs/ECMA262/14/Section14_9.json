@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "14.9",
   "title": "The break Statement",
-  "status": "Untracked",
+  "status": "Supported",
   "specUrl": "https://tc39.es/ecma262/#sec-break-statement",
   "parent": {
     "clause": "14"
@@ -12,14 +12,46 @@
     {
       "clause": "14.9.1",
       "title": "Static Semantics: Early Errors",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-break-statement-static-semantics-early-errors"
     },
     {
       "clause": "14.9.2",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-break-statement-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "14.9.2",
+        "feature": "break statement (unlabeled)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-break-statement-runtime-semantics-evaluation",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Break_AtThree.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_Break_AtThree.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Break_AtThree.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Break.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Break.js"
+        ]
+      },
+      {
+        "clause": "14.9.2",
+        "feature": "break statement (labeled)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-break-statement-runtime-semantics-evaluation",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledBreak.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledBreak.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledBreak.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledBreak.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_LabeledBreak.js"
+        ],
+        "notes": "Labeled break exits the targeted statement (loop/switch). Implemented using label stacks during statement lowering."
+      }
+    ]
+  }
 }

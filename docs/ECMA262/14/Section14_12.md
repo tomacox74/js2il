@@ -12,10 +12,10 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 14.12.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-switch-statement-static-semantics-early-errors) |
-| 14.12.2 | Runtime Semantics: CaseBlockEvaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-caseblockevaluation) |
-| 14.12.3 | CaseClauseIsSelected ( C , input ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-caseclauseisselected) |
-| 14.12.4 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-switch-statement-runtime-semantics-evaluation) |
+| 14.12.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-switch-statement-static-semantics-early-errors) |
+| 14.12.2 | Runtime Semantics: CaseBlockEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-caseblockevaluation) |
+| 14.12.3 | CaseClauseIsSelected ( C , input ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-caseclauseisselected) |
+| 14.12.4 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-switch-statement-runtime-semantics-evaluation) |
 
 ## Support
 

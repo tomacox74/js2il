@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "14.8",
   "title": "The continue Statement",
-  "status": "Untracked",
+  "status": "Supported",
   "specUrl": "https://tc39.es/ecma262/#sec-continue-statement",
   "parent": {
     "clause": "14"
@@ -12,14 +12,43 @@
     {
       "clause": "14.8.1",
       "title": "Static Semantics: Early Errors",
-      "status": "Untracked",
+      "status": "Partially Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-continue-statement-static-semantics-early-errors"
     },
     {
       "clause": "14.8.2",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-continue-statement-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "14.8.2",
+        "feature": "continue statement (unlabeled)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-continue-statement-runtime-semantics-evaluation",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_Continue_SkipEven.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js"
+        ]
+      },
+      {
+        "clause": "14.8.2",
+        "feature": "continue statement (labeled)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-continue-statement-runtime-semantics-evaluation",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledContinue.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledContinue.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledContinue.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledContinue.js"
+        ],
+        "notes": "Labeled continue targets an enclosing iteration statement; implemented via loop context label mapping during lowering."
+      }
+    ]
+  }
 }

@@ -12,8 +12,8 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 14.6.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-if-statement-static-semantics-early-errors) |
-| 14.6.2 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-if-statement-runtime-semantics-evaluation) |
+| 14.6.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-if-statement-static-semantics-early-errors) |
+| 14.6.2 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-if-statement-runtime-semantics-evaluation) |
 
 ## Support
 
