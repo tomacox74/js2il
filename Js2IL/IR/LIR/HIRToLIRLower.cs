@@ -6310,18 +6310,15 @@ public sealed class HIRToLIRLowerer
         // - Parameters live in IL arguments
         // Do not rely on the temp storage kind here, since other lowering steps may propagate
         // stable unboxed types for captured fields.
-        var updateStorage = _environmentLayout?.GetStorage(updateBinding);
         var isActiveScopeStored = TryGetActiveScopeFieldStorage(updateBinding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId);
+        var updateStorage = isActiveScopeStored ? null : _environmentLayout?.GetStorage(updateBinding);
         var isEnvironmentStored = isActiveScopeStored || (updateStorage != null && updateStorage.Kind != BindingStorageKind.IlLocal);
 
         // Implement numeric coercion via runtime TypeUtilities.ToNumber(object?) and then store
         // the boxed updated value back to the appropriate storage location.
         if (isEnvironmentStored)
         {
-            if (!isActiveScopeStored && (_environmentLayout == null || updateStorage == null))
-            {
-                return false;
-            }
+            // Note: if we're in this branch and not using an active scope temp, updateStorage must be non-null.
 
             var currentNumber = EnsureNumber(currentValue);
 
@@ -6711,9 +6708,8 @@ public sealed class HIRToLIRLowerer
         }
 
         // Ensure all per-iteration bindings live in the leaf scope.
-        foreach (var binding in bindings)
+        foreach (var storage in bindings.Select(_environmentLayout.GetStorage))
         {
-            var storage = _environmentLayout.GetStorage(binding);
             if (storage == null || storage.Kind != BindingStorageKind.LeafScopeField)
             {
                 return false;

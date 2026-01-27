@@ -455,12 +455,11 @@ internal static class TempLocalAllocator
                 // LIRBuildScopesArray may load scope instances from temps (ScopeInstanceSource.Temp).
                 if (instruction is LIRBuildScopesArray buildScopes)
                 {
-                    foreach (var slot in buildScopes.Slots)
+                    foreach (var temp in buildScopes.Slots
+                        .Where(slot => slot.Source == ScopeInstanceSource.Temp && slot.SourceIndex >= 0)
+                        .Select(slot => new TempVariable(slot.SourceIndex)))
                     {
-                        if (slot.Source == ScopeInstanceSource.Temp && slot.SourceIndex >= 0)
-                        {
-                            yield return new TempVariable(slot.SourceIndex);
-                        }
+                        yield return temp;
                     }
                 }
                 break;
