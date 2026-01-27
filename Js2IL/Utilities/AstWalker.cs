@@ -114,6 +114,10 @@ public class AstWalker
                 VisitNodes(switchCase.Consequent, visitor);
                 break;
 
+            case LabeledStatement labeledStmt:
+                Visit(labeledStmt.Body, visitor);
+                break;
+
             case TryStatement tryStmt:
                 Visit(tryStmt.Block, visitor);
                 Visit(tryStmt.Handler, visitor);
@@ -305,6 +309,10 @@ public class AstWalker
             case SwitchCase switchCase:
                 VisitWithContext(switchCase.Test, enterNode, exitNode);
                 VisitNodesWithContext(switchCase.Consequent, enterNode, exitNode);
+                break;
+
+            case LabeledStatement labeledStmt:
+                VisitWithContext(labeledStmt.Body, enterNode, exitNode);
                 break;
 
             case TryStatement tryStmt:

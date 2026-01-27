@@ -49,7 +49,18 @@ public class ModuleLoader
     private bool TryLoadAndParseModule(string modulePath, string rootModulePath, out ModuleDefinition? module)
     {
         var jsSource = _fileSystem.ReadAllText(modulePath);
-        var ast = _parser.ParseJavaScript(jsSource, modulePath);
+        Acornima.Ast.Program ast;
+        try
+        {
+            ast = _parser.ParseJavaScript(jsSource, modulePath);
+        }
+        catch (Exception ex)
+        {
+            module = null;
+            _logger.WriteLineError("\nParse Errors:");
+            _logger.WriteLineError($"Error: {ex.Message}");
+            return false;
+        }
 
         var moduleName = JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromPath(modulePath, rootModulePath);
 

@@ -31,6 +31,10 @@ public class JavaScriptAstValidator : IAstValidator
     {
         var result = new ValidationResult { IsValid = true };
 
+        // Validate spec-level early errors that Acornima may parse but considers static errors.
+        // In particular, break/continue target rules are specified under iteration statements.
+        ValidateIterationStatementEarlyErrors(ast, result);
+
         // Validate async/await usage - await is only valid inside async functions.
         ValidateAsyncAwait(ast, result);
 
@@ -248,6 +252,252 @@ public class JavaScriptAstValidator : IAstValidator
         });
 
         return result;
+    }
+
+    private static void ValidateIterationStatementEarlyErrors(Acornima.Ast.Program ast, ValidationResult result)
+    {
+        var walker = new AstWalker();
+        var functionContexts = new Stack<EarlyErrorContext>();
+        functionContexts.Push(new EarlyErrorContext());
+
+        walker.VisitWithContext(ast, node =>
+        {
+            // Function boundaries reset label/loop/switch target sets.
+            if (node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression)
+            {
+                functionContexts.Push(new EarlyErrorContext());
+                return;
+            }
+
+            var ctx = functionContexts.Peek();
+
+            switch (node)
+            {
+                case LabeledStatement labeledStmt:
+                    {
+                        var labelNode = labeledStmt.Label;
+                        var labelName = labelNode?.Name;
+                        if (string.IsNullOrWhiteSpace(labelName))
+                        {
+                            break;
+                        }
+
+                        if (!ctx.ActiveLabelNames.Add(labelName))
+                        {
+                            AddError(result,
+                                $"Duplicate label '{labelName}' is not allowed",
+                                labelNode!);
+                            // Still push so the exit pop stays consistent.
+                        }
+
+                        ctx.LabelStack.Push(new LabelEntry(labelName, labeledStmt.Body, labelNode!));
+                        break;
+                    }
+
+                case SwitchStatement:
+                    ctx.BreakableStack.Push(BreakableKind.Switch);
+                    break;
+
+                case DoWhileStatement:
+                case WhileStatement:
+                case ForStatement:
+                case ForInStatement:
+                case ForOfStatement:
+                    ctx.BreakableStack.Push(BreakableKind.Iteration);
+                    ctx.IterationDepth++;
+
+                    if (node is ForOfStatement forOfStmt && forOfStmt.Await)
+                    {
+                        // Covered elsewhere; just ignore here.
+                    }
+                    else if (node is ForInStatement forIn)
+                    {
+                        ValidateForInOfLeft(forIn.Left, isForOf: false, result);
+                    }
+                    else if (node is ForOfStatement forOf)
+                    {
+                        ValidateForInOfLeft(forOf.Left, isForOf: true, result);
+                    }
+                    break;
+
+                case BreakStatement breakStmt:
+                    ValidateBreakStatement(breakStmt, ctx, result);
+                    break;
+
+                case ContinueStatement continueStmt:
+                    ValidateContinueStatement(continueStmt, ctx, result);
+                    break;
+            }
+        }, exitNode =>
+        {
+            // Function boundaries restore previous context.
+            if (exitNode is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression)
+            {
+                if (functionContexts.Count > 1)
+                {
+                    functionContexts.Pop();
+                }
+                return;
+            }
+
+            var ctx = functionContexts.Peek();
+
+            switch (exitNode)
+            {
+                case LabeledStatement:
+                    if (ctx.LabelStack.Count > 0)
+                    {
+                        var entry = ctx.LabelStack.Pop();
+                        ctx.ActiveLabelNames.Remove(entry.Name);
+                    }
+                    break;
+
+                case SwitchStatement:
+                    if (ctx.BreakableStack.Count > 0)
+                    {
+                        ctx.BreakableStack.Pop();
+                    }
+                    break;
+
+                case DoWhileStatement:
+                case WhileStatement:
+                case ForStatement:
+                case ForInStatement:
+                case ForOfStatement:
+                    if (ctx.BreakableStack.Count > 0)
+                    {
+                        ctx.BreakableStack.Pop();
+                    }
+                    if (ctx.IterationDepth > 0)
+                    {
+                        ctx.IterationDepth--;
+                    }
+                    break;
+            }
+        });
+    }
+
+    private static void ValidateBreakStatement(BreakStatement breakStmt, EarlyErrorContext ctx, ValidationResult result)
+    {
+        if (breakStmt.Label == null)
+        {
+            if (ctx.BreakableStack.Count == 0)
+            {
+                AddError(result, "Illegal break statement (not inside a loop or switch)", breakStmt);
+            }
+            return;
+        }
+
+        var labelName = breakStmt.Label.Name;
+        if (!TryFindLabelTarget(labelName, ctx, out _))
+        {
+            AddError(result, $"Undefined label '{labelName}' in break statement", breakStmt.Label);
+        }
+    }
+
+    private static void ValidateContinueStatement(ContinueStatement continueStmt, EarlyErrorContext ctx, ValidationResult result)
+    {
+        if (continueStmt.Label == null)
+        {
+            if (ctx.IterationDepth == 0)
+            {
+                AddError(result, "Illegal continue statement (not inside a loop)", continueStmt);
+            }
+            return;
+        }
+
+        var labelName = continueStmt.Label.Name;
+        if (!TryFindLabelTarget(labelName, ctx, out var targetStatement))
+        {
+            AddError(result, $"Undefined label '{labelName}' in continue statement", continueStmt.Label);
+            return;
+        }
+
+        if (!IsIterationStatement(targetStatement))
+        {
+            AddError(result, $"Illegal continue target '{labelName}' (label does not refer to a loop)", continueStmt.Label);
+        }
+    }
+
+    private static bool TryFindLabelTarget(string labelName, EarlyErrorContext ctx, out Node? targetStatement)
+    {
+        foreach (var entry in ctx.LabelStack)
+        {
+            if (string.Equals(entry.Name, labelName, StringComparison.Ordinal))
+            {
+                targetStatement = entry.TargetStatement;
+                return true;
+            }
+        }
+
+        targetStatement = null;
+        return false;
+    }
+
+    private static bool IsIterationStatement(Node? node)
+    {
+        return node is DoWhileStatement
+            or WhileStatement
+            or ForStatement
+            or ForInStatement
+            or ForOfStatement;
+    }
+
+    private static void ValidateForInOfLeft(Node left, bool isForOf, ValidationResult result)
+    {
+        // Spec-level early error: for-in/of variable declarations must not have initializers
+        // and must declare exactly one binding.
+        if (left is VariableDeclaration vd)
+        {
+            if (vd.Declarations.Count != 1)
+            {
+                AddError(result,
+                    $"Invalid {(isForOf ? "for...of" : "for...in")} head: exactly one variable declarator is required",
+                    vd);
+                return;
+            }
+
+            var decl = vd.Declarations[0];
+            if (decl.Init != null)
+            {
+                AddError(result,
+                    $"Invalid {(isForOf ? "for...of" : "for...in")} head: variable declarator cannot have an initializer",
+                    decl.Init);
+            }
+
+            return;
+        }
+
+        // Defensive: Acornima usually won't produce these, but if it does, treat as early error.
+        if (left is AssignmentExpression)
+        {
+            AddError(result,
+                $"Invalid {(isForOf ? "for...of" : "for...in")} head: assignment is not allowed in the loop target",
+                left);
+        }
+    }
+
+    private static void AddError(ValidationResult result, string message, Node node)
+    {
+        var loc = node.Location.Start;
+        result.Errors.Add($"{message} (line {loc.Line}, col {loc.Column})");
+        result.IsValid = false;
+    }
+
+    private enum BreakableKind
+    {
+        Iteration,
+        Switch
+    }
+
+    private sealed record LabelEntry(string Name, Node TargetStatement, Node LabelNode);
+
+    private sealed class EarlyErrorContext
+    {
+        public int IterationDepth;
+        public Stack<BreakableKind> BreakableStack { get; } = new();
+        public Stack<LabelEntry> LabelStack { get; } = new();
+        public HashSet<string> ActiveLabelNames { get; } = new(StringComparer.Ordinal);
     }
 
     private static void ValidateAsyncAwait(Node ast, ValidationResult result)
