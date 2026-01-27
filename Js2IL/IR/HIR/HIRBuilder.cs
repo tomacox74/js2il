@@ -767,81 +767,261 @@ class HIRMethodBuilder
 
             case ForOfStatement forOfStmt:
                 {
-                    // Parse RHS iterable expression
+                    var previousForOfScope = _currentScope;
+
+                    static BindingKind MapDeclarationKind(VariableDeclarationKind kind) => kind switch
+                    {
+                        VariableDeclarationKind.Var => BindingKind.Var,
+                        VariableDeclarationKind.Let => BindingKind.Let,
+                        VariableDeclarationKind.Const => BindingKind.Const,
+                        _ => BindingKind.Var
+                    };
+
+                    static void CollectBindings(HIRPattern pattern, List<BindingInfo> bindings)
+                    {
+                        switch (pattern)
+                        {
+                            case HIRIdentifierPattern id:
+                                bindings.Add(id.Symbol.BindingInfo);
+                                break;
+
+                            case HIRDefaultPattern def:
+                                CollectBindings(def.Target, bindings);
+                                break;
+
+                            case HIRRestPattern rest:
+                                CollectBindings(rest.Target, bindings);
+                                break;
+
+                            case HIRObjectPattern obj:
+                                foreach (var prop in obj.Properties)
+                                {
+                                    CollectBindings(prop.Value, bindings);
+                                }
+                                if (obj.Rest != null)
+                                {
+                                    CollectBindings(obj.Rest, bindings);
+                                }
+                                break;
+
+                            case HIRArrayPattern arr:
+                                foreach (var el in arr.Elements)
+                                {
+                                    if (el != null)
+                                    {
+                                        CollectBindings(el, bindings);
+                                    }
+                                }
+                                if (arr.Rest != null)
+                                {
+                                    CollectBindings(arr.Rest, bindings);
+                                }
+                                break;
+                        }
+                    }
+
+                    // Determine whether the left-hand side is a declaration and whether it has a
+                    // dedicated loop-head scope (for let/const).
+                    bool isDeclaration = false;
+                    var declarationKind = BindingKind.Var;
+                    Scope? forScope = null;
+                    Node? declIdNode = null;
+
+                    if (forOfStmt.Left is VariableDeclaration forOfDecl && forOfDecl.Declarations.Count == 1)
+                    {
+                        isDeclaration = true;
+                        declarationKind = MapDeclarationKind(forOfDecl.Kind);
+                        declIdNode = forOfDecl.Declarations[0].Id;
+
+                        if (forOfDecl.Kind == VariableDeclarationKind.Let || forOfDecl.Kind == VariableDeclarationKind.Const)
+                        {
+                            forScope = FindChildScopeForAstNode(forOfDecl);
+                        }
+                    }
+
+                    // Parse RHS iterable expression in the outer scope (matches current runtime semantics).
+                    _currentScope = previousForOfScope;
                     if (!TryParseExpression(forOfStmt.Right, out var iterableExpr))
                     {
+                        _currentScope = previousForOfScope;
                         return false;
                     }
 
-                    // Parse body
-                    if (!TryParseStatement(forOfStmt.Body, out var bodyStmt))
-                    {
-                        return false;
-                    }
+                    // Parse target + body in the loop scope when present.
+                    _currentScope = forScope ?? previousForOfScope;
 
-                    // Determine loop target identifier
-                    string? targetName = null;
-                    if (forOfStmt.Left is VariableDeclaration vd && vd.Declarations.Count == 1 && vd.Declarations[0].Id is Identifier vid)
+                    HIRPattern? targetPattern = null;
+                    var loopHeadBindings = new List<BindingInfo>();
+
+                    if (isDeclaration)
                     {
-                        targetName = vid.Name;
+                        if (declIdNode == null)
+                        {
+                            _currentScope = previousForOfScope;
+                            return false;
+                        }
+
+                        if (!TryParsePattern(declIdNode, out targetPattern))
+                        {
+                            _currentScope = previousForOfScope;
+                            return false;
+                        }
+
+                        CollectBindings(targetPattern!, loopHeadBindings);
                     }
                     else if (forOfStmt.Left is Identifier id)
                     {
-                        targetName = id.Name;
+                        var symbol = _currentScope.FindSymbol(id.Name);
+                        if (symbol == null)
+                        {
+                            _currentScope = previousForOfScope;
+                            return false;
+                        }
+                        targetPattern = new HIRIdentifierPattern(symbol);
                     }
-
-                    if (string.IsNullOrEmpty(targetName))
+                    else
                     {
+                        _currentScope = previousForOfScope;
                         return false;
                     }
 
-                    var symbol = _currentScope.FindSymbol(targetName!);
-                    if (symbol == null)
+                    if (!TryParseStatement(forOfStmt.Body, out var bodyStmt))
                     {
+                        _currentScope = previousForOfScope;
                         return false;
                     }
 
-                    hirStatement = new HIRForOfStatement(symbol, iterableExpr!, bodyStmt!);
+                    _currentScope = previousForOfScope;
+                    hirStatement = new HIRForOfStatement(targetPattern!, isDeclaration, declarationKind, loopHeadBindings, iterableExpr!, bodyStmt!);
                     return true;
                 }
 
             case ForInStatement forInStmt:
                 {
-                    // Parse RHS enumerable expression
+                    var previousForInScope = _currentScope;
+
+                    static BindingKind MapDeclarationKind(VariableDeclarationKind kind) => kind switch
+                    {
+                        VariableDeclarationKind.Var => BindingKind.Var,
+                        VariableDeclarationKind.Let => BindingKind.Let,
+                        VariableDeclarationKind.Const => BindingKind.Const,
+                        _ => BindingKind.Var
+                    };
+
+                    static void CollectBindings(HIRPattern pattern, List<BindingInfo> bindings)
+                    {
+                        switch (pattern)
+                        {
+                            case HIRIdentifierPattern id:
+                                bindings.Add(id.Symbol.BindingInfo);
+                                break;
+
+                            case HIRDefaultPattern def:
+                                CollectBindings(def.Target, bindings);
+                                break;
+
+                            case HIRRestPattern rest:
+                                CollectBindings(rest.Target, bindings);
+                                break;
+
+                            case HIRObjectPattern obj:
+                                foreach (var prop in obj.Properties)
+                                {
+                                    CollectBindings(prop.Value, bindings);
+                                }
+                                if (obj.Rest != null)
+                                {
+                                    CollectBindings(obj.Rest, bindings);
+                                }
+                                break;
+
+                            case HIRArrayPattern arr:
+                                foreach (var el in arr.Elements)
+                                {
+                                    if (el != null)
+                                    {
+                                        CollectBindings(el, bindings);
+                                    }
+                                }
+                                if (arr.Rest != null)
+                                {
+                                    CollectBindings(arr.Rest, bindings);
+                                }
+                                break;
+                        }
+                    }
+
+                    bool isDeclaration = false;
+                    var declarationKind = BindingKind.Var;
+                    Scope? forScope = null;
+                    Node? declIdNode = null;
+
+                    if (forInStmt.Left is VariableDeclaration forInDecl && forInDecl.Declarations.Count == 1)
+                    {
+                        isDeclaration = true;
+                        declarationKind = MapDeclarationKind(forInDecl.Kind);
+                        declIdNode = forInDecl.Declarations[0].Id;
+
+                        if (forInDecl.Kind == VariableDeclarationKind.Let || forInDecl.Kind == VariableDeclarationKind.Const)
+                        {
+                            forScope = FindChildScopeForAstNode(forInDecl);
+                        }
+                    }
+
+                    // Parse RHS enumerable expression in the outer scope (matches current runtime semantics).
+                    _currentScope = previousForInScope;
                     if (!TryParseExpression(forInStmt.Right, out var enumerableExpr))
                     {
+                        _currentScope = previousForInScope;
                         return false;
                     }
 
-                    // Parse body
-                    if (!TryParseStatement(forInStmt.Body, out var bodyStmt))
-                    {
-                        return false;
-                    }
+                    // Parse target + body in the loop scope when present.
+                    _currentScope = forScope ?? previousForInScope;
 
-                    // Determine loop target identifier
-                    string? targetName = null;
-                    if (forInStmt.Left is VariableDeclaration vd && vd.Declarations.Count == 1 && vd.Declarations[0].Id is Identifier vid)
+                    HIRPattern? targetPattern = null;
+                    var loopHeadBindings = new List<BindingInfo>();
+
+                    if (isDeclaration)
                     {
-                        targetName = vid.Name;
+                        if (declIdNode == null)
+                        {
+                            _currentScope = previousForInScope;
+                            return false;
+                        }
+
+                        if (!TryParsePattern(declIdNode, out targetPattern))
+                        {
+                            _currentScope = previousForInScope;
+                            return false;
+                        }
+
+                        CollectBindings(targetPattern!, loopHeadBindings);
                     }
                     else if (forInStmt.Left is Identifier id)
                     {
-                        targetName = id.Name;
+                        var symbol = _currentScope.FindSymbol(id.Name);
+                        if (symbol == null)
+                        {
+                            _currentScope = previousForInScope;
+                            return false;
+                        }
+                        targetPattern = new HIRIdentifierPattern(symbol);
                     }
-
-                    if (string.IsNullOrEmpty(targetName))
+                    else
                     {
+                        _currentScope = previousForInScope;
                         return false;
                     }
 
-                    var symbol = _currentScope.FindSymbol(targetName!);
-                    if (symbol == null)
+                    if (!TryParseStatement(forInStmt.Body, out var bodyStmt))
                     {
+                        _currentScope = previousForInScope;
                         return false;
                     }
 
-                    hirStatement = new HIRForInStatement(symbol, enumerableExpr!, bodyStmt!);
+                    _currentScope = previousForInScope;
+                    hirStatement = new HIRForInStatement(targetPattern!, isDeclaration, declarationKind, loopHeadBindings, enumerableExpr!, bodyStmt!);
                     return true;
                 }
 
@@ -902,8 +1082,8 @@ class HIRMethodBuilder
                     hirStatement = labeledBody switch
                     {
                         HIRForStatement forStmt => new HIRForStatement(forStmt.Init, forStmt.Test, forStmt.Update, forStmt.Body, labelName),
-                        HIRForOfStatement forOfStmt => new HIRForOfStatement(forOfStmt.Target, forOfStmt.Iterable, forOfStmt.Body, labelName),
-                        HIRForInStatement forInStmt => new HIRForInStatement(forInStmt.Target, forInStmt.Enumerable, forInStmt.Body, labelName),
+                        HIRForOfStatement forOfStmt => new HIRForOfStatement(forOfStmt.Target, forOfStmt.IsDeclaration, forOfStmt.DeclarationKind, forOfStmt.LoopHeadBindings, forOfStmt.Iterable, forOfStmt.Body, labelName),
+                        HIRForInStatement forInStmt => new HIRForInStatement(forInStmt.Target, forInStmt.IsDeclaration, forInStmt.DeclarationKind, forInStmt.LoopHeadBindings, forInStmt.Enumerable, forInStmt.Body, labelName),
                         HIRWhileStatement whileStmt => new HIRWhileStatement(whileStmt.Test, whileStmt.Body, labelName),
                         HIRDoWhileStatement dws => new HIRDoWhileStatement(dws.Body, dws.Test, labelName),
                         _ => new HIRLabeledStatement(labelName, labeledBody!)

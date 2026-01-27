@@ -4,15 +4,28 @@ namespace Js2IL.HIR;
 
 public sealed class HIRForOfStatement : HIRStatement
 {
-    public HIRForOfStatement(Symbol target, HIRExpression iterable, HIRStatement body, string? label = null)
+    public HIRForOfStatement(
+        HIRPattern target,
+        bool isDeclaration,
+        BindingKind declarationKind,
+        IReadOnlyList<BindingInfo> loopHeadBindings,
+        HIRExpression iterable,
+        HIRStatement body,
+        string? label = null)
     {
         Target = target;
+        IsDeclaration = isDeclaration;
+        DeclarationKind = declarationKind;
+        LoopHeadBindings = loopHeadBindings;
         Iterable = iterable;
         Body = body;
         Label = label;
     }
 
-    public Symbol Target { get; }
+    public HIRPattern Target { get; }
+    public bool IsDeclaration { get; }
+    public BindingKind DeclarationKind { get; }
+    public IReadOnlyList<BindingInfo> LoopHeadBindings { get; }
     public HIRExpression Iterable { get; }
     public HIRStatement Body { get; }
     public string? Label { get; }
