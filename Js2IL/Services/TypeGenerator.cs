@@ -307,9 +307,14 @@ namespace Js2IL.Services
         {
             // Scope types are always nested types in metadata. The specific enclosing TypeDef is resolved
             // later (once module + callable-owner + class TypeDefs exist) and emitted via NestedClass rows.
-            // Scope types are nested. Use NestedAssembly so sibling module methods (e.g. __js_module_init__)
-            // can instantiate per-iteration loop-head scopes that are nested under other scope types.
-            var typeAttributes = TypeAttributes.NestedAssembly | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
+            //
+            // Most scopes can remain NestedPrivate, but loop-head scopes for for-in/of need to be instantiable
+            // from module init methods (which are outside the root Scope type). Mark just those as NestedAssembly.
+            var visibility = (scope.Name.StartsWith("ForOf_", StringComparison.Ordinal) ||
+                              scope.Name.StartsWith("ForIn_", StringComparison.Ordinal))
+                ? TypeAttributes.NestedAssembly
+                : TypeAttributes.NestedPrivate;
+            var typeAttributes = visibility | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
             var actualNamespace = string.Empty;
 
             // Initialize TypeBuilder for this type (handles field/method tracking and first-method/field invariants)
