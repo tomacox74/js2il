@@ -10,7 +10,7 @@ _This section is split into subsection documents for readability._
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 15 | ECMAScript Language: Functions and Classes | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) |
+| 15 | ECMAScript Language: Functions and Classes | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) |
 
 ## Subsections
 

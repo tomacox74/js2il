@@ -30,7 +30,7 @@ Important:
 | 12 | ECMAScript Language: Lexical Grammar | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar) | [Section12.md](12/Section12.md) |
 | 13 | ECMAScript Language: Expressions | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-expressions) | [Section13.md](13/Section13.md) |
 | 14 | ECMAScript Language: Statements and Declarations | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations) | [Section14.md](14/Section14.md) |
-| 15 | ECMAScript Language: Functions and Classes | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) | [Section15.md](15/Section15.md) |
+| 15 | ECMAScript Language: Functions and Classes | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) | [Section15.md](15/Section15.md) |
 | 16 | ECMAScript Language: Scripts and Modules | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-scripts-and-modules) | [Section16.md](16/Section16.md) |
 | 17 | Error Handling and Language Extensions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-error-handling-and-language-extensions) | [Section17.md](17/Section17.md) |
 | 18 | ECMAScript Standard Built-in Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-standard-built-in-objects) | [Section18.md](18/Section18.md) |
