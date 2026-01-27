@@ -10,6 +10,7 @@ All notable changes to this project are documented here.
 - Packaging/docs: ship `samples/**` inside the `js2il` tool NuGet and document how to extract and run them.
 - Runtime/spec: implement ECMA-262 §9.5.1–§9.5.3 JobCallback host operations and integrate them into Promise job scheduling (fixes #435).
 - Classes/spec: support `class B extends A { ... }`, `super(...)` in derived constructors, and `super.m(...)` base method calls (fixes #293, #294).
+- Generators/spec: support `yield*` delegation for synchronous generators (fixes #389).
 
 ## v0.7.3 - 2026-01-23
 

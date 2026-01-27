@@ -21,4 +21,3 @@ _This section is split into subsection documents for readability._
 | 25.3 | DataView Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-dataview-objects) | [Section25_3.md](Section25_3.md) |
 | 25.4 | The Atomics Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-atomics-object) | [Section25_4.md](Section25_4.md) |
 | 25.5 | The JSON Object | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-json-object) | [Section25_5.md](Section25_5.md) |
-

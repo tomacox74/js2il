@@ -186,6 +186,10 @@ internal sealed class LIRToILCompiler
             "_hasResumeException" => typeof(bool),
             "_returnValue" => typeof(object),
             "_hasReturn" => typeof(bool),
+            "_yieldStarMode" => typeof(double),
+            "_yieldStarTarget" => typeof(object),
+            "_yieldStarIndex" => typeof(double),
+            "_yieldStarLength" => typeof(double),
             _ => typeof(object)
         };
 
@@ -196,7 +200,11 @@ internal sealed class LIRToILCompiler
             or "_resumeException"
             or "_hasResumeException"
             or "_returnValue"
-            or "_hasReturn";
+            or "_hasReturn"
+            or "_yieldStarMode"
+            or "_yieldStarTarget"
+            or "_yieldStarIndex"
+            or "_yieldStarLength";
     }
 
     private bool TryResolveAsyncScopeBaseFieldToken(string fieldName, out EntityHandle token)
@@ -3396,47 +3404,50 @@ internal sealed class LIRToILCompiler
                     }
                     ilEncoder.MarkLabel(resumeLabel);
 
-                    // If _hasReturn: mark done and return { value: _returnValue, done: true }
-                    var noReturnLabel = ilEncoder.DefineLabel();
-                    ilEncoder.LoadLocal(0);
-                    EmitLoadFieldByName(ilEncoder, scopeName, "_hasReturn");
-                    ilEncoder.Branch(ILOpCode.Brfalse, noReturnLabel);
+                    if (yieldInstr.HandleThrowReturn)
+                    {
+                        // If _hasReturn: mark done and return { value: _returnValue, done: true }
+                        var noReturnLabel = ilEncoder.DefineLabel();
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_hasReturn");
+                        ilEncoder.Branch(ILOpCode.Brfalse, noReturnLabel);
 
-                    ilEncoder.LoadLocal(0);
-                    ilEncoder.LoadConstantI4(1);
-                    EmitStoreFieldByName(ilEncoder, scopeName, "_done");
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(1);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_done");
 
-                    ilEncoder.LoadLocal(0);
-                    EmitLoadFieldByName(ilEncoder, scopeName, "_returnValue");
-                    ilEncoder.LoadConstantI4(1);
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(iterCreate);
-                    ilEncoder.OpCode(ILOpCode.Ret);
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_returnValue");
+                        ilEncoder.LoadConstantI4(1);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(iterCreate);
+                        ilEncoder.OpCode(ILOpCode.Ret);
 
-                    ilEncoder.MarkLabel(noReturnLabel);
+                        ilEncoder.MarkLabel(noReturnLabel);
 
-                    // If _hasResumeException: throw at yield site
-                    var noThrowLabel = ilEncoder.DefineLabel();
-                    ilEncoder.LoadLocal(0);
-                    EmitLoadFieldByName(ilEncoder, scopeName, "_hasResumeException");
-                    ilEncoder.Branch(ILOpCode.Brfalse, noThrowLabel);
+                        // If _hasResumeException: throw at yield site
+                        var noThrowLabel = ilEncoder.DefineLabel();
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_hasResumeException");
+                        ilEncoder.Branch(ILOpCode.Brfalse, noThrowLabel);
 
-                    // Clear the injected-exception flag before throwing so a caught exception
-                    // doesn't get rethrown on the next resume.
-                    ilEncoder.LoadLocal(0);
-                    ilEncoder.LoadConstantI4(0);
-                    EmitStoreFieldByName(ilEncoder, scopeName, "_hasResumeException");
+                        // Clear the injected-exception flag before throwing so a caught exception
+                        // doesn't get rethrown on the next resume.
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(0);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_hasResumeException");
 
-                    ilEncoder.LoadLocal(0);
-                    EmitLoadFieldByName(ilEncoder, scopeName, "_resumeException");
-                    var thrownCtor = _memberRefRegistry.GetOrAddConstructor(
-                        typeof(JavaScriptRuntime.JsThrownValueException),
-                        parameterTypes: new[] { typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(thrownCtor);
-                    ilEncoder.OpCode(ILOpCode.Throw);
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_resumeException");
+                        var thrownCtor = _memberRefRegistry.GetOrAddConstructor(
+                            typeof(JavaScriptRuntime.JsThrownValueException),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(thrownCtor);
+                        ilEncoder.OpCode(ILOpCode.Throw);
 
-                    ilEncoder.MarkLabel(noThrowLabel);
+                        ilEncoder.MarkLabel(noThrowLabel);
+                    }
 
                     if (IsMaterialized(yieldInstr.Result, allocation))
                     {

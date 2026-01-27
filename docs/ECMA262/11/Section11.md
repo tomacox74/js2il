@@ -18,4 +18,3 @@ _This section is split into subsection documents for readability._
 |---:|---|---|---|---|
 | 11.1 | Source Text | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-source-text) | [Section11_1.md](Section11_1.md) |
 | 11.2 | Types of Source Code | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-types-of-source-code) | [Section11_2.md](Section11_2.md) |
-

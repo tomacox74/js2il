@@ -18,4 +18,3 @@ _This section is split into subsection documents for readability._
 |---:|---|---|---|---|
 | 16.1 | Scripts | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-scripts) | [Section16_1.md](Section16_1.md) |
 | 16.2 | Modules | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-modules) | [Section16_2.md](Section16_2.md) |
-

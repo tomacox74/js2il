@@ -27,4 +27,3 @@ _This section is split into subsection documents for readability._
 | 29.9 | Data Races | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-data-races) | [Section29_9.md](Section29_9.md) |
 | 29.10 | Data Race Freedom | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-data-race-freedom) | [Section29_10.md](Section29_10.md) |
 | 29.11 | Shared Memory Guidelines | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-shared-memory-guidelines) | [Section29_11.md](Section29_11.md) |
-

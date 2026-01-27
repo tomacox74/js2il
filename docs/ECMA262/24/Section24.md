@@ -21,4 +21,3 @@ _This section is split into subsection documents for readability._
 | 24.3 | WeakMap Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-weakmap-objects) | [Section24_3.md](Section24_3.md) |
 | 24.4 | WeakSet Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-weakset-objects) | [Section24_4.md](Section24_4.md) |
 | 24.5 | Abstract Operations for Keyed Collections | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-keyed-collections) | [Section24_5.md](Section24_5.md) |
-

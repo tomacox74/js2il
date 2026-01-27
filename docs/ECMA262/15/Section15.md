@@ -26,4 +26,3 @@ _This section is split into subsection documents for readability._
 | 15.8 | Async Function Definitions | Supported | [tc39.es](https://tc39.es/ecma262/#sec-async-function-definitions) | [Section15_8.md](Section15_8.md) |
 | 15.9 | Async Arrow Function Definitions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-async-arrow-function-definitions) | [Section15_9.md](Section15_9.md) |
 | 15.10 | Tail Position Calls | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-tail-position-calls) | [Section15_10.md](Section15_10.md) |
-

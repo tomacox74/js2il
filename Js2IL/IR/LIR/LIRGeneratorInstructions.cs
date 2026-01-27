@@ -13,7 +13,8 @@ public record LIRYield(
     TempVariable YieldedValue,
     int ResumeStateId,
     int ResumeLabelId,
-    TempVariable Result) : LIRInstruction;
+    TempVariable Result,
+    bool HandleThrowReturn = true) : LIRInstruction;
 
 /// <summary>
 /// Multi-way branch based on generator state.
