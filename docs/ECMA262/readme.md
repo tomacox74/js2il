@@ -38,6 +38,32 @@ How to run
 - npm: `npm run generate:ecma262-subsections`
 - direct: `node scripts/ECMA262/splitEcma262SectionsIntoSubsections.js`
 
+### 1b) Roll up statuses from JSON (automated, non-destructive)
+
+If you treat the subsection JSON files (e.g. `docs/ECMA262/15/Section15_5.json`) as the source of truth for
+status, you can regenerate the **section hub pages** (e.g. `docs/ECMA262/15/Section15.md`) and the **root index**
+(`docs/ECMA262/Index.md`) from those JSON statuses.
+
+Script
+- scripts/ECMA262/rollupEcma262Statuses.js
+
+What it does
+- Rebuilds each `docs/ECMA262/<N>/Section<N>.md` hub page “Section Entry” + “Subsections” table from the sibling `Section<N>_<k>.json` files.
+- Updates the `Status` column for each section row in `docs/ECMA262/Index.md`.
+
+What it does NOT do
+- Does not split/merge subsection docs.
+- Does not fetch tc39.es or change subsection JSON structure.
+- Does not touch subsection markdown files (e.g. `Section15_5.md`).
+
+Rollup policy
+- If a section contains a mix of supported and unsupported subsections (e.g. some `Supported`/`Partially Supported` and some `Not Yet Supported`), the section rolls up to `Partially Supported`.
+- If everything is `Untracked`, the section remains `Untracked`.
+
+How to run
+- direct: `node scripts/ECMA262/rollupEcma262Statuses.js`
+- custom root: `node scripts/ECMA262/rollupEcma262Statuses.js --root docs/ECMA262`
+
 ### 2) “Structural sync” of a subsection file (manual, links-only)
 
 Sometimes a subsection document exists only as a **stub** (single row) and needs its **subclause structure** filled in so it mirrors the current ECMA-262 clause layout (still links-only).
