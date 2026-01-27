@@ -585,9 +585,9 @@ namespace JavaScriptRuntime
 
         public static bool IteratorResultDone(object iteratorResult)
         {
-            if (iteratorResult is IteratorResultObject ro)
+            if (iteratorResult is IIteratorResult res)
             {
-                return ro.done;
+                return res.done;
             }
 
             // Fallback for foreign iterator results.
@@ -597,9 +597,9 @@ namespace JavaScriptRuntime
 
         public static object? IteratorResultValue(object iteratorResult)
         {
-            if (iteratorResult is IteratorResultObject ro)
+            if (iteratorResult is IIteratorResult res)
             {
-                return ro.value;
+                return res.value;
             }
 
             // Fallback for foreign iterator results.
@@ -835,6 +835,11 @@ namespace JavaScriptRuntime
                     if (result is IteratorResultObject ro)
                     {
                         return ro;
+                    }
+
+                    if (result is IIteratorResult ir)
+                    {
+                        return new IteratorResultObject(ir.value, ir.done);
                     }
 
                     // Normalize foreign iterator results to a strongly-typed shape.
