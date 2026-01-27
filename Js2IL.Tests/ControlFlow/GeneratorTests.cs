@@ -63,6 +63,15 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForOf_ClosureCallback() { var testName = nameof(ControlFlow_ForOf_ClosureCallback); return GenerateTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForOf_Let_PerIterationBinding() { var testName = nameof(ControlFlow_ForOf_Let_PerIterationBinding); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_Let_PerIterationBinding() { var testName = nameof(ControlFlow_ForIn_Let_PerIterationBinding); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForOf_Let_Destructuring_PerIterationBinding() { var testName = nameof(ControlFlow_ForOf_Let_Destructuring_PerIterationBinding); return GenerateTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForIn_Object_Basic() { var testName = nameof(ControlFlow_ForIn_Object_Basic); return GenerateTest(testName); }
 
         [Fact]
