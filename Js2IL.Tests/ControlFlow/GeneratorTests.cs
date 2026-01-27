@@ -111,6 +111,9 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_If_NotFlag() { var testName = nameof(ControlFlow_If_NotFlag); return GenerateTest(testName); }
 
         [Fact]
+        public Task ControlFlow_EmptyStatement() { var testName = nameof(ControlFlow_EmptyStatement); return GenerateTest(testName); }
+
+        [Fact]
         public Task ControlFlow_If_Truthiness() { var testName = nameof(ControlFlow_If_Truthiness); return GenerateTest(testName); }
 
         [Fact]

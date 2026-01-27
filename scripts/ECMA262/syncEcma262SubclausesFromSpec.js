@@ -18,6 +18,7 @@
  *
  * Options:
  *   --root <path>     Root docs folder (default: docs/ECMA262)
+ *   --section <cl>    Only process a specific subsection clause (e.g. 14.4)
  *   --write           Write changes (default: dry-run)
  *   --fill-blanks     Fill missing title/specUrl in existing subclauses
  *   --verbose         Log per-file details
@@ -34,6 +35,7 @@ const SPEC_URL = 'https://tc39.es/ecma262/';
 function parseArgs(argv) {
   const args = {
     root: DEFAULT_ROOT,
+    section: '',
     write: false,
     fillBlanks: false,
     verbose: false,
@@ -63,6 +65,17 @@ function parseArgs(argv) {
       continue;
     }
 
+    if (a === '--section' || a === '-s') {
+      args.section = argv[i + 1] || '';
+      i++;
+      continue;
+    }
+
+    if (a.startsWith('--section=')) {
+      args.section = a.substring('--section='.length);
+      continue;
+    }
+
     if (a === '--root' || a === '-r') {
       const v = argv[i + 1];
       if (v) {
@@ -89,10 +102,20 @@ function usage() {
   console.log('');
   console.log('Options:');
   console.log('  --root, -r     Root docs folder (default: docs/ECMA262)');
+  console.log('  --section, -s  Only process a specific subsection clause (e.g. 14.4)');
   console.log('  --write        Actually write files (default: dry-run)');
   console.log('  --fill-blanks  Fill missing title/specUrl in existing subclauses');
   console.log('  --verbose, -v  Extra per-file logging');
   console.log('  --help, -h     Show help');
+}
+
+function normalizeClauseFilter(v) {
+  const s = String(v ?? '').trim();
+  if (!s) return '';
+  if (!/^\d+\.\d+$/.test(s)) {
+    throw new Error(`Invalid --section '${s}'. Expected a subsection clause like 14.4`);
+  }
+  return s;
 }
 
 function walkFiles(dir) {
@@ -207,6 +230,8 @@ async function main() {
     return;
   }
 
+  const clauseFilter = normalizeClauseFilter(args.section);
+
   if (!fs.existsSync(args.root) || !fs.statSync(args.root).isDirectory()) {
     console.error(`Root not found or not a directory: ${args.root}`);
     process.exitCode = 1;
@@ -237,6 +262,10 @@ async function main() {
       const doc = readJson(jsonPath);
       const clause = typeof doc.clause === 'string' ? doc.clause.trim() : '';
       if (!/^\d+\.\d+$/.test(clause)) {
+        continue;
+      }
+
+      if (clauseFilter && clause !== clauseFilter) {
         continue;
       }
 
