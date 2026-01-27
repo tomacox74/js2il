@@ -282,7 +282,7 @@ internal static class Stackify
     {
         // Treat leaf-scope creation as a barrier for stackification: it overwrites the
         // leaf scope local (ldloc.0) and can change the result of re-emitted scope field loads.
-        return instruction is LIRLabel or LIRBranch or LIRBranchIfFalse or LIRBranchIfTrue or LIRCreateLeafScopeInstance;
+        return instruction is LIRLabel or LIRBranch or LIRBranchIfFalse or LIRBranchIfTrue or LIRCreateLeafScopeInstance or LIRCreateScopeInstance;
     }
 
     /// <summary>
@@ -317,6 +317,22 @@ internal static class Stackify
             // Scope field loads - side-effect free field reads, similar to parameter loads
             case LIRLoadLeafScopeField:
             case LIRLoadParentScopeField:
+                return true;
+
+            case LIRLoadScopeField loadScopeField:
+                // Only inline if the scope-instance temp is stable.
+                // If the scope instance temp is backed by a variable slot that can be reassigned
+                // (e.g., per-iteration environment recreation), re-emitting the load could observe
+                // a different scope instance.
+                var scopeTempIdx = loadScopeField.ScopeInstance.Index;
+                if (scopeTempIdx >= 0 && scopeTempIdx < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[scopeTempIdx] >= 0)
+                {
+                    var scopeVarSlot = methodBody.TempVariableSlots[scopeTempIdx];
+                    if (!methodBody.SingleAssignmentSlots.Contains(scopeVarSlot))
+                    {
+                        return false;
+                    }
+                }
                 return true;
 
             // Intrinsic global loads - just a dictionary lookup, no side effects

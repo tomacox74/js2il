@@ -120,6 +120,14 @@ namespace Js2IL.Services
                 return "Scope";
             }
 
+            // For-loop per-iteration lexical environments: name the scope type with a Scope_ prefix
+            // so it can live as a sibling of the root Scope type under the callable/module owner.
+            // Example: For_L3C5 -> Scope_For_L3C5
+            if (scope.Kind == ScopeKind.Block && scope.Name.StartsWith("For_", StringComparison.Ordinal))
+            {
+                return $"Scope_{scope.Name}";
+            }
+
             return scope.Name;
         }
 

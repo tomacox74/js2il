@@ -40,7 +40,7 @@ namespace Js2IL.SymbolTables
             foreach (var param in JavaScriptRuntime.CommonJS.ModuleParameters.Parameters)
             {
                 var bindingKind = param.IsConst ? BindingKind.Const : BindingKind.Var;
-                globalScope.Bindings[param.Name] = new BindingInfo(param.Name, bindingKind, astNode);
+                globalScope.Bindings[param.Name] = new BindingInfo(param.Name, bindingKind, globalScope, astNode);
                 globalScope.Parameters.Add(param.Name);
             }
         }
@@ -444,7 +444,7 @@ namespace Js2IL.SymbolTables
                     classScope.DotNetNamespace = DefaultClassesNamespace + "." + globalScope.Name; 
                     // Per user guidance, keep type name same as scope name for now
                     classScope.DotNetTypeName = SanitizeForMetadata(className);
-                    currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, classDecl);
+                    currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, currentScope, classDecl);
                     // Process class body members for nested functions or fields later if needed
                     foreach (var element in classDecl.Body.Body)
                     {
@@ -496,13 +496,13 @@ namespace Js2IL.SymbolTables
                             {
                                 if (p is Identifier pid)
                                 {
-                                    methodScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, pid);
+                                    methodScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, methodScope, pid);
                                     methodScope.Parameters.Add(pid.Name);
                                 }
                                 else if (p is AssignmentPattern ap && ap.Left is Identifier apId)
                                 {
                                     // Parameter with default value (e.g., a = 10)
-                                    methodScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, apId);
+                                    methodScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, methodScope, apId);
                                     methodScope.Parameters.Add(apId.Name);
                                 }
                                 else if (p is ObjectPattern op)
@@ -523,7 +523,7 @@ namespace Js2IL.SymbolTables
 
                                         if (bindId != null && !methodScope.Bindings.ContainsKey(bindId.Name))
                                         {
-                                            methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                                            methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, methodScope, bindId);
                                             // Mark as parameter so TypeGenerator creates fields/locals for them
                                             methodScope.Parameters.Add(bindId.Name);
                                         }
@@ -555,7 +555,7 @@ namespace Js2IL.SymbolTables
                     {
                         funcScope.YieldPointCount = CountYieldExpressions(funcDecl.Body);
                     }
-                    currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, funcDecl);
+                    currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, currentScope, funcDecl);
                         // Register parameters (identifiers + object pattern properties) via helper
                         BindObjectPatternParameters(funcDecl.Params, funcScope);
                         if (funcScope.IsGenerator)
@@ -611,7 +611,7 @@ namespace Js2IL.SymbolTables
                     // outer scope. Authoritative binding here so downstream codegen can allocate a field.
                     if (funcExpr.Id is Identifier internalId && !funcExprScope.Bindings.ContainsKey(internalId.Name))
                     {
-                        funcExprScope.Bindings[internalId.Name] = new BindingInfo(internalId.Name, BindingKind.Function, funcExpr);
+                        funcExprScope.Bindings[internalId.Name] = new BindingInfo(internalId.Name, BindingKind.Function, funcExprScope, funcExpr);
                     }
                     BindObjectPatternParameters(funcExpr.Params, funcExprScope);
                     if (funcExprScope.IsGenerator)
@@ -667,7 +667,7 @@ namespace Js2IL.SymbolTables
                                 }
                             }
 
-                            var binding = new BindingInfo(id.Name, kind, decl);
+                            var binding = new BindingInfo(id.Name, kind, targetScope, decl);
                             // Attempt early CLR type resolution for: const x = require('<module>')
                             TryAssignClrTypeForRequireInit(decl, binding);
                             targetScope.Bindings[id.Name] = binding;
@@ -719,7 +719,7 @@ namespace Js2IL.SymbolTables
                             }
                             if (!targetScope.Bindings.ContainsKey(tempName))
                             {
-                                var tempBinding = new BindingInfo(tempName, kind, decl);
+                                var tempBinding = new BindingInfo(tempName, kind, targetScope, decl);
                                 TryAssignClrTypeForRequireInit(decl, tempBinding);
                                 targetScope.Bindings[tempName] = tempBinding;
                             }
@@ -732,7 +732,7 @@ namespace Js2IL.SymbolTables
                                 {
                                     if (!targetScope.Bindings.ContainsKey(bid.Name))
                                     {
-                                        targetScope.Bindings[bid.Name] = new BindingInfo(bid.Name, kind, decl);
+                                        targetScope.Bindings[bid.Name] = new BindingInfo(bid.Name, kind, targetScope, decl);
                                     }
                                 }
                             }
@@ -801,13 +801,13 @@ namespace Js2IL.SymbolTables
                     {
                         if (param is Identifier id)
                         {
-                            arrowScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
+                            arrowScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, arrowScope, id);
                             arrowScope.Parameters.Add(id.Name);
                         }
                         else if (param is AssignmentPattern ap && ap.Left is Identifier apId)
                         {
                             // Parameter with default value (e.g., a = 10)
-                            arrowScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, apId);
+                            arrowScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, arrowScope, apId);
                             arrowScope.Parameters.Add(apId.Name);
                         }
                         else if (param is ObjectPattern op)
@@ -830,7 +830,7 @@ namespace Js2IL.SymbolTables
 
                                 if (bindId != null && !arrowScope.Bindings.ContainsKey(bindId.Name))
                                 {
-                                    arrowScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                                    arrowScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, arrowScope, bindId);
                                     // Mark as parameter so TypeGenerator creates fields for them
                                     arrowScope.Parameters.Add(bindId.Name);
                                 }
@@ -852,20 +852,20 @@ namespace Js2IL.SymbolTables
                                 var name = prop?.GetValue(param) as string;
                                 if (!string.IsNullOrEmpty(name))
                                 {
-                                    arrowScope.Bindings[name!] = new BindingInfo(name!, BindingKind.Var, param);
+                                    arrowScope.Bindings[name!] = new BindingInfo(name!, BindingKind.Var, arrowScope, param);
                                     arrowScope.Parameters.Add(name!);
                                 }
                                 else
                                 {
                                     var syn = $"p{syntheticIndex++}";
-                                    arrowScope.Bindings[syn] = new BindingInfo(syn, BindingKind.Var, param);
+                                    arrowScope.Bindings[syn] = new BindingInfo(syn, BindingKind.Var, arrowScope, param);
                                     arrowScope.Parameters.Add(syn);
                                 }
                             }
                             catch
                             {
                                 var syn = $"p{syntheticIndex++}";
-                                arrowScope.Bindings[syn] = new BindingInfo(syn, BindingKind.Var, param);
+                                arrowScope.Bindings[syn] = new BindingInfo(syn, BindingKind.Var, arrowScope, param);
                                 arrowScope.Parameters.Add(syn);
                             }
                         }
@@ -907,17 +907,30 @@ namespace Js2IL.SymbolTables
                     }
                     break;
                 case ForStatement forStmt:
+                    // Per ECMA-262, `for (let/const ...)` introduces a lexical environment for
+                    // the loop head bindings. Model that as a dedicated block-like scope so
+                    // captured loop-head bindings can be materialized per iteration.
+                    var forScope = currentScope;
+                    if (forStmt.Init is VariableDeclaration forInitDecl &&
+                        (forInitDecl.Kind == VariableDeclarationKind.Let || forInitDecl.Kind == VariableDeclarationKind.Const))
+                    {
+                        var loc = forInitDecl.Location.Start;
+                        var forScopeName = $"For_L{loc.Line}C{loc.Column}";
+                        var existingForScope = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == forScopeName);
+                        forScope = existingForScope ?? new Scope(forScopeName, ScopeKind.Block, currentScope, forInitDecl);
+                    }
+
                     // Process init, test, and update expressions
                     if (forStmt.Init != null)
-                        BuildScopeRecursive(globalScope, forStmt.Init, currentScope);
+                        BuildScopeRecursive(globalScope, forStmt.Init, forScope);
                     if (forStmt.Test != null)
-                        BuildScopeRecursive(globalScope, forStmt.Test, currentScope);
+                        BuildScopeRecursive(globalScope, forStmt.Test, forScope);
                     if (forStmt.Update != null)
-                        BuildScopeRecursive(globalScope, forStmt.Update, currentScope);
+                        BuildScopeRecursive(globalScope, forStmt.Update, forScope);
                     
                     // Process the body statement (which may be a block or a single statement)
                     if (forStmt.Body != null)
-                        BuildScopeRecursive(globalScope, forStmt.Body, currentScope);
+                        BuildScopeRecursive(globalScope, forStmt.Body, forScope);
                     break;
                 case ForOfStatement forOf:
                     // Register loop variable binding if declared (e.g., for (const x of arr))
@@ -934,7 +947,7 @@ namespace Js2IL.SymbolTables
                                     VariableDeclarationKind.Const => BindingKind.Const,
                                     _ => BindingKind.Var
                                 };
-                                currentScope.Bindings[id.Name] = new BindingInfo(id.Name, kind, decl);
+                                currentScope.Bindings[id.Name] = new BindingInfo(id.Name, kind, currentScope, decl);
                             }
                         }
                     }
@@ -958,7 +971,7 @@ namespace Js2IL.SymbolTables
                                     VariableDeclarationKind.Const => BindingKind.Const,
                                     _ => BindingKind.Var
                                 };
-                                currentScope.Bindings[id.Name] = new BindingInfo(id.Name, kind, decl);
+                                currentScope.Bindings[id.Name] = new BindingInfo(id.Name, kind, currentScope, decl);
                             }
                         }
                     }
@@ -986,7 +999,7 @@ namespace Js2IL.SymbolTables
                             {
                                 if (!catchScope.Bindings.ContainsKey(cid.Name))
                                 {
-                                    catchScope.Bindings[cid.Name] = new BindingInfo(cid.Name, BindingKind.Let, cid);
+                                    catchScope.Bindings[cid.Name] = new BindingInfo(cid.Name, BindingKind.Let, catchScope, cid);
                                 }
                             }
                             else if (handler.Param != null)
@@ -1457,7 +1470,7 @@ namespace Js2IL.SymbolTables
                 {
                     if (!scope.Bindings.ContainsKey(id.Name))
                     {
-                        scope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
+                        scope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, scope, id);
                     }
                     if (!scope.Parameters.Contains(id.Name))
                     {
@@ -1470,7 +1483,7 @@ namespace Js2IL.SymbolTables
                     // Extract the identifier from the left side and register it as a parameter
                     if (!scope.Bindings.ContainsKey(apId.Name))
                     {
-                        scope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, apId);
+                        scope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, scope, apId);
                     }
                     if (!scope.Parameters.Contains(apId.Name))
                     {
@@ -1496,7 +1509,7 @@ namespace Js2IL.SymbolTables
                             
                             if (bindId != null && !scope.Bindings.ContainsKey(bindId.Name))
                             {
-                                scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                                scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, scope, bindId);
                             }
                             // Add destructured properties to Parameters set so TypeGenerator creates fields/locals
                             if (bindId != null && !scope.Parameters.Contains(bindId.Name))
@@ -1531,7 +1544,7 @@ namespace Js2IL.SymbolTables
                             
                             if (bindId != null && !scope.Bindings.ContainsKey(bindId.Name))
                             {
-                                scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                                scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, scope, bindId);
                             }
                             // Add destructured properties to Parameters set
                             if (bindId != null && !scope.Parameters.Contains(bindId.Name))
