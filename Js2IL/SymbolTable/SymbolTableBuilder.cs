@@ -933,52 +933,89 @@ namespace Js2IL.SymbolTables
                         BuildScopeRecursive(globalScope, forStmt.Body, forScope);
                     break;
                 case ForOfStatement forOf:
-                    // Register loop variable binding if declared (e.g., for (const x of arr))
+                    // Per ECMA-262, `for (let/const ... of ...)` introduces a lexical environment for
+                    // the loop head bindings. Model that as a dedicated block-like scope so captured
+                    // loop-head bindings can be materialized per iteration.
+                    var forOfScope = currentScope;
+                    if (forOf.Left is VariableDeclaration forOfInitDecl &&
+                        (forOfInitDecl.Kind == VariableDeclarationKind.Let || forOfInitDecl.Kind == VariableDeclarationKind.Const))
+                    {
+                        var loc = forOfInitDecl.Location.Start;
+                        var forScopeName = $"ForOf_L{loc.Line}C{loc.Column}";
+                        var existingForScope = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == forScopeName);
+                        forOfScope = existingForScope ?? new Scope(forScopeName, ScopeKind.Block, currentScope, forOfInitDecl);
+                    }
+
+                    // Register loop variable bindings if declared (e.g., for (const x of arr), for (let {a} of arr))
                     if (forOf.Left is VariableDeclaration forOfDecl)
                     {
+                        var kind = forOfDecl.Kind switch
+                        {
+                            VariableDeclarationKind.Var => BindingKind.Var,
+                            VariableDeclarationKind.Let => BindingKind.Let,
+                            VariableDeclarationKind.Const => BindingKind.Const,
+                            _ => BindingKind.Var
+                        };
+
+                        // Hoist `var` declared inside blocks to the nearest function/global scope.
+                        Scope targetScope = kind == BindingKind.Var
+                            ? GetVarHoistingTarget(currentScope)
+                            : forOfScope;
+
                         foreach (var decl in forOfDecl.Declarations)
                         {
-                            if (decl.Id is Identifier id)
-                            {
-                                var kind = forOfDecl.Kind switch
-                                {
-                                    VariableDeclarationKind.Var => BindingKind.Var,
-                                    VariableDeclarationKind.Let => BindingKind.Let,
-                                    VariableDeclarationKind.Const => BindingKind.Const,
-                                    _ => BindingKind.Var
-                                };
-                                currentScope.Bindings[id.Name] = new BindingInfo(id.Name, kind, currentScope, decl);
-                            }
+                            BindPatternBindings(decl.Id, kind, targetScope, decl);
                         }
                     }
-                    // Visit the iterable expression and loop body
+
+                    // Visit the iterable expression in the outer scope (matches current runtime semantics).
                     BuildScopeRecursive(globalScope, forOf.Right, currentScope);
+
+                    // Visit loop body within the loop-head scope when present.
                     if (forOf.Body != null)
-                        BuildScopeRecursive(globalScope, forOf.Body, currentScope);
+                        BuildScopeRecursive(globalScope, forOf.Body, forOfScope);
                     break;
                 case ForInStatement forIn:
-                    // Register loop variable binding if declared (e.g., for (const k in obj))
+                    // Per ECMA-262, `for (let/const ... in ...)` introduces a lexical environment for
+                    // the loop head bindings. Model that as a dedicated block-like scope so captured
+                    // loop-head bindings can be materialized per iteration.
+                    var forInScope = currentScope;
+                    if (forIn.Left is VariableDeclaration forInInitDecl &&
+                        (forInInitDecl.Kind == VariableDeclarationKind.Let || forInInitDecl.Kind == VariableDeclarationKind.Const))
+                    {
+                        var loc = forInInitDecl.Location.Start;
+                        var forScopeName = $"ForIn_L{loc.Line}C{loc.Column}";
+                        var existingForScope = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == forScopeName);
+                        forInScope = existingForScope ?? new Scope(forScopeName, ScopeKind.Block, currentScope, forInInitDecl);
+                    }
+
+                    // Register loop variable bindings if declared (e.g., for (const k in obj), for (let {a} in obj))
                     if (forIn.Left is VariableDeclaration forInDecl)
                     {
+                        var kind = forInDecl.Kind switch
+                        {
+                            VariableDeclarationKind.Var => BindingKind.Var,
+                            VariableDeclarationKind.Let => BindingKind.Let,
+                            VariableDeclarationKind.Const => BindingKind.Const,
+                            _ => BindingKind.Var
+                        };
+
+                        Scope targetScope = kind == BindingKind.Var
+                            ? GetVarHoistingTarget(currentScope)
+                            : forInScope;
+
                         foreach (var decl in forInDecl.Declarations)
                         {
-                            if (decl.Id is Identifier id)
-                            {
-                                var kind = forInDecl.Kind switch
-                                {
-                                    VariableDeclarationKind.Var => BindingKind.Var,
-                                    VariableDeclarationKind.Let => BindingKind.Let,
-                                    VariableDeclarationKind.Const => BindingKind.Const,
-                                    _ => BindingKind.Var
-                                };
-                                currentScope.Bindings[id.Name] = new BindingInfo(id.Name, kind, currentScope, decl);
-                            }
+                            BindPatternBindings(decl.Id, kind, targetScope, decl);
                         }
                     }
-                    // Visit the object expression and loop body
+
+                    // Visit the object expression in the outer scope (matches current runtime semantics).
                     BuildScopeRecursive(globalScope, forIn.Right, currentScope);
+
+                    // Visit loop body within the loop-head scope when present.
                     if (forIn.Body != null)
-                        BuildScopeRecursive(globalScope, forIn.Body, currentScope);
+                        BuildScopeRecursive(globalScope, forIn.Body, forInScope);
                     break;
 
                 case TryStatement tryStmt:
@@ -1559,6 +1596,67 @@ namespace Js2IL.SymbolTables
                         }
                     }
                 }
+            }
+        }
+
+        private static Scope GetVarHoistingTarget(Scope currentScope)
+        {
+            if (currentScope.Kind != ScopeKind.Block)
+            {
+                return currentScope;
+            }
+
+            var ancestor = currentScope.Parent;
+            while (ancestor != null && ancestor.Kind != ScopeKind.Function && ancestor.Kind != ScopeKind.Global)
+            {
+                ancestor = ancestor.Parent;
+            }
+
+            return ancestor ?? currentScope;
+        }
+
+        private static void BindPatternBindings(Node pattern, BindingKind kind, Scope targetScope, Node declarationNode)
+        {
+            switch (pattern)
+            {
+                case Identifier id:
+                    targetScope.Bindings[id.Name] = new BindingInfo(id.Name, kind, targetScope, declarationNode);
+                    return;
+
+                case AssignmentPattern ap:
+                    BindPatternBindings(ap.Left, kind, targetScope, declarationNode);
+                    return;
+
+                case RestElement re:
+                    BindPatternBindings(re.Argument, kind, targetScope, declarationNode);
+                    return;
+
+                case ObjectPattern op:
+                    foreach (var pnode in op.Properties)
+                    {
+                        if (pnode is Property prop)
+                        {
+                            // For pattern properties, the binding pattern is in prop.Value.
+                            BindPatternBindings(prop.Value, kind, targetScope, declarationNode);
+                        }
+                        else if (pnode is RestElement rest)
+                        {
+                            BindPatternBindings(rest.Argument, kind, targetScope, declarationNode);
+                        }
+                    }
+                    return;
+
+                case ArrayPattern arr:
+                    foreach (var el in arr.Elements.Where(el => el != null))
+                    {
+                        BindPatternBindings(el!, kind, targetScope, declarationNode);
+                    }
+                    return;
+
+                default:
+                    // Unsupported pattern node kinds are ignored here. Validation + HIR parsing
+                    // will reject patterns we cannot lower.
+                    return;
             }
         }
 

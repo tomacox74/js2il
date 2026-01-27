@@ -294,7 +294,7 @@ public sealed class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRLoadParameter(i, paramTemp));
             DefineTempStorage(paramTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-            if (!TryLowerDestructuringPattern(p, paramTemp, isDeclaration: true, sourceNameForError: null))
+            if (!TryLowerDestructuringPattern(p, paramTemp, DestructuringWriteMode.Declaration, sourceNameForError: null))
             {
                 return false;
             }
@@ -1237,7 +1237,6 @@ public sealed class HIRToLIRLowerer
                         // No initializer means 'undefined'
                         value = CreateTempVariable();
                         lirInstructions.Add(new LIRConstUndefined(value));
-                        DefineTempStorage(value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     }
 
                     // Use BindingInfo as key for correct shadowing behavior
@@ -1321,7 +1320,7 @@ public sealed class HIRToLIRLowerer
                     sourceTemp = EnsureObject(sourceTemp);
 
                     var sourceNameForError = TryGetSimpleSourceNameForDestructuring(destructDecl.Initializer);
-                    if (!TryLowerDestructuringPattern(destructDecl.Pattern, sourceTemp, isDeclaration: true, sourceNameForError))
+                    if (!TryLowerDestructuringPattern(destructDecl.Pattern, sourceTemp, DestructuringWriteMode.Declaration, sourceNameForError))
                     {
                         IRPipelineMetrics.RecordFailureIfUnset("HIR->LIR: failed lowering destructuring variable declaration");
                         return false;
@@ -1605,7 +1604,6 @@ public sealed class HIRToLIRLowerer
                         var outerTryStart = CreateLabel();
                         var outerTryEnd = CreateLabel();
                         var endLabel = CreateLabel();
-
                         int innerTryStart = outerTryStart;
                         int innerTryEnd = outerTryEnd;
 
@@ -1972,12 +1970,45 @@ public sealed class HIRToLIRLowerer
                     //   goto loop_start
                     // end:
 
-                    if (!TryLowerExpression(forOfStmt.Iterable, out var rhsTemp))
+                    // Spec: CreatePerIterationEnvironment for for..of with lexical declarations.
+                    var perIterationBindings = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
+                        ? forOfStmt.LoopHeadBindings.Where(b => b.Kind is BindingKind.Let or BindingKind.Const).Where(b => b.IsCaptured).ToList()
+                        : new List<BindingInfo>();
+
+                    bool useTempPerIterationScope = false;
+                    TempVariable loopScopeTemp = default;
+                    ScopeId loopScopeId = default;
+                    string? loopScopeName = null;
+
+                    if (perIterationBindings.Count > 0
+                        && !_methodBodyIR.IsAsync
+                        && !_methodBodyIR.IsGenerator)
                     {
-                        return false;
+                        var declaringScope = perIterationBindings[0].DeclaringScope;
+                        if (declaringScope != null
+                            && declaringScope.Kind == ScopeKind.Block
+                            && perIterationBindings.All(b => b.DeclaringScope == declaringScope))
+                        {
+                            useTempPerIterationScope = true;
+                            loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);
+                            loopScopeId = new ScopeId(loopScopeName);
+
+                            loopScopeTemp = CreateTempVariable();
+                            DefineTempStorage(loopScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName));
+                            SetTempVariableSlot(loopScopeTemp, CreateAnonymousVariableSlot($"$forOf_lexenv", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName)));
+                            _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(loopScopeId, loopScopeTemp));
+                            _activeScopeTempsByScopeName[loopScopeName] = loopScopeTemp;
+                        }
                     }
 
-                    var rhsBoxed = EnsureObject(rhsTemp);
+                    try
+                    {
+                        if (!TryLowerExpression(forOfStmt.Iterable, out var rhsTemp))
+                        {
+                            return false;
+                        }
+
+                        var rhsBoxed = EnsureObject(rhsTemp);
 
                     var iterTemp = CreateTempVariable();
                     lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "NormalizeForOfIterable", new[] { rhsBoxed }, iterTemp));
@@ -2007,14 +2038,19 @@ public sealed class HIRToLIRLowerer
                     DefineTempStorage(condTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     lirInstructions.Add(new LIRBranchIfFalse(condTemp, loopEndLabel));
 
-                    // target = iter[idx]
-                    var itemTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRGetItem(EnsureObject(iterTemp), idxTemp, itemTemp));
-                    DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    if (!TryStoreToBinding(forOfStmt.Target.BindingInfo, itemTemp, out _))
-                    {
-                        return false;
-                    }
+                        // target = iter[idx]
+                        var itemTemp = CreateTempVariable();
+                        lirInstructions.Add(new LIRGetItem(EnsureObject(iterTemp), idxTemp, itemTemp));
+                        DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                        var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
+                            ? DestructuringWriteMode.ForDeclarationBindingInitialization
+                            : DestructuringWriteMode.Assignment;
+
+                        if (!TryLowerDestructuringPattern(forOfStmt.Target, itemTemp, writeMode, sourceNameForError: null))
+                        {
+                            return false;
+                        }
 
                     _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopUpdateLabel, forOfStmt.Label));
                     try
@@ -2029,7 +2065,12 @@ public sealed class HIRToLIRLowerer
                         _controlFlowStack.Pop();
                     }
 
-                    lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+                        lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+
+                        if (useTempPerIterationScope)
+                        {
+                            EmitRecreatePerIterationScopeFromTemp(loopScopeTemp, loopScopeId, loopScopeName!, perIterationBindings);
+                        }
                     var oneTemp = CreateTempVariable();
                     lirInstructions.Add(new LIRConstNumber(1.0, oneTemp));
                     DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -2038,8 +2079,16 @@ public sealed class HIRToLIRLowerer
                     DefineTempStorage(updatedIdx, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                     lirInstructions.Add(new LIRCopyTemp(updatedIdx, idxTemp));
                     lirInstructions.Add(new LIRBranch(loopStartLabel));
-                    lirInstructions.Add(new LIRLabel(loopEndLabel));
-                    return true;
+                        lirInstructions.Add(new LIRLabel(loopEndLabel));
+                        return true;
+                    }
+                    finally
+                    {
+                        if (useTempPerIterationScope && loopScopeName != null)
+                        {
+                            _activeScopeTempsByScopeName.Remove(loopScopeName);
+                        }
+                    }
                 }
 
             case Js2IL.HIR.HIRForInStatement forInStmt:
@@ -2057,12 +2106,44 @@ public sealed class HIRToLIRLowerer
                     //   goto loop_start
                     // end:
 
-                    if (!TryLowerExpression(forInStmt.Enumerable, out var rhsTemp))
+                    var perIterationBindings = (forInStmt.IsDeclaration && (forInStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
+                        ? forInStmt.LoopHeadBindings.Where(b => b.Kind is BindingKind.Let or BindingKind.Const).Where(b => b.IsCaptured).ToList()
+                        : new List<BindingInfo>();
+
+                    bool useTempPerIterationScope = false;
+                    TempVariable loopScopeTemp = default;
+                    ScopeId loopScopeId = default;
+                    string? loopScopeName = null;
+
+                    if (perIterationBindings.Count > 0
+                        && !_methodBodyIR.IsAsync
+                        && !_methodBodyIR.IsGenerator)
                     {
-                        return false;
+                        var declaringScope = perIterationBindings[0].DeclaringScope;
+                        if (declaringScope != null
+                            && declaringScope.Kind == ScopeKind.Block
+                            && perIterationBindings.All(b => b.DeclaringScope == declaringScope))
+                        {
+                            useTempPerIterationScope = true;
+                            loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);
+                            loopScopeId = new ScopeId(loopScopeName);
+
+                            loopScopeTemp = CreateTempVariable();
+                            DefineTempStorage(loopScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName));
+                            SetTempVariableSlot(loopScopeTemp, CreateAnonymousVariableSlot($"$forIn_lexenv", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName)));
+                            _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(loopScopeId, loopScopeTemp));
+                            _activeScopeTempsByScopeName[loopScopeName] = loopScopeTemp;
+                        }
                     }
 
-                    var rhsBoxed = EnsureObject(rhsTemp);
+                    try
+                    {
+                        if (!TryLowerExpression(forInStmt.Enumerable, out var rhsTemp))
+                        {
+                            return false;
+                        }
+
+                        var rhsBoxed = EnsureObject(rhsTemp);
 
                     var keysTemp = CreateTempVariable();
                     lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "GetEnumerableKeys", new[] { rhsBoxed }, keysTemp));
@@ -2090,13 +2171,18 @@ public sealed class HIRToLIRLowerer
                     DefineTempStorage(condTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     lirInstructions.Add(new LIRBranchIfFalse(condTemp, loopEndLabel));
 
-                    var keyTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRGetItem(EnsureObject(keysTemp), idxTemp, keyTemp));
-                    DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    if (!TryStoreToBinding(forInStmt.Target.BindingInfo, keyTemp, out _))
-                    {
-                        return false;
-                    }
+                        var keyTemp = CreateTempVariable();
+                        lirInstructions.Add(new LIRGetItem(EnsureObject(keysTemp), idxTemp, keyTemp));
+                        DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                        var writeMode = (forInStmt.IsDeclaration && (forInStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
+                            ? DestructuringWriteMode.ForDeclarationBindingInitialization
+                            : DestructuringWriteMode.Assignment;
+
+                        if (!TryLowerDestructuringPattern(forInStmt.Target, keyTemp, writeMode, sourceNameForError: null))
+                        {
+                            return false;
+                        }
 
                     _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopUpdateLabel, forInStmt.Label));
                     try
@@ -2111,7 +2197,12 @@ public sealed class HIRToLIRLowerer
                         _controlFlowStack.Pop();
                     }
 
-                    lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+                        lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+
+                        if (useTempPerIterationScope)
+                        {
+                            EmitRecreatePerIterationScopeFromTemp(loopScopeTemp, loopScopeId, loopScopeName!, perIterationBindings);
+                        }
                     var oneTemp = CreateTempVariable();
                     lirInstructions.Add(new LIRConstNumber(1.0, oneTemp));
                     DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -2120,8 +2211,16 @@ public sealed class HIRToLIRLowerer
                     DefineTempStorage(updatedIdx, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                     lirInstructions.Add(new LIRCopyTemp(updatedIdx, idxTemp));
                     lirInstructions.Add(new LIRBranch(loopStartLabel));
-                    lirInstructions.Add(new LIRLabel(loopEndLabel));
-                    return true;
+                        lirInstructions.Add(new LIRLabel(loopEndLabel));
+                        return true;
+                    }
+                    finally
+                    {
+                        if (useTempPerIterationScope && loopScopeName != null)
+                        {
+                            _activeScopeTempsByScopeName.Remove(loopScopeName);
+                        }
+                    }
                 }
             case HIRWhileStatement whileStmt:
                 {
@@ -5817,27 +5916,41 @@ public sealed class HIRToLIRLowerer
         return "0";
     }
 
-    private bool TryLowerDestructuringPattern(HIRPattern pattern, TempVariable sourceValue, bool isDeclaration, string? sourceNameForError)
+    private enum DestructuringWriteMode
+    {
+        Declaration,
+        Assignment,
+        ForDeclarationBindingInitialization
+    }
+
+    private bool TryLowerDestructuringPattern(HIRPattern pattern, TempVariable sourceValue, DestructuringWriteMode writeMode, string? sourceNameForError)
     {
         sourceValue = EnsureObject(sourceValue);
 
         switch (pattern)
         {
             case HIRIdentifierPattern id:
-                if (isDeclaration)
+                switch (writeMode)
                 {
-                    return TryDeclareBinding(id.Symbol, sourceValue);
-                }
-                else
-                {
-                    // Assignment to const is a runtime TypeError.
-                    if (id.Symbol.BindingInfo.Kind == BindingKind.Const)
-                    {
-                        _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError("Assignment to constant variable."));
-                        return true;
-                    }
+                    case DestructuringWriteMode.Declaration:
+                        return TryDeclareBinding(id.Symbol, sourceValue);
 
-                    return TryStoreToBinding(id.Symbol.BindingInfo, sourceValue, out _);
+                    case DestructuringWriteMode.Assignment:
+                        // Assignment to const is a runtime TypeError.
+                        if (id.Symbol.BindingInfo.Kind == BindingKind.Const)
+                        {
+                            _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError("Assignment to constant variable."));
+                            return true;
+                        }
+                        return TryStoreToBinding(id.Symbol.BindingInfo, sourceValue, out _);
+
+                    case DestructuringWriteMode.ForDeclarationBindingInitialization:
+                        // Loop-head ForDeclaration bindings are initialized each iteration.
+                        // This must be allowed for const bindings as part of a fresh iteration environment.
+                        return TryStoreToBinding(id.Symbol.BindingInfo, sourceValue, out _);
+
+                    default:
+                        return false;
                 }
 
             case HIRDefaultPattern def:
@@ -5863,12 +5976,12 @@ public sealed class HIRToLIRLowerer
                     _methodBodyIR.Instructions.Add(new LIRCopyTemp(sourceValue, selected));
                     _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
 
-                    return TryLowerDestructuringPattern(def.Target, selected, isDeclaration, sourceNameForError);
+                    return TryLowerDestructuringPattern(def.Target, selected, writeMode, sourceNameForError);
                 }
 
             case HIRRestPattern rest:
                 // Rest patterns are materialized by the containing object/array pattern.
-                return TryLowerDestructuringPattern(rest.Target, sourceValue, isDeclaration, sourceNameForError);
+                return TryLowerDestructuringPattern(rest.Target, sourceValue, writeMode, sourceNameForError);
 
             case HIRObjectPattern obj:
                 {
@@ -5885,7 +5998,7 @@ public sealed class HIRToLIRLowerer
                         _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, EnsureObject(keyTemp), getResult));
                         DefineTempStorage(getResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                        if (!TryLowerDestructuringPattern(prop.Value, getResult, isDeclaration, prop.Key))
+                        if (!TryLowerDestructuringPattern(prop.Value, getResult, writeMode, prop.Key))
                         {
                             return false;
                         }
@@ -5905,7 +6018,7 @@ public sealed class HIRToLIRLowerer
                             Result: restObj));
                         DefineTempStorage(restObj, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                        if (!TryLowerDestructuringPattern(obj.Rest.Target, restObj, isDeclaration, "rest"))
+                        if (!TryLowerDestructuringPattern(obj.Rest.Target, restObj, writeMode, "rest"))
                         {
                             return false;
                         }
@@ -5931,7 +6044,7 @@ public sealed class HIRToLIRLowerer
                         _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, indexTemp, getResult));
                         DefineTempStorage(getResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                        if (!TryLowerDestructuringPattern(elementPattern, getResult, isDeclaration, i.ToString()))
+                        if (!TryLowerDestructuringPattern(elementPattern, getResult, writeMode, i.ToString()))
                         {
                             return false;
                         }
@@ -5943,7 +6056,7 @@ public sealed class HIRToLIRLowerer
                         {
                             return false;
                         }
-                        if (!TryLowerDestructuringPattern(arr.Rest.Target, restArray, isDeclaration, "rest"))
+                        if (!TryLowerDestructuringPattern(arr.Rest.Target, restArray, writeMode, "rest"))
                         {
                             return false;
                         }
@@ -6259,7 +6372,7 @@ public sealed class HIRToLIRLowerer
         rhsTemp = EnsureObject(rhsTemp);
 
         var sourceNameForError = TryGetSimpleSourceNameForDestructuring(assignExpr.Value);
-        if (!TryLowerDestructuringPattern(assignExpr.Pattern, rhsTemp, isDeclaration: false, sourceNameForError))
+        if (!TryLowerDestructuringPattern(assignExpr.Pattern, rhsTemp, DestructuringWriteMode.Assignment, sourceNameForError))
         {
             return false;
         }

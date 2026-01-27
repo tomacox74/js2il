@@ -83,7 +83,10 @@ internal sealed class ScopeNestingPlanner
             // These scopes should be nested as siblings of the parent scope type, under the same
             // enclosing owner type (module/callable/class), so they are constructible from that
             // owner while remaining NestedPrivate.
-            if (child.Kind == ScopeKind.Block && child.Name.StartsWith("For_", StringComparison.Ordinal))
+            if (child.Kind == ScopeKind.Block &&
+                (child.Name.StartsWith("For_", StringComparison.Ordinal) ||
+                 child.Name.StartsWith("ForIn_", StringComparison.Ordinal) ||
+                 child.Name.StartsWith("ForOf_", StringComparison.Ordinal)))
             {
                 relationships.Add((childTypeHandle, enclosingForParentScopeType));
                 CollectScopeNestingRelationships(moduleName, child, enclosingForParentScopeType, relationships, visited);

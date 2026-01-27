@@ -31,8 +31,8 @@ do/while/for loops are supported including break/continue (with labels). for..in
 | 14.7.5 | The for - in , for - of , and for - await - of Statements | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements) |
 | 14.7.5.1 | Static Semantics: Early Errors | Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements-static-semantics-early-errors) |
 | 14.7.5.2 | Static Semantics: IsDestructuring | Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-isdestructuring) |
-| 14.7.5.3 | Runtime Semantics: ForDeclarationBindingInitialization | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginitialization) |
-| 14.7.5.4 | Runtime Semantics: ForDeclarationBindingInstantiation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginstantiation) |
+| 14.7.5.3 | Runtime Semantics: ForDeclarationBindingInitialization | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginitialization) |
+| 14.7.5.4 | Runtime Semantics: ForDeclarationBindingInstantiation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginstantiation) |
 | 14.7.5.5 | Runtime Semantics: ForInOfLoopEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forinofloopevaluation) |
 | 14.7.5.6 | ForIn/OfHeadEvaluation ( uninitializedBoundNames , expr , iterationKind ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forinofheadevaluation) |
 | 14.7.5.7 | ForIn/OfBodyEvaluation ( lhs , stmt , iteratorRecord , iterationKind , lhsKind , labelSet [ , iteratorKind ] ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forin-div-ofbodyevaluation-lhs-stmt-iterator-lhskind-labelset) |

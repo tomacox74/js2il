@@ -122,8 +122,14 @@ namespace Js2IL.Services
 
             // For-loop per-iteration lexical environments: name the scope type with a Scope_ prefix
             // so it can live as a sibling of the root Scope type under the callable/module owner.
-            // Example: For_L3C5 -> Scope_For_L3C5
-            if (scope.Kind == ScopeKind.Block && scope.Name.StartsWith("For_", StringComparison.Ordinal))
+            // Examples:
+            //   For_L3C5   -> Scope_For_L3C5
+            //   ForIn_L3C5 -> Scope_ForIn_L3C5
+            //   ForOf_L3C5 -> Scope_ForOf_L3C5
+            if (scope.Kind == ScopeKind.Block &&
+                (scope.Name.StartsWith("For_", StringComparison.Ordinal) ||
+                 scope.Name.StartsWith("ForIn_", StringComparison.Ordinal) ||
+                 scope.Name.StartsWith("ForOf_", StringComparison.Ordinal)))
             {
                 return $"Scope_{scope.Name}";
             }
@@ -307,6 +313,7 @@ namespace Js2IL.Services
         {
             // Scope types are always nested types in metadata. The specific enclosing TypeDef is resolved
             // later (once module + callable-owner + class TypeDefs exist) and emitted via NestedClass rows.
+            //
             var typeAttributes = TypeAttributes.NestedPrivate | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
             var actualNamespace = string.Empty;
 
