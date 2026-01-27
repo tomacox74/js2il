@@ -499,7 +499,7 @@ namespace JavaScriptRuntime
         ///  - User-defined iterables via [Symbol.iterator]
         ///  - .NET IEnumerable as a best-effort fallback
         /// </summary>
-        public static object GetIterator(object? iterable)
+        public static IJavaScriptIterator GetIterator(object? iterable)
         {
             if (iterable is null || iterable is JsNull)
             {
@@ -509,17 +509,17 @@ namespace JavaScriptRuntime
             // Built-ins
             if (iterable is string s)
             {
-                return CreateStringIterator(s);
+                return new StringIterator(s);
             }
 
             if (iterable is JavaScriptRuntime.Array arr)
             {
-                return CreateArrayIterator(arr);
+                return new ArrayIterator(arr);
             }
 
             if (iterable is JavaScriptRuntime.Int32Array i32)
             {
-                return CreateInt32ArrayIterator(i32);
+                return new Int32ArrayIterator(i32);
             }
 
             // User-defined iterables: call obj[Symbol.iterator]().
@@ -543,7 +543,11 @@ namespace JavaScriptRuntime
                     {
                         throw new JavaScriptRuntime.TypeError("Iterator method returned null or undefined");
                     }
-                    return iteratorObj;
+                    if (iteratorObj is IJavaScriptIterator native)
+                    {
+                        return native;
+                    }
+                    return new DynamicIterator(iteratorObj);
                 }
                 finally
                 {
@@ -559,10 +563,47 @@ namespace JavaScriptRuntime
             // Best-effort fallback: treat .NET IEnumerable as iterable.
             if (iterable is System.Collections.IEnumerable en)
             {
-                return CreateEnumerableIterator(en);
+                return new EnumerableIterator(en);
             }
 
             throw new JavaScriptRuntime.TypeError("Object is not iterable");
+        }
+
+        /// <summary>
+        /// Advances an iterator via the iterator protocol.
+        /// Returns an iterator result object of the form: { value, done }.
+        /// </summary>
+        public static object IteratorNext(object iterator)
+        {
+            if (iterator is IJavaScriptIterator it)
+            {
+                return it.Next();
+            }
+
+            throw new JavaScriptRuntime.TypeError("Iterator is not an iterator");
+        }
+
+        public static bool IteratorResultDone(object iteratorResult)
+        {
+            if (iteratorResult is IteratorResultObject ro)
+            {
+                return ro.done;
+            }
+
+            // Fallback for foreign iterator results.
+            var doneObj = GetItem(iteratorResult, "done");
+            return JavaScriptRuntime.TypeUtilities.ToBoolean(doneObj);
+        }
+
+        public static object? IteratorResultValue(object iteratorResult)
+        {
+            if (iteratorResult is IteratorResultObject ro)
+            {
+                return ro.value;
+            }
+
+            // Fallback for foreign iterator results.
+            return GetItem(iteratorResult, "value");
         }
 
         /// <summary>
@@ -573,6 +614,17 @@ namespace JavaScriptRuntime
         {
             if (iterator is null || iterator is JsNull)
             {
+                return;
+            }
+
+            if (iterator is IJavaScriptIterator it)
+            {
+                if (!it.HasReturn)
+                {
+                    return;
+                }
+
+                it.Return();
                 return;
             }
 
@@ -624,141 +676,201 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static object CreateArrayIterator(JavaScriptRuntime.Array arr)
+        private sealed class ArrayIterator : IJavaScriptIterator
         {
-            int index = 0;
-            bool isClosed = false;
+            private readonly JavaScriptRuntime.Array _arr;
+            private int _index;
+            private bool _isClosed;
 
-            var iter = new System.Dynamic.ExpandoObject();
-            var dict = (IDictionary<string, object?>)iter;
-
-            dict["next"] = (Func<object[], object?>)((_) =>
+            public ArrayIterator(JavaScriptRuntime.Array arr)
             {
-                if (isClosed)
+                _arr = arr;
+            }
+
+            public bool HasReturn => true;
+
+            public IteratorResultObject Next()
+            {
+                if (_isClosed || _index >= _arr.Count)
                 {
-                    return IteratorResult.Create(null, done: true);
+                    return new IteratorResultObject(null, done: true);
                 }
 
-                if (index >= arr.Count)
-                {
-                    return IteratorResult.Create(null, done: true);
-                }
+                var value = _arr[_index++];
+                return new IteratorResultObject(value, done: false);
+            }
 
-                var value = arr[index++];
-                return IteratorResult.Create(value, done: false);
-            });
-
-            dict["return"] = (Func<object[], object?>)((_) =>
+            public void Return()
             {
-                isClosed = true;
-                return IteratorResult.Create(null, done: true);
-            });
-
-            return iter;
+                _isClosed = true;
+            }
         }
 
-        private static object CreateStringIterator(string s)
+        private sealed class StringIterator : IJavaScriptIterator
         {
-            int index = 0;
-            bool isClosed = false;
+            private readonly string _s;
+            private int _index;
+            private bool _isClosed;
 
-            var iter = new System.Dynamic.ExpandoObject();
-            var dict = (IDictionary<string, object?>)iter;
-
-            dict["next"] = (Func<object[], object?>)((_) =>
+            public StringIterator(string s)
             {
-                if (isClosed)
+                _s = s;
+            }
+
+            public bool HasReturn => true;
+
+            public IteratorResultObject Next()
+            {
+                if (_isClosed || _index >= _s.Length)
                 {
-                    return IteratorResult.Create(null, done: true);
+                    return new IteratorResultObject(null, done: true);
                 }
 
-                if (index >= s.Length)
-                {
-                    return IteratorResult.Create(null, done: true);
-                }
+                var ch = _s[_index++].ToString();
+                return new IteratorResultObject(ch, done: false);
+            }
 
-                var ch = s[index++].ToString();
-                return IteratorResult.Create(ch, done: false);
-            });
-
-            dict["return"] = (Func<object[], object?>)((_) =>
+            public void Return()
             {
-                isClosed = true;
-                return IteratorResult.Create(null, done: true);
-            });
-
-            return iter;
+                _isClosed = true;
+            }
         }
 
-        private static object CreateInt32ArrayIterator(JavaScriptRuntime.Int32Array arr)
+        private sealed class Int32ArrayIterator : IJavaScriptIterator
         {
-            int index = 0;
-            bool isClosed = false;
+            private readonly JavaScriptRuntime.Int32Array _arr;
+            private int _index;
+            private bool _isClosed;
 
-            var iter = new System.Dynamic.ExpandoObject();
-            var dict = (IDictionary<string, object?>)iter;
-
-            dict["next"] = (Func<object[], object?>)((_) =>
+            public Int32ArrayIterator(JavaScriptRuntime.Int32Array arr)
             {
-                if (isClosed)
+                _arr = arr;
+            }
+
+            public bool HasReturn => true;
+
+            public IteratorResultObject Next()
+            {
+                if (_isClosed || _index >= _arr.length)
                 {
-                    return IteratorResult.Create(null, done: true);
+                    return new IteratorResultObject(null, done: true);
                 }
 
-                if (index >= arr.length)
-                {
-                    return IteratorResult.Create(null, done: true);
-                }
+                var value = (double)_arr[_index++];
+                return new IteratorResultObject(value, done: false);
+            }
 
-                var value = (double)arr[index++];
-                return IteratorResult.Create(value, done: false);
-            });
-
-            dict["return"] = (Func<object[], object?>)((_) =>
+            public void Return()
             {
-                isClosed = true;
-                return IteratorResult.Create(null, done: true);
-            });
-
-            return iter;
+                _isClosed = true;
+            }
         }
 
-        private static object CreateEnumerableIterator(System.Collections.IEnumerable en)
+        private sealed class EnumerableIterator : IJavaScriptIterator
         {
-            var enumerator = en.GetEnumerator();
-            bool isClosed = false;
+            private readonly System.Collections.IEnumerator _enumerator;
+            private bool _isClosed;
 
-            var iter = new System.Dynamic.ExpandoObject();
-            var dict = (IDictionary<string, object?>)iter;
-
-            dict["next"] = (Func<object[], object?>)((_) =>
+            public EnumerableIterator(System.Collections.IEnumerable en)
             {
-                if (isClosed)
+                _enumerator = en.GetEnumerator();
+            }
+
+            public bool HasReturn => true;
+
+            public IteratorResultObject Next()
+            {
+                if (_isClosed)
                 {
-                    return IteratorResult.Create(null, done: true);
+                    return new IteratorResultObject(null, done: true);
                 }
 
-                bool moved;
-                moved = enumerator.MoveNext();
+                var moved = _enumerator.MoveNext();
                 if (!moved)
                 {
-                    return IteratorResult.Create(null, done: true);
+                    return new IteratorResultObject(null, done: true);
                 }
 
-                return IteratorResult.Create(enumerator.Current, done: false);
-            });
+                return new IteratorResultObject(_enumerator.Current, done: false);
+            }
 
-            dict["return"] = (Func<object[], object?>)((_) =>
+            public void Return()
             {
-                isClosed = true;
-                if (enumerator is IDisposable d)
+                _isClosed = true;
+                if (_enumerator is IDisposable d)
                 {
                     d.Dispose();
                 }
-                return IteratorResult.Create(null, done: true);
-            });
+            }
+        }
 
-            return iter;
+        private sealed class DynamicIterator : IJavaScriptIterator
+        {
+            private readonly object _iterator;
+            private readonly Delegate _next;
+            private readonly object? _return;
+
+            public DynamicIterator(object iterator)
+            {
+                _iterator = iterator;
+
+                var nextMember = GetProperty(_iterator, "next");
+                if (nextMember is not Delegate nextDel)
+                {
+                    throw new JavaScriptRuntime.TypeError("Iterator.next is not a function");
+                }
+                _next = nextDel;
+
+                _return = GetProperty(_iterator, "return");
+            }
+
+            public bool HasReturn => _return != null;
+
+            public IteratorResultObject Next()
+            {
+                var previousThis = RuntimeServices.SetCurrentThis(_iterator);
+                try
+                {
+                    var result = Closure.InvokeWithArgs(_next, System.Array.Empty<object>(), System.Array.Empty<object>());
+                    if (result is IteratorResultObject ro)
+                    {
+                        return ro;
+                    }
+
+                    // Normalize foreign iterator results to a strongly-typed shape.
+                    var doneObj = GetItem(result, "done");
+                    var done = JavaScriptRuntime.TypeUtilities.ToBoolean(doneObj);
+                    var value = GetItem(result, "value");
+                    return new IteratorResultObject(value, done);
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+
+            public void Return()
+            {
+                if (_return is null)
+                {
+                    return;
+                }
+
+                if (_return is not Delegate del)
+                {
+                    throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
+                }
+
+                var previousThis = RuntimeServices.SetCurrentThis(_iterator);
+                try
+                {
+                    Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
         }
 
         /// <summary>

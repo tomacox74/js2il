@@ -2066,36 +2066,20 @@ public sealed class HIRToLIRLowerer
                             // Loop start
                             lirInstructions.Add(new LIRLabel(loopStartLabel));
 
-                            // result = iterator.next()
-                            var emptyArgs = CreateTempVariable();
-                            lirInstructions.Add(new LIRBuildArray(System.Array.Empty<TempVariable>(), emptyArgs));
-                            DefineTempStorage(emptyArgs, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-
+                            // result = Object.IteratorNext(iterator)
                             var iterResult = CreateTempVariable();
-                            lirInstructions.Add(new LIRCallMember(iterTemp, "next", emptyArgs, iterResult));
+                            lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "IteratorNext", new[] { EnsureObject(iterTemp) }, iterResult));
                             DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                            // done = ToBoolean(result.done)
-                            var doneKey = CreateTempVariable();
-                            lirInstructions.Add(new LIRConstString("done", doneKey));
-                            DefineTempStorage(doneKey, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-
-                            var valueKey = CreateTempVariable();
-                            lirInstructions.Add(new LIRConstString("value", valueKey));
-                            DefineTempStorage(valueKey, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-
-                            var doneObj = CreateTempVariable();
-                            lirInstructions.Add(new LIRGetItem(EnsureObject(iterResult), EnsureObject(doneKey), doneObj));
-                            DefineTempStorage(doneObj, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
+                            // done = Object.IteratorResultDone(result)
                             var doneBool = CreateTempVariable();
-                            lirInstructions.Add(new LIRConvertToBoolean(doneObj, doneBool));
+                            lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "IteratorResultDone", new[] { EnsureObject(iterResult) }, doneBool));
                             DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                             lirInstructions.Add(new LIRBranchIfTrue(doneBool, normalCompleteLabel));
 
-                            // value = result.value
+                            // value = Object.IteratorResultValue(result)
                             var itemTemp = CreateTempVariable();
-                            lirInstructions.Add(new LIRGetItem(EnsureObject(iterResult), EnsureObject(valueKey), itemTemp));
+                            lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "IteratorResultValue", new[] { EnsureObject(iterResult) }, itemTemp));
                             DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                             var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))

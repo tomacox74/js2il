@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2140
+			// Method begins at RVA 0x2128
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x215b
+					// Method begins at RVA 0x2143
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2152
+				// Method begins at RVA 0x213a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2149
+			// Method begins at RVA 0x2131
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -104,7 +104,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 212 (0xd4)
+		// Code size: 186 (0xba)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_Break/Scope,
@@ -132,7 +132,7 @@
 		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_002d: stloc.1
 		IL_002e: ldloc.1
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
+		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
 		IL_0034: stloc.2
 		IL_0035: ldc.i4.0
 		IL_0036: stloc.3
@@ -142,69 +142,63 @@
 		{
 			// loop start (head: IL_003a)
 				IL_003a: ldloc.2
-				IL_003b: ldstr "next"
-				IL_0040: ldc.i4.0
-				IL_0041: newarr [System.Runtime]System.Object
-				IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-				IL_004b: stloc.s 6
-				IL_004d: ldloc.s 6
-				IL_004f: ldstr "done"
-				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_0059: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-				IL_005e: stloc.s 7
-				IL_0060: ldloc.s 7
-				IL_0062: brtrue IL_00b8
+				IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+				IL_0040: stloc.s 6
+				IL_0042: ldloc.s 6
+				IL_0044: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+				IL_0049: stloc.s 7
+				IL_004b: ldloc.s 7
+				IL_004d: brtrue IL_009e
 
-				IL_0067: ldloc.s 6
-				IL_0069: ldstr "value"
-				IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_0073: stloc.s 5
-				IL_0075: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_007a: ldc.i4.1
-				IL_007b: newarr [System.Runtime]System.Object
-				IL_0080: dup
-				IL_0081: ldc.i4.0
-				IL_0082: ldloc.s 5
-				IL_0084: stelem.ref
-				IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_008a: pop
-				IL_008b: ldloc.s 5
-				IL_008d: ldstr "b"
-				IL_0092: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_0097: stloc.s 7
-				IL_0099: ldloc.s 7
-				IL_009b: brfalse IL_00a5
+				IL_0052: ldloc.s 6
+				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+				IL_0059: stloc.s 5
+				IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0060: ldc.i4.1
+				IL_0061: newarr [System.Runtime]System.Object
+				IL_0066: dup
+				IL_0067: ldc.i4.0
+				IL_0068: ldloc.s 5
+				IL_006a: stelem.ref
+				IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0070: pop
+				IL_0071: ldloc.s 5
+				IL_0073: ldstr "b"
+				IL_0078: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_007d: stloc.s 7
+				IL_007f: ldloc.s 7
+				IL_0081: brfalse IL_008b
 
-				IL_00a0: br IL_00aa
+				IL_0086: br IL_0090
 
-				IL_00a5: br IL_003a
+				IL_008b: br IL_003a
 			// end loop
 
-			IL_00aa: ldloc.2
-			IL_00ab: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
-			IL_00b0: ldc.i4.1
-			IL_00b1: stloc.s 4
-			IL_00b3: leave IL_00d3
+			IL_0090: ldloc.2
+			IL_0091: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+			IL_0096: ldc.i4.1
+			IL_0097: stloc.s 4
+			IL_0099: leave IL_00b9
 
-			IL_00b8: ldc.i4.1
-			IL_00b9: stloc.3
-			IL_00ba: leave IL_00d3
+			IL_009e: ldc.i4.1
+			IL_009f: stloc.3
+			IL_00a0: leave IL_00b9
 		} // end .try
 		finally
 		{
-			IL_00bf: ldloc.3
-			IL_00c0: brtrue IL_00d2
+			IL_00a5: ldloc.3
+			IL_00a6: brtrue IL_00b8
 
-			IL_00c5: ldloc.s 4
-			IL_00c7: brtrue IL_00d2
+			IL_00ab: ldloc.s 4
+			IL_00ad: brtrue IL_00b8
 
-			IL_00cc: ldloc.2
-			IL_00cd: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+			IL_00b2: ldloc.2
+			IL_00b3: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
 
-			IL_00d2: endfinally
+			IL_00b8: endfinally
 		} // end handler
 
-		IL_00d3: ret
+		IL_00b9: ret
 	} // end of method ControlFlow_ForOf_Break::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_Break
@@ -216,7 +210,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2164
+		// Method begins at RVA 0x214c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

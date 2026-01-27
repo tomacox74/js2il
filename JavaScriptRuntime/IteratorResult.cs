@@ -1,7 +1,22 @@
-using System.Collections.Generic;
-using System.Dynamic;
-
 namespace JavaScriptRuntime;
+
+/// <summary>
+/// Strongly-typed iterator result object of the form: { value: any, done: boolean }.
+///
+/// NOTE: Field names are intentionally lower-case to match JS property lookups
+/// in this runtime's reflection-based `Object.GetProperty`.
+/// </summary>
+public sealed class IteratorResultObject
+{
+    public object? value;
+    public bool done;
+
+    public IteratorResultObject(object? value, bool done)
+    {
+        this.value = value;
+        this.done = done;
+    }
+}
 
 /// <summary>
 /// Helper for creating iterator result objects of the form: { value: any, done: boolean }.
@@ -10,9 +25,6 @@ public static class IteratorResult
 {
     public static object Create(object? value, bool done)
     {
-        var expando = new ExpandoObject() as IDictionary<string, object?>;
-        expando!["value"] = value;
-        expando["done"] = done;
-        return (ExpandoObject)expando;
+        return new IteratorResultObject(value, done);
     }
 }
