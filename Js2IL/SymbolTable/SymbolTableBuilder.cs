@@ -1647,12 +1647,9 @@ namespace Js2IL.SymbolTables
                     return;
 
                 case ArrayPattern arr:
-                    foreach (var el in arr.Elements)
+                    foreach (var el in arr.Elements.Where(el => el != null))
                     {
-                        if (el != null)
-                        {
-                            BindPatternBindings(el, kind, targetScope, declarationNode);
-                        }
+                        BindPatternBindings(el!, kind, targetScope, declarationNode);
                     }
                     return;
 

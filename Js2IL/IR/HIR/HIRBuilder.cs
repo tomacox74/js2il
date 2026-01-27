@@ -805,12 +805,9 @@ class HIRMethodBuilder
                                 break;
 
                             case HIRArrayPattern arr:
-                                foreach (var el in arr.Elements)
+                                foreach (var el in arr.Elements.Where(el => el != null))
                                 {
-                                    if (el != null)
-                                    {
-                                        CollectBindings(el, bindings);
-                                    }
+                                    CollectBindings(el!, bindings);
                                 }
                                 if (arr.Rest != null)
                                 {
@@ -936,12 +933,9 @@ class HIRMethodBuilder
                                 break;
 
                             case HIRArrayPattern arr:
-                                foreach (var el in arr.Elements)
+                                foreach (var el in arr.Elements.Where(el => el != null))
                                 {
-                                    if (el != null)
-                                    {
-                                        CollectBindings(el, bindings);
-                                    }
+                                    CollectBindings(el!, bindings);
                                 }
                                 if (arr.Rest != null)
                                 {
