@@ -48,6 +48,12 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForLoop_LessThanOrEqual() { var testName = "ControlFlow_ForLoop_LessThanOrEqual"; return GenerateTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForLoop_LetClosureCapture() { var testName = nameof(ControlFlow_ForLoop_LetClosureCapture); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForLoop_LetClosureCapture_Continue() { var testName = nameof(ControlFlow_ForLoop_LetClosureCapture_Continue); return GenerateTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForOf_Array_Basic() { var testName = nameof(ControlFlow_ForOf_Array_Basic); return GenerateTest(testName); }
 
         [Fact]

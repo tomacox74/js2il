@@ -342,6 +342,17 @@
         "notes": "Implements continue by branching to the update expression (LoopContext)."
       },
       {
+        "clause": "14.7.4.4",
+        "feature": "for-loop per-iteration lexical environment (let closure capture)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-createperiterationenvironment",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture_Continue.js"
+        ],
+        "notes": "Implements per-iteration environments for captured loop-head lexical bindings so closures observe 0,1,2 rather than the final value. Currently guarded to only apply when the loop-head captured bindings are the only captured bindings stored in the current leaf scope."
+      },
+      {
         "clause": "14.7.4.2",
         "feature": "for loop: labeled break",
         "status": "Supported",

@@ -12,6 +12,7 @@ All notable changes to this project are documented here.
 - Classes/spec: support `class B extends A { ... }`, `super(...)` in derived constructors, and `super.m(...)` base method calls (fixes #293, #294).
 - Generators/spec: support `yield*` delegation for synchronous generators (fixes #389).
 - Validator/spec: enforce and consistently surface iteration-statement early errors (break/continue targets and for-in/of head constraints) and fix labeled-statement AST traversal (fixes #463).
+- ControlFlow/spec: implement per-iteration lexical environments for `for (let/const ...)` loops so closures capture iteration values (fixes #461).
 
 ## v0.7.3 - 2026-01-23
 

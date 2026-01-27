@@ -1770,6 +1770,17 @@ public sealed class HIRToLIRLowerer
                         return false;
                     }
 
+                    // Spec: CreatePerIterationEnvironment for for-loops with lexical declarations.
+                    // JS2IL currently models captured bindings via a single leaf scope instance.
+                    // To approximate per-iteration environments for captured loop bindings, we
+                    // recreate the leaf scope instance at the end of each iteration (after update),
+                    // carrying forward the current values of the loop bindings.
+                    //
+                    // This is guarded to avoid breaking unrelated captured bindings that live in
+                    // the same leaf scope instance.
+                    var perIterationBindings = GetPerIterationLexicalBindingsForForInit(forStmt.Init);
+                    bool shouldRecreateLeafScopeEachIteration = CanSafelyRecreateLeafScopeForPerIterationBindings(perIterationBindings);
+
                     int loopStartLabel = CreateLabel();
                     int loopUpdateLabel = CreateLabel();
                     int loopEndLabel = CreateLabel();
@@ -1819,6 +1830,13 @@ public sealed class HIRToLIRLowerer
 
                     // Continue target (for-loops continue runs update, then loops)
                     lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+
+                    // CreatePerIterationEnvironment: ensure the update expression mutates the
+                    // next iteration's environment, not the previous iteration's.
+                    if (shouldRecreateLeafScopeEachIteration)
+                    {
+                        EmitRecreateLeafScopeForPerIterationBindings(perIterationBindings);
+                    }
 
                     // Update expression (if present)
                     if (forStmt.Update != null && !TryLowerExpressionDiscardResult(forStmt.Update))
@@ -6507,6 +6525,121 @@ public sealed class HIRToLIRLowerer
 
         storedValue = valueToStore;
         return true;
+    }
+
+    private List<BindingInfo> GetPerIterationLexicalBindingsForForInit(HIRStatement? init)
+    {
+        var result = new List<BindingInfo>();
+
+        void CollectFromStatement(HIRStatement? st)
+        {
+            if (st == null)
+            {
+                return;
+            }
+
+            if (st is HIRVariableDeclaration vd)
+            {
+                var binding = vd.Name.BindingInfo;
+                if (binding.Kind is BindingKind.Let or BindingKind.Const && binding.IsCaptured)
+                {
+                    result.Add(binding);
+                }
+                return;
+            }
+
+            if (st is HIRBlock block)
+            {
+                foreach (var inner in block.Statements)
+                {
+                    CollectFromStatement(inner);
+                }
+            }
+        }
+
+        CollectFromStatement(init);
+        return result;
+    }
+
+    private bool CanSafelyRecreateLeafScopeForPerIterationBindings(IReadOnlyList<BindingInfo> bindings)
+    {
+        if (bindings.Count == 0)
+        {
+            return false;
+        }
+
+        // Only supported for non-resumables.
+        if (_methodBodyIR.IsAsync || _methodBodyIR.IsGenerator)
+        {
+            return false;
+        }
+
+        if (!_methodBodyIR.NeedsLeafScopeLocal || _methodBodyIR.LeafScopeId.IsNil)
+        {
+            return false;
+        }
+
+        if (_environmentLayout == null)
+        {
+            return false;
+        }
+
+        // Ensure all per-iteration bindings live in the leaf scope.
+        foreach (var binding in bindings)
+        {
+            var storage = _environmentLayout.GetStorage(binding);
+            if (storage == null || storage.Kind != BindingStorageKind.LeafScopeField)
+            {
+                return false;
+            }
+
+            if (storage.DeclaringScope.IsNil || storage.DeclaringScope != _methodBodyIR.LeafScopeId)
+            {
+                return false;
+            }
+        }
+
+        // Guard: leaf scope must not contain other captured fields.
+        // Otherwise, recreating the leaf scope would change closure semantics for those bindings.
+        var leafScopeFieldBindings = _environmentLayout.StorageByBinding
+            .Where(kvp => kvp.Value.Kind == BindingStorageKind.LeafScopeField && kvp.Value.DeclaringScope == _methodBodyIR.LeafScopeId)
+            .Select(kvp => kvp.Key)
+            .ToHashSet();
+
+        return leafScopeFieldBindings.SetEquals(bindings);
+    }
+
+    private void EmitRecreateLeafScopeForPerIterationBindings(IReadOnlyList<BindingInfo> bindings)
+    {
+        if (_environmentLayout == null)
+        {
+            throw new InvalidOperationException("Cannot recreate leaf scope without environment layout.");
+        }
+
+        // Load current values before overwriting leaf local.
+        var temps = new Dictionary<BindingInfo, TempVariable>();
+        foreach (var binding in bindings)
+        {
+            var storage = _environmentLayout.GetStorage(binding)
+                ?? throw new InvalidOperationException("Missing storage for per-iteration binding.");
+
+            var temp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, temp));
+            DefineTempStorage(temp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            temps[binding] = temp;
+        }
+
+        // Overwrite leaf scope local with a new instance.
+        _methodBodyIR.Instructions.Add(new LIRCreateLeafScopeInstance(_methodBodyIR.LeafScopeId));
+
+        // Store values into the new leaf scope instance.
+        foreach (var binding in bindings)
+        {
+            var storage = _environmentLayout.GetStorage(binding)
+                ?? throw new InvalidOperationException("Missing storage for per-iteration binding.");
+            var valueTemp = temps[binding];
+            _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, EnsureObject(valueTemp)));
+        }
     }
 
     private bool TryLowerAssignmentExpression(HIRAssignmentExpression assignExpr, out TempVariable resultTempVar)

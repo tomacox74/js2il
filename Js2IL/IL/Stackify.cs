@@ -280,7 +280,9 @@ internal static class Stackify
     /// </summary>
     private static bool IsControlFlowInstruction(LIRInstruction instruction)
     {
-        return instruction is LIRLabel or LIRBranch or LIRBranchIfFalse or LIRBranchIfTrue;
+        // Treat leaf-scope creation as a barrier for stackification: it overwrites the
+        // leaf scope local (ldloc.0) and can change the result of re-emitted scope field loads.
+        return instruction is LIRLabel or LIRBranch or LIRBranchIfFalse or LIRBranchIfTrue or LIRCreateLeafScopeInstance;
     }
 
     /// <summary>

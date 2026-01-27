@@ -18,18 +18,18 @@ do/while/for loops are supported including break/continue (with labels). for..in
 | 14.7.1.1 | LoopContinues ( completion , labelSet ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-loopcontinues) |
 | 14.7.1.2 | Runtime Semantics: LoopEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-loopevaluation) |
 | 14.7.2 | The do - while Statement | Supported | [tc39.es](https://tc39.es/ecma262/#sec-do-while-statement) |
-| 14.7.2.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-do-while-statement-static-semantics-early-errors) |
+| 14.7.2.1 | Static Semantics: Early Errors | Supported | [tc39.es](https://tc39.es/ecma262/#sec-do-while-statement-static-semantics-early-errors) |
 | 14.7.2.2 | Runtime Semantics: DoWhileLoopEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-dowhileloopevaluation) |
 | 14.7.3 | The while Statement | Supported | [tc39.es](https://tc39.es/ecma262/#sec-while-statement) |
-| 14.7.3.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-while-statement-static-semantics-early-errors) |
+| 14.7.3.1 | Static Semantics: Early Errors | Supported | [tc39.es](https://tc39.es/ecma262/#sec-while-statement-static-semantics-early-errors) |
 | 14.7.3.2 | Runtime Semantics: WhileLoopEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-whileloopevaluation) |
 | 14.7.4 | The for Statement | Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-statement) |
-| 14.7.4.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-statement-static-semantics-early-errors) |
+| 14.7.4.1 | Static Semantics: Early Errors | Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-statement-static-semantics-early-errors) |
 | 14.7.4.2 | Runtime Semantics: ForLoopEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forloopevaluation) |
 | 14.7.4.3 | ForBodyEvaluation ( test , increment , stmt , perIterationBindings , labelSet ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-forbodyevaluation) |
 | 14.7.4.4 | CreatePerIterationEnvironment ( perIterationBindings ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-createperiterationenvironment) |
 | 14.7.5 | The for - in , for - of , and for - await - of Statements | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements) |
-| 14.7.5.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements-static-semantics-early-errors) |
+| 14.7.5.1 | Static Semantics: Early Errors | Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements-static-semantics-early-errors) |
 | 14.7.5.2 | Static Semantics: IsDestructuring | Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-isdestructuring) |
 | 14.7.5.3 | Runtime Semantics: ForDeclarationBindingInitialization | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginitialization) |
 | 14.7.5.4 | Runtime Semantics: ForDeclarationBindingInstantiation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-fordeclarationbindinginstantiation) |
@@ -80,6 +80,12 @@ Feature-level support tracking with test script references.
 | for loop: continue | Supported | [`ControlFlow_ForLoop_Continue_SkipEven.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js) | Implements continue by branching to the update expression (LoopContext). |
 | for loop: labeled break | Supported | [`ControlFlow_ForLoop_LabeledBreak.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledBreak.js) | Supports break <label> where <label> targets an enclosing loop. |
 | for loop: labeled continue | Supported | [`ControlFlow_ForLoop_LabeledContinue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledContinue.js) | Supports continue <label> where <label> targets an enclosing loop. |
+
+### 14.7.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-createperiterationenvironment))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| for-loop per-iteration lexical environment (let closure capture) | Supported | [`ControlFlow_ForLoop_LetClosureCapture.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture.js)<br>[`ControlFlow_ForLoop_LetClosureCapture_Continue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture_Continue.js) | Implements per-iteration environments for captured loop-head lexical bindings so closures observe 0,1,2 rather than the final value. Currently guarded to only apply when the loop-head captured bindings are the only captured bindings stored in the current leaf scope. |
 
 ### 14.7.5 ([tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements))
 
