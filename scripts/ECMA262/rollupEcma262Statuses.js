@@ -1,4 +1,4 @@
-/*
+  /*
  * Rolls up ECMA-262 coverage statuses:
  *   1) From subsection JSON docs (e.g. docs/ECMA262/15/Section15_5.json)
  *      into the parent section hub markdown (e.g. docs/ECMA262/15/Section15.md)
@@ -135,17 +135,32 @@ function validateStatus(status) {
   }
 }
 
-// Rollup precedence (matches splitEcma262SectionsIntoSubsections.js):
-// Not Yet Supported > Partially Supported > Supported > Untracked
+// Rollup policy:
+// - If everything is Untracked -> Untracked
+// - If there is a mix of supported and unsupported -> Partially Supported
+// - Otherwise prefer the “best summary” of what exists
 function getRollupStatus(statuses) {
   const norm = (Array.isArray(statuses) ? statuses : [])
     .map((s) => (s ?? '').trim())
     .filter((s) => s.length > 0);
 
-  if (norm.includes('Not Yet Supported')) return 'Not Yet Supported';
-  if (norm.includes('Not Supported')) return 'Not Yet Supported';
-  if (norm.includes('Partially Supported')) return 'Partially Supported';
-  if (norm.includes('Supported')) return 'Supported';
+  const hasUntracked = norm.includes('Untracked');
+  const hasNotYet = norm.includes('Not Yet Supported') || norm.includes('Not Supported');
+  const hasPartial = norm.includes('Partially Supported');
+  const hasSupported = norm.includes('Supported');
+
+  // Nothing tracked at all.
+  if (!hasNotYet && !hasPartial && !hasSupported && hasUntracked) return 'Untracked';
+
+  // If anything is partially supported, keep it partial.
+  if (hasPartial) return 'Partially Supported';
+
+  // Mixed support implies partial support overall.
+  if (hasSupported && hasNotYet) return 'Partially Supported';
+
+  if (hasSupported) return 'Supported';
+  if (hasNotYet) return 'Not Yet Supported';
+
   return 'Untracked';
 }
 
