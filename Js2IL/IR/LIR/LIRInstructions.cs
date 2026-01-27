@@ -13,7 +13,7 @@ public enum ValueStorageKind
     Reference
 }
 
-public sealed record ValueStorage(ValueStorageKind Kind, Type? ClrType = null, EntityHandle TypeHandle = default);
+public sealed record ValueStorage(ValueStorageKind Kind, Type? ClrType = null, EntityHandle TypeHandle = default, string? ScopeName = null);
 
 public abstract record LIRInstruction;
 
@@ -247,7 +247,9 @@ public enum ScopeInstanceSource
     /// <summary>The scope instance is in the caller's scopes argument (ldarg scopesArg, ldelem.ref).</summary>
     ScopesArgument,
     /// <summary>The scope instance is in the caller's this._scopes field (ldarg.0, ldfld _scopes, ldelem.ref).</summary>
-    ThisScopes
+    ThisScopes,
+    /// <summary>The scope instance is stored in a caller temp local (TempVariable index in SourceIndex).</summary>
+    Temp
 }
 
 /// <summary>
@@ -257,6 +259,22 @@ public enum ScopeInstanceSource
 /// <param name="Slots">The ordered list of scope slots with their sources. Empty if the callee doesn't need scopes.</param>
 /// <param name="Result">The temp variable to store the created array.</param>
 public record LIRBuildScopesArray(IReadOnlyList<ScopeSlotSource> Slots, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Creates a new instance of a scope class and stores it into a temp.
+/// Used for materializing nested lexical environments (e.g., per-iteration loop environments).
+/// </summary>
+public record LIRCreateScopeInstance(ScopeId Scope, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Loads a field from a specific scope instance held in a temp.
+/// </summary>
+public record LIRLoadScopeField(TempVariable ScopeInstance, BindingInfo Binding, FieldId Field, ScopeId Scope, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Stores a value into a field on a specific scope instance held in a temp.
+/// </summary>
+public record LIRStoreScopeField(TempVariable ScopeInstance, BindingInfo Binding, FieldId Field, ScopeId Scope, TempVariable Value) : LIRInstruction;
 
 public record LIRReturn(TempVariable ReturnValue) : LIRInstruction;
 

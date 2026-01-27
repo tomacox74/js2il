@@ -35,7 +35,7 @@ internal readonly record struct TempLocalAllocation(int[] TempToSlot, IReadOnlyL
 /// </summary>
 internal static class TempLocalAllocator
 {
-    private readonly record struct StorageKey(ValueStorageKind Kind, Type? ClrType, EntityHandle TypeHandle);
+    private readonly record struct StorageKey(ValueStorageKind Kind, Type? ClrType, EntityHandle TypeHandle, string? ScopeName);
 
     public static TempLocalAllocation Allocate(MethodBodyIR methodBody, bool[]? shouldMaterializeTemp = null)
     {
@@ -90,7 +90,7 @@ internal static class TempLocalAllocator
                 }
 
                 var usedStorage = GetTempStorage(methodBody, used);
-                var key = new StorageKey(usedStorage.Kind, usedStorage.ClrType, usedStorage.TypeHandle);
+                var key = new StorageKey(usedStorage.Kind, usedStorage.ClrType, usedStorage.TypeHandle, usedStorage.ScopeName);
                 if (!freeByKey.TryGetValue(key, out var stack))
                 {
                     stack = new Stack<int>();
@@ -111,7 +111,7 @@ internal static class TempLocalAllocator
                 !(defined.Index < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[defined.Index] >= 0))
             {
                 var storage = GetTempStorage(methodBody, defined);
-                var key = new StorageKey(storage.Kind, storage.ClrType, storage.TypeHandle);
+                var key = new StorageKey(storage.Kind, storage.ClrType, storage.TypeHandle, storage.ScopeName);
 
                 int slot;
                 if (freeByKey.TryGetValue(key, out var stack) && stack.Count > 0)
@@ -452,7 +452,16 @@ internal static class TempLocalAllocator
                 }
                 break;
             case LIRBuildScopesArray:
-                // LIRBuildScopesArray doesn't consume temps - it loads scope instances from locals/args directly
+                // LIRBuildScopesArray may load scope instances from temps (ScopeInstanceSource.Temp).
+                if (instruction is LIRBuildScopesArray buildScopes)
+                {
+                    foreach (var temp in buildScopes.Slots
+                        .Where(slot => slot.Source == ScopeInstanceSource.Temp && slot.SourceIndex >= 0)
+                        .Select(slot => new TempVariable(slot.SourceIndex)))
+                    {
+                        yield return temp;
+                    }
+                }
                 break;
             case LIRLoadThis:
                 // LIRLoadThis doesn't consume any temps (it loads from IL argument 0)
@@ -468,6 +477,15 @@ internal static class TempLocalAllocator
                 break;
             case LIRStoreScopeFieldByName storeByName:
                 yield return storeByName.Value;
+                break;
+
+            case LIRLoadScopeField loadScopeField:
+                yield return loadScopeField.ScopeInstance;
+                break;
+
+            case LIRStoreScopeField storeScopeField:
+                yield return storeScopeField.ScopeInstance;
+                yield return storeScopeField.Value;
                 break;
             case LIRLoadLeafScopeField:
             case LIRLoadParentScopeField:
@@ -686,6 +704,14 @@ internal static class TempLocalAllocator
 
             case LIRLoadScopeFieldByName loadScopeByName:
                 defined = loadScopeByName.Result;
+                return true;
+
+            case LIRCreateScopeInstance createScope:
+                defined = createScope.Result;
+                return true;
+
+            case LIRLoadScopeField loadScopeField:
+                defined = loadScopeField.Result;
                 return true;
 
             // Async / await state machine instructions

@@ -102,7 +102,13 @@ public class EnvironmentLayoutBuilder
         var current = scope.Parent;
         while (current != null)
         {
-            ancestorScopes.Add(current);
+            // Only include ancestor scopes that can contribute bindings to the environment chain.
+            // Empty block scopes are elided since they have no runtime-observable bindings and
+            // the IR pipeline does not materialize instances for them.
+            if (current.Kind != ScopeKind.Block || current.Bindings.Count > 0)
+            {
+                ancestorScopes.Add(current);
+            }
             current = current.Parent;
         }
 

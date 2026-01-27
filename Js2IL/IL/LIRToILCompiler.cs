@@ -2472,7 +2472,7 @@ internal sealed class LIRToILCompiler
                     }
                     else
                     {
-                        EmitPopulateScopesArray(ilEncoder, buildScopes.Slots, methodDescriptor);
+                        EmitPopulateScopesArray(ilEncoder, buildScopes.Slots, methodDescriptor, allocation);
                     }
                     
                     EmitStoreTemp(buildScopes.Result, ilEncoder, allocation);
@@ -2916,6 +2916,78 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(bindRef);
 
                     EmitStoreTemp(createFunc.Result, ilEncoder, allocation);
+                    break;
+                }
+
+            case LIRCreateScopeInstance createScopeTemp:
+                {
+                    if (!IsMaterialized(createScopeTemp.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    var scopeTypeHandle = ResolveScopeTypeHandle(
+                        createScopeTemp.Scope.Name,
+                        "LIRCreateScopeInstance instruction");
+                    var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(ctorRef);
+                    EmitStoreTemp(createScopeTemp.Result, ilEncoder, allocation);
+                    break;
+                }
+
+            case LIRLoadScopeField loadScopeFieldTemp:
+                {
+                    if (!IsMaterialized(loadScopeFieldTemp.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    var scopeTypeHandle = ResolveScopeTypeHandle(
+                        loadScopeFieldTemp.Scope.Name,
+                        "LIRLoadScopeField instruction (castclass)");
+                    var fieldHandle = ResolveFieldToken(
+                        loadScopeFieldTemp.Field.ScopeName,
+                        loadScopeFieldTemp.Field.FieldName,
+                        "LIRLoadScopeField instruction");
+
+                    EmitLoadTemp(loadScopeFieldTemp.ScopeInstance, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(scopeTypeHandle);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(loadScopeFieldTemp.Field.ScopeName, loadScopeFieldTemp.Field.FieldName);
+                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(loadScopeFieldTemp.Result), ilEncoder);
+                    EmitStoreTemp(loadScopeFieldTemp.Result, ilEncoder, allocation);
+                    break;
+                }
+
+            case LIRStoreScopeField storeScopeFieldTemp:
+                {
+                    var scopeTypeHandle = ResolveScopeTypeHandle(
+                        storeScopeFieldTemp.Scope.Name,
+                        "LIRStoreScopeField instruction (castclass)");
+                    var fieldHandle = ResolveFieldToken(
+                        storeScopeFieldTemp.Field.ScopeName,
+                        storeScopeFieldTemp.Field.FieldName,
+                        "LIRStoreScopeField instruction");
+
+                    EmitLoadTemp(storeScopeFieldTemp.ScopeInstance, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(scopeTypeHandle);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(storeScopeFieldTemp.Field.ScopeName, storeScopeFieldTemp.Field.FieldName);
+                    if (fieldClrType == typeof(double))
+                    {
+                        EmitLoadTempAsDouble(storeScopeFieldTemp.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTemp(storeScopeFieldTemp.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    ilEncoder.OpCode(ILOpCode.Stfld);
+                    ilEncoder.Token(fieldHandle);
                     break;
                 }
             case LIRLoadLeafScopeField loadLeafField:
@@ -3712,6 +3784,13 @@ internal sealed class LIRToILCompiler
             return;
         }
 
+        if (storage.Kind == ValueStorageKind.Reference && !string.IsNullOrWhiteSpace(storage.ScopeName))
+        {
+            var scopeTypeHandle = ResolveScopeTypeHandle(storage.ScopeName!, "local variable signature creation (scope instance local)");
+            typeEncoder.Type(scopeTypeHandle, false);
+            return;
+        }
+
         if (storage.Kind == ValueStorageKind.Reference && !storage.TypeHandle.IsNil)
         {
             // Preserve known reference types represented only by metadata handles
@@ -3816,6 +3895,16 @@ internal sealed class LIRToILCompiler
 
         switch (def)
         {
+            case LIRCreateScopeInstance createScope:
+                {
+                    var scopeTypeHandle = ResolveScopeTypeHandle(
+                        createScope.Scope.Name,
+                        "inline LIRCreateScopeInstance emission");
+                    var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(ctorRef);
+                    break;
+                }
             case LIRNewBuiltInError newError:
                 {
                     var errorClrType = Js2IL.IR.BuiltInErrorTypes.GetRuntimeErrorClrType(newError.ErrorTypeName);
@@ -4047,6 +4136,27 @@ internal sealed class LIRToILCompiler
                     EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
                 }
                 break;
+            case LIRLoadScopeField loadScopeFieldTemp:
+                // Emit inline: load scope temp, cast, ldfld
+                {
+                    var scopeTypeHandle = ResolveScopeTypeHandle(
+                        loadScopeFieldTemp.Scope.Name,
+                        "inline LIRLoadScopeField emission (castclass)");
+                    var fieldHandle = ResolveFieldToken(
+                        loadScopeFieldTemp.Field.ScopeName,
+                        loadScopeFieldTemp.Field.FieldName,
+                        "inline LIRLoadScopeField emission");
+
+                    EmitLoadTemp(loadScopeFieldTemp.ScopeInstance, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(scopeTypeHandle);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(loadScopeFieldTemp.Field.ScopeName, loadScopeFieldTemp.Field.FieldName);
+                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
+                }
+                break;
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
                 // Emit inline: call IntrinsicObjectRegistry.GetOrDefault
                 EmitLoadIntrinsicGlobalVariable(getIntrinsicGlobal.Name, ilEncoder);
@@ -4059,7 +4169,7 @@ internal sealed class LIRToILCompiler
                 }
                 else
                 {
-                    EmitPopulateScopesArray(ilEncoder, buildScopes.Slots, methodDescriptor);
+                    EmitPopulateScopesArray(ilEncoder, buildScopes.Slots, methodDescriptor, allocation);
                 }
                 // Array reference stays on stack
                 break;
@@ -5044,7 +5154,7 @@ internal sealed class LIRToILCompiler
     /// <summary>
     /// Emits IL to load a scope instance from the specified source.
     /// </summary>
-    private void EmitLoadScopeInstance(InstructionEncoder ilEncoder, ScopeSlotSource slotSource, MethodDescriptor methodDescriptor)
+    private void EmitLoadScopeInstance(InstructionEncoder ilEncoder, ScopeSlotSource slotSource, MethodDescriptor methodDescriptor, TempLocalAllocation allocation)
     {
         switch (slotSource.Source)
         {
@@ -5077,6 +5187,11 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Ldelem_ref);
                 break;
 
+            case ScopeInstanceSource.Temp:
+                // Load from a temp local (TempVariable index encoded in SourceIndex)
+                EmitLoadTemp(new TempVariable(slotSource.SourceIndex), ilEncoder, allocation, methodDescriptor);
+                break;
+
             default:
                 throw new ArgumentException($"Unknown ScopeInstanceSource: {slotSource.Source}");
         }
@@ -5100,7 +5215,7 @@ internal sealed class LIRToILCompiler
     /// <summary>
     /// Emits IL to create and populate a scopes array with scope instances.
     /// </summary>
-    private void EmitPopulateScopesArray(InstructionEncoder ilEncoder, IReadOnlyList<ScopeSlotSource> slots, MethodDescriptor methodDescriptor)
+    private void EmitPopulateScopesArray(InstructionEncoder ilEncoder, IReadOnlyList<ScopeSlotSource> slots, MethodDescriptor methodDescriptor, TempLocalAllocation allocation)
     {
         // Create array with proper size
         ilEncoder.LoadConstantI4(slots.Count);
@@ -5114,7 +5229,7 @@ internal sealed class LIRToILCompiler
             ilEncoder.LoadConstantI4(slotSource.Slot.Index);
             
             // Load the scope instance from the appropriate source
-            EmitLoadScopeInstance(ilEncoder, slotSource, methodDescriptor);
+            EmitLoadScopeInstance(ilEncoder, slotSource, methodDescriptor, allocation);
             
             ilEncoder.OpCode(ILOpCode.Stelem_ref);
         }

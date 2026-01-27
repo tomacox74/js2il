@@ -15,6 +15,7 @@ public class BindingInfo
 {
     public string Name { get; }
     public BindingKind Kind { get; }
+    public Scope DeclaringScope { get; }
     public Node DeclarationNode { get; }
     // Optional: CLR runtime type known via static analysis (e.g., const fs = require('fs'))
     public Type? ClrType { get; set; }
@@ -32,10 +33,11 @@ public class BindingInfo
     /// </summary>
     public bool IsStableType { get; set; }
 
-    public BindingInfo(string name, BindingKind kind, Node declarationNode)
+    public BindingInfo(string name, BindingKind kind, Scope declaringScope, Node declarationNode)
     {
         Name = name;
         Kind = kind;
+        DeclaringScope = declaringScope;
         DeclarationNode = declarationNode;
     }
 }

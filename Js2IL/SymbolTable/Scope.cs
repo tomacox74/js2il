@@ -133,7 +133,7 @@ public class Scope
             
             // parent is null and we have undeclard symbol
             // this actually can occur.. for example "console" or "require"
-            var globalBinding = new BindingInfo(name, BindingKind.Global, AstNode);
+            var globalBinding = new BindingInfo(name, BindingKind.Global, this, AstNode);
             Bindings[name] = globalBinding;
             return new Symbol(globalBinding);
         }

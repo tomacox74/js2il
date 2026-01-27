@@ -91,7 +91,7 @@
     {
       "clause": "14.7.4.4",
       "title": "CreatePerIterationEnvironment ( perIterationBindings )",
-      "status": "Partially Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-createperiterationenvironment"
     },
     {
@@ -340,6 +340,17 @@
           "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js"
         ],
         "notes": "Implements continue by branching to the update expression (LoopContext)."
+      },
+      {
+        "clause": "14.7.4.4",
+        "feature": "for-loop per-iteration lexical environment (let closure capture)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-createperiterationenvironment",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture_Continue.js"
+        ],
+        "notes": "Implements CreatePerIterationEnvironment by materializing a dedicated loop-head scope instance per iteration and capturing that scope in closures, so closures observe 0,1,2 rather than the final value."
       },
       {
         "clause": "14.7.4.2",

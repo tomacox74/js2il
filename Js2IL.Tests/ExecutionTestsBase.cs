@@ -8,6 +8,7 @@ using System.Text;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
 using System.Runtime.ExceptionServices;
+using Js2IL.IR;
 
 namespace Js2IL.Tests
 {
@@ -55,16 +56,30 @@ namespace Js2IL.Tests
             var testLogger = new TestLogger();
             var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, testLogger);
             var compiler = serviceProvider.GetRequiredService<Compiler>();
-            
-            if (!compiler.Compile(testFilePath))
+
+            var prevMetricsEnabled = IRPipelineMetrics.Enabled;
+            IRPipelineMetrics.Enabled = true;
+            IRPipelineMetrics.Reset();
+            try
             {
-                var details = string.IsNullOrWhiteSpace(testLogger.Errors)
-                    ? string.Empty
-                    : $"\nErrors:\n{testLogger.Errors}";
-                var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings)
-                    ? string.Empty
-                    : $"\nWarnings:\n{testLogger.Warnings}";
-                throw new InvalidOperationException($"Compilation failed for test {testName}.{details}{warnings}");
+                if (!compiler.Compile(testFilePath))
+                {
+                    var details = string.IsNullOrWhiteSpace(testLogger.Errors)
+                        ? string.Empty
+                        : $"\nErrors:\n{testLogger.Errors}";
+                    var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings)
+                        ? string.Empty
+                        : $"\nWarnings:\n{testLogger.Warnings}";
+                    var lastFailure = IRPipelineMetrics.GetLastFailure();
+                    var failureDetails = string.IsNullOrWhiteSpace(lastFailure)
+                        ? string.Empty
+                        : $"\nIR failure: {lastFailure}";
+                    throw new InvalidOperationException($"Compilation failed for test {testName}.{failureDetails}{details}{warnings}");
+                }
+            }
+            finally
+            {
+                IRPipelineMetrics.Enabled = prevMetricsEnabled;
             }
 
             // Compiler outputs <entryFileBasename>.dll into OutputDirectory.

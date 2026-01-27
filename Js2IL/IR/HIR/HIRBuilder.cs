@@ -173,7 +173,7 @@ public static class HIRBuilder
                             var paramName = $"__arg{i}";
                             if (!scope.Bindings.TryGetValue(paramName, out var binding))
                             {
-                                binding = new BindingInfo(paramName, BindingKind.Var, classBody);
+                                binding = new BindingInfo(paramName, BindingKind.Var, scope, classBody);
                                 scope.Bindings[paramName] = binding;
                             }
 
@@ -683,9 +683,17 @@ class HIRMethodBuilder
 
             case ForStatement forStmt:
                 {
-                    // For loops with 'let' create a child block scope for the loop variable
-                    // Find the child scope for the for loop (if one exists)
-                    var forScope = FindChildScopeForAstNode(forStmt);
+                    // For loops with `let/const` loop-head bindings create a dedicated block-like scope.
+                    // SymbolTableBuilder models this scope as a child whose AstNode is the init VariableDeclaration,
+                    // not the ForStatement itself.
+                    Scope? forScope = null;
+                    if (forStmt.Init is VariableDeclaration forInitDecl
+                        && (forInitDecl.Kind == VariableDeclarationKind.Let || forInitDecl.Kind == VariableDeclarationKind.Const))
+                    {
+                        forScope = FindChildScopeForAstNode(forInitDecl);
+                    }
+
+                    forScope ??= FindChildScopeForAstNode(forStmt);
                     var previousForScope = _currentScope;
                     if (forScope != null)
                     {
@@ -1943,6 +1951,16 @@ class HIRMethodBuilder
         {
             var blockName = $"Block_L{blockStmt.Location.Start.Line}C{blockStmt.Location.Start.Column}";
             return _currentScope.Children.FirstOrDefault(child => child.Kind == ScopeKind.Block && child.Name == blockName);
+        }
+
+        // Fallback for `for (let/const ...)` loop-head scopes.
+        // SymbolTableBuilder creates these with AstNode = init VariableDeclaration and name `For_L{line}C{col}`.
+        if (astNode is VariableDeclaration decl
+            && (decl.Kind == VariableDeclarationKind.Let || decl.Kind == VariableDeclarationKind.Const))
+        {
+            var loc = decl.Location.Start;
+            var forName = $"For_L{loc.Line}C{loc.Column}";
+            return _currentScope.Children.FirstOrDefault(child => child.Kind == ScopeKind.Block && child.Name == forName);
         }
 
         return null;

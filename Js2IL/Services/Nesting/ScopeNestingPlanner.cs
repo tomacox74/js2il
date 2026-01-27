@@ -44,7 +44,7 @@ internal sealed class ScopeNestingPlanner
 
         // Child scopes nest under their parent scope.
         var visited = new HashSet<string>(StringComparer.Ordinal);
-        CollectScopeNestingRelationships(moduleName, globalScope, relationships, visited);
+        CollectScopeNestingRelationships(moduleName, globalScope, enclosingForParentScopeType: moduleTypeHandle, relationships, visited);
 
         return relationships.Distinct().ToArray();
     }
@@ -62,6 +62,7 @@ internal sealed class ScopeNestingPlanner
     private void CollectScopeNestingRelationships(
         string moduleName,
         Scope parentScope,
+        TypeDefinitionHandle enclosingForParentScopeType,
         List<(TypeDefinitionHandle Nested, TypeDefinitionHandle Enclosing)> relationships,
         HashSet<string> visited)
     {
@@ -77,6 +78,17 @@ internal sealed class ScopeNestingPlanner
             }
 
             var childTypeHandle = GetScopeTypeHandleOrThrow(childKey);
+
+            // Special case: for-loop loop-head lexical environments (CreatePerIterationEnvironment).
+            // These scopes should be nested as siblings of the parent scope type, under the same
+            // enclosing owner type (module/callable/class), so they are constructible from that
+            // owner while remaining NestedPrivate.
+            if (child.Kind == ScopeKind.Block && child.Name.StartsWith("For_", StringComparison.Ordinal))
+            {
+                relationships.Add((childTypeHandle, enclosingForParentScopeType));
+                CollectScopeNestingRelationships(moduleName, child, enclosingForParentScopeType, relationships, visited);
+                continue;
+            }
 
             // Special case: class member scopes (ctor/get/set/method bodies) should be nested under the
             // runtime class TypeDef as siblings of the class scope type.
@@ -102,14 +114,14 @@ internal sealed class ScopeNestingPlanner
                     if (classRegistry.TryGet(registryClassName, out var classTypeHandle) && !classTypeHandle.IsNil)
                     {
                         relationships.Add((childTypeHandle, classTypeHandle));
-                        CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                        CollectScopeNestingRelationships(moduleName, child, classTypeHandle, relationships, visited);
                         continue;
                     }
                 }
 
                 // Fallback: if we can't resolve the runtime class TypeDef, keep legacy nesting.
                 relationships.Add((childTypeHandle, parentTypeHandle));
-                CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                CollectScopeNestingRelationships(moduleName, child, parentTypeHandle, relationships, visited);
                 continue;
             }
 
@@ -127,14 +139,14 @@ internal sealed class ScopeNestingPlanner
                     if (classRegistry.TryGet(registryClassName, out var classTypeHandle) && !classTypeHandle.IsNil)
                     {
                         relationships.Add((childTypeHandle, classTypeHandle));
-                        CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                        CollectScopeNestingRelationships(moduleName, child, classTypeHandle, relationships, visited);
                         continue;
                     }
                 }
 
                 // Fallback: if we can't resolve the runtime class TypeDef, keep legacy nesting.
                 relationships.Add((childTypeHandle, parentTypeHandle));
-                CollectScopeNestingRelationships(moduleName, child, relationships, visited);
+                CollectScopeNestingRelationships(moduleName, child, parentTypeHandle, relationships, visited);
                 continue;
             }
 
@@ -148,11 +160,13 @@ internal sealed class ScopeNestingPlanner
                 if (_functionTypeMetadataRegistry.TryGet(moduleName, child.Name, out var ownerTypeHandle) && !ownerTypeHandle.IsNil)
                 {
                     relationships.Add((childTypeHandle, ownerTypeHandle));
+                    CollectScopeNestingRelationships(moduleName, child, ownerTypeHandle, relationships, visited);
                 }
                 else
                 {
                     // Fallback: if the owner type isn't available for some reason, nest under the parent scope.
                     relationships.Add((childTypeHandle, parentTypeHandle));
+                    CollectScopeNestingRelationships(moduleName, child, parentTypeHandle, relationships, visited);
                 }
             }
             else if (child.Kind == ScopeKind.Function && child.AstNode is ArrowFunctionExpression)
@@ -161,10 +175,12 @@ internal sealed class ScopeNestingPlanner
                 if (_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, parentScopeKey, child.Name, out var arrowOwner) && !arrowOwner.IsNil)
                 {
                     relationships.Add((childTypeHandle, arrowOwner));
+                    CollectScopeNestingRelationships(moduleName, child, arrowOwner, relationships, visited);
                 }
                 else
                 {
                     relationships.Add((childTypeHandle, parentTypeHandle));
+                    CollectScopeNestingRelationships(moduleName, child, parentTypeHandle, relationships, visited);
                 }
             }
             else if (child.Kind == ScopeKind.Function && child.AstNode is FunctionExpression)
@@ -173,18 +189,19 @@ internal sealed class ScopeNestingPlanner
                 if (_anonymousCallableTypeMetadataRegistry.TryGetOwnerTypeHandle(moduleName, parentScopeKey, child.Name, out var funcExprOwner) && !funcExprOwner.IsNil)
                 {
                     relationships.Add((childTypeHandle, funcExprOwner));
+                    CollectScopeNestingRelationships(moduleName, child, funcExprOwner, relationships, visited);
                 }
                 else
                 {
                     relationships.Add((childTypeHandle, parentTypeHandle));
+                    CollectScopeNestingRelationships(moduleName, child, parentTypeHandle, relationships, visited);
                 }
             }
             else
             {
                 relationships.Add((childTypeHandle, parentTypeHandle));
+                CollectScopeNestingRelationships(moduleName, child, parentTypeHandle, relationships, visited);
             }
-
-            CollectScopeNestingRelationships(moduleName, child, relationships, visited);
         }
     }
 

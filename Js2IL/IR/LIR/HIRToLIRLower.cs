@@ -69,6 +69,11 @@ public sealed class HIRToLIRLowerer
     // Maps parameter bindings to their 0-based JS parameter index (not IL arg index)
     private readonly Dictionary<BindingInfo, int> _parameterIndexMap = new Dictionary<BindingInfo, int>();
 
+    // Maps an active scope registry name to a temp holding that scope instance.
+    // Used for nested lexical environments that are materialized within the current method
+    // (e.g., per-iteration loop environments).
+    private readonly Dictionary<string, TempVariable> _activeScopeTempsByScopeName = new(StringComparer.Ordinal);
+
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
 
@@ -1078,6 +1083,13 @@ public sealed class HIRToLIRLowerer
         // 2. If it's in the caller's parent scopes -> ScopesArgument (ldarg scopesArg, ldelem.ref)
         // 3. If caller is a class method with _scopes -> ThisScopes (ldarg.0, ldfld _scopes, ldelem.ref)
 
+        // Check if this scope is currently materialized in a temp (e.g., loop iteration scope)
+        if (_activeScopeTempsByScopeName.TryGetValue(slot.ScopeName, out var scopeTemp))
+        {
+            slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.Temp, scopeTemp.Index);
+            return true;
+        }
+
         // Check if this is the caller's leaf scope
         if (_scope != null && ScopeNaming.GetRegistryScopeName(_scope) == slot.ScopeName)
         {
@@ -1115,6 +1127,34 @@ public sealed class HIRToLIRLowerer
         // This might happen for scopes that don't have runtime instances
         // For now, we'll fail - the caller should fall back to legacy
         return false;
+    }
+
+    private bool TryGetActiveScopeFieldStorage(BindingInfo binding, out TempVariable scopeTemp, out ScopeId scopeId, out FieldId fieldId)
+    {
+        scopeTemp = default;
+        scopeId = default;
+        fieldId = default;
+
+        if (!binding.IsCaptured)
+        {
+            return false;
+        }
+
+        var declaringScope = binding.DeclaringScope;
+        if (declaringScope == null)
+        {
+            return false;
+        }
+
+        var scopeName = ScopeNaming.GetRegistryScopeName(declaringScope);
+        if (!_activeScopeTempsByScopeName.TryGetValue(scopeName, out scopeTemp))
+        {
+            return false;
+        }
+
+        scopeId = new ScopeId(scopeName);
+        fieldId = new FieldId(scopeName, binding.Name);
+        return true;
     }
 
     // Backward compatibility overload for callers that don't provide scope
@@ -1202,6 +1242,29 @@ public sealed class HIRToLIRLowerer
 
                     // Use BindingInfo as key for correct shadowing behavior
                     var binding = exprStmt.Name.BindingInfo;
+
+                    // Per-iteration environments: if this binding lives in an active materialized scope instance
+                    // (e.g., `for (let/const ...)` loop-head scope), store directly into that scope field.
+                    if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
+                    {
+                        TempVariable fieldValue;
+                        if (binding.IsStableType && binding.ClrType == typeof(double))
+                        {
+                            fieldValue = EnsureNumber(value);
+                        }
+                        else if (binding.IsStableType && binding.ClrType == typeof(bool))
+                        {
+                            fieldValue = EnsureBoolean(value);
+                        }
+                        else
+                        {
+                            fieldValue = EnsureObject(value);
+                        }
+
+                        lirInstructions.Add(new LIRStoreScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, fieldValue));
+                        _variableMap[binding] = fieldValue;
+                        return true;
+                    }
 
                     // Check if this binding should be stored in a scope field (captured variable)
                     if (_environmentLayout != null)
@@ -1764,15 +1827,54 @@ public sealed class HIRToLIRLowerer
                     //   goto loop_start
                     // end:
 
-                    // Lower init statement (if present)
-                    if (forStmt.Init != null && !TryLowerStatement(forStmt.Init))
-                    {
-                        return false;
-                    }
+                    var perIterationBindings = GetPerIterationLexicalBindingsForForInit(forStmt.Init);
 
                     int loopStartLabel = CreateLabel();
                     int loopUpdateLabel = CreateLabel();
                     int loopEndLabel = CreateLabel();
+
+                    // Spec: CreatePerIterationEnvironment for for-loops with lexical declarations.
+                    // When the symbol table models loop-head lexical declarations in a dedicated
+                    // block scope, materialize that scope as a runtime scope instance and recreate
+                    // it per iteration (before update) so closures capture the correct binding.
+                    bool useTempPerIterationScope = false;
+                    TempVariable loopScopeTemp = default;
+                    ScopeId loopScopeId = default;
+                    string? loopScopeName = null;
+
+                    if (perIterationBindings.Count > 0
+                        && !_methodBodyIR.IsAsync
+                        && !_methodBodyIR.IsGenerator)
+                    {
+                        var declaringScope = perIterationBindings[0].DeclaringScope;
+                        if (declaringScope != null
+                            && declaringScope.Kind == ScopeKind.Block
+                            && perIterationBindings.All(b => b.DeclaringScope == declaringScope))
+                        {
+                            useTempPerIterationScope = true;
+                            loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);
+                            loopScopeId = new ScopeId(loopScopeName);
+
+                            // Create the initial loop environment instance and pin it to a stable slot.
+                            loopScopeTemp = CreateTempVariable();
+                            DefineTempStorage(loopScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName));
+                            SetTempVariableSlot(loopScopeTemp, CreateAnonymousVariableSlot($"$for_lexenv_{loopStartLabel}", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName)));
+                            _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(loopScopeId, loopScopeTemp));
+                            _activeScopeTempsByScopeName[loopScopeName] = loopScopeTemp;
+                        }
+                    }
+
+                    // Fallback to the legacy guarded leaf-scope recreation when we can't materialize
+                    // a dedicated loop scope instance.
+                    bool shouldRecreateLeafScopeEachIteration = !useTempPerIterationScope && CanSafelyRecreateLeafScopeForPerIterationBindings(perIterationBindings);
+
+                    try
+                    {
+                        // Lower init statement (if present)
+                        if (forStmt.Init != null && !TryLowerStatement(forStmt.Init))
+                        {
+                            return false;
+                        }
 
                     // Loop start label
                     lirInstructions.Add(new LIRLabel(loopStartLabel));
@@ -1803,22 +1905,33 @@ public sealed class HIRToLIRLowerer
                         lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, loopEndLabel));
                     }
 
-                    // Loop body
-                    _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopUpdateLabel, forStmt.Label));
-                    try
-                    {
-                        if (!TryLowerStatement(forStmt.Body))
+                        // Loop body
+                        _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopUpdateLabel, forStmt.Label));
+                        try
                         {
-                            return false;
+                            if (!TryLowerStatement(forStmt.Body))
+                            {
+                                return false;
+                            }
                         }
-                    }
-                    finally
-                    {
-                        _controlFlowStack.Pop();
-                    }
+                        finally
+                        {
+                            _controlFlowStack.Pop();
+                        }
 
                     // Continue target (for-loops continue runs update, then loops)
                     lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+
+                        // CreatePerIterationEnvironment: ensure the update expression mutates the
+                        // next iteration's environment, not the previous iteration's.
+                        if (useTempPerIterationScope)
+                        {
+                            EmitRecreatePerIterationScopeFromTemp(loopScopeTemp, loopScopeId, loopScopeName!, perIterationBindings);
+                        }
+                        else if (shouldRecreateLeafScopeEachIteration)
+                        {
+                            EmitRecreateLeafScopeForPerIterationBindings(perIterationBindings);
+                        }
 
                     // Update expression (if present)
                     if (forStmt.Update != null && !TryLowerExpressionDiscardResult(forStmt.Update))
@@ -1830,10 +1943,18 @@ public sealed class HIRToLIRLowerer
                     // Jump back to loop start
                     lirInstructions.Add(new LIRBranch(loopStartLabel));
 
-                    // Loop end label
-                    lirInstructions.Add(new LIRLabel(loopEndLabel));
+                        // Loop end label
+                        lirInstructions.Add(new LIRLabel(loopEndLabel));
 
-                    return true;
+                        return true;
+                    }
+                    finally
+                    {
+                        if (useTempPerIterationScope && loopScopeName != null)
+                        {
+                            _activeScopeTempsByScopeName.Remove(loopScopeName);
+                        }
+                    }
                 }
 
             case Js2IL.HIR.HIRForOfStatement forOfStmt:
@@ -3254,6 +3375,39 @@ public sealed class HIRToLIRLowerer
                 // Look up the binding using the Symbol's BindingInfo directly
                 // This correctly resolves shadowed variables to the right binding
                 var binding = varExpr.Name.BindingInfo;
+
+                static ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
+                {
+                    // Propagate unboxed primitives for stable inferred types. This matches the current
+                    // typed-scope-field support in TypeGenerator/VariableRegistry.
+                    if (b.IsStableType)
+                    {
+                        if (b.ClrType == typeof(double))
+                        {
+                            return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                        }
+                        if (b.ClrType == typeof(bool))
+                        {
+                            return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+                        }
+                        if (b.ClrType == typeof(JavaScriptRuntime.Array))
+                        {
+                            return new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array));
+                        }
+                    }
+
+                    return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+                }
+
+                // Per-iteration environments: if this binding lives in an active materialized scope instance
+                // (e.g., `for (let/const ...)` loop-head scope), load directly from that scope field.
+                if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRLoadScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, resultTempVar));
+                    DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                    return true;
+                }
                 
                 // Check if this binding is stored in a scope field (captured variable)
                 if (_environmentLayout != null)
@@ -3303,35 +3457,6 @@ public sealed class HIRToLIRLowerer
                     }
                     if (storage != null)
                     {
-                        static ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
-                        {
-                            // Propagate unboxed primitives for stable inferred types. This matches the current
-                            // typed-scope-field support in TypeGenerator/VariableRegistry.
-                            //
-                            // Note: We only use unboxed storage when the runtime semantics are identical:
-                            // - bool: JS ToBoolean(bool) is the identity (so conditionals can branch directly).
-                            // - double: used for numeric IL paths (e.g., add) and boxed on demand.
-                            if (b.IsStableType)
-                            {
-                                if (b.ClrType == typeof(double))
-                                {
-                                    return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
-                                }
-                                if (b.ClrType == typeof(bool))
-                                {
-                                    return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
-                                }
-                                if (b.ClrType == typeof(JavaScriptRuntime.Array))
-                                {
-                                    // Keep as a typed reference so downstream lowering can emit direct instance calls
-                                    // (e.g., arr.join(), arr.push(...)) without generic dispatch.
-                                    return new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array));
-                                }
-                            }
-
-                            return new ValueStorage(ValueStorageKind.Reference, typeof(object));
-                        }
-
                         switch (storage.Kind)
                         {
                             case BindingStorageKind.IlArgument:
@@ -6185,17 +6310,15 @@ public sealed class HIRToLIRLowerer
         // - Parameters live in IL arguments
         // Do not rely on the temp storage kind here, since other lowering steps may propagate
         // stable unboxed types for captured fields.
-        var updateStorage = _environmentLayout?.GetStorage(updateBinding);
-        var isEnvironmentStored = updateStorage != null && updateStorage.Kind != BindingStorageKind.IlLocal;
+        var isActiveScopeStored = TryGetActiveScopeFieldStorage(updateBinding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId);
+        var updateStorage = isActiveScopeStored ? null : _environmentLayout?.GetStorage(updateBinding);
+        var isEnvironmentStored = isActiveScopeStored || (updateStorage != null && updateStorage.Kind != BindingStorageKind.IlLocal);
 
         // Implement numeric coercion via runtime TypeUtilities.ToNumber(object?) and then store
         // the boxed updated value back to the appropriate storage location.
         if (isEnvironmentStored)
         {
-            if (_environmentLayout == null || updateStorage == null)
-            {
-                return false;
-            }
+            // Note: if we're in this branch and not using an active scope temp, updateStorage must be non-null.
 
             var currentNumber = EnsureNumber(currentValue);
 
@@ -6228,35 +6351,42 @@ public sealed class HIRToLIRLowerer
 
             var updatedBoxed = EnsureObject(updatedNumber);
 
-            switch (updateStorage.Kind)
+            if (isActiveScopeStored)
             {
-                case BindingStorageKind.IlArgument:
-                    if (updateStorage.JsParameterIndex < 0)
-                    {
-                        return false;
-                    }
-                    _methodBodyIR.Instructions.Add(new LIRStoreParameter(updateStorage.JsParameterIndex, updatedBoxed));
-                    break;
+                _methodBodyIR.Instructions.Add(new LIRStoreScopeField(activeScopeTemp, updateBinding, activeFieldId, activeScopeId, updatedBoxed));
+            }
+            else
+            {
+                switch (updateStorage!.Kind)
+                {
+                    case BindingStorageKind.IlArgument:
+                        if (updateStorage.JsParameterIndex < 0)
+                        {
+                            return false;
+                        }
+                        _methodBodyIR.Instructions.Add(new LIRStoreParameter(updateStorage.JsParameterIndex, updatedBoxed));
+                        break;
 
-                case BindingStorageKind.LeafScopeField:
-                    if (updateStorage.Field.IsNil || updateStorage.DeclaringScope.IsNil)
-                    {
-                        return false;
-                    }
-                    _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, updatedBoxed));
-                    break;
+                    case BindingStorageKind.LeafScopeField:
+                        if (updateStorage.Field.IsNil || updateStorage.DeclaringScope.IsNil)
+                        {
+                            return false;
+                        }
+                        _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, updatedBoxed));
+                        break;
 
-                case BindingStorageKind.ParentScopeField:
-                    if (updateStorage.ParentScopeIndex < 0 || updateStorage.Field.IsNil || updateStorage.DeclaringScope.IsNil)
-                    {
-                        return false;
-                    }
-                    _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, updateStorage.ParentScopeIndex, updatedBoxed));
-                    break;
+                    case BindingStorageKind.ParentScopeField:
+                        if (updateStorage.ParentScopeIndex < 0 || updateStorage.Field.IsNil || updateStorage.DeclaringScope.IsNil)
+                        {
+                            return false;
+                        }
+                        _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, updateStorage.ParentScopeIndex, updatedBoxed));
+                        break;
 
-                default:
-                    // Not a captured storage - fall back to local update path.
-                    return false;
+                    default:
+                        // Not a captured storage - fall back to local update path.
+                        return false;
+                }
             }
 
             // Update SSA map for subsequent reads.
@@ -6439,6 +6569,17 @@ public sealed class HIRToLIRLowerer
 
         var lirInstructions = _methodBodyIR.Instructions;
 
+        // Per-iteration environments: if this binding lives in an active materialized scope instance
+        // (e.g., for-loop iteration scope), store into that scope temp.
+        if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
+        {
+            var boxedValue = EnsureObject(valueToStore);
+            lirInstructions.Add(new LIRStoreScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, boxedValue));
+            _variableMap[binding] = boxedValue;
+            storedValue = boxedValue;
+            return true;
+        }
+
         // Store via environment layout (captured vars, parameters)
         if (_environmentLayout != null)
         {
@@ -6509,6 +6650,150 @@ public sealed class HIRToLIRLowerer
         return true;
     }
 
+    private List<BindingInfo> GetPerIterationLexicalBindingsForForInit(HIRStatement? init)
+    {
+        var result = new List<BindingInfo>();
+
+        void CollectFromStatement(HIRStatement? st)
+        {
+            if (st == null)
+            {
+                return;
+            }
+
+            if (st is HIRVariableDeclaration vd)
+            {
+                var binding = vd.Name.BindingInfo;
+                if (binding.Kind is BindingKind.Let or BindingKind.Const && binding.IsCaptured)
+                {
+                    result.Add(binding);
+                }
+                return;
+            }
+
+            if (st is HIRBlock block)
+            {
+                foreach (var inner in block.Statements)
+                {
+                    CollectFromStatement(inner);
+                }
+            }
+        }
+
+        CollectFromStatement(init);
+        return result;
+    }
+
+    private bool CanSafelyRecreateLeafScopeForPerIterationBindings(IReadOnlyList<BindingInfo> bindings)
+    {
+        if (bindings.Count == 0)
+        {
+            return false;
+        }
+
+        // Only supported for non-resumables.
+        if (_methodBodyIR.IsAsync || _methodBodyIR.IsGenerator)
+        {
+            return false;
+        }
+
+        if (!_methodBodyIR.NeedsLeafScopeLocal || _methodBodyIR.LeafScopeId.IsNil)
+        {
+            return false;
+        }
+
+        if (_environmentLayout == null)
+        {
+            return false;
+        }
+
+        // Ensure all per-iteration bindings live in the leaf scope.
+        foreach (var storage in bindings.Select(_environmentLayout.GetStorage))
+        {
+            if (storage == null || storage.Kind != BindingStorageKind.LeafScopeField)
+            {
+                return false;
+            }
+
+            if (storage.DeclaringScope.IsNil || storage.DeclaringScope != _methodBodyIR.LeafScopeId)
+            {
+                return false;
+            }
+        }
+
+        // Guard: leaf scope must not contain other captured fields.
+        // Otherwise, recreating the leaf scope would change closure semantics for those bindings.
+        var leafScopeFieldBindings = _environmentLayout.StorageByBinding
+            .Where(kvp => kvp.Value.Kind == BindingStorageKind.LeafScopeField && kvp.Value.DeclaringScope == _methodBodyIR.LeafScopeId)
+            .Select(kvp => kvp.Key)
+            .ToHashSet();
+
+        return leafScopeFieldBindings.SetEquals(bindings);
+    }
+
+    private void EmitRecreateLeafScopeForPerIterationBindings(IReadOnlyList<BindingInfo> bindings)
+    {
+        if (_environmentLayout == null)
+        {
+            throw new InvalidOperationException("Cannot recreate leaf scope without environment layout.");
+        }
+
+        // Load current values before overwriting leaf local.
+        var temps = new Dictionary<BindingInfo, TempVariable>();
+        foreach (var binding in bindings)
+        {
+            var storage = _environmentLayout.GetStorage(binding)
+                ?? throw new InvalidOperationException("Missing storage for per-iteration binding.");
+
+            var temp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, temp));
+            DefineTempStorage(temp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            temps[binding] = temp;
+        }
+
+        // Overwrite leaf scope local with a new instance.
+        _methodBodyIR.Instructions.Add(new LIRCreateLeafScopeInstance(_methodBodyIR.LeafScopeId));
+
+        // Store values into the new leaf scope instance.
+        foreach (var binding in bindings)
+        {
+            var storage = _environmentLayout.GetStorage(binding)
+                ?? throw new InvalidOperationException("Missing storage for per-iteration binding.");
+            var valueTemp = temps[binding];
+            _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, EnsureObject(valueTemp)));
+        }
+    }
+
+    private void EmitRecreatePerIterationScopeFromTemp(TempVariable scopeInstanceTemp, ScopeId scopeId, string scopeName, IReadOnlyList<BindingInfo> bindings)
+    {
+        // Load current values before overwriting the loop scope instance.
+        var valueTemps = new Dictionary<BindingInfo, TempVariable>();
+        foreach (var binding in bindings)
+        {
+            var temp = CreateTempVariable();
+            var fieldId = new FieldId(scopeName, binding.Name);
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeField(scopeInstanceTemp, binding, fieldId, scopeId, temp));
+            DefineTempStorage(temp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            valueTemps[binding] = temp;
+        }
+
+        // Create a new scope instance for the next iteration.
+        var newScopeTemp = CreateTempVariable();
+        DefineTempStorage(newScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: scopeName));
+        _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(scopeId, newScopeTemp));
+
+        // Copy values into the new scope instance.
+        foreach (var binding in bindings)
+        {
+            var fieldId = new FieldId(scopeName, binding.Name);
+            var valueTemp = valueTemps[binding];
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeField(newScopeTemp, binding, fieldId, scopeId, EnsureObject(valueTemp)));
+        }
+
+        // Update the loop's current scope instance (backed by a stable variable slot).
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(newScopeTemp, scopeInstanceTemp));
+    }
+
     private bool TryLowerAssignmentExpression(HIRAssignmentExpression assignExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
@@ -6558,6 +6843,17 @@ public sealed class HIRToLIRLowerer
         }
 
         // Store the value to the appropriate location
+        // Per-iteration environments: if this binding lives in an active materialized scope instance,
+        // store into that scope temp.
+        if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
+        {
+            var boxedValue = EnsureObject(valueToStore);
+            lirInstructions.Add(new LIRStoreScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, boxedValue));
+            _variableMap[binding] = boxedValue;
+            resultTempVar = boxedValue;
+            return true;
+        }
+
         // Check if this binding should be stored in a scope field (captured variable)
         if (_environmentLayout != null)
         {
@@ -7204,6 +7500,16 @@ public sealed class HIRToLIRLowerer
             }
 
             return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+        }
+
+        // Per-iteration environments: if this binding lives in an active materialized scope instance
+        // (e.g., for-loop iteration scope), load from that scope temp.
+        if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
+        {
+            result = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, result));
+            DefineTempStorage(result, GetPreferredBindingReadStorage(binding));
+            return true;
         }
 
         // Check if this binding is stored in a scope field (captured variable)
