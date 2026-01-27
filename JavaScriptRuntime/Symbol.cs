@@ -11,6 +11,10 @@ public sealed class Symbol
 {
     private static long _nextId;
 
+    // Well-known symbols used by core language features.
+    // These are singletons so identity comparisons work as expected.
+    private static readonly Symbol _iterator = new Symbol("Symbol.iterator");
+
     private readonly long _id;
 
     public string? Description { get; }
@@ -50,6 +54,20 @@ public sealed class Symbol
     public override string ToString()
     {
         return Description == null ? "Symbol()" : $"Symbol({Description})";
+    }
+
+    // Well-known symbol: Symbol.iterator
+    public static Symbol iterator => _iterator;
+
+    // Access well-known symbols via property-read lowering (e.g., Symbol.iterator).
+    // Returns null (JS undefined) when the well-known symbol is not supported.
+    public static object? GetWellKnown(string name)
+    {
+        return name switch
+        {
+            "iterator" => iterator,
+            _ => null
+        };
     }
 
     // Useful for debugging, but keep ToString() JS-like.

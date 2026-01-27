@@ -1957,18 +1957,20 @@ public sealed class HIRToLIRLowerer
 
             case Js2IL.HIR.HIRForOfStatement forOfStmt:
                 {
-                    // Desugar for..of:
-                    // iter = Object.NormalizeForOfIterable(rhs)
-                    // len = iter.length
-                    // idx = 0
-                    // loop_start:
-                    //   if (!(idx < len)) goto end
-                    //   target = iter[idx]
-                    //   body
-                    // loop_update:
-                    //   idx = idx + 1
-                    //   goto loop_start
-                    // end:
+                    // Desugar for..of using iterator protocol (ECMA-262 14.7.5.5-.7):
+                    // iterator = Object.GetIterator(rhs)
+                    // try {
+                    //   while (true) {
+                    //     result = iterator.next()
+                    //     if (ToBoolean(result.done)) break
+                    //     value = result.value
+                    //     target = value
+                    //     body
+                    //   }
+                    // } finally {
+                    //   // IteratorClose on abrupt completion
+                    //   if (!completed && !closedExplicitly) Object.IteratorClose(iterator)
+                    // }
 
                     // Spec: CreatePerIterationEnvironment for for..of with lexical declarations.
                     var perIterationBindings = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
@@ -2010,77 +2012,155 @@ public sealed class HIRToLIRLowerer
 
                         var rhsBoxed = EnsureObject(rhsTemp);
 
-                    var iterTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "NormalizeForOfIterable", new[] { rhsBoxed }, iterTemp));
-                    DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                    // NOTE: temp-local allocation is linear and does not account for loop back-edges.
-                    // Pin loop-carry temps to stable variable slots so values remain correct across iterations.
-                    SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+                        // iterator = Object.GetIterator(rhs)
+                        var iterTemp = CreateTempVariable();
+                        lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "GetIterator", new[] { rhsBoxed }, iterTemp));
+                        DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        // NOTE: temp-local allocation is linear and does not account for loop back-edges.
+                        // Pin loop-carry temps to stable variable slots so values remain correct across iterations.
+                        SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
 
-                    var lenTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRGetLength(iterTemp, lenTemp));
-                    DefineTempStorage(lenTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    SetTempVariableSlot(lenTemp, CreateAnonymousVariableSlot("$forOf_len", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double))));
+                        var completedTemp = CreateTempVariable();
+                        DefineTempStorage(completedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        SetTempVariableSlot(completedTemp, CreateAnonymousVariableSlot("$forOf_completed", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
 
-                    var idxTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRConstNumber(0.0, idxTemp));
-                    DefineTempStorage(idxTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    SetTempVariableSlot(idxTemp, CreateAnonymousVariableSlot("$forOf_idx", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double))));
+                        var closedTemp = CreateTempVariable();
+                        DefineTempStorage(closedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        SetTempVariableSlot(closedTemp, CreateAnonymousVariableSlot("$forOf_closed", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
 
-                    int loopStartLabel = CreateLabel();
-                    int loopUpdateLabel = CreateLabel();
-                    int loopEndLabel = CreateLabel();
+                        var falseTemp = CreateTempVariable();
+                        lirInstructions.Add(new LIRConstBoolean(false, falseTemp));
+                        DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
+                        lirInstructions.Add(new LIRCopyTemp(falseTemp, closedTemp));
 
-                    lirInstructions.Add(new LIRLabel(loopStartLabel));
+                        var trueTemp = CreateTempVariable();
+                        lirInstructions.Add(new LIRConstBoolean(true, trueTemp));
+                        DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
 
-                    var condTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCompareNumberLessThan(idxTemp, lenTemp, condTemp));
-                    DefineTempStorage(condTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-                    lirInstructions.Add(new LIRBranchIfFalse(condTemp, loopEndLabel));
+                        int outerTryStart = CreateLabel();
+                        int outerTryEnd = CreateLabel();
+                        int finallyStart = CreateLabel();
+                        int finallyEnd = CreateLabel();
 
-                        // target = iter[idx]
-                        var itemTemp = CreateTempVariable();
-                        lirInstructions.Add(new LIRGetItem(EnsureObject(iterTemp), idxTemp, itemTemp));
-                        DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        int loopStartLabel = CreateLabel();
+                        int loopUpdateLabel = CreateLabel();
+                        int breakCleanupLabel = CreateLabel();
+                        int normalCompleteLabel = CreateLabel();
+                        int loopEndLabel = CreateLabel();
 
-                        var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
-                            ? DestructuringWriteMode.ForDeclarationBindingInitialization
-                            : DestructuringWriteMode.Assignment;
+                        // Track current control-flow depth so we can decide when break/continue exits the protected region.
+                        _protectedControlFlowDepthStack.Push(_controlFlowStack.Count);
 
-                        if (!TryLowerDestructuringPattern(forOfStmt.Target, itemTemp, writeMode, sourceNameForError: null))
+                        // Any return inside a protected region must use 'leave' to an epilogue outside the region.
+                        if (!_methodBodyIR.ReturnEpilogueLabelId.HasValue)
                         {
-                            return false;
+                            _methodBodyIR.ReturnEpilogueLabelId = CreateLabel();
                         }
 
-                    _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopUpdateLabel, forOfStmt.Label));
-                    try
-                    {
-                        if (!TryLowerStatement(forOfStmt.Body))
+                        _controlFlowStack.Push(new ControlFlowContext(breakCleanupLabel, loopUpdateLabel, forOfStmt.Label));
+                        try
                         {
-                            return false;
+                            lirInstructions.Add(new LIRLabel(outerTryStart));
+
+                            // Loop start
+                            lirInstructions.Add(new LIRLabel(loopStartLabel));
+
+                            // result = iterator.next()
+                            var emptyArgs = CreateTempVariable();
+                            lirInstructions.Add(new LIRBuildArray(System.Array.Empty<TempVariable>(), emptyArgs));
+                            DefineTempStorage(emptyArgs, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+                            var iterResult = CreateTempVariable();
+                            lirInstructions.Add(new LIRCallMember(iterTemp, "next", emptyArgs, iterResult));
+                            DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                            // done = ToBoolean(result.done)
+                            var doneKey = CreateTempVariable();
+                            lirInstructions.Add(new LIRConstString("done", doneKey));
+                            DefineTempStorage(doneKey, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                            var valueKey = CreateTempVariable();
+                            lirInstructions.Add(new LIRConstString("value", valueKey));
+                            DefineTempStorage(valueKey, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                            var doneObj = CreateTempVariable();
+                            lirInstructions.Add(new LIRGetItem(EnsureObject(iterResult), EnsureObject(doneKey), doneObj));
+                            DefineTempStorage(doneObj, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                            var doneBool = CreateTempVariable();
+                            lirInstructions.Add(new LIRConvertToBoolean(doneObj, doneBool));
+                            DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                            lirInstructions.Add(new LIRBranchIfTrue(doneBool, normalCompleteLabel));
+
+                            // value = result.value
+                            var itemTemp = CreateTempVariable();
+                            lirInstructions.Add(new LIRGetItem(EnsureObject(iterResult), EnsureObject(valueKey), itemTemp));
+                            DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                            var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
+                                ? DestructuringWriteMode.ForDeclarationBindingInitialization
+                                : DestructuringWriteMode.Assignment;
+
+                            if (!TryLowerDestructuringPattern(forOfStmt.Target, itemTemp, writeMode, sourceNameForError: null))
+                            {
+                                return false;
+                            }
+
+                            if (!TryLowerStatement(forOfStmt.Body))
+                            {
+                                return false;
+                            }
+
+                            // Continue target
+                            lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+
+                            if (useTempPerIterationScope)
+                            {
+                                EmitRecreatePerIterationScopeFromTemp(loopScopeTemp, loopScopeId, loopScopeName!, perIterationBindings);
+                            }
+
+                            lirInstructions.Add(new LIRBranch(loopStartLabel));
+
+                            // Break target: close iterator then leave loop.
+                            lirInstructions.Add(new LIRLabel(breakCleanupLabel));
+                            lirInstructions.Add(new LIRCallIntrinsicStaticVoid("Object", "IteratorClose", new[] { EnsureObject(iterTemp) }));
+                            lirInstructions.Add(new LIRCopyTemp(trueTemp, closedTemp));
+                            lirInstructions.Add(new LIRLeave(loopEndLabel));
+
+                            // Normal completion: leave loop.
+                            lirInstructions.Add(new LIRLabel(normalCompleteLabel));
+                            lirInstructions.Add(new LIRCopyTemp(trueTemp, completedTemp));
+                            lirInstructions.Add(new LIRLeave(loopEndLabel));
+
+                            lirInstructions.Add(new LIRLabel(outerTryEnd));
+
+                            lirInstructions.Add(new LIRLabel(finallyStart));
+                            // Only close on abrupt completion.
+                            int finallySkipClose = CreateLabel();
+                            lirInstructions.Add(new LIRBranchIfTrue(completedTemp, finallySkipClose));
+                            lirInstructions.Add(new LIRBranchIfTrue(closedTemp, finallySkipClose));
+                            lirInstructions.Add(new LIRCallIntrinsicStaticVoid("Object", "IteratorClose", new[] { EnsureObject(iterTemp) }));
+                            lirInstructions.Add(new LIRLabel(finallySkipClose));
+                            lirInstructions.Add(new LIREndFinally());
+                            lirInstructions.Add(new LIRLabel(finallyEnd));
+
+                            lirInstructions.Add(new LIRLabel(loopEndLabel));
+
+                            _methodBodyIR.ExceptionRegions.Add(new ExceptionRegionInfo(
+                                ExceptionRegionKind.Finally,
+                                TryStartLabelId: outerTryStart,
+                                TryEndLabelId: outerTryEnd,
+                                HandlerStartLabelId: finallyStart,
+                                HandlerEndLabelId: finallyEnd));
+
+                            return true;
                         }
-                    }
-                    finally
-                    {
-                        _controlFlowStack.Pop();
-                    }
-
-                        lirInstructions.Add(new LIRLabel(loopUpdateLabel));
-
-                        if (useTempPerIterationScope)
+                        finally
                         {
-                            EmitRecreatePerIterationScopeFromTemp(loopScopeTemp, loopScopeId, loopScopeName!, perIterationBindings);
+                            _controlFlowStack.Pop();
+                            _protectedControlFlowDepthStack.Pop();
                         }
-                    var oneTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRConstNumber(1.0, oneTemp));
-                    DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    var updatedIdx = CreateTempVariable();
-                    lirInstructions.Add(new LIRAddNumber(idxTemp, oneTemp, updatedIdx));
-                    DefineTempStorage(updatedIdx, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    lirInstructions.Add(new LIRCopyTemp(updatedIdx, idxTemp));
-                    lirInstructions.Add(new LIRBranch(loopStartLabel));
-                        lirInstructions.Add(new LIRLabel(loopEndLabel));
-                        return true;
                     }
                     finally
                     {
@@ -7354,6 +7434,27 @@ public sealed class HIRToLIRLowerer
     private bool TryLowerPropertyAccessExpression(HIRPropertyAccessExpression propAccessExpr, out TempVariable resultTempVar)
     {
         resultTempVar = CreateTempVariable();
+
+        // Intrinsic object property read: support well-known Symbol properties (e.g., Symbol.iterator).
+        // We lower this as a static intrinsic call so `Symbol` does not need to be representable
+        // as a normal runtime value.
+        if (propAccessExpr.Object is HIRVariableExpression intrinsicVar
+            && intrinsicVar.Name.Kind == BindingKind.Global
+            && string.Equals(intrinsicVar.Name.Name, "Symbol", StringComparison.Ordinal)
+            && JavaScriptRuntime.IntrinsicObjectRegistry.Get("Symbol") != null)
+        {
+            var intrinsicKeyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(propAccessExpr.PropertyName, intrinsicKeyTemp));
+            DefineTempStorage(intrinsicKeyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                IntrinsicName: "Symbol",
+                MethodName: "GetWellKnown",
+                Arguments: new[] { EnsureObject(intrinsicKeyTemp) },
+                Result: resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
 
         // User-defined class instance field access (e.g., this.wordArray).
         // If the receiver is `this` and we know the generated CLR type has a field with this name,

@@ -14,6 +14,7 @@ All notable changes to this project are documented here.
 - Validator/spec: enforce and consistently surface iteration-statement early errors (break/continue targets and for-in/of head constraints) and fix labeled-statement AST traversal (fixes #463).
 - ControlFlow/spec: implement per-iteration lexical environments for `for (let/const ...)` loops so closures capture iteration values (fixes #461).
 - ControlFlow/spec: implement per-iteration lexical environments for `for (let/const ... of ...)` and `for (let/const ... in ...)`, including destructuring loop heads (fixes #462).
+- ControlFlow/spec: implement iterator-protocol `for..of` (Symbol.iterator + IteratorClose on abrupt completion) and add custom iterable compliance tests (fixes #458).
 
 ## v0.7.3 - 2026-01-23
 

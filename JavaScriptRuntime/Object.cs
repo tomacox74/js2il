@@ -270,10 +270,24 @@ namespace JavaScriptRuntime
             // 4) Fallback to reflection on receiver type
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
+
+        private static string ToPropertyKeyString(object key)
+        {
+            if (key is Symbol sym)
+            {
+                // NOTE: We don't yet model true ECMAScript symbol-keyed properties.
+                // We encode Symbol keys to a stable internal string so computed
+                // properties like obj[Symbol.iterator] can round-trip.
+                return sym.DebugId;
+            }
+
+            return DotNet2JSConversions.ToString(key);
+        }
+
         public static object GetItem(object obj, object index)
         {
             // Coerce index to int (JS ToInt32-ish truncation)
-            int intIndex;
+            int intIndex = 0;
             switch (index)
             {
                 case int ii: intIndex = ii; break;
@@ -304,7 +318,7 @@ namespace JavaScriptRuntime
             if (obj is System.Dynamic.ExpandoObject exp)
             {
                 var dict = (IDictionary<string, object?>)exp;
-                var propName = DotNet2JSConversions.ToString(index);
+                var propName = ToPropertyKeyString(index);
                 if (dict.TryGetValue(propName, out var value))
                 {
                     return value!;
@@ -330,7 +344,7 @@ namespace JavaScriptRuntime
             {
                 // Generic object index access: treat index as a property key (JS ToPropertyKey -> string)
                 // and fall back to dynamic property lookup (public fields/properties and ExpandoObject).
-                var propName = DotNet2JSConversions.ToString(index);
+                var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
         }
@@ -354,7 +368,7 @@ namespace JavaScriptRuntime
             if (obj is System.Dynamic.ExpandoObject exp)
             {
                 var dict = (IDictionary<string, object?>)exp;
-                var propName = DotNet2JSConversions.ToString(index);
+                var propName = ToPropertyKeyString(index);
                 if (dict.TryGetValue(propName, out var value))
                 {
                     return value!;
@@ -380,7 +394,7 @@ namespace JavaScriptRuntime
             {
                 // Generic object index access: treat index as a property key (JS ToPropertyKey -> string)
                 // and fall back to dynamic property lookup (public fields/properties and ExpandoObject).
-                var propName = DotNet2JSConversions.ToString(index);
+                var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
         }
@@ -420,7 +434,7 @@ namespace JavaScriptRuntime
                     break;
             }
 
-            var propName = DotNet2JSConversions.ToString(index);
+            var propName = ToPropertyKeyString(index);
 
             // Strings are immutable in JS; silently ignore and return value.
             if (obj is string)
@@ -476,6 +490,275 @@ namespace JavaScriptRuntime
 
             // Generic object: treat as property assignment (ToPropertyKey -> string)
             return SetProperty(obj, propName, value);
+        }
+
+        /// <summary>
+        /// Gets an iterator for for..of using the iterator protocol.
+        /// Supports:
+        ///  - Arrays, strings, Int32Array
+        ///  - User-defined iterables via [Symbol.iterator]
+        ///  - .NET IEnumerable as a best-effort fallback
+        /// </summary>
+        public static object GetIterator(object? iterable)
+        {
+            if (iterable is null || iterable is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot iterate over null or undefined");
+            }
+
+            // Built-ins
+            if (iterable is string s)
+            {
+                return CreateStringIterator(s);
+            }
+
+            if (iterable is JavaScriptRuntime.Array arr)
+            {
+                return CreateArrayIterator(arr);
+            }
+
+            if (iterable is JavaScriptRuntime.Int32Array i32)
+            {
+                return CreateInt32ArrayIterator(i32);
+            }
+
+            // User-defined iterables: call obj[Symbol.iterator]().
+            object? iteratorMethod;
+            try
+            {
+                iteratorMethod = GetItem(iterable, Symbol.iterator);
+            }
+            catch
+            {
+                iteratorMethod = null;
+            }
+
+            if (iteratorMethod is Delegate del)
+            {
+                var previousThis = RuntimeServices.SetCurrentThis(iterable);
+                try
+                {
+                    var iteratorObj = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
+                    if (iteratorObj is null)
+                    {
+                        throw new JavaScriptRuntime.TypeError("Iterator method returned null or undefined");
+                    }
+                    return iteratorObj;
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+
+            if (iteratorMethod != null)
+            {
+                throw new JavaScriptRuntime.TypeError("Symbol.iterator is not a function");
+            }
+
+            // Best-effort fallback: treat .NET IEnumerable as iterable.
+            if (iterable is System.Collections.IEnumerable en)
+            {
+                return CreateEnumerableIterator(en);
+            }
+
+            throw new JavaScriptRuntime.TypeError("Object is not iterable");
+        }
+
+        /// <summary>
+        /// Closes an iterator on abrupt completion (IteratorClose).
+        /// If iterator has a callable 'return' member, it is invoked.
+        /// </summary>
+        public static void IteratorClose(object? iterator)
+        {
+            if (iterator is null || iterator is JsNull)
+            {
+                return;
+            }
+
+            // ExpandoObject: common for user-defined iterators in this runtime.
+            if (iterator is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                if (!dict.TryGetValue("return", out var ret) || ret is null)
+                {
+                    return;
+                }
+
+                if (ret is not Delegate del)
+                {
+                    throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
+                }
+
+                var previousThis = RuntimeServices.SetCurrentThis(iterator);
+                try
+                {
+                    Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
+                    return;
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+
+            // Host object: look for a delegate-valued property.
+            var memberValue = GetProperty(iterator, "return");
+            if (memberValue is null)
+            {
+                return;
+            }
+            if (memberValue is not Delegate memberDel)
+            {
+                throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
+            }
+
+            var prev = RuntimeServices.SetCurrentThis(iterator);
+            try
+            {
+                Closure.InvokeWithArgs(memberDel, System.Array.Empty<object>(), System.Array.Empty<object>());
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(prev);
+            }
+        }
+
+        private static object CreateArrayIterator(JavaScriptRuntime.Array arr)
+        {
+            int index = 0;
+            bool isClosed = false;
+
+            var iter = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)iter;
+
+            dict["next"] = (Func<object[], object?>)((_) =>
+            {
+                if (isClosed)
+                {
+                    return IteratorResult.Create(null, done: true);
+                }
+
+                if (index >= arr.Count)
+                {
+                    return IteratorResult.Create(null, done: true);
+                }
+
+                var value = arr[index++];
+                return IteratorResult.Create(value, done: false);
+            });
+
+            dict["return"] = (Func<object[], object?>)((_) =>
+            {
+                isClosed = true;
+                return IteratorResult.Create(null, done: true);
+            });
+
+            return iter;
+        }
+
+        private static object CreateStringIterator(string s)
+        {
+            int index = 0;
+            bool isClosed = false;
+
+            var iter = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)iter;
+
+            dict["next"] = (Func<object[], object?>)((_) =>
+            {
+                if (isClosed)
+                {
+                    return IteratorResult.Create(null, done: true);
+                }
+
+                if (index >= s.Length)
+                {
+                    return IteratorResult.Create(null, done: true);
+                }
+
+                var ch = s[index++].ToString();
+                return IteratorResult.Create(ch, done: false);
+            });
+
+            dict["return"] = (Func<object[], object?>)((_) =>
+            {
+                isClosed = true;
+                return IteratorResult.Create(null, done: true);
+            });
+
+            return iter;
+        }
+
+        private static object CreateInt32ArrayIterator(JavaScriptRuntime.Int32Array arr)
+        {
+            int index = 0;
+            bool isClosed = false;
+
+            var iter = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)iter;
+
+            dict["next"] = (Func<object[], object?>)((_) =>
+            {
+                if (isClosed)
+                {
+                    return IteratorResult.Create(null, done: true);
+                }
+
+                if (index >= arr.length)
+                {
+                    return IteratorResult.Create(null, done: true);
+                }
+
+                var value = (double)arr[index++];
+                return IteratorResult.Create(value, done: false);
+            });
+
+            dict["return"] = (Func<object[], object?>)((_) =>
+            {
+                isClosed = true;
+                return IteratorResult.Create(null, done: true);
+            });
+
+            return iter;
+        }
+
+        private static object CreateEnumerableIterator(System.Collections.IEnumerable en)
+        {
+            var enumerator = en.GetEnumerator();
+            bool isClosed = false;
+
+            var iter = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)iter;
+
+            dict["next"] = (Func<object[], object?>)((_) =>
+            {
+                if (isClosed)
+                {
+                    return IteratorResult.Create(null, done: true);
+                }
+
+                bool moved;
+                moved = enumerator.MoveNext();
+                if (!moved)
+                {
+                    return IteratorResult.Create(null, done: true);
+                }
+
+                return IteratorResult.Create(enumerator.Current, done: false);
+            });
+
+            dict["return"] = (Func<object[], object?>)((_) =>
+            {
+                isClosed = true;
+                if (enumerator is IDisposable d)
+                {
+                    d.Dispose();
+                }
+                return IteratorResult.Create(null, done: true);
+            });
+
+            return iter;
         }
 
         /// <summary>
@@ -888,7 +1171,7 @@ namespace JavaScriptRuntime
             if (receiver == null) throw new ArgumentNullException(nameof(receiver));
 
             // Coerce index to int (JS ToInt32-ish truncation)
-            int i;
+            int i = 0;
             switch (index)
             {
                 case int ii: i = ii; break;

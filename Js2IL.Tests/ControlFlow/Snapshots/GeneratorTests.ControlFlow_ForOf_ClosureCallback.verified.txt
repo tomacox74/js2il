@@ -25,7 +25,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21e9
+					// Method begins at RVA 0x2232
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -49,7 +49,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x21fb
+						// Method begins at RVA 0x2244
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -67,7 +67,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21f2
+					// Method begins at RVA 0x223b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -89,16 +89,16 @@
 			{
 				// Method begins at RVA 0x2118
 				// Header size: 12
-				// Code size: 179 (0xb3)
+				// Code size: 235 (0xeb)
 				.maxstack 32
 				.locals init (
-					[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-					[1] float64,
-					[2] float64,
+					[0] object,
+					[1] bool,
+					[2] bool,
 					[3] object,
 					[4] object,
-					[5] object[],
-					[6] float64
+					[5] bool,
+					[6] object[]
 				)
 
 				IL_0000: ldc.i4.3
@@ -115,64 +115,92 @@
 				IL_002f: ldc.r8 3
 				IL_0038: box [System.Runtime]System.Double
 				IL_003d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-				IL_0042: stloc.0
-				IL_0043: ldloc.0
-				IL_0044: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
+				IL_0047: stloc.0
+				IL_0048: ldc.i4.0
 				IL_0049: stloc.1
-				IL_004a: ldc.r8 0.0
-				IL_0053: stloc.2
-				// loop start (head: IL_0054)
-					IL_0054: ldloc.2
-					IL_0055: ldloc.1
-					IL_0056: clt
-					IL_0058: brfalse IL_00b1
+				IL_004a: ldc.i4.0
+				IL_004b: stloc.2
+				.try
+				{
+					// loop start (head: IL_004c)
+						IL_004c: ldloc.0
+						IL_004d: ldstr "next"
+						IL_0052: ldc.i4.0
+						IL_0053: newarr [System.Runtime]System.Object
+						IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+						IL_005d: stloc.s 4
+						IL_005f: ldloc.s 4
+						IL_0061: ldstr "done"
+						IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+						IL_006b: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+						IL_0070: stloc.s 5
+						IL_0072: ldloc.s 5
+						IL_0074: brtrue IL_00cf
 
-					IL_005d: ldloc.0
-					IL_005e: ldloc.2
-					IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-					IL_0064: stloc.3
-					IL_0065: ldarg.0
-					IL_0066: ldc.i4.1
-					IL_0067: ldelem.ref
-					IL_0068: castclass Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope
-					IL_006d: ldfld object Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope::callback
-					IL_0072: stloc.s 4
-					IL_0074: ldc.i4.1
-					IL_0075: newarr [System.Runtime]System.Object
-					IL_007a: dup
-					IL_007b: ldc.i4.0
-					IL_007c: ldloc.3
-					IL_007d: stelem.ref
-					IL_007e: stloc.s 5
-					IL_0080: ldloc.s 4
-					IL_0082: ldc.i4.2
-					IL_0083: newarr [System.Runtime]System.Object
-					IL_0088: dup
-					IL_0089: ldc.i4.0
-					IL_008a: ldarg.0
-					IL_008b: ldc.i4.0
-					IL_008c: ldelem.ref
-					IL_008d: stelem.ref
-					IL_008e: dup
-					IL_008f: ldc.i4.1
-					IL_0090: ldarg.0
-					IL_0091: ldc.i4.1
-					IL_0092: ldelem.ref
-					IL_0093: stelem.ref
-					IL_0094: ldloc.s 5
-					IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-					IL_009b: pop
-					IL_009c: ldloc.2
-					IL_009d: ldc.r8 1
-					IL_00a6: add
-					IL_00a7: stloc.s 6
-					IL_00a9: ldloc.s 6
-					IL_00ab: stloc.2
-					IL_00ac: br IL_0054
-				// end loop
+						IL_0079: ldloc.s 4
+						IL_007b: ldstr "value"
+						IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+						IL_0085: stloc.3
+						IL_0086: ldarg.0
+						IL_0087: ldc.i4.1
+						IL_0088: ldelem.ref
+						IL_0089: castclass Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope
+						IL_008e: ldfld object Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope::callback
+						IL_0093: stloc.s 4
+						IL_0095: ldc.i4.1
+						IL_0096: newarr [System.Runtime]System.Object
+						IL_009b: dup
+						IL_009c: ldc.i4.0
+						IL_009d: ldloc.3
+						IL_009e: stelem.ref
+						IL_009f: stloc.s 6
+						IL_00a1: ldloc.s 4
+						IL_00a3: ldc.i4.2
+						IL_00a4: newarr [System.Runtime]System.Object
+						IL_00a9: dup
+						IL_00aa: ldc.i4.0
+						IL_00ab: ldarg.0
+						IL_00ac: ldc.i4.0
+						IL_00ad: ldelem.ref
+						IL_00ae: stelem.ref
+						IL_00af: dup
+						IL_00b0: ldc.i4.1
+						IL_00b1: ldarg.0
+						IL_00b2: ldc.i4.1
+						IL_00b3: ldelem.ref
+						IL_00b4: stelem.ref
+						IL_00b5: ldloc.s 6
+						IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+						IL_00bc: pop
+						IL_00bd: br IL_004c
+					// end loop
+					IL_00c2: ldloc.0
+					IL_00c3: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+					IL_00c8: ldc.i4.1
+					IL_00c9: stloc.2
+					IL_00ca: leave IL_00e9
 
-				IL_00b1: ldnull
-				IL_00b2: ret
+					IL_00cf: ldc.i4.1
+					IL_00d0: stloc.1
+					IL_00d1: leave IL_00e9
+				} // end .try
+				finally
+				{
+					IL_00d6: ldloc.1
+					IL_00d7: brtrue IL_00e8
+
+					IL_00dc: ldloc.2
+					IL_00dd: brtrue IL_00e8
+
+					IL_00e2: ldloc.0
+					IL_00e3: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+
+					IL_00e8: endfinally
+				} // end handler
+
+				IL_00e9: ldnull
+				IL_00ea: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner
@@ -187,7 +215,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e0
+				// Method begins at RVA 0x2229
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -272,7 +300,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2204
+				// Method begins at RVA 0x224d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -323,7 +351,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d7
+			// Method begins at RVA 0x2220
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -393,7 +421,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x220d
+		// Method begins at RVA 0x2256
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
