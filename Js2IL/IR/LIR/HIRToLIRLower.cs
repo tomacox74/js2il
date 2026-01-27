@@ -2015,10 +2015,10 @@ public sealed class HIRToLIRLowerer
                         // iterator = Object.GetIterator(rhs)
                         var iterTemp = CreateTempVariable();
                         lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "GetIterator", new[] { rhsBoxed }, iterTemp));
-                        DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
                         // NOTE: temp-local allocation is linear and does not account for loop back-edges.
                         // Pin loop-carry temps to stable variable slots so values remain correct across iterations.
-                        SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+                        SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator))));
 
                         var completedTemp = CreateTempVariable();
                         DefineTempStorage(completedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
