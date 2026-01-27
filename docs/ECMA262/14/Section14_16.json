@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "14.16",
   "title": "The debugger Statement",
-  "status": "Untracked",
+  "status": "Not Yet Supported",
   "specUrl": "https://tc39.es/ecma262/#sec-debugger-statement",
   "parent": {
     "clause": "14"
@@ -12,7 +12,7 @@
     {
       "clause": "14.16.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-debugger-statement-runtime-semantics-evaluation"
     }
   ],
@@ -20,57 +20,10 @@
     "entries": [
       {
         "clause": "14.16.1",
-        "feature": "throw statement",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-try-statement",
-        "testScripts": [
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js",
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatchFinally_ThrowValue.js"
-        ],
-        "notes": "Supports throwing any JS value. Non-Exception values are wrapped in JavaScriptRuntime.JsThrownValueException; catch unwrapping binds the original value. JavaScriptRuntime.Error is thrown directly."
-      },
-      {
-        "clause": "14.16.1",
-        "feature": "try/catch (no binding)",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-try-statement",
-        "testScripts": [
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js",
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding_NoThrow.js"
-        ],
-        "notes": "Catch blocks handle values thrown within the try region (including non-Exception JS values via JsThrownValueException) and bind the caught value only when a binding is present."
-      },
-      {
-        "clause": "14.16.1",
-        "feature": "try/catch (with binding; block-scoped catch parameter)",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-try-statement",
-        "testScripts": [
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_ScopedParam.js"
-        ],
-        "notes": "Catch parameter binding is block-scoped to the catch clause and does not leak outside the catch block."
-      },
-      {
-        "clause": "14.16.1",
-        "feature": "try/catch/finally",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-try-statement",
-        "testScripts": [
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatchFinally_ThrowValue.js"
-        ],
-        "notes": "Supports catch + finally with correct finally execution and catch binding when throwing arbitrary JS values."
-      },
-      {
-        "clause": "14.16.1",
-        "feature": "try/finally (no catch)",
-        "status": "Partially Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-try-statement",
-        "testScripts": [
-          "Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch.js",
-          "Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch_Throw.js",
-          "Js2IL.Tests/TryCatch/JavaScript/TryFinally_Return.js"
-        ],
-        "notes": "Finally emission is in place and executes on normal and return exits. Execution test for unhandled throw is skipped pending top-level unhandled Error semantics; generator snapshot verifies structure."
+        "feature": "debugger statement",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-debugger-statement",
+        "notes": "Rejected by Js2IL.Validation.JavaScriptAstValidator as unsupported."
       }
     ]
   }
