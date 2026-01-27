@@ -59,6 +59,9 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForLoop_LetClosureCapture_Continue() { var testName = nameof(ControlFlow_ForLoop_LetClosureCapture_Continue); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForLoop_VarClosureCapture() { var testName = nameof(ControlFlow_ForLoop_VarClosureCapture); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForOf_Array_Basic() { var testName = nameof(ControlFlow_ForOf_Array_Basic); return ExecutionTest(testName); }
 
         [Fact]
