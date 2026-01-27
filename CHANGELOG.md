@@ -11,6 +11,7 @@ All notable changes to this project are documented here.
 - Runtime/spec: implement ECMA-262 §9.5.1–§9.5.3 JobCallback host operations and integrate them into Promise job scheduling (fixes #435).
 - Classes/spec: support `class B extends A { ... }`, `super(...)` in derived constructors, and `super.m(...)` base method calls (fixes #293, #294).
 - Generators/spec: support `yield*` delegation for synchronous generators (fixes #389).
+- Validator/spec: enforce and consistently surface iteration-statement early errors (break/continue targets and for-in/of head constraints) and fix labeled-statement AST traversal (fixes #463).
 
 ## v0.7.3 - 2026-01-23
 
