@@ -4,7 +4,7 @@
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 6.1 | ECMAScript Language Types | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types) |
+| 6.1 | ECMAScript Language Types | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types) |
 
 ## Subclauses
 
@@ -76,7 +76,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| ECMAScript Language Types | Partially Supported |  |  |
+| ECMAScript Language Types | Incomplete |  |  |
 
 ### 6.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-undefined-type))
 
@@ -100,7 +100,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| The String Type | Partially Supported |  |  |
+| The String Type | Supported with Limitations |  |  |
 
 ### 6.1.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-stringindexof))
 
@@ -130,7 +130,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Numeric Types | Partially Supported |  |  |
+| Numeric Types | Incomplete |  |  |
 
 ### 6.1.6.1 ([tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-number-type))
 
@@ -220,7 +220,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Number::sameValue | Partially Supported |  |  |
+| Number::sameValue | Supported with Limitations |  |  |
 
 ### 6.1.6.1.15 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-sameValueZero))
 
@@ -256,7 +256,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Number::toString | Partially Supported |  |  |
+| Number::toString | Supported with Limitations |  |  |
 
 ### 6.1.6.2 ([tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-bigint-type))
 
@@ -394,29 +394,29 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| The Object Type | Partially Supported |  |  |
+| The Object Type | Incomplete |  |  |
 
 ### 6.1.7.1 ([tc39.es](https://tc39.es/ecma262/#sec-property-attributes))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Property Attributes | Partially Supported |  |  |
+| Property Attributes | Incomplete |  |  |
 
 ### 6.1.7.2 ([tc39.es](https://tc39.es/ecma262/#sec-object-internal-methods-and-internal-slots))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object Internal Methods and Internal Slots | Partially Supported |  |  |
+| Object Internal Methods and Internal Slots | Incomplete |  |  |
 
 ### 6.1.7.3 ([tc39.es](https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Invariants of the Essential Internal Methods | Partially Supported |  |  |
+| Invariants of the Essential Internal Methods | Incomplete |  |  |
 
 ### 6.1.7.4 ([tc39.es](https://tc39.es/ecma262/#sec-well-known-intrinsic-objects))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Well-Known Intrinsic Objects | Partially Supported |  |  |
+| Well-Known Intrinsic Objects | Supported with Limitations |  |  |
 

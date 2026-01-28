@@ -8,28 +8,28 @@ JS2IL supports class declarations/expressions, methods (including async and gene
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 15.7 | Class Definitions | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions) |
+| 15.7 | Class Definitions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 15.7.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions-static-semantics-early-errors) |
-| 15.7.2 | Static Semantics: ClassElementKind | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-classelementkind) |
+| 15.7.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions-static-semantics-early-errors) |
+| 15.7.2 | Static Semantics: ClassElementKind | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-classelementkind) |
 | 15.7.3 | Static Semantics: ConstructorMethod | Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-constructormethod) |
 | 15.7.4 | Static Semantics: IsStatic | Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-isstatic) |
-| 15.7.5 | Static Semantics: NonConstructorElements | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-nonconstructorelements) |
-| 15.7.6 | Static Semantics: PrototypePropertyNameList | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-prototypepropertynamelist) |
-| 15.7.7 | Static Semantics: AllPrivateIdentifiersValid | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-allprivateidentifiersvalid) |
-| 15.7.8 | Static Semantics: PrivateBoundIdentifiers | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-privateboundidentifiers) |
+| 15.7.5 | Static Semantics: NonConstructorElements | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-nonconstructorelements) |
+| 15.7.6 | Static Semantics: PrototypePropertyNameList | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-prototypepropertynamelist) |
+| 15.7.7 | Static Semantics: AllPrivateIdentifiersValid | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-allprivateidentifiersvalid) |
+| 15.7.8 | Static Semantics: PrivateBoundIdentifiers | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-privateboundidentifiers) |
 | 15.7.9 | Static Semantics: ContainsArguments | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-containsarguments) |
-| 15.7.10 | Runtime Semantics: ClassFieldDefinitionEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation) |
+| 15.7.10 | Runtime Semantics: ClassFieldDefinitionEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation) |
 | 15.7.11 | Runtime Semantics: ClassStaticBlockDefinitionEvaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classstaticblockdefinitionevaluation) |
 | 15.7.12 | Runtime Semantics: EvaluateClassStaticBlockBody | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody) |
-| 15.7.13 | Runtime Semantics: ClassElementEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation) |
-| 15.7.14 | Runtime Semantics: ClassDefinitionEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation) |
-| 15.7.15 | Runtime Semantics: BindingClassDeclarationEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-bindingclassdeclarationevaluation) |
-| 15.7.16 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions-runtime-semantics-evaluation) |
+| 15.7.13 | Runtime Semantics: ClassElementEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-classelementevaluation) |
+| 15.7.14 | Runtime Semantics: ClassDefinitionEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation) |
+| 15.7.15 | Runtime Semantics: BindingClassDeclarationEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-bindingclassdeclarationevaluation) |
+| 15.7.16 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-class-definitions-runtime-semantics-evaluation) |
 
 ## Support
 
@@ -67,7 +67,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Class elements: methods vs. fields vs. constructors | Partially Supported | [`Classes_DeclareEmptyClass.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`Classes_ClassWithMethod_HelloWorld.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js)<br>[`Classes_ClassProperty_DefaultAndLog.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js)<br>[`Classes_ClassWithStaticMethod_HelloWorld.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js)<br>[`Classes_ClassWithStaticProperty_DefaultAndLog.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js) | JS2IL supports constructors, identifier-named methods, and identifier/private-identifier fields. Limitations: class accessors, private methods, computed names, and static blocks are not supported. |
+| Class elements: methods vs. fields vs. constructors | Supported with Limitations | [`Classes_DeclareEmptyClass.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`Classes_ClassWithMethod_HelloWorld.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js)<br>[`Classes_ClassProperty_DefaultAndLog.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js)<br>[`Classes_ClassWithStaticMethod_HelloWorld.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js)<br>[`Classes_ClassWithStaticProperty_DefaultAndLog.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js) | JS2IL supports constructors, identifier-named methods, and identifier/private-identifier fields. Limitations: class accessors, private methods, computed names, and static blocks are not supported. |
 
 ### 15.7.3 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-constructormethod))
 
@@ -85,7 +85,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| AllPrivateIdentifiersValid: private field access this.#name | Partially Supported | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js) | Valid programs using declared private fields compile and run. Invalid private identifier usage is not fully validated per spec; some cases fail during compilation when registry resolution cannot find the field. |
+| AllPrivateIdentifiersValid: private field access this.#name | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js) | Valid programs using declared private fields compile and run. Invalid private identifier usage is not fully validated per spec; some cases fail during compilation when registry resolution cannot find the field. |
 
 ### 15.7.10 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation))
 

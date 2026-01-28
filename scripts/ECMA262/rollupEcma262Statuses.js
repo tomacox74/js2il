@@ -129,35 +129,64 @@ function escapePipes(text) {
 }
 
 function validateStatus(status) {
-  const allowed = ['Untracked', 'Not Yet Supported', 'Partially Supported', 'Supported'];
+  const allowed = [
+    'Untracked',
+    'Not Yet Supported',
+    'Incomplete',
+    'Supported with Limitations',
+    'Supported',
+    // Legacy
+    'Partially Supported',
+    'Not Supported',
+  ];
   if (!allowed.includes(status)) {
     throw new Error(`Invalid status '${status}'. Allowed: ${allowed.join(', ')}`);
   }
 }
 
+function normalizeLegacyStatus(status) {
+  const s = String(status ?? '').trim();
+  if (s === 'Not Supported') return 'Not Yet Supported';
+  if (s === 'Partially Supported') return 'Supported with Limitations';
+  return s;
+}
+
 // Rollup policy:
 // - If everything is Untracked -> Untracked
-// - If there is a mix of supported and unsupported -> Partially Supported
+// - If there is a mix of supported and unsupported -> Incomplete
 // - Otherwise prefer the “best summary” of what exists
 function getRollupStatus(statuses) {
   const norm = (Array.isArray(statuses) ? statuses : [])
-    .map((s) => (s ?? '').trim())
-    .filter((s) => s.length > 0);
+    .map((s) => String(s ?? '').trim())
+    .filter((s) => s.length > 0)
+    // Normalize legacy spellings.
+    .map((s) => {
+      if (s === 'Not Supported') return 'Not Yet Supported';
+      if (s === 'Partially Supported') return 'Supported with Limitations';
+      return s;
+    });
 
   const hasUntracked = norm.includes('Untracked');
-  const hasNotYet = norm.includes('Not Yet Supported') || norm.includes('Not Supported');
-  const hasPartial = norm.includes('Partially Supported');
+  const hasNotYet = norm.includes('Not Yet Supported');
+  const hasIncomplete = norm.includes('Incomplete');
+  const hasLimitations = norm.includes('Supported with Limitations');
   const hasSupported = norm.includes('Supported');
 
   // Nothing tracked at all.
-  if (!hasNotYet && !hasPartial && !hasSupported && hasUntracked) return 'Untracked';
+  if (!hasNotYet && !hasIncomplete && !hasLimitations && !hasSupported && hasUntracked) return 'Untracked';
 
-  // If anything is partially supported, keep it partial.
-  if (hasPartial) return 'Partially Supported';
+  // Entirely unimplemented.
+  if (hasNotYet && !hasIncomplete && !hasLimitations && !hasSupported) return 'Not Yet Supported';
 
-  // Mixed support implies partial support overall.
-  if (hasSupported && hasNotYet) return 'Partially Supported';
+  // Missing core semantics anywhere in the tree.
+  if (hasIncomplete) return 'Incomplete';
 
+  // If there's a mix of implemented and not-yet-supported, treat as incomplete overall.
+  if (hasSupported && hasNotYet) return 'Incomplete';
+  if (hasLimitations && hasNotYet) return 'Incomplete';
+
+  // Otherwise, we have something usable.
+  if (hasLimitations) return 'Supported with Limitations';
   if (hasSupported) return 'Supported';
   if (hasNotYet) return 'Not Yet Supported';
 
@@ -357,11 +386,13 @@ function main() {
       if (!clause) throw new Error(`Missing 'clause' in ${f.jsonPath}`);
       if (!title) throw new Error(`Missing 'title' in ${f.jsonPath}`);
       validateStatus(status);
+      const normalizedStatus = normalizeLegacyStatus(status);
+      validateStatus(normalizedStatus);
 
       subsectionRows.push({
         clause,
         title,
-        status,
+        status: normalizedStatus,
         specUrl,
         mdFileName: f.mdFileName,
       });

@@ -8,17 +8,17 @@ JS2IL supports common declaration forms (`let`, `const`, `var`) and destructurin
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 14.3 | Declarations and the Variable Statement | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-declarations-and-the-variable-statement) |
+| 14.3 | Declarations and the Variable Statement | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-declarations-and-the-variable-statement) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 14.3.1 | Let and Const Declarations | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-let-and-const-declarations) |
-| 14.3.1.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-let-and-const-declarations-static-semantics-early-errors) |
-| 14.3.1.2 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-let-and-const-declarations-runtime-semantics-evaluation) |
-| 14.3.2 | Variable Statement | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-variable-statement) |
-| 14.3.2.1 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-variable-statement-runtime-semantics-evaluation) |
+| 14.3.1 | Let and Const Declarations | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-let-and-const-declarations) |
+| 14.3.1.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-let-and-const-declarations-static-semantics-early-errors) |
+| 14.3.1.2 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-let-and-const-declarations-runtime-semantics-evaluation) |
+| 14.3.2 | Variable Statement | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-variable-statement) |
+| 14.3.2.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-variable-statement-runtime-semantics-evaluation) |
 | 14.3.3 | Destructuring Binding Patterns | Supported | [tc39.es](https://tc39.es/ecma262/#sec-destructuring-binding-patterns) |
 | 14.3.3.1 | Runtime Semantics: PropertyBindingInitialization | Supported | [tc39.es](https://tc39.es/ecma262/#sec-destructuring-binding-patterns-runtime-semantics-propertybindinginitialization) |
 | 14.3.3.2 | Runtime Semantics: RestBindingInitialization | Supported | [tc39.es](https://tc39.es/ecma262/#sec-destructuring-binding-patterns-runtime-semantics-restbindinginitialization) |
@@ -41,7 +41,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| var hoisting edge cases | Partially Supported |  | Basic `var` behavior is exercised, but hoisting/redeclaration edge cases are not explicitly covered by dedicated tests. |
+| var hoisting edge cases | Supported with Limitations |  | Basic `var` behavior is exercised, but hoisting/redeclaration edge cases are not explicitly covered by dedicated tests. |
 | var statement (basic in functions and global) | Supported | [`Function_GlobalFunctionWithArrayIteration.js`](../../../Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionWithArrayIteration.js)<br>[`Function_NestedFunctionAccessesMultipleScopes.js`](../../../Js2IL.Tests/Function/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js) | Covers local `var` bindings, `var` in for-loops, and nested function scopes. |
 
 ### 14.3.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-destructuring-binding-patterns-runtime-semantics-propertybindinginitialization))

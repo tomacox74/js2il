@@ -12,7 +12,7 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 14.8.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-continue-statement-static-semantics-early-errors) |
+| 14.8.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-continue-statement-static-semantics-early-errors) |
 | 14.8.2 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-continue-statement-runtime-semantics-evaluation) |
 
 ## Support

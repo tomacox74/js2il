@@ -31,8 +31,8 @@ Type conversion in JS2IL is implemented on an as-needed basis for supported lang
 | 7.1.10 | ToInt8 ( argument ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-toint8) |
 | 7.1.11 | ToUint8 ( argument ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-touint8) |
 | 7.1.12 | ToUint8Clamp ( argument ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-touint8clamp) |
-| 7.1.13 | ToBigInt ( argument ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-tobigint) |
-| 7.1.14 | StringToBigInt ( str ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringtobigint) |
+| 7.1.13 | ToBigInt ( argument ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-tobigint) |
+| 7.1.14 | StringToBigInt ( str ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-stringtobigint) |
 | 7.1.14.1 | StringIntegerLiteral Grammar | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-stringintegerliteral-grammar) |
 | 7.1.14.2 | Runtime Semantics: MV | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-mv-for-stringintegerliteral) |
 | 7.1.15 | ToBigInt64 ( argument ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-tobigint64) |
@@ -52,11 +52,11 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| ToBigInt (minimal, via BigInt(value)) | Partially Supported | [`IntrinsicCallables_BigInt_Callable_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js) | Implemented only to the extent required by the current BigInt(value) callable support. Full spec conversion rules (including full ToPrimitive/valueOf/toString behavior and error message/edge-case fidelity) are not yet implemented. |
+| ToBigInt (minimal, via BigInt(value)) | Supported with Limitations | [`IntrinsicCallables_BigInt_Callable_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js) | Implemented only to the extent required by the current BigInt(value) callable support. Full spec conversion rules (including full ToPrimitive/valueOf/toString behavior and error message/edge-case fidelity) are not yet implemented. |
 
 ### 7.1.14 ([tc39.es](https://tc39.es/ecma262/#sec-stringtobigint))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| StringToBigInt (minimal decimal parsing) | Partially Supported | [`IntrinsicCallables_BigInt_Callable_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js) | Currently supports basic decimal string parsing used by BigInt(value). Does not implement the full StringIntegerLiteral grammar (binary/octal/hex prefixes, separators, etc.) or all spec-mandated error cases. |
+| StringToBigInt (minimal decimal parsing) | Supported with Limitations | [`IntrinsicCallables_BigInt_Callable_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js) | Currently supports basic decimal string parsing used by BigInt(value). Does not implement the full StringIntegerLiteral grammar (binary/octal/hex prefixes, separators, etc.) or all spec-mandated error cases. |
 

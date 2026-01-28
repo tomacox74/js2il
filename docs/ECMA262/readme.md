@@ -57,8 +57,13 @@ What it does NOT do
 - Does not touch subsection markdown files (e.g. `Section15_5.md`).
 
 Rollup policy
-- If a section contains a mix of supported and unsupported subsections (e.g. some `Supported`/`Partially Supported` and some `Not Yet Supported`), the section rolls up to `Partially Supported`.
+- If a section contains a mix of supported and unsupported subsections (e.g. some `Supported`/`Supported with Limitations` and some `Not Yet Supported`), the section rolls up to `Incomplete`.
 - If everything is `Untracked`, the section remains `Untracked`.
+
+Status notes
+- `Supported with Limitations` is intended to be safe for general/daily-driver use; remaining gaps are edge cases and should be documented in subsection notes.
+- `Incomplete` means missing core semantics; do not rely on it broadly.
+- Legacy `Partially Supported` is deprecated and treated as `Supported with Limitations` by the scripts.
 
 How to run
 - direct: `node scripts/ECMA262/rollupEcma262Statuses.js`

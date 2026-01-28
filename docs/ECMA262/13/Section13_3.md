@@ -10,30 +10,30 @@ Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, 
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 13.3 | Left-Hand-Side Expressions | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions) |
+| 13.3 | Left-Hand-Side Expressions | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 13.3.1 | Static Semantics | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics) |
-| 13.3.1.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions-static-semantics-early-errors) |
+| 13.3.1 | Static Semantics | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics) |
+| 13.3.1.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions-static-semantics-early-errors) |
 | 13.3.2 | Property Accessors | Supported | [tc39.es](https://tc39.es/ecma262/#sec-property-accessors) |
 | 13.3.2.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-property-accessors-runtime-semantics-evaluation) |
 | 13.3.3 | EvaluatePropertyAccessWithExpressionKey ( baseValue , expression , strict ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-property-access-with-expression-key) |
 | 13.3.4 | EvaluatePropertyAccessWithIdentifierKey ( baseValue , identifierName , strict ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-property-access-with-identifier-key) |
-| 13.3.5 | The new Operator | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-new-operator) |
-| 13.3.5.1 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-new-operator-runtime-semantics-evaluation) |
-| 13.3.5.1.1 | EvaluateNew ( constructExpr , arguments ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluatenew) |
-| 13.3.6 | Function Calls | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-calls) |
-| 13.3.6.1 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-calls-runtime-semantics-evaluation) |
-| 13.3.6.2 | EvaluateCall ( func , ref , arguments , tailPosition ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluatecall) |
-| 13.3.7 | The super Keyword | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-super-keyword) |
-| 13.3.7.1 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-super-keyword-runtime-semantics-evaluation) |
-| 13.3.7.2 | GetSuperConstructor ( ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-getsuperconstructor) |
-| 13.3.7.3 | MakeSuperPropertyReference ( actualThis , propertyKey , strict ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-makesuperpropertyreference) |
-| 13.3.8 | Argument Lists | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-argument-lists) |
-| 13.3.8.1 | Runtime Semantics: ArgumentListEvaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-argumentlistevaluation) |
+| 13.3.5 | The new Operator | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-new-operator) |
+| 13.3.5.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-new-operator-runtime-semantics-evaluation) |
+| 13.3.5.1.1 | EvaluateNew ( constructExpr , arguments ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-evaluatenew) |
+| 13.3.6 | Function Calls | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-calls) |
+| 13.3.6.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-calls-runtime-semantics-evaluation) |
+| 13.3.6.2 | EvaluateCall ( func , ref , arguments , tailPosition ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-evaluatecall) |
+| 13.3.7 | The super Keyword | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-super-keyword) |
+| 13.3.7.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-super-keyword-runtime-semantics-evaluation) |
+| 13.3.7.2 | GetSuperConstructor ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-getsuperconstructor) |
+| 13.3.7.3 | MakeSuperPropertyReference ( actualThis , propertyKey , strict ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-makesuperpropertyreference) |
+| 13.3.8 | Argument Lists | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-argument-lists) |
+| 13.3.8.1 | Runtime Semantics: ArgumentListEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-argumentlistevaluation) |
 | 13.3.9 | Optional Chains | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-optional-chains) |
 | 13.3.9.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-evaluation) |
 | 13.3.9.2 | Runtime Semantics: ChainEvaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-chain-evaluation) |
@@ -90,5 +90,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Argument lists without spread | Partially Supported |  | Normal argument lists are supported; spread in CallExpression arguments is not yet supported and is rejected during validation. |
+| Argument lists without spread | Supported with Limitations |  | Normal argument lists are supported; spread in CallExpression arguments is not yet supported and is rejected during validation. |
 

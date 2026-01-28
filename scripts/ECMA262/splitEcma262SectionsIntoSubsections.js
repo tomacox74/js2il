@@ -7,8 +7,9 @@
  * - Updates Index.md section rollup status
  *
  * Status rollup precedence:
- *   Not Yet Supported > Partially Supported > Supported > Untracked
+ *   Not Yet Supported > Incomplete > Supported with Limitations > Supported > Untracked
  * Legacy "Not Supported" is treated as "Not Yet Supported".
+ * Legacy "Partially Supported" is treated as "Supported with Limitations".
  */
 
 'use strict';
@@ -115,7 +116,9 @@ function getRollupStatus(statuses) {
 
   if (norm.includes('Not Yet Supported')) return 'Not Yet Supported';
   if (norm.includes('Not Supported')) return 'Not Yet Supported';
-  if (norm.includes('Partially Supported')) return 'Partially Supported';
+  if (norm.includes('Incomplete')) return 'Incomplete';
+  if (norm.includes('Supported with Limitations')) return 'Supported with Limitations';
+  if (norm.includes('Partially Supported')) return 'Supported with Limitations';
   if (norm.includes('Supported')) return 'Supported';
   return 'Untracked';
 }

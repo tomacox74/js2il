@@ -8,14 +8,14 @@ JS2IL provides a minimal Symbol implementation sufficient for basic callable usa
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 20.4 | Symbol Objects | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-symbol-objects) |
+| 20.4 | Symbol Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-symbol-objects) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 20.4.1 | The Symbol Constructor | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-symbol-constructor) |
-| 20.4.1.1 | Symbol ( [ description ] ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-symbol-description) |
+| 20.4.1 | The Symbol Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-symbol-constructor) |
+| 20.4.1.1 | Symbol ( [ description ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-symbol-description) |
 | 20.4.2 | Properties of the Symbol Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-symbol-constructor) |
 | 20.4.2.1 | Symbol.asyncIterator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-symbol.asynciterator) |
 | 20.4.2.2 | Symbol.for ( key ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-symbol.for) |
@@ -54,5 +54,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Symbol([description]) callable (basic) | Partially Supported | [`IntrinsicCallables_Symbol_Callable_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Callable_Basic.js) | Supports callable invocation with 0/1 arguments, unique symbol instances, and typeof === 'symbol'. Does not implement the full Symbol registry or well-known symbols. |
+| Symbol([description]) callable (basic) | Supported with Limitations | [`IntrinsicCallables_Symbol_Callable_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Callable_Basic.js) | Supports callable invocation with 0/1 arguments, unique symbol instances, and typeof === 'symbol'. Does not implement the full Symbol registry or well-known symbols. |
 
