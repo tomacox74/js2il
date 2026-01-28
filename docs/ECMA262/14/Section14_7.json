@@ -375,16 +375,17 @@
       {
         "clause": "14.7.5.7",
         "feature": "for-of over arrays (enumerate values)",
-        "status": "Partially Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-forinofbodyevaluation",
         "testScripts": [
           "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js",
           "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Continue.js",
           "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Break.js",
           "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js",
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js"
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js"
         ],
-        "notes": "Lowered to an index loop over a normalized iterable (JavaScriptRuntime.Object.NormalizeForOfIterable), then accessed via JavaScriptRuntime.Object.GetLength(object) + GetItem(object, double). Supports arrays, strings, typed arrays, and .NET IEnumerable (via Array.from), but does not implement full JS iterator protocol (Symbol.iterator)."
+        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], and a best-effort fallback for .NET IEnumerable."
       },
       {
         "clause": "14.7.5.7",

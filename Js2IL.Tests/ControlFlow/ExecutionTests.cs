@@ -77,6 +77,9 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForOf_Let_Destructuring_PerIterationBinding() { var testName = nameof(ControlFlow_ForOf_Let_Destructuring_PerIterationBinding); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForOf_CustomIterable_IteratorProtocol() { var testName = nameof(ControlFlow_ForOf_CustomIterable_IteratorProtocol); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForIn_Object_Basic() { var testName = nameof(ControlFlow_ForIn_Object_Basic); return ExecutionTest(testName); }
 
         [Fact]
