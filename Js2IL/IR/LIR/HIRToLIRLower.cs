@@ -2618,35 +2618,35 @@ public sealed class HIRToLIRLowerer
 
                         var rhsBoxed = EnsureObject(rhsTemp);
 
-                    var keysTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetEnumerableKeys), new[] { rhsBoxed }, keysTemp));
-                    DefineTempStorage(keysTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    // Spec-aligned: for..in uses a For-In Iterator object that re-checks key existence
+                    // per step (e.g., deletion during enumeration). We model this via a native iterator.
+                    var iterTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.EnumerateObjectProperties), new[] { rhsBoxed }, iterTemp));
+                    DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     // Pin loop-carry temps to stable variable slots (see note in for..of lowering).
-                    SetTempVariableSlot(keysTemp, CreateAnonymousVariableSlot("$forIn_keys", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
-
-                    var lenTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRGetLength(keysTemp, lenTemp));
-                    DefineTempStorage(lenTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    SetTempVariableSlot(lenTemp, CreateAnonymousVariableSlot("$forIn_len", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double))));
-
-                    var idxTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRConstNumber(0.0, idxTemp));
-                    DefineTempStorage(idxTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    SetTempVariableSlot(idxTemp, CreateAnonymousVariableSlot("$forIn_idx", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double))));
+                    SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forIn_iter", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
 
                     int loopStartLabel = CreateLabel();
                     int loopUpdateLabel = CreateLabel();
                     int loopEndLabel = CreateLabel();
 
                     lirInstructions.Add(new LIRLabel(loopStartLabel));
-                    var condTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCompareNumberLessThan(idxTemp, lenTemp, condTemp));
-                    DefineTempStorage(condTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-                    lirInstructions.Add(new LIRBranchIfFalse(condTemp, loopEndLabel));
 
-                        var keyTemp = CreateTempVariable();
-                        lirInstructions.Add(new LIRGetItem(EnsureObject(keysTemp), idxTemp, keyTemp));
-                        DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    // result = IteratorNext(iterator)
+                    var iterResult = CreateTempVariable();
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
+                    DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                    // done = IteratorResultDone(result)
+                    var doneBool = CreateTempVariable();
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
+                    DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    lirInstructions.Add(new LIRBranchIfTrue(doneBool, loopEndLabel));
+
+                    // key = IteratorResultValue(result)
+                    var keyTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, keyTemp));
+                    DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                         var writeMode = (forInStmt.IsDeclaration && (forInStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
                             ? DestructuringWriteMode.ForDeclarationBindingInitialization
@@ -2676,13 +2676,8 @@ public sealed class HIRToLIRLowerer
                         {
                             EmitRecreatePerIterationScopeFromTemp(loopScopeTemp, loopScopeId, loopScopeName!, perIterationBindings);
                         }
-                    var oneTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRConstNumber(1.0, oneTemp));
-                    DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    var updatedIdx = CreateTempVariable();
-                    lirInstructions.Add(new LIRAddNumber(idxTemp, oneTemp, updatedIdx));
-                    DefineTempStorage(updatedIdx, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    lirInstructions.Add(new LIRCopyTemp(updatedIdx, idxTemp));
+
+                    // Continue enumeration.
                     lirInstructions.Add(new LIRBranch(loopStartLabel));
                         lirInstructions.Add(new LIRLabel(loopEndLabel));
                         return true;
@@ -5784,6 +5779,58 @@ public sealed class HIRToLIRLowerer
     private bool TryLowerUnaryExpression(HIRUnaryExpression unaryExpr, out TempVariable resultTempVar)
     {
         resultTempVar = CreateTempVariable();
+
+        // delete operator requires lvalue semantics (delete obj[prop] / delete obj.prop)
+        if (unaryExpr.Operator == Acornima.Operator.Delete)
+        {
+            switch (unaryExpr.Argument)
+            {
+                case HIRPropertyAccessExpression propAccess:
+                {
+                    if (!TryLowerExpression(propAccess.Object, out var recvTemp))
+                    {
+                        return false;
+                    }
+
+                    var keyTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstString(propAccess.PropertyName, keyTemp));
+                    DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                    var deleted = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.DeleteProperty), new[] { EnsureObject(recvTemp), EnsureObject(keyTemp) }, deleted));
+                    DefineTempStorage(deleted, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+                    // delete returns boolean
+                    _methodBodyIR.Instructions.Add(new LIRCopyTemp(deleted, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+                case HIRIndexAccessExpression indexAccess:
+                {
+                    if (!TryLowerExpression(indexAccess.Object, out var recvTemp))
+                    {
+                        return false;
+                    }
+                    if (!TryLowerExpression(indexAccess.Index, out var indexTemp))
+                    {
+                        return false;
+                    }
+
+                    var deleted = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.DeleteItem), new[] { EnsureObject(recvTemp), EnsureObject(indexTemp) }, deleted));
+                    DefineTempStorage(deleted, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+                    _methodBodyIR.Instructions.Add(new LIRCopyTemp(deleted, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+                default:
+                    // Minimal semantics: delete of non-reference returns true.
+                    _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+            }
+        }
 
         if (!TryLowerExpression(unaryExpr.Argument, out var unaryArgTempVar))
         {

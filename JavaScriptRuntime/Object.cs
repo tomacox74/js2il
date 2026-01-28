@@ -1446,6 +1446,32 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// ECMA-262 14.7.5.9 EnumerateObjectProperties (O).
+        /// Returns a For-In Iterator object that yields enumerable property keys.
+        ///
+        /// This is mutation-aware (e.g., deletion during enumeration) and is used by the compiler's
+        /// for..in lowering.
+        /// </summary>
+        public static IJavaScriptIterator EnumerateObjectProperties(object? obj)
+        {
+            return CreateForInIterator(obj);
+        }
+
+        /// <summary>
+        /// ECMA-262 14.7.5.10.1 CreateForInIterator (object).
+        /// Returns a native iterator implementing the For-In iterator protocol.
+        /// </summary>
+        public static IJavaScriptIterator CreateForInIterator(object? obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Right-hand side of 'for...in' should be an object");
+            }
+
+            return new ForInIterator(obj);
+        }
+
+        /// <summary>
         /// Returns enumerable property keys for for..in. Minimal implementation:
         /// - ExpandoObject: own keys
         /// - Array/Int32Array/string: numeric indices as strings
@@ -1512,6 +1538,65 @@ namespace JavaScriptRuntime
             }
 
             return JavaScriptRuntime.Array.Empty;
+        }
+
+        /// <summary>
+        /// Implements the JavaScript <c>delete obj.prop</c> runtime semantics (minimal).
+        /// Returns true if the deletion succeeds or the property is not present.
+        /// </summary>
+        public static bool DeleteProperty(object? receiver, object? propName)
+        {
+            if (receiver is null || receiver is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot convert undefined or null to object");
+            }
+
+            var key = DotNet2JSConversions.ToString(propName);
+
+            if (receiver is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                dict.Remove(key);
+                return true;
+            }
+
+            if (receiver is System.Collections.IDictionary dictObj)
+            {
+                // Fast path for string-keyed dictionaries.
+                if (dictObj.Contains(key))
+                {
+                    dictObj.Remove(key);
+                    return true;
+                }
+
+                // Best-effort: find a matching key by ToString conversion.
+                object? match = null;
+                foreach (var k in dictObj.Keys)
+                {
+                    if (string.Equals(DotNet2JSConversions.ToString(k), key, StringComparison.Ordinal))
+                    {
+                        match = k;
+                        break;
+                    }
+                }
+                if (match != null)
+                {
+                    dictObj.Remove(match);
+                }
+                return true;
+            }
+
+            // Arrays/typed arrays/strings and CLR objects: deletion is a no-op in this runtime for now.
+            // (Full JS semantics for array holes and non-configurable properties are not modeled.)
+            return true;
+        }
+
+        /// <summary>
+        /// Implements the JavaScript <c>delete obj[index]</c> runtime semantics (minimal).
+        /// </summary>
+        public static bool DeleteItem(object? receiver, object? index)
+        {
+            return DeleteProperty(receiver, DotNet2JSConversions.ToString(index));
         }
 
         /// <summary>
