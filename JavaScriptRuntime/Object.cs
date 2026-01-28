@@ -286,6 +286,41 @@ namespace JavaScriptRuntime
 
         public static object GetItem(object obj, object index)
         {
+            // If the key is a Symbol (or a non-numeric string), it must be treated as a property key.
+            // The previous implementation coerced all keys to an integer index first, which caused
+            // Symbol keys (e.g. Symbol.asyncIterator) to incorrectly read index 0 on arrays.
+            if (index is Symbol)
+            {
+                var propName = ToPropertyKeyString(index);
+                if (obj is System.Dynamic.ExpandoObject expSym)
+                {
+                    var dict = (IDictionary<string, object?>)expSym;
+                    if (dict.TryGetValue(propName, out var value))
+                    {
+                        return value!;
+                    }
+                    return null!;
+                }
+
+                return GetProperty(obj, propName)!;
+            }
+
+            if (index is string sKey && !int.TryParse(sKey, out _))
+            {
+                // JS ToPropertyKey for non-index strings.
+                if (obj is System.Dynamic.ExpandoObject expStr)
+                {
+                    var dict = (IDictionary<string, object?>)expStr;
+                    if (dict.TryGetValue(sKey, out var value))
+                    {
+                        return value!;
+                    }
+                    return null!;
+                }
+
+                return GetProperty(obj, sKey)!;
+            }
+
             // Coerce index to int (JS ToInt32-ish truncation)
             int intIndex = 0;
             switch (index)
@@ -567,6 +602,126 @@ namespace JavaScriptRuntime
             }
 
             throw new JavaScriptRuntime.TypeError("Object is not iterable");
+        }
+
+        /// <summary>
+        /// Gets an async iterator for for await..of using the async iterator protocol.
+        ///
+        /// If [Symbol.asyncIterator] is not present, it falls back to [Symbol.iterator]
+        /// and wraps the sync iterator (CreateAsyncFromSyncIterator semantics).
+        /// </summary>
+        public static IJavaScriptAsyncIterator GetAsyncIterator(object? iterable)
+        {
+            if (iterable is null || iterable is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot iterate over null or undefined");
+            }
+
+            // User-defined async iterables: call obj[Symbol.asyncIterator]().
+            object? asyncIteratorMethod;
+            try
+            {
+                asyncIteratorMethod = GetItem(iterable, Symbol.asyncIterator);
+            }
+            catch
+            {
+                asyncIteratorMethod = null;
+            }
+
+            if (asyncIteratorMethod is Delegate asyncDel)
+            {
+                var previousThis = RuntimeServices.SetCurrentThis(iterable);
+                try
+                {
+                    var iteratorObj = Closure.InvokeWithArgs(asyncDel, System.Array.Empty<object>(), System.Array.Empty<object>());
+                    if (iteratorObj is null)
+                    {
+                        throw new JavaScriptRuntime.TypeError("Async iterator method returned null or undefined");
+                    }
+
+                    if (iteratorObj is IJavaScriptAsyncIterator native)
+                    {
+                        return native;
+                    }
+
+                    // If the async iterator method returns a sync iterator, it is still valid: we will await its next() result.
+                    if (iteratorObj is IJavaScriptIterator sync)
+                    {
+                        return new AsyncFromSyncIterator(sync);
+                    }
+
+                    return new AsyncDynamicIterator(iteratorObj);
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+
+            if (asyncIteratorMethod != null)
+            {
+                throw new JavaScriptRuntime.TypeError("Symbol.asyncIterator is not a function");
+            }
+
+            // Fallback: use sync iterator protocol and wrap.
+            return new AsyncFromSyncIterator(GetIterator(iterable));
+        }
+
+        /// <summary>
+        /// Advances an async iterator.
+        /// The returned value is always awaited by the compiler.
+        /// </summary>
+        public static object? AsyncIteratorNext(object iterator)
+        {
+            if (iterator is IJavaScriptAsyncIterator it)
+            {
+                return it.Next();
+            }
+
+            if (iterator is IJavaScriptIterator sync)
+            {
+                return sync.Next();
+            }
+
+            throw new JavaScriptRuntime.TypeError("Iterator is not an async iterator");
+        }
+
+        /// <summary>
+        /// Closes an async iterator on abrupt completion.
+        /// If iterator has a callable 'return' member, it is invoked.
+        ///
+        /// The returned value is always awaited by the compiler.
+        /// </summary>
+        public static object? AsyncIteratorClose(object? iterator)
+        {
+            if (iterator is null || iterator is JsNull)
+            {
+                return null;
+            }
+
+            if (iterator is IJavaScriptAsyncIterator it)
+            {
+                if (!it.HasReturn)
+                {
+                    return null;
+                }
+
+                return it.Return();
+            }
+
+            // Sync iterator: close synchronously.
+            if (iterator is IJavaScriptIterator sync)
+            {
+                if (!sync.HasReturn)
+                {
+                    return null;
+                }
+
+                sync.Return();
+                return null;
+            }
+
+            throw new JavaScriptRuntime.TypeError("Iterator is not an iterator");
         }
 
         /// <summary>
@@ -870,6 +1025,91 @@ namespace JavaScriptRuntime
                 try
                 {
                     Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+        }
+
+        private sealed class AsyncFromSyncIterator : IJavaScriptAsyncIterator
+        {
+            private readonly IJavaScriptIterator _sync;
+
+            public AsyncFromSyncIterator(IJavaScriptIterator sync)
+            {
+                _sync = sync;
+            }
+
+            public bool HasReturn => _sync.HasReturn;
+
+            public object? Next()
+            {
+                // Async-from-sync iterator semantics: next() returns a Promise resolved
+                // with the underlying sync iterator result.
+                return JavaScriptRuntime.Promise.resolve(_sync.Next());
+            }
+
+            public object? Return()
+            {
+                _sync.Return();
+                // Async iterator close awaits the return() result, so return a resolved promise.
+                return JavaScriptRuntime.Promise.resolve(null);
+            }
+        }
+
+        private sealed class AsyncDynamicIterator : IJavaScriptAsyncIterator
+        {
+            private readonly object _iterator;
+            private readonly Delegate _next;
+            private readonly object? _return;
+
+            public AsyncDynamicIterator(object iterator)
+            {
+                _iterator = iterator;
+
+                var nextMember = GetProperty(_iterator, "next");
+                if (nextMember is not Delegate nextDel)
+                {
+                    throw new JavaScriptRuntime.TypeError("Iterator.next is not a function");
+                }
+                _next = nextDel;
+
+                _return = GetProperty(_iterator, "return");
+            }
+
+            public bool HasReturn => _return != null;
+
+            public object? Next()
+            {
+                var previousThis = RuntimeServices.SetCurrentThis(_iterator);
+                try
+                {
+                    return Closure.InvokeWithArgs(_next, System.Array.Empty<object>(), System.Array.Empty<object>());
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+
+            public object? Return()
+            {
+                if (_return is null)
+                {
+                    return null;
+                }
+
+                if (_return is not Delegate del)
+                {
+                    throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
+                }
+
+                var previousThis = RuntimeServices.SetCurrentThis(_iterator);
+                try
+                {
+                    return Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
                 }
                 finally
                 {

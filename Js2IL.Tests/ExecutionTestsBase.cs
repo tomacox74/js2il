@@ -25,7 +25,11 @@ namespace Js2IL.Tests
             _validator = new JavaScriptAstValidator();
             _verifySettings.DisableDiff();
 
-            _outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", $"{testCategory}.ExecutionTests");
+            // Use a unique per-run directory to avoid file locks from in-proc AssemblyLoadContext
+            // execution causing intermittent failures when re-running tests on Windows.
+            var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
+            var runId = Guid.NewGuid().ToString("N");
+            _outputPath = Path.Combine(root, $"{testCategory}.ExecutionTests", runId);
             Directory.CreateDirectory(_outputPath);
         }
 

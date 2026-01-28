@@ -128,9 +128,14 @@
       {
         "clause": "14.1.1",
         "feature": "for await..of statement",
-        "status": "Not Yet Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-for-in-and-for-of-statements",
-        "notes": "`for await...of` is explicitly rejected by the AST validator."
+        "testScripts": [
+          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js",
+          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js",
+          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
+        ],
+        "notes": "Supported within async functions. Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose)."
       }
     ]
   }

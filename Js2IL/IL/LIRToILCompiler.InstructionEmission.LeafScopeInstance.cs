@@ -151,6 +151,18 @@ internal sealed partial class LIRToILCompiler
 
                         ilEncoder.MarkLabel(afterInitLabel);
 
+                        // Ensure we have persistent storage for variable locals and restore them on resumption.
+                        // This is required because async MoveNext re-enters the method, so IL locals are re-initialized.
+                        EmitEnsureAsyncLocalsArray(ilEncoder);
+
+                        var skipRestoreLabel = ilEncoder.DefineLabel();
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
+                        ilEncoder.LoadConstantI4(0);
+                        ilEncoder.Branch(ILOpCode.Ble_s, skipRestoreLabel);
+                        EmitRestoreVariableSlotsFromAsyncLocalsArray(ilEncoder);
+                        ilEncoder.MarkLabel(skipRestoreLabel);
+
                         // Now emit the state switch to dispatch to resume points
                         // State 0 = initial entry (fall through)
                         // State 1, 2, ... = resume points after each await

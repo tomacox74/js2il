@@ -450,7 +450,24 @@ namespace Js2IL.Services
             pe.Serialize(peImage);
 
             string assemblyDll = Path.Combine(outputPath, $"{name}.dll");
-            File.WriteAllBytes(assemblyDll, peImage.ToArray());
+
+            // In test runs (and on some machines with aggressive file scanning), the just-produced
+            // assembly can briefly be locked by another process. Retry a few times to avoid flaky
+            // failures while still surfacing a persistent lock.
+            var peBytes = peImage.ToArray();
+            const int maxAttempts = 20;
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            {
+                try
+                {
+                    File.WriteAllBytes(assemblyDll, peBytes);
+                    break;
+                }
+                catch (IOException) when (attempt < maxAttempts)
+                {
+                    Thread.Sleep(25 * attempt);
+                }
+            }
 
             RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, typeof(object).Assembly.GetName());
 

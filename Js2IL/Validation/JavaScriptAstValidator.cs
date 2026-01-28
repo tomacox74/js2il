@@ -306,11 +306,7 @@ public class JavaScriptAstValidator : IAstValidator
                     ctx.BreakableStack.Push(BreakableKind.Iteration);
                     ctx.IterationDepth++;
 
-                    if (node is ForOfStatement forOfStmt && forOfStmt.Await)
-                    {
-                        // Covered elsewhere; just ignore here.
-                    }
-                    else if (node is ForInStatement forIn)
+                    if (node is ForInStatement forIn)
                     {
                         ValidateForInOfLeft(forIn.Left, isForOf: false, result);
                     }
@@ -560,8 +556,11 @@ public class JavaScriptAstValidator : IAstValidator
             // Validate for-await-of is not yet supported
             if (node is ForOfStatement forOfStmt && forOfStmt.Await)
             {
-                result.Errors.Add($"The 'for await...of' statement is not yet supported (line {node.Location.Start.Line}). Use Promise.all() with a regular for...of loop instead.");
-                result.IsValid = false;
+                if (asyncFunctionDepth == 0)
+                {
+                    result.Errors.Add($"The 'for await...of' statement is only valid inside async functions (line {node.Location.Start.Line})");
+                    result.IsValid = false;
+                }
             }
 
             // Walk children

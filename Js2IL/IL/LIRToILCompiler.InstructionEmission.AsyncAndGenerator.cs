@@ -293,6 +293,7 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.OpCode(ILOpCode.Callvirt);
                             ilEncoder.Token(setupAwaitRef);
                         }
+
                         else
                         {
                             var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
@@ -302,6 +303,10 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.OpCode(ILOpCode.Callvirt);
                             ilEncoder.Token(setupAwaitRef);
                         }
+
+                        // Persist variable locals across the suspension.
+                        // The async continuation re-enters the method, so IL locals must be restored from scope storage.
+                        EmitSpillVariableSlotsToAsyncLocalsArray(ilEncoder);
 
                         // --- Step 3: Return _deferred.promise ---
                         // ldloc.0, ldfld _deferred, callvirt get_promise, ret
