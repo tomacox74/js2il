@@ -605,6 +605,24 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Generic overload of <see cref="GetIterator"/> for cases where the yielded value type is known.
+        ///
+        /// This is a convenience API: if the underlying iterator is not natively typed, values are
+        /// coerced/cast to <typeparamref name="T"/>.
+        /// </summary>
+        public static IJavaScriptIterator<T> GetIterator<T>(object? iterable)
+        {
+            var iterator = GetIterator(iterable);
+
+            if (iterator is IJavaScriptIterator<T> typed)
+            {
+                return typed;
+            }
+
+            return new CastIterator<T>(iterator);
+        }
+
+        /// <summary>
         /// Gets an async iterator for for await..of using the async iterator protocol.
         ///
         /// If [Symbol.asyncIterator] is not present, it falls back to [Symbol.iterator]
@@ -1030,6 +1048,66 @@ namespace JavaScriptRuntime
                 {
                     RuntimeServices.SetCurrentThis(previousThis);
                 }
+            }
+        }
+
+        private sealed class CastIterator<T> : IJavaScriptIterator<T>
+        {
+            private readonly IJavaScriptIterator _inner;
+
+            public CastIterator(IJavaScriptIterator inner)
+            {
+                _inner = inner;
+            }
+
+            public bool HasReturn => _inner.HasReturn;
+
+            public IteratorResultObject<T> Next()
+            {
+                var result = _inner.Next();
+                return new IteratorResultObject<T>(CoerceValue(result.value), result.done);
+            }
+
+            IteratorResultObject IJavaScriptIterator.Next()
+            {
+                var result = Next();
+                return new IteratorResultObject(result.value, result.done);
+            }
+
+            public void Return()
+            {
+                _inner.Return();
+            }
+
+            private static T? CoerceValue(object? value)
+            {
+                if (value is null)
+                {
+                    return default;
+                }
+
+                if (value is T direct)
+                {
+                    return direct;
+                }
+
+                // Common JS primitive coercions.
+                if (typeof(T) == typeof(double))
+                {
+                    return (T)(object)JavaScriptRuntime.TypeUtilities.ToNumber(value);
+                }
+
+                if (typeof(T) == typeof(bool))
+                {
+                    return (T)(object)JavaScriptRuntime.TypeUtilities.ToBoolean(value);
+                }
+
+                if (typeof(T) == typeof(string))
+                {
+                    return (T)(object)DotNet2JSConversions.ToString(value);
+                }
+
+                throw new JavaScriptRuntime.TypeError($"Iterator value is not a {typeof(T).Name}");
             }
         }
 
