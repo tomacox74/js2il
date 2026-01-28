@@ -62,5 +62,14 @@ namespace Js2IL.Tests.Async
 
         [Fact]
         public Task Async_Inheritance_SuperAsyncMethod() { var testName = nameof(Async_Inheritance_SuperAsyncMethod); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ForAwaitOf_Array() { var testName = nameof(Async_ForAwaitOf_Array); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ForAwaitOf_AsyncIterator_BreakCloses() { var testName = nameof(Async_ForAwaitOf_AsyncIterator_BreakCloses); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ForAwaitOf_SyncIteratorFallback_BreakCloses() { var testName = nameof(Async_ForAwaitOf_SyncIteratorFallback_BreakCloses); return ExecutionTest(testName); }
     }
 }

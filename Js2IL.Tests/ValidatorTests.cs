@@ -215,13 +215,22 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_ForAwaitOf_ReportsError()
+    public void Validate_ForAwaitOf_IsValid()
     {
         var js = "async function f() { for await (const x of []) { console.log(x); } }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void Validate_ForAwaitOf_OutsideAsync_ReportsError()
+    {
+        var js = "function f() { for await (const x of []) { console.log(x); } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("for await...of"));
+        Assert.Contains(result.Errors, e => e.Contains("for await...of") || e.Contains("only valid inside async functions"));
     }
 
     [Fact]

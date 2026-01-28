@@ -438,6 +438,20 @@ public sealed class HIRToLIRLowerer
                     count += CountAwaitExpressionsInExpression(forStmt.Update);
                 count += CountAwaitExpressionsInStatement(forStmt.Body);
                 break;
+            case HIRForOfStatement forOfStmt:
+                // for-await-of has an implicit await on IteratorNext.
+                if (forOfStmt.IsAwait)
+                {
+                    // Lowering also includes an awaited AsyncIteratorClose on abrupt completion.
+                    count += 2;
+                }
+                count += CountAwaitExpressionsInExpression(forOfStmt.Iterable);
+                count += CountAwaitExpressionsInStatement(forOfStmt.Body);
+                break;
+            case HIRForInStatement forInStmt:
+                count += CountAwaitExpressionsInExpression(forInStmt.Enumerable);
+                count += CountAwaitExpressionsInStatement(forInStmt.Body);
+                break;
             case HIRTryStatement tryStmt:
                 count += CountAwaitExpressionsInStatement(tryStmt.TryBlock);
                 if (tryStmt.CatchBody != null)
@@ -1957,6 +1971,399 @@ public sealed class HIRToLIRLowerer
 
             case Js2IL.HIR.HIRForOfStatement forOfStmt:
                 {
+                    if (forOfStmt.IsAwait)
+                    {
+                        // Desugar for await..of using async iterator protocol (ECMA-262 14.7.5.6):
+                        // iterator = Object.GetAsyncIterator(rhs)
+                        // completed = false; closed = false
+                        // try {
+                        //   while (true) {
+                        //     result = await Object.AsyncIteratorNext(iterator)
+                        //     if (ToBoolean(result.done)) break
+                        //     value = result.value
+                        //     target = value
+                        //     body
+                        //   }
+                        //   completed = true
+                        // } finally {
+                        //   // AsyncIteratorClose on abrupt completion (await return())
+                        //   if (!completed && !closed) await Object.AsyncIteratorClose(iterator)
+                        // }
+
+                        if (!_isAsync || _methodBodyIR.AsyncInfo == null || _methodBodyIR.LeafScopeId.IsNil)
+                        {
+                            return false;
+                        }
+
+                        var asyncInfo = _methodBodyIR.AsyncInfo;
+                        var scopeName = _methodBodyIR.LeafScopeId.Name;
+
+                        const string pendingExceptionField = "_pendingException";
+                        const string hasPendingExceptionField = "_hasPendingException";
+                        const string pendingReturnField = "_pendingReturnValue";
+                        const string hasPendingReturnField = "_hasPendingReturn";
+
+                        // Spec: CreatePerIterationEnvironment for for..of with lexical declarations.
+                        var perIterationBindings = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
+                            ? forOfStmt.LoopHeadBindings.Where(b => b.Kind is BindingKind.Let or BindingKind.Const).Where(b => b.IsCaptured).ToList()
+                            : new List<BindingInfo>();
+
+                        bool useTempPerIterationScope = false;
+                        TempVariable loopScopeTemp = default;
+                        ScopeId loopScopeId = default;
+                        string? loopScopeName = null;
+
+                        // Current implementation only supports the "typed temp scope" optimization for non-async methods.
+                        // Keep behavior consistent with sync for..of lowering.
+                        if (perIterationBindings.Count > 0
+                            && !_methodBodyIR.IsAsync
+                            && !_methodBodyIR.IsGenerator)
+                        {
+                            var declaringScope = perIterationBindings[0].DeclaringScope;
+                            if (declaringScope != null
+                                && declaringScope.Kind == ScopeKind.Block
+                                && perIterationBindings.All(b => b.DeclaringScope == declaringScope))
+                            {
+                                useTempPerIterationScope = true;
+                                loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);
+                                loopScopeId = new ScopeId(loopScopeName);
+
+                                loopScopeTemp = CreateTempVariable();
+                                DefineTempStorage(loopScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName));
+                                SetTempVariableSlot(loopScopeTemp, CreateAnonymousVariableSlot($"$forAwaitOf_lexenv", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: loopScopeName)));
+                                _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(loopScopeId, loopScopeTemp));
+                                _activeScopeTempsByScopeName[loopScopeName] = loopScopeTemp;
+                            }
+                        }
+
+                        try
+                        {
+                            if (!TryLowerExpression(forOfStmt.Iterable, out var rhsTemp))
+                            {
+                                return false;
+                            }
+
+                            var rhsBoxed = EnsureObject(rhsTemp);
+
+                            // iterator = Object.GetAsyncIterator(rhs)
+                            var iterTemp = CreateTempVariable();
+                            lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "GetAsyncIterator", new[] { rhsBoxed }, iterTemp));
+                            DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptAsyncIterator)));
+                            SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forAwaitOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptAsyncIterator))));
+
+                            var completedTemp = CreateTempVariable();
+                            DefineTempStorage(completedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                            SetTempVariableSlot(completedTemp, CreateAnonymousVariableSlot("$forAwaitOf_completed", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+
+                            var closedTemp = CreateTempVariable();
+                            DefineTempStorage(closedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                            SetTempVariableSlot(closedTemp, CreateAnonymousVariableSlot("$forAwaitOf_closed", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+
+                            var falseTemp = CreateTempVariable();
+                            lirInstructions.Add(new LIRConstBoolean(false, falseTemp));
+                            DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                            lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
+                            lirInstructions.Add(new LIRCopyTemp(falseTemp, closedTemp));
+
+                            var trueTemp = CreateTempVariable();
+                            lirInstructions.Add(new LIRConstBoolean(true, trueTemp));
+                            DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+                            // Synthetic labels used by the async state machine.
+                            var afterTryLabel = CreateLabel();
+                            var finallyEntryLabel = CreateLabel();
+                            var finallyExitLabel = CreateLabel();
+
+                            // Rejection/exception routing labels (used as resume targets for await rejection).
+                            var exceptionToFinallyStateId = asyncInfo.AllocateResumeStateId();
+                            var exceptionToFinallyLabel = CreateLabel();
+                            asyncInfo.RegisterResumeLabel(exceptionToFinallyStateId, exceptionToFinallyLabel);
+
+                            var exceptionInFinallyStateId = asyncInfo.AllocateResumeStateId();
+                            var exceptionInFinallyLabel = CreateLabel();
+                            asyncInfo.RegisterResumeLabel(exceptionInFinallyStateId, exceptionInFinallyLabel);
+
+                            // Reset pending completion fields on entry.
+                            {
+                                var nullTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRConstNull(nullTemp));
+                                DefineTempStorage(nullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, nullTemp));
+                                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingReturnField, nullTemp));
+
+                                var resetFalseTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, resetFalseTemp));
+                                DefineTempStorage(resetFalseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, resetFalseTemp));
+                                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingReturnField, resetFalseTemp));
+                            }
+
+                            int loopStartLabel = CreateLabel();
+                            int loopUpdateLabel = CreateLabel();
+                            int breakCleanupLabel = CreateLabel();
+                            int normalCompleteLabel = CreateLabel();
+
+                            _controlFlowStack.Push(new ControlFlowContext(breakCleanupLabel, loopUpdateLabel, forOfStmt.Label));
+                            _asyncTryFinallyStack.Push(new AsyncTryFinallyContext(
+                                FinallyEntryLabelId: finallyEntryLabel,
+                                FinallyExitLabelId: finallyExitLabel,
+                                PendingExceptionFieldName: pendingExceptionField,
+                                HasPendingExceptionFieldName: hasPendingExceptionField,
+                                PendingReturnFieldName: pendingReturnField,
+                                HasPendingReturnFieldName: hasPendingReturnField,
+                                IsInFinally: false));
+                            _asyncTryCatchStack.Push(new AsyncTryCatchContext(
+                                CatchStateId: exceptionToFinallyStateId,
+                                CatchLabelId: exceptionToFinallyLabel,
+                                PendingExceptionFieldName: pendingExceptionField));
+                            try
+                            {
+                                // Loop start
+                                lirInstructions.Add(new LIRLabel(loopStartLabel));
+
+                                // awaitedNext = await Object.AsyncIteratorNext(iterator)
+                                var nextCallTemp = CreateTempVariable();
+                                lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "AsyncIteratorNext", new[] { EnsureObject(iterTemp) }, nextCallTemp));
+                                DefineTempStorage(nextCallTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                                // Emit await of nextCallTemp
+                                var awaitId = asyncInfo.AllocateAwaitId();
+                                var resumeStateId = asyncInfo.AllocateResumeStateId();
+                                var resumeLabelId = CreateLabel();
+                                var iterResult = CreateTempVariable();
+                                DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                asyncInfo.AwaitPoints.Add(new AwaitPointInfo
+                                {
+                                    AwaitId = awaitId,
+                                    ResumeStateId = resumeStateId,
+                                    ResumeLabelId = resumeLabelId,
+                                    ResultTemp = iterResult
+                                });
+                                asyncInfo.RegisterResumeLabel(resumeStateId, resumeLabelId);
+
+                                int? rejectStateId = null;
+                                string? rejectPendingExceptionField = null;
+                                if (_asyncTryCatchStack.Count > 0)
+                                {
+                                    var ctx = _asyncTryCatchStack.Peek();
+                                    rejectStateId = ctx.CatchStateId;
+                                    rejectPendingExceptionField = ctx.PendingExceptionFieldName;
+                                }
+
+                                _methodBodyIR.Instructions.Add(new LIRAwait(
+                                    nextCallTemp,
+                                    awaitId,
+                                    resumeStateId,
+                                    resumeLabelId,
+                                    iterResult,
+                                    rejectStateId,
+                                    rejectPendingExceptionField));
+
+                                // done = Object.IteratorResultDone(result)
+                                var doneBool = CreateTempVariable();
+                                lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "IteratorResultDone", new[] { EnsureObject(iterResult) }, doneBool));
+                                DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                                lirInstructions.Add(new LIRBranchIfTrue(doneBool, normalCompleteLabel));
+
+                                // value = Object.IteratorResultValue(result)
+                                var itemTemp = CreateTempVariable();
+                                lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "IteratorResultValue", new[] { EnsureObject(iterResult) }, itemTemp));
+                                DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                                var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
+                                    ? DestructuringWriteMode.ForDeclarationBindingInitialization
+                                    : DestructuringWriteMode.Assignment;
+
+                                if (!TryLowerDestructuringPattern(forOfStmt.Target, itemTemp, writeMode, sourceNameForError: null))
+                                {
+                                    return false;
+                                }
+
+                                if (!TryLowerStatement(forOfStmt.Body))
+                                {
+                                    return false;
+                                }
+
+                                // Continue target
+                                lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+                                if (useTempPerIterationScope)
+                                {
+                                    EmitRecreatePerIterationScopeFromTemp(loopScopeTemp, loopScopeId, loopScopeName!, perIterationBindings);
+                                }
+                                lirInstructions.Add(new LIRBranch(loopStartLabel));
+
+                                // Break target: exit via finally (which performs AsyncIteratorClose on abrupt completion).
+                                lirInstructions.Add(new LIRLabel(breakCleanupLabel));
+                                _methodBodyIR.Instructions.Add(new LIRBranch(finallyEntryLabel));
+
+                                // Normal completion: mark completed then exit via finally.
+                                lirInstructions.Add(new LIRLabel(normalCompleteLabel));
+                                lirInstructions.Add(new LIRCopyTemp(trueTemp, completedTemp));
+                                _methodBodyIR.Instructions.Add(new LIRBranch(finallyEntryLabel));
+                            }
+                            finally
+                            {
+                                _asyncTryCatchStack.Pop();
+                                _asyncTryFinallyStack.Pop();
+                                _controlFlowStack.Pop();
+                            }
+
+                            // --- Exception path into finally (synthetic; used for await rejection / throw) ---
+                            _methodBodyIR.Instructions.Add(new LIRLabel(exceptionToFinallyLabel));
+                            {
+                                var setHasExTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, setHasExTemp));
+                                DefineTempStorage(setHasExTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, setHasExTemp));
+
+                                var clearHasReturnTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, clearHasReturnTemp));
+                                DefineTempStorage(clearHasReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingReturnField, clearHasReturnTemp));
+
+                                _methodBodyIR.Instructions.Add(new LIRBranch(finallyEntryLabel));
+                            }
+
+                            // --- Finally block ---
+                            _methodBodyIR.Instructions.Add(new LIRLabel(finallyEntryLabel));
+                            _asyncTryFinallyStack.Push(new AsyncTryFinallyContext(
+                                FinallyEntryLabelId: finallyEntryLabel,
+                                FinallyExitLabelId: finallyExitLabel,
+                                PendingExceptionFieldName: pendingExceptionField,
+                                HasPendingExceptionFieldName: hasPendingExceptionField,
+                                PendingReturnFieldName: pendingReturnField,
+                                HasPendingReturnFieldName: hasPendingReturnField,
+                                IsInFinally: true));
+                            _asyncTryCatchStack.Push(new AsyncTryCatchContext(
+                                CatchStateId: exceptionInFinallyStateId,
+                                CatchLabelId: exceptionInFinallyLabel,
+                                PendingExceptionFieldName: pendingExceptionField));
+                            try
+                            {
+                                int finallySkipClose = CreateLabel();
+                                _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(completedTemp, finallySkipClose));
+                                _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(closedTemp, finallySkipClose));
+
+                                // Await Object.AsyncIteratorClose(iterator)
+                                _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, closedTemp));
+                                var closeCallTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Object", "AsyncIteratorClose", new[] { EnsureObject(iterTemp) }, closeCallTemp));
+                                DefineTempStorage(closeCallTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                                var finallyAwaitId = asyncInfo.AllocateAwaitId();
+                                var finallyResumeStateId = asyncInfo.AllocateResumeStateId();
+                                var finallyResumeLabelId = CreateLabel();
+                                var finallyCloseResultTemp = CreateTempVariable();
+                                DefineTempStorage(finallyCloseResultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                asyncInfo.AwaitPoints.Add(new AwaitPointInfo
+                                {
+                                    AwaitId = finallyAwaitId,
+                                    ResumeStateId = finallyResumeStateId,
+                                    ResumeLabelId = finallyResumeLabelId,
+                                    ResultTemp = finallyCloseResultTemp
+                                });
+                                asyncInfo.RegisterResumeLabel(finallyResumeStateId, finallyResumeLabelId);
+
+                                int? finallyRejectStateId = null;
+                                string? finallyRejectPendingExceptionField = null;
+                                if (_asyncTryCatchStack.Count > 0)
+                                {
+                                    var ctx = _asyncTryCatchStack.Peek();
+                                    finallyRejectStateId = ctx.CatchStateId;
+                                    finallyRejectPendingExceptionField = ctx.PendingExceptionFieldName;
+                                }
+
+                                _methodBodyIR.Instructions.Add(new LIRAwait(
+                                    closeCallTemp,
+                                    finallyAwaitId,
+                                    finallyResumeStateId,
+                                    finallyResumeLabelId,
+                                    finallyCloseResultTemp,
+                                    finallyRejectStateId,
+                                    finallyRejectPendingExceptionField));
+
+                                _methodBodyIR.Instructions.Add(new LIRLabel(finallySkipClose));
+                                _methodBodyIR.Instructions.Add(new LIRBranch(finallyExitLabel));
+                            }
+                            finally
+                            {
+                                _asyncTryCatchStack.Pop();
+                                _asyncTryFinallyStack.Pop();
+                            }
+
+                            // --- Exception inside finally overrides prior completion ---
+                            _methodBodyIR.Instructions.Add(new LIRLabel(exceptionInFinallyLabel));
+                            {
+                                var setHasExTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, setHasExTemp));
+                                DefineTempStorage(setHasExTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, setHasExTemp));
+
+                                var clearHasReturnTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, clearHasReturnTemp));
+                                DefineTempStorage(clearHasReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingReturnField, clearHasReturnTemp));
+
+                                _methodBodyIR.Instructions.Add(new LIRBranch(finallyExitLabel));
+                            }
+
+                            // --- After finally: dispatch based on completion ---
+                            _methodBodyIR.Instructions.Add(new LIRLabel(finallyExitLabel));
+
+                            var checkReturnLabel = CreateLabel();
+                            {
+                                var hasExTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, hasPendingExceptionField, hasExTemp));
+                                DefineTempStorage(hasExTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                                SetTempVariableSlot(hasExTemp, CreateAnonymousVariableSlot("$forAwaitOf_hasEx", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+
+                                _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasExTemp, checkReturnLabel));
+
+                                var exTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingExceptionField, exTemp));
+                                DefineTempStorage(exTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                                if (_asyncTryCatchStack.Count > 0)
+                                {
+                                    var outer = _asyncTryCatchStack.Peek();
+                                    _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, outer.PendingExceptionFieldName, exTemp));
+                                    _methodBodyIR.Instructions.Add(new LIRBranch(outer.CatchLabelId));
+                                }
+                                else
+                                {
+                                    _methodBodyIR.Instructions.Add(new LIRAsyncReject(exTemp));
+                                }
+                            }
+
+                            _methodBodyIR.Instructions.Add(new LIRLabel(checkReturnLabel));
+                            {
+                                var hasReturnTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, hasPendingReturnField, hasReturnTemp));
+                                DefineTempStorage(hasReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                                SetTempVariableSlot(hasReturnTemp, CreateAnonymousVariableSlot("$forAwaitOf_hasReturn", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+
+                                _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasReturnTemp, afterTryLabel));
+
+                                var retTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingReturnField, retTemp));
+                                DefineTempStorage(retTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                _methodBodyIR.Instructions.Add(new LIRReturn(retTemp));
+                            }
+
+                            _methodBodyIR.Instructions.Add(new LIRLabel(afterTryLabel));
+                            return true;
+                        }
+                        finally
+                        {
+                            if (useTempPerIterationScope && loopScopeName != null)
+                            {
+                                _activeScopeTempsByScopeName.Remove(loopScopeName);
+                            }
+                        }
+                    }
+
+                    else
+                    {
                     // Desugar for..of using iterator protocol (ECMA-262 14.7.5.5-.7):
                     // iterator = Object.GetIterator(rhs)
                     // try {
@@ -2154,6 +2561,8 @@ public sealed class HIRToLIRLowerer
                         }
                     }
                 }
+
+                    }
 
             case Js2IL.HIR.HIRForInStatement forInStmt:
                 {
@@ -3649,7 +4058,14 @@ public sealed class HIRToLIRLowerer
                                 if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                                 {
                                     resultTempVar = CreateTempVariable();
-                                    _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, resultTempVar));
+                                    var parentIndex = storage.ParentScopeIndex;
+                                    if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
+                                        || (_methodBodyIR.IsGenerator && (_methodBodyIR.GeneratorInfo?.YieldPointCount ?? 0) > 0))
+                                    {
+                                        // Resumables prepend leaf scope at scopes[0], shifting parents right by one.
+                                        parentIndex += 1;
+                                    }
+                                    _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, resultTempVar));
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                                     return true;
                                 }
@@ -6557,7 +6973,15 @@ public sealed class HIRToLIRLowerer
                         {
                             return false;
                         }
-                        _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, updateStorage.ParentScopeIndex, updatedBoxed));
+                        {
+                            var parentIndex = updateStorage.ParentScopeIndex;
+                            if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
+                                || (_methodBodyIR.IsGenerator && (_methodBodyIR.GeneratorInfo?.YieldPointCount ?? 0) > 0))
+                            {
+                                parentIndex += 1;
+                            }
+                            _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, parentIndex, updatedBoxed));
+                        }
                         break;
 
                     default:
@@ -6780,7 +7204,15 @@ public sealed class HIRToLIRLowerer
                         if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                         {
                             var boxedValue = EnsureObject(valueToStore);
-                            lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, boxedValue));
+                            {
+                                var parentIndex = storage.ParentScopeIndex;
+                                if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
+                                    || (_methodBodyIR.IsGenerator && (_methodBodyIR.GeneratorInfo?.YieldPointCount ?? 0) > 0))
+                                {
+                                    parentIndex += 1;
+                                }
+                                lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, boxedValue));
+                            }
                             _variableMap[binding] = boxedValue;
                             storedValue = boxedValue;
                             return true;
@@ -7057,7 +7489,15 @@ public sealed class HIRToLIRLowerer
                         if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                         {
                             var boxedValue = EnsureObject(valueToStore);
-                            lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, boxedValue));
+                            {
+                                var parentIndex = storage.ParentScopeIndex;
+                                if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
+                                    || (_methodBodyIR.IsGenerator && (_methodBodyIR.GeneratorInfo?.YieldPointCount ?? 0) > 0))
+                                {
+                                    parentIndex += 1;
+                                }
+                                lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, boxedValue));
+                            }
                             // Also update SSA map for subsequent reads, mirroring leaf-scope behavior
                             _variableMap[binding] = boxedValue;
                             resultTempVar = boxedValue;

@@ -8,6 +8,7 @@ public sealed class HIRForOfStatement : HIRStatement
         HIRPattern target,
         bool isDeclaration,
         BindingKind declarationKind,
+        bool isAwait,
         IReadOnlyList<BindingInfo> loopHeadBindings,
         HIRExpression iterable,
         HIRStatement body,
@@ -16,6 +17,7 @@ public sealed class HIRForOfStatement : HIRStatement
         Target = target;
         IsDeclaration = isDeclaration;
         DeclarationKind = declarationKind;
+        IsAwait = isAwait;
         LoopHeadBindings = loopHeadBindings;
         Iterable = iterable;
         Body = body;
@@ -25,6 +27,7 @@ public sealed class HIRForOfStatement : HIRStatement
     public HIRPattern Target { get; }
     public bool IsDeclaration { get; }
     public BindingKind DeclarationKind { get; }
+    public bool IsAwait { get; }
     public IReadOnlyList<BindingInfo> LoopHeadBindings { get; }
     public HIRExpression Iterable { get; }
     public HIRStatement Body { get; }

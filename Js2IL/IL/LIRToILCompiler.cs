@@ -158,6 +158,7 @@ internal sealed partial class LIRToILCompiler
             "_asyncState" => typeof(int),
             "_deferred" => typeof(JavaScriptRuntime.PromiseWithResolvers),
             "_moveNext" => typeof(object),
+            "_locals" => typeof(object[]),
             "_pendingException" => typeof(object),
             "_hasPendingException" => typeof(bool),
             "_pendingReturnValue" => typeof(object),
@@ -168,6 +169,7 @@ internal sealed partial class LIRToILCompiler
         return fieldName is "_asyncState"
             or "_deferred"
             or "_moveNext"
+            or "_locals"
             or "_pendingException"
             or "_hasPendingException"
             or "_pendingReturnValue"

@@ -889,7 +889,7 @@ class HIRMethodBuilder
                     }
 
                     _currentScope = previousForOfScope;
-                    hirStatement = new HIRForOfStatement(targetPattern!, isDeclaration, declarationKind, loopHeadBindings, iterableExpr!, bodyStmt!);
+                    hirStatement = new HIRForOfStatement(targetPattern!, isDeclaration, declarationKind, forOfStmt.Await, loopHeadBindings, iterableExpr!, bodyStmt!);
                     return true;
                 }
 
@@ -1076,7 +1076,7 @@ class HIRMethodBuilder
                     hirStatement = labeledBody switch
                     {
                         HIRForStatement forStmt => new HIRForStatement(forStmt.Init, forStmt.Test, forStmt.Update, forStmt.Body, labelName),
-                        HIRForOfStatement forOfStmt => new HIRForOfStatement(forOfStmt.Target, forOfStmt.IsDeclaration, forOfStmt.DeclarationKind, forOfStmt.LoopHeadBindings, forOfStmt.Iterable, forOfStmt.Body, labelName),
+                        HIRForOfStatement forOfStmt => new HIRForOfStatement(forOfStmt.Target, forOfStmt.IsDeclaration, forOfStmt.DeclarationKind, forOfStmt.IsAwait, forOfStmt.LoopHeadBindings, forOfStmt.Iterable, forOfStmt.Body, labelName),
                         HIRForInStatement forInStmt => new HIRForInStatement(forInStmt.Target, forInStmt.IsDeclaration, forInStmt.DeclarationKind, forInStmt.LoopHeadBindings, forInStmt.Enumerable, forInStmt.Body, labelName),
                         HIRWhileStatement whileStmt => new HIRWhileStatement(whileStmt.Test, whileStmt.Body, labelName),
                         HIRDoWhileStatement dws => new HIRDoWhileStatement(dws.Body, dws.Test, labelName),

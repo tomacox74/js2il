@@ -1676,6 +1676,14 @@ namespace Js2IL.SymbolTables
                 count = 1;
             }
 
+            // for-await-of introduces implicit awaits:
+            //  - await IteratorNext(nextResult)
+            //  - await AsyncIteratorClose(return()) on abrupt completion
+            if (node is ForOfStatement forOf && forOf.Await)
+            {
+                count += 2;
+            }
+
             // Don't descend into nested functions - they have their own await counts
             if (node is FunctionDeclaration || node is FunctionExpression || node is ArrowFunctionExpression)
             {

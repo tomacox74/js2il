@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-do/while/for loops are supported including break/continue (with labels). for..in and for..of are implemented for common cases but do not provide full spec iterator/enumeration fidelity for all exotic objects/iterables. for await..of is rejected by the validator.
+do/while/for loops are supported including break/continue (with labels). for..in and for..of are implemented for common cases but do not provide full spec iterator/enumeration fidelity for all exotic objects/iterables. for await..of is supported in async functions.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -91,7 +91,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| for await..of | Not Yet Supported |  | Rejected by Js2IL.Validation.JavaScriptAstValidator (ForOfStatement.Await). |
+| for await..of | Supported | [`Async_ForAwaitOf_Array.js`](../../../Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) | Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose), including awaiting AsyncIteratorClose on abrupt completion (break/throw/return). |
 
 ### 14.7.5.7 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forin-div-ofbodyevaluation-lhs-stmt-iterator-lhskind-labelset))
 

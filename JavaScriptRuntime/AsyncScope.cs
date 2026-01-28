@@ -1,6 +1,7 @@
 namespace JavaScriptRuntime;
 
 using System.Reflection;
+using System;
 
 public class AsyncScope : IAsyncScope
 {
@@ -13,6 +14,10 @@ public class AsyncScope : IAsyncScope
     public int _asyncState;
     public PromiseWithResolvers? _deferred;
     public object? _moveNext;
+
+    // Persistent storage for compiler-generated IL locals that must survive across awaits.
+    // Indexed by MethodBodyIR variable slot.
+    public object?[]? _locals;
 
     // Async try/finally completion tracking
     public object? _pendingException;
@@ -53,6 +58,20 @@ public class AsyncScope : IAsyncScope
         string resultFieldName,
         object? moveNext)
     {
+        if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+        {
+            try
+            {
+                var promiseState = awaited is Promise debugPromise
+                    ? debugPromise.GetType().GetField("_state", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(debugPromise)?.ToString()
+                    : null;
+                System.Console.Error.WriteLine($"[js2il] await setup: awaited={awaited?.GetType().FullName ?? "null"}, promiseState={promiseState ?? "n/a"}, resultField={resultFieldName}");
+            }
+            catch
+            {
+            }
+        }
+
         // Wrap in Promise.resolve() per ECMA-262
         var promise = awaited is Promise p ? p : (Promise)Promise.resolve(awaited)!;
 
@@ -89,6 +108,20 @@ public class AsyncScope : IAsyncScope
         int rejectStateId,
         string pendingExceptionFieldName)
     {
+        if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+        {
+            try
+            {
+                var promiseState = awaited is Promise debugPromise
+                    ? debugPromise.GetType().GetField("_state", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(debugPromise)?.ToString()
+                    : null;
+                System.Console.Error.WriteLine($"[js2il] await setup(reject->{rejectStateId}): awaited={awaited?.GetType().FullName ?? "null"}, promiseState={promiseState ?? "n/a"}, resultField={resultFieldName}, pendingField={pendingExceptionFieldName}");
+            }
+            catch
+            {
+            }
+        }
+
         var promise = awaited is Promise p ? p : (Promise)Promise.resolve(awaited)!;
 
         var scopeType = GetType();
@@ -127,6 +160,17 @@ public class AsyncScope : IAsyncScope
             var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
             try
             {
+                if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        System.Console.Error.WriteLine($"[js2il] await fulfilled: value={value} ({value?.GetType().FullName ?? "null"}), resultField={(resultField?.Name ?? "<none>")}, moveNextType={(moveNext?.GetType().FullName ?? "null")}");
+                    }
+                    catch
+                    {
+                    }
+                }
+
                 // Store the awaited value to the result field if specified
                 resultField?.SetValue(scope, value);
 
@@ -155,6 +199,18 @@ public class AsyncScope : IAsyncScope
             var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
             try
             {
+                if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        System.Console.Error.WriteLine($"[js2il] await rejected -> state {rejectStateId}: {reason} ({reason?.GetType().FullName ?? "null"})");
+                    }
+                    catch
+                    {
+                        // Best-effort debugging only.
+                    }
+                }
+
                 pendingField.SetValue(scope, reason);
                 ((IAsyncScope)scope).AsyncState = rejectStateId;
                 InvokeMoveNext(moveNext, scopesArray);
@@ -174,6 +230,17 @@ public class AsyncScope : IAsyncScope
         {
             throw new InvalidOperationException(
                 "Cannot resume async function: _moveNext is null. The async function closure was not properly initialized.");
+        }
+
+        if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+        {
+            try
+            {
+                System.Console.Error.WriteLine($"[js2il] invoking MoveNext: {moveNext.GetType().FullName}");
+            }
+            catch
+            {
+            }
         }
 
         if (moveNext is Func<object[], object> fn)
