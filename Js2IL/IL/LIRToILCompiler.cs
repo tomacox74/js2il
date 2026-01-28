@@ -155,58 +155,58 @@ internal sealed partial class LIRToILCompiler
     {
         fieldClrType = fieldName switch
         {
-            "_asyncState" => typeof(int),
-            "_deferred" => typeof(JavaScriptRuntime.PromiseWithResolvers),
-            "_moveNext" => typeof(object),
-            "_locals" => typeof(object[]),
-            "_pendingException" => typeof(object),
-            "_hasPendingException" => typeof(bool),
-            "_pendingReturnValue" => typeof(object),
-            "_hasPendingReturn" => typeof(bool),
+            nameof(JavaScriptRuntime.AsyncScope._asyncState) => typeof(int),
+            nameof(JavaScriptRuntime.AsyncScope._deferred) => typeof(JavaScriptRuntime.PromiseWithResolvers),
+            nameof(JavaScriptRuntime.AsyncScope._moveNext) => typeof(object),
+            nameof(JavaScriptRuntime.AsyncScope._locals) => typeof(object[]),
+            nameof(JavaScriptRuntime.AsyncScope._pendingException) => typeof(object),
+            nameof(JavaScriptRuntime.AsyncScope._hasPendingException) => typeof(bool),
+            nameof(JavaScriptRuntime.AsyncScope._pendingReturnValue) => typeof(object),
+            nameof(JavaScriptRuntime.AsyncScope._hasPendingReturn) => typeof(bool),
             _ => typeof(object)
         };
 
-        return fieldName is "_asyncState"
-            or "_deferred"
-            or "_moveNext"
-            or "_locals"
-            or "_pendingException"
-            or "_hasPendingException"
-            or "_pendingReturnValue"
-            or "_hasPendingReturn";
+        return fieldName is nameof(JavaScriptRuntime.AsyncScope._asyncState)
+            or nameof(JavaScriptRuntime.AsyncScope._deferred)
+            or nameof(JavaScriptRuntime.AsyncScope._moveNext)
+            or nameof(JavaScriptRuntime.AsyncScope._locals)
+            or nameof(JavaScriptRuntime.AsyncScope._pendingException)
+            or nameof(JavaScriptRuntime.AsyncScope._hasPendingException)
+            or nameof(JavaScriptRuntime.AsyncScope._pendingReturnValue)
+            or nameof(JavaScriptRuntime.AsyncScope._hasPendingReturn);
     }
 
     private static bool TryGetGeneratorScopeBaseFieldClrType(string fieldName, out Type fieldClrType)
     {
         fieldClrType = fieldName switch
         {
-            "_genState" => typeof(int),
-            "_started" => typeof(bool),
-            "_done" => typeof(bool),
-            "_resumeValue" => typeof(object),
-            "_resumeException" => typeof(object),
-            "_hasResumeException" => typeof(bool),
-            "_returnValue" => typeof(object),
-            "_hasReturn" => typeof(bool),
-            "_yieldStarMode" => typeof(double),
-            "_yieldStarTarget" => typeof(object),
-            "_yieldStarIndex" => typeof(double),
-            "_yieldStarLength" => typeof(double),
+            nameof(JavaScriptRuntime.GeneratorScope._genState) => typeof(int),
+            nameof(JavaScriptRuntime.GeneratorScope._started) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._done) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._resumeValue) => typeof(object),
+            nameof(JavaScriptRuntime.GeneratorScope._resumeException) => typeof(object),
+            nameof(JavaScriptRuntime.GeneratorScope._hasResumeException) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._returnValue) => typeof(object),
+            nameof(JavaScriptRuntime.GeneratorScope._hasReturn) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode) => typeof(double),
+            nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget) => typeof(object),
+            nameof(JavaScriptRuntime.GeneratorScope._yieldStarIndex) => typeof(double),
+            nameof(JavaScriptRuntime.GeneratorScope._yieldStarLength) => typeof(double),
             _ => typeof(object)
         };
 
-        return fieldName is "_genState"
-            or "_started"
-            or "_done"
-            or "_resumeValue"
-            or "_resumeException"
-            or "_hasResumeException"
-            or "_returnValue"
-            or "_hasReturn"
-            or "_yieldStarMode"
-            or "_yieldStarTarget"
-            or "_yieldStarIndex"
-            or "_yieldStarLength";
+        return fieldName is nameof(JavaScriptRuntime.GeneratorScope._genState)
+            or nameof(JavaScriptRuntime.GeneratorScope._started)
+            or nameof(JavaScriptRuntime.GeneratorScope._done)
+            or nameof(JavaScriptRuntime.GeneratorScope._resumeValue)
+            or nameof(JavaScriptRuntime.GeneratorScope._resumeException)
+            or nameof(JavaScriptRuntime.GeneratorScope._hasResumeException)
+            or nameof(JavaScriptRuntime.GeneratorScope._returnValue)
+            or nameof(JavaScriptRuntime.GeneratorScope._hasReturn)
+            or nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode)
+            or nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget)
+            or nameof(JavaScriptRuntime.GeneratorScope._yieldStarIndex)
+            or nameof(JavaScriptRuntime.GeneratorScope._yieldStarLength);
     }
 
     private bool TryResolveAsyncScopeBaseFieldToken(string fieldName, out EntityHandle token)

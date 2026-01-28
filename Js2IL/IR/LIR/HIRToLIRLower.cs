@@ -217,7 +217,7 @@ public sealed class HIRToLIRLowerer
 
         // if (_started) goto afterInit;
         var startedTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_started", startedTemp));
+        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._started), startedTemp));
         DefineTempStorage(startedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
         SetTempVariableSlot(startedTemp, CreateAnonymousVariableSlot("$gen_started", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(startedTemp, afterInitLabel));
@@ -242,7 +242,7 @@ public sealed class HIRToLIRLowerer
         var trueTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, trueTemp));
         DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_started", trueTemp));
+        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._started), trueTemp));
 
         _methodBodyIR.Instructions.Add(new LIRLabel(afterInitLabel));
         return true;
@@ -1998,10 +1998,10 @@ public sealed class HIRToLIRLowerer
                         var asyncInfo = _methodBodyIR.AsyncInfo;
                         var scopeName = _methodBodyIR.LeafScopeId.Name;
 
-                        const string pendingExceptionField = "_pendingException";
-                        const string hasPendingExceptionField = "_hasPendingException";
-                        const string pendingReturnField = "_pendingReturnValue";
-                        const string hasPendingReturnField = "_hasPendingReturn";
+                        const string pendingExceptionField = nameof(JavaScriptRuntime.AsyncScope._pendingException);
+                        const string hasPendingExceptionField = nameof(JavaScriptRuntime.AsyncScope._hasPendingException);
+                        const string pendingReturnField = nameof(JavaScriptRuntime.AsyncScope._pendingReturnValue);
+                        const string hasPendingReturnField = nameof(JavaScriptRuntime.AsyncScope._hasPendingReturn);
 
                         // Spec: CreatePerIterationEnvironment for for..of with lexical declarations.
                         var perIterationBindings = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
@@ -2047,7 +2047,7 @@ public sealed class HIRToLIRLowerer
 
                             // iterator = Object.GetAsyncIterator(rhs)
                             var iterTemp = CreateTempVariable();
-                            lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "GetAsyncIterator", new[] { rhsBoxed }, iterTemp));
+                            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetAsyncIterator), new[] { rhsBoxed }, iterTemp));
                             DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptAsyncIterator)));
                             SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forAwaitOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptAsyncIterator))));
 
@@ -2123,7 +2123,7 @@ public sealed class HIRToLIRLowerer
 
                                 // awaitedNext = await Object.AsyncIteratorNext(iterator)
                                 var nextCallTemp = CreateTempVariable();
-                                lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "AsyncIteratorNext", new[] { EnsureObject(iterTemp) }, nextCallTemp));
+                                lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.AsyncIteratorNext), new[] { EnsureObject(iterTemp) }, nextCallTemp));
                                 DefineTempStorage(nextCallTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                                 // Emit await of nextCallTemp
@@ -2161,13 +2161,13 @@ public sealed class HIRToLIRLowerer
 
                                 // done = Object.IteratorResultDone(result)
                                 var doneBool = CreateTempVariable();
-                                lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "IteratorResultDone", new[] { EnsureObject(iterResult) }, doneBool));
+                                lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
                                 DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                                 lirInstructions.Add(new LIRBranchIfTrue(doneBool, normalCompleteLabel));
 
                                 // value = Object.IteratorResultValue(result)
                                 var itemTemp = CreateTempVariable();
-                                lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "IteratorResultValue", new[] { EnsureObject(iterResult) }, itemTemp));
+                                lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
                                 DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                                 var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
@@ -2247,7 +2247,7 @@ public sealed class HIRToLIRLowerer
                                 // Await Object.AsyncIteratorClose(iterator)
                                 _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, closedTemp));
                                 var closeCallTemp = CreateTempVariable();
-                                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Object", "AsyncIteratorClose", new[] { EnsureObject(iterTemp) }, closeCallTemp));
+                                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.AsyncIteratorClose), new[] { EnsureObject(iterTemp) }, closeCallTemp));
                                 DefineTempStorage(closeCallTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                                 var finallyAwaitId = asyncInfo.AllocateAwaitId();
@@ -2421,7 +2421,7 @@ public sealed class HIRToLIRLowerer
 
                         // iterator = Object.GetIterator(rhs)
                         var iterTemp = CreateTempVariable();
-                        lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "GetIterator", new[] { rhsBoxed }, iterTemp));
+                        lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetIterator), new[] { rhsBoxed }, iterTemp));
                         DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
                         // NOTE: temp-local allocation is linear and does not account for loop back-edges.
                         // Pin loop-carry temps to stable variable slots so values remain correct across iterations.
@@ -2475,18 +2475,18 @@ public sealed class HIRToLIRLowerer
 
                             // result = Object.IteratorNext(iterator)
                             var iterResult = CreateTempVariable();
-                            lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "IteratorNext", new[] { EnsureObject(iterTemp) }, iterResult));
+                            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
                             DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                             // done = Object.IteratorResultDone(result)
                             var doneBool = CreateTempVariable();
-                            lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "IteratorResultDone", new[] { EnsureObject(iterResult) }, doneBool));
+                            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
                             DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                             lirInstructions.Add(new LIRBranchIfTrue(doneBool, normalCompleteLabel));
 
                             // value = Object.IteratorResultValue(result)
                             var itemTemp = CreateTempVariable();
-                            lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "IteratorResultValue", new[] { EnsureObject(iterResult) }, itemTemp));
+                            lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
                             DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                             var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
@@ -2619,7 +2619,7 @@ public sealed class HIRToLIRLowerer
                         var rhsBoxed = EnsureObject(rhsTemp);
 
                     var keysTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "GetEnumerableKeys", new[] { rhsBoxed }, keysTemp));
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetEnumerableKeys), new[] { rhsBoxed }, keysTemp));
                     DefineTempStorage(keysTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     // Pin loop-carry temps to stable variable slots (see note in for..of lowering).
                     SetTempVariableSlot(keysTemp, CreateAnonymousVariableSlot("$forIn_keys", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
@@ -2960,7 +2960,7 @@ public sealed class HIRToLIRLowerer
 
         var asyncInfo = _methodBodyIR.AsyncInfo;
         var scopeName = _methodBodyIR.LeafScopeId.Name;
-        const string pendingExceptionField = "_pendingException";
+        const string pendingExceptionField = nameof(JavaScriptRuntime.AsyncScope._pendingException);
 
         var catchStateId = asyncInfo.AllocateResumeStateId();
         var catchLabel = CreateLabel();
@@ -3033,10 +3033,10 @@ public sealed class HIRToLIRLowerer
         var asyncInfo = _methodBodyIR.AsyncInfo;
         var scopeName = _methodBodyIR.LeafScopeId.Name;
 
-        const string pendingExceptionField = "_pendingException";
-        const string hasPendingExceptionField = "_hasPendingException";
-        const string pendingReturnField = "_pendingReturnValue";
-        const string hasPendingReturnField = "_hasPendingReturn";
+        const string pendingExceptionField = nameof(JavaScriptRuntime.AsyncScope._pendingException);
+        const string hasPendingExceptionField = nameof(JavaScriptRuntime.AsyncScope._hasPendingException);
+        const string pendingReturnField = nameof(JavaScriptRuntime.AsyncScope._pendingReturnValue);
+        const string hasPendingReturnField = nameof(JavaScriptRuntime.AsyncScope._hasPendingReturn);
 
         bool hasCatch = tryStmt.CatchBody != null;
 
@@ -3436,25 +3436,25 @@ public sealed class HIRToLIRLowerer
                         // Indexable delegation path (arrays/strings/typed arrays via NormalizeForOfIterable)
                         // ---------------------------
                         var indexIterTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Object", "NormalizeForOfIterable", new[] { yieldedStarArg }, indexIterTemp));
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.NormalizeForOfIterable), new[] { yieldedStarArg }, indexIterTemp));
                         DefineTempStorage(indexIterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                         // Persist delegation state on GeneratorScope so it survives suspension.
                         var oneTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, oneTemp));
                         DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarMode", oneTemp));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarTarget", indexIterTemp));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode), oneTemp));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget), indexIterTemp));
 
                         var idxTempInit = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstNumber(0.0, idxTempInit));
                         DefineTempStorage(idxTempInit, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarIndex", idxTempInit));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarIndex), idxTempInit));
 
                         var lenTempInit = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRGetLength(indexIterTemp, lenTempInit));
                         DefineTempStorage(lenTempInit, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarLength", lenTempInit));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarLength), lenTempInit));
 
                         int indexLoopStart = CreateLabel();
                         int indexLoopEnd = CreateLabel();
@@ -3475,11 +3475,11 @@ public sealed class HIRToLIRLowerer
                         _methodBodyIR.Instructions.Add(new LIRLabel(indexLoopStart));
 
                         var idxTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_yieldStarIndex", idxTemp));
+                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarIndex), idxTemp));
                         DefineTempStorage(idxTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
                         var lenTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_yieldStarLength", lenTemp));
+                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarLength), lenTemp));
                         DefineTempStorage(lenTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
                         var condTemp = CreateTempVariable();
@@ -3488,7 +3488,7 @@ public sealed class HIRToLIRLowerer
                         _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(condTemp, indexLoopEnd));
 
                         var iterObjTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_yieldStarTarget", iterObjTemp));
+                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget), iterObjTemp));
                         DefineTempStorage(iterObjTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                         var itemTemp = CreateTempVariable();
@@ -3502,7 +3502,7 @@ public sealed class HIRToLIRLowerer
                         var nextIdxTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRAddNumber(idxTemp, oneIdxTemp, nextIdxTemp));
                         DefineTempStorage(nextIdxTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarIndex", nextIdxTemp));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarIndex), nextIdxTemp));
 
                         // Yield the current item.
                         _methodBodyIR.Instructions.Add(new LIRYield(
@@ -3519,12 +3519,12 @@ public sealed class HIRToLIRLowerer
                         var zeroModeTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstNumber(0.0, zeroModeTemp));
                         DefineTempStorage(zeroModeTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarMode", zeroModeTemp));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode), zeroModeTemp));
 
                         var nullTargetTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstNull(nullTargetTemp));
                         DefineTempStorage(nullTargetTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarTarget", nullTargetTemp));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget), nullTargetTemp));
 
                         _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
 
@@ -3540,8 +3540,8 @@ public sealed class HIRToLIRLowerer
                         var twoTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstNumber(2.0, twoTemp));
                         DefineTempStorage(twoTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarMode", twoTemp));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarTarget", isGenObjTemp));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode), twoTemp));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget), isGenObjTemp));
 
                         // Local flag: whether the current delegated step was triggered by generator.return(...)
                         var wasReturnTemp = CreateTempVariable();
@@ -3578,16 +3578,16 @@ public sealed class HIRToLIRLowerer
                         _methodBodyIR.Instructions.Add(new LIRLabel(iterLoopStart));
 
                         var iterObj = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_yieldStarTarget", iterObj));
+                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget), iterObj));
                         DefineTempStorage(iterObj, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                         var hasReturnTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_hasReturn", hasReturnTemp));
+                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasReturn), hasReturnTemp));
                         DefineTempStorage(hasReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(hasReturnTemp, iterCallReturn));
 
                         var hasThrowTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_hasResumeException", hasThrowTemp));
+                        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasResumeException), hasThrowTemp));
                         DefineTempStorage(hasThrowTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(hasThrowTemp, iterCallThrow));
 
@@ -3604,11 +3604,11 @@ public sealed class HIRToLIRLowerer
                             _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, wasReturnTemp));
 
                             var returnArg = CreateTempVariable();
-                            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_returnValue", returnArg));
+                            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._returnValue), returnArg));
                             DefineTempStorage(returnArg, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                             // Clear outer return flag before forwarding.
-                            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_hasReturn", falseTemp));
+                            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasReturn), falseTemp));
 
                             var argsArr = CreateTempVariable();
                             _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(returnArg) }, argsArr));
@@ -3623,11 +3623,11 @@ public sealed class HIRToLIRLowerer
                             _methodBodyIR.Instructions.Add(new LIRCopyTemp(falseTemp, wasReturnTemp));
 
                             var throwArg = CreateTempVariable();
-                            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_resumeException", throwArg));
+                            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._resumeException), throwArg));
                             DefineTempStorage(throwArg, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                             // Clear outer throw flag before forwarding.
-                            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_hasResumeException", falseTemp));
+                            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasResumeException), falseTemp));
 
                             var argsArr = CreateTempVariable();
                             _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(throwArg) }, argsArr));
@@ -3642,7 +3642,7 @@ public sealed class HIRToLIRLowerer
                             _methodBodyIR.Instructions.Add(new LIRCopyTemp(falseTemp, wasReturnTemp));
 
                             var nextArg = CreateTempVariable();
-                            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_resumeValue", nextArg));
+                            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._resumeValue), nextArg));
                             DefineTempStorage(nextArg, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                             var argsArr = CreateTempVariable();
@@ -3697,12 +3697,12 @@ public sealed class HIRToLIRLowerer
                         var iterZeroModeTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstNumber(0.0, iterZeroModeTemp));
                         DefineTempStorage(iterZeroModeTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarMode", iterZeroModeTemp));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode), iterZeroModeTemp));
 
                         var iterNullTargetTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstNull(iterNullTargetTemp));
                         DefineTempStorage(iterNullTargetTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_yieldStarTarget", iterNullTargetTemp));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget), iterNullTargetTemp));
 
                         // If this step was triggered by generator.return(...), complete the outer generator immediately.
                         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(wasReturnTemp, iterReturnComplete));

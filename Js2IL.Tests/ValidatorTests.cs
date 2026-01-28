@@ -226,11 +226,13 @@ public class ValidatorTests
     [Fact]
     public void Validate_ForAwaitOf_OutsideAsync_ReportsError()
     {
+        // The parser enforces this constraint: `for await...of` is only valid in async functions
+        // (and we keep AllowAwaitOutsideFunction = false).
         var js = "function f() { for await (const x of []) { console.log(x); } }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
-        var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("for await...of") || e.Contains("only valid inside async functions"));
+
+        var ex = Assert.Throws<Exception>(() => _parser.ParseJavaScript(js, "test.js"));
+        Assert.Contains("Failed to parse JavaScript", ex.Message);
+        Assert.Contains("Unexpected reserved word", ex.Message);
     }
 
     [Fact]
