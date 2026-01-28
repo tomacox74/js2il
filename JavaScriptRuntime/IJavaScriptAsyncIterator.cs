@@ -22,3 +22,21 @@ public interface IJavaScriptAsyncIterator
 
     object? Return();
 }
+
+/// <summary>
+/// Generic async iterator interface for cases where the yielded value type is known.
+///
+/// This models the iterator result object shape (<see cref="IteratorResultObject{T}"/>) that is
+/// observed after awaiting <c>next()</c> / <c>return()</c> in the async iterator protocol.
+/// </summary>
+/// <remarks>
+/// When consumed via the non-generic <see cref="IJavaScriptAsyncIterator"/>, implementations should
+/// also provide explicit <see cref="IJavaScriptAsyncIterator.Next"/> and <see cref="IJavaScriptAsyncIterator.Return"/>
+/// members that return the value (or a <c>Promise.resolve(...)</c> wrapper) as <see cref="object"/>.
+/// </remarks>
+public interface IJavaScriptAsyncIterator<T> : IJavaScriptAsyncIterator
+{
+    new IteratorResultObject<T> Next();
+
+    new IteratorResultObject<T> Return();
+}
