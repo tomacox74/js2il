@@ -1,4 +1,4 @@
-﻿# ECMA-262 Coverage Index (JS2IL v0.7.2)
+﻿# ECMA-262 Coverage Index
 
 Clause index of ECMA-262 (tc39.es) cross-labeled using JS2IL current coverage tracking.
 
