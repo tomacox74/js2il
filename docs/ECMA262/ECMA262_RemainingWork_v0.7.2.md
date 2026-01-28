@@ -17,7 +17,7 @@ If you want a **clause-by-clause** view of ECMA-262 (language + built-ins), see:
 Overall (coverage-file rows):
 - Total tracked feature rows: **196**
 - Supported: **187**
-- Partially Supported: **7**
+- Supported with Limitations: **7**
 - Not Yet Supported: **2**
 
 Remaining work (high-level themes):
@@ -67,7 +67,10 @@ See [docs/nodejs/NodeSupport.md](../nodejs/NodeSupport.md) for the Node-side cov
 From [docs/archive/LoweringPipeline_Migration_PunchList.md](../archive/LoweringPipeline_Migration_PunchList.md):
 - **Callable-only intrinsics (no `new`)**: `String(x)`, `Number(x)`, `Boolean(x)` are supported, but other callable-only intrinsics are not yet supported: `Date(...)`, `RegExp(...)`, `Error(...)`, `Array(...)`, `Object(...)`, `Symbol(...)`, `BigInt(...)`.
 
-## Detailed list (Partially Supported + Not Yet Supported)
+## Detailed list (Supported with Limitations + Not Yet Supported)
+
+Status note:
+- This document historically used `Partially Supported`; it maps to `Supported with Limitations` under the current ECMA-262 coverage taxonomy.
 
 Formatting:
 - Each entry is listed under its paragraph/subsection from the coverage JSON.
@@ -82,14 +85,14 @@ Formatting:
 
 | Status | Feature | Notes |
 |---|---|---|
-| Partially Supported | let/const | Block scoping, shadowing chain, nested function capture, and simple const initialization implemented. Temporal dead zone access error (Variable_TemporalDeadZoneAccess.js) and reads before initialization are still pending. |
+| Supported with Limitations | let/const | Block scoping, shadowing chain, nested function capture, and simple const initialization implemented. Temporal dead zone access error (Variable_TemporalDeadZoneAccess.js) and reads before initialization are still pending. |
 
 ##### 13.2.3: Function declarations
 - Spec: https://tc39.es/ecma262/#sec-function-definitions
 
 | Status | Feature | Notes |
 |---|---|---|
-| Partially Supported | Arrow functions | Covers expression- and block-bodied arrows, multiple parameters, nested functions, closure capture across scopes (including returning functions that capture globals/locals), and default parameter values. Not yet supported: rest parameters, lexical this/arguments semantics, and spread at call sites. |
+| Supported with Limitations | Arrow functions | Covers expression- and block-bodied arrows, multiple parameters, nested functions, closure capture across scopes (including returning functions that capture globals/locals), and default parameter values. Not yet supported: rest parameters, lexical this/arguments semantics, and spread at call sites. |
 
 ##### 13.2.3.1: Default parameters, Rest parameters
 - Spec: https://tc39.es/ecma262/#sec-function-definitions-runtime-semantics-evaluation
@@ -114,14 +117,14 @@ Formatting:
 
 | Status | Feature | Notes |
 |---|---|---|
-| Partially Supported | for-of over arrays (enumerate values) | Lowered to an index loop over a normalized iterable (JavaScriptRuntime.Object.NormalizeForOfIterable), then accessed via JavaScriptRuntime.Object.GetLength(object) + GetItem(object, double). Supports arrays, strings, typed arrays, and .NET IEnumerable (via Array.from), but does not implement full JS iterator protocol (Symbol.iterator). |
+| Supported with Limitations | for-of over arrays (enumerate values) | Lowered using the iterator protocol (GetIterator + next() + value/done) and attempts IteratorClose on abrupt completion. Supports built-ins and user-defined iterables via Symbol.iterator, with remaining gaps documented in the subsection JSON notes. |
 
 ##### 14.7.5.2: Runtime Semantics: ForInOfBodyEvaluation (for-in)
 - Spec: https://tc39.es/ecma262/#sec-runtime-semantics-forinofbodyevaluation
 
 | Status | Feature | Notes |
 |---|---|---|
-| Partially Supported | for-in over objects (enumerate enumerable keys) | Lowered to an index loop over JavaScriptRuntime.Object.GetEnumerableKeys(object). Minimal semantics: supports ExpandoObject (object literals), JS Array/Int32Array/string index keys, and IDictionary keys; does not currently model full prototype-chain enumeration rules. |
+| Supported with Limitations | for-in over objects (enumerate enumerable keys) | Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through IteratorNext + IteratorResultDone/Value. Deletions during enumeration are respected; prototype/exotic-object fidelity is still not exhaustive. |
 
 #### 14.16: The try Statement
 
@@ -130,7 +133,7 @@ Formatting:
 
 | Status | Feature | Notes |
 |---|---|---|
-| Partially Supported | try/finally (no catch) | Finally emission is in place and executes on normal and return exits. Execution test for unhandled throw is skipped pending top-level unhandled Error semantics; generator snapshot verifies structure. |
+| Supported with Limitations | try/finally (no catch) | Finally emission is in place and executes on normal and return exits. Execution test for unhandled throw is skipped pending top-level unhandled Error semantics; generator snapshot verifies structure. |
 
 ### Section 24: Text Processing
 
@@ -141,7 +144,7 @@ Formatting:
 
 | Status | Feature | Notes |
 |---|---|---|
-| Partially Supported | String.prototype.replace (regex literal, string replacement) | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. |
+| Supported with Limitations | String.prototype.replace (regex literal, string replacement) | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. |
 
 #### 24.5: JSON Object
 
@@ -150,7 +153,7 @@ Formatting:
 
 | Status | Feature | Notes |
 |---|---|---|
-| Partially Supported | JSON.parse | Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double. |
+| Supported with Limitations | JSON.parse | Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double. |
 
 ---
 

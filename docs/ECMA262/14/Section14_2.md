@@ -8,15 +8,15 @@ Block statements are supported, including lexical scoping for `let`/`const` decl
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 14.2 | Block | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-block) |
+| 14.2 | Block | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-block) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 14.2.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-block-static-semantics-early-errors) |
-| 14.2.2 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-block-runtime-semantics-evaluation) |
-| 14.2.3 | BlockDeclarationInstantiation ( code , env ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-blockdeclarationinstantiation) |
+| 14.2.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-block-static-semantics-early-errors) |
+| 14.2.2 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-block-runtime-semantics-evaluation) |
+| 14.2.3 | BlockDeclarationInstantiation ( code , env ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-blockdeclarationinstantiation) |
 
 ## Support
 
@@ -26,7 +26,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| block early-error edge cases | Partially Supported |  | Relies on Acornima parsing plus JS2IL validation/symbol table; not all early-error combinations are explicitly covered by tests. |
+| block early-error edge cases | Supported with Limitations |  | Relies on Acornima parsing plus JS2IL validation/symbol table; not all early-error combinations are explicitly covered by tests. |
 
 ### 14.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-block-runtime-semantics-evaluation))
 

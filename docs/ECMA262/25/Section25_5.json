@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "25.5",
   "title": "The JSON Object",
-  "status": "Partially Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-json-object",
   "parent": {
     "clause": "25"
@@ -12,7 +12,7 @@
     {
       "clause": "25.5.1",
       "title": "JSON.parse ( text [ , reviver ] )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-json.parse"
     },
     {
@@ -75,5 +75,19 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-json-%symbol.tostringtag%"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "25.5.1",
+        "feature": "JSON.parse",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-json.parse",
+        "testScripts": [
+          "Js2IL.Tests/JSONRuntimeTests.cs"
+        ],
+        "notes": "Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double."
+      }
+    ]
+  }
 }

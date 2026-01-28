@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "22.1",
   "title": "String Objects",
-  "status": "Partially Supported",
+  "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-string-objects",
   "parent": {
     "clause": "22"
@@ -54,7 +54,7 @@
     {
       "clause": "22.1.3",
       "title": "Properties of the String Prototype Object",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-string-prototype-object"
     },
     {
@@ -96,13 +96,13 @@
     {
       "clause": "22.1.3.7",
       "title": "String.prototype.endsWith ( searchString [ , endPosition ] )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.endswith"
     },
     {
       "clause": "22.1.3.8",
       "title": "String.prototype.includes ( searchString [ , position ] )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.includes"
     },
     {
@@ -126,7 +126,7 @@
     {
       "clause": "22.1.3.12",
       "title": "String.prototype.localeCompare ( that [ , reserved1 [ , reserved2 ] ] )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.localecompare"
     },
     {
@@ -186,7 +186,7 @@
     {
       "clause": "22.1.3.19",
       "title": "String.prototype.replace ( searchValue , replaceValue )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.replace"
     },
     {
@@ -216,13 +216,13 @@
     {
       "clause": "22.1.3.23",
       "title": "String.prototype.split ( separator , limit )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.split"
     },
     {
       "clause": "22.1.3.24",
       "title": "String.prototype.startsWith ( searchString [ , position ] )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.startswith"
     },
     {
@@ -345,5 +345,63 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-%stringiteratorprototype%-%symbol.tostringtag%"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "22.1.3.24",
+        "feature": "String.prototype.startsWith",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.startswith",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js"
+        ],
+        "notes": "Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed)."
+      },
+      {
+        "clause": "22.1.3.8",
+        "feature": "String.prototype.includes",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.includes",
+        "notes": "Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.)"
+      },
+      {
+        "clause": "22.1.3.7",
+        "feature": "String.prototype.endsWith",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.endswith",
+        "notes": "Implemented in JavaScriptRuntime.String and wired via IL generator for definite string receivers. Supports optional end position. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.)"
+      },
+      {
+        "clause": "22.1.3.23",
+        "feature": "String.prototype.split",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.split",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_Split_Basic.js"
+        ],
+        "notes": "Supports string and regular-expression separators and optional limit. Implemented via JavaScriptRuntime.String.Split and returned as JavaScriptRuntime.Array. Separator omitted or undefined returns [input]. Empty string separator splits into individual UTF-16 code units."
+      },
+      {
+        "clause": "22.1.3.19",
+        "feature": "String.prototype.replace (regex literal, string replacement)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.replace",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js"
+        ],
+        "notes": "Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator."
+      },
+      {
+        "clause": "22.1.3.12",
+        "feature": "String.prototype.localeCompare (numeric compare)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.localecompare",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_LocaleCompare_Numeric.js"
+        ],
+        "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
+      }
+    ]
+  }
 }

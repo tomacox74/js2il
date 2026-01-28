@@ -112,10 +112,26 @@ function requireString(obj, key) {
 }
 
 function validateStatus(status) {
-  const allowed = ['Untracked', 'Not Yet Supported', 'Partially Supported', 'Supported'];
+  const allowed = [
+    'Untracked',
+    'Not Yet Supported',
+    'Incomplete',
+    'Supported with Limitations',
+    'Supported',
+    // Legacy
+    'Partially Supported',
+    'Not Supported',
+  ];
   if (!allowed.includes(status)) {
     throw new Error(`Invalid status '${status}'. Allowed: ${allowed.join(', ')}`);
   }
+}
+
+function normalizeLegacyStatus(status) {
+  const s = String(status ?? '').trim();
+  if (s === 'Not Supported') return 'Not Yet Supported';
+  if (s === 'Partially Supported') return 'Supported with Limitations';
+  return s;
 }
 
 function parseClause(section) {
@@ -192,7 +208,7 @@ function getSpecUrlForClause(doc, clause) {
 function render(doc, sectionClause, mdPath, repoRootDir) {
   const clause = requireString(doc, 'clause');
   const title = requireString(doc, 'title');
-  const status = requireString(doc, 'status');
+  const status = normalizeLegacyStatus(requireString(doc, 'status'));
   const specUrl = requireString(doc, 'specUrl');
 
   validateStatus(status);
@@ -237,7 +253,7 @@ function render(doc, sectionClause, mdPath, repoRootDir) {
       if (!s || typeof s !== 'object') continue;
       const sc = requireString(s, 'clause');
       const st = requireString(s, 'title');
-      const ss = requireString(s, 'status');
+      const ss = normalizeLegacyStatus(requireString(s, 'status'));
       const su = requireString(s, 'specUrl');
       validateStatus(ss);
       lines.push(`| ${sc} | ${st} | ${ss} | ${asSpecLink(su)} |`);
@@ -255,7 +271,7 @@ function render(doc, sectionClause, mdPath, repoRootDir) {
       if (!e || typeof e !== 'object') continue;
       const ec = requireString(e, 'clause');
       const ef = requireString(e, 'feature');
-      const es = requireString(e, 'status');
+      const es = normalizeLegacyStatus(requireString(e, 'status'));
       validateStatus(es);
       const list = entriesByClause.get(ec) || [];
       list.push(e);
@@ -280,7 +296,7 @@ function render(doc, sectionClause, mdPath, repoRootDir) {
       list.sort((a, b) => String(a.feature || '').localeCompare(String(b.feature || ''), undefined, { numeric: true }));
       for (const e of list) {
         const feature = requireString(e, 'feature');
-        const es = requireString(e, 'status');
+        const es = normalizeLegacyStatus(requireString(e, 'status'));
         validateStatus(es);
         const scripts = formatTestScriptsCell(e.testScripts, mdDir, repoRootDir);
         const notes = formatTableCellText(e.notes || '');

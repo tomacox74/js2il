@@ -6,14 +6,14 @@
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 14.13 | Labelled Statements | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-labelled-statements) |
+| 14.13 | Labelled Statements | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-labelled-statements) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 14.13.1 | Static Semantics: Early Errors | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-labelled-statements-static-semantics-early-errors) |
-| 14.13.2 | Static Semantics: IsLabelledFunction ( stmt ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-islabelledfunction) |
+| 14.13.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-labelled-statements-static-semantics-early-errors) |
+| 14.13.2 | Static Semantics: IsLabelledFunction ( stmt ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-islabelledfunction) |
 | 14.13.3 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-labelled-statements-runtime-semantics-evaluation) |
 | 14.13.4 | Runtime Semantics: LabelledEvaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-labelledevaluation) |
 
