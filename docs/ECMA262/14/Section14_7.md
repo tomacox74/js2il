@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-do/while/for loops are supported including break/continue (with labels). for..in and for..of are implemented for common cases but do not provide full spec iterator/enumeration fidelity for all exotic objects/iterables. for await..of is supported in async functions.
+do/while/for loops are supported including break/continue (with labels). for..of uses the iterator protocol; for..in uses a dedicated For-In Iterator (mutation-aware key enumeration) but does not yet provide full spec fidelity for all exotic objects. for await..of is supported in async functions.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -37,12 +37,12 @@ do/while/for loops are supported including break/continue (with labels). for..in
 | 14.7.5.6 | ForIn/OfHeadEvaluation ( uninitializedBoundNames , expr , iterationKind ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forinofheadevaluation) |
 | 14.7.5.7 | ForIn/OfBodyEvaluation ( lhs , stmt , iteratorRecord , iterationKind , lhsKind , labelSet [ , iteratorKind ] ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forin-div-ofbodyevaluation-lhs-stmt-iterator-lhskind-labelset) |
 | 14.7.5.8 | Runtime Semantics: Evaluation | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements-runtime-semantics-evaluation) |
-| 14.7.5.9 | EnumerateObjectProperties ( O ) | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-enumerate-object-properties) |
-| 14.7.5.10 | For-In Iterator Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-in-iterator-objects) |
-| 14.7.5.10.1 | CreateForInIterator ( object ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-createforiniterator) |
-| 14.7.5.10.2 | The %ForInIteratorPrototype% Object | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%foriniteratorprototype%-object) |
-| 14.7.5.10.2.1 | %ForInIteratorPrototype%.next ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%foriniteratorprototype%.next) |
-| 14.7.5.10.3 | Properties of For-In Iterator Instances | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-for-in-iterator-instances) |
+| 14.7.5.9 | EnumerateObjectProperties ( O ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-enumerate-object-properties) |
+| 14.7.5.10 | For-In Iterator Objects | Supported | [tc39.es](https://tc39.es/ecma262/#sec-for-in-iterator-objects) |
+| 14.7.5.10.1 | CreateForInIterator ( object ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-createforiniterator) |
+| 14.7.5.10.2 | The %ForInIteratorPrototype% Object | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-%foriniteratorprototype%-object) |
+| 14.7.5.10.2.1 | %ForInIteratorPrototype%.next ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-%foriniteratorprototype%.next) |
+| 14.7.5.10.3 | Properties of For-In Iterator Instances | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-for-in-iterator-instances) |
 
 ## Support
 
@@ -97,6 +97,6 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| for-in over objects (enumerate enumerable keys) | Partially Supported | [`ControlFlow_ForIn_Object_Basic.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js)<br>[`ControlFlow_ForIn_Continue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Continue.js)<br>[`ControlFlow_ForIn_Break.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Break.js)<br>[`ControlFlow_ForIn_LabeledContinue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledContinue.js)<br>[`ControlFlow_ForIn_LabeledBreak.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledBreak.js) | Lowered to an index loop over JavaScriptRuntime.Object.GetEnumerableKeys(object). Minimal semantics: supports ExpandoObject (object literals), JS Array/Int32Array/string index keys, and IDictionary keys; does not currently model full prototype-chain enumeration rules. |
+| for-in over objects (enumerate enumerable keys) | Supported | [`ControlFlow_ForIn_Object_Basic.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js)<br>[`ControlFlow_ForIn_Continue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Continue.js)<br>[`ControlFlow_ForIn_Break.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Break.js)<br>[`ControlFlow_ForIn_LabeledContinue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledContinue.js)<br>[`ControlFlow_ForIn_LabeledBreak.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledBreak.js)<br>[`ControlFlow_ForIn_Mutation_DeleteAndAdd.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js)<br>[`ControlFlow_ForIn_ClassFields_BaseAndDerived.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_ClassFields_BaseAndDerived.js)<br>[`ControlFlow_ForIn_Shadowing_NoDuplicateKeys.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Shadowing_NoDuplicateKeys.js) | Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain. |
 | for-of over arrays (enumerate values) | Supported | [`ControlFlow_ForOf_Array_Basic.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js)<br>[`ControlFlow_ForOf_Continue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Continue.js)<br>[`ControlFlow_ForOf_Break.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Break.js)<br>[`ControlFlow_ForOf_LabeledContinue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js)<br>[`ControlFlow_ForOf_LabeledBreak.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js)<br>[`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], and a best-effort fallback for .NET IEnumerable. |
 

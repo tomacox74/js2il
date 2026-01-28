@@ -78,6 +78,15 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForIn_Object_Basic() { var testName = nameof(ControlFlow_ForIn_Object_Basic); return GenerateTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForIn_Mutation_DeleteAndAdd() { var testName = nameof(ControlFlow_ForIn_Mutation_DeleteAndAdd); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_ClassFields_BaseAndDerived() { var testName = nameof(ControlFlow_ForIn_ClassFields_BaseAndDerived); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_Shadowing_NoDuplicateKeys() { var testName = nameof(ControlFlow_ForIn_Shadowing_NoDuplicateKeys); return GenerateTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForOf_Break() { var testName = nameof(ControlFlow_ForOf_Break); return GenerateTest(testName); }
 
         [Fact]

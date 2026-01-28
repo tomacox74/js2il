@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f5
+			// Method begins at RVA 0x20dc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2107
+				// Method begins at RVA 0x20ee
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fe
+			// Method begins at RVA 0x20e5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,16 +82,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 153 (0x99)
+		// Code size: 128 (0x80)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.ControlFlow_ForIn_Object_Basic/Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[2] object,
-			[3] float64,
-			[4] float64,
-			[5] object,
-			[6] float64
+			[3] object,
+			[4] object,
+			[5] bool
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForIn_Object_Basic/Scope::.ctor()
@@ -109,42 +108,34 @@
 		IL_0038: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
 		IL_003d: stloc.1
 		IL_003e: ldloc.1
-		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Object::GetEnumerableKeys(object)
+		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
 		IL_0044: stloc.2
-		IL_0045: ldloc.2
-		IL_0046: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_004b: stloc.3
-		IL_004c: ldc.r8 0.0
-		IL_0055: stloc.s 4
-		// loop start (head: IL_0057)
-			IL_0057: ldloc.s 4
-			IL_0059: ldloc.3
-			IL_005a: clt
-			IL_005c: brfalse IL_0098
+		// loop start (head: IL_0045)
+			IL_0045: ldloc.2
+			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_004b: stloc.s 4
+			IL_004d: ldloc.s 4
+			IL_004f: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_0054: stloc.s 5
+			IL_0056: ldloc.s 5
+			IL_0058: brtrue IL_007f
 
-			IL_0061: ldloc.2
-			IL_0062: ldloc.s 4
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_0069: stloc.s 5
-			IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0070: ldc.i4.1
-			IL_0071: newarr [System.Runtime]System.Object
-			IL_0076: dup
-			IL_0077: ldc.i4.0
-			IL_0078: ldloc.s 5
-			IL_007a: stelem.ref
-			IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0080: pop
-			IL_0081: ldloc.s 4
-			IL_0083: ldc.r8 1
-			IL_008c: add
-			IL_008d: stloc.s 6
-			IL_008f: ldloc.s 6
-			IL_0091: stloc.s 4
-			IL_0093: br IL_0057
+			IL_005d: ldloc.s 4
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_0064: stloc.3
+			IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_006a: ldc.i4.1
+			IL_006b: newarr [System.Runtime]System.Object
+			IL_0070: dup
+			IL_0071: ldc.i4.0
+			IL_0072: ldloc.3
+			IL_0073: stelem.ref
+			IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0079: pop
+			IL_007a: br IL_0045
 		// end loop
 
-		IL_0098: ret
+		IL_007f: ret
 	} // end of method ControlFlow_ForIn_Object_Basic::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForIn_Object_Basic
@@ -156,7 +147,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2110
+		// Method begins at RVA 0x20f7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
