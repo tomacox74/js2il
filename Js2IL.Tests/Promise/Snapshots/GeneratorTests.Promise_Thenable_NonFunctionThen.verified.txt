@@ -21,7 +21,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20fb
+				// Method begins at RVA 0x20ff
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				object 'value'
 			) cil managed 
 		{
-			// Method begins at RVA 0x20c0
+			// Method begins at RVA 0x20c4
 			// Header size: 12
 			// Code size: 38 (0x26)
 			.maxstack 32
@@ -75,7 +75,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f2
+			// Method begins at RVA 0x20f6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -101,7 +101,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 99 (0x63)
+		// Code size: 104 (0x68)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.Promise_Thenable_NonFunctionThen/Scope,
@@ -132,21 +132,22 @@
 		IL_003f: ldc.i4.0
 		IL_0040: ldloc.0
 		IL_0041: stelem.ref
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0047: stloc.3
-		IL_0048: ldc.i4.1
-		IL_0049: newarr [System.Runtime]System.Object
-		IL_004e: dup
-		IL_004f: ldc.i4.0
-		IL_0050: ldloc.3
-		IL_0051: stelem.ref
-		IL_0052: stloc.s 4
-		IL_0054: ldloc.2
-		IL_0055: ldstr "then"
-		IL_005a: ldloc.s 4
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0061: pop
-		IL_0062: ret
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_004c: stloc.3
+		IL_004d: ldc.i4.1
+		IL_004e: newarr [System.Runtime]System.Object
+		IL_0053: dup
+		IL_0054: ldc.i4.0
+		IL_0055: ldloc.3
+		IL_0056: stelem.ref
+		IL_0057: stloc.s 4
+		IL_0059: ldloc.2
+		IL_005a: ldstr "then"
+		IL_005f: ldloc.s 4
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0066: pop
+		IL_0067: ret
 	} // end of method Promise_Thenable_NonFunctionThen::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_NonFunctionThen
@@ -158,7 +159,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2104
+		// Method begins at RVA 0x2108
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

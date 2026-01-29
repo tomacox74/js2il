@@ -22,7 +22,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216e
+				// Method begins at RVA 0x2176
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x2140
+			// Method begins at RVA 0x2148
 			// Header size: 12
 			// Code size: 25 (0x19)
 			.maxstack 32
@@ -81,7 +81,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2177
+				// Method begins at RVA 0x217f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -99,7 +99,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2165
+			// Method begins at RVA 0x216d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -125,7 +125,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 228 (0xe4)
+		// Code size: 233 (0xe9)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.Array_Sort_WithComparatorArrow/Scope,
@@ -168,46 +168,47 @@
 		IL_0084: ldc.i4.0
 		IL_0085: ldloc.0
 		IL_0086: stelem.ref
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_008c: stloc.3
-		IL_008d: ldloc.1
-		IL_008e: ldc.i4.1
-		IL_008f: newarr [System.Runtime]System.Object
-		IL_0094: dup
-		IL_0095: ldc.i4.0
-		IL_0096: ldloc.3
-		IL_0097: stelem.ref
-		IL_0098: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
-		IL_009d: pop
-		IL_009e: ldc.r8 0.0
-		IL_00a7: stloc.2
-		// loop start (head: IL_00a8)
-			IL_00a8: ldloc.2
-			IL_00a9: ldloc.1
-			IL_00aa: callvirt instance int32 class [System.Collections]System.Collections.Generic.List`1<object>::get_Count()
-			IL_00af: conv.r8
-			IL_00b0: clt
-			IL_00b2: brfalse IL_00e3
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0091: stloc.3
+		IL_0092: ldloc.1
+		IL_0093: ldc.i4.1
+		IL_0094: newarr [System.Runtime]System.Object
+		IL_0099: dup
+		IL_009a: ldc.i4.0
+		IL_009b: ldloc.3
+		IL_009c: stelem.ref
+		IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
+		IL_00a2: pop
+		IL_00a3: ldc.r8 0.0
+		IL_00ac: stloc.2
+		// loop start (head: IL_00ad)
+			IL_00ad: ldloc.2
+			IL_00ae: ldloc.1
+			IL_00af: callvirt instance int32 class [System.Collections]System.Collections.Generic.List`1<object>::get_Count()
+			IL_00b4: conv.r8
+			IL_00b5: clt
+			IL_00b7: brfalse IL_00e8
 
-			IL_00b7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00bc: ldc.i4.1
-			IL_00bd: newarr [System.Runtime]System.Object
-			IL_00c2: dup
-			IL_00c3: ldc.i4.0
-			IL_00c4: ldloc.1
-			IL_00c5: ldloc.2
-			IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00cb: stelem.ref
-			IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00d1: pop
-			IL_00d2: ldloc.2
-			IL_00d3: ldc.r8 1
-			IL_00dc: add
-			IL_00dd: stloc.2
-			IL_00de: br IL_00a8
+			IL_00bc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00c1: ldc.i4.1
+			IL_00c2: newarr [System.Runtime]System.Object
+			IL_00c7: dup
+			IL_00c8: ldc.i4.0
+			IL_00c9: ldloc.1
+			IL_00ca: ldloc.2
+			IL_00cb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_00d0: stelem.ref
+			IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00d6: pop
+			IL_00d7: ldloc.2
+			IL_00d8: ldc.r8 1
+			IL_00e1: add
+			IL_00e2: stloc.2
+			IL_00e3: br IL_00ad
 		// end loop
 
-		IL_00e3: ret
+		IL_00e8: ret
 	} // end of method Array_Sort_WithComparatorArrow::__js_module_init__
 
 } // end of class Modules.Array_Sort_WithComparatorArrow
@@ -219,7 +220,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2180
+		// Method begins at RVA 0x2188
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

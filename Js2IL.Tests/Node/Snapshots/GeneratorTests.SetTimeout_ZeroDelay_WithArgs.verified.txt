@@ -23,7 +23,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x214e
+				// Method begins at RVA 0x2156
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 				object city
 			) cil managed 
 		{
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20dc
 			// Header size: 12
 			// Code size: 101 (0x65)
 			.maxstack 32
@@ -106,7 +106,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2145
+			// Method begins at RVA 0x214d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -132,7 +132,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 120 (0x78)
+		// Code size: 125 (0x7d)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.SetTimeout_ZeroDelay_WithArgs/Scope,
@@ -150,38 +150,39 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldloc.1
-		IL_0023: ldc.r8 0.0
-		IL_002c: box [System.Runtime]System.Double
-		IL_0031: ldc.i4.3
-		IL_0032: newarr [System.Runtime]System.Object
-		IL_0037: dup
-		IL_0038: ldc.i4.0
-		IL_0039: ldstr "Alice"
-		IL_003e: stelem.ref
-		IL_003f: dup
-		IL_0040: ldc.i4.1
-		IL_0041: ldc.r8 30
-		IL_004a: box [System.Runtime]System.Double
-		IL_004f: stelem.ref
-		IL_0050: dup
-		IL_0051: ldc.i4.2
-		IL_0052: ldstr "Seattle"
-		IL_0057: stelem.ref
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-		IL_005d: pop
-		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0063: ldc.i4.1
-		IL_0064: newarr [System.Runtime]System.Object
-		IL_0069: dup
-		IL_006a: ldc.i4.0
-		IL_006b: ldstr "setTimeout with zero delay and arguments scheduled."
-		IL_0070: stelem.ref
-		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0076: pop
-		IL_0077: ret
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0026: stloc.1
+		IL_0027: ldloc.1
+		IL_0028: ldc.r8 0.0
+		IL_0031: box [System.Runtime]System.Double
+		IL_0036: ldc.i4.3
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: dup
+		IL_003d: ldc.i4.0
+		IL_003e: ldstr "Alice"
+		IL_0043: stelem.ref
+		IL_0044: dup
+		IL_0045: ldc.i4.1
+		IL_0046: ldc.r8 30
+		IL_004f: box [System.Runtime]System.Double
+		IL_0054: stelem.ref
+		IL_0055: dup
+		IL_0056: ldc.i4.2
+		IL_0057: ldstr "Seattle"
+		IL_005c: stelem.ref
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+		IL_0062: pop
+		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0068: ldc.i4.1
+		IL_0069: newarr [System.Runtime]System.Object
+		IL_006e: dup
+		IL_006f: ldc.i4.0
+		IL_0070: ldstr "setTimeout with zero delay and arguments scheduled."
+		IL_0075: stelem.ref
+		IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007b: pop
+		IL_007c: ret
 	} // end of method SetTimeout_ZeroDelay_WithArgs::__js_module_init__
 
 } // end of class Modules.SetTimeout_ZeroDelay_WithArgs
@@ -193,7 +194,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2157
+		// Method begins at RVA 0x215f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

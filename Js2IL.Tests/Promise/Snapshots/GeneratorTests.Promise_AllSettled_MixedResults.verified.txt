@@ -21,7 +21,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2220
+				// Method begins at RVA 0x2224
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				object results
 			) cil managed 
 		{
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x20fc
 			// Header size: 12
 			// Code size: 275 (0x113)
 			.maxstack 32
@@ -156,7 +156,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2217
+			// Method begins at RVA 0x221b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -182,7 +182,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 153 (0x99)
+		// Code size: 158 (0x9e)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.Promise_AllSettled_MixedResults/Scope,
@@ -232,21 +232,22 @@
 		IL_0072: ldc.i4.0
 		IL_0073: ldloc.0
 		IL_0074: stelem.ref
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_007a: stloc.s 6
-		IL_007c: ldc.i4.1
-		IL_007d: newarr [System.Runtime]System.Object
-		IL_0082: dup
-		IL_0083: ldc.i4.0
-		IL_0084: ldloc.s 6
-		IL_0086: stelem.ref
-		IL_0087: stloc.s 7
-		IL_0089: ldloc.s 5
-		IL_008b: ldstr "then"
-		IL_0090: ldloc.s 7
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0097: pop
-		IL_0098: ret
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_007f: stloc.s 6
+		IL_0081: ldc.i4.1
+		IL_0082: newarr [System.Runtime]System.Object
+		IL_0087: dup
+		IL_0088: ldc.i4.0
+		IL_0089: ldloc.s 6
+		IL_008b: stelem.ref
+		IL_008c: stloc.s 7
+		IL_008e: ldloc.s 5
+		IL_0090: ldstr "then"
+		IL_0095: ldloc.s 7
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_009c: pop
+		IL_009d: ret
 	} // end of method Promise_AllSettled_MixedResults::__js_module_init__
 
 } // end of class Modules.Promise_AllSettled_MixedResults
@@ -258,7 +259,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2229
+		// Method begins at RVA 0x222d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
