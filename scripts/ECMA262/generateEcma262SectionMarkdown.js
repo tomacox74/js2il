@@ -114,6 +114,7 @@ function requireString(obj, key) {
 function validateStatus(status) {
   const allowed = [
     'Untracked',
+    'N/A (informational)',
     'Not Yet Supported',
     'Incomplete',
     'Supported with Limitations',

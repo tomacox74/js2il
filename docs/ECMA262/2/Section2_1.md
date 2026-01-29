@@ -1,4 +1,4 @@
-﻿<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+<!-- AUTO-GENERATED: generateEcma262SectionMarkdown.js -->
 
 # Section 2.1: Example Normative Optional Clause Heading
 
@@ -6,5 +6,5 @@
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 2.1 | Example Normative Optional Clause Heading | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-conformance-normative-optional) |
+| 2.1 | Example Normative Optional Clause Heading | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-conformance-normative-optional) |
 

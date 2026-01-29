@@ -131,6 +131,7 @@ function escapePipes(text) {
 function validateStatus(status) {
   const allowed = [
     'Untracked',
+    'N/A (informational)',
     'Not Yet Supported',
     'Incomplete',
     'Supported with Limitations',
@@ -166,11 +167,18 @@ function getRollupStatus(statuses) {
       return s;
     });
 
-  const hasUntracked = norm.includes('Untracked');
-  const hasNotYet = norm.includes('Not Yet Supported');
-  const hasIncomplete = norm.includes('Incomplete');
-  const hasLimitations = norm.includes('Supported with Limitations');
-  const hasSupported = norm.includes('Supported');
+  // Treat informational clauses as neutral for rollups.
+  // If *everything* is informational, the rollup should be informational.
+  const withoutInformational = norm.filter((s) => s !== 'N/A (informational)');
+  if (norm.length > 0 && withoutInformational.length === 0) return 'N/A (informational)';
+
+  const effective = withoutInformational;
+
+  const hasUntracked = effective.includes('Untracked');
+  const hasNotYet = effective.includes('Not Yet Supported');
+  const hasIncomplete = effective.includes('Incomplete');
+  const hasLimitations = effective.includes('Supported with Limitations');
+  const hasSupported = effective.includes('Supported');
 
   // Nothing tracked at all.
   if (!hasNotYet && !hasIncomplete && !hasLimitations && !hasSupported && hasUntracked) return 'Untracked';

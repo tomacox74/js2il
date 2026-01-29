@@ -1,4 +1,4 @@
-﻿<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+<!-- AUTO-GENERATED: generateEcma262SectionMarkdown.js -->
 
 # Section 4.5: Organization of This Specification
 
@@ -6,5 +6,5 @@
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 4.5 | Organization of This Specification | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-organization-of-this-specification) |
+| 4.5 | Organization of This Specification | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-organization-of-this-specification) |
 

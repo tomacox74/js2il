@@ -6,5 +6,5 @@ Defines the overall scope of the ECMAScript specification and how the document i
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 1 | Scope | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-scope) |
+| 1 | Scope | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-scope) |
 
