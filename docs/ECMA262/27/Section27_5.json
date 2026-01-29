@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "27.5",
   "title": "Generator Objects",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-generator-objects",
   "parent": {
     "clause": "27"
@@ -13,98 +13,116 @@
     {
       "clause": "27.5.1",
       "title": "The %GeneratorPrototype% Object",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-generator-prototype"
     },
     {
       "clause": "27.5.1.1",
       "title": "%GeneratorPrototype%.constructor",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generator.prototype.constructor"
     },
     {
       "clause": "27.5.1.2",
       "title": "%GeneratorPrototype%.next ( value )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generator.prototype.next"
     },
     {
       "clause": "27.5.1.3",
       "title": "%GeneratorPrototype%.return ( value )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generator.prototype.return"
     },
     {
       "clause": "27.5.1.4",
       "title": "%GeneratorPrototype%.throw ( exception )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-generator.prototype.throw"
     },
     {
       "clause": "27.5.1.5",
       "title": "%GeneratorPrototype% [ %Symbol.toStringTag% ]",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generator.prototype-%symbol.tostringtag%"
     },
     {
       "clause": "27.5.2",
       "title": "Properties of Generator Instances",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-generator-instances"
     },
     {
       "clause": "27.5.3",
       "title": "Generator Abstract Operations",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-generator-abstract-operations"
     },
     {
       "clause": "27.5.3.1",
       "title": "GeneratorStart ( generator , generatorBody )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorstart"
     },
     {
       "clause": "27.5.3.2",
       "title": "GeneratorValidate ( generator , generatorBrand )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorvalidate"
     },
     {
       "clause": "27.5.3.3",
       "title": "GeneratorResume ( generator , value , generatorBrand )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorresume"
     },
     {
       "clause": "27.5.3.4",
       "title": "GeneratorResumeAbrupt ( generator , abruptCompletion , generatorBrand )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorresumeabrupt"
     },
     {
       "clause": "27.5.3.5",
       "title": "GetGeneratorKind ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-getgeneratorkind"
     },
     {
       "clause": "27.5.3.6",
       "title": "GeneratorYield ( iteratorResult )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-generatoryield"
     },
     {
       "clause": "27.5.3.7",
       "title": "Yield ( value )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-yield"
     },
     {
       "clause": "27.5.3.8",
       "title": "CreateIteratorFromClosure ( closure , generatorBrand , generatorPrototype [ , extraSlots ] )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createiteratorfromclosure"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "27.5.1",
+        "feature": "Generator objects support next/return and yield*/iterator delegation",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-generator-objects",
+        "testScripts": [
+          "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js"
+        ],
+        "notes": "`throw()` is implemented on the runtime object but currently has limited test coverage. Spec-shaped prototype properties like `constructor` and `Symbol.toStringTag` are not currently exposed."
+      }
+    ]
+  }
 }

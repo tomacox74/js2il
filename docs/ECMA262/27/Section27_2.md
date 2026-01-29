@@ -10,47 +10,75 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 27.2.1 | Promise Abstract Operations | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-promise-abstract-operations) |
-| 27.2.1.1 | PromiseCapability Records | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-promisecapability-records) |
-| 27.2.1.1.1 | IfAbruptRejectPromise ( value , capability ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ifabruptrejectpromise) |
-| 27.2.1.2 | PromiseReaction Records | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-promisereaction-records) |
-| 27.2.1.3 | CreateResolvingFunctions ( promise ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-createresolvingfunctions) |
-| 27.2.1.4 | FulfillPromise ( promise , value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-fulfillpromise) |
-| 27.2.1.5 | NewPromiseCapability ( C ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-newpromisecapability) |
-| 27.2.1.6 | IsPromise ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ispromise) |
-| 27.2.1.7 | RejectPromise ( promise , reason ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-rejectpromise) |
-| 27.2.1.8 | TriggerPromiseReactions ( reactions , argument ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-triggerpromisereactions) |
-| 27.2.1.9 | HostPromiseRejectionTracker ( promise , operation ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-host-promise-rejection-tracker) |
-| 27.2.2 | Promise Jobs | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-promise-jobs) |
-| 27.2.2.1 | NewPromiseReactionJob ( reaction , argument ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-newpromisereactionjob) |
-| 27.2.2.2 | NewPromiseResolveThenableJob ( promiseToResolve , thenable , then ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-newpromiseresolvethenablejob) |
+| 27.2.1 | Promise Abstract Operations | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-promise-abstract-operations) |
+| 27.2.1.1 | PromiseCapability Records | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-promisecapability-records) |
+| 27.2.1.1.1 | IfAbruptRejectPromise ( value , capability ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ifabruptrejectpromise) |
+| 27.2.1.2 | PromiseReaction Records | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-promisereaction-records) |
+| 27.2.1.3 | CreateResolvingFunctions ( promise ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-createresolvingfunctions) |
+| 27.2.1.4 | FulfillPromise ( promise , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-fulfillpromise) |
+| 27.2.1.5 | NewPromiseCapability ( C ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-newpromisecapability) |
+| 27.2.1.6 | IsPromise ( x ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ispromise) |
+| 27.2.1.7 | RejectPromise ( promise , reason ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-rejectpromise) |
+| 27.2.1.8 | TriggerPromiseReactions ( reactions , argument ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-triggerpromisereactions) |
+| 27.2.1.9 | HostPromiseRejectionTracker ( promise , operation ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-host-promise-rejection-tracker) |
+| 27.2.2 | Promise Jobs | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-promise-jobs) |
+| 27.2.2.1 | NewPromiseReactionJob ( reaction , argument ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-newpromisereactionjob) |
+| 27.2.2.2 | NewPromiseResolveThenableJob ( promiseToResolve , thenable , then ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-newpromiseresolvethenablejob) |
 | 27.2.3 | The Promise Constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise-constructor) |
 | 27.2.3.1 | Promise ( executor ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise-executor) |
 | 27.2.4 | Properties of the Promise Constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-promise-constructor) |
 | 27.2.4.1 | Promise.all ( iterable ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.all) |
-| 27.2.4.1.1 | GetPromiseResolve ( promiseConstructor ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-getpromiseresolve) |
-| 27.2.4.1.2 | PerformPromiseAll ( iteratorRecord , constructor , resultCapability , promiseResolve ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-performpromiseall) |
+| 27.2.4.1.1 | GetPromiseResolve ( promiseConstructor ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-getpromiseresolve) |
+| 27.2.4.1.2 | PerformPromiseAll ( iteratorRecord , constructor , resultCapability , promiseResolve ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-performpromiseall) |
 | 27.2.4.2 | Promise.allSettled ( iterable ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.allsettled) |
-| 27.2.4.2.1 | PerformPromiseAllSettled ( iteratorRecord , constructor , resultCapability , promiseResolve ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-performpromiseallsettled) |
+| 27.2.4.2.1 | PerformPromiseAllSettled ( iteratorRecord , constructor , resultCapability , promiseResolve ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-performpromiseallsettled) |
 | 27.2.4.3 | Promise.any ( iterable ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.any) |
-| 27.2.4.3.1 | PerformPromiseAny ( iteratorRecord , constructor , resultCapability , promiseResolve ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-performpromiseany) |
-| 27.2.4.4 | Promise.prototype | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype) |
+| 27.2.4.3.1 | PerformPromiseAny ( iteratorRecord , constructor , resultCapability , promiseResolve ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-performpromiseany) |
+| 27.2.4.4 | Promise.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype) |
 | 27.2.4.5 | Promise.race ( iterable ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.race) |
-| 27.2.4.5.1 | PerformPromiseRace ( iteratorRecord , constructor , resultCapability , promiseResolve ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-performpromiserace) |
+| 27.2.4.5.1 | PerformPromiseRace ( iteratorRecord , constructor , resultCapability , promiseResolve ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-performpromiserace) |
 | 27.2.4.6 | Promise.reject ( r ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.reject) |
 | 27.2.4.7 | Promise.resolve ( x ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.resolve) |
-| 27.2.4.7.1 | PromiseResolve ( C , x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-promise-resolve) |
-| 27.2.4.8 | Promise.try ( callback , ... args ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-promise.try) |
+| 27.2.4.7.1 | PromiseResolve ( C , x ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-promise-resolve) |
+| 27.2.4.8 | Promise.try ( callback , ... args ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.try) |
 | 27.2.4.9 | Promise.withResolvers ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.withResolvers) |
-| 27.2.4.10 | get Promise [ %Symbol.species% ] | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-get-promise-%symbol.species%) |
-| 27.2.5 | Properties of the Promise Prototype Object | Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-promise-prototype-object) |
+| 27.2.4.10 | get Promise [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-promise-%symbol.species%) |
+| 27.2.5 | Properties of the Promise Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-promise-prototype-object) |
 | 27.2.5.1 | Promise.prototype.catch ( onRejected ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype.catch) |
-| 27.2.5.2 | Promise.prototype.constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype.constructor) |
+| 27.2.5.2 | Promise.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype.constructor) |
 | 27.2.5.3 | Promise.prototype.finally ( onFinally ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype.finally) |
 | 27.2.5.4 | Promise.prototype.then ( onFulfilled , onRejected ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype.then) |
-| 27.2.5.4.1 | PerformPromiseThen ( promise , onFulfilled , onRejected [ , resultCapability ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-performpromisethen) |
-| 27.2.5.5 | Promise.prototype [ %Symbol.toStringTag% ] | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype-%symbol.tostringtag%) |
-| 27.2.6 | Properties of Promise Instances | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-promise-instances) |
+| 27.2.5.4.1 | PerformPromiseThen ( promise , onFulfilled , onRejected [ , resultCapability ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-performpromisethen) |
+| 27.2.5.5 | Promise.prototype [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype-%symbol.tostringtag%) |
+| 27.2.6 | Properties of Promise Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-promise-instances) |
+
+## Support
+
+Feature-level support tracking with test script references.
+
+### 27.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-promise-constructor))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Promise constructor (executor), Promise.resolve, Promise.reject | Supported | [`Promise_Executor_Resolved.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Executor_Resolved.js)<br>[`Promise_Executor_Rejected.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Executor_Rejected.js)<br>[`Promise_Thenable_Resolve_Immediate.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Thenable_Resolve_Immediate.js)<br>[`Promise_Thenable_Resolve_Delayed.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Thenable_Resolve_Delayed.js)<br>[`Promise_Thenable_Reject.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Thenable_Reject.js)<br>[`Promise_Thenable_NonFunctionThen.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Thenable_NonFunctionThen.js)<br>[`Promise_Thenable_Nested.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Thenable_Nested.js) | Constructor accepts an executor delegate and supports resolving/rejecting, including thenable assimilation in Promise.resolve. |
+
+### 27.2.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-promise.all))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Promise.all / allSettled / any / race | Supported | [`Promise_All_AllResolved.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_All_AllResolved.js)<br>[`Promise_All_OneRejected.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_All_OneRejected.js)<br>[`Promise_All_EmptyArray.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_All_EmptyArray.js)<br>[`Promise_AllSettled_MixedResults.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_MixedResults.js)<br>[`Promise_AllSettled_AllResolved.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_AllResolved.js)<br>[`Promise_AllSettled_AllRejected.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_AllRejected.js)<br>[`Promise_Any_FirstResolved.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Any_FirstResolved.js)<br>[`Promise_Any_AllRejected.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Any_AllRejected.js)<br>[`Promise_Race_FirstResolved.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Race_FirstResolved.js)<br>[`Promise_Race_FirstRejected.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Race_FirstRejected.js) |  |
+
+### 27.2.4.9 ([tc39.es](https://tc39.es/ecma262/#sec-promise.withResolvers))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Promise.withResolvers() | Supported | [`Promise_WithResolvers_Resolve.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Resolve.js)<br>[`Promise_WithResolvers_Reject.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Reject.js)<br>[`Promise_WithResolvers_Idempotent.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Idempotent.js) |  |
+
+### 27.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-promise-prototype-object))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Promise.prototype.then / catch / finally | Supported | [`Promise_Resolve_Then.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js)<br>[`Promise_Reject_Then.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Reject_Then.js)<br>[`Promise_Resolve_ThenFinally.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_ThenFinally.js)<br>[`Promise_Reject_FinallyCatch.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Reject_FinallyCatch.js)<br>[`Promise_Resolve_FinallyThen.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_FinallyThen.js)<br>[`Promise_Resolve_FinallyThrows.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_FinallyThrows.js)<br>[`Promise_Then_ReturnsResolvedPromise.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Then_ReturnsResolvedPromise.js)<br>[`Promise_Then_ReturnsRejectedPromise.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Then_ReturnsRejectedPromise.js)<br>[`Promise_Thenable_Returned_FromHandler.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Thenable_Returned_FromHandler.js)<br>[`Promise_Catch_ReturnsResolvedPromise.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Catch_ReturnsResolvedPromise.js)<br>[`Promise_Catch_ReturnsRejectedPromise.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Catch_ReturnsRejectedPromise.js)<br>[`Promise_Finally_ReturnsResolvedPromise.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsResolvedPromise.js)<br>[`Promise_Finally_ReturnsRejectedPromise.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsRejectedPromise.js)<br>[`Promise_Finally_ReturnsThenable_PassThrough_Fulfilled.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsThenable_PassThrough_Fulfilled.js)<br>[`Promise_Finally_ReturnsThenable_PassThrough_Rejected.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsThenable_PassThrough_Rejected.js)<br>[`Promise_Scheduling_StarvationTest.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js) | Implements then/catch/finally with scheduling and thenable assimilation for returned values. Limitations remain around full spec-shaped prototype properties (constructor/toStringTag) and host rejection tracking. |
 
 ## Reference: Converted Spec Text
 

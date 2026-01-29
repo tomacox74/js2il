@@ -31,3 +31,9 @@ Feature-level support tracking with test script references.
 | function expressions (assigned/returned) and closures | Supported | [`Function_NestedFunctionExpression_ReturnedAndCalledViaVariable.js`](../../../Js2IL.Tests/Function/JavaScript/Function_NestedFunctionExpression_ReturnedAndCalledViaVariable.js)<br>[`Function_CallViaVariable_Reassignment.js`](../../../Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js)<br>[`Function_Closure_MultiLevel_ReadWriteAcrossScopes.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Closure_MultiLevel_ReadWriteAcrossScopes.js)<br>[`Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter.js`](../../../Js2IL.Tests/Function/JavaScript/Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter.js) |  |
 | IIFE (immediately-invoked function expressions) | Supported | [`Function_IIFE_Classic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_IIFE_Classic.js)<br>[`Function_IIFE_Recursive.js`](../../../Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js) |  |
 
+### 15.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-functionbodycontainsusestrict))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| directive prologue / strict mode ("use strict") semantics | Supported with Limitations |  | JS2IL parses directive prologues but does not currently aim for full strict-mode semantics/early errors across the language. This clause is tracked as limited until a dedicated strict-mode test matrix exists. |
+

@@ -53,7 +53,7 @@ Notes:
 | 24 | Keyed Collections | Supported | [tc39.es](https://tc39.es/ecma262/#sec-keyed-collections) | [Section24.md](24/Section24.md) |
 | 25 | Structured Data | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-structured-data) | [Section25.md](25/Section25.md) |
 | 26 | Managing Memory | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-managing-memory) | [Section26.md](26/Section26.md) |
-| 27 | Control Abstraction Objects | Supported | [tc39.es](https://tc39.es/ecma262/#sec-control-abstraction-objects) | [Section27.md](27/Section27.md) |
+| 27 | Control Abstraction Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-control-abstraction-objects) | [Section27.md](27/Section27.md) |
 | 28 | Reflection | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-reflection) | [Section28.md](28/Section28.md) |
 | 29 | Memory Model | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-memory-model) | [Section29.md](29/Section29.md) |
 

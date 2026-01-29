@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "27.7",
   "title": "AsyncFunction Objects",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-async-function-objects",
   "parent": {
     "clause": "27"
@@ -12,86 +12,107 @@
     {
       "clause": "27.7.1",
       "title": "The AsyncFunction Constructor",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-constructor"
     },
     {
       "clause": "27.7.1.1",
       "title": "AsyncFunction ( ... parameterArgs , bodyArg )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-constructor-arguments"
     },
     {
       "clause": "27.7.2",
       "title": "Properties of the AsyncFunction Constructor",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-constructor-properties"
     },
     {
       "clause": "27.7.2.1",
       "title": "AsyncFunction.prototype",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-constructor-prototype"
     },
     {
       "clause": "27.7.3",
       "title": "Properties of the AsyncFunction Prototype Object",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-prototype-properties"
     },
     {
       "clause": "27.7.3.1",
       "title": "AsyncFunction.prototype.constructor",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-prototype-properties-constructor"
     },
     {
       "clause": "27.7.3.2",
       "title": "AsyncFunction.prototype [ %Symbol.toStringTag% ]",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-prototype-%symbol.tostringtag%"
     },
     {
       "clause": "27.7.4",
       "title": "AsyncFunction Instances",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-instances"
     },
     {
       "clause": "27.7.4.1",
       "title": "length",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-instances-length"
     },
     {
       "clause": "27.7.4.2",
       "title": "name",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-instances-name"
     },
     {
       "clause": "27.7.5",
       "title": "Async Functions Abstract Operations",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-async-functions-abstract-operations"
     },
     {
       "clause": "27.7.5.1",
       "title": "AsyncFunctionStart ( promiseCapability , asyncFunctionBody )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-async-functions-abstract-operations-async-function-start"
     },
     {
       "clause": "27.7.5.2",
       "title": "AsyncBlockStart ( promiseCapability , asyncBody , asyncContext )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncblockstart"
     },
     {
       "clause": "27.7.5.3",
       "title": "Await ( value )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#await"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "27.7.5.3",
+        "feature": "async/await lowers to Promise-based state machine and supports await of pending Promises",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#await",
+        "testScripts": [
+          "Js2IL.Tests/Async/JavaScript/Async_SimpleAwait.js",
+          "Js2IL.Tests/Async/JavaScript/Async_ReturnValue.js",
+          "Js2IL.Tests/Async/JavaScript/Async_PendingPromiseAwait.js",
+          "Js2IL.Tests/Async/JavaScript/Async_RealSuspension_SetTimeout.js",
+          "Js2IL.Tests/Async/JavaScript/Async_TryCatch_AwaitReject.js",
+          "Js2IL.Tests/Async/JavaScript/Async_TryCatchFinally_AwaitInFinally_OnReject.js",
+          "Js2IL.Tests/Async/JavaScript/Async_TryFinally_ReturnPreservedThroughAwait.js",
+          "Js2IL.Tests/Async/JavaScript/Async_TryFinally_PreservesExceptionThroughAwait.js"
+        ],
+        "notes": "Async functions are supported via syntax (`async function`, `await`) and runtime Promise integration. The spec-level `AsyncFunction` constructor/prototype intrinsics are not currently exposed."
+      }
+    ]
+  }
 }
