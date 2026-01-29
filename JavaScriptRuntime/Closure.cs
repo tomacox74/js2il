@@ -108,39 +108,85 @@ namespace JavaScriptRuntime
         // overrides it for the duration of the arrow function body to match ECMA-262 lexical semantics.
         public static object BindArrow(object target, object[] boundScopes, object? boundThis)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-
             if (target is Func<object[], object> f0)
             {
-                return (Func<object[], object>)(_ => InvokeWithThis(boundThis, () => f0(boundScopes)));
+                return BindArrow0(f0, boundScopes, boundThis);
             }
             if (target is Func<object[], object?, object> f1)
             {
-                return (Func<object[], object?, object>)((_, a1) => InvokeWithThis(boundThis, () => f1(boundScopes, a1)));
+                return BindArrow1(f1, boundScopes, boundThis);
             }
             if (target is Func<object[], object?, object?, object> f2)
             {
-                return (Func<object[], object?, object?, object>)((_, a1, a2) => InvokeWithThis(boundThis, () => f2(boundScopes, a1, a2)));
+                return BindArrow2(f2, boundScopes, boundThis);
             }
             if (target is Func<object[], object?, object?, object?, object> f3)
             {
-                return (Func<object[], object?, object?, object?, object>)((_, a1, a2, a3) => InvokeWithThis(boundThis, () => f3(boundScopes, a1, a2, a3)));
+                return BindArrow3(f3, boundScopes, boundThis);
             }
             if (target is Func<object[], object?, object?, object?, object?, object> f4)
             {
-                return (Func<object[], object?, object?, object?, object?, object>)((_, a1, a2, a3, a4) => InvokeWithThis(boundThis, () => f4(boundScopes, a1, a2, a3, a4)));
+                return BindArrow4(f4, boundScopes, boundThis);
             }
             if (target is Func<object[], object?, object?, object?, object?, object?, object> f5)
             {
-                return (Func<object[], object?, object?, object?, object?, object?, object>)((_, a1, a2, a3, a4, a5) => InvokeWithThis(boundThis, () => f5(boundScopes, a1, a2, a3, a4, a5)));
+                return BindArrow5(f5, boundScopes, boundThis);
             }
             if (target is Func<object[], object?, object?, object?, object?, object?, object?, object> f6)
             {
-                return (Func<object[], object?, object?, object?, object?, object?, object?, object>)((_, a1, a2, a3, a4, a5, a6) => InvokeWithThis(boundThis, () => f6(boundScopes, a1, a2, a3, a4, a5, a6)));
+                return BindArrow6(f6, boundScopes, boundThis);
             }
 
             throw new ArgumentException("Unsupported delegate type for arrow closure binding", nameof(target));
+        }
+
+        public static Func<object[], object> BindArrow0(Func<object[], object> target, object[] boundScopes, object? boundThis)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
+            return (Func<object[], object>)(_ => InvokeWithThis(boundThis, () => target(boundScopes)));
+        }
+
+        public static Func<object[], object?, object> BindArrow1(Func<object[], object?, object> target, object[] boundScopes, object? boundThis)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
+            return (Func<object[], object?, object>)((_, a1) => InvokeWithThis(boundThis, () => target(boundScopes, a1)));
+        }
+
+        public static Func<object[], object?, object?, object> BindArrow2(Func<object[], object?, object?, object> target, object[] boundScopes, object? boundThis)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
+            return (Func<object[], object?, object?, object>)((_, a1, a2) => InvokeWithThis(boundThis, () => target(boundScopes, a1, a2)));
+        }
+
+        public static Func<object[], object?, object?, object?, object> BindArrow3(Func<object[], object?, object?, object?, object> target, object[] boundScopes, object? boundThis)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
+            return (Func<object[], object?, object?, object?, object>)((_, a1, a2, a3) => InvokeWithThis(boundThis, () => target(boundScopes, a1, a2, a3)));
+        }
+
+        public static Func<object[], object?, object?, object?, object?, object> BindArrow4(Func<object[], object?, object?, object?, object?, object> target, object[] boundScopes, object? boundThis)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
+            return (Func<object[], object?, object?, object?, object?, object>)((_, a1, a2, a3, a4) => InvokeWithThis(boundThis, () => target(boundScopes, a1, a2, a3, a4)));
+        }
+
+        public static Func<object[], object?, object?, object?, object?, object?, object> BindArrow5(Func<object[], object?, object?, object?, object?, object?, object> target, object[] boundScopes, object? boundThis)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
+            return (Func<object[], object?, object?, object?, object?, object?, object>)((_, a1, a2, a3, a4, a5) => InvokeWithThis(boundThis, () => target(boundScopes, a1, a2, a3, a4, a5)));
+        }
+
+        public static Func<object[], object?, object?, object?, object?, object?, object?, object> BindArrow6(Func<object[], object?, object?, object?, object?, object?, object?, object> target, object[] boundScopes, object? boundThis)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
+            return (Func<object[], object?, object?, object?, object?, object?, object?, object>)((_, a1, a2, a3, a4, a5, a6) => InvokeWithThis(boundThis, () => target(boundScopes, a1, a2, a3, a4, a5, a6)));
         }
 
         // Bind a zero-parameter JS function (aside from the scopes array) to a fixed scopes array
