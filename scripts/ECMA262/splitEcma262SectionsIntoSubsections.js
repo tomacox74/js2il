@@ -8,6 +8,7 @@
  *
  * Status rollup precedence:
  *   Not Yet Supported > Incomplete > Supported with Limitations > Supported > Untracked
+ *   N/A (informational) is neutral and only wins when all statuses are informational.
  * Legacy "Not Supported" is treated as "Not Yet Supported".
  * Legacy "Partially Supported" is treated as "Supported with Limitations".
  */
@@ -114,12 +115,17 @@ function getRollupStatus(statuses) {
     .map((s) => (s ?? '').trim())
     .filter((s) => s.length > 0);
 
-  if (norm.includes('Not Yet Supported')) return 'Not Yet Supported';
-  if (norm.includes('Not Supported')) return 'Not Yet Supported';
-  if (norm.includes('Incomplete')) return 'Incomplete';
-  if (norm.includes('Supported with Limitations')) return 'Supported with Limitations';
-  if (norm.includes('Partially Supported')) return 'Supported with Limitations';
-  if (norm.includes('Supported')) return 'Supported';
+  const withoutInformational = norm.filter((s) => s !== 'N/A (informational)');
+  if (norm.length > 0 && withoutInformational.length === 0) return 'N/A (informational)';
+
+  const effective = withoutInformational;
+
+  if (effective.includes('Not Yet Supported')) return 'Not Yet Supported';
+  if (effective.includes('Not Supported')) return 'Not Yet Supported';
+  if (effective.includes('Incomplete')) return 'Incomplete';
+  if (effective.includes('Supported with Limitations')) return 'Supported with Limitations';
+  if (effective.includes('Partially Supported')) return 'Supported with Limitations';
+  if (effective.includes('Supported')) return 'Supported';
   return 'Untracked';
 }
 

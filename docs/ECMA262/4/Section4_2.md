@@ -1,4 +1,4 @@
-﻿<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+<!-- AUTO-GENERATED: generateEcma262SectionMarkdown.js -->
 
 # Section 4.2: Hosts and Implementations
 
@@ -6,5 +6,5 @@
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 4.2 | Hosts and Implementations | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-hosts-and-implementations) |
+| 4.2 | Hosts and Implementations | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-hosts-and-implementations) |
 

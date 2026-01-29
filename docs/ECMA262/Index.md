@@ -12,6 +12,7 @@ Important:
 - `Supported with Limitations`: Safe for general/daily-driver use, but has known edge-case/spec-corner gaps (documented in subsection notes).
 - `Incomplete`: Some implementation exists, but missing core semantics and not safe to rely on broadly.
 - `Not Yet Supported`: Not implemented (or intentionally rejected by validator) for the documented scope.
+- `N/A (informational)`: Spec clause is informational/organizational (not a JS runtime/compiler feature).
 - `Untracked`: Not evaluated/documented yet; may work, but not claimed.
 
 Notes:
@@ -26,11 +27,11 @@ Notes:
 
 | Section | Title | Status | Spec | Document |
 |---:|---|---|---|---|
-| 1 | Scope | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-scope) | [Section1.md](1/Section1.md) |
-| 2 | Conformance | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-conformance) | [Section2.md](2/Section2.md) |
-| 3 | Normative References | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-normative-references) | [Section3.md](3/Section3.md) |
-| 4 | Overview | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-overview) | [Section4.md](4/Section4.md) |
-| 5 | Notational Conventions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-notational-conventions) | [Section5.md](5/Section5.md) |
+| 1 | Scope | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-scope) | [Section1.md](1/Section1.md) |
+| 2 | Conformance | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-conformance) | [Section2.md](2/Section2.md) |
+| 3 | Normative References | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-normative-references) | [Section3.md](3/Section3.md) |
+| 4 | Overview | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-overview) | [Section4.md](4/Section4.md) |
+| 5 | Notational Conventions | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-notational-conventions) | [Section5.md](5/Section5.md) |
 | 6 | ECMAScript Data Types and Values | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-data-types-and-values) | [Section6.md](6/Section6.md) |
 | 7 | Abstract Operations | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations) | [Section7.md](7/Section7.md) |
 | 8 | Syntax-Directed Operations | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations) | [Section8.md](8/Section8.md) |
