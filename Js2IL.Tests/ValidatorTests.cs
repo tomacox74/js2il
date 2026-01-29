@@ -490,14 +490,16 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_ThisInArrowFunction_ReportsError()
+    public void Validate_ThisInArrowFunction_Valid()
     {
-        // Issue #218: 'this' in arrow functions (outside classes) is not yet supported
-        var js = "const foo = () => this.bar;";
+        // Issue #219: arrow functions support lexical 'this'
+        // Keep this inside a function so the validator doesn't need to assume
+        // any particular global/module `this` semantics.
+        var js = "function outer() { const foo = () => this.bar; }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported in this context"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
@@ -523,9 +525,9 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_ThisInArrowFunctionInsideClassConstructor_ReportsError()
+    public void Validate_ThisInArrowFunctionInsideClassConstructor_Valid()
     {
-        // Issue #244: 'this' in arrow function inside class constructor is not yet supported
+        // Issue #219: arrow functions inside class constructors inherit lexical 'this'
         var js = @"
 class Counter {
     constructor(initial) {
@@ -537,14 +539,14 @@ class Counter {
 }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported in this context"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_ThisInArrowFunctionInsideClassMethod_ReportsError()
+    public void Validate_ThisInArrowFunctionInsideClassMethod_Valid()
     {
-        // Issue #244: 'this' in arrow function inside class method is not yet supported
+        // Issue #219: arrow functions inside class methods inherit lexical 'this'
         var js = @"
 class Counter {
     doSomething() {
@@ -556,8 +558,8 @@ class Counter {
 }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported in this context"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]

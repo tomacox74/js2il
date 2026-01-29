@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219c
+				// Method begins at RVA 0x21a8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -40,7 +40,7 @@
 				object reject
 			) cil managed 
 		{
-			// Method begins at RVA 0x2118
+			// Method begins at RVA 0x2124
 			// Header size: 12
 			// Code size: 46 (0x2e)
 			.maxstack 32
@@ -85,7 +85,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a5
+				// Method begins at RVA 0x21b1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -105,7 +105,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2154
+			// Method begins at RVA 0x2160
 			// Header size: 12
 			// Code size: 14 (0xe)
 			.maxstack 32
@@ -134,7 +134,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ae
+				// Method begins at RVA 0x21ba
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -155,7 +155,7 @@
 				object 'value'
 			) cil managed 
 		{
-			// Method begins at RVA 0x2170
+			// Method begins at RVA 0x217c
 			// Header size: 12
 			// Code size: 23 (0x17)
 			.maxstack 32
@@ -189,7 +189,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2193
+			// Method begins at RVA 0x219f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -215,7 +215,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 188 (0xbc)
+		// Code size: 198 (0xc6)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.Promise_Thenable_Returned_FromHandler/Scope,
@@ -260,44 +260,46 @@
 		IL_0062: ldc.i4.0
 		IL_0063: ldloc.0
 		IL_0064: stelem.ref
-		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_006a: stloc.3
-		IL_006b: ldc.i4.1
-		IL_006c: newarr [System.Runtime]System.Object
-		IL_0071: dup
-		IL_0072: ldc.i4.0
-		IL_0073: ldloc.3
-		IL_0074: stelem.ref
-		IL_0075: stloc.s 4
-		IL_0077: ldloc.1
-		IL_0078: ldstr "then"
-		IL_007d: ldloc.s 4
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0084: stloc.1
-		IL_0085: ldnull
-		IL_0086: ldftn object Modules.Promise_Thenable_Returned_FromHandler/ArrowFunction_L7C47::__js_call__(object[], object)
-		IL_008c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0091: ldc.i4.1
-		IL_0092: newarr [System.Runtime]System.Object
-		IL_0097: dup
-		IL_0098: ldc.i4.0
-		IL_0099: ldloc.0
-		IL_009a: stelem.ref
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_00a0: stloc.3
-		IL_00a1: ldc.i4.1
-		IL_00a2: newarr [System.Runtime]System.Object
-		IL_00a7: dup
-		IL_00a8: ldc.i4.0
-		IL_00a9: ldloc.3
-		IL_00aa: stelem.ref
-		IL_00ab: stloc.s 4
-		IL_00ad: ldloc.1
-		IL_00ae: ldstr "then"
-		IL_00b3: ldloc.s 4
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00ba: pop
-		IL_00bb: ret
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_006f: stloc.3
+		IL_0070: ldc.i4.1
+		IL_0071: newarr [System.Runtime]System.Object
+		IL_0076: dup
+		IL_0077: ldc.i4.0
+		IL_0078: ldloc.3
+		IL_0079: stelem.ref
+		IL_007a: stloc.s 4
+		IL_007c: ldloc.1
+		IL_007d: ldstr "then"
+		IL_0082: ldloc.s 4
+		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0089: stloc.1
+		IL_008a: ldnull
+		IL_008b: ldftn object Modules.Promise_Thenable_Returned_FromHandler/ArrowFunction_L7C47::__js_call__(object[], object)
+		IL_0091: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0096: ldc.i4.1
+		IL_0097: newarr [System.Runtime]System.Object
+		IL_009c: dup
+		IL_009d: ldc.i4.0
+		IL_009e: ldloc.0
+		IL_009f: stelem.ref
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00aa: stloc.3
+		IL_00ab: ldc.i4.1
+		IL_00ac: newarr [System.Runtime]System.Object
+		IL_00b1: dup
+		IL_00b2: ldc.i4.0
+		IL_00b3: ldloc.3
+		IL_00b4: stelem.ref
+		IL_00b5: stloc.s 4
+		IL_00b7: ldloc.1
+		IL_00b8: ldstr "then"
+		IL_00bd: ldloc.s 4
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00c4: pop
+		IL_00c5: ret
 	} // end of method Promise_Thenable_Returned_FromHandler::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_Returned_FromHandler
@@ -309,7 +311,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b7
+		// Method begins at RVA 0x21c3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

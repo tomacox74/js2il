@@ -1406,11 +1406,13 @@ class HIRMethodBuilder
 
             case ThisExpression:
                 // PL3.5: ThisExpression support.
-                // For now, only support 'this' inside class instance methods/constructors.
-                // (Top-level/function 'this' semantics are more complex and remain legacy.)
+                // Support 'this' in function scopes, including arrow functions.
+                // Non-arrow functions get their dynamic 'this' from the runtime call sites.
+                // Arrow functions get lexical 'this' via binding at closure creation time.
                 var allowsThis = _rootScope.Parent?.Kind == ScopeKind.Class
                     || _rootScope.AstNode is FunctionExpression
-                    || _rootScope.AstNode is FunctionDeclaration;
+                    || _rootScope.AstNode is FunctionDeclaration
+                    || _rootScope.AstNode is ArrowFunctionExpression;
                 if (!allowsThis)
                 {
                     return false;

@@ -22,7 +22,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212c
+				// Method begins at RVA 0x2138
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				object reject
 			) cil managed 
 		{
-			// Method begins at RVA 0x20c4
+			// Method begins at RVA 0x20d0
 			// Header size: 12
 			// Code size: 37 (0x25)
 			.maxstack 32
@@ -91,7 +91,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2135
+				// Method begins at RVA 0x2141
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -112,7 +112,7 @@
 				object message
 			) cil managed 
 		{
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x2104
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 32
@@ -143,7 +143,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2123
+			// Method begins at RVA 0x212f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -169,7 +169,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 103 (0x67)
+		// Code size: 113 (0x71)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.Promise_Executor_Rejected/Scope,
@@ -189,40 +189,42 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.2
-		IL_0022: ldloc.2
-		IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
-		IL_0028: stloc.1
-		IL_0029: ldnull
-		IL_002a: ldftn object Modules.Promise_Executor_Rejected/ArrowFunction_L5C14::__js_call__(object[], object)
-		IL_0030: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0035: ldc.i4.1
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: dup
-		IL_003c: ldc.i4.0
-		IL_003d: ldloc.0
-		IL_003e: stelem.ref
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0044: stloc.2
-		IL_0045: ldc.i4.2
-		IL_0046: newarr [System.Runtime]System.Object
-		IL_004b: dup
-		IL_004c: ldc.i4.0
-		IL_004d: ldc.i4.0
-		IL_004e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0053: stelem.ref
-		IL_0054: dup
-		IL_0055: ldc.i4.1
-		IL_0056: ldloc.2
-		IL_0057: stelem.ref
-		IL_0058: stloc.3
-		IL_0059: ldloc.1
-		IL_005a: ldstr "then"
-		IL_005f: ldloc.3
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0065: pop
-		IL_0066: ret
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0026: stloc.2
+		IL_0027: ldloc.2
+		IL_0028: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
+		IL_002d: stloc.1
+		IL_002e: ldnull
+		IL_002f: ldftn object Modules.Promise_Executor_Rejected/ArrowFunction_L5C14::__js_call__(object[], object)
+		IL_0035: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldloc.0
+		IL_0043: stelem.ref
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_004e: stloc.2
+		IL_004f: ldc.i4.2
+		IL_0050: newarr [System.Runtime]System.Object
+		IL_0055: dup
+		IL_0056: ldc.i4.0
+		IL_0057: ldc.i4.0
+		IL_0058: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_005d: stelem.ref
+		IL_005e: dup
+		IL_005f: ldc.i4.1
+		IL_0060: ldloc.2
+		IL_0061: stelem.ref
+		IL_0062: stloc.3
+		IL_0063: ldloc.1
+		IL_0064: ldstr "then"
+		IL_0069: ldloc.3
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_006f: pop
+		IL_0070: ret
 	} // end of method Promise_Executor_Rejected::__js_module_init__
 
 } // end of class Modules.Promise_Executor_Rejected
@@ -234,7 +236,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213e
+		// Method begins at RVA 0x214a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

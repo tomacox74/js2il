@@ -45,7 +45,29 @@ internal sealed partial class LIRToILCompiler
                         }
                     }
 
-                    ilEncoder.LoadArgument(0);
+                    // Instance fields are stored on the runtime `this`.
+                    // - In instance methods (class methods/ctors): receiver is IL arg0.
+                    // - In static JS callables (functions/arrows): receiver is RuntimeServices.CurrentThis.
+                    if (methodDescriptor.IsStatic)
+                    {
+                        var getThisRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getThisRef);
+
+                        if (!classRegistry.TryGet(storeInstanceField.RegistryClassName, out var thisTypeHandle))
+                        {
+                            return false;
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(thisTypeHandle);
+                    }
+                    else
+                    {
+                        ilEncoder.LoadArgument(0);
+                    }
                     var fieldClrType = GetDeclaredUserClassFieldClrType(
                         classRegistry,
                         storeInstanceField.RegistryClassName,
@@ -176,7 +198,29 @@ internal sealed partial class LIRToILCompiler
                         }
                     }
 
-                    ilEncoder.LoadArgument(0);
+                    // Instance fields are loaded from the runtime `this`.
+                    // - In instance methods (class methods/ctors): receiver is IL arg0.
+                    // - In static JS callables (functions/arrows): receiver is RuntimeServices.CurrentThis.
+                    if (methodDescriptor.IsStatic)
+                    {
+                        var getThisRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getThisRef);
+
+                        if (!classRegistry.TryGet(loadInstanceField.RegistryClassName, out var thisTypeHandle))
+                        {
+                            return false;
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(thisTypeHandle);
+                    }
+                    else
+                    {
+                        ilEncoder.LoadArgument(0);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
 

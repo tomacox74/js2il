@@ -21,7 +21,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e2
+				// Method begins at RVA 0x20e6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				object results
 			) cil managed 
 		{
-			// Method begins at RVA 0x20a4
+			// Method begins at RVA 0x20a8
 			// Header size: 12
 			// Code size: 41 (0x29)
 			.maxstack 32
@@ -75,7 +75,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d9
+			// Method begins at RVA 0x20dd
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -101,7 +101,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 71 (0x47)
+		// Code size: 76 (0x4c)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.Promise_AllSettled_EmptyArray/Scope,
@@ -125,21 +125,22 @@
 		IL_0025: ldc.i4.0
 		IL_0026: ldloc.0
 		IL_0027: stelem.ref
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_002d: stloc.2
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.2
-		IL_0037: stelem.ref
-		IL_0038: stloc.3
-		IL_0039: ldloc.1
-		IL_003a: ldstr "then"
-		IL_003f: ldloc.3
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0045: pop
-		IL_0046: ret
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0032: stloc.2
+		IL_0033: ldc.i4.1
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: dup
+		IL_003a: ldc.i4.0
+		IL_003b: ldloc.2
+		IL_003c: stelem.ref
+		IL_003d: stloc.3
+		IL_003e: ldloc.1
+		IL_003f: ldstr "then"
+		IL_0044: ldloc.3
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_004a: pop
+		IL_004b: ret
 	} // end of method Promise_AllSettled_EmptyArray::__js_module_init__
 
 } // end of class Modules.Promise_AllSettled_EmptyArray
@@ -151,7 +152,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20eb
+		// Method begins at RVA 0x20ef
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

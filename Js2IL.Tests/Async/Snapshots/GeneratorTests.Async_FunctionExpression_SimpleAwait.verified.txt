@@ -21,7 +21,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x225d
+				// Method begins at RVA 0x2261
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				object 'value'
 			) cil managed 
 		{
-			// Method begins at RVA 0x20e8
+			// Method begins at RVA 0x20ec
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 32
@@ -81,7 +81,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2254
+				// Method begins at RVA 0x2258
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -101,7 +101,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2114
+			// Method begins at RVA 0x2118
 			// Header size: 12
 			// Code size: 299 (0x12b)
 			.maxstack 32
@@ -243,7 +243,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x224b
+			// Method begins at RVA 0x224f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -269,7 +269,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 139 (0x8b)
+		// Code size: 144 (0x90)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.Async_FunctionExpression_SimpleAwait/Scope,
@@ -314,30 +314,31 @@
 		IL_004e: ldc.i4.0
 		IL_004f: ldloc.0
 		IL_0050: stelem.ref
-		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0056: stloc.s 4
-		IL_0058: ldc.i4.1
-		IL_0059: newarr [System.Runtime]System.Object
-		IL_005e: dup
-		IL_005f: ldc.i4.0
-		IL_0060: ldloc.s 4
-		IL_0062: stelem.ref
-		IL_0063: stloc.2
-		IL_0064: ldloc.3
-		IL_0065: ldstr "then"
-		IL_006a: ldloc.2
-		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0070: pop
-		IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0076: ldc.i4.1
-		IL_0077: newarr [System.Runtime]System.Object
-		IL_007c: dup
-		IL_007d: ldc.i4.0
-		IL_007e: ldstr "After calling async function expression"
-		IL_0083: stelem.ref
-		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0089: pop
-		IL_008a: ret
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_005b: stloc.s 4
+		IL_005d: ldc.i4.1
+		IL_005e: newarr [System.Runtime]System.Object
+		IL_0063: dup
+		IL_0064: ldc.i4.0
+		IL_0065: ldloc.s 4
+		IL_0067: stelem.ref
+		IL_0068: stloc.2
+		IL_0069: ldloc.3
+		IL_006a: ldstr "then"
+		IL_006f: ldloc.2
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0075: pop
+		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007b: ldc.i4.1
+		IL_007c: newarr [System.Runtime]System.Object
+		IL_0081: dup
+		IL_0082: ldc.i4.0
+		IL_0083: ldstr "After calling async function expression"
+		IL_0088: stelem.ref
+		IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008e: pop
+		IL_008f: ret
 	} // end of method Async_FunctionExpression_SimpleAwait::__js_module_init__
 
 } // end of class Modules.Async_FunctionExpression_SimpleAwait
@@ -349,7 +350,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2266
+		// Method begins at RVA 0x226a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

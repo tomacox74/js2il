@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a4
+				// Method begins at RVA 0x21b0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2124
+			// Method begins at RVA 0x2130
 			// Header size: 12
 			// Code size: 27 (0x1b)
 			.maxstack 32
@@ -69,7 +69,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ad
+				// Method begins at RVA 0x21b9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -89,7 +89,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x214c
+			// Method begins at RVA 0x2158
 			// Header size: 12
 			// Code size: 27 (0x1b)
 			.maxstack 32
@@ -120,7 +120,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b6
+				// Method begins at RVA 0x21c2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -140,7 +140,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2174
+			// Method begins at RVA 0x2180
 			// Header size: 12
 			// Code size: 27 (0x1b)
 			.maxstack 32
@@ -167,7 +167,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219b
+			// Method begins at RVA 0x21a7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -193,7 +193,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 197 (0xc5)
+		// Code size: 212 (0xd4)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.SetTimeout_MultipleZeroDelay_ExecutedInOrder/Scope,
@@ -213,61 +213,64 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldnull
-		IL_0023: ldftn object Modules.SetTimeout_MultipleZeroDelay_ExecutedInOrder/ArrowFunction_L5C14::__js_call__(object[])
-		IL_0029: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.0
-		IL_0037: stelem.ref
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_003d: stloc.2
-		IL_003e: ldnull
-		IL_003f: ldftn object Modules.SetTimeout_MultipleZeroDelay_ExecutedInOrder/ArrowFunction_L9C14::__js_call__(object[])
-		IL_0045: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_004a: ldc.i4.1
-		IL_004b: newarr [System.Runtime]System.Object
-		IL_0050: dup
-		IL_0051: ldc.i4.0
-		IL_0052: ldloc.0
-		IL_0053: stelem.ref
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0059: stloc.3
-		IL_005a: ldloc.1
-		IL_005b: ldc.r8 0.0
-		IL_0064: box [System.Runtime]System.Double
-		IL_0069: ldc.i4.0
-		IL_006a: newarr [System.Runtime]System.Object
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-		IL_0074: pop
-		IL_0075: ldloc.2
-		IL_0076: ldc.r8 0.0
-		IL_007f: box [System.Runtime]System.Double
-		IL_0084: ldc.i4.0
-		IL_0085: newarr [System.Runtime]System.Object
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-		IL_008f: pop
-		IL_0090: ldloc.3
-		IL_0091: ldc.r8 0.0
-		IL_009a: box [System.Runtime]System.Double
-		IL_009f: ldc.i4.0
-		IL_00a0: newarr [System.Runtime]System.Object
-		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-		IL_00aa: pop
-		IL_00ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b0: ldc.i4.1
-		IL_00b1: newarr [System.Runtime]System.Object
-		IL_00b6: dup
-		IL_00b7: ldc.i4.0
-		IL_00b8: ldstr "setTimeout with zero delay scheduled 3 times."
-		IL_00bd: stelem.ref
-		IL_00be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c3: pop
-		IL_00c4: ret
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0026: stloc.1
+		IL_0027: ldnull
+		IL_0028: ldftn object Modules.SetTimeout_MultipleZeroDelay_ExecutedInOrder/ArrowFunction_L5C14::__js_call__(object[])
+		IL_002e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0033: ldc.i4.1
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: dup
+		IL_003a: ldc.i4.0
+		IL_003b: ldloc.0
+		IL_003c: stelem.ref
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0047: stloc.2
+		IL_0048: ldnull
+		IL_0049: ldftn object Modules.SetTimeout_MultipleZeroDelay_ExecutedInOrder/ArrowFunction_L9C14::__js_call__(object[])
+		IL_004f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0054: ldc.i4.1
+		IL_0055: newarr [System.Runtime]System.Object
+		IL_005a: dup
+		IL_005b: ldc.i4.0
+		IL_005c: ldloc.0
+		IL_005d: stelem.ref
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0068: stloc.3
+		IL_0069: ldloc.1
+		IL_006a: ldc.r8 0.0
+		IL_0073: box [System.Runtime]System.Double
+		IL_0078: ldc.i4.0
+		IL_0079: newarr [System.Runtime]System.Object
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+		IL_0083: pop
+		IL_0084: ldloc.2
+		IL_0085: ldc.r8 0.0
+		IL_008e: box [System.Runtime]System.Double
+		IL_0093: ldc.i4.0
+		IL_0094: newarr [System.Runtime]System.Object
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+		IL_009e: pop
+		IL_009f: ldloc.3
+		IL_00a0: ldc.r8 0.0
+		IL_00a9: box [System.Runtime]System.Double
+		IL_00ae: ldc.i4.0
+		IL_00af: newarr [System.Runtime]System.Object
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+		IL_00b9: pop
+		IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bf: ldc.i4.1
+		IL_00c0: newarr [System.Runtime]System.Object
+		IL_00c5: dup
+		IL_00c6: ldc.i4.0
+		IL_00c7: ldstr "setTimeout with zero delay scheduled 3 times."
+		IL_00cc: stelem.ref
+		IL_00cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00d2: pop
+		IL_00d3: ret
 	} // end of method SetTimeout_MultipleZeroDelay_ExecutedInOrder::__js_module_init__
 
 } // end of class Modules.SetTimeout_MultipleZeroDelay_ExecutedInOrder
@@ -279,7 +282,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21bf
+		// Method begins at RVA 0x21cb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

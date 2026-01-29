@@ -184,8 +184,10 @@ internal sealed class JsMethodCompiler
             return irBody;
         }
 
+        var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
+        var extra = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $"\nIR failure: {lastFailure}";
         throw new NotSupportedException(
-            $"IR pipeline could not compile class constructor body for callable '{callable}' (node={ctorNode.Type}, scope='{ctorScope.GetQualifiedName()}').");
+            $"IR pipeline could not compile class constructor body for callable '{callable}' (node={ctorNode.Type}, scope='{ctorScope.GetQualifiedName()}').{extra}");
     }
 
     public CompiledCallableBody CompileClassStaticInitializerBodyTwoPhase(
@@ -283,8 +285,10 @@ internal sealed class JsMethodCompiler
             return irBody;
         }
 
+        var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
+        var extra = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $"\nIR failure: {lastFailure}";
         throw new NotSupportedException(
-            $"IR pipeline could not compile class method body for callable '{callable}' (node={methodDef.Type}, scope='{methodScope!.GetQualifiedName()}').");
+            $"IR pipeline could not compile class method body for callable '{callable}' (node={methodDef.Type}, scope='{methodScope!.GetQualifiedName()}').{extra}");
     }
 
     /// <summary>

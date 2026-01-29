@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2188
+				// Method begins at RVA 0x2190
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20e8
+			// Method begins at RVA 0x20f0
 			// Header size: 12
 			// Code size: 44 (0x2c)
 			.maxstack 32
@@ -74,7 +74,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2191
+				// Method begins at RVA 0x2199
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -94,7 +94,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2120
+			// Method begins at RVA 0x2128
 			// Header size: 12
 			// Code size: 83 (0x53)
 			.maxstack 32
@@ -151,7 +151,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217f
+			// Method begins at RVA 0x2187
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -177,7 +177,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 137 (0x89)
+		// Code size: 147 (0x93)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope,
@@ -197,50 +197,52 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.2
-		IL_0022: ldloc.0
-		IL_0023: ldloc.2
-		IL_0024: stfld object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
-		IL_0029: ldnull
-		IL_002a: ldftn object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L6C25::__js_call__(object[])
-		IL_0030: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0035: ldc.i4.1
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: dup
-		IL_003c: ldc.i4.0
-		IL_003d: ldloc.0
-		IL_003e: stelem.ref
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0044: stloc.1
-		IL_0045: ldc.i4.0
-		IL_0046: newarr [System.Runtime]System.Object
-		IL_004b: stloc.3
-		IL_004c: ldloc.1
-		IL_004d: ldc.i4.1
-		IL_004e: newarr [System.Runtime]System.Object
-		IL_0053: dup
-		IL_0054: ldc.i4.0
-		IL_0055: ldnull
-		IL_0056: stelem.ref
-		IL_0057: ldloc.3
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_005d: pop
-		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0063: ldc.i4.2
-		IL_0064: newarr [System.Runtime]System.Object
-		IL_0069: dup
-		IL_006a: ldc.i4.0
-		IL_006b: ldstr "finally is now"
-		IL_0070: stelem.ref
-		IL_0071: dup
-		IL_0072: ldc.i4.1
-		IL_0073: ldc.r8 3
-		IL_007c: box [System.Runtime]System.Double
-		IL_0081: stelem.ref
-		IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0087: pop
-		IL_0088: ret
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0026: stloc.2
+		IL_0027: ldloc.0
+		IL_0028: ldloc.2
+		IL_0029: stfld object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
+		IL_002e: ldnull
+		IL_002f: ldftn object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L6C25::__js_call__(object[])
+		IL_0035: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldloc.0
+		IL_0043: stelem.ref
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_004e: stloc.1
+		IL_004f: ldc.i4.0
+		IL_0050: newarr [System.Runtime]System.Object
+		IL_0055: stloc.3
+		IL_0056: ldloc.1
+		IL_0057: ldc.i4.1
+		IL_0058: newarr [System.Runtime]System.Object
+		IL_005d: dup
+		IL_005e: ldc.i4.0
+		IL_005f: ldnull
+		IL_0060: stelem.ref
+		IL_0061: ldloc.3
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0067: pop
+		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006d: ldc.i4.2
+		IL_006e: newarr [System.Runtime]System.Object
+		IL_0073: dup
+		IL_0074: ldc.i4.0
+		IL_0075: ldstr "finally is now"
+		IL_007a: stelem.ref
+		IL_007b: dup
+		IL_007c: ldc.i4.1
+		IL_007d: ldc.r8 3
+		IL_0086: box [System.Runtime]System.Double
+		IL_008b: stelem.ref
+		IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0091: pop
+		IL_0092: ret
 	} // end of method ArrowFunction_GlobalFunctionCallsGlobalFunction::__js_module_init__
 
 } // end of class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction
@@ -252,7 +254,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219a
+		// Method begins at RVA 0x21a2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

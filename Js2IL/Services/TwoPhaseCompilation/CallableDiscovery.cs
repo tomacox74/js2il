@@ -258,7 +258,10 @@ public sealed class CallableDiscovery
             if (child.Kind == ScopeKind.Function && child.AstNode is FunctionExpression)
             {
                 // This is a method body scope - check for nested callables
-                DiscoverFromScope(child, classScopeName);
+                // IMPORTANT: include the method scope name so nested callables end up with a
+                // DeclaringScopeName that matches Scope.GetQualifiedName() (e.g. "C/m" or "C/constructor").
+                var methodScopeName = $"{classScopeName}/{child.Name}";
+                DiscoverFromScope(child, methodScopeName);
             }
         }
     }

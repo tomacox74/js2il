@@ -1,0 +1,468 @@
+﻿// IL code: Async_ArrowFunction_LexicalThis
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Async_ArrowFunction_LexicalThis
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L21C16
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object 'value'
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x22da
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object 'value'
+			) cil managed 
+		{
+			// Method begins at RVA 0x2114
+			// Header size: 12
+			// Code size: 31 (0x1f)
+			.maxstack 32
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldc.i4.2
+			IL_0006: newarr [System.Runtime]System.Object
+			IL_000b: dup
+			IL_000c: ldc.i4.0
+			IL_000d: ldstr "Final value:"
+			IL_0012: stelem.ref
+			IL_0013: dup
+			IL_0014: ldc.i4.1
+			IL_0015: ldarg.1
+			IL_0016: stelem.ref
+			IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_001c: pop
+			IL_001d: ldnull
+			IL_001e: ret
+		} // end of method ArrowFunction_L21C16::__js_call__
+
+	} // end of class ArrowFunction_L21C16
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L7C16
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [JavaScriptRuntime]JavaScriptRuntime.AsyncScope
+		{
+			// Fields
+			.field public object _awaited1
+			.field public object _awaited2
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x22d1
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x2140
+			// Header size: 12
+			// Code size: 274 (0x112)
+			.maxstack 32
+			.locals init (
+				[0] class Modules.Async_ArrowFunction_LexicalThis/ArrowFunction_L7C16/Scope,
+				[1] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: isinst Modules.Async_ArrowFunction_LexicalThis/ArrowFunction_L7C16/Scope
+			IL_0008: dup
+			IL_0009: brtrue IL_003b
+
+			IL_000e: pop
+			IL_000f: newobj instance void Modules.Async_ArrowFunction_LexicalThis/ArrowFunction_L7C16/Scope::.ctor()
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: ldarg.0
+			IL_0017: call object[] [JavaScriptRuntime]JavaScriptRuntime.Promise::PrependScopeToArray(object, object[])
+			IL_001c: starg.s scopes
+			IL_001e: ldloc.0
+			IL_001f: ldnull
+			IL_0020: ldftn object Modules.Async_ArrowFunction_LexicalThis/ArrowFunction_L7C16::__js_call__(object[])
+			IL_0026: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_002b: ldarg.0
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_0031: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_0036: br IL_003c
+
+			IL_003b: stloc.0
+
+			IL_003c: ldloc.0
+			IL_003d: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0042: ldc.i4.0
+			IL_0043: ble.s IL_0045
+
+			IL_0045: ldloc.0
+			IL_0046: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_004b: switch (IL_0058, IL_00a3)
+
+			IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_005d: ldc.i4.1
+			IL_005e: newarr [System.Runtime]System.Object
+			IL_0063: dup
+			IL_0064: ldc.i4.0
+			IL_0065: ldstr "Before await"
+			IL_006a: stelem.ref
+			IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0070: pop
+			IL_0071: ldc.i4.0
+			IL_0072: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+			IL_007c: stloc.1
+			IL_007d: ldloc.0
+			IL_007e: ldc.i4.1
+			IL_007f: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0084: ldloc.0
+			IL_0085: ldloc.1
+			IL_0086: ldarg.0
+			IL_0087: ldstr "_awaited1"
+			IL_008c: ldloc.0
+			IL_008d: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_0092: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuation(object, object[], string, object)
+			IL_0097: ldloc.0
+			IL_0098: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_009d: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_00a2: ret
+
+			IL_00a3: ldloc.0
+			IL_00a4: ldfld object Modules.Async_ArrowFunction_LexicalThis/ArrowFunction_L7C16/Scope::_awaited1
+			IL_00a9: pop
+			IL_00aa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00af: ldc.i4.2
+			IL_00b0: newarr [System.Runtime]System.Object
+			IL_00b5: dup
+			IL_00b6: ldc.i4.0
+			IL_00b7: ldstr "After await, this.x:"
+			IL_00bc: stelem.ref
+			IL_00bd: dup
+			IL_00be: ldc.i4.1
+			IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_00c4: castclass Modules.Async_ArrowFunction_LexicalThis/Counter
+			IL_00c9: ldfld object Modules.Async_ArrowFunction_LexicalThis/Counter::x
+			IL_00ce: stelem.ref
+			IL_00cf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00d4: pop
+			IL_00d5: ldloc.0
+			IL_00d6: ldc.i4.m1
+			IL_00d7: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_00dc: ldloc.0
+			IL_00dd: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_00e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+			IL_00e7: ldarg.0
+			IL_00e8: ldc.i4.1
+			IL_00e9: newarr [System.Runtime]System.Object
+			IL_00ee: dup
+			IL_00ef: ldc.i4.0
+			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_00f5: castclass Modules.Async_ArrowFunction_LexicalThis/Counter
+			IL_00fa: ldfld object Modules.Async_ArrowFunction_LexicalThis/Counter::x
+			IL_00ff: stelem.ref
+			IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_0105: pop
+			IL_0106: ldloc.0
+			IL_0107: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_010c: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_0111: ret
+		} // end of method ArrowFunction_L7C16::__js_call__
+
+	} // end of class ArrowFunction_L7C16
+
+	.class nested public auto ansi beforefieldinit Counter
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x22b6
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested private auto ansi beforefieldinit Scope_ctor
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x22bf
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_ctor::.ctor
+
+		} // end of class Scope_ctor
+
+		.class nested private auto ansi beforefieldinit Scope_makeGetter
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x22c8
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_makeGetter::.ctor
+
+		} // end of class Scope_makeGetter
+
+
+		// Fields
+		.field public object x
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor (
+				object initial
+			) cil managed 
+		{
+			// Method begins at RVA 0x2260
+			// Header size: 12
+			// Code size: 14 (0xe)
+			.maxstack 32
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldarg.1
+			IL_0008: stfld object Modules.Async_ArrowFunction_LexicalThis/Counter::x
+			IL_000d: ret
+		} // end of method Counter::.ctor
+
+		.method public hidebysig 
+			instance object makeGetter () cil managed 
+		{
+			// Method begins at RVA 0x227c
+			// Header size: 12
+			// Code size: 37 (0x25)
+			.maxstack 32
+			.locals init (
+				[0] class Modules.Async_ArrowFunction_LexicalThis/Counter/Scope_makeGetter,
+				[1] object
+			)
+
+			IL_0000: newobj instance void Modules.Async_ArrowFunction_LexicalThis/Counter/Scope_makeGetter::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldnull
+			IL_0007: ldftn object Modules.Async_ArrowFunction_LexicalThis/ArrowFunction_L7C16::__js_call__(object[])
+			IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_0012: ldc.i4.1
+			IL_0013: newarr [System.Runtime]System.Object
+			IL_0018: dup
+			IL_0019: ldc.i4.0
+			IL_001a: ldnull
+			IL_001b: stelem.ref
+			IL_001c: ldarg.0
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0022: stloc.1
+			IL_0023: ldloc.1
+			IL_0024: ret
+		} // end of method Counter::makeGetter
+
+	} // end of class Counter
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x22ad
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 183 (0xb7)
+		.maxstack 32
+		.locals init (
+			[0] class Modules.Async_ArrowFunction_LexicalThis/Scope,
+			[1] class Modules.Async_ArrowFunction_LexicalThis/Counter,
+			[2] object,
+			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[4] object,
+			[5] object,
+			[6] object[]
+		)
+
+		IL_0000: newobj instance void Modules.Async_ArrowFunction_LexicalThis/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 7
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: newobj instance void Modules.Async_ArrowFunction_LexicalThis/Counter::.ctor(object)
+		IL_0019: stloc.1
+		IL_001a: ldloc.1
+		IL_001b: callvirt instance object Modules.Async_ArrowFunction_LexicalThis/Counter::makeGetter()
+		IL_0020: stloc.2
+		IL_0021: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0026: dup
+		IL_0027: ldstr "x"
+		IL_002c: ldc.r8 99
+		IL_0035: box [System.Runtime]System.Double
+		IL_003a: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_003f: dup
+		IL_0040: ldstr "g"
+		IL_0045: ldloc.2
+		IL_0046: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_004b: stloc.3
+		IL_004c: ldloc.3
+		IL_004d: ldstr "g"
+		IL_0052: ldc.i4.0
+		IL_0053: newarr [System.Runtime]System.Object
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_005d: stloc.s 4
+		IL_005f: ldnull
+		IL_0060: ldftn object Modules.Async_ArrowFunction_LexicalThis/ArrowFunction_L21C16::__js_call__(object[], object)
+		IL_0066: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_006b: ldc.i4.1
+		IL_006c: newarr [System.Runtime]System.Object
+		IL_0071: dup
+		IL_0072: ldc.i4.0
+		IL_0073: ldloc.0
+		IL_0074: stelem.ref
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_007f: stloc.s 5
+		IL_0081: ldc.i4.1
+		IL_0082: newarr [System.Runtime]System.Object
+		IL_0087: dup
+		IL_0088: ldc.i4.0
+		IL_0089: ldloc.s 5
+		IL_008b: stelem.ref
+		IL_008c: stloc.s 6
+		IL_008e: ldloc.s 4
+		IL_0090: ldstr "then"
+		IL_0095: ldloc.s 6
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_009c: pop
+		IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a2: ldc.i4.1
+		IL_00a3: newarr [System.Runtime]System.Object
+		IL_00a8: dup
+		IL_00a9: ldc.i4.0
+		IL_00aa: ldstr "After calling async getter"
+		IL_00af: stelem.ref
+		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00b5: pop
+		IL_00b6: ret
+	} // end of method Async_ArrowFunction_LexicalThis::__js_module_init__
+
+} // end of class Modules.Async_ArrowFunction_LexicalThis
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x22e3
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Async_ArrowFunction_LexicalThis::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

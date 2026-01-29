@@ -4241,7 +4241,12 @@ public sealed class HIRToLIRLowerer
             var globalSlot = new ScopeSlot(Index: 0, ScopeName: moduleName, ScopeId: new ScopeId(moduleName));
             if (!TryMapScopeSlotToSource(globalSlot, out var globalSlotSource))
             {
-                return false;
+                // Some call sites (notably synchronous class methods/constructors) may not have
+                // access to a global scope instance when no scopes parameter/_scopes field is present.
+                // For callables that don't reference parent-scope variables, fall back to the ABI-compatible
+                // empty scopes array (1-element null) rather than failing compilation.
+                _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+                return true;
             }
 
             _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));

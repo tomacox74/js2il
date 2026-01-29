@@ -1036,8 +1036,29 @@ internal sealed partial class LIRToILCompiler
                         }
                     }
 
-                    // Inline: ldarg.0; ldfld <field>
-                    ilEncoder.LoadArgument(0);
+                    // Inline instance-field load from runtime `this`.
+                    // - In instance methods (class methods/ctors): receiver is IL arg0.
+                    // - In static JS callables (functions/arrows): receiver is RuntimeServices.CurrentThis.
+                    if (methodDescriptor.IsStatic)
+                    {
+                        var getThisRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getThisRef);
+
+                        if (!classRegistry.TryGet(loadInstanceField.RegistryClassName, out var thisTypeHandle))
+                        {
+                            throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing class '{loadInstanceField.RegistryClassName}' for this-cast");
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(thisTypeHandle);
+                    }
+                    else
+                    {
+                        ilEncoder.LoadArgument(0);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
 

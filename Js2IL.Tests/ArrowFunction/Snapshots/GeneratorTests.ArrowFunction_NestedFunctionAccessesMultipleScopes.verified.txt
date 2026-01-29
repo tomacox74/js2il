@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2195
+					// Method begins at RVA 0x21a1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x2100
+				// Method begins at RVA 0x210c
 				// Header size: 12
 				// Code size: 119 (0x77)
 				.maxstack 32
@@ -115,7 +115,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218c
+				// Method begins at RVA 0x2198
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -135,9 +135,9 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20a4
+			// Method begins at RVA 0x20a8
 			// Header size: 12
-			// Code size: 80 (0x50)
+			// Code size: 85 (0x55)
 			.maxstack 32
 			.locals init (
 				[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L3C22/Scope,
@@ -165,25 +165,26 @@
 			IL_002a: ldc.i4.1
 			IL_002b: ldloc.0
 			IL_002c: stelem.ref
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_0032: stloc.1
-			IL_0033: ldc.i4.0
-			IL_0034: newarr [System.Runtime]System.Object
-			IL_0039: stloc.2
-			IL_003a: ldloc.1
-			IL_003b: ldc.i4.1
-			IL_003c: newarr [System.Runtime]System.Object
-			IL_0041: dup
-			IL_0042: ldc.i4.0
-			IL_0043: ldarg.0
-			IL_0044: ldc.i4.0
-			IL_0045: ldelem.ref
-			IL_0046: stelem.ref
-			IL_0047: ldloc.2
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_004d: pop
-			IL_004e: ldnull
-			IL_004f: ret
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0037: stloc.1
+			IL_0038: ldc.i4.0
+			IL_0039: newarr [System.Runtime]System.Object
+			IL_003e: stloc.2
+			IL_003f: ldloc.1
+			IL_0040: ldc.i4.1
+			IL_0041: newarr [System.Runtime]System.Object
+			IL_0046: dup
+			IL_0047: ldc.i4.0
+			IL_0048: ldarg.0
+			IL_0049: ldc.i4.0
+			IL_004a: ldelem.ref
+			IL_004b: stelem.ref
+			IL_004c: ldloc.2
+			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_0052: pop
+			IL_0053: ldnull
+			IL_0054: ret
 		} // end of method ArrowFunction_L3C22::__js_call__
 
 	} // end of class ArrowFunction_L3C22
@@ -198,7 +199,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2183
+			// Method begins at RVA 0x218f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -224,7 +225,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 71 (0x47)
+		// Code size: 76 (0x4c)
 		.maxstack 32
 		.locals init (
 			[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope,
@@ -246,22 +247,23 @@
 		IL_0024: ldc.i4.0
 		IL_0025: ldloc.0
 		IL_0026: stelem.ref
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_002c: stloc.1
-		IL_002d: ldc.i4.0
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: stloc.2
-		IL_0034: ldloc.1
-		IL_0035: ldc.i4.1
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: dup
-		IL_003c: ldc.i4.0
-		IL_003d: ldnull
-		IL_003e: stelem.ref
-		IL_003f: ldloc.2
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0045: pop
-		IL_0046: ret
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0031: stloc.1
+		IL_0032: ldc.i4.0
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: stloc.2
+		IL_0039: ldloc.1
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldnull
+		IL_0043: stelem.ref
+		IL_0044: ldloc.2
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_004a: pop
+		IL_004b: ret
 	} // end of method ArrowFunction_NestedFunctionAccessesMultipleScopes::__js_module_init__
 
 } // end of class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes
@@ -273,7 +275,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219e
+		// Method begins at RVA 0x21aa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

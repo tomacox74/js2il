@@ -16,6 +16,7 @@ All notable changes to this project are documented here.
 - ControlFlow/spec: implement per-iteration lexical environments for `for (let/const ... of ...)` and `for (let/const ... in ...)`, including destructuring loop heads (fixes #462).
 - ControlFlow/spec: implement iterator-protocol `for..of` (Symbol.iterator + IteratorClose on abrupt completion) and add custom iterable compliance tests (fixes #458).
 - Async/spec: implement `for await...of` using the async iterator protocol (including awaited AsyncIteratorClose on abrupt completion) and add conformance tests (fixes #341).
+- ArrowFunction/spec: implement lexical `this` for arrow functions (including async arrows across `await`) (fixes #219).
 
 ## v0.7.3 - 2026-01-23
 

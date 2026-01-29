@@ -119,11 +119,12 @@ public class JavaScriptAstValidator : IAstValidator
             {
                 contextStack.Push(new ValidationContext
                 {
-                    AllowsThis = node is not ArrowFunctionExpression,
+                    // Arrow functions have lexical 'this' (they inherit it from the enclosing context).
+                    // Non-arrow functions establish their own 'this'.
+                    AllowsThis = node is ArrowFunctionExpression ? currentContext.AllowsThis : true,
                     AllowsSuper = false,
                     ScopeOwner = node,
-                    MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue
-                    ,
+                    MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
                     InDerivedClass = currentContext.InDerivedClass
                 });
             }
