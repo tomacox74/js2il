@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "15.4",
   "title": "Method Definitions",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
   "parent": {
     "clause": "15"
@@ -12,32 +12,81 @@
     {
       "clause": "15.4.1",
       "title": "Static Semantics: Early Errors",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-method-definitions-static-semantics-early-errors"
     },
     {
       "clause": "15.4.2",
       "title": "Static Semantics: HasDirectSuper",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-hasdirectsuper"
     },
     {
       "clause": "15.4.3",
       "title": "Static Semantics: SpecialMethod",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-specialmethod"
     },
     {
       "clause": "15.4.4",
       "title": "Runtime Semantics: DefineMethod",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-definemethod"
     },
     {
       "clause": "15.4.5",
       "title": "Runtime Semantics: MethodDefinitionEvaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-methoddefinitionevaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "15.4.5",
+        "feature": "Object literal method definition (shorthand method)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js",
+          "Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js"
+        ],
+        "notes": "Supports method syntax in object literals and correct this binding when called as obj.m()."
+      },
+      {
+        "clause": "15.4.4",
+        "feature": "Computed property names in object literals",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-definemethod",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js"
+        ],
+        "notes": "Supports computed property keys and preserves evaluation order."
+      },
+      {
+        "clause": "15.4.5",
+        "feature": "Class instance/static method definitions",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+        ],
+        "notes": "Covers instance/static methods and super method calls. Limitations are tracked under Class Definitions (e.g., getters/setters, computed method names, and private methods are rejected)."
+      },
+      {
+        "clause": "15.4.5",
+        "feature": "Async/generator methods (class elements)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_SimpleAwait.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_SimpleYield.js"
+        ],
+        "notes": "Async and generator methods are supported as class elements; broader async/generator limitations are tracked under Async Function Definitions / Generator Function Definitions."
+      }
+    ]
+  }
 }

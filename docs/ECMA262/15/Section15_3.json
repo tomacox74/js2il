@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "15.3",
   "title": "Arrow Function Definitions",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-arrow-function-definitions",
   "parent": {
     "clause": "15"
@@ -12,32 +12,63 @@
     {
       "clause": "15.3.1",
       "title": "Static Semantics: Early Errors",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arrow-function-definitions-static-semantics-early-errors"
     },
     {
       "clause": "15.3.2",
       "title": "Static Semantics: ConciseBodyContainsUseStrict",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-concisebodycontainsusestrict"
     },
     {
       "clause": "15.3.3",
       "title": "Runtime Semantics: EvaluateConciseBody",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluateconcisebody"
     },
     {
       "clause": "15.3.4",
       "title": "Runtime Semantics: InstantiateArrowFunctionExpression",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiatearrowfunctionexpression"
     },
     {
       "clause": "15.3.5",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arrow-function-definitions-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "15.3",
+        "feature": "arrow functions (=>) - basic syntax, closure, and invocation",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-arrow-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_SimpleExpression.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_BlockBody_Return.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_CapturesOuterVariable.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ClosureMutatesOuterVariable.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_NestedFunctionAccessesMultipleScopes.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionCallsGlobalFunction.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterExpression.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js"
+        ],
+        "notes": "Arrow functions compile via the IR pipeline and are emitted as callable methods (see JavaScriptArrowFunctionGenerator). Most real-world uses (callbacks/closures) work, but lexical 'this' is not yet supported (tracked separately)."
+      },
+      {
+        "clause": "15.3.4",
+        "feature": "lexical this for arrow functions",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiatearrowfunctionexpression",
+        "notes": "JS2IL currently rejects ThisExpression inside ArrowFunctionExpression during validation (see JavaScriptAstValidator: AllowsThis = node is not ArrowFunctionExpression). This prevents correct lexical-this capture/inheritance (see GitHub issue #219)."
+      }
+    ]
+  }
 }
