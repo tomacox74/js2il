@@ -48,16 +48,20 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-async-arrow-function-definitions",
         "testScripts": [
-          "Js2IL.Tests/Async/JavaScript/Async_ArrowFunction_SimpleAwait.js"
+          "Js2IL.Tests/Async/JavaScript/Async_ArrowFunction_SimpleAwait.js",
+          "Js2IL.Tests/Async/JavaScript/Async_ArrowFunction_LexicalThis.js"
         ],
-        "notes": "Covered by Async test fixture. Async arrow functions compile and run, including await and Promise chaining. Lexical 'this' for arrows is still not supported (see separate entry)."
+        "notes": "Covered by Async test fixture. Async arrow functions compile and run, including await and Promise chaining."
       },
       {
         "clause": "15.9.4",
         "feature": "lexical this for async arrow functions",
-        "status": "Not Yet Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiateasyncarrowfunctionexpression",
-        "notes": "Same limitation as non-async arrows: JS2IL currently rejects ThisExpression inside ArrowFunctionExpression during validation, preventing correct lexical-this capture/inheritance (see GitHub issue #219)."
+        "testScripts": [
+          "Js2IL.Tests/Async/JavaScript/Async_ArrowFunction_LexicalThis.js"
+        ],
+        "notes": "Async arrow functions preserve lexical this across await (GitHub issue #219)."
       }
     ]
   }

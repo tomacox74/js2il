@@ -60,14 +60,18 @@
           "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterExpression.js",
           "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js"
         ],
-        "notes": "Arrow functions compile via the IR pipeline and are emitted as callable methods (see JavaScriptArrowFunctionGenerator). Most real-world uses (callbacks/closures) work, but lexical 'this' is not yet supported (tracked separately)."
+        "notes": "Arrow functions compile via the IR pipeline and are emitted as callable methods (see JavaScriptArrowFunctionGenerator)."
       },
       {
         "clause": "15.3.4",
         "feature": "lexical this for arrow functions",
-        "status": "Not Yet Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiatearrowfunctionexpression",
-        "notes": "JS2IL currently rejects ThisExpression inside ArrowFunctionExpression during validation (see JavaScriptAstValidator: AllowsThis = node is not ArrowFunctionExpression). This prevents correct lexical-this capture/inheritance (see GitHub issue #219)."
+        "testScripts": [
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_ConstructorAssigned.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_CreatedInMethod.js"
+        ],
+        "notes": "Arrow functions capture lexical this at creation time and invoke with that bound this (GitHub issue #219)."
       }
     ]
   }

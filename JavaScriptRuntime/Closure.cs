@@ -5,6 +5,19 @@ namespace JavaScriptRuntime
 {
     public static class Closure
     {
+        private static T InvokeWithThis<T>(object? boundThis, Func<T> invoke)
+        {
+            var previous = RuntimeServices.SetCurrentThis(boundThis);
+            try
+            {
+                return invoke();
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previous);
+            }
+        }
+
         // Bind a function delegate (object-typed) to a fixed scopes array AND a fixed set of JS arguments.
         // Returns a Func<object[], object> suitable for AsyncScope._moveNext (resume invokes with scopes only).
         public static object BindMoveNext(object target, object[] boundScopes, object?[] boundArgs)
@@ -88,6 +101,46 @@ namespace JavaScriptRuntime
                 return (Func<object[], object, object, object, object, object, object, object>)((_, a1, a2, a3, a4, a5, a6) => f6(boundScopes, a1, a2, a3, a4, a5, a6));
             }
             throw new ArgumentException("Unsupported delegate type for closure binding", nameof(target));
+        }
+
+        // Bind an arrow function delegate to a fixed scopes array AND a fixed lexical 'this'.
+        // The runtime call sites may set a dynamic 'this' (receiver) before invocation; this binder
+        // overrides it for the duration of the arrow function body to match ECMA-262 lexical semantics.
+        public static object BindArrow(object target, object[] boundScopes, object? boundThis)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
+
+            if (target is Func<object[], object> f0)
+            {
+                return (Func<object[], object>)(_ => InvokeWithThis(boundThis, () => f0(boundScopes)));
+            }
+            if (target is Func<object[], object?, object> f1)
+            {
+                return (Func<object[], object?, object>)((_, a1) => InvokeWithThis(boundThis, () => f1(boundScopes, a1)));
+            }
+            if (target is Func<object[], object?, object?, object> f2)
+            {
+                return (Func<object[], object?, object?, object>)((_, a1, a2) => InvokeWithThis(boundThis, () => f2(boundScopes, a1, a2)));
+            }
+            if (target is Func<object[], object?, object?, object?, object> f3)
+            {
+                return (Func<object[], object?, object?, object?, object>)((_, a1, a2, a3) => InvokeWithThis(boundThis, () => f3(boundScopes, a1, a2, a3)));
+            }
+            if (target is Func<object[], object?, object?, object?, object?, object> f4)
+            {
+                return (Func<object[], object?, object?, object?, object?, object>)((_, a1, a2, a3, a4) => InvokeWithThis(boundThis, () => f4(boundScopes, a1, a2, a3, a4)));
+            }
+            if (target is Func<object[], object?, object?, object?, object?, object?, object> f5)
+            {
+                return (Func<object[], object?, object?, object?, object?, object?, object>)((_, a1, a2, a3, a4, a5) => InvokeWithThis(boundThis, () => f5(boundScopes, a1, a2, a3, a4, a5)));
+            }
+            if (target is Func<object[], object?, object?, object?, object?, object?, object?, object> f6)
+            {
+                return (Func<object[], object?, object?, object?, object?, object?, object?, object>)((_, a1, a2, a3, a4, a5, a6) => InvokeWithThis(boundThis, () => f6(boundScopes, a1, a2, a3, a4, a5, a6)));
+            }
+
+            throw new ArgumentException("Unsupported delegate type for arrow closure binding", nameof(target));
         }
 
         // Bind a zero-parameter JS function (aside from the scopes array) to a fixed scopes array

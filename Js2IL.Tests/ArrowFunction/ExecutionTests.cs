@@ -31,6 +31,12 @@ namespace Js2IL.Tests.ArrowFunction
         [Fact]
         public Task ArrowFunction_NestedFunctionAccessesMultipleScopes() { var testName = nameof(ArrowFunction_NestedFunctionAccessesMultipleScopes); return ExecutionTest(testName); }
 
+        [Fact]
+        public Task ArrowFunction_LexicalThis_ConstructorAssigned() { var testName = nameof(ArrowFunction_LexicalThis_ConstructorAssigned); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_LexicalThis_CreatedInMethod() { var testName = nameof(ArrowFunction_LexicalThis_CreatedInMethod); return ExecutionTest(testName); }
+
         // New: parameter destructuring (object)
         [Fact]
         public Task ArrowFunction_ParameterDestructuring_Object() { var testName = nameof(ArrowFunction_ParameterDestructuring_Object); return ExecutionTest(testName); }

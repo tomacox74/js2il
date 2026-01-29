@@ -23,6 +23,9 @@ namespace Js2IL.Tests.Async
         public Task Async_ArrowFunction_SimpleAwait() { var testName = nameof(Async_ArrowFunction_SimpleAwait); return GenerateTest(testName); }
 
         [Fact]
+        public Task Async_ArrowFunction_LexicalThis() { var testName = nameof(Async_ArrowFunction_LexicalThis); return GenerateTest(testName); }
+
+        [Fact]
         public Task Async_FunctionExpression_SimpleAwait() { var testName = nameof(Async_FunctionExpression_SimpleAwait); return GenerateTest(testName); }
 
         [Fact]

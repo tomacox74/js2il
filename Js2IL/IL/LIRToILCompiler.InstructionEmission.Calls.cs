@@ -354,10 +354,25 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
 
-                    // Bind delegate to scopes array: Closure.Bind(object, object[])
+                    // Bind delegate to scopes array AND lexical 'this': Closure.BindArrow(object, object[], object)
                     EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
+
+                    // Capture lexical 'this' at arrow creation time.
+                    // - In instance methods: ldarg.0
+                    // - In static methods: RuntimeServices.GetCurrentThis()
+                    if (methodDescriptor.IsStatic)
+                    {
+                        var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getThisRef);
+                    }
+                    else
+                    {
+                        ilEncoder.LoadArgument(0);
+                    }
+
                     ilEncoder.OpCode(ILOpCode.Call);
-                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
+                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.BindArrow), new[] { typeof(object), typeof(object[]), typeof(object) });
                     ilEncoder.Token(bindRef);
 
                     EmitStoreTemp(createArrow.Result, ilEncoder, allocation);
