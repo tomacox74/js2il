@@ -22,6 +22,12 @@
 
 Feature-level support tracking with test script references.
 
+### 15.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-method-definitions-static-semantics-early-errors))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Getter/setter method definitions (get x() / set x(v)) | Not Yet Supported |  | Getters/setters are currently rejected by the validator in both object literals and classes. |
+
 ### 15.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-definemethod))
 
 | Feature name | Status | Test scripts | Notes |

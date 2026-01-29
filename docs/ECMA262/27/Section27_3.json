@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "27.3",
   "title": "GeneratorFunction Objects",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-objects",
   "parent": {
     "clause": "27"
@@ -13,74 +13,91 @@
     {
       "clause": "27.3.1",
       "title": "The GeneratorFunction Constructor",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-constructor"
     },
     {
       "clause": "27.3.1.1",
       "title": "GeneratorFunction ( ... parameterArgs , bodyArg )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction"
     },
     {
       "clause": "27.3.2",
       "title": "Properties of the GeneratorFunction Constructor",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-generatorfunction-constructor"
     },
     {
       "clause": "27.3.2.1",
       "title": "GeneratorFunction.prototype",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction.prototype"
     },
     {
       "clause": "27.3.3",
       "title": "Properties of the GeneratorFunction Prototype Object",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-generatorfunction-prototype-object"
     },
     {
       "clause": "27.3.3.1",
       "title": "GeneratorFunction.prototype.constructor",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction.prototype.constructor"
     },
     {
       "clause": "27.3.3.2",
       "title": "GeneratorFunction.prototype.prototype",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction.prototype.prototype"
     },
     {
       "clause": "27.3.3.3",
       "title": "GeneratorFunction.prototype [ %Symbol.toStringTag% ]",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction.prototype-%symbol.tostringtag%"
     },
     {
       "clause": "27.3.4",
       "title": "GeneratorFunction Instances",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-instances"
     },
     {
       "clause": "27.3.4.1",
       "title": "length",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-instances-length"
     },
     {
       "clause": "27.3.4.2",
       "title": "name",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-instances-name"
     },
     {
       "clause": "27.3.4.3",
       "title": "prototype",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-instances-prototype"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "27.3.4",
+        "feature": "Generator function declarations/expressions (`function*`) compile and return generator objects",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-generatorfunction-instances",
+        "testScripts": [
+          "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js"
+        ],
+        "notes": "JS2IL supports generator syntax (`function*`, `yield`, `yield*`) but does not currently expose a spec-shaped `GeneratorFunction` constructor/prototype as global intrinsics."
+      }
+    ]
+  }
 }

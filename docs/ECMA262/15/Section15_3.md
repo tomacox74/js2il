@@ -28,6 +28,12 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | arrow functions (=>) - basic syntax, closure, and invocation | Supported | [`ArrowFunction_SimpleExpression.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_SimpleExpression.js)<br>[`ArrowFunction_BlockBody_Return.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_BlockBody_Return.js)<br>[`ArrowFunction_CapturesOuterVariable.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_CapturesOuterVariable.js)<br>[`ArrowFunction_ClosureMutatesOuterVariable.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ClosureMutatesOuterVariable.js)<br>[`ArrowFunction_GlobalFunctionWithMultipleParameters.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js)<br>[`ArrowFunction_NestedFunctionAccessesMultipleScopes.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_NestedFunctionAccessesMultipleScopes.js)<br>[`ArrowFunction_GlobalFunctionCallsGlobalFunction.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionCallsGlobalFunction.js)<br>[`ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js)<br>[`ArrowFunction_DefaultParameterValue.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js)<br>[`ArrowFunction_DefaultParameterExpression.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterExpression.js)<br>[`ArrowFunction_ParameterDestructuring_Object.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js) | Arrow functions compile via the IR pipeline and are emitted as callable methods (see JavaScriptArrowFunctionGenerator). |
 
+### 15.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-concisebodycontainsusestrict))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| directive prologue / strict mode ("use strict") semantics | Supported with Limitations |  | JS2IL parses directive prologues but does not currently aim for full strict-mode semantics/early errors across the language. This clause is tracked as limited until a dedicated strict-mode test matrix exists. |
+
 ### 15.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-instantiatearrowfunctionexpression))
 
 | Feature name | Status | Test scripts | Notes |

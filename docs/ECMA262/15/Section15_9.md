@@ -28,6 +28,12 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | async arrow functions (async () => ...) with await | Supported | [`Async_ArrowFunction_SimpleAwait.js`](../../../Js2IL.Tests/Async/JavaScript/Async_ArrowFunction_SimpleAwait.js)<br>[`Async_ArrowFunction_LexicalThis.js`](../../../Js2IL.Tests/Async/JavaScript/Async_ArrowFunction_LexicalThis.js) | Covered by Async test fixture. Async arrow functions compile and run, including await and Promise chaining. |
 
+### 15.9.2 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-asyncconcisebodycontainsusestrict))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| directive prologue / strict mode ("use strict") semantics | Supported with Limitations |  | JS2IL parses directive prologues but does not currently aim for full strict-mode semantics/early errors across the language. This clause is tracked as limited until a dedicated strict-mode test matrix exists. |
+
 ### 15.9.4 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-instantiateasyncarrowfunctionexpression))
 
 | Feature name | Status | Test scripts | Notes |
