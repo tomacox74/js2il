@@ -82,7 +82,7 @@ public class ExecutionTests
         var outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "Hosting", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(outputPath);
 
-        var js = JavaScriptTestSource.EnsureUseStrict(GetJavaScript(scriptName));
+        var js = GetJavaScript(scriptName);
         moduleId = $"{scriptName}_{Guid.NewGuid():N}";
         var testFilePath = Path.Combine(outputPath, moduleId + ".js");
 

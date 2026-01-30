@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test compound bitwise OR assignment on array elements (dynamic indexed access)
+"use strict";
+
+// Test compound bitwise OR assignment on array elements (dynamic indexed access)
 // This triggers the dynamic fallback path that uses CoerceToInt32
 
 var arr = [1, 2, 4, 8];

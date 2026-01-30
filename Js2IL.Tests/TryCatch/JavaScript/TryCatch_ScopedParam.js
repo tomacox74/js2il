@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nlet x = "outer";
+"use strict";
+
+let x = "outer";
 
 try {
   throw "inner";

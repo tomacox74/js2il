@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Default is not "last"; it executes based on source order.
+"use strict";
+
+// Default is not "last"; it executes based on source order.
 switch (1) {
   case 1:
     console.log("a");

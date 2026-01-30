@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Ternary operator demo
+"use strict";
+
+// Ternary operator demo
 // Expected: prints "lte" then "lte"
 const a = 3;
 const b = 5;

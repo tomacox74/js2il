@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+"use strict";
+
 /*
   updateVerifiedFiles.js
   Port of scripts/Update-VerifiedFiles.ps1

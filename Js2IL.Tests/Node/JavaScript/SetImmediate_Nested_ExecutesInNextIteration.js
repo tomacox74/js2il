@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nsetImmediate(() => {
+"use strict";
+
+setImmediate(() => {
     console.log("outer");
     setImmediate(() => console.log("inner"));
 });

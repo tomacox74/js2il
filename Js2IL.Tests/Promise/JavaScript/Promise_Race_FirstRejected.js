@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst p1 = Promise.reject("Error first");
+"use strict";
+
+const p1 = Promise.reject("Error first");
 const p2 = Promise.resolve(2);
 const p3 = Promise.resolve(3);
 

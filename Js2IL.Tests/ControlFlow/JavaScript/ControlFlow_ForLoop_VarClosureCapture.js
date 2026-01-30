@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst fns = [];
+"use strict";
+
+const fns = [];
 
 for (var i = 0; i < 3; i++) {
   fns.push(() => i);

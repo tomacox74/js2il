@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass Counter {
+"use strict";
+
+class Counter {
     constructor() {
         this.value = 0;
         this.name = "test";

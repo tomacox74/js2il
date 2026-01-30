@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Library module that exports a single function
+"use strict";
+
+// Library module that exports a single function
 
 function greet(name) {
     return "Hello, " + name + "!";

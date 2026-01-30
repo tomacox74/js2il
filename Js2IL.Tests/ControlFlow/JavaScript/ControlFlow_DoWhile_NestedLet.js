@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nlet i = 0;
+"use strict";
+
+let i = 0;
 while (i < 10) {
   i++;
   let message = "Current value is: " + i;

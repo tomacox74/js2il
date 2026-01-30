@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nasync function addAsync(x, y) {
+"use strict";
+
+async function addAsync(x, y) {
     return x + y;
 }
 

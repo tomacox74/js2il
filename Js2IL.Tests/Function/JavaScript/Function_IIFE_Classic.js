@@ -1,3 +1,5 @@
-"use strict";\r\n\r\n(function() {
+"use strict";
+
+(function() {
     console.log('IIFE ran');
 })();

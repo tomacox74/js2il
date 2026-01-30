@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst version = "1.0.0";
+"use strict";
+
+const version = "1.0.0";
 function add(x, y) {
   return x + y;
 }

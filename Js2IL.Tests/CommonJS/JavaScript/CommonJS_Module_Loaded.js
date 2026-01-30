@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test module.loaded property
+"use strict";
+
+// Test module.loaded property
 // module.loaded is false while the module is loading, true after
 
 // During module execution, loaded should be false

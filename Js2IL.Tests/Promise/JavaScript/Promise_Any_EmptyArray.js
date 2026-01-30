@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nPromise.any([])
+"use strict";
+
+Promise.any([])
     .then((result) => {
         console.log("Should not reach here");
     })

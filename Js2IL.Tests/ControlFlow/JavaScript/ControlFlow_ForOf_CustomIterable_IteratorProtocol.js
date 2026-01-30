@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nlet closed = 0;
+"use strict";
+
+let closed = 0;
 
 const iterable = {
   [Symbol.iterator]: function () {

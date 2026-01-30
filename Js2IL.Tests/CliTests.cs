@@ -174,7 +174,7 @@ namespace Js2IL.Tests
             var tempRoot = Path.Combine(Path.GetTempPath(), "js2il_cli_test_" + Guid.NewGuid().ToString("n"));
             Directory.CreateDirectory(tempRoot);
             var jsFile = Path.Combine(tempRoot, "simple.js");
-            File.WriteAllText(jsFile, "console.log('x is', 3);");
+            File.WriteAllText(jsFile, "\"use strict\";\nconsole.log('x is', 3);");
             var outDir = Path.Combine(tempRoot, "out");
 
             try

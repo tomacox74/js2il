@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Callback-based Array operations
+"use strict";
+
+// Callback-based Array operations
 
 var a = [1, 2, 3];
 a.forEach(function (x) { console.log(x); });

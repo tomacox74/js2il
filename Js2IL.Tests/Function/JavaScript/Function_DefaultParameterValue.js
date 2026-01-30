@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test default parameter values in functions
+"use strict";
+
+// Test default parameter values in functions
 function greet(name = "World") {
     console.log("Hello, " + name);
 }

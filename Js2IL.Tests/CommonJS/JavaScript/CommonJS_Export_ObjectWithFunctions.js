@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test: Import an object with function properties and call them
+"use strict";
+
+// Test: Import an object with function properties and call them
 // This is the exact repro case from issue #156
 
 const mathUtils = require('./CommonJS_Export_ObjectWithFunctions_Lib');

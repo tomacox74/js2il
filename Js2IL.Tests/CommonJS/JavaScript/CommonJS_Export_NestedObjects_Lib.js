@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Library module that exports nested literal objects with fields and methods
+"use strict";
+
+// Library module that exports nested literal objects with fields and methods
 
 module.exports = {
     name: "Calculator",

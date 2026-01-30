@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction testFunction() {
+"use strict";
+
+function testFunction() {
 	const FUNCTION_VALUE = "Hello from function";
 	
 	class MyClass {

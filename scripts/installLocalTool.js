@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+"use strict";
+
 /**
  * Build a Release nupkg of js2il and install it as the global dotnet tool.
  * This script ensures the newest version is installed by:

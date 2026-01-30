@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nlet state = 0;
+"use strict";
+
+let state = 0;
 
 function startTimer(ms) {
     setTimeout(() => {

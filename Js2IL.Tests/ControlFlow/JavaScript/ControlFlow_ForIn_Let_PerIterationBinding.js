@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nlet funcs = [];
+"use strict";
+
+let funcs = [];
 
 let obj = { a: 1, b: 2, c: 3 };
 

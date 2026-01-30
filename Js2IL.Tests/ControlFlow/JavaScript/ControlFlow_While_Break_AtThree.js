@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nlet i = 0;
+"use strict";
+
+let i = 0;
 while (i < 10) {
   if (i === 3) break;
   console.log(i);

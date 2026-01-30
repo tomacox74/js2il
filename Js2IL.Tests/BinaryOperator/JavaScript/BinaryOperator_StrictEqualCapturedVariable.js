@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test strict equality with captured variable in arrow function
+"use strict";
+
+// Test strict equality with captured variable in arrow function
 // This reproduced a bug where Unknown type (boxed captured var) wasn't 
 // being converted to number before comparison with numeric literal
 // The key is that `id` is a parameter of the arrow function which gets

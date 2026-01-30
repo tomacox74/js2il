@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test module.paths - the search paths for the module
+"use strict";
+
+// Test module.paths - the search paths for the module
 // This is an array of directories where require() looks for modules
 
 console.log("module.paths type:", typeof module.paths);

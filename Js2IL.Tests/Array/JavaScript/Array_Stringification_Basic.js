@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Array stringification
+"use strict";
+
+// Array stringification
 
 var arr = [1, 2, 3];
 console.log(arr.join());

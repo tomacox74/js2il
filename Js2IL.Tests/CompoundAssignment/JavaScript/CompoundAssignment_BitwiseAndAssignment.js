@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test bitwise AND assignment operator &=
+"use strict";
+
+// Test bitwise AND assignment operator &=
 var x = 7;
 x &= 3;
 console.log('x after 7 &= 3:', x);

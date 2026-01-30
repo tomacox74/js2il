@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction f() {
+"use strict";
+
+function f() {
   try {
     console.log("a");
     return;

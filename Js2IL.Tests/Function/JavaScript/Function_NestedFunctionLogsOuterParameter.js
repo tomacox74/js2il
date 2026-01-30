@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction outerFunction(outerParam) {
+"use strict";
+
+function outerFunction(outerParam) {
     function innerFunction(innerParam) {
         console.log("Outer Param:", outerParam);
         console.log("Inner Param:", innerParam);

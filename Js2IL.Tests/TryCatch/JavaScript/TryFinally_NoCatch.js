@@ -1,4 +1,6 @@
-"use strict";\r\n\r\ntry {
+"use strict";
+
+try {
     console.log("in try");
 } finally {
     console.log("in finally");

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// for await...of over a sync iterable (Array)
+"use strict";
+
+// for await...of over a sync iterable (Array)
 async function test() {
     let sum = 0;
 

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst obj = { a: 1 };
+"use strict";
+
+const obj = { a: 1 };
 console.log("a" in obj);
 console.log("b" in obj);
 // numeric key presence (not set) should be false

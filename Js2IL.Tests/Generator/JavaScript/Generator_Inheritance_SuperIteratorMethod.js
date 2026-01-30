@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass Base {
+"use strict";
+
+class Base {
     *values() {
         yield 1;
         yield 2;

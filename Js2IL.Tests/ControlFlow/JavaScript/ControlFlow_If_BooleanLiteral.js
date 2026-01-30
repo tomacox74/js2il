@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nif (true) {
+"use strict";
+
+if (true) {
   console.log("T");
 } else {
   console.log("F");

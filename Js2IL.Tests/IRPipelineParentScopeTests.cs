@@ -22,6 +22,8 @@ public class IRPipelineParentScopeTests
             Directory.CreateDirectory(outputPath);
 
             var js = """
+                "use strict";
+
                 function makeCounter() {
                     var x = 0;
                     function inc() {
@@ -36,7 +38,7 @@ public class IRPipelineParentScopeTests
 
             var testFilePath = Path.Combine(outputPath, "parent-scope.js");
             var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile(testFilePath, JavaScriptTestSource.EnsureUseStrict(js));
+            mockFileSystem.AddFile(testFilePath, js);
 
             var options = new CompilerOptions
             {
@@ -89,6 +91,8 @@ public class IRPipelineParentScopeTests
             Directory.CreateDirectory(outputPath);
 
             var js = """
+                "use strict";
+
                 function makeCounter() {
                     var x = 0;
                     function f() {
@@ -105,7 +109,7 @@ public class IRPipelineParentScopeTests
 
             var testFilePath = Path.Combine(outputPath, "parent-scope-updateexpr.js");
             var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile(testFilePath, JavaScriptTestSource.EnsureUseStrict(js));
+            mockFileSystem.AddFile(testFilePath, js);
 
             var options = new CompilerOptions
             {

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass Greeter {
+"use strict";
+
+class Greeter {
   helloWorld() {
     console.log("Hello world from Greeter");
   }

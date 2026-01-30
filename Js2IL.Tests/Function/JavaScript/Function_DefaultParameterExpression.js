@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test default parameter expressions that reference other parameters in functions
+"use strict";
+
+// Test default parameter expressions that reference other parameters in functions
 function calculate(a, b = a * 2, c = a + b) {
     console.log(c);
 }

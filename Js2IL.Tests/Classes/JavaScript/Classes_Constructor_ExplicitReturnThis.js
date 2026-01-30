@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test PL5.4a: Constructor with explicit return statements
+"use strict";
+
+// Test PL5.4a: Constructor with explicit return statements
 // Both 'return;' and 'return this;' in constructors should work correctly
 // Constructors are void-returning in IL, so return statements don't push values
 

@@ -1,3 +1,5 @@
-"use strict";\r\n\r\nlet s = 'a';
+"use strict";
+
+let s = 'a';
 s += 'b';
 console.log(s);

@@ -1,3 +1,5 @@
-"use strict";\r\n\r\n// call on expression, not an identifier
+"use strict";
+
+// call on expression, not an identifier
 console.log(('abc').replace('b','x'));
 console.log(('abc').replace(/b/g,'x'));

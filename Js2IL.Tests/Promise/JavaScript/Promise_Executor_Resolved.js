@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst p = new Promise((resolve) => {
+"use strict";
+
+const p = new Promise((resolve) => {
     resolve("Hello World");
 });
 

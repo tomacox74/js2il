@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nvar arr = [1, 2];
+"use strict";
+
+var arr = [1, 2];
 console.log(arr.push(3)); // length after push -> 3
 console.log(arr.length); // 3
 console.log(arr.push(4, 5)); // length after pushing two -> 5

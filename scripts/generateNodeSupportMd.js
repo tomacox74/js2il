@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+"use strict";
+
 /*
  Generates docs/nodejs/NodeSupport.md from docs/nodejs/NodeSupport.json.
 */

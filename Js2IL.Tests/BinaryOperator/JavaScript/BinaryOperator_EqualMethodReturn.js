@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass TestClass {
+"use strict";
+
+class TestClass {
     getValue() {
         return 4;
     }

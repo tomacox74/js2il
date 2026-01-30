@@ -1,1 +1,3 @@
-"use strict";\r\n\r\nconsole.log('d executed');
+"use strict";
+
+console.log('d executed');

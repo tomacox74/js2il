@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction logNameAge(name, age) {
+"use strict";
+
+function logNameAge(name, age) {
     console.log(name + " " + age);
 }
 

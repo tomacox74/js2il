@@ -1,4 +1,6 @@
-"use strict";\r\n\r\ntry {
+"use strict";
+
+try {
     console.log("before throw");
     throw new Error("test error message");
 } catch {

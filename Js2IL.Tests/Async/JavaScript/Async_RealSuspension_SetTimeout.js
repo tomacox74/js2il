@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconsole.log("Before calling async function");
+"use strict";
+
+console.log("Before calling async function");
 
 function run() {
     console.log("Inside async function (before await)");

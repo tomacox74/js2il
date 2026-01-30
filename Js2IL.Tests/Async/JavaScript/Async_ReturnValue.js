@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nasync function getValue() {
+"use strict";
+
+async function getValue() {
     return 42;
 }
 

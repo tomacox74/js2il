@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction printMessage(message) {
+"use strict";
+
+function printMessage(message) {
     console.log("Message:", message);
 }
 

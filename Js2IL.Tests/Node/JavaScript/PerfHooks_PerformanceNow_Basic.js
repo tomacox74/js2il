@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst { performance } = require('perf_hooks');
+"use strict";
+
+const { performance } = require('perf_hooks');
 const t1 = performance.now();
 
 let s = 0.0;

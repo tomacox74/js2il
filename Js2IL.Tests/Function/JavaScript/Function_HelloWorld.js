@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction helloWorld() {
+"use strict";
+
+function helloWorld() {
     console.log("Hello, World!");
 }
 helloWorld();

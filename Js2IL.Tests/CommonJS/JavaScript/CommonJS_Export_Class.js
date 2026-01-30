@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test: Import a class constructor from another module and instantiate it
+"use strict";
+
+// Test: Import a class constructor from another module and instantiate it
 // This tests cross-module class constructor exports + `new` in the importing module
 
 const Calculator = require('./CommonJS_Export_Class_Lib');

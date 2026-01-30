@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// PL3.3a: NewExpression for built-in Error types
+"use strict";
+
+// PL3.3a: NewExpression for built-in Error types
 try {
     throw new TypeError(123);
 } catch (e) {

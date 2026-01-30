@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// exception thrown in finally should override original exception from try
+"use strict";
+
+// exception thrown in finally should override original exception from try
 async function test() {
     console.log("start");
     try {

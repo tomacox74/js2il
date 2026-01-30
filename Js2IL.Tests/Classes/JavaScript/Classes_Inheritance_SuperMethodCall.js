@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass B {
+"use strict";
+
+class B {
   m() {
     return 3;
   }

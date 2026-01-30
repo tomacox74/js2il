@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass GlobalBase {
+"use strict";
+
+class GlobalBase {
     m() {
         return 5;
     }

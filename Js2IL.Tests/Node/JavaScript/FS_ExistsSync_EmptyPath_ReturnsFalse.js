@@ -1,3 +1,5 @@
-"use strict";\r\n\r\nconst fs = require('fs');
+"use strict";
+
+const fs = require('fs');
 // Empty path should not exist
 console.log(fs.existsSync(''));

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nvar arr = [10, 20, 30];
+"use strict";
+
+var arr = [10, 20, 30];
 console.log(arr.pop()); // 30
 console.log(arr.length); // 2
 console.log(arr.pop()); // 20

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test equality comparison with function parameters
+"use strict";
+
+// Test equality comparison with function parameters
 // This tests a bug where parameter == literal was always returning true
 
 function testParam(value) {

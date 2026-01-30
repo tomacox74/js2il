@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction* g() {
+"use strict";
+
+function* g() {
   yield* [1, 2, 3];
   return 99;
 }

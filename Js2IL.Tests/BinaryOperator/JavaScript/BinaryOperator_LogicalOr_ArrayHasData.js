@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction arrayHasData(arr) {
+"use strict";
+
+function arrayHasData(arr) {
     if (!arr || !arr.length) {
         return false;
     }

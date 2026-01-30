@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// for await...of using Symbol.asyncIterator, ensure IteratorClose/return() is called on break
+"use strict";
+
+// for await...of using Symbol.asyncIterator, ensure IteratorClose/return() is called on break
 const iterable = {
     [Symbol.asyncIterator]() {
         let i = 0;

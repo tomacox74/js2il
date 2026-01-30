@@ -18,7 +18,7 @@ public class ValidatorTests
     }
 
     private Acornima.Ast.Program ParseStrict(string js)
-        => _parser.ParseJavaScript(JavaScriptTestSource.EnsureUseStrict(js), "test.js");
+        => _parser.ParseJavaScript("\"use strict\";\n" + js, "test.js");
 
     [Fact]
     public void Validate_MissingUseStrict_ReportsError()

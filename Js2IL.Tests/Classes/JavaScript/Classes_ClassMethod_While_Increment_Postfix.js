@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass Counter {
+"use strict";
+
+class Counter {
   run(n) {
     let i = 0;
     while (i < n) {

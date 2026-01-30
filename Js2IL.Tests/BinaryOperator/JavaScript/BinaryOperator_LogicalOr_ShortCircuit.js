@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nlet x = 0;
+"use strict";
+
+let x = 0;
 function inc() {
   x = x + 1;
   return true;

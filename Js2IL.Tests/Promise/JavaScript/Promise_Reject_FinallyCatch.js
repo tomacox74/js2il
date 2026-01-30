@@ -1,1 +1,3 @@
-"use strict";\n\nPromise.reject("Hello from Promise.reject").finally(() => console.log("Hello from finally")).catch((message => console.log(message)));
+"use strict";
+
+Promise.reject("Hello from Promise.reject").finally(() => console.log("Hello from finally")).catch((message => console.log(message)));

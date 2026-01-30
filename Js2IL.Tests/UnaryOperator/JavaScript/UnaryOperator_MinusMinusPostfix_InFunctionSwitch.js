@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction bump(kind) {
+"use strict";
+
+function bump(kind) {
   let maj = 3;
   let min = 2;
   let pat = 1;

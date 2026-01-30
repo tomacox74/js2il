@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction* inner() {
+"use strict";
+
+function* inner() {
   yield 1;
   yield 5;
   return 7;

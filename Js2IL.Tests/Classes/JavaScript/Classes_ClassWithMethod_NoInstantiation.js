@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass Greeter { 
+"use strict";
+
+class Greeter { 
   hello() { return 42; }
 }
 

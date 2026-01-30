@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Non-mutating/copying Array operations
+"use strict";
+
+// Non-mutating/copying Array operations
 
 var f = [1, 2].concat([3, 4], 5);
 console.log(f.join());

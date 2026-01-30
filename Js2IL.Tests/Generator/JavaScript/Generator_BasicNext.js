@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction* g() {
+"use strict";
+
+function* g() {
   console.log("start");
   yield 1;
   const x = yield 2;

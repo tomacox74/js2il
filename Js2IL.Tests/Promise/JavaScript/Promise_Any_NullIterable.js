@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nPromise.any(null)
+"use strict";
+
+Promise.any(null)
     .then((result) => {
         console.log("Should not reach here");
     })

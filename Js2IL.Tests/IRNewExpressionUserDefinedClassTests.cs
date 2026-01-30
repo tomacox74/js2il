@@ -14,6 +14,8 @@ public class IRNewExpressionUserDefinedClassTests
         IRPipelineMetrics.Reset();
 
         var js = @"
+      ""use strict"";
+
 class Foo {
   constructor(a = 123) {
     // keep ctor non-trivial so it is emitted and declared
@@ -28,7 +30,7 @@ new Foo();
 
         var testFilePath = Path.Combine(outputPath, "test.js");
         var mockFs = new MockFileSystem();
-        mockFs.AddFile(testFilePath, JavaScriptTestSource.EnsureUseStrict(js));
+        mockFs.AddFile(testFilePath, js);
 
         var options = new CompilerOptions { OutputDirectory = outputPath };
         var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, new TestLogger());
@@ -47,6 +49,8 @@ new Foo();
       public void IR_NewExpression_UserDefinedClass_ConstructorArgCountMismatch_ThrowsNotSupported()
       {
         var js = @"
+      ""use strict"";
+
     class Foo {
       constructor(a, b = 2) {
       }
@@ -59,7 +63,7 @@ new Foo();
 
         var testFilePath = Path.Combine(outputPath, "test.js");
         var mockFs = new MockFileSystem();
-        mockFs.AddFile(testFilePath, JavaScriptTestSource.EnsureUseStrict(js));
+        mockFs.AddFile(testFilePath, js);
 
         var options = new CompilerOptions { OutputDirectory = outputPath };
         var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, new TestLogger());

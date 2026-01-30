@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst stringObject = "abc";
+"use strict";
+
+const stringObject = "abc";
 
 try {
   stringObject.doesNotExist();

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// await inside finally should run on normal completion
+"use strict";
+
+// await inside finally should run on normal completion
 async function test() {
     console.log("try: before");
     try {

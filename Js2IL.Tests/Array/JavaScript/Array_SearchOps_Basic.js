@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Search/position Array operations
+"use strict";
+
+// Search/position Array operations
 
 var arr = [1, 2, 3, 2];
 console.log(arr.indexOf(2));

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test compound bitwise OR with local variable index
+"use strict";
+
+// Test compound bitwise OR with local variable index
 // This reproduces a bug where using a local variable as array index in compound assignment produces incorrect results
 
 class TestClass {

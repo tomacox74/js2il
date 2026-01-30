@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nlet x = 2;
+"use strict";
+
+let x = 2;
 
 switch (x) {
   case 1:

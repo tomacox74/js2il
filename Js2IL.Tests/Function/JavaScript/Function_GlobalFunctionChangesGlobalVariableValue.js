@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nvar counter = 0;
+"use strict";
+
+var counter = 0;
 var message = "Initial message";
 
 function changeGlobalValues() {

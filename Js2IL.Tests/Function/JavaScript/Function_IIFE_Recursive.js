@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Recursive IIFE pattern similar to walk() usage in cleanUnusedSnapshots.js
+"use strict";
+
+// Recursive IIFE pattern similar to walk() usage in cleanUnusedSnapshots.js
 (function walk(node, depth) {
     console.log('visit', node.name, depth);
     if (depth > 2) {

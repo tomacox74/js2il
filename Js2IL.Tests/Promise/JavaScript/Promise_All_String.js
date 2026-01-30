@@ -1,1 +1,3 @@
-"use strict";\n\nPromise.all("hello").then((results) => console.log(results));
+"use strict";
+
+Promise.all("hello").then((results) => console.log(results));

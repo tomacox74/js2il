@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst obj = { a: 1, b: 2, c: 3 };
+"use strict";
+
+const obj = { a: 1, b: 2, c: 3 };
 
 for (const k in obj) {
   console.log(k);

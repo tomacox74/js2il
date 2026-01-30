@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconsole.log(!true);
+"use strict";
+
+console.log(!true);
 console.log(!false);
 console.log(!0);
 console.log(!1);

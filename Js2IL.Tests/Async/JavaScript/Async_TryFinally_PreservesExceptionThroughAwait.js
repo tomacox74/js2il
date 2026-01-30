@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// exception thrown in try should be preserved through finally await
+"use strict";
+
+// exception thrown in try should be preserved through finally await
 async function test() {
     console.log("start");
     try {

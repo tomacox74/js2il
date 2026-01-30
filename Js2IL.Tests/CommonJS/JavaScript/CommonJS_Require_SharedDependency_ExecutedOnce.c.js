@@ -1,3 +1,5 @@
-"use strict";\r\n\r\nconsole.log('c start');
+"use strict";
+
+console.log('c start');
 require('./d');
 console.log('c end');

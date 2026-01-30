@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// return value from try must be preserved when finally awaits and completes normally
+"use strict";
+
+// return value from try must be preserved when finally awaits and completes normally
 async function test() {
     console.log("start");
     try {

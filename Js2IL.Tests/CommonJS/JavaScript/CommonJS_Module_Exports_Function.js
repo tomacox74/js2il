@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test module.exports = function pattern
+"use strict";
+
+// Test module.exports = function pattern
 // Common pattern to export a single function
 
 function greet(name) {

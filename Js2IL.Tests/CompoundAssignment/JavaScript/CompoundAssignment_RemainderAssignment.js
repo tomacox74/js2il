@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test remainder/modulo assignment operator %=
+"use strict";
+
+// Test remainder/modulo assignment operator %=
 var x = 17;
 x %= 5;
 console.log('x after 17 %= 5:', x);

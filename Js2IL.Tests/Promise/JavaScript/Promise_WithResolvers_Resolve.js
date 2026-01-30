@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst r = Promise.withResolvers();
+"use strict";
+
+const r = Promise.withResolvers();
 
 r.promise.then((value) => {
     console.log(value);

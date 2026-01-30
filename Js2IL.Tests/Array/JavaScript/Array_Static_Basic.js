@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Static Array operations
+"use strict";
+
+// Static Array operations
 
 console.log(Array.of(1, 2, 3).join());
 console.log(Array.of().length);

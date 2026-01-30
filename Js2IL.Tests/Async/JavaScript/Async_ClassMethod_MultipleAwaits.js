@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass Processor {
+"use strict";
+
+class Processor {
     async process(items) {
         const first = await Promise.resolve(items[0]);
         const second = await Promise.resolve(items[1]);

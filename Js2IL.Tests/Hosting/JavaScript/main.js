@@ -1,2 +1,4 @@
-"use strict";\r\n\r\nconst calc = require('./calculator/index');
+"use strict";
+
+const calc = require('./calculator/index');
 module.exports = { add: calc.add };

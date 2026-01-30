@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Mutating Array operations
+"use strict";
+
+// Mutating Array operations
 
 var d = [1, 2, 3];
 console.log(d.shift());

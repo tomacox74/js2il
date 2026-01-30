@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst show = ({a, b}) => {
+"use strict";
+
+const show = ({a, b}) => {
   console.log(a, b);
 };
 

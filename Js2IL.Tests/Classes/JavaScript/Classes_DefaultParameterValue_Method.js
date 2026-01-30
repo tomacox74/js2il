@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test default parameter values in class methods
+"use strict";
+
+// Test default parameter values in class methods
 class Calculator {
     add(a, b = 10) {
         console.log(a + b);

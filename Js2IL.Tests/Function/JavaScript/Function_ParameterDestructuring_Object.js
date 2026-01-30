@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction show({a, b}) {
+"use strict";
+
+function show({a, b}) {
 	console.log(a, b);
 }
 

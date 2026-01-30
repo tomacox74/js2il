@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n[1].map((x) => x);
+"use strict";
+
+[1].map((x) => x);
 
 require('./CommonJS_Require_Dependency');
 console.log('CommonJS_Require_Basic has been loaded');

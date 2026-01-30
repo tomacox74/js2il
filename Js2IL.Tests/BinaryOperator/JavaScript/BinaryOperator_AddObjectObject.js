@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction add(a, b) {
+"use strict";
+
+function add(a, b) {
     return a + b;
 }
 

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\ntry {
+"use strict";
+
+try {
   console.log(a); // TDZ access before declaration
   let a = 3;
   console.log('NO_TDZ');

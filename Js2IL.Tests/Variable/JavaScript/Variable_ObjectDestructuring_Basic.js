@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test basic object destructuring assignment
+"use strict";
+
+// Test basic object destructuring assignment
 const obj = { x: 10, y: 20, name: 'test' };
 const { x, y, name } = obj;
 

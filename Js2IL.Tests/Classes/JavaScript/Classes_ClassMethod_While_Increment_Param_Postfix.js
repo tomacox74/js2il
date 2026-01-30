@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass Counter {
+"use strict";
+
+class Counter {
   run(n) {
     while (n < 3) {
       n++;

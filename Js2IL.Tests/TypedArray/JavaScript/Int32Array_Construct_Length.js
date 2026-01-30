@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst a = new Int32Array(3);
+"use strict";
+
+const a = new Int32Array(3);
 console.log(a.length);
 console.log(a[0]);
 console.log(a[2]);

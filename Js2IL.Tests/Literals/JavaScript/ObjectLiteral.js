@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nvar x = {
+"use strict";
+
+var x = {
     name: "Alice",
     age: 31,
 };

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test left shift that produces bit 31 (sign bit)
+"use strict";
+
+// Test left shift that produces bit 31 (sign bit)
 // In JavaScript, 1 << 31 should produce -2147483648 (0x80000000 as signed int32)
 var mask31 = 1 << 31;
 console.log('mask31 is', mask31);

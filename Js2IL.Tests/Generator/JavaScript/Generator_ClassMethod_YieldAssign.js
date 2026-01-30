@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass Gen {
+"use strict";
+
+class Gen {
   *values() {
     const x = yield 10;
     yield x;

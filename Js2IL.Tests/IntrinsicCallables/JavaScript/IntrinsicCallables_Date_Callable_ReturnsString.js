@@ -1,2 +1,4 @@
-"use strict";\r\n\r\nconsole.log(typeof Date());
+"use strict";
+
+console.log(typeof Date());
 console.log(typeof Date(0));

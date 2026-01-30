@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst p1 = Promise.reject("Error 1");
+"use strict";
+
+const p1 = Promise.reject("Error 1");
 const p2 = Promise.reject("Error 2");
 
 Promise.allSettled([p1, p2]).then((results) => {

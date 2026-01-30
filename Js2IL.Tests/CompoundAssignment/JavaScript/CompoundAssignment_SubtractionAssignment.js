@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test subtraction assignment operator -=
+"use strict";
+
+// Test subtraction assignment operator -=
 var x = 10;
 x -= 3;
 console.log('x after 10 -= 3:', x);

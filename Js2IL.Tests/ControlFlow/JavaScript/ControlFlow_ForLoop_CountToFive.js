@@ -1,3 +1,5 @@
-"use strict";\r\n\r\nfor (let i = 0; i < 5; i++) {
+"use strict";
+
+for (let i = 0; i < 5; i++) {
   console.log(i + 1);
 }

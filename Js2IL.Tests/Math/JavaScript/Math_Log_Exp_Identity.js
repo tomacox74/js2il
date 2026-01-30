@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Basic identity checks
+"use strict";
+
+// Basic identity checks
 const a = Math.log(Math.exp(1));
 const b = Math.log1p(0);
 const c = Math.expm1(0);

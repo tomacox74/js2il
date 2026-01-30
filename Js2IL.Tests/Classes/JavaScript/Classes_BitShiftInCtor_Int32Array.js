@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Minimal repro for invalid IL in class constructor
+"use strict";
+
+// Minimal repro for invalid IL in class constructor
 // - Uses shift/and arithmetic and Int32Array length expression similar to PrimeSieve/BitArray
 
 class BitBag {

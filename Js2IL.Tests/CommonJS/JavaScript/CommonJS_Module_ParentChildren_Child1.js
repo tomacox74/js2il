@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Child module 1 - tests module.parent
+"use strict";
+
+// Child module 1 - tests module.parent
 
 // This module's parent should be the main module
 console.log("child1 module.parent is not null:", module.parent !== null);

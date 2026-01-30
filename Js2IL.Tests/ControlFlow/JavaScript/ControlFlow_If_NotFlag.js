@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst flag = false;
+"use strict";
+
+const flag = false;
 if (!flag) {
   console.log("F");
 } else {

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst obj = {
+"use strict";
+
+const obj = {
     prefix: "Result: ",
     asyncFormat: async function (valuePromise) {
         const value = await valuePromise;

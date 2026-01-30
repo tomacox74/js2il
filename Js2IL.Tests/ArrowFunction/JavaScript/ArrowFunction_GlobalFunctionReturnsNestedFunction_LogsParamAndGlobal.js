@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nvar g = "Hello";
+"use strict";
+
+var g = "Hello";
 
 const outer = (p) => {
     const inner = () => {

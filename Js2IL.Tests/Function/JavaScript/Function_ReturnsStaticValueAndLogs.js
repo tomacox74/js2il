@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction returnsFive() {
+"use strict";
+
+function returnsFive() {
     console.log("Returning value");
     return 5;
 }

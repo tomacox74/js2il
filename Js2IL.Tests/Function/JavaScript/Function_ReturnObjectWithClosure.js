@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test: Function returns object literal containing inner function that captures outer variable
+"use strict";
+
+// Test: Function returns object literal containing inner function that captures outer variable
 
 function createCalculator(factor) {
     // Inner function captures 'factor' from outer function scope

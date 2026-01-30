@@ -1,1 +1,3 @@
-"use strict";\r\n\r\nthrow new Error('boom');
+"use strict";
+
+throw new Error('boom');

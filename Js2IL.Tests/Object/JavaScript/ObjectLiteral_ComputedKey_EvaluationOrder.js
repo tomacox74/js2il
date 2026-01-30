@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Verify evaluation order for computed keys and spread members.
+"use strict";
+
+// Verify evaluation order for computed keys and spread members.
 // Spec: members evaluate left-to-right; computed key evaluates key then value.
 
 let log = '';

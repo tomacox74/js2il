@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test division assignment operator /=
+"use strict";
+
+// Test division assignment operator /=
 var x = 20;
 x /= 4;
 console.log('x after 20 /= 4:', x);

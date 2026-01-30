@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction outerFunction() {
+"use strict";
+
+function outerFunction() {
     console.log("Before nested function declaration");
     
     function innerFunction() {

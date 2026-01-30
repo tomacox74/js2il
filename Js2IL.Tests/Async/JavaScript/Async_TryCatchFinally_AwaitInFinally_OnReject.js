@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// finally should run on rejection, and await inside finally must work
+"use strict";
+
+// finally should run on rejection, and await inside finally must work
 async function test() {
     console.log("before");
     try {

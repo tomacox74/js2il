@@ -1,2 +1,4 @@
-"use strict";\r\n\r\nconsole.log(null);
+"use strict";
+
+console.log(null);
 console.log(undefined);

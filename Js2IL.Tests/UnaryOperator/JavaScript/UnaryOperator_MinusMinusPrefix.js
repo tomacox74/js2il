@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction logCase(label, before, result, after) {
+"use strict";
+
+function logCase(label, before, result, after) {
 	console.log(label, before, result, after);
 }
 

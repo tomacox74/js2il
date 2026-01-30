@@ -1,4 +1,4 @@
-"use strict";\r\n\r\n// Performance Comparison Script
+// Performance Comparison Script
 // Compares Node.js vs Jint vs JS2IL performance on PrimeJavaScript.js
 
 const { execSync } = require('child_process');

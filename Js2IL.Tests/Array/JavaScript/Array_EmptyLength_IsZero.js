@@ -1,2 +1,4 @@
-"use strict";\r\n\r\nvar arr = [];
+"use strict";
+
+var arr = [];
 console.log(arr.length);

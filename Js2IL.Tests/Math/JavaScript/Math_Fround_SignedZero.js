@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Validate fround rounding and -0 preservation
+"use strict";
+
+// Validate fround rounding and -0 preservation
 const a = Math.fround(1.337);
 const b = Math.fround(-0);
 function toStr(n){

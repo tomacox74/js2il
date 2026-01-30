@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Object rest in destructuring
+"use strict";
+
+// Object rest in destructuring
 const obj = { a: 1, b: 2, c: 3 };
 const { a, ...rest } = obj;
 

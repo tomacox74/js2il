@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nconst logHello = () =>{
+"use strict";
+
+const logHello = () =>{
     console.log("Hello, World!");
 }
 

@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Test parameter destructuring in class constructors
+"use strict";
+
+// Test parameter destructuring in class constructors
 class Point {
     constructor({ x, y }) {
         this.x = x;

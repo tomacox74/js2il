@@ -1,4 +1,6 @@
-"use strict";\r\n\r\n// Issue #167 repro: a capturing function escapes its scope via object literal property.
+"use strict";
+
+// Issue #167 repro: a capturing function escapes its scope via object literal property.
 
 function createCalculator(factor) {
     function multiply(x) {

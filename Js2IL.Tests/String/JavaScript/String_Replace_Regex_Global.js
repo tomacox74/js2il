@@ -1,2 +1,4 @@
-"use strict";\r\n\r\nconst s = 'abbabb';
+"use strict";
+
+const s = 'abbabb';
 console.log(s.replace(/b/g, 'x'));

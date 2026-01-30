@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nclass Adder {
+"use strict";
+
+class Adder {
     constructor(a, b) {
         this.a = a;
         this.b = b;

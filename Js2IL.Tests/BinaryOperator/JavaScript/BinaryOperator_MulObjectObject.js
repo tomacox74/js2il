@@ -1,4 +1,6 @@
-"use strict";\r\n\r\nfunction mul(a, b) {
+"use strict";
+
+function mul(a, b) {
     return a * b;
 }
 
