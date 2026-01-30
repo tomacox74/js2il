@@ -48,7 +48,7 @@
     {
       "clause": "19.3.7",
       "title": "Boolean ( . . . )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean"
     },
     {
@@ -56,6 +56,20 @@
       "title": "DataView ( . . . )",
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-dataview"
+    },
+    "support": {
+      "entries": [
+        {
+          "clause": "19.3.7",
+          "feature": "Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean))",
+          "status": "Supported with Limitations",
+          "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean",
+          "testScripts": [
+            "Js2IL.Tests/Integration/JavaScript/Compile_Scripts_DecompileGeneratorTest.js"
+          ],
+          "notes": "js2il supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics."
+        }
+      ]
     },
     {
       "clause": "19.3.9",

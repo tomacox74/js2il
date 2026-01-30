@@ -118,6 +118,32 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_MissingGlobalFunction_ReportsError()
+    {
+        // A global function call that is not implemented/exposed by the runtime.
+        var js = "queueMicrotask(() => console.log('x'));";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Global function 'queueMicrotask'", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Validate_BooleanGlobalValue_AsPredicate_ReturnsValid()
+    {
+        // This pattern requires Boolean to be usable as a function value.
+        var js = @"
+            const a = [0, 1, 2, 3];
+            const b = a.filter(Boolean);
+            console.log(b.length);
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_Require_DynamicArgument_ReportsError()
     {
         var js = "const name = './b'; const m = require(name);";
