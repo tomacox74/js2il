@@ -305,23 +305,18 @@ public class JavaScriptAstValidator : IAstValidator
     // Collated from the runtime's shared module parameter list to avoid duplication.
     private static readonly Lazy<HashSet<string>> AllowedInjectedGlobals = new(() =>
     {
-        var names = new HashSet<string>(StringComparer.Ordinal);
         try
         {
-            foreach (var p in JavaScriptRuntime.CommonJS.ModuleParameters.Parameters)
-            {
-                if (!string.IsNullOrWhiteSpace(p.Name))
-                {
-                    names.Add(p.Name);
-                }
-            }
+            return JavaScriptRuntime.CommonJS.ModuleParameters.Parameters
+                .Select(p => p.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToHashSet(StringComparer.Ordinal);
         }
         catch
         {
             // Ignore runtime reflection/type-load issues; validator will fall back to stricter behavior.
+            return new HashSet<string>(StringComparer.Ordinal);
         }
-
-        return names;
     });
 
     // Primitive conversion callables supported directly by the IR pipeline.
