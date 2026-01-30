@@ -43,4 +43,31 @@ public class ModuleLoaderTests
         Assert.Contains("Validation Errors", logger.Errors);
         Assert.Contains("requires strict mode", logger.Errors, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void LoadModules_MultipleDependenciesMissingUseStrict_ReturnsNullAndLogsAllErrorsWithModuleNames()
+    {
+        var fileSystem = new MockFileSystem();
+        var logger = new TestLogger();
+        var options = new CompilerOptions { Verbose = false };
+        var loader = new ModuleLoader(options, fileSystem, logger);
+
+        var rootPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "root.js"));
+        var depAPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rootPath)!, "depA.js"));
+        var depBPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rootPath)!, "depB.js"));
+
+        fileSystem.AddFile(rootPath, "\"use strict\";\nconst a = require('./depA');\nconst b = require('./depB');\nconsole.log(a, b);\n");
+        fileSystem.AddFile(depAPath, "module.exports = 1;\n");
+        fileSystem.AddFile(depBPath, "module.exports = 2;\n");
+
+        var modules = loader.LoadModules(rootPath);
+
+        Assert.Null(modules);
+        Assert.Contains("Validation Errors", logger.Errors);
+
+        // Both dependencies should be reported (fail-fast hides one of these).
+        Assert.Contains("requires strict mode", logger.Errors, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(Path.GetFileName(depAPath), logger.Errors, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(Path.GetFileName(depBPath), logger.Errors, StringComparison.OrdinalIgnoreCase);
+    }
 }
