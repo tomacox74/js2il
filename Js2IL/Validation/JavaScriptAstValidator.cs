@@ -343,6 +343,51 @@ public class JavaScriptAstValidator : IAstValidator
             IsFunctionScope = true
         });
 
+        void CollectHoistedDeclarations(Node node, ScopeFrame target)
+        {
+            // For the purpose of missing-globals validation we treat function declarations and `var`
+            // declarations as hoisted to the nearest function scope. This avoids false positives for
+            // patterns like calling a function before its declaration.
+            void VisitHoist(Node n)
+            {
+                switch (n)
+                {
+                    case FunctionDeclaration fd:
+                        if (fd.Id != null)
+                        {
+                            target.DeclaredNames.Add(fd.Id.Name);
+                        }
+                        // Do not descend into nested function scopes.
+                        return;
+
+                    case FunctionExpression:
+                    case ArrowFunctionExpression:
+                        // Do not descend into nested function scopes.
+                        return;
+
+                    case VariableDeclaration vd when vd.Kind == VariableDeclarationKind.Var:
+                        foreach (var decl in vd.Declarations)
+                        {
+                            if (decl?.Id != null)
+                            {
+                                DeclarePatternNames(decl.Id, target);
+                            }
+                        }
+                        break;
+                }
+
+                foreach (var child in n.ChildNodes)
+                {
+                    VisitHoist(child);
+                }
+            }
+
+            VisitHoist(node);
+        }
+
+        // Pre-collect hoisted declarations for the top-level (Program) scope.
+        CollectHoistedDeclarations(ast, scopeStack.Peek());
+
         static bool IsBindingPatternNode(Node n)
             => n is ObjectPattern
             || n is ArrayPattern
@@ -476,6 +521,12 @@ public class JavaScriptAstValidator : IAstValidator
                         {
                             if (p != null) DeclarePatternNames(p, scopeStack.Peek());
                         }
+
+                        // Pre-collect hoisted declarations within this function scope.
+                        if (fd.Body != null)
+                        {
+                            CollectHoistedDeclarations(fd.Body, scopeStack.Peek());
+                        }
                         break;
 
                     case FunctionExpression fe:
@@ -493,6 +544,12 @@ public class JavaScriptAstValidator : IAstValidator
                         {
                             if (p != null) DeclarePatternNames(p, scopeStack.Peek());
                         }
+
+                        // Pre-collect hoisted declarations within this function scope.
+                        if (fe.Body != null)
+                        {
+                            CollectHoistedDeclarations(fe.Body, scopeStack.Peek());
+                        }
                         break;
 
                     case ArrowFunctionExpression afe:
@@ -504,6 +561,13 @@ public class JavaScriptAstValidator : IAstValidator
                         foreach (var p in afe.Params)
                         {
                             if (p != null) DeclarePatternNames(p, scopeStack.Peek());
+                        }
+
+                        // Arrow functions with block bodies can contain hoisted `var` and nested
+                        // function declarations (var-scoped to the arrow function).
+                        if (afe.Body is BlockStatement bs)
+                        {
+                            CollectHoistedDeclarations(bs, scopeStack.Peek());
                         }
                         break;
 
