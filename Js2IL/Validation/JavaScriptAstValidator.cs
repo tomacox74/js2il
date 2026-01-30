@@ -302,14 +302,27 @@ public class JavaScriptAstValidator : IAstValidator
     });
 
     // CommonJS/module wrapper globals that are provided by js2il hosting/module loader.
-    private static readonly HashSet<string> AllowedInjectedGlobals = new(StringComparer.Ordinal)
+    // Collated from the runtime's shared module parameter list to avoid duplication.
+    private static readonly Lazy<HashSet<string>> AllowedInjectedGlobals = new(() =>
     {
-        "require",
-        "module",
-        "exports",
-        "__dirname",
-        "__filename",
-    };
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        try
+        {
+            foreach (var p in JavaScriptRuntime.CommonJS.ModuleParameters.Parameters)
+            {
+                if (!string.IsNullOrWhiteSpace(p.Name))
+                {
+                    names.Add(p.Name);
+                }
+            }
+        }
+        catch
+        {
+            // Ignore runtime reflection/type-load issues; validator will fall back to stricter behavior.
+        }
+
+        return names;
+    });
 
     // Primitive conversion callables supported directly by the IR pipeline.
     // We collate these from the runtime intrinsic types so the validator doesn't need to hardcode names.
@@ -684,7 +697,7 @@ public class JavaScriptAstValidator : IAstValidator
                             }
 
                             // CommonJS injected values.
-                            if (AllowedInjectedGlobals.Contains(name))
+                            if (AllowedInjectedGlobals.Value.Contains(name))
                             {
                                 break;
                             }
