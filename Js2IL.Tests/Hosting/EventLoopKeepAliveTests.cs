@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
+using Js2IL.Tests;
 using Js2IL.Runtime;
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,7 @@ public class EventLoopKeepAliveTests
         var outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "Hosting", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(outputPath);
 
-        var js = GetJavaScript(scriptName);
+        var js = JavaScriptTestSource.EnsureUseStrict(GetJavaScript(scriptName));
         moduleId = $"{scriptName}_{Guid.NewGuid():N}";
         var testFilePath = Path.Combine(outputPath, moduleId + ".js");
 

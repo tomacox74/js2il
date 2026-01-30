@@ -36,7 +36,7 @@ public class IRPipelineParentScopeTests
 
             var testFilePath = Path.Combine(outputPath, "parent-scope.js");
             var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile(testFilePath, js);
+            mockFileSystem.AddFile(testFilePath, JavaScriptTestSource.EnsureUseStrict(js));
 
             var options = new CompilerOptions
             {
@@ -105,7 +105,7 @@ public class IRPipelineParentScopeTests
 
             var testFilePath = Path.Combine(outputPath, "parent-scope-updateexpr.js");
             var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile(testFilePath, js);
+            mockFileSystem.AddFile(testFilePath, JavaScriptTestSource.EnsureUseStrict(js));
 
             var options = new CompilerOptions
             {

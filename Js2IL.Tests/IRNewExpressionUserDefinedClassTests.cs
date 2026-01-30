@@ -28,7 +28,7 @@ new Foo();
 
         var testFilePath = Path.Combine(outputPath, "test.js");
         var mockFs = new MockFileSystem();
-        mockFs.AddFile(testFilePath, js);
+        mockFs.AddFile(testFilePath, JavaScriptTestSource.EnsureUseStrict(js));
 
         var options = new CompilerOptions { OutputDirectory = outputPath };
         var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, new TestLogger());
@@ -59,7 +59,7 @@ new Foo();
 
         var testFilePath = Path.Combine(outputPath, "test.js");
         var mockFs = new MockFileSystem();
-        mockFs.AddFile(testFilePath, js);
+        mockFs.AddFile(testFilePath, JavaScriptTestSource.EnsureUseStrict(js));
 
         var options = new CompilerOptions { OutputDirectory = outputPath };
         var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, new TestLogger());

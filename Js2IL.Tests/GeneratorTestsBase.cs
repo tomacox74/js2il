@@ -36,7 +36,7 @@ namespace Js2IL.Tests
         {
             async Task RunAsync()
             {
-                var js = GetJavaScript(testName);
+                var js = JavaScriptTestSource.EnsureUseStrict(GetJavaScript(testName));
                 var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
 
                 var mockFileSystem = new MockFileSystem();
@@ -47,7 +47,7 @@ namespace Js2IL.Tests
                 {
                     foreach (var scriptName in additionalScripts)
                     {
-                        var scriptContent = GetJavaScript(scriptName);
+                        var scriptContent = JavaScriptTestSource.EnsureUseStrict(GetJavaScript(scriptName));
                         var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
                         mockFileSystem.AddFile(scriptPath, scriptContent);
                     }

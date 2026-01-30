@@ -185,7 +185,7 @@ public class IRPipelineAuditTests : IDisposable
         var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
         
         var mockFileSystem = new MockFileSystem();
-        mockFileSystem.AddFile(testFilePath, js);
+        mockFileSystem.AddFile(testFilePath, JavaScriptTestSource.EnsureUseStrict(js));
 
         var options = new CompilerOptions
         {
