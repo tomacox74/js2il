@@ -72,6 +72,7 @@ x is  3
 - Experimental.
 - Not all JavaScript features are supported; `eval` is not supported.
 - Two-phase compilation pipeline is always enabled. See `docs/compiler/TwoPhaseCompilationPipeline.md`.
+- Prototype-chain support design: see `docs/PrototypeChainSupport.md`.
 - See [ECMA-262 coverage index](docs/ECMA262/Index.md) for a spec-clause breakdown (with per-subsection support notes).
 - See [Node.js Feature Coverage](docs/nodejs/NodeSupport.md) for details on supported Node.js modules, APIs, and globals.
 
