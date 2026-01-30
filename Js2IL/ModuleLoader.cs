@@ -106,7 +106,18 @@ public class ModuleLoader
         ModuleLoadDiagnostics diagnostics,
         out ModuleDefinition? module)
     {
-        var jsSource = _fileSystem.ReadAllText(modulePath);
+        string jsSource;
+        try
+        {
+            jsSource = _fileSystem.ReadAllText(modulePath);
+        }
+        catch (Exception ex)
+        {
+            module = null;
+            diagnostics.AddParseError(modulePath, ex.Message);
+            return false;
+        }
+
         Acornima.Ast.Program ast;
         try
         {
@@ -157,7 +168,6 @@ public class ModuleLoader
         {
             diagnostics.AddWarnings(moduleName, modulePath, validationResult.Warnings);
         }
-        
 
         return true;
     }
@@ -304,4 +314,4 @@ public class ModuleLoader
             ? fullPath
             : fullPath + ".js";
     }
-}    
+}
