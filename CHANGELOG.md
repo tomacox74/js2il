@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.7.4 - 2026-01-30
+
 - Hosting: project JavaScript `Promise` return values to C# `Task`/`Task<T>` for typed exports and handles (enables `await` without deadlocks).
 - Hosting: compiler-generated contracts now project `async` exports as `Task`/`Task<T>`.
 - Samples: add .NET library hosting samples (`samples/Hosting.Basic` and `samples/Hosting.Typed`) showing `JsEngine.LoadModule<TExports>()` with generated contracts only (fixes #406).
