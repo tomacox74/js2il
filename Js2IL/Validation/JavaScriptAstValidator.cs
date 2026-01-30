@@ -590,16 +590,34 @@ public class JavaScriptAstValidator : IAstValidator
                                     break;
                                 }
 
-                                // Callable intrinsics (e.g., Error(...), Symbol(...), BigInt(...))
+                                JavaScriptRuntime.IntrinsicObjectInfo? intrinsicInfo = null;
                                 try
                                 {
-                                    var info = JavaScriptRuntime.IntrinsicObjectRegistry.GetInfo(name);
-                                    if (info != null && info.CallKind != JavaScriptRuntime.IntrinsicCallKind.None)
+                                    intrinsicInfo = JavaScriptRuntime.IntrinsicObjectRegistry.GetInfo(name);
+                                }
+                                catch
+                                {
+                                    intrinsicInfo = null;
+                                }
+
+                                // Many intrinsics are constructible (e.g., Promise, Int32Array) but do not need a special
+                                // intrinsic call kind: the compiler maps `new X(...)` to the intrinsic CLR type/ctor.
+                                if (calledAsConstructor)
+                                {
+                                    if (intrinsicInfo != null)
                                     {
                                         break;
                                     }
+
+                                    ReportMissingGlobal(name, id, calledAsFunction: true);
+                                    break;
                                 }
-                                catch { /* ignore */ }
+
+                                // Callable intrinsics (e.g., Error(...), Symbol(...), BigInt(...))
+                                if (intrinsicInfo != null && intrinsicInfo.CallKind != JavaScriptRuntime.IntrinsicCallKind.None)
+                                {
+                                    break;
+                                }
 
                                 // GlobalThis static method callables (e.g., parseInt, setTimeout)
                                 if (GlobalThisMethodNames.Value.Contains(name))
