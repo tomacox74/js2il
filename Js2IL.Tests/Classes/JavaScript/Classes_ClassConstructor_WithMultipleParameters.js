@@ -1,3 +1,5 @@
+"use strict";
+
 class C1 {
     constructor(a) {
         console.log("C1", a);

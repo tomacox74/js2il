@@ -1,3 +1,5 @@
+"use strict";
+
 console.log("Step 1");
 Promise.resolve(42).finally(() => {
     console.log("Step 2: In finally");

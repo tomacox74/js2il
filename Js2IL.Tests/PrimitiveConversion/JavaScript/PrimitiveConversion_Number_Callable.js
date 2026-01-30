@@ -1,3 +1,5 @@
+"use strict";
+
 console.log('Number():' + Number());
 console.log('Number("1.5"):' + Number("1.5"));
 console.log('Number(true):' + Number(true));

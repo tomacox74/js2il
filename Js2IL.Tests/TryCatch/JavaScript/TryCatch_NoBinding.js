@@ -1,3 +1,5 @@
+"use strict";
+
 try {
     console.log("before throw");
     throw new Error("test error message");

@@ -1,3 +1,5 @@
+"use strict";
+
 // Test default parameter values in class methods
 class Calculator {
     add(a, b = 10) {

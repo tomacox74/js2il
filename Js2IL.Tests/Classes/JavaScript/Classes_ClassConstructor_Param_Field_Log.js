@@ -1,3 +1,5 @@
+"use strict";
+
 class Greeter {
 	constructor(name) {
 		this.name = name;

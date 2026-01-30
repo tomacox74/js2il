@@ -1,3 +1,5 @@
+"use strict";
+
 class Gen {
   static *values() {
     yield 42;

@@ -1,3 +1,5 @@
+"use strict";
+
 let arr = ["a", "b", "c"]; 
 
 outer: for (const x of arr) {

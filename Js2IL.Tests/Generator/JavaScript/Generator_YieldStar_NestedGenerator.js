@@ -1,3 +1,5 @@
+"use strict";
+
 function* inner() {
   yield 1;
   yield 2;

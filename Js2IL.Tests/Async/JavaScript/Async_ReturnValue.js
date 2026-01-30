@@ -1,3 +1,5 @@
+"use strict";
+
 async function getValue() {
     return 42;
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 // Validate min/max behavior with NaN and empty args
 const a = Math.min(3, 2, 5);
 const b = Math.max(3, 2, 5);

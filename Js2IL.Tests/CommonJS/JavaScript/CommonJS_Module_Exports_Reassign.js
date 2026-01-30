@@ -1,3 +1,5 @@
+"use strict";
+
 // Test that module.exports can be reassigned
 // This is a key Node.js pattern for replacing the entire exports object
 

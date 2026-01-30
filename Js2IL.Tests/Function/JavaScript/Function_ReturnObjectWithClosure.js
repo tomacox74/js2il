@@ -1,3 +1,5 @@
+"use strict";
+
 // Test: Function returns object literal containing inner function that captures outer variable
 
 function createCalculator(factor) {

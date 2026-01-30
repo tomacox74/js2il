@@ -1,3 +1,5 @@
+"use strict";
+
 let closed = 0;
 
 const iterable = {

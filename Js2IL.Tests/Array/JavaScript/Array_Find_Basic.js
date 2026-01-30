@@ -1,3 +1,5 @@
+"use strict";
+
 const arr = [1, 5, 10, 20];
 
 const found = arr.find(function (x) {

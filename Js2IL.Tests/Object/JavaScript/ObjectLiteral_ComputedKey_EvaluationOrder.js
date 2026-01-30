@@ -1,3 +1,5 @@
+"use strict";
+
 // Verify evaluation order for computed keys and spread members.
 // Spec: members evaluate left-to-right; computed key evaluates key then value.
 

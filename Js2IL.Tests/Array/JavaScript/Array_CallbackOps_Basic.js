@@ -1,3 +1,5 @@
+"use strict";
+
 // Callback-based Array operations
 
 var a = [1, 2, 3];

@@ -1,3 +1,5 @@
+"use strict";
+
 class B {
   constructor(x) {
     this.x = x;

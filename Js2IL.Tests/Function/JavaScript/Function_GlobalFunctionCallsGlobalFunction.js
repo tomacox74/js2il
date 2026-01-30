@@ -1,3 +1,5 @@
+"use strict";
+
 // javascript allows functions to be hoisted.. 
 // meaning functions like hellowWorldProxy can reference helloWorld before it has been declared
 // this also tests that the function has access to the global closure

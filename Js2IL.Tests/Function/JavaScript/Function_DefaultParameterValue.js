@@ -1,3 +1,5 @@
+"use strict";
+
 // Test default parameter values in functions
 function greet(name = "World") {
     console.log("Hello, " + name);

@@ -1,3 +1,5 @@
+"use strict";
+
 let state = 0;
 
 function startTimer(ms) {

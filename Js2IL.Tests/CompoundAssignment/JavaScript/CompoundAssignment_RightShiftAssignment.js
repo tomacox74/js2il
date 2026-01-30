@@ -1,3 +1,5 @@
+"use strict";
+
 // Test right shift assignment operator >>=
 var x = 16;
 x >>= 2;

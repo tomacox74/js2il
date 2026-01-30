@@ -1,3 +1,5 @@
+"use strict";
+
 // exception thrown in finally should override original exception from try
 async function test() {
     console.log("start");

@@ -1,3 +1,5 @@
+"use strict";
+
 function* inner() {
   const x = yield 1;
   yield x;

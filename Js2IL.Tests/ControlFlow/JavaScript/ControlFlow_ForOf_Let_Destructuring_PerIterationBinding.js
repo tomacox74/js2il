@@ -1,3 +1,5 @@
+"use strict";
+
 let funcs = [];
 
 for (let { x } of [{ x: 1 }, { x: 2 }, { x: 3 }]) {

@@ -1,3 +1,5 @@
+"use strict";
+
 // Non-mutating/copying Array operations
 
 var f = [1, 2].concat([3, 4], 5);

@@ -1,3 +1,5 @@
+"use strict";
+
 function outer() {
     const captured = 40;
 

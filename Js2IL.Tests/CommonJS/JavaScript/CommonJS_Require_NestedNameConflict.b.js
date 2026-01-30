@@ -1,3 +1,5 @@
+"use strict";
+
 [1].map((x) => x);
 
 const moduleName = "CommonJS_Require_NestedNameConflict/b";

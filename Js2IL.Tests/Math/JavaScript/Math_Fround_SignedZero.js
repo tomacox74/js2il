@@ -1,3 +1,5 @@
+"use strict";
+
 // Validate fround rounding and -0 preservation
 const a = Math.fround(1.337);
 const b = Math.fround(-0);

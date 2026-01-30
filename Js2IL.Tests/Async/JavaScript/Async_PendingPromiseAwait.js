@@ -1,3 +1,5 @@
+"use strict";
+
 // Test awaiting a pending promise that resolves asynchronously
 console.log("Before async function");
 

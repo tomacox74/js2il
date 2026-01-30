@@ -1,3 +1,5 @@
+"use strict";
+
 class Gen {
   *values() {
     const x = yield 10;

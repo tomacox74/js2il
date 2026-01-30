@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+"use strict";
+
 /*
  * bumpVersion.js
  * Automates version bumping across CHANGELOG.md, Js2IL/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj.

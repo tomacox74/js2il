@@ -1,3 +1,5 @@
+"use strict";
+
 class Service {
     async fetchData() {
         return await Promise.resolve(100);

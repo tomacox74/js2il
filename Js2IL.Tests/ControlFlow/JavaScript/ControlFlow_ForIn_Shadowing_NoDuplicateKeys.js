@@ -1,3 +1,5 @@
+"use strict";
+
 class Base {
   constructor() {
     this.x = 1;

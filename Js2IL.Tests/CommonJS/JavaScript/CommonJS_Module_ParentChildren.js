@@ -1,3 +1,5 @@
+"use strict";
+
 // Main module that requires child modules to test parent/children relationships
 // This is the entry point
 

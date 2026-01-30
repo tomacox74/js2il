@@ -1,3 +1,5 @@
+"use strict";
+
 console.log(new Boolean());
 console.log(new Boolean(0));
 console.log(new Boolean(""));

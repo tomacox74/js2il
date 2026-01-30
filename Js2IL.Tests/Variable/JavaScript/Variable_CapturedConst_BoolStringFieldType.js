@@ -1,3 +1,5 @@
+"use strict";
+
 const FLAG = true;
 const NAME = "typed";
 

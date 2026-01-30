@@ -1,3 +1,5 @@
+"use strict";
+
 const logHello = () =>{
     console.log("Hello, World!  One second has elapsed.");
 }

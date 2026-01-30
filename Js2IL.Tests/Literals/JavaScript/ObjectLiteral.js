@@ -1,3 +1,5 @@
+"use strict";
+
 var x = {
     name: "Alice",
     age: 31,

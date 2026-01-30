@@ -1,3 +1,5 @@
+"use strict";
+
 // Test strict equality with captured variable in arrow function
 // This reproduced a bug where Unknown type (boxed captured var) wasn't 
 // being converted to number before comparison with numeric literal

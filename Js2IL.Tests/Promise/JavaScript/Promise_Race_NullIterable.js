@@ -1,3 +1,5 @@
+"use strict";
+
 Promise.race(null)
     .then((result) => {
         console.log("Should not reach here");

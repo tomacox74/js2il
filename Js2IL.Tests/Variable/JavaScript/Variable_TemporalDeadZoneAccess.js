@@ -1,3 +1,5 @@
+"use strict";
+
 try {
   console.log(a); // TDZ access before declaration
   let a = 3;

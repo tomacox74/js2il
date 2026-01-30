@@ -1,3 +1,5 @@
+"use strict";
+
 class Gen {
   *values() {
     yield 1;

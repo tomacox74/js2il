@@ -1,3 +1,5 @@
+"use strict";
+
 // Test await inside try/catch - rejection should be caught
 async function testTryCatch() {
     console.log("Before try");

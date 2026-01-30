@@ -1,3 +1,5 @@
+"use strict";
+
 class Calculator {
     async add(a, b) {
         return await Promise.resolve(a + b);

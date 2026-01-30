@@ -1,3 +1,5 @@
+"use strict";
+
 // Test module.exports = function pattern
 // Common pattern to export a single function
 

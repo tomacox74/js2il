@@ -1,3 +1,5 @@
+"use strict";
+
 const logMessage = (name, age, city) => {
     console.log("Name: " + name);
     console.log("Age: " + age);

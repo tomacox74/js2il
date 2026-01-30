@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+"use strict";
+
 /*
 Runs a generator test and opens the resulting assembly in ILSpy.
 

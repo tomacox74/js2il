@@ -1,3 +1,5 @@
+"use strict";
+
 var globalVar = "I am global";
 
 function testFunction() {

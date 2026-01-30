@@ -1,3 +1,5 @@
+"use strict";
+
 let v = 0;
 {
   let v = 1;

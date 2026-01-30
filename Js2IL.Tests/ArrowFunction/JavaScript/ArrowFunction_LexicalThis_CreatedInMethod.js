@@ -1,3 +1,5 @@
+"use strict";
+
 class Counter {
     constructor(initial) {
         this.x = initial;

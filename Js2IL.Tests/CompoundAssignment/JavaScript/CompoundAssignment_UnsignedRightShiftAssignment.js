@@ -1,3 +1,5 @@
+"use strict";
+
 // Test unsigned right shift assignment operator >>>=
 var x = 16;
 x >>>= 2;

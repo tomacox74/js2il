@@ -1,3 +1,5 @@
+"use strict";
+
 // Test bitwise AND assignment operator &=
 var x = 7;
 x &= 3;

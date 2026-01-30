@@ -1,3 +1,5 @@
+"use strict";
+
 class C {
     constructor() {
         this.x = 48;

@@ -1,3 +1,5 @@
+"use strict";
+
 // Test: Inner function modifies captured variable from outer function scope
 // This tests the IR pipeline's ability to emit stfld for captured variable writes
 

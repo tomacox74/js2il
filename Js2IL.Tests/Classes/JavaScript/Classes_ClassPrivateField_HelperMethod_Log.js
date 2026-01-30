@@ -1,3 +1,5 @@
+"use strict";
+
 class Greeter {
   #secret = "TopSecret";
   logSecret() {

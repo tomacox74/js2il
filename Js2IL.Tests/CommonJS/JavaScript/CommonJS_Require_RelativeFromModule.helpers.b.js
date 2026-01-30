@@ -1,3 +1,5 @@
+"use strict";
+
 const moduleName = "CommonJS_Require_RelativeFromModule/helpers/b";
 
 require('./c');

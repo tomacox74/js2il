@@ -1,3 +1,5 @@
+"use strict";
+
 const show = ({a, b}) => {
   console.log(a, b);
 };

@@ -1,3 +1,5 @@
+"use strict";
+
 function immediateResolve(value) {
     return Promise.resolve(value);
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 let funcs = [];
 
 for (let x of [1, 2, 3]) {

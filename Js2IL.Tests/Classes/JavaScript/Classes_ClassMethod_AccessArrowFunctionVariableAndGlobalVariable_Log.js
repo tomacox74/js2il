@@ -1,3 +1,5 @@
+"use strict";
+
 const GLOBAL_VALUE = "Hello from global";
 
 const testArrowFunction = () => {

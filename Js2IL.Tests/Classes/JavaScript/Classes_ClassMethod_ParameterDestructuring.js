@@ -1,3 +1,5 @@
+"use strict";
+
 // Test parameter destructuring in class methods
 class Calculator {
     add({ a, b }) {

@@ -1,3 +1,5 @@
+"use strict";
+
 async function helloWorld() {
     console.log("Hello, World!");
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 let i = 0;
 
 outer: while (i < 3) {

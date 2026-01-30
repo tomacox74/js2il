@@ -1,3 +1,5 @@
+"use strict";
+
 const log1 = () =>{
     console.log("Hello 1st time");
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 class Accumulator {
   constructor(start) {
     this.total = start;

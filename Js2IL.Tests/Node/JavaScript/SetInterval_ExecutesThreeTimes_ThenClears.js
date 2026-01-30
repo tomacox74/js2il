@@ -1,3 +1,5 @@
+"use strict";
+
 let count = 0;
 
 const id = setInterval(() => {

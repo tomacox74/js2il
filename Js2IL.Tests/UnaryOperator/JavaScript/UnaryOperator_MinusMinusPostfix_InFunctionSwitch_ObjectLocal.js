@@ -1,3 +1,5 @@
+"use strict";
+
 function bump(kind) {
   let maj = '3';
   let min = '2';

@@ -1,3 +1,5 @@
+"use strict";
+
 var outerVar = 10;
 
 function createFunction(param) {

@@ -1,3 +1,5 @@
+"use strict";
+
 // Test: Import a class constructor from another module and instantiate it
 // This tests cross-module class constructor exports + `new` in the importing module
 

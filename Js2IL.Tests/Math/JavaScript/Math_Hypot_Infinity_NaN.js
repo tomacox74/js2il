@@ -1,3 +1,5 @@
+"use strict";
+
 // Validate hypot with Infinity, NaN and basic Pythagoras
 const a = Math.hypot(3, 4);
 const b = Math.hypot(Infinity, 1);

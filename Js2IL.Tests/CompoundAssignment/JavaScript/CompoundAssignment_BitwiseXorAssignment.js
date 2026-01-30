@@ -1,3 +1,5 @@
+"use strict";
+
 // Test bitwise XOR assignment operator ^=
 var x = 5;
 x ^= 3;

@@ -1,3 +1,5 @@
+"use strict";
+
 const obj = {
     prefix: "Result: ",
     asyncFormat: async function (valuePromise) {

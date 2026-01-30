@@ -31,6 +31,10 @@ public class JavaScriptAstValidator : IAstValidator
     {
         var result = new ValidationResult { IsValid = true };
 
+        // JS2IL currently only supports strict-mode semantics.
+        // Require every module/script to include a directive prologue containing "use strict".
+        ValidateUseStrictDirectivePrologue(ast, result);
+
         // Validate spec-level early errors that Acornima may parse but considers static errors.
         // In particular, break/continue target rules are specified under iteration statements.
         ValidateIterationStatementEarlyErrors(ast, result);
@@ -253,6 +257,35 @@ public class JavaScriptAstValidator : IAstValidator
         });
 
         return result;
+    }
+
+    private static void ValidateUseStrictDirectivePrologue(Acornima.Ast.Program ast, ValidationResult result)
+    {
+        var hasUseStrict = false;
+
+        foreach (var statement in ast.Body)
+        {
+            if (statement is ExpressionStatement { Expression: StringLiteral str })
+            {
+                if (string.Equals(str.Value, "use strict", StringComparison.Ordinal))
+                {
+                    hasUseStrict = true;
+                    break;
+                }
+                continue;
+            }
+
+            // Directive prologue ends at the first non-string-literal expression statement.
+            break;
+        }
+
+        if (!hasUseStrict)
+        {
+            AddError(
+                result,
+                "JS2IL requires strict mode: add a \"use strict\"; directive prologue at the start of the module",
+                ast);
+        }
     }
 
     private static void ValidateIterationStatementEarlyErrors(Acornima.Ast.Program ast, ValidationResult result)

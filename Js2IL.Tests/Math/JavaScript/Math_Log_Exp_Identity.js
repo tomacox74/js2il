@@ -1,3 +1,5 @@
+"use strict";
+
 // Basic identity checks
 const a = Math.log(Math.exp(1));
 const b = Math.log1p(0);

@@ -1,3 +1,5 @@
+"use strict";
+
 // Test left shift assignment operator <<=
 var x = 1;
 x <<= 3;

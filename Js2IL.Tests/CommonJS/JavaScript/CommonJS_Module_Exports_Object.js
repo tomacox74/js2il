@@ -1,3 +1,5 @@
+"use strict";
+
 // Test module.exports basic functionality
 // This tests that module.exports is the authoritative export value
 

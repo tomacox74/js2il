@@ -1,3 +1,5 @@
+"use strict";
+
 // Test: Import an object with function properties and call them
 // This is the exact repro case from issue #156
 

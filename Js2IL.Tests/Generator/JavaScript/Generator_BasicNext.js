@@ -1,3 +1,5 @@
+"use strict";
+
 function* g() {
   console.log("start");
   yield 1;

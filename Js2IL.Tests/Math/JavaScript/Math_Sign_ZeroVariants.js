@@ -1,3 +1,5 @@
+"use strict";
+
 // Validate Math.sign for +0, -0, positive/negative, NaN, and infinities
 const vals = [0, (0 * (0 - 1)), 1, (0 - 1), NaN, Infinity, (Infinity * (0 - 1))];
 const out = vals.map(v => Math.sign(v));

@@ -1,3 +1,5 @@
+"use strict";
+
 class Base {
     *values() {
         yield 1;

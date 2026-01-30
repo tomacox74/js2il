@@ -1,3 +1,5 @@
+"use strict";
+
 // Shorthand properties and method definitions
 
 const a = 1;

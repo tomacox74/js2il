@@ -1,3 +1,5 @@
+"use strict";
+
 class Processor {
     async process(items) {
         const first = await Promise.resolve(items[0]);

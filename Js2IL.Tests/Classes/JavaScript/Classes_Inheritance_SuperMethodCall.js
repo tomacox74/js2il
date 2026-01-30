@@ -1,3 +1,5 @@
+"use strict";
+
 class B {
   m() {
     return 3;

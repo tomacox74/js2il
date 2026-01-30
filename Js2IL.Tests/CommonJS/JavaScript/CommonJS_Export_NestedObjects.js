@@ -1,3 +1,5 @@
+"use strict";
+
 // Test: Import nested literal objects and access fields/methods at various depths
 
 const lib = require('./CommonJS_Export_NestedObjects_Lib');

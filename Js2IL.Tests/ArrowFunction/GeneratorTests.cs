@@ -66,12 +66,21 @@ namespace Js2IL.Tests.ArrowFunction
                 var createCounterScope = createCounterClass.GetNestedType("Scope", BindingFlags.Public | BindingFlags.NonPublic)!;
                 Assert.True(createCounterScope.IsClass);
 
-                var nestedArrowFunction = createCounterClass.GetNestedType("ArrowFunction_L7C23", BindingFlags.Public | BindingFlags.NonPublic)!;
-                Assert.True(nestedArrowFunction.IsClass, "Expected ArrowFunction_L7C23 to be a class");
+                var nestedArrowFunctions = createCounterClass
+                    .GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(t => t.Name.StartsWith("ArrowFunction_L", StringComparison.Ordinal))
+                    .ToArray();
 
-                // make sure there is no old Function.* types
-                var previousType = generatedAssembly.GetType("Functions.ArrowFunction_L7C23", throwOnError: false);
-                Assert.Null(previousType);
+                Assert.True(nestedArrowFunctions.Length > 0, "Expected at least one nested ArrowFunction_L* type.");
+
+                foreach (var nestedArrowFunction in nestedArrowFunctions)
+                {
+                    Assert.True(nestedArrowFunction.IsClass, $"Expected {nestedArrowFunction.Name} to be a class");
+
+                    // Make sure there is no old Function.* type for this arrow function
+                    var previousType = generatedAssembly.GetType($"Functions.{nestedArrowFunction.Name}", throwOnError: false);
+                    Assert.Null(previousType);
+                }
             });
         }
     }

@@ -14,6 +14,8 @@ public class IRNewExpressionUserDefinedClassTests
         IRPipelineMetrics.Reset();
 
         var js = @"
+      ""use strict"";
+
 class Foo {
   constructor(a = 123) {
     // keep ctor non-trivial so it is emitted and declared
@@ -47,6 +49,8 @@ new Foo();
       public void IR_NewExpression_UserDefinedClass_ConstructorArgCountMismatch_ThrowsNotSupported()
       {
         var js = @"
+      ""use strict"";
+
     class Foo {
       constructor(a, b = 2) {
       }

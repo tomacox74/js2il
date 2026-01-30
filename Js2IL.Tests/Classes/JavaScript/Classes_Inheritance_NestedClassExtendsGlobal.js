@@ -1,3 +1,5 @@
+"use strict";
+
 class GlobalBase {
     m() {
         return 5;

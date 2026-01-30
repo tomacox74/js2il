@@ -1,3 +1,5 @@
+"use strict";
+
 const a = 1;
 const b = "world";
 const c = a && b; // should pick b since a is truthy

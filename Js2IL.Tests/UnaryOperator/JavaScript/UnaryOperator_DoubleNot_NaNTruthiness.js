@@ -1,3 +1,5 @@
+"use strict";
+
 class C {
     returnNaN() {
         return 0.0 / 0.0;

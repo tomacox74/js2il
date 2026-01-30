@@ -1,3 +1,5 @@
+"use strict";
+
 // Library module that exports nested literal objects with fields and methods
 
 module.exports = {

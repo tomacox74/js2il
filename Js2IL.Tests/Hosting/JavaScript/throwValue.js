@@ -1,3 +1,5 @@
+"use strict";
+
 function throwValue() {
   throw 123;
 }
