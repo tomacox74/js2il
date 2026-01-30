@@ -1,4 +1,4 @@
-// Test default parameter values in arrow functions
+"use strict";\r\n\r\n// Test default parameter values in arrow functions
 const greet = (name = "World") => {
     console.log("Hello, " + name);
 };

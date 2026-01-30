@@ -1,4 +1,4 @@
-class PrimeSieve {
+"use strict";\r\n\r\nclass PrimeSieve {
   constructor(n) { this.n = n; }
 }
 

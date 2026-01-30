@@ -1,4 +1,4 @@
-const FLAG = true;
+"use strict";\r\n\r\nconst FLAG = true;
 const NAME = "typed";
 
 function run() {

@@ -1,1 +1,1 @@
-Promise.reject("Hello from Promise.reject").then(null, (message => console.log(message)));
+"use strict";\n\nPromise.reject("Hello from Promise.reject").then(null, (message => console.log(message)));

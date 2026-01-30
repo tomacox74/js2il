@@ -1,4 +1,4 @@
-class C {
+"use strict";\r\n\r\nclass C {
     returnNaN() {
         return 0.0 / 0.0;
     }

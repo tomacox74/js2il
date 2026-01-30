@@ -1,4 +1,4 @@
-function* inner() {
+"use strict";\r\n\r\nfunction* inner() {
   const x = yield 1;
   yield x;
   return 99;

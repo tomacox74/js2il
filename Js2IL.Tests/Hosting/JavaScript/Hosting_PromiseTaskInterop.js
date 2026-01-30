@@ -1,4 +1,4 @@
-function immediateResolve(value) {
+"use strict";\r\n\r\nfunction immediateResolve(value) {
     return Promise.resolve(value);
 }
 

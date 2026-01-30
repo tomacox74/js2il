@@ -1,4 +1,4 @@
-class C1 {
+"use strict";\r\n\r\nclass C1 {
     constructor(a) {
         console.log("C1", a);
     }

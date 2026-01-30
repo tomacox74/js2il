@@ -1,4 +1,4 @@
-const testArrowFunction = () => {
+"use strict";\r\n\r\nconst testArrowFunction = () => {
 	const FUNCTION_VALUE = "Hello from function";
 	
 	class MyClass {

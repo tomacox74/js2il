@@ -1,4 +1,4 @@
-// Test bitwise OR assignment operator |=
+"use strict";\r\n\r\n// Test bitwise OR assignment operator |=
 // This reproduces the issue found in PrimeJavaScript.js
 var x = 5;
 x |= 3;

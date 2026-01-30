@@ -1,1 +1,1 @@
-process.exit();
+"use strict";\n\nprocess.exit();

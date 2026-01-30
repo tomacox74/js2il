@@ -1,4 +1,4 @@
-var arr = ['b', 'a', 'c'];
+"use strict";\r\n\r\nvar arr = ['b', 'a', 'c'];
 arr.sort();
 for (var i = 0; i < arr.length; i++) {
   console.log(arr[i]);

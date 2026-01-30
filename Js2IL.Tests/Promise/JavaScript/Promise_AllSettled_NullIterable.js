@@ -1,4 +1,4 @@
-Promise.allSettled(null)
+"use strict";\r\n\r\nPromise.allSettled(null)
     .then((result) => {
         console.log("Should not reach here");
     })

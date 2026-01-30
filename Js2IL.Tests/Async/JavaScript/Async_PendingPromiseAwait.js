@@ -1,4 +1,4 @@
-// Test awaiting a pending promise that resolves asynchronously
+"use strict";\r\n\r\n// Test awaiting a pending promise that resolves asynchronously
 console.log("Before async function");
 
 async function test() {

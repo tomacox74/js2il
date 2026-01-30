@@ -1,4 +1,4 @@
-let x = 42;
+"use strict";\r\n\r\nlet x = 42;
 
 function outer() {
   // outer does NOT reference x, so it has no captured fields.

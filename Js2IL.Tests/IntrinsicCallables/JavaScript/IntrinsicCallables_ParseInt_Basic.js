@@ -1,4 +1,4 @@
-// ECMA-262: https://tc39.es/ecma262/#sec-parseint-string-radix
+"use strict";\r\n\r\n// ECMA-262: https://tc39.es/ecma262/#sec-parseint-string-radix
 // Minimal conformance checks for js2il runtime.
 
 console.log(parseInt("  123"));

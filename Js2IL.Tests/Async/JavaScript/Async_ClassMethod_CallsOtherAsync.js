@@ -1,4 +1,4 @@
-class Service {
+"use strict";\r\n\r\nclass Service {
     async fetchData() {
         return await Promise.resolve(100);
     }

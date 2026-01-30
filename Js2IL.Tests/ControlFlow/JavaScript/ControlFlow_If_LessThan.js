@@ -1,4 +1,4 @@
-const a = 3;
+"use strict";\r\n\r\nconst a = 3;
 const b = 5;
 if (a < b) {
   console.log("lte");

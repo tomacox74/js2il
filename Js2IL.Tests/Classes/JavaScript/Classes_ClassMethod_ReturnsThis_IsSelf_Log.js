@@ -1,4 +1,4 @@
-class Self {
+"use strict";\r\n\r\nclass Self {
   isSelf() {
     return this;
   }

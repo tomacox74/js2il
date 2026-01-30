@@ -1,4 +1,4 @@
-const globalVar = "global";
+"use strict";\r\n\r\nconst globalVar = "global";
 
 const testFunction = () => {
     const outerVar = "outer";

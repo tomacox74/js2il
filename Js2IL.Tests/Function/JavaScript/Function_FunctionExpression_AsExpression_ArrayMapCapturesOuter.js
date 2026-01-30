@@ -1,4 +1,4 @@
-// Test: FunctionExpression as an expression value (PL3.6)
+"use strict";\r\n\r\n// Test: FunctionExpression as an expression value (PL3.6)
 // Uses Array.map to invoke the function value, so the IR pipeline must:
 // 1) create a delegate for the FunctionExpression
 // 2) bind the correct scopes array for captured variables

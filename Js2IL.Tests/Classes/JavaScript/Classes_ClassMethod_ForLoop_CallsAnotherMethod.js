@@ -1,4 +1,4 @@
-class Accumulator {
+"use strict";\r\n\r\nclass Accumulator {
   constructor(start) {
     this.total = start;
   }

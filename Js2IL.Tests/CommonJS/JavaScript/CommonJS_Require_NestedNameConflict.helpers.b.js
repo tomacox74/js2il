@@ -1,4 +1,4 @@
-[1].map((x) => x);
+"use strict";\r\n\r\n[1].map((x) => x);
 
 const moduleName = "CommonJS_Require_NestedNameConflict/helpers/b";
 

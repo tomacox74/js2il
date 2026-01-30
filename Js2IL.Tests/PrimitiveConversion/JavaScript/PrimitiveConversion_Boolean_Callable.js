@@ -1,4 +1,4 @@
-console.log('Boolean():' + Boolean());
+"use strict";\r\n\r\nconsole.log('Boolean():' + Boolean());
 console.log('Boolean(0):' + Boolean(0));
 console.log('Boolean(1):' + Boolean(1));
 console.log('Boolean(""):' + Boolean(""));

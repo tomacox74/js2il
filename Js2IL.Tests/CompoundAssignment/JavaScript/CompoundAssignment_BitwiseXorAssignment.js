@@ -1,4 +1,4 @@
-// Test bitwise XOR assignment operator ^=
+"use strict";\r\n\r\n// Test bitwise XOR assignment operator ^=
 var x = 5;
 x ^= 3;
 console.log('x after 5 ^= 3:', x);

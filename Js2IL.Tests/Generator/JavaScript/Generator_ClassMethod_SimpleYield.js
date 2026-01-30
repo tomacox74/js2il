@@ -1,4 +1,4 @@
-class Gen {
+"use strict";\r\n\r\nclass Gen {
   *values() {
     yield 1;
     yield 2;

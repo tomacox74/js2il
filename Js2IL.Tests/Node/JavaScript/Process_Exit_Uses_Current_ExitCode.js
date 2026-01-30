@@ -1,2 +1,2 @@
-process.exitCode = 5;
+"use strict";\r\n\r\nprocess.exitCode = 5;
 process.exit();

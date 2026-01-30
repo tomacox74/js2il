@@ -1,4 +1,4 @@
-// Test object destructuring with default values
+"use strict";\r\n\r\n// Test object destructuring with default values
 const obj = { provided: 42 };
 const { provided, missing = 'default', count = 100 } = obj;
 

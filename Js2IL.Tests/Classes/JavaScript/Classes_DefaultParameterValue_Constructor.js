@@ -1,4 +1,4 @@
-// Test default parameter values in class constructors
+"use strict";\r\n\r\n// Test default parameter values in class constructors
 class Person {
     constructor(name = "Unknown", age = 0) {
         this.name = name;

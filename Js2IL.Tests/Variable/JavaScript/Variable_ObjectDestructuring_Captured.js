@@ -1,4 +1,4 @@
-// Test object destructuring where variables are captured by nested function
+"use strict";\r\n\r\n// Test object destructuring where variables are captured by nested function
 const obj = { a: 5, b: 10 };
 const { a, b } = obj;
 

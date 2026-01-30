@@ -1,1 +1,1 @@
-Promise.resolve("Hello from Promise.resolve").finally(() => { throw new Error("oops"); }).then((message) => console.log("[then]", message)).catch((error) => console.log("[catch]", error));
+"use strict";\n\nPromise.resolve("Hello from Promise.resolve").finally(() => { throw new Error("oops"); }).then((message) => console.log("[then]", message)).catch((error) => console.log("[catch]", error));

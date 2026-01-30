@@ -1,4 +1,4 @@
-class Gen {
+"use strict";\r\n\r\nclass Gen {
   static *values() {
     yield 42;
     return 100;

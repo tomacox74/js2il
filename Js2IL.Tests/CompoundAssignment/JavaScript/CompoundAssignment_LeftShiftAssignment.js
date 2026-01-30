@@ -1,4 +1,4 @@
-// Test left shift assignment operator <<=
+"use strict";\r\n\r\n// Test left shift assignment operator <<=
 var x = 1;
 x <<= 3;
 console.log('x after 1 <<= 3:', x);

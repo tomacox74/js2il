@@ -1,4 +1,4 @@
-let g = 0;
+"use strict";\r\n\r\nlet g = 0;
 
 function outer() {
   let x = 1;

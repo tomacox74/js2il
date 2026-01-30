@@ -1,4 +1,4 @@
-async function helloWorld() {
+"use strict";\r\n\r\nasync function helloWorld() {
     console.log("Hello, World!");
 }
 

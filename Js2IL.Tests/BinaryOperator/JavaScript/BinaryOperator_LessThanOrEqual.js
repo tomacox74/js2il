@@ -1,4 +1,4 @@
-var x = 1 <= 2;
+"use strict";\r\n\r\nvar x = 1 <= 2;
 var y = 2 <= 1;
 var z = 2 <= 2;
 

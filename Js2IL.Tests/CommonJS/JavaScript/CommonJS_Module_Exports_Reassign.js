@@ -1,4 +1,4 @@
-// Test that module.exports can be reassigned
+"use strict";\r\n\r\n// Test that module.exports can be reassigned
 // This is a key Node.js pattern for replacing the entire exports object
 
 // Add something via exports (which starts as alias to module.exports)

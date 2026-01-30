@@ -1,4 +1,4 @@
-const x = 5;
+"use strict";\r\n\r\nconst x = 5;
 try {
   x = 10; // should trigger runtime error (not yet implemented)
   console.log('NO_ERROR');

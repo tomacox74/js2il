@@ -1,4 +1,4 @@
-Promise.race([])
+"use strict";\r\n\r\nPromise.race([])
     .then((result) => {
         console.log("Resolved:", result);
     })

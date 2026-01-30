@@ -1,4 +1,4 @@
-function throwValue() {
+"use strict";\r\n\r\nfunction throwValue() {
   throw 123;
 }
 

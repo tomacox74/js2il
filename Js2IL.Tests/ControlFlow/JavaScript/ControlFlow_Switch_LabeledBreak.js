@@ -1,4 +1,4 @@
-outer: {
+"use strict";\r\n\r\nouter: {
   switch (2) {
     case 1:
       console.log("x");

@@ -1,4 +1,4 @@
-const GLOBAL_VALUE = "Hello from global";
+"use strict";\r\n\r\nconst GLOBAL_VALUE = "Hello from global";
 
 function testFunction() {
 	const FUNCTION_VALUE = "Hello from function";

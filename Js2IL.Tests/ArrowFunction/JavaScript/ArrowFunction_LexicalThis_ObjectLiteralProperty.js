@@ -1,4 +1,4 @@
-class C {
+"use strict";\r\n\r\nclass C {
     constructor() {
         this.x = 48;
     }

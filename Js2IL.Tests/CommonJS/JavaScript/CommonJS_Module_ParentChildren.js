@@ -1,4 +1,4 @@
-// Main module that requires child modules to test parent/children relationships
+"use strict";\r\n\r\n// Main module that requires child modules to test parent/children relationships
 // This is the entry point
 
 const child1 = require('./CommonJS_Module_ParentChildren_Child1');

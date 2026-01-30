@@ -1,4 +1,4 @@
-// Test exponentiation assignment operator **=
+"use strict";\r\n\r\n// Test exponentiation assignment operator **=
 var x = 2;
 x **= 3;
 console.log('x after 2 **= 3:', x);

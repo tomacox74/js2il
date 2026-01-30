@@ -1,4 +1,4 @@
-// Confirms ternary using Array.isArray result
+"use strict";\r\n\r\n// Confirms ternary using Array.isArray result
 function asArray(v) { 
     return Array.isArray(v) ? v : (v == null ? [] : [v]); 
 }

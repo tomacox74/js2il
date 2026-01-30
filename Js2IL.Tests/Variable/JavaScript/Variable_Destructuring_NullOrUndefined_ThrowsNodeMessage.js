@@ -1,4 +1,4 @@
-function logError(fn) {
+"use strict";\r\n\r\nfunction logError(fn) {
   try {
     fn();
   } catch (e) {

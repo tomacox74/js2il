@@ -1,4 +1,4 @@
-// Test: Import a class constructor from another module and instantiate it
+"use strict";\r\n\r\n// Test: Import a class constructor from another module and instantiate it
 // This tests cross-module class constructor exports + `new` in the importing module
 
 const Person = require('./CommonJS_Export_ClassWithConstructor_Lib');

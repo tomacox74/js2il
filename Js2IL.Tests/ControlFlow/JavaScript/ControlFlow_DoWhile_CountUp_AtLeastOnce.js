@@ -1,4 +1,4 @@
-let i = 0;
+"use strict";\r\n\r\nlet i = 0;
 do {
   i++;
   console.log(i);

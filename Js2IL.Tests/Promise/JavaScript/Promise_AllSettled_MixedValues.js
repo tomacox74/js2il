@@ -1,4 +1,4 @@
-const p1 = Promise.resolve("promise");
+"use strict";\r\n\r\nconst p1 = Promise.resolve("promise");
 const value = "non-promise";
 const num = 42;
 

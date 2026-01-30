@@ -1,4 +1,4 @@
-// Issue #167 repro lib: exported functions capture variables and escape their defining scope.
+"use strict";\r\n\r\n// Issue #167 repro lib: exported functions capture variables and escape their defining scope.
 
 const moduleFactor = 7;
 

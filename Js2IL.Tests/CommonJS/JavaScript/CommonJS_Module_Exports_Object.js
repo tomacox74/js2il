@@ -1,4 +1,4 @@
-// Test module.exports basic functionality
+"use strict";\r\n\r\n// Test module.exports basic functionality
 // This tests that module.exports is the authoritative export value
 
 exports.foo = "exported via exports.foo";

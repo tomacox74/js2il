@@ -1,4 +1,4 @@
-console.log("a");
+"use strict";\r\n\r\nconsole.log("a");
 
 try {
   throw 123;

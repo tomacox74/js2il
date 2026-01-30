@@ -1,4 +1,4 @@
-// Test PL5.4: Constructor implicitly returns 'this' unless explicitly returning an object
+"use strict";\r\n\r\n// Test PL5.4: Constructor implicitly returns 'this' unless explicitly returning an object
 // When using 'new Class()', the result should be the class instance
 // NOTE: Explicit 'return;' and 'return this;' in constructors cause InvalidProgramException (separate bug)
 

@@ -1,4 +1,4 @@
-// Test: Inner function modifies captured variable from outer function scope
+"use strict";\r\n\r\n// Test: Inner function modifies captured variable from outer function scope
 // This tests the IR pipeline's ability to emit stfld for captured variable writes
 
 function createCounter(start) {

@@ -1,4 +1,4 @@
-// Test multiplication assignment operator *=
+"use strict";\r\n\r\n// Test multiplication assignment operator *=
 var x = 5;
 x *= 3;
 console.log('x after 5 *= 3:', x);

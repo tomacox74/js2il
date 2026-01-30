@@ -1,4 +1,4 @@
-// Array destructuring basic
+"use strict";\r\n\r\n// Array destructuring basic
 const arr = [1, 2, 3];
 const [a, b] = arr;
 

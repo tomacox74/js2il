@@ -1,4 +1,4 @@
-function outer() {
+"use strict";\r\n\r\nfunction outer() {
     var x = 3;
 
     function inner() {

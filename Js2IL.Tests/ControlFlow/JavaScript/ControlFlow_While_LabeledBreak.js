@@ -1,4 +1,4 @@
-let i = 0;
+"use strict";\r\n\r\nlet i = 0;
 
 outer: while (true) {
   for (let j = 0; j < 2; j++) {

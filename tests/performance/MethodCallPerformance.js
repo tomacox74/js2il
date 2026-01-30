@@ -1,4 +1,4 @@
-// Performance test: Class method calling another method repeatedly
+"use strict";\r\n\r\n// Performance test: Class method calling another method repeatedly
 class Counter {
     constructor() {
         this.value = 0;

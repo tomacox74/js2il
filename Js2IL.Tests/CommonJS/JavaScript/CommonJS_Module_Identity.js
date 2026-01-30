@@ -1,4 +1,4 @@
-// Test module identity properties: id, filename, path
+"use strict";\r\n\r\n// Test module identity properties: id, filename, path
 
 // module.id should be the resolved filename (or '.' for main module)
 console.log("module.id type:", typeof module.id);

@@ -1,4 +1,4 @@
-class Subber {
+"use strict";\r\n\r\nclass Subber {
     constructor(a, b) {
         this.a = a;
         this.b = b;

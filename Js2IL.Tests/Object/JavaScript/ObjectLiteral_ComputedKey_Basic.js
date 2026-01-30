@@ -1,4 +1,4 @@
-// Object literal computed keys
+"use strict";\r\n\r\n// Object literal computed keys
 
 const k = 'x';
 console.log(({ [k]: 1 }).x);

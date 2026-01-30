@@ -1,4 +1,4 @@
-// Test async arrow function with await
+"use strict";\r\n\r\n// Test async arrow function with await
 const asyncArrow = async () => {
     console.log("Before await");
     const result = await Promise.resolve(42);

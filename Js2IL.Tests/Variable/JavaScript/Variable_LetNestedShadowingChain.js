@@ -1,4 +1,4 @@
-let v = 0;
+"use strict";\r\n\r\nlet v = 0;
 {
   let v = 1;
   console.log(v);

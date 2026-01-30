@@ -1,4 +1,4 @@
-// Test parameter destructuring in class methods
+"use strict";\r\n\r\n// Test parameter destructuring in class methods
 class Calculator {
     add({ a, b }) {
         return a + b;

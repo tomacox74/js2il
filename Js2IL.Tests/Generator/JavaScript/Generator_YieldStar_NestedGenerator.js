@@ -1,4 +1,4 @@
-function* inner() {
+"use strict";\r\n\r\nfunction* inner() {
   yield 1;
   yield 2;
   return 3;

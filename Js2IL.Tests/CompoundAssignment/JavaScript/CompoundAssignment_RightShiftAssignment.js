@@ -1,4 +1,4 @@
-// Test right shift assignment operator >>=
+"use strict";\r\n\r\n// Test right shift assignment operator >>=
 var x = 16;
 x >>= 2;
 console.log('x after 16 >>= 2:', x);

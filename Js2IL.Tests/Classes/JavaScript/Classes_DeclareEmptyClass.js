@@ -1,4 +1,4 @@
-class Foo {}
+"use strict";\r\n\r\nclass Foo {}
 
 // no output expected
 

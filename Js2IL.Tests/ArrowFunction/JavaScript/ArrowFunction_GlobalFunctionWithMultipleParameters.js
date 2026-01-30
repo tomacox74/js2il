@@ -1,4 +1,4 @@
-const f1 = (a) => {
+"use strict";\r\n\r\nconst f1 = (a) => {
     console.log("f1", a);
 };
 

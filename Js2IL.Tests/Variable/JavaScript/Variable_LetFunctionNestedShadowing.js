@@ -1,4 +1,4 @@
-let a = 0;
+"use strict";\r\n\r\nlet a = 0;
 function outer() {
   let a = 1;
   function inner() {

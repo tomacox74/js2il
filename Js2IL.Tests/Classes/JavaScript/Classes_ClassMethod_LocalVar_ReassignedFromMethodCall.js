@@ -1,4 +1,4 @@
-// Bug repro: class method local variable initialized as number,
+"use strict";\r\n\r\n// Bug repro: class method local variable initialized as number,
 // then reassigned from another method call.
 // The type inference marks 'factor' as stable double, but method calls return object.
 // The IL generator must unbox before storing to the double local.

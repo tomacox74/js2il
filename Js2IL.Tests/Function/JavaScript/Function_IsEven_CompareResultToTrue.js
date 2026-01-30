@@ -1,4 +1,4 @@
-function isEven(n) {
+"use strict";\r\n\r\nfunction isEven(n) {
     return (n % 2 == 0);
 }
 

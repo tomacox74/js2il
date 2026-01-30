@@ -1,4 +1,4 @@
-let count = 0;
+"use strict";\r\n\r\nlet count = 0;
 
 const id = setInterval(() => {
     count++;

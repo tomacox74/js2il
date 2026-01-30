@@ -1,4 +1,4 @@
-function thenImpl(resolve, reject) {
+"use strict";\r\n\r\nfunction thenImpl(resolve, reject) {
   function later() {
     resolve(42);
   }

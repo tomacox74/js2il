@@ -1,4 +1,4 @@
-// Test: Class constructor instantiates another class that references a global variable
+"use strict";\r\n\r\n// Test: Class constructor instantiates another class that references a global variable
 // This reproduces the bug where the constructor scope array construction fails
 // when a nested class needs to access parent scopes.
 

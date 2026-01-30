@@ -1,4 +1,4 @@
-function makeAdder(n) {
+"use strict";\r\n\r\nfunction makeAdder(n) {
   return function (x) {
     return n + x;
   };

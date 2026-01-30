@@ -1,4 +1,4 @@
-// Issue #167 repro main: import and invoke exported escaping closures.
+"use strict";\r\n\r\n// Issue #167 repro main: import and invoke exported escaping closures.
 
 const lib = require('./CommonJS_Export_ObjectWithClosure_Lib');
 

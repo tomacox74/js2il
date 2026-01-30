@@ -1,4 +1,4 @@
-const p1 = Promise.resolve(1);
+"use strict";\r\n\r\nconst p1 = Promise.resolve(1);
 const p2 = Promise.resolve(2);
 const p3 = Promise.resolve(3);
 

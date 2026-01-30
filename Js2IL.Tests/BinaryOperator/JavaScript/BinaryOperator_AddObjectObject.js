@@ -1,4 +1,4 @@
-function add(a, b) {
+"use strict";\r\n\r\nfunction add(a, b) {
     return a + b;
 }
 

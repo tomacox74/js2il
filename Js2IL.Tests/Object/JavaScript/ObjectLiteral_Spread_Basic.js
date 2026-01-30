@@ -1,4 +1,4 @@
-// Object literal spread properties
+"use strict";\r\n\r\n// Object literal spread properties
 
 const o1 = { ...{ a: 1 }, b: 2 };
 console.log(o1.a);

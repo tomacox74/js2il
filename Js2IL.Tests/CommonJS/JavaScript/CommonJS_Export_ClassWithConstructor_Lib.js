@@ -1,4 +1,4 @@
-// Library module that exports a class constructor
+"use strict";\r\n\r\n// Library module that exports a class constructor
 
 class Person {
     constructor(name, age) {

@@ -1,4 +1,4 @@
-function outer() {
+"use strict";\r\n\r\nfunction outer() {
     const captured = 40;
 
     class Base {

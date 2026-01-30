@@ -1,4 +1,4 @@
-var globalVar = "I am global";
+"use strict";\r\n\r\nvar globalVar = "I am global";
 
 function testFunction() {
     var outerVar = "I am outer";

@@ -1,4 +1,4 @@
-class Fetcher {
+"use strict";\r\n\r\nclass Fetcher {
     static async getData() {
         return await Promise.resolve({ value: 42 });
     }

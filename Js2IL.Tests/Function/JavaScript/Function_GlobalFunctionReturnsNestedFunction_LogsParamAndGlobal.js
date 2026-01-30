@@ -1,4 +1,4 @@
-var outerVar = 10;
+"use strict";\r\n\r\nvar outerVar = 10;
 
 function createFunction(param) {
     function nestedFunction() {

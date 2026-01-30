@@ -1,4 +1,4 @@
-function innerThen(resolve2, reject2) {
+"use strict";\r\n\r\nfunction innerThen(resolve2, reject2) {
   resolve2(7);
 }
 

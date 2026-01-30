@@ -1,4 +1,4 @@
-let i = 5;
+"use strict";\r\n\r\nlet i = 5;
 while (true) {
   console.log(i);
   i--;

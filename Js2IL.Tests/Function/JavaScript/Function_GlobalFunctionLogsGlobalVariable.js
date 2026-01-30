@@ -1,4 +1,4 @@
-var globalMessage = "Hello from global scope!";
+"use strict";\r\n\r\nvar globalMessage = "Hello from global scope!";
 var globalNumber = 42;
 
 function logGlobalValues() {

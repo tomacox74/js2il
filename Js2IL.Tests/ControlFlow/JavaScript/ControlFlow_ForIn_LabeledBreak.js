@@ -1,4 +1,4 @@
-let obj = { a: 1, b: 2, c: 3 };
+"use strict";\r\n\r\nlet obj = { a: 1, b: 2, c: 3 };
 
 outer: for (let k in obj) {
   for (let j = 0; j < 1; j++) {

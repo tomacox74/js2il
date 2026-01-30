@@ -1,4 +1,4 @@
-let i = 0;
+"use strict";\r\n\r\nlet i = 0;
 while (i < 10) {
   i++;
   if (i % 2 === 0) continue;

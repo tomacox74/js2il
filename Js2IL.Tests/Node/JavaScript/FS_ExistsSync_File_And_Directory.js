@@ -1,4 +1,4 @@
-const fs = require('fs');
+"use strict";\r\n\r\nconst fs = require('fs');
 const path = require('path');
 const dir = __dirname;
 const file = path.join(dir, 'temp_exists.txt');

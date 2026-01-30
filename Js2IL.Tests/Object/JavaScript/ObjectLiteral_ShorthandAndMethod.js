@@ -1,4 +1,4 @@
-// Shorthand properties and method definitions
+"use strict";\r\n\r\n// Shorthand properties and method definitions
 
 const a = 1;
 console.log(({ a }).a);

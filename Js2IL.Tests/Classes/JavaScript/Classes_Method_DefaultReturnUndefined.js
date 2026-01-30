@@ -1,4 +1,4 @@
-// Test PL5.5: Instance methods without explicit return should return 'undefined', not 'this'
+"use strict";\r\n\r\n// Test PL5.5: Instance methods without explicit return should return 'undefined', not 'this'
 // This is different from JavaScript convention where methods without return give undefined
 
 class Calculator {

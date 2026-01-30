@@ -1,4 +1,4 @@
-function outer(arr) {
+"use strict";\r\n\r\nfunction outer(arr) {
   function inner(cb) {
     // Call map on the param inside a nested function to force runtime member dispatch
     return arr.map(cb);

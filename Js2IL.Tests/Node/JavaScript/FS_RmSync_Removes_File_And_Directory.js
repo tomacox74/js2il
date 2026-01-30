@@ -1,4 +1,4 @@
-const fs = require('fs');
+"use strict";\r\n\r\nconst fs = require('fs');
 const path = require('path');
 const file = path.join(__dirname, 'deleteme.txt');
 fs.writeFileSync(file, 'x');

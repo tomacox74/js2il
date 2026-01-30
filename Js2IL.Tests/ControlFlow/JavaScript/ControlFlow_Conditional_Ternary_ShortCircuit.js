@@ -1,4 +1,4 @@
-let x = 0;
+"use strict";\r\n\r\nlet x = 0;
 function bump() {
   x = x + 1;
   return x;

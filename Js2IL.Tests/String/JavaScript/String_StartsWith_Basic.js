@@ -1,1 +1,1 @@
-console.log('abc'.startsWith('ab'));
+"use strict";\r\n\r\nconsole.log('abc'.startsWith('ab'));

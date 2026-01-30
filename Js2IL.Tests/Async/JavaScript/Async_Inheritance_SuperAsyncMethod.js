@@ -1,4 +1,4 @@
-class Base {
+"use strict";\r\n\r\nclass Base {
     async inc(x) {
         return await Promise.resolve(x + 1);
     }

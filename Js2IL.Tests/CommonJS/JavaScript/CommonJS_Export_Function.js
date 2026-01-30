@@ -1,4 +1,4 @@
-// Test: Import a function exported from another module and call it
+"use strict";\r\n\r\n// Test: Import a function exported from another module and call it
 // This is the main entry point that imports and uses the function
 
 const greet = require('./CommonJS_Export_Function_Lib');

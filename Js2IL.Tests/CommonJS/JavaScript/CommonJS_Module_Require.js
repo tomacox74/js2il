@@ -1,4 +1,4 @@
-// Test module.require() - should work like require()
+"use strict";\r\n\r\n// Test module.require() - should work like require()
 // This is a bound require function on the module object
 
 // Check that module.require is defined
