@@ -156,6 +156,86 @@ Inline cache shape:
 
 This aligns with the document’s earlier “guarded early-binding” direction.
 
+### 5.7 Domino Blocker Requirements (Issues #503 / #504)
+
+This strategy document also serves as the requirements spec for the domino blockers:
+
+- Issue #503: `Object.create` / `Object.defineProperty` / `Object.defineProperties` / `Object.getOwnPropertyDescriptor`
+- Issue #504: `Object.getPrototypeOf` / `Object.setPrototypeOf` / `Object.prototype.__proto__`
+
+The intent is to make the “prototype-aware path” concrete enough that we can write focused tests and know when the runtime is compliant for domino.
+
+#### 5.7.1 Descriptor APIs (Issue #503)
+
+Minimum required runtime semantics:
+
+- Property descriptors must exist as a first-class concept.
+  - Data descriptor fields: `Value`, `Writable`, `Enumerable`, `Configurable`.
+  - Accessor descriptor fields: `Get`, `Set`, `Enumerable`, `Configurable`.
+- `Object.getOwnPropertyDescriptor(o, p)`
+  - Must return the correct descriptor for an *own* property.
+  - Must distinguish data vs accessor descriptors.
+  - Must return `undefined` if the property is not an own property.
+- `Object.defineProperty(o, p, attributes)`
+  - Must define or update an own property using descriptor semantics.
+  - Must support both data and accessor descriptors (domino uses getters/setters).
+  - Must support defining non-enumerable properties.
+- `Object.defineProperties(o, props)`
+  - Must define a set of own properties from a descriptor map.
+  - Must preserve the spec’s “define all-or-throw” behavior when feasible (i.e., if any descriptor is invalid, do not partially apply changes).
+- `Object.create(proto, properties)`
+  - Must create an object whose `[[Prototype]]` is exactly `proto`.
+  - Must support `Object.create(null)` producing a **null-prototype object** (no `Object.prototype` in the lookup chain).
+  - When `properties` is present, must apply the descriptors as if via `ObjectDefineProperties` / `DefinePropertyOrThrow`.
+
+Relevant ECMA-262 anchors:
+
+- `Object.create`: https://tc39.es/ecma262/#sec-object.create
+- `Object.defineProperty`: https://tc39.es/ecma262/#sec-object.defineproperty
+- `Object.defineProperties`: https://tc39.es/ecma262/#sec-object.defineproperties
+- `Object.getOwnPropertyDescriptor`: https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
+- `DefinePropertyOrThrow` (building block): https://tc39.es/ecma262/#sec-definepropertyorthrow
+
+Acceptance tests (minimum):
+
+- `defineProperty` supports getter/setter:
+  - Define an accessor property with `get` and verify reading calls it.
+  - Define an accessor property with `set` and verify assignment routes through it.
+- Enumerable vs non-enumerable:
+  - A property defined with `enumerable: false` must not appear in `for...in`.
+  - If `Object.keys` is supported, it must exclude non-enumerable properties.
+
+#### 5.7.2 Prototype chain operations + `__proto__` (Issue #504)
+
+Minimum required runtime semantics:
+
+- Objects in the prototype-aware model must carry an explicit prototype pointer (models `[[Prototype]]`).
+- `Object.getPrototypeOf(o)` must reflect the object’s current prototype pointer.
+- `Object.setPrototypeOf(o, proto)` must update the prototype pointer.
+  - The object must subsequently resolve inherited properties via the new prototype.
+- `Object.prototype.__proto__` must behave as the legacy accessor property:
+  - Getter returns the receiver’s `[[Prototype]]`.
+  - Setter updates the receiver’s `[[Prototype]]` when the receiver is an object and the `proto` is an object or `null`.
+
+Property lookup requirements (prototype-aware path):
+
+- Reads must walk the chain: own properties first, then prototypes, repeatedly, until found or prototype is `null`.
+- Writes must follow the spec-shaped behavior described earlier (own update when present + writable, otherwise consult prototype accessor setter, otherwise define an own data property when allowed).
+
+Relevant ECMA-262 anchors:
+
+- `Object.getPrototypeOf`: https://tc39.es/ecma262/#sec-object.getprototypeof
+- `Object.setPrototypeOf`: https://tc39.es/ecma262/#sec-object.setprototypeof
+- `Object.prototype.__proto__`: https://tc39.es/ecma262/#sec-object.prototype.__proto__
+- Ordinary object internal methods (background): https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots
+
+Acceptance tests (minimum):
+
+- `a.__proto__ = b; b.x = 1; a.x === 1`
+- `Object.setPrototypeOf(a, b)` behavior matches `__proto__` for subsequent reads.
+- Null prototype objects:
+  - `let o = Object.create(null); o.toString === undefined` (no inheritance from `Object.prototype`).
+
 ## 6. Functions and Prototypes (Runtime Model)
 
 JavaScript has two related but distinct concepts:
@@ -270,6 +350,7 @@ Detection patterns (AST-level):
 
 - Assignment to `X.prototype.<name>`
 - `Object.defineProperty(X.prototype, ...)`
+- `Object.defineProperties(X.prototype, ...)`
 - `Reflect.defineProperty(X.prototype, ...)`
 
 ### 9.2 Prototype reassignment / prototype chain rewiring
@@ -322,6 +403,7 @@ Detection patterns:
 - Computed member access `obj[expr]`
 - `in` operator
 - `for...in`
+- `Object.getOwnPropertyDescriptor`, `Object.defineProperty`, `Object.defineProperties`
 - `Object.keys/values/entries`, `Reflect.ownKeys`
 
 ### 9.5 `eval` / `with` (if supported)
