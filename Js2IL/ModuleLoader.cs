@@ -31,26 +31,22 @@ public class ModuleLoader
         var rootModulePath = Path.GetFullPath(modulePath);
 
         var diagnostics = new ModuleLoadDiagnostics(rootModulePath);
-        var moduleCache = new Dictionary<string, ModuleDefinition>(StringComparer.OrdinalIgnoreCase);
-        var pending = new Stack<string>();
-        pending.Push(rootModulePath);
-
+        var moduleCache = new Dictionary<string, ModuleDefinition>();
         var hadAnyErrors = false;
         ModuleDefinition? rootModule = null;
 
-        while (pending.Count > 0)
+        void LoadRecursive(string currentPath)
         {
-            var currentPath = pending.Pop();
             if (moduleCache.ContainsKey(currentPath))
             {
-                continue;
+                return;
             }
 
             var loadOk = TryLoadAndParseModule(currentPath, rootModulePath, diagnostics, out var module);
             if (module is null)
             {
                 hadAnyErrors = true;
-                continue;
+                return;
             }
 
             if (string.Equals(currentPath, rootModulePath, StringComparison.OrdinalIgnoreCase))
@@ -58,14 +54,16 @@ public class ModuleLoader
                 rootModule = module;
             }
 
+            // Preserve insertion order (and therefore emitted module order) matching the old loader.
             moduleCache[currentPath] = module;
             if (!loadOk)
             {
                 hadAnyErrors = true;
             }
 
-            // Continue walking dependency graph even if this module failed validation.
-            foreach (var dep in GetModuleDependencies(module))
+            // Continue walking the dependency graph even if this module failed validation.
+            // Dependency extraction must be best-effort to avoid crashing when validation failed.
+            foreach (var dep in GetModuleDependenciesBestEffort(module))
             {
                 // is local module?
                 if (!dep.StartsWith(".") && !dep.StartsWith("/"))
@@ -75,12 +73,11 @@ public class ModuleLoader
                 }
 
                 var resolvedDepPath = ResolveModulePath(module.Path, dep);
-                if (!moduleCache.ContainsKey(resolvedDepPath))
-                {
-                    pending.Push(resolvedDepPath);
-                }
+                LoadRecursive(resolvedDepPath);
             }
         }
+
+        LoadRecursive(rootModulePath);
 
         diagnostics.Flush(_logger);
 
@@ -259,6 +256,38 @@ public class ModuleLoader
                 }
             }
         });
+
+        return dependencies;
+    }
+
+    private IEnumerable<string> GetModuleDependenciesBestEffort(ModuleDefinition module)
+    {
+        var dependencies = new List<string>();
+
+        try
+        {
+            _parser.VisitAst(module.Ast, node =>
+            {
+                if (node is Acornima.Ast.CallExpression callExpr)
+                {
+                    if (callExpr.Callee is Acornima.Ast.Identifier identifier)
+                    {
+                        if (identifier.Name == "require" && callExpr.Arguments.Count == 1)
+                        {
+                            if (callExpr.Arguments[0] is Acornima.Ast.StringLiteral strLiteral)
+                            {
+                                dependencies.Add(strLiteral.Value);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        catch
+        {
+            // Best-effort only. If the AST contains unexpected shapes (likely due to validation failures),
+            // skip dependency extraction rather than crashing so we can still aggregate diagnostics.
+        }
 
         return dependencies;
     }
