@@ -2,7 +2,7 @@
 
 This document describes how JS2IL should support JavaScript’s prototype-based inheritance while preserving **early-bound** (fast) field/method access for the common case.
 
-## Motivation
+## 1. Motivation
 
 Today, JS2IL can compile many calls as **early-bound direct calls** (e.g., a known method on a known runtime type) without guards.
 
@@ -16,19 +16,19 @@ However, JavaScript allows mutation of behavior via:
 
 When these appear, JS2IL should switch to a semantics-preserving strategy that is compliant with JavaScript’s property lookup rules.
 
-## High-level Goal
+## 2. High-level Goal
 
 - **Default**: Stay **early-bound** to object fields and methods.
 - **Escalate only when needed**: If the program contains **explicit references to prototype chain features** (or other constructs that can observably affect property lookup), compile affected accesses as **late-bound** with the correct lookup behavior.
 - **Future goal**: Once we have correct prototype-chain semantics in the “slow path”, add optimizations (inline caches, shape checks, specialization) to make prototype-aware code fast too.
 
-## Terminology
+## 3. Terminology
 
 - **Early-bound access**: The compiler emits direct IL to read a field/call a method on a known CLR type, with no prototype lookup and no deopt checks.
 - **Late-bound access**: The compiler emits calls into runtime helpers that implement JavaScript property lookup (`Get`/`Set`/`Call`) including prototype-chain traversal.
 - **Prototype-sensitive program**: A compilation unit that performs operations that may change or depend on prototype-based dispatch in ways that are observable.
 
-## Relevant ECMA-262 Coverage Docs (in this repo)
+## 4. Relevant ECMA-262 Coverage Docs (in this repo)
 
 These are the ECMA-262 areas that most directly define (or interact with) prototype-chain semantics. They’re useful as a “spec map” when implementing the runtime helpers and deciding when early-bound calls are safe.
 
@@ -44,17 +44,17 @@ These are the ECMA-262 areas that most directly define (or interact with) protot
   - [docs/ECMA262/15/Section15_7.md](ECMA262/15/Section15_7.md)
   - [docs/ECMA262/15/Section15_4.md](ECMA262/15/Section15_4.md)
 
-## Proposed .NET Representation of the Prototype Chain
+## 5. Proposed .NET Representation of the Prototype Chain
 
 This section proposes runtime data structures for implementing prototype-chain semantics *when we opt into the prototype-aware path*, while keeping the current “fast path” representation viable for early-bound code.
 
-### Design Goals
+### 5.1 Design Goals
 
 - **Don’t slow down the mainstream case**: keep current early-bound representations (e.g., `JavaScriptRuntime.Array` as a `List<object?>`, object literals as `ExpandoObject`, method calls via intrinsic dispatch) for programs that don’t exercise prototype features.
 - **Have a clear, spec-shaped model available** when the compiler must produce prototype-aware code.
 - **Enable future optimization** (inline caches / versioning) without requiring a full JS engine.
 
-### Current Runtime Reality (Baseline)
+### 5.2 Current Runtime Reality (Baseline)
 
 Today, JS2IL uses pragmatic CLR representations:
 
@@ -64,16 +64,16 @@ Today, JS2IL uses pragmatic CLR representations:
 
 This is why we can compile early-bound “fast calls” in hot paths like `tests/performance/PrimeJavaScript.js`.
 
-### Two-Layer Model: Fast Values + Prototype-Aware Objects
+### 5.3 Two-Layer Model: Fast Values + Prototype-Aware Objects
 
 We can preserve the existing model by introducing *additional* runtime types that are only required when prototype-aware lowering is selected.
 
-#### Layer 1: Fast Path Values (unchanged)
+#### 5.3.1 Layer 1: Fast Path Values (unchanged)
 
 - `JavaScriptRuntime.Array`, `Int32Array`, `string`, `double`, `bool`, `ExpandoObject`, delegates, and host objects.
 - Member calls continue to use the existing dispatch (`JavaScriptRuntime.Object.CallMember`, intrinsic direct calls, etc.).
 
-#### Layer 2: Prototype-Aware Values (new)
+#### 5.3.2 Layer 2: Prototype-Aware Values (new)
 
 Introduce a small set of types/interfaces:
 
@@ -103,7 +103,7 @@ Concrete types:
 
 This keeps the “fast values” model intact while giving us a spec-shaped object graph for programs that need it.
 
-### Property Keys and Descriptors
+### 5.4 Property Keys and Descriptors
 
 For prototype-correct lookup we eventually need property descriptors.
 
@@ -121,7 +121,7 @@ Initial simplification (Phase 0):
 - Support only *data properties* in the prototype-aware object model.
 - Treat accessors as “future” but keep the representation designed for them.
 
-### Prototype Chain Traversal
+### 5.5 Prototype Chain Traversal
 
 Prototype-aware `Get` can follow the spec-shaped approach:
 
@@ -138,7 +138,7 @@ Prototype-aware `Set`:
 - Otherwise, if a prototype accessor setter exists, call it.
 - Otherwise, define a new own data property (subject to extensibility rules; can be simplified initially).
 
-### Versioning for Fast, Correct Dispatch (Future-Ready)
+### 5.6 Versioning for Fast, Correct Dispatch (Future-Ready)
 
 To keep calls fast in prototype-sensitive programs, add *monotonic version counters*:
 
@@ -156,14 +156,14 @@ Inline cache shape:
 
 This aligns with the document’s earlier “guarded early-binding” direction.
 
-## Functions and Prototypes (Runtime Model)
+## 6. Functions and Prototypes (Runtime Model)
 
 JavaScript has two related but distinct concepts:
 
 - A function’s `[[Prototype]]` (its *prototype chain* as an object; typically `Function.prototype`).
 - A function’s `.prototype` property (an *ordinary object* used as the `[[Prototype]]` of instances created via `new f()`).
 
-### `JsFunctionObject` Basics
+### 6.1 `JsFunctionObject` Basics
 
 Proposed fields/properties:
 
@@ -177,7 +177,7 @@ And the callable operations:
 - `Call(thisArg, args)` invokes the delegate while setting `RuntimeServices.SetCurrentThis(thisArg)`.
 - `Construct(args, newTarget)` creates an instance object and then calls the function as a constructor.
 
-### Constructor Semantics and `.prototype`
+### 6.2 Constructor Semantics and `.prototype`
 
 For `new F(...)` semantics, the important steps are:
 
@@ -193,7 +193,7 @@ In the runtime model this implies:
 - Every `JsFunctionObject` that is constructible has an own data property named `"prototype"` whose value is an `IJsObject`.
 - That prototype object should have an own property `"constructor"` pointing back to the function (important for typical JS expectations).
 
-### Classes
+### 6.3 Classes
 
 For `class C { m() {} }`:
 
@@ -207,7 +207,7 @@ JS2IL can keep its current early-bound method calls for classes when prototype s
 - per-instance overrides `obj.m = ...`
 - `Object.setPrototypeOf(obj, ...)`
 
-### Interop With Existing CLR Delegate Model
+### 6.4 Interop With Existing CLR Delegate Model
 
 We do **not** have to abandon delegates. Instead:
 
@@ -217,7 +217,7 @@ We do **not** have to abandon delegates. Instead:
 
 This provides a compatibility bridge between today’s execution model and the spec-shaped future model.
 
-## Scope of Prototype Semantics We Care About
+## 7. Scope of Prototype Semantics We Care About
 
 JavaScript property access can be affected by:
 
@@ -229,11 +229,11 @@ JavaScript property access can be affected by:
 
 JS2IL does not need to implement every edge case on day one, but the selection logic must be conservative: if we can’t prove early-binding is safe, we must fall back to late-bound.
 
-## Design: Tiered Compilation Modes
+## 8. Design: Tiered Compilation Modes
 
 We will support at least two modes per compilation unit, and (eventually) per-object:
 
-### Mode A: Fast / Early-bound (default)
+### 8.1 Mode A: Fast / Early-bound (default)
 
 Used when we can infer that prototype semantics are not being exercised in a way that could affect the compiled accesses.
 
@@ -243,7 +243,7 @@ Characteristics:
 - No guards/checks for prototype mutation.
 - Maximizes performance for mainstream code.
 
-### Mode B: Prototype-aware / Late-bound (opt-in by detection)
+### 8.2 Mode B: Prototype-aware / Late-bound (opt-in by detection)
 
 Enabled when compile-time analysis detects prototype-related mutation or reflection-like behavior.
 
@@ -253,11 +253,11 @@ Characteristics:
 - More allocations and indirections; slower but correct.
 - Can be narrowed to only affected call-sites or only affected objects in later phases.
 
-## Compile-time Detection: When to Escalate
+## 9. Compile-time Detection: When to Escalate
 
 The compiler should conservatively escalate to prototype-aware lowering when any of the following are present.
 
-### 1) Prototype mutation
+### 9.1 Prototype mutation
 
 Examples:
 
@@ -272,7 +272,7 @@ Detection patterns (AST-level):
 - `Object.defineProperty(X.prototype, ...)`
 - `Reflect.defineProperty(X.prototype, ...)`
 
-### 2) Prototype reassignment / prototype chain rewiring
+### 9.2 Prototype reassignment / prototype chain rewiring
 
 Examples:
 
@@ -286,7 +286,7 @@ Detection patterns:
 - Calls to `Object.setPrototypeOf`
 - Member assignment to `__proto__`
 
-### 3) Per-instance method replacement / dynamic override
+### 9.3 Per-instance method replacement / dynamic override
 
 Examples:
 
@@ -304,7 +304,7 @@ Detection patterns:
 
 Conservative strategy (Phase 1): if we see *any* assignment to a property name that is also used as a method call (e.g., `x.indexOf(...)` anywhere), consider that call-site prototype-sensitive unless we can prove it’s a different object.
 
-### 4) Reflection-like dynamic property access
+### 9.4 Reflection-like dynamic property access
 
 Examples:
 
@@ -324,36 +324,36 @@ Detection patterns:
 - `for...in`
 - `Object.keys/values/entries`, `Reflect.ownKeys`
 
-### 5) `eval` / `with` (if supported)
+### 9.5 `eval` / `with` (if supported)
 
 These features make static reasoning about binding and lookup extremely hard. If they are supported in any form, they should force prototype-aware lowering for the relevant scope.
 
-## How “Escalation” Applies: Granularity Options
+## 10. How “Escalation” Applies: Granularity Options
 
 We have a few choices for how broadly to apply prototype-aware lowering.
 
-### Option 1: Global switch per compilation unit (simplest)
+### 10.1 Option 1: Global switch per compilation unit (simplest)
 
 - If any prototype-sensitive construct exists anywhere, compile all property reads/writes/calls as late-bound.
 - Pros: easiest to implement, safest.
 - Cons: pessimizes unrelated hot paths.
 
-### Option 2: Per-scope / per-function switch (better)
+### 10.2 Option 2: Per-scope / per-function switch (better)
 
 - Track a flag on the symbol table scope: `PrototypeSensitive`.
 - If a function mutates prototypes or uses reflection-like access, mark that function (and possibly callers) as sensitive.
 - Compile only accesses inside sensitive scopes as late-bound.
 
-### Option 3: Per-call-site decision (best long-term)
+### 10.3 Option 3: Per-call-site decision (best long-term)
 
 - Each `MemberExpression`/call-site decides early vs late based on local proof.
 - Requires alias analysis / points-to approximations.
 
 Roadmap below recommends starting with Option 2 and growing into Option 3.
 
-## Lowering Strategy
+## 11. Lowering Strategy
 
-### Early-bound lowering (fast path)
+### 11.1 Early-bound lowering (fast path)
 
 For common intrinsics (Array/Object/String/Number/etc.), where we can emit direct IL calls:
 
@@ -362,7 +362,7 @@ For common intrinsics (Array/Object/String/Number/etc.), where we can emit direc
 
 This should stay as-is **when we can prove** the lookup cannot be affected.
 
-### Late-bound lowering (prototype-aware path)
+### 11.2 Late-bound lowering (prototype-aware path)
 
 When prototype sensitivity is detected:
 
@@ -379,26 +379,26 @@ Runtime requirements:
   - accessors
 - Prototype traversal and property descriptor semantics.
 
-## Compile-time Inference Heuristics (Initial)
+## 12. Compile-time Inference Heuristics (Initial)
 
 We want inference that is:
 
 - conservative (never early-bind when semantics could differ)
 - cheap (doesn’t require complex whole-program analysis initially)
 
-### Minimal inference (Phase 0)
+### 12.1 Minimal inference (Phase 0)
 
 - If the program contains any of the detection patterns above, mark compilation unit as prototype-sensitive.
 - Otherwise, keep current early-bound behavior.
 
-### Scoped inference (Phase 1)
+### 12.2 Scoped inference (Phase 1)
 
 - Track prototype-sensitive constructs per scope.
 - Late-bind only inside those scopes.
 - Additionally, late-bind call-sites for names that appear in prototype mutations:
   - if we see `Array.prototype.indexOf = ...`, then any `x.indexOf(...)` where `x` could be an Array becomes late-bound (or at least guarded).
 
-### Toward per-call-site inference (Phase 2)
+### 12.3 Toward per-call-site inference (Phase 2)
 
 - Add lightweight points-to classification:
   - “definitely intrinsic array”
@@ -406,11 +406,11 @@ We want inference that is:
   - “unknown”
 - Early-bind only when receiver is “definitely intrinsic array” *and* we have not observed mutation of the relevant property name.
 
-## Guarded Early-binding (Future Optimization)
+## 13. Guarded Early-binding (Future Optimization)
 
 Even in prototype-sensitive code, we can keep many calls fast by adding guards.
 
-### Inline caches / shape checks
+### 13.1 Inline caches / shape checks
 
 - Cache the resolved function and a “shape/prototype version” token.
 - On call:
@@ -419,7 +419,7 @@ Even in prototype-sensitive code, we can keep many calls fast by adding guards.
 
 This brings performance close to early-bound for stable shapes while remaining correct.
 
-### Prototype versioning
+### 13.2 Prototype versioning
 
 Maintain a version counter for:
 
@@ -428,7 +428,7 @@ Maintain a version counter for:
 
 Any mutation increments a version; caches become invalid.
 
-## Interaction with JS2IL’s Architecture
+## 14. Interaction with JS2IL’s Architecture
 
 Relevant compilation phases:
 
@@ -445,9 +445,9 @@ Suggested implementation points:
   - `LateBound`
   - `GuardedEarlyBound` (future)
 
-## Examples (Desired Behavior)
+## 15. Examples (Desired Behavior)
 
-### Prototype mutation triggers late-bound
+### 15.1 Prototype mutation triggers late-bound
 
 ```js
 Array.prototype.indexOf = function (value) { return -1; };
@@ -458,7 +458,7 @@ console.log(a.indexOf(2));
 - Detected: assignment to `Array.prototype.indexOf`
 - Compile: `a.indexOf(2)` via prototype-aware lookup
 
-### Per-instance override triggers late-bound for that receiver
+### 15.2 Per-instance override triggers late-bound for that receiver
 
 ```js
 let a = [1,2,3];
@@ -469,7 +469,7 @@ console.log(a.indexOf(2));
 - Detected: assignment to `a.indexOf`
 - Compile: `a.indexOf(2)` via own-property lookup then call
 
-### Mainstream case stays early-bound
+### 15.3 Mainstream case stays early-bound
 
 ```js
 let a = [1,2,3];
@@ -479,29 +479,29 @@ a.indexOf(2);
 - Detected: no prototype-sensitive constructs
 - Compile: early-bound direct call (no lookup overhead)
 
-## Roadmap
+## 16. Roadmap
 
-### Phase 0 (document + unit-level switch)
+### 16.1 Phase 0 (document + unit-level switch)
 
 - Add prototype sensitivity detection.
 - If present anywhere, lower member access/calls late-bound.
 
-### Phase 1 (per-scope sensitivity)
+### 16.2 Phase 1 (per-scope sensitivity)
 
 - Track sensitivity per scope/function.
 - Late-bind only inside sensitive scopes.
 
-### Phase 2 (property-name targeted)
+### 16.3 Phase 2 (property-name targeted)
 
 - Track mutated property names per prototype/receiver category.
 - Late-bind only for those property names.
 
-### Phase 3 (guarded fast path)
+### 16.4 Phase 3 (guarded fast path)
 
 - Add inline caches / shape checks.
 - Add prototype versioning invalidation.
 
-## Open Questions
+## 17. Open Questions
 
 - What is our initial runtime surface for prototype-aware lookup (new helpers vs expanding existing `Operators`)?
 - How do we represent accessors and property descriptors in the runtime?
