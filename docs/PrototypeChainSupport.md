@@ -44,6 +44,179 @@ These are the ECMA-262 areas that most directly define (or interact with) protot
   - [docs/ECMA262/15/Section15_7.md](ECMA262/15/Section15_7.md)
   - [docs/ECMA262/15/Section15_4.md](ECMA262/15/Section15_4.md)
 
+## Proposed .NET Representation of the Prototype Chain
+
+This section proposes runtime data structures for implementing prototype-chain semantics *when we opt into the prototype-aware path*, while keeping the current “fast path” representation viable for early-bound code.
+
+### Design Goals
+
+- **Don’t slow down the mainstream case**: keep current early-bound representations (e.g., `JavaScriptRuntime.Array` as a `List<object?>`, object literals as `ExpandoObject`, method calls via intrinsic dispatch) for programs that don’t exercise prototype features.
+- **Have a clear, spec-shaped model available** when the compiler must produce prototype-aware code.
+- **Enable future optimization** (inline caches / versioning) without requiring a full JS engine.
+
+### Current Runtime Reality (Baseline)
+
+Today, JS2IL uses pragmatic CLR representations:
+
+- Object literals are typically `System.Dynamic.ExpandoObject` accessed via `JavaScriptRuntime.Object.GetProperty/SetProperty`.
+- Arrays are `JavaScriptRuntime.Array` (a `List<object?>`) with index access and a few intrinsic methods.
+- Functions are typically CLR delegates (plus binding helpers in `JavaScriptRuntime.Closure`); they are not full “Function objects” with a prototype chain.
+
+This is why we can compile early-bound “fast calls” in hot paths like `tests/performance/PrimeJavaScript.js`.
+
+### Two-Layer Model: Fast Values + Prototype-Aware Objects
+
+We can preserve the existing model by introducing *additional* runtime types that are only required when prototype-aware lowering is selected.
+
+#### Layer 1: Fast Path Values (unchanged)
+
+- `JavaScriptRuntime.Array`, `Int32Array`, `string`, `double`, `bool`, `ExpandoObject`, delegates, and host objects.
+- Member calls continue to use the existing dispatch (`JavaScriptRuntime.Object.CallMember`, intrinsic direct calls, etc.).
+
+#### Layer 2: Prototype-Aware Values (new)
+
+Introduce a small set of types/interfaces:
+
+- `IJsObject`
+  - `IJsObject? Prototype { get; set; }` (models `[[Prototype]]`)
+  - `bool TryGetOwnProperty(JsPropertyKey key, out JsPropertyDescriptor desc)`
+  - `bool DefineOwnProperty(JsPropertyKey key, JsPropertyDescriptor desc)`
+  - Optional: `int ShapeVersion { get; }` (see versioning below)
+
+- `IJsCallable : IJsObject`
+  - `object? Call(object? thisArg, object?[] args)` (models `[[Call]]`)
+  - Optional: `object? Construct(object?[] args, object? newTarget)` (models `[[Construct]]`)
+
+Concrete types:
+
+- `JsOrdinaryObject : IJsObject`
+  - Own properties stored in a dictionary keyed by `JsPropertyKey`.
+  - Has a prototype pointer.
+
+- `JsArrayObject : IJsObject`
+  - Wraps a fast `JavaScriptRuntime.Array` internally (or inherits from it) but also has an own-property bag + prototype pointer.
+  - Numeric index reads/writes still go to the underlying list for speed.
+
+- `JsFunctionObject : IJsCallable`
+  - Wraps a compiled delegate + captured scopes (what we already have today).
+  - Has its own properties + prototype pointer.
+
+This keeps the “fast values” model intact while giving us a spec-shaped object graph for programs that need it.
+
+### Property Keys and Descriptors
+
+For prototype-correct lookup we eventually need property descriptors.
+
+Proposed types:
+
+- `JsPropertyKey`
+  - Either `string` or `JavaScriptRuntime.Symbol` (the repo already has a `Symbol` type).
+
+- `JsPropertyDescriptor`
+  - Data: `{ Value, Writable, Enumerable, Configurable }`
+  - Accessor: `{ Get, Set, Enumerable, Configurable }` where `Get/Set` are `IJsCallable` or delegate-backed wrappers.
+
+Initial simplification (Phase 0):
+
+- Support only *data properties* in the prototype-aware object model.
+- Treat accessors as “future” but keep the representation designed for them.
+
+### Prototype Chain Traversal
+
+Prototype-aware `Get` can follow the spec-shaped approach:
+
+1. Check own property (including numeric-index logic for arrays).
+2. If missing, walk `Prototype` repeatedly.
+3. If found:
+   - For data properties: return value.
+   - For accessors: call getter with `thisArg`.
+4. If missing: return `undefined` (represented as CLR `null` in JS2IL).
+
+Prototype-aware `Set`:
+
+- If an own writable data property exists, update it.
+- Otherwise, if a prototype accessor setter exists, call it.
+- Otherwise, define a new own data property (subject to extensibility rules; can be simplified initially).
+
+### Versioning for Fast, Correct Dispatch (Future-Ready)
+
+To keep calls fast in prototype-sensitive programs, add *monotonic version counters*:
+
+- Each `IJsObject` can have an `int ShapeVersion` incremented when:
+  - an own property is added/removed/changed
+  - `Prototype` changes
+
+- Each intrinsic prototype (e.g., `Array.prototype`) can maintain its own version.
+
+Inline cache shape:
+
+- Cache `(receiverTypeOrShapeId, receiverShapeVersion, prototypeChainVersion, resolvedCallable)`.
+- If versions match, call the cached function directly.
+- If not, redo prototype-aware lookup and refresh the cache.
+
+This aligns with the document’s earlier “guarded early-binding” direction.
+
+## Functions and Prototypes (Runtime Model)
+
+JavaScript has two related but distinct concepts:
+
+- A function’s `[[Prototype]]` (its *prototype chain* as an object; typically `Function.prototype`).
+- A function’s `.prototype` property (an *ordinary object* used as the `[[Prototype]]` of instances created via `new f()`).
+
+### `JsFunctionObject` Basics
+
+Proposed fields/properties:
+
+- `IJsObject Prototype` (this is the function object’s `[[Prototype]]`; usually `Function.prototype`).
+- `JsPropertyBag OwnProperties` (for `length`, `name`, user-assigned properties, etc.).
+- `object Target` (the compiled delegate we have today).
+- `object[] BoundScopes` (existing closure model).
+
+And the callable operations:
+
+- `Call(thisArg, args)` invokes the delegate while setting `RuntimeServices.SetCurrentThis(thisArg)`.
+- `Construct(args, newTarget)` creates an instance object and then calls the function as a constructor.
+
+### Constructor Semantics and `.prototype`
+
+For `new F(...)` semantics, the important steps are:
+
+1. Determine the instance’s `[[Prototype]]`:
+   - If `F.prototype` is an object, use it.
+   - Otherwise use the intrinsic default (e.g., `Object.prototype`).
+2. Create the instance object with that prototype.
+3. Invoke the constructor body with `this` bound to the instance.
+4. If the constructor returns an object/function, that value overrides the instance (we already have this logic in `JavaScriptRuntime.TypeUtilities.IsConstructorReturnOverride`).
+
+In the runtime model this implies:
+
+- Every `JsFunctionObject` that is constructible has an own data property named `"prototype"` whose value is an `IJsObject`.
+- That prototype object should have an own property `"constructor"` pointing back to the function (important for typical JS expectations).
+
+### Classes
+
+For `class C { m() {} }`:
+
+- `C` is a constructible function object.
+- `C.prototype` is an object containing methods like `m`.
+- Instances’ `[[Prototype]]` points at `C.prototype`.
+
+JS2IL can keep its current early-bound method calls for classes when prototype sensitivity is absent, but when prototype semantics are enabled the runtime model above gives a place for:
+
+- adding/replacing `C.prototype.m`
+- per-instance overrides `obj.m = ...`
+- `Object.setPrototypeOf(obj, ...)`
+
+### Interop With Existing CLR Delegate Model
+
+We do **not** have to abandon delegates. Instead:
+
+- Wrap delegates in `JsFunctionObject` only in prototype-aware mode.
+- Keep using `JavaScriptRuntime.Closure.Bind/BindArrow` for scope/this mechanics.
+- Teach prototype-aware `Get` to return a `JsFunctionObject` (or delegate) and prototype-aware `Call` to invoke it with the right `this`.
+
+This provides a compatibility bridge between today’s execution model and the spec-shaped future model.
+
 ## Scope of Prototype Semantics We Care About
 
 JavaScript property access can be affected by:
