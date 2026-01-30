@@ -30,25 +30,94 @@ public class ModuleLoader
     {
         var rootModulePath = Path.GetFullPath(modulePath);
 
-        if (TryLoadAndParseModule(rootModulePath, rootModulePath, out ModuleDefinition? module))
-        {
-            var modules = new Modules { rootModule = module! };
-            modules._modules[rootModulePath] = module!;
+        var diagnostics = new ModuleLoadDiagnostics(rootModulePath);
+        var moduleCache = new Dictionary<string, ModuleDefinition>();
+        var hadAnyErrors = false;
+        ModuleDefinition? rootModule = null;
 
-            if (!LoadDepedencies(module!, modules))
+        void LoadRecursive(string currentPath)
+        {
+            if (moduleCache.ContainsKey(currentPath))
             {
-                return null;
+                return;
             }
 
-            return modules;
+            var loadOk = TryLoadAndParseModule(currentPath, rootModulePath, diagnostics, out var module);
+            if (module is null)
+            {
+                hadAnyErrors = true;
+                return;
+            }
+
+            if (string.Equals(currentPath, rootModulePath, StringComparison.OrdinalIgnoreCase))
+            {
+                rootModule = module;
+            }
+
+            // Preserve insertion order (and therefore emitted module order) matching the old loader.
+            moduleCache[currentPath] = module;
+            if (!loadOk)
+            {
+                hadAnyErrors = true;
+            }
+
+            // Continue walking the dependency graph even if this module failed validation.
+            // Dependency extraction must be best-effort to avoid crashing when validation failed.
+            foreach (var dep in GetModuleDependenciesBestEffort(module))
+            {
+                // is local module?
+                if (!dep.StartsWith(".") && !dep.StartsWith("/"))
+                {
+                    // skip loading non-local modules
+                    continue;
+                }
+
+                var resolvedDepPath = ResolveModulePath(module.Path, dep);
+                LoadRecursive(resolvedDepPath);
+            }
         }
 
-        return null;
+        LoadRecursive(rootModulePath);
+
+        diagnostics.Flush(_logger);
+
+        if (rootModule is null)
+        {
+            return null;
+        }
+
+        if (hadAnyErrors)
+        {
+            return null;
+        }
+
+        var modules = new Modules { rootModule = rootModule };
+        foreach (var kvp in moduleCache)
+        {
+            modules._modules[kvp.Key] = kvp.Value;
+        }
+
+        return modules;
     }
 
-    private bool TryLoadAndParseModule(string modulePath, string rootModulePath, out ModuleDefinition? module)
+    private bool TryLoadAndParseModule(
+        string modulePath,
+        string rootModulePath,
+        ModuleLoadDiagnostics diagnostics,
+        out ModuleDefinition? module)
     {
-        var jsSource = _fileSystem.ReadAllText(modulePath);
+        string jsSource;
+        try
+        {
+            jsSource = _fileSystem.ReadAllText(modulePath);
+        }
+        catch (Exception ex)
+        {
+            module = null;
+            diagnostics.AddParseError(modulePath, ex.Message);
+            return false;
+        }
+
         Acornima.Ast.Program ast;
         try
         {
@@ -57,8 +126,7 @@ public class ModuleLoader
         catch (Exception ex)
         {
             module = null;
-            _logger.WriteLineError("\nParse Errors:");
-            _logger.WriteLineError($"Error: {ex.Message}");
+            diagnostics.AddParseError(modulePath, ex.Message);
             return false;
         }
 
@@ -92,60 +160,81 @@ public class ModuleLoader
         var validationResult = _validator.Validate(ast);
         if (!validationResult.IsValid)
         {
-            _logger.WriteLineError("\nValidation Errors:");
-            foreach (var error in validationResult.Errors)
-            {
-                _logger.WriteLineError($"Error: {error}");
-            }
+            diagnostics.AddValidationErrors(moduleName, modulePath, validationResult.Errors);
             return false;
         }
 
         if (validationResult.Warnings.Any())
         {
-            _logger.WriteLine("\nValidation Warnings:");
-            foreach (var warning in validationResult.Warnings)
-            {
-                _logger.WriteLineWarning($"Warning: {warning}");
-            }
+            diagnostics.AddWarnings(moduleName, modulePath, validationResult.Warnings);
         }
-        
 
         return true;
     }
 
-    private bool LoadDepedencies(ModuleDefinition module, Modules modules)
+    private sealed class ModuleLoadDiagnostics
     {
-        var dependencies = GetModuleDependencies(module);
-        foreach (var dep in dependencies)
+        private readonly string _rootModulePath;
+        private readonly List<(string ModuleName, string ModulePath, string Message)> _parseErrors = new();
+        private readonly List<(string ModuleName, string ModulePath, string Message)> _validationErrors = new();
+        private readonly List<(string ModuleName, string ModulePath, string Message)> _warnings = new();
+
+        public ModuleLoadDiagnostics(string rootModulePath)
         {
-            // is local module?
-            if (!dep.StartsWith(".") && !dep.StartsWith("/"))
-            {
-                // skip loading non-local modules
-                continue;
-            }
+            _rootModulePath = rootModulePath;
+        }
 
-            var resolvedDepPath = ResolveModulePath(module.Path, dep);
-            if (!modules._modules.TryGetValue(resolvedDepPath, out var depModule))
-            {
-                if (TryLoadAndParseModule(resolvedDepPath, modules.rootModule.Path, out depModule) && depModule != null)
-                {
-                    modules._modules[resolvedDepPath] = depModule;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+        public void AddParseError(string modulePath, string message)
+        {
+            var moduleName = JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromPath(modulePath, _rootModulePath);
+            _parseErrors.Add((moduleName, modulePath, message));
+        }
 
-            // Recursively load nested dependencies (guarded by the module cache above).
-            if (!LoadDepedencies(depModule!, modules))
+        public void AddValidationErrors(string moduleName, string modulePath, IEnumerable<string> errors)
+        {
+            foreach (var error in errors)
             {
-                return false;
+                _validationErrors.Add((moduleName, modulePath, error));
             }
         }
 
-        return true;
+        public void AddWarnings(string moduleName, string modulePath, IEnumerable<string> warnings)
+        {
+            foreach (var warning in warnings)
+            {
+                _warnings.Add((moduleName, modulePath, warning));
+            }
+        }
+
+        public void Flush(ILogger logger)
+        {
+            if (_parseErrors.Count > 0)
+            {
+                logger.WriteLineError("\nParse Errors:");
+                foreach (var e in _parseErrors)
+                {
+                    logger.WriteLineError($"Error: [{e.ModuleName}] {e.ModulePath}: {e.Message}");
+                }
+            }
+
+            if (_validationErrors.Count > 0)
+            {
+                logger.WriteLineError("\nValidation Errors:");
+                foreach (var e in _validationErrors)
+                {
+                    logger.WriteLineError($"Error: [{e.ModuleName}] {e.ModulePath}: {e.Message}");
+                }
+            }
+
+            if (_warnings.Count > 0)
+            {
+                logger.WriteLine("\nValidation Warnings:");
+                foreach (var w in _warnings)
+                {
+                    logger.WriteLineWarning($"Warning: [{w.ModuleName}] {w.ModulePath}: {w.Message}");
+                }
+            }
+        }
     }
 
     private IEnumerable<string> GetModuleDependencies(ModuleDefinition module)
@@ -181,6 +270,38 @@ public class ModuleLoader
         return dependencies;
     }
 
+    private IEnumerable<string> GetModuleDependenciesBestEffort(ModuleDefinition module)
+    {
+        var dependencies = new List<string>();
+
+        try
+        {
+            _parser.VisitAst(module.Ast, node =>
+            {
+                if (node is Acornima.Ast.CallExpression callExpr)
+                {
+                    if (callExpr.Callee is Acornima.Ast.Identifier identifier)
+                    {
+                        if (identifier.Name == "require" && callExpr.Arguments.Count == 1)
+                        {
+                            if (callExpr.Arguments[0] is Acornima.Ast.StringLiteral strLiteral)
+                            {
+                                dependencies.Add(strLiteral.Value);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        catch
+        {
+            // Best-effort only. If the AST contains unexpected shapes (likely due to validation failures),
+            // skip dependency extraction rather than crashing so we can still aggregate diagnostics.
+        }
+
+        return dependencies;
+    }
+
     private string ResolveModulePath(string basePath, string moduleSpecifier)
     {
         var baseDirectory = Path.GetDirectoryName(basePath) ?? ".";
@@ -193,4 +314,4 @@ public class ModuleLoader
             ? fullPath
             : fullPath + ".js";
     }
-}    
+}

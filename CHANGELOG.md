@@ -12,11 +12,15 @@ All notable changes to this project are documented here.
 - Classes/spec: support `class B extends A { ... }`, `super(...)` in derived constructors, and `super.m(...)` base method calls (fixes #293, #294).
 - Generators/spec: support `yield*` delegation for synchronous generators (fixes #389).
 - Validator/spec: enforce and consistently surface iteration-statement early errors (break/continue targets and for-in/of head constraints) and fix labeled-statement AST traversal (fixes #463).
+- Validator/spec: require a directive prologue containing `"use strict";` at the start of every module/script (PR #478).
 - ControlFlow/spec: implement per-iteration lexical environments for `for (let/const ...)` loops so closures capture iteration values (fixes #461).
 - ControlFlow/spec: implement per-iteration lexical environments for `for (let/const ... of ...)` and `for (let/const ... in ...)`, including destructuring loop heads (fixes #462).
 - ControlFlow/spec: implement iterator-protocol `for..of` (Symbol.iterator + IteratorClose on abrupt completion) and add custom iterable compliance tests (fixes #458).
 - Async/spec: implement `for await...of` using the async iterator protocol (including awaited AsyncIteratorClose on abrupt completion) and add conformance tests (fixes #341).
 - ArrowFunction/spec: implement lexical `this` for arrow functions (including async arrows across `await`) (fixes #219).
+- Module loading: aggregate parse/validation diagnostics across the full dependency graph and include module/file context in error output (fixes #488) (PR #509).
+- Docs: add prototype-chain support strategy and document domino blocker requirements for descriptor/prototype APIs (PR #477, #508).
+- Docs(ecma262): audit Sections 15 and 27 and sync coverage/status taxonomy for spec documentation (PR #475, #476).
 
 ## v0.7.3 - 2026-01-23
 
