@@ -28,6 +28,22 @@ When these appear, JS2IL should switch to a semantics-preserving strategy that i
 - **Late-bound access**: The compiler emits calls into runtime helpers that implement JavaScript property lookup (`Get`/`Set`/`Call`) including prototype-chain traversal.
 - **Prototype-sensitive program**: A compilation unit that performs operations that may change or depend on prototype-based dispatch in ways that are observable.
 
+## Relevant ECMA-262 Coverage Docs (in this repo)
+
+These are the ECMA-262 areas that most directly define (or interact with) prototype-chain semantics. They’re useful as a “spec map” when implementing the runtime helpers and deciding when early-bound calls are safe.
+
+- Ordinary object internal methods and `[[Prototype]]` mechanics: [docs/ECMA262/10/Section10_1.md](ECMA262/10/Section10_1.md)
+  - Especially: 10.1.1 `[[GetPrototypeOf]]`, 10.1.2 `[[SetPrototypeOf]]`, 10.1.8 `[[Get]]`, 10.1.9 `[[Set]]`, 10.1.12 `OrdinaryObjectCreate`, 10.1.14 `GetPrototypeFromConstructor`.
+- Property access, calls, and `new` (where prototype lookup becomes observable at call-sites): [docs/ECMA262/13/Section13_3.md](ECMA262/13/Section13_3.md)
+  - Especially: 13.3.2 Property Accessors, 13.3.6 Function Calls, 13.3.5 `new`.
+- Object constructor APIs and prototype-related hooks: [docs/ECMA262/20/Section20_1.md](ECMA262/20/Section20_1.md)
+  - Especially: `Object.getPrototypeOf`, `Object.setPrototypeOf`, `Object.create`, and `Object.prototype.__proto__`.
+- Function objects and the `.prototype` property used by `new`: [docs/ECMA262/20/Section20_2.md](ECMA262/20/Section20_2.md)
+  - Especially: 20.2.4.3 `prototype`.
+- Classes/methods (class instances use `C.prototype` for method lookup; accessors are also relevant):
+  - [docs/ECMA262/15/Section15_7.md](ECMA262/15/Section15_7.md)
+  - [docs/ECMA262/15/Section15_4.md](ECMA262/15/Section15_4.md)
+
 ## Scope of Prototype Semantics We Care About
 
 JavaScript property access can be affected by:
