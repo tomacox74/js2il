@@ -13,7 +13,7 @@ public class ModuleLoaderTests
         var options = new CompilerOptions { Verbose = false };
         var loader = new ModuleLoader(options, fileSystem, logger);
 
-        var modulePath = Path.GetFullPath("C:\\temp\\bad.js");
+        var modulePath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "bad.js"));
         fileSystem.AddFile(modulePath, "while (false) { notALoop: { continue notALoop; } }");
 
         var modules = loader.LoadModules(modulePath);
@@ -31,8 +31,8 @@ public class ModuleLoaderTests
         var options = new CompilerOptions { Verbose = false };
         var loader = new ModuleLoader(options, fileSystem, logger);
 
-        var rootPath = Path.GetFullPath("C:\\temp\\root.js");
-        var depPath = Path.GetFullPath("C:\\temp\\dep.js");
+        var rootPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "root.js"));
+        var depPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rootPath)!, "dep.js"));
 
         fileSystem.AddFile(rootPath, "\"use strict\";\nconst d = require('./dep');\nconsole.log(d);\n");
         fileSystem.AddFile(depPath, "module.exports = 1;\n");
