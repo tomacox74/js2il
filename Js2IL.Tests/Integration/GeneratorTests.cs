@@ -13,6 +13,9 @@ namespace Js2IL.Tests.Integration
         public Task Compile_Scripts_BumpVersion() => GenerateTest(nameof(Compile_Scripts_BumpVersion));
 
         [Fact]
+        public Task Compile_Scripts_DecompileGeneratorTest() => GenerateTest(nameof(Compile_Scripts_DecompileGeneratorTest));
+
+        [Fact]
         public Task Compile_Performance_PrimeJavaScript() => GenerateTest(nameof(Compile_Performance_PrimeJavaScript));
     }
 }
