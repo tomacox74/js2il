@@ -270,12 +270,36 @@ public class JavaScriptAstValidator : IAstValidator
         public required bool IsFunctionScope { get; init; }
     }
 
-    private static readonly HashSet<string> KnownGlobalConstants = new(StringComparer.Ordinal)
+    private static readonly Lazy<HashSet<string>> KnownGlobalConstants = new(() =>
     {
-        "undefined",
-        "NaN",
-        "Infinity",
-    };
+        var names = new HashSet<string>(StringComparer.Ordinal);
+
+        // JS 'undefined' is modeled as CLR null rather than a GlobalThis property.
+        names.Add("undefined");
+
+        // Reflect constant-like globals exposed by JavaScriptRuntime.GlobalThis (e.g., NaN, Infinity).
+        try
+        {
+            var gvType = typeof(JavaScriptRuntime.GlobalThis);
+            foreach (var p in gvType.GetProperties(BindingFlags.Public | BindingFlags.Static))
+            {
+                if (string.IsNullOrWhiteSpace(p.Name)) continue;
+
+                // Keep this intentionally conservative: only treat simple numeric constants
+                // as always-available globals.
+                if (p.PropertyType == typeof(double) || p.PropertyType == typeof(float) || p.PropertyType == typeof(int) || p.PropertyType == typeof(long))
+                {
+                    names.Add(p.Name);
+                }
+            }
+        }
+        catch
+        {
+            // Ignore reflection errors; fall back to 'undefined' only.
+        }
+
+        return names;
+    });
 
     // CommonJS/module wrapper globals that are provided by js2il hosting/module loader.
     private static readonly HashSet<string> AllowedInjectedGlobals = new(StringComparer.Ordinal)
@@ -287,15 +311,38 @@ public class JavaScriptAstValidator : IAstValidator
         "__filename",
     };
 
-    // Primitive conversion callables supported directly by the IR pipeline (even if not exposed as GlobalThis methods).
-    private static readonly HashSet<string> AllowedGlobalCallables = new(StringComparer.Ordinal)
+    // Primitive conversion callables supported directly by the IR pipeline.
+    // We collate these from the runtime intrinsic types so the validator doesn't need to hardcode names.
+    private static readonly Lazy<HashSet<string>> AllowedGlobalCallables = new(() =>
     {
-        "String",
-        "Number",
-        "Boolean",
-        "BigInt",
-        "Symbol",
-    };
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        try
+        {
+            static void AddIntrinsicName(HashSet<string> set, Type t)
+            {
+                var attr = (JavaScriptRuntime.IntrinsicObjectAttribute?)t
+                    .GetCustomAttributes(typeof(JavaScriptRuntime.IntrinsicObjectAttribute), inherit: false)
+                    .FirstOrDefault();
+                if (attr != null && !string.IsNullOrWhiteSpace(attr.Name))
+                {
+                    set.Add(attr.Name);
+                }
+            }
+
+            // These types are the runtime intrinsics that the compiler lowers as primitive conversion callables.
+            AddIntrinsicName(names, typeof(JavaScriptRuntime.String));
+            AddIntrinsicName(names, typeof(JavaScriptRuntime.Number));
+            AddIntrinsicName(names, typeof(JavaScriptRuntime.Boolean));
+            AddIntrinsicName(names, typeof(JavaScriptRuntime.BigInt));
+            AddIntrinsicName(names, typeof(JavaScriptRuntime.Symbol));
+        }
+        catch
+        {
+            // Ignore reflection errors; the validator will fall back to stricter behavior.
+        }
+
+        return names;
+    });
 
     private static readonly Lazy<HashSet<string>> GlobalThisPropertyNames = new(() =>
     {
@@ -631,7 +678,7 @@ public class JavaScriptAstValidator : IAstValidator
                             }
 
                             // Locals and known built-in constants are always allowed.
-                            if (IsDeclared(name) || KnownGlobalConstants.Contains(name))
+                            if (IsDeclared(name) || KnownGlobalConstants.Value.Contains(name))
                             {
                                 break;
                             }
@@ -649,7 +696,7 @@ public class JavaScriptAstValidator : IAstValidator
 
                             if (invoked)
                             {
-                                if (AllowedGlobalCallables.Contains(name))
+                                if (AllowedGlobalCallables.Value.Contains(name))
                                 {
                                     break;
                                 }
