@@ -379,7 +379,21 @@ function main() {
     const sectionDir = path.join(rootDir, sectionNumber);
 
     const subsectionJsonFiles = listSubsectionJsonFiles(sectionDir, sectionNumber);
-    if (subsectionJsonFiles.length === 0) continue;
+    // Some sections (e.g. Section 18) have no numbered subsection documents.
+    // In those cases, keep Index.md in sync with the section hub's existing status.
+    if (subsectionJsonFiles.length === 0) {
+      const sectionHubPath = path.join(sectionDir, `Section${sectionNumber}.md`);
+      if (fs.existsSync(sectionHubPath)) {
+        const sectionRead = readLines(sectionHubPath);
+        const existingEntry = findExistingSectionEntry(sectionRead.lines, sectionNumber);
+        if (existingEntry && existingEntry.Status) {
+          const normalizedStatus = normalizeLegacyStatus(existingEntry.Status);
+          validateStatus(normalizedStatus);
+          sectionStatusByNumber[String(sectionNumber)] = normalizedStatus;
+        }
+      }
+      continue;
+    }
 
     const subsectionRows = [];
 
