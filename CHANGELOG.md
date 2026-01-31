@@ -8,6 +8,7 @@ All notable changes to this project are documented here.
 - IR: support `??` (nullish coalescing) lowering in the new IR pipeline (fixes #501).
 - Runtime: expose global `Boolean` as a callable function value (enables patterns like `array.filter(Boolean)`) (fixes #511).
 - Validator: report references to missing global identifiers/functions as validation errors (fixes #511).
+- AsyncGenerators/spec: support `async function*` (async generator functions) and async generator objects, including consumption via `for await..of` (fixes #342).
 
 ## v0.7.4 - 2026-01-30
 

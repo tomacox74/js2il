@@ -255,6 +255,14 @@ public sealed class HIRToLIRLowerer
             return;
         }
 
+        // Async generators need a combined dispatch that prioritizes resumption from await
+        // (via _asyncState) over resumption from yield (via _genState). That dispatch is emitted
+        // in IL at LIRCreateLeafScopeInstance time.
+        if (_isAsync)
+        {
+            return;
+        }
+
         if (_methodBodyIR.GeneratorInfo == null)
         {
             return;

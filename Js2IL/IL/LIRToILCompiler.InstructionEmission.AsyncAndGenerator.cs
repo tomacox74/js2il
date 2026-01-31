@@ -132,6 +132,156 @@ internal sealed partial class LIRToILCompiler
                 {
                     var scopeName = MethodBody.LeafScopeId.Name;
 
+                    // Async generator yield: resolve the current _deferred with { value, done: false }
+                    // and return _deferred.promise.
+                    if (MethodBody.IsAsync && MethodBody.IsGenerator)
+                    {
+                        // _genState = ResumeStateId
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(yieldInstr.ResumeStateId);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_genState");
+
+                        // _asyncState = -1 (completed for this next() call)
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(-1);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
+
+                        var iterCreateAsync = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.IteratorResult),
+                            nameof(JavaScriptRuntime.IteratorResult.Create),
+                            parameterTypes: new[] { typeof(object), typeof(bool) });
+
+                        var invokeWithArgsRefAsync = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
+                            parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+
+                        // Load _deferred.resolve (it's a bound closure)
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                        var getResolveRefAsync = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.PromiseWithResolvers),
+                            $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.resolve)}");
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(getResolveRefAsync);
+
+                        // Invoke resolve with [{ value: yielded, done: false }]
+                        EmitLoadScopesArray(ilEncoder, methodDescriptor);
+                        ilEncoder.LoadConstantI4(1);
+                        ilEncoder.OpCode(ILOpCode.Newarr);
+                        ilEncoder.Token(_bclReferences.ObjectType);
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        ilEncoder.LoadConstantI4(0);
+
+                        // Create iterator result and store it into the args array
+                        EmitLoadTempAsObject(yieldInstr.YieldedValue, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.LoadConstantI4(0);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(iterCreateAsync);
+                        ilEncoder.OpCode(ILOpCode.Stelem_ref);
+
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(invokeWithArgsRefAsync);
+                        ilEncoder.OpCode(ILOpCode.Pop);
+
+                        // Return _deferred.promise
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                        var getPromiseRefAsync = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.PromiseWithResolvers),
+                            $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.promise)}");
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(getPromiseRefAsync);
+                        ilEncoder.OpCode(ILOpCode.Ret);
+
+                        // Resume label
+                        if (!labelMap.TryGetValue(yieldInstr.ResumeLabelId, out var resumeLabelAsync))
+                        {
+                            resumeLabelAsync = ilEncoder.DefineLabel();
+                            labelMap[yieldInstr.ResumeLabelId] = resumeLabelAsync;
+                        }
+                        ilEncoder.MarkLabel(resumeLabelAsync);
+
+                        if (yieldInstr.HandleThrowReturn)
+                        {
+                            // If _hasReturn: mark done and resolve deferred with { value: _returnValue, done: true }
+                            var noReturnLabel = ilEncoder.DefineLabel();
+                            ilEncoder.LoadLocal(0);
+                            EmitLoadFieldByName(ilEncoder, scopeName, "_hasReturn");
+                            ilEncoder.Branch(ILOpCode.Brfalse, noReturnLabel);
+
+                            ilEncoder.LoadLocal(0);
+                            ilEncoder.LoadConstantI4(1);
+                            EmitStoreFieldByName(ilEncoder, scopeName, "_done");
+
+                            // _asyncState = -1
+                            ilEncoder.LoadLocal(0);
+                            ilEncoder.LoadConstantI4(-1);
+                            EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
+
+                            // resolve({ value: _returnValue, done: true })
+                            ilEncoder.LoadLocal(0);
+                            EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
+                            ilEncoder.Token(getResolveRefAsync);
+
+                            EmitLoadScopesArray(ilEncoder, methodDescriptor);
+                            ilEncoder.LoadConstantI4(1);
+                            ilEncoder.OpCode(ILOpCode.Newarr);
+                            ilEncoder.Token(_bclReferences.ObjectType);
+                            ilEncoder.OpCode(ILOpCode.Dup);
+                            ilEncoder.LoadConstantI4(0);
+                            ilEncoder.LoadLocal(0);
+                            EmitLoadFieldByName(ilEncoder, scopeName, "_returnValue");
+                            ilEncoder.LoadConstantI4(1);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(iterCreateAsync);
+                            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(invokeWithArgsRefAsync);
+                            ilEncoder.OpCode(ILOpCode.Pop);
+
+                            ilEncoder.LoadLocal(0);
+                            EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
+                            ilEncoder.Token(getPromiseRefAsync);
+                            ilEncoder.OpCode(ILOpCode.Ret);
+
+                            ilEncoder.MarkLabel(noReturnLabel);
+
+                            // If _hasResumeException: throw at yield site
+                            var noThrowLabel = ilEncoder.DefineLabel();
+                            ilEncoder.LoadLocal(0);
+                            EmitLoadFieldByName(ilEncoder, scopeName, "_hasResumeException");
+                            ilEncoder.Branch(ILOpCode.Brfalse, noThrowLabel);
+
+                            ilEncoder.LoadLocal(0);
+                            ilEncoder.LoadConstantI4(0);
+                            EmitStoreFieldByName(ilEncoder, scopeName, "_hasResumeException");
+
+                            ilEncoder.LoadLocal(0);
+                            EmitLoadFieldByName(ilEncoder, scopeName, "_resumeException");
+                            var thrownCtor = _memberRefRegistry.GetOrAddConstructor(
+                                typeof(JavaScriptRuntime.JsThrownValueException),
+                                parameterTypes: new[] { typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Newobj);
+                            ilEncoder.Token(thrownCtor);
+                            ilEncoder.OpCode(ILOpCode.Throw);
+
+                            ilEncoder.MarkLabel(noThrowLabel);
+                        }
+
+                        if (IsMaterialized(yieldInstr.Result, allocation))
+                        {
+                            // yield expression result = _resumeValue
+                            ilEncoder.LoadLocal(0);
+                            EmitLoadFieldByName(ilEncoder, scopeName, "_resumeValue");
+                            EmitStoreTemp(yieldInstr.Result, ilEncoder, allocation);
+                        }
+
+                        break;
+                    }
+
                     // _genState = ResumeStateId
                     ilEncoder.LoadLocal(0);
                     ilEncoder.LoadConstantI4(yieldInstr.ResumeStateId);

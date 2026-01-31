@@ -276,7 +276,65 @@ internal sealed partial class LIRToILCompiler
         {
             if (!methodDescriptor.ReturnsVoid)
             {
-                if (MethodBody.IsAsync && MethodBody.AsyncInfo is { HasAwaits: true })
+                if (MethodBody.IsAsync && MethodBody.IsGenerator)
+                {
+                    // Async generator fallthrough: mark done and resolve _deferred with { value: undefined, done: true }
+                    var scopeName = MethodBody.LeafScopeId.Name;
+
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.LoadConstantI4(1);
+                    EmitStoreFieldByName(ilEncoder, scopeName, "_done");
+
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.LoadConstantI4(-1);
+                    EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
+
+                    // Load _deferred.resolve
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                    var getResolveRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.PromiseWithResolvers),
+                        $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.resolve)}");
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getResolveRef);
+
+                    var iterCreate = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.IteratorResult),
+                        nameof(JavaScriptRuntime.IteratorResult.Create),
+                        parameterTypes: new[] { typeof(object), typeof(bool) });
+
+                    var invokeWithArgsRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Closure),
+                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
+                        parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+
+                    // resolve(IteratorResult.Create(undefined, true))
+                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
+                    ilEncoder.LoadConstantI4(1);
+                    ilEncoder.OpCode(ILOpCode.Newarr);
+                    ilEncoder.Token(_bclReferences.ObjectType);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.LoadConstantI4(0);
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    ilEncoder.LoadConstantI4(1);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(iterCreate);
+                    ilEncoder.OpCode(ILOpCode.Stelem_ref);
+
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(invokeWithArgsRef);
+                    ilEncoder.OpCode(ILOpCode.Pop);
+
+                    // Return _deferred.promise
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                    var getPromiseRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.PromiseWithResolvers),
+                        $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.promise)}");
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getPromiseRef);
+                }
+                else if (MethodBody.IsAsync && MethodBody.AsyncInfo is { HasAwaits: true })
                 {
                     // Full async state machine: resolve _deferred with undefined and return its promise.
                     var scopeName = MethodBody.LeafScopeId.Name;

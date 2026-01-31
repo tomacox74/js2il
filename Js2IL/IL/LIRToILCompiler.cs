@@ -229,7 +229,11 @@ internal sealed partial class LIRToILCompiler
             return false;
         }
 
-        token = _memberRefRegistry.GetOrAddField(typeof(JavaScriptRuntime.GeneratorScope), fieldName);
+        var ownerType = (MethodBody.IsAsync && MethodBody.IsGenerator)
+            ? typeof(JavaScriptRuntime.AsyncGeneratorScope)
+            : typeof(JavaScriptRuntime.GeneratorScope);
+
+        token = _memberRefRegistry.GetOrAddField(ownerType, fieldName);
         return true;
     }
 

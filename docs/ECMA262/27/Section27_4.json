@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "27.4",
   "title": "AsyncGeneratorFunction Objects",
-  "status": "Not Yet Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-objects",
   "parent": {
     "clause": "27"
@@ -61,7 +61,7 @@
     {
       "clause": "27.4.4",
       "title": "AsyncGeneratorFunction Instances",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instances"
     },
     {
@@ -82,5 +82,20 @@
       "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-instance-prototype"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "27.4",
+        "feature": "async generator functions via syntax (`async function*`) compile to async iterators (next/return/throw) and integrate with `for await..of`",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-asyncgeneratorfunction-objects",
+        "testScripts": [
+          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js",
+          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js"
+        ],
+        "notes": "Async generators are supported via syntax (`async function*`, `yield`, `await`) and a runtime async iterator object. The spec-level AsyncGeneratorFunction constructor/prototype intrinsics are not currently exposed."
+      }
+    ]
+  }
 }
