@@ -21,7 +21,66 @@ internal sealed partial class LIRToILCompiler
                 // Constructors are void-returning - don't load any value before ret
                 if (!methodDescriptor.ReturnsVoid)
                 {
-                    if (MethodBody.IsGenerator)
+                    if (MethodBody.IsAsync && MethodBody.IsGenerator)
+                    {
+                        var scopeName = MethodBody.LeafScopeId.Name;
+
+                        // Mark generator done
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(1);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_done");
+
+                        // Mark async state completed for this next() call
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(-1);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
+
+                        var iterCreate = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.IteratorResult),
+                            nameof(JavaScriptRuntime.IteratorResult.Create),
+                            parameterTypes: new[] { typeof(object), typeof(bool) });
+
+                        var invokeWithArgsRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
+                            parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+
+                        // Load _deferred.resolve
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                        var getResolveRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.PromiseWithResolvers),
+                            $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.resolve)}");
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(getResolveRef);
+
+                        // Call it with IteratorResult.Create(value, true)
+                        EmitLoadScopesArray(ilEncoder, methodDescriptor);
+                        ilEncoder.LoadConstantI4(1);
+                        ilEncoder.OpCode(ILOpCode.Newarr);
+                        ilEncoder.Token(_bclReferences.ObjectType);
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        ilEncoder.LoadConstantI4(0);
+                        EmitLoadTempAsObject(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.LoadConstantI4(1);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(iterCreate);
+                        ilEncoder.OpCode(ILOpCode.Stelem_ref);
+
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(invokeWithArgsRef);
+                        ilEncoder.OpCode(ILOpCode.Pop);
+
+                        // Return _deferred.promise
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                        var getPromiseRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.PromiseWithResolvers),
+                            $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.promise)}");
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(getPromiseRef);
+                    }
+                    else if (MethodBody.IsGenerator)
                     {
                         // Generator completion: mark done and return { value, done: true }
                         var scopeName = MethodBody.LeafScopeId.Name;

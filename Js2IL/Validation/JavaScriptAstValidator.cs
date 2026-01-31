@@ -1188,19 +1188,6 @@ public class JavaScriptAstValidator : IAstValidator
                 _ => false
             };
 
-            bool isAsyncGeneratorFunction = node switch
-            {
-                FunctionDeclaration fd => fd.Async && fd.Generator,
-                FunctionExpression fe => fe.Async && fe.Generator,
-                _ => false
-            };
-
-            if (isAsyncGeneratorFunction)
-            {
-                result.Errors.Add($"Async generators (async function*) are not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-            }
-
             if (isGeneratorFunction)
             {
                 generatorFunctionDepth++;
