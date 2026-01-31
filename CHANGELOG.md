@@ -4,7 +4,9 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- IR: support `??` (nullish coalescing) lowering in the new IR pipeline.
+- Runtime: expose global `Boolean` as a callable function value (enables patterns like `array.filter(Boolean)`) (fixes #511).
+- Validator: report references to missing global identifiers/functions as validation errors (fixes #511).
 
 ## v0.7.4 - 2026-01-30
 

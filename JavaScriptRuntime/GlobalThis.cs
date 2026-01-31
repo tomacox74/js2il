@@ -11,6 +11,12 @@ namespace JavaScriptRuntime
     {
         private static readonly ThreadLocal<ServiceContainer?> _serviceProvider = new(() => null);
 
+        // Some ECMAScript globals are callable (e.g., Boolean(x)). When used in expression position
+        // (e.g., arr.filter(Boolean)), we expose them as function values (delegates) so the compiler
+        // can bind them as intrinsic globals.
+        private static readonly Func<object[], object?, bool> _booleanFunctionValue = static (_, value) =>
+            JavaScriptRuntime.TypeUtilities.ToBoolean(value);
+
         internal static ServiceContainer? ServiceProvider
         {
             get => _serviceProvider.Value;
@@ -34,6 +40,12 @@ namespace JavaScriptRuntime
         {
             get => _serviceProvider.Value!.Resolve<JavaScriptRuntime.Console>();
         }
+
+        /// <summary>
+        /// ECMAScript global Boolean conversion function value.
+        /// This enables patterns like <c>array.filter(Boolean)</c>.
+        /// </summary>
+        public static object Boolean => _booleanFunctionValue;
 
         /// <summary>
         /// ECMAScript global Infinity value (+∞).

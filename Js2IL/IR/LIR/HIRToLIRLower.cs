@@ -5962,6 +5962,44 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
+        // Nullish coalescing (??) short-circuits and returns one of the operand VALUES.
+        // Semantics: evaluate LHS; if LHS is null or undefined, evaluate/return RHS; else return LHS.
+        if (binaryExpr.Operator == Acornima.Operator.NullishCoalescing)
+        {
+            int evalRightLabel = CreateLabel();
+            int endLabel = CreateLabel();
+
+            // Ensure we branch on an object reference.
+            var leftBoxed = EnsureObject(leftTempVar);
+
+            // If left is null (undefined), evaluate RHS.
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(leftBoxed, evalRightLabel));
+
+            // If left is boxed JsNull (null), evaluate RHS.
+            var isJsNullTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), leftBoxed, isJsNullTemp));
+            DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, evalRightLabel));
+
+            // Left is non-nullish; return it.
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+            // Left is nullish; evaluate RHS and return it.
+            _methodBodyIR.Instructions.Add(new LIRLabel(evalRightLabel));
+            if (!TryLowerExpression(binaryExpr.Right, out var coalesceRightTempVar))
+            {
+                return false;
+            }
+
+            var rightBoxed = EnsureObject(coalesceRightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(rightBoxed, resultTempVar));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+            return true;
+        }
+
         // Non-logical operators: evaluate RHS eagerly.
         if (!TryLowerExpression(binaryExpr.Right, out var rightTempVar))
         {

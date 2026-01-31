@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 using System.Reflection;
+using System.Linq;
 
 namespace Js2IL.Validation;
 
@@ -44,6 +45,10 @@ public class JavaScriptAstValidator : IAstValidator
 
         // Validate generator/yield usage - yield is only valid inside generator functions.
         ValidateGenerators(ast, result);
+
+        // Validate references to undeclared globals so we fail with a clear validation error
+        // rather than an unhandled compiler exception later in the pipeline.
+        ValidateMissingGlobals(ast, result);
         
         // Track contexts where 'this' and 'super' are supported.
         var contextStack = new Stack<ValidationContext>();
@@ -257,6 +262,535 @@ public class JavaScriptAstValidator : IAstValidator
         });
 
         return result;
+    }
+
+    private sealed class ScopeFrame
+    {
+        public required HashSet<string> DeclaredNames { get; init; }
+        public required bool IsFunctionScope { get; init; }
+    }
+
+    private static readonly Lazy<HashSet<string>> KnownGlobalConstants = new(() =>
+    {
+        var names = new HashSet<string>(StringComparer.Ordinal);
+
+        // JS 'undefined' is modeled as CLR null rather than a GlobalThis property.
+        names.Add("undefined");
+
+        // Reflect constant-like globals exposed by JavaScriptRuntime.GlobalThis (e.g., NaN, Infinity).
+        try
+        {
+            var numericTypes = new HashSet<Type>
+            {
+                typeof(double),
+                typeof(float),
+                typeof(int),
+                typeof(long)
+            };
+
+            var reflectedNames = typeof(JavaScriptRuntime.GlobalThis)
+                .GetProperties(BindingFlags.Public | BindingFlags.Static)
+                // Keep this intentionally conservative: only treat simple numeric constants
+                // as always-available globals.
+                .Where(p => p != null && !string.IsNullOrWhiteSpace(p.Name) && numericTypes.Contains(p.PropertyType))
+                .Select(p => p.Name);
+
+            names.UnionWith(reflectedNames);
+        }
+        catch
+        {
+            // Ignore reflection errors; fall back to 'undefined' only.
+        }
+
+        return names;
+    });
+
+    // CommonJS/module wrapper globals that are provided by js2il hosting/module loader.
+    // Collated from the runtime's shared module parameter list to avoid duplication.
+    private static readonly Lazy<HashSet<string>> AllowedInjectedGlobals = new(() =>
+    {
+        try
+        {
+            return JavaScriptRuntime.CommonJS.ModuleParameters.Parameters
+                .Select(p => p.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToHashSet(StringComparer.Ordinal);
+        }
+        catch
+        {
+            // Ignore runtime reflection/type-load issues; validator will fall back to stricter behavior.
+            return new HashSet<string>(StringComparer.Ordinal);
+        }
+    });
+
+    // Primitive conversion callables supported directly by the IR pipeline.
+    // We collate these from the runtime intrinsic types so the validator doesn't need to hardcode names.
+    private static readonly Lazy<HashSet<string>> AllowedGlobalCallables = new(() =>
+    {
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        try
+        {
+            static void AddIntrinsicName(HashSet<string> set, Type t)
+            {
+                var attr = (JavaScriptRuntime.IntrinsicObjectAttribute?)t
+                    .GetCustomAttributes(typeof(JavaScriptRuntime.IntrinsicObjectAttribute), inherit: false)
+                    .FirstOrDefault();
+                if (attr != null && !string.IsNullOrWhiteSpace(attr.Name))
+                {
+                    set.Add(attr.Name);
+                }
+            }
+
+            // These types are the runtime intrinsics that the compiler lowers as primitive conversion callables.
+            AddIntrinsicName(names, typeof(JavaScriptRuntime.String));
+            AddIntrinsicName(names, typeof(JavaScriptRuntime.Number));
+            AddIntrinsicName(names, typeof(JavaScriptRuntime.Boolean));
+            AddIntrinsicName(names, typeof(JavaScriptRuntime.BigInt));
+            AddIntrinsicName(names, typeof(JavaScriptRuntime.Symbol));
+        }
+        catch
+        {
+            // Ignore reflection errors; the validator will fall back to stricter behavior.
+        }
+
+        return names;
+    });
+
+    private static readonly Lazy<HashSet<string>> GlobalThisPropertyNames = new(() =>
+    {
+        try
+        {
+            return typeof(JavaScriptRuntime.GlobalThis)
+                .GetProperties(BindingFlags.Public | BindingFlags.Static)
+                .Select(p => p.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
+        catch { /* reflection errors -> empty set */ }
+        return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    });
+
+    private static readonly Lazy<HashSet<string>> GlobalThisMethodNames = new(() =>
+    {
+        try
+        {
+            return typeof(JavaScriptRuntime.GlobalThis)
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                // Skip property accessors and infrastructure.
+                .Where(m => !m.IsSpecialName)
+                .Select(m => m.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
+        catch { /* reflection errors -> empty set */ }
+        return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    });
+
+    private void ValidateMissingGlobals(Acornima.Ast.Program ast, ValidationResult result)
+    {
+        var walker = new AstWalker();
+
+        var nodeStack = new Stack<Node>();
+        var scopeStack = new Stack<ScopeFrame>();
+
+        // Program scope is the outermost function scope.
+        scopeStack.Push(new ScopeFrame
+        {
+            DeclaredNames = new HashSet<string>(StringComparer.Ordinal),
+            IsFunctionScope = true
+        });
+
+        void CollectHoistedDeclarations(Node node, ScopeFrame target)
+        {
+            // For the purpose of missing-globals validation we treat function declarations and `var`
+            // declarations as hoisted to the nearest function scope. This avoids false positives for
+            // patterns like calling a function before its declaration.
+            void VisitHoist(Node n)
+            {
+                switch (n)
+                {
+                    case FunctionDeclaration fd:
+                        if (fd.Id != null)
+                        {
+                            target.DeclaredNames.Add(fd.Id.Name);
+                        }
+                        // Do not descend into nested function scopes.
+                        return;
+
+                    case FunctionExpression:
+                    case ArrowFunctionExpression:
+                        // Do not descend into nested function scopes.
+                        return;
+
+                    case VariableDeclaration vd when vd.Kind == VariableDeclarationKind.Var:
+                        foreach (var decl in vd.Declarations)
+                        {
+                            if (decl?.Id != null)
+                            {
+                                DeclarePatternNames(decl.Id, target);
+                            }
+                        }
+                        break;
+                }
+
+                foreach (var child in n.ChildNodes)
+                {
+                    VisitHoist(child);
+                }
+            }
+
+            VisitHoist(node);
+        }
+
+        // Pre-collect hoisted declarations for the top-level (Program) scope.
+        CollectHoistedDeclarations(ast, scopeStack.Peek());
+
+        static bool IsBindingPatternNode(Node n)
+            => n is ObjectPattern
+            || n is ArrayPattern
+            || n is RestElement
+            || n is AssignmentPattern;
+
+        void DeclarePatternNames(Node pattern, ScopeFrame target)
+        {
+            switch (pattern)
+            {
+                case Identifier id:
+                    target.DeclaredNames.Add(id.Name);
+                    break;
+                case RestElement rest:
+                    if (rest.Argument != null) DeclarePatternNames(rest.Argument, target);
+                    break;
+                case AssignmentPattern ap:
+                    if (ap.Left != null) DeclarePatternNames(ap.Left, target);
+                    break;
+                case ArrayPattern arr:
+                    foreach (var el in arr.Elements)
+                    {
+                        if (el != null) DeclarePatternNames(el, target);
+                    }
+                    break;
+                case ObjectPattern obj:
+                    foreach (var prop in obj.Properties)
+                    {
+                        switch (prop)
+                        {
+                            case Property p:
+                                if (p.Value != null) DeclarePatternNames(p.Value, target);
+                                break;
+                            case RestElement re:
+                                if (re.Argument != null) DeclarePatternNames(re.Argument, target);
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        ScopeFrame FindNearestFunctionScope()
+        {
+            foreach (var frame in scopeStack)
+            {
+                if (frame.IsFunctionScope) return frame;
+            }
+            return scopeStack.Peek();
+        }
+
+        bool IsDeclared(string name)
+        {
+            foreach (var frame in scopeStack)
+            {
+                if (frame.DeclaredNames.Contains(name)) return true;
+            }
+            return false;
+        }
+
+        bool IsIntrinsicObjectName(string name)
+        {
+            try
+            {
+                return JavaScriptRuntime.IntrinsicObjectRegistry.GetInfo(name) != null;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        void ReportMissingGlobal(string name, Node node, bool calledAsFunction)
+        {
+            var line = node.Location.Start.Line;
+            if (calledAsFunction)
+            {
+                result.Errors.Add($"Global function '{name}' is not yet supported (line {line}).");
+            }
+            else
+            {
+                result.Errors.Add($"Global identifier '{name}' is not yet supported (line {line}).");
+            }
+            result.IsValid = false;
+        }
+
+        walker.VisitWithContext(
+            ast,
+            enterNode: node =>
+            {
+                nodeStack.Push(node);
+
+                switch (node)
+                {
+                    case BlockStatement:
+                        scopeStack.Push(new ScopeFrame
+                        {
+                            DeclaredNames = new HashSet<string>(StringComparer.Ordinal),
+                            IsFunctionScope = false
+                        });
+                        break;
+
+                    case CatchClause cc:
+                        // Catch introduces a new lexical scope for its param.
+                        scopeStack.Push(new ScopeFrame
+                        {
+                            DeclaredNames = new HashSet<string>(StringComparer.Ordinal),
+                            IsFunctionScope = false
+                        });
+                        if (cc.Param != null)
+                        {
+                            DeclarePatternNames(cc.Param, scopeStack.Peek());
+                        }
+                        break;
+
+                    case FunctionDeclaration fd:
+                        // Function declaration name is bound in the parent scope.
+                        if (fd.Id != null)
+                        {
+                            // Function declarations are effectively var-scoped.
+                            FindNearestFunctionScope().DeclaredNames.Add(fd.Id.Name);
+                        }
+
+                        // New function scope for parameters/body.
+                        scopeStack.Push(new ScopeFrame
+                        {
+                            DeclaredNames = new HashSet<string>(StringComparer.Ordinal),
+                            IsFunctionScope = true
+                        });
+                        foreach (var p in fd.Params)
+                        {
+                            if (p != null) DeclarePatternNames(p, scopeStack.Peek());
+                        }
+
+                        // Pre-collect hoisted declarations within this function scope.
+                        if (fd.Body != null)
+                        {
+                            CollectHoistedDeclarations(fd.Body, scopeStack.Peek());
+                        }
+                        break;
+
+                    case FunctionExpression fe:
+                        scopeStack.Push(new ScopeFrame
+                        {
+                            DeclaredNames = new HashSet<string>(StringComparer.Ordinal),
+                            IsFunctionScope = true
+                        });
+                        // Named function expressions bind their name in their own scope.
+                        if (fe.Id != null)
+                        {
+                            scopeStack.Peek().DeclaredNames.Add(fe.Id.Name);
+                        }
+                        foreach (var p in fe.Params)
+                        {
+                            if (p != null) DeclarePatternNames(p, scopeStack.Peek());
+                        }
+
+                        // Pre-collect hoisted declarations within this function scope.
+                        if (fe.Body != null)
+                        {
+                            CollectHoistedDeclarations(fe.Body, scopeStack.Peek());
+                        }
+                        break;
+
+                    case ArrowFunctionExpression afe:
+                        scopeStack.Push(new ScopeFrame
+                        {
+                            DeclaredNames = new HashSet<string>(StringComparer.Ordinal),
+                            IsFunctionScope = true
+                        });
+                        foreach (var p in afe.Params)
+                        {
+                            if (p != null) DeclarePatternNames(p, scopeStack.Peek());
+                        }
+
+                        // Arrow functions with block bodies can contain hoisted `var` and nested
+                        // function declarations (var-scoped to the arrow function).
+                        if (afe.Body is BlockStatement bs)
+                        {
+                            CollectHoistedDeclarations(bs, scopeStack.Peek());
+                        }
+                        break;
+
+                    case ClassDeclaration cd:
+                        if (cd.Id != null)
+                        {
+                            // Class declarations are block scoped.
+                            scopeStack.Peek().DeclaredNames.Add(cd.Id.Name);
+                        }
+                        break;
+
+                    case VariableDeclaration vd:
+                        {
+                            var target = vd.Kind == VariableDeclarationKind.Var
+                                ? FindNearestFunctionScope()
+                                : scopeStack.Peek();
+
+                            foreach (var decl in vd.Declarations)
+                            {
+                                if (decl?.Id != null)
+                                {
+                                    DeclarePatternNames(decl.Id, target);
+                                }
+                            }
+                        }
+                        break;
+
+                    case Identifier id:
+                        {
+                            // Ignore identifiers in binding patterns (they are declarations).
+                            if (nodeStack.Skip(1).Any(IsBindingPatternNode))
+                            {
+                                break;
+                            }
+
+                            // Ignore identifiers used as property keys when not computed.
+                            var parent = nodeStack.Count > 1 ? nodeStack.Skip(1).First() : null;
+                            if (parent is MemberExpression me && !me.Computed && ReferenceEquals(me.Property, id))
+                            {
+                                break;
+                            }
+                            if (parent is Property p && !p.Computed && ReferenceEquals(p.Key, id))
+                            {
+                                break;
+                            }
+                            if (parent is MethodDefinition md && !md.Computed && ReferenceEquals(md.Key, id))
+                            {
+                                break;
+                            }
+                            if (parent is PropertyDefinition pd && !pd.Computed && ReferenceEquals(pd.Key, id))
+                            {
+                                break;
+                            }
+
+                            // Ignore declaration identifiers that the walker doesn't visit (should already be handled).
+                            // Now treat remaining identifiers as references.
+                            var name = id.Name;
+                            if (string.IsNullOrWhiteSpace(name))
+                            {
+                                break;
+                            }
+
+                            // Locals and known built-in constants are always allowed.
+                            if (IsDeclared(name) || KnownGlobalConstants.Value.Contains(name))
+                            {
+                                break;
+                            }
+
+                            // CommonJS injected values.
+                            if (AllowedInjectedGlobals.Value.Contains(name))
+                            {
+                                break;
+                            }
+
+                            // Determine if this identifier is in a call/new callee position.
+                            bool calledAsFunction = parent is CallExpression ce && ReferenceEquals(ce.Callee, id);
+                            bool calledAsConstructor = parent is NewExpression ne && ReferenceEquals(ne.Callee, id);
+                            bool invoked = calledAsFunction || calledAsConstructor;
+
+                            if (invoked)
+                            {
+                                if (AllowedGlobalCallables.Value.Contains(name))
+                                {
+                                    break;
+                                }
+
+                                JavaScriptRuntime.IntrinsicObjectInfo? intrinsicInfo = null;
+                                try
+                                {
+                                    intrinsicInfo = JavaScriptRuntime.IntrinsicObjectRegistry.GetInfo(name);
+                                }
+                                catch
+                                {
+                                    intrinsicInfo = null;
+                                }
+
+                                // Many intrinsics are constructible (e.g., Promise, Int32Array) but do not need a special
+                                // intrinsic call kind: the compiler maps `new X(...)` to the intrinsic CLR type/ctor.
+                                if (calledAsConstructor)
+                                {
+                                    if (intrinsicInfo != null)
+                                    {
+                                        break;
+                                    }
+
+                                    ReportMissingGlobal(name, id, calledAsFunction: true);
+                                    break;
+                                }
+
+                                // Callable intrinsics (e.g., Error(...), Symbol(...), BigInt(...))
+                                if (intrinsicInfo != null && intrinsicInfo.CallKind != JavaScriptRuntime.IntrinsicCallKind.None)
+                                {
+                                    break;
+                                }
+
+                                // GlobalThis static method callables (e.g., parseInt, setTimeout)
+                                if (GlobalThisMethodNames.Value.Contains(name))
+                                {
+                                    break;
+                                }
+
+                                ReportMissingGlobal(name, id, calledAsFunction: true);
+                                break;
+                            }
+
+                            // Identifier used as a value.
+                            // Intrinsic objects (e.g., Math, JSON) are supported when used as the base of a member access
+                            // (Math.abs, JSON.parse) or when invoked/constructed. They are not generally supported as
+                            // first-class values unless explicitly exposed via a GlobalThis value property.
+                            if (GlobalThisPropertyNames.Value.Contains(name))
+                            {
+                                break;
+                            }
+
+                            var isIntrinsic = IsIntrinsicObjectName(name);
+                            var usedAsMemberBase = parent is MemberExpression meObj && ReferenceEquals(meObj.Object, id);
+                            if (isIntrinsic && usedAsMemberBase)
+                            {
+                                break;
+                            }
+
+                            ReportMissingGlobal(name, id, calledAsFunction: false);
+                        }
+                        break;
+                }
+            },
+            exitNode: node =>
+            {
+                // Pop scopes on exit.
+                switch (node)
+                {
+                    case BlockStatement:
+                        scopeStack.Pop();
+                        break;
+                    case CatchClause:
+                        scopeStack.Pop();
+                        break;
+                    case FunctionDeclaration:
+                    case FunctionExpression:
+                    case ArrowFunctionExpression:
+                        scopeStack.Pop();
+                        break;
+                }
+
+                nodeStack.Pop();
+            });
     }
 
     private static void ValidateUseStrictDirectivePrologue(Acornima.Ast.Program ast, ValidationResult result)
