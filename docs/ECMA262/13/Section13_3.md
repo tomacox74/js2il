@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-JS2IL supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, and `super` in derived class constructors/methods). However, several spec features in this section are still not implemented (notably optional chaining, dynamic `import()`, tagged templates, and meta properties like `new.target` / `import.meta`).
+JS2IL supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, and `super` in derived class constructors/methods). However, several spec features in this section are still not implemented (notably dynamic `import()`, tagged templates, and meta properties like `new.target` / `import.meta`).
 
 Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, not a full mechanistic implementation of every spec abstract operation.
 
