@@ -1376,6 +1376,11 @@ class HIRMethodBuilder
 
         switch (expr)
         {
+            case ChainExpression chainExpr:
+                // Optional chaining is represented by ChainExpression wrapping a chain element
+                // (MemberExpression/CallExpression) with Optional=true.
+                return TryParseExpression(chainExpr.Expression, out hirExpr);
+
             case AwaitExpression awaitExpr:
                 {
                     if (!TryParseExpression(awaitExpr.Argument, out var awaitedArg) || awaitedArg == null)
@@ -1513,6 +1518,12 @@ class HIRMethodBuilder
                         return false;
                     }
                     argExprs.Add(argHirExpr!);
+                }
+
+                if (callExpr.Optional)
+                {
+                    hirExpr = new HIROptionalCallExpression(calleeExpr!, argExprs);
+                    return true;
                 }
 
                 hirExpr = new HIRCallExpression(calleeExpr!, argExprs);
@@ -1729,6 +1740,29 @@ class HIRMethodBuilder
                 if (!TryParseExpression(memberExpr.Object, out objectExpr))
                 {
                     return false;
+                }
+
+                // Optional chaining: obj?.prop / obj?.[expr]
+                if (memberExpr.Optional)
+                {
+                    if (memberExpr.Computed)
+                    {
+                        if (!TryParseExpression(memberExpr.Property, out var optionalIndexExpr))
+                        {
+                            return false;
+                        }
+
+                        hirExpr = new HIROptionalIndexAccessExpression(objectExpr!, optionalIndexExpr!);
+                        return true;
+                    }
+
+                    if (memberExpr.Property is not Identifier optionalPropertyIdentifier)
+                    {
+                        return false;
+                    }
+
+                    hirExpr = new HIROptionalPropertyAccessExpression(objectExpr!, optionalPropertyIdentifier.Name);
+                    return true;
                 }
 
                 if (memberExpr.Computed)

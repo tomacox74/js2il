@@ -105,6 +105,15 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_NotEqual() { var testName = nameof(BinaryOperator_NotEqual); return ExecutionTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_NullishCoalescing_Basic() { var testName = nameof(BinaryOperator_NullishCoalescing_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_OptionalChaining_PropertyAccess() { var testName = nameof(BinaryOperator_OptionalChaining_PropertyAccess); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit() { var testName = nameof(BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit); return ExecutionTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_RightShiftNumberNumber() { var testName = nameof(BinaryOperator_RightShiftNumberNumber); return ExecutionTest(testName); }
 
         [Fact]
