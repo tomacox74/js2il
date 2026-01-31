@@ -8290,15 +8290,9 @@ public sealed class HIRToLIRLowerer
         }
 
         var indexStorage = GetTempStorage(indexTemp);
-        TempVariable indexForGet;
-        if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
-        {
-            indexForGet = indexTemp;
-        }
-        else
-        {
-            indexForGet = EnsureObject(indexTemp);
-        }
+        TempVariable indexForGet = indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double)
+            ? indexTemp
+            : EnsureObject(indexTemp);
 
         _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, indexForGet, resultTempVar));
         _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
