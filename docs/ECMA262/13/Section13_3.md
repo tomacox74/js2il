@@ -34,9 +34,9 @@ Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, 
 | 13.3.7.3 | MakeSuperPropertyReference ( actualThis , propertyKey , strict ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-makesuperpropertyreference) |
 | 13.3.8 | Argument Lists | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-argument-lists) |
 | 13.3.8.1 | Runtime Semantics: ArgumentListEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-argumentlistevaluation) |
-| 13.3.9 | Optional Chains | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-optional-chains) |
-| 13.3.9.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-evaluation) |
-| 13.3.9.2 | Runtime Semantics: ChainEvaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-chain-evaluation) |
+| 13.3.9 | Optional Chains | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-optional-chains) |
+| 13.3.9.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-evaluation) |
+| 13.3.9.2 | Runtime Semantics: ChainEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-chain-evaluation) |
 | 13.3.10 | Import Calls | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-import-calls) |
 | 13.3.10.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-import-call-runtime-semantics-evaluation) |
 | 13.3.10.2 | EvaluateImportCall ( specifierExpression [ , optionsExpression ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-import-call) |
@@ -91,4 +91,10 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Argument lists without spread | Supported with Limitations |  | Normal argument lists are supported; spread in CallExpression arguments is not yet supported and is rejected during validation. |
+
+### 13.3.9 ([tc39.es](https://tc39.es/ecma262/#sec-optional-chains))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Optional chaining (?.) for property/index access and calls | Supported with Limitations | [`BinaryOperator_OptionalChaining_PropertyAccess.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_PropertyAccess.js)<br>[`BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit.js) | Implements nullish short-circuiting for optional member access (identifier + computed) and optional calls, including skipping evaluation of computed keys / call arguments when the base/callee is nullish. Optional chaining on private fields and other less common forms may be incomplete. |
 

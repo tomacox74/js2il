@@ -12,8 +12,22 @@
     {
       "clause": "13.13.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-binary-logical-operators-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "13.13",
+        "feature": "Nullish coalescing operator (??)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-binary-logical-operators",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NullishCoalescing_Basic.js"
+        ],
+        "notes": "Implements short-circuit semantics: the right-hand side is evaluated only when the left-hand side is nullish (undefined or null)."
+      }
+    ]
+  }
 }

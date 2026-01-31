@@ -3309,6 +3309,15 @@ public sealed class HIRToLIRLowerer
 
         switch (expression)
         {
+            case HIROptionalPropertyAccessExpression optionalPropAccessExpr:
+                return TryLowerOptionalPropertyAccessExpression(optionalPropAccessExpr, out resultTempVar);
+
+            case HIROptionalIndexAccessExpression optionalIndexAccessExpr:
+                return TryLowerOptionalIndexAccessExpression(optionalIndexAccessExpr, out resultTempVar);
+
+            case HIROptionalCallExpression optionalCallExpr:
+                return TryLowerOptionalCallExpression(optionalCallExpr, out resultTempVar);
+
             case HIRAwaitExpression awaitExpr:
                 {
                     // await is only supported inside async functions
@@ -8208,6 +8217,152 @@ public sealed class HIRToLIRLowerer
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         }
 
+        return true;
+    }
+
+    private bool TryLowerOptionalPropertyAccessExpression(HIROptionalPropertyAccessExpression propAccessExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = CreateTempVariable();
+
+        if (!TryLowerExpression(propAccessExpr.Object, out var objectTemp))
+        {
+            return false;
+        }
+
+        var boxedObject = EnsureObject(objectTemp);
+
+        int nullishLabel = CreateLabel();
+        int endLabel = CreateLabel();
+
+        // Short-circuit if base is undefined (null)
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(boxedObject, nullishLabel));
+
+        // Short-circuit if base is explicit JS null (JsNull)
+        var isJsNullTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), boxedObject, isJsNullTemp));
+        DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, nullishLabel));
+
+        // Non-nullish: perform access (as GetItem with string key)
+        var keyTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(propAccessExpr.PropertyName, keyTemp));
+        DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var boxedKey = EnsureObject(keyTemp);
+        _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, boxedKey, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        // Nullish: undefined
+        _methodBodyIR.Instructions.Add(new LIRLabel(nullishLabel));
+        _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
+    private bool TryLowerOptionalIndexAccessExpression(HIROptionalIndexAccessExpression indexAccessExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = CreateTempVariable();
+
+        if (!TryLowerExpression(indexAccessExpr.Object, out var objectTemp))
+        {
+            return false;
+        }
+
+        var boxedObject = EnsureObject(objectTemp);
+
+        int nullishLabel = CreateLabel();
+        int endLabel = CreateLabel();
+
+        // Short-circuit if base is undefined (null)
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(boxedObject, nullishLabel));
+
+        // Short-circuit if base is explicit JS null (JsNull)
+        var isJsNullTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), boxedObject, isJsNullTemp));
+        DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, nullishLabel));
+
+        // Non-nullish: evaluate index expression (must not run when base is nullish)
+        if (!TryLowerExpression(indexAccessExpr.Index, out var indexTemp))
+        {
+            return false;
+        }
+
+        var indexStorage = GetTempStorage(indexTemp);
+        TempVariable indexForGet;
+        if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
+        {
+            indexForGet = indexTemp;
+        }
+        else
+        {
+            indexForGet = EnsureObject(indexTemp);
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, indexForGet, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        // Nullish: undefined
+        _methodBodyIR.Instructions.Add(new LIRLabel(nullishLabel));
+        _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
+    private bool TryLowerOptionalCallExpression(HIROptionalCallExpression optionalCallExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = CreateTempVariable();
+
+        // Evaluate callee once, then short-circuit if nullish.
+        if (!TryLowerExpression(optionalCallExpr.Callee, out var calleeTemp))
+        {
+            return false;
+        }
+
+        var calleeBoxed = EnsureObject(calleeTemp);
+
+        int nullishLabel = CreateLabel();
+        int endLabel = CreateLabel();
+
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(calleeBoxed, nullishLabel));
+
+        var isJsNullTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), calleeBoxed, isJsNullTemp));
+        DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, nullishLabel));
+
+        var callArgTemps = new List<TempVariable>();
+        foreach (var arg in optionalCallExpr.Arguments)
+        {
+            if (!TryLowerExpression(arg, out var argTemp))
+            {
+                return false;
+            }
+            callArgTemps.Add(EnsureObject(argTemp));
+        }
+
+        var argsArrayTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgTemps, argsArrayTemp));
+        DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        var scopesTemp = CreateTempVariable();
+        if (!TryBuildCurrentScopesArray(scopesTemp))
+        {
+            return false;
+        }
+        DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(calleeBoxed, scopesTemp, argsArrayTemp, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(nullishLabel));
+        _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
     }
 
