@@ -10,7 +10,7 @@ _This section is split into subsection documents for readability._
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 27 | Control Abstraction Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-control-abstraction-objects) |
+| 27 | Control Abstraction Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-control-abstraction-objects) |
 
 ## Subsections
 
