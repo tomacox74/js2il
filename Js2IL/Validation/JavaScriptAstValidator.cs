@@ -280,18 +280,22 @@ public class JavaScriptAstValidator : IAstValidator
         // Reflect constant-like globals exposed by JavaScriptRuntime.GlobalThis (e.g., NaN, Infinity).
         try
         {
-            var gvType = typeof(JavaScriptRuntime.GlobalThis);
-            foreach (var p in gvType.GetProperties(BindingFlags.Public | BindingFlags.Static))
+            var numericTypes = new HashSet<Type>
             {
-                if (string.IsNullOrWhiteSpace(p.Name)) continue;
+                typeof(double),
+                typeof(float),
+                typeof(int),
+                typeof(long)
+            };
 
+            var reflectedNames = typeof(JavaScriptRuntime.GlobalThis)
+                .GetProperties(BindingFlags.Public | BindingFlags.Static)
                 // Keep this intentionally conservative: only treat simple numeric constants
                 // as always-available globals.
-                if (p.PropertyType == typeof(double) || p.PropertyType == typeof(float) || p.PropertyType == typeof(int) || p.PropertyType == typeof(long))
-                {
-                    names.Add(p.Name);
-                }
-            }
+                .Where(p => p != null && !string.IsNullOrWhiteSpace(p.Name) && numericTypes.Contains(p.PropertyType))
+                .Select(p => p.Name);
+
+            names.UnionWith(reflectedNames);
         }
         catch
         {
@@ -354,34 +358,32 @@ public class JavaScriptAstValidator : IAstValidator
 
     private static readonly Lazy<HashSet<string>> GlobalThisPropertyNames = new(() =>
     {
-        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         try
         {
-            var gvType = typeof(JavaScriptRuntime.GlobalThis);
-            foreach (var p in gvType.GetProperties(BindingFlags.Public | BindingFlags.Static))
-            {
-                names.Add(p.Name);
-            }
+            return typeof(JavaScriptRuntime.GlobalThis)
+                .GetProperties(BindingFlags.Public | BindingFlags.Static)
+                .Select(p => p.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
         catch { /* reflection errors -> empty set */ }
-        return names;
+        return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     });
 
     private static readonly Lazy<HashSet<string>> GlobalThisMethodNames = new(() =>
     {
-        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         try
         {
-            var gvType = typeof(JavaScriptRuntime.GlobalThis);
-            foreach (var m in gvType.GetMethods(BindingFlags.Public | BindingFlags.Static))
-            {
+            return typeof(JavaScriptRuntime.GlobalThis)
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
                 // Skip property accessors and infrastructure.
-                if (m.IsSpecialName) continue;
-                names.Add(m.Name);
-            }
+                .Where(m => !m.IsSpecialName)
+                .Select(m => m.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
         catch { /* reflection errors -> empty set */ }
-        return names;
+        return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     });
 
     private void ValidateMissingGlobals(Acornima.Ast.Program ast, ValidationResult result)

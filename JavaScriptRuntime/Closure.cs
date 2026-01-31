@@ -245,6 +245,36 @@ namespace JavaScriptRuntime
 
             // JavaScript semantics: missing args are 'undefined' (modeled as CLR null); extra args are ignored.
             // Dispatch on delegate type (arity) rather than args.Length.
+            if (target is Func<object[], bool> b0)
+            {
+                return b0(scopes);
+            }
+            if (target is Func<object[], object?, bool> b1)
+            {
+                return b1(scopes, args.Length > 0 ? args[0] : null);
+            }
+            if (target is Func<object[], object?, object?, bool> b2)
+            {
+                return b2(scopes,
+                    args.Length > 0 ? args[0] : null,
+                    args.Length > 1 ? args[1] : null);
+            }
+            if (target is Func<object[], object?, object?, object?, bool> b3)
+            {
+                return b3(scopes,
+                    args.Length > 0 ? args[0] : null,
+                    args.Length > 1 ? args[1] : null,
+                    args.Length > 2 ? args[2] : null);
+            }
+            if (target is Func<object[], object?, object?, object?, object?, bool> b4)
+            {
+                return b4(scopes,
+                    args.Length > 0 ? args[0] : null,
+                    args.Length > 1 ? args[1] : null,
+                    args.Length > 2 ? args[2] : null,
+                    args.Length > 3 ? args[3] : null);
+            }
+
             if (target is Func<object[], object> f0)
             {
                 return f0(scopes);

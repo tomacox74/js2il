@@ -340,6 +340,28 @@ namespace JavaScriptRuntime
             // Our delegate shapes include an extra leading "scopes" parameter.
             var scopes = System.Array.Empty<object?>();
 
+            // Predicates may return bool directly (e.g., filter(Boolean)). Support that shape and box the result.
+            if (cb is Func<object?[], object?, object?, object?, object?, bool> b4)
+            {
+                return b4(scopes, a0, a1, a2, a3);
+            }
+            if (cb is Func<object?[], object?, object?, object?, bool> b3)
+            {
+                return b3(scopes, a0, a1, a2);
+            }
+            if (cb is Func<object?[], object?, object?, bool> b2)
+            {
+                return b2(scopes, a0, a1);
+            }
+            if (cb is Func<object?[], object?, bool> b1)
+            {
+                return b1(scopes, a0);
+            }
+            if (cb is Func<object?[], bool> b0)
+            {
+                return b0(scopes);
+            }
+
             if (cb is Func<object?[], object?, object?, object?, object?, object?> f4)
             {
                 return f4(scopes, a0, a1, a2, a3);

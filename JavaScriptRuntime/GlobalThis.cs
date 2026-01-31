@@ -14,7 +14,7 @@ namespace JavaScriptRuntime
         // Some ECMAScript globals are callable (e.g., Boolean(x)). When used in expression position
         // (e.g., arr.filter(Boolean)), we expose them as function values (delegates) so the compiler
         // can bind them as intrinsic globals.
-        private static readonly Func<object[], object?, object> _booleanFunctionValue = static (_, value) =>
+        private static readonly Func<object[], object?, bool> _booleanFunctionValue = static (_, value) =>
             JavaScriptRuntime.TypeUtilities.ToBoolean(value);
 
         internal static ServiceContainer? ServiceProvider
