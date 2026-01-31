@@ -541,6 +541,12 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Cannot iterate over null or undefined");
             }
 
+            // Native iterator objects can be used directly.
+            if (iterable is IJavaScriptIterator nativeIterator)
+            {
+                return nativeIterator;
+            }
+
             // Built-ins
             if (iterable is string s)
             {
@@ -615,6 +621,18 @@ namespace JavaScriptRuntime
             if (iterable is null || iterable is JsNull)
             {
                 throw new JavaScriptRuntime.TypeError("Cannot iterate over null or undefined");
+            }
+
+            // Native async iterator objects can be used directly.
+            // If a sync iterator is provided, wrap it (CreateAsyncFromSyncIterator semantics).
+            if (iterable is IJavaScriptAsyncIterator nativeAsyncIterator)
+            {
+                return nativeAsyncIterator;
+            }
+
+            if (iterable is IJavaScriptIterator nativeSyncIterator)
+            {
+                return new AsyncFromSyncIterator(nativeSyncIterator);
             }
 
             // User-defined async iterables: call obj[Symbol.asyncIterator]().

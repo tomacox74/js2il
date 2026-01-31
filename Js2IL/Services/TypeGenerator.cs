@@ -330,7 +330,9 @@ namespace Js2IL.Services
 
             // Create the type definition
             var baseType = scope.IsAsync
-                ? _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.AsyncScope))
+                ? (scope.IsGenerator
+                    ? _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.AsyncGeneratorScope))
+                    : _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.AsyncScope)))
                 : scope.IsGenerator
                     ? _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.GeneratorScope))
                     : _bclReferences.ObjectType;
@@ -374,7 +376,11 @@ namespace Js2IL.Services
             var encoder = new InstructionEncoder(ilBuilder);
             encoder.OpCode(ILOpCode.Ldarg_0);
 
-            if (isAsync)
+            if (isAsync && isGenerator)
+            {
+                encoder.Call(_bclReferences.AsyncGeneratorScope_Ctor_Ref);
+            }
+            else if (isAsync)
             {
                 encoder.Call(_bclReferences.AsyncScope_Ctor_Ref);
             }

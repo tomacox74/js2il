@@ -5,6 +5,7 @@ using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
@@ -23,6 +24,191 @@ internal sealed partial class LIRToILCompiler
         {
             case LIRCreateLeafScopeInstance createScope:
                 {
+                    // Async generators are both async and generator resumables.
+                    // - Factory call returns an AsyncGeneratorObject
+                    // - Step calls run the method body, potentially awaiting and/or yielding
+                    //
+                    // Step calls are detected by scopes[0] being our leaf scope type.
+                    if (MethodBody.IsAsync && MethodBody.IsGenerator)
+                    {
+                        if (!methodDescriptor.HasScopesParameter)
+                        {
+                            throw new InvalidOperationException("Async generator methods must use the js2il ABI and declare a leading scopes parameter.");
+                        }
+
+                        int scopesArgIndex = GetIlArgIndexForScopesArray(methodDescriptor);
+
+                        var scopeTypeHandle = ResolveScopeTypeHandle(
+                            createScope.Scope.Name,
+                            "LIRCreateLeafScopeInstance instruction (async generator)");
+                        var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
+                        var scopeName = createScope.Scope.Name;
+
+                        // ldarg scopes, ldc.i4.0, ldelem.ref, isinst ScopeType
+                        ilEncoder.LoadArgument(scopesArgIndex);
+                        ilEncoder.LoadConstantI4(0);
+                        ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                        ilEncoder.OpCode(ILOpCode.Isinst);
+                        ilEncoder.Token(scopeTypeHandle);
+                        ilEncoder.OpCode(ILOpCode.Dup);
+
+                        var stepLabel = ilEncoder.DefineLabel();
+                        ilEncoder.Branch(ILOpCode.Brtrue, stepLabel);
+
+                        // --- Factory path ---
+                        ilEncoder.OpCode(ILOpCode.Pop); // pop null
+
+                        // Create leaf scope instance
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(ctorRef);
+                        ilEncoder.StoreLocal(0);
+
+                        // Build modified scopes array with leaf at [0]
+                        ilEncoder.LoadLocal(0); // leafScope
+                        ilEncoder.LoadArgument(scopesArgIndex); // parent scopes
+                        var prependRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Promise),
+                            nameof(JavaScriptRuntime.Promise.PrependScopeToArray),
+                            parameterTypes: new[] { typeof(object), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(prependRef);
+                        ilEncoder.StoreArgument(scopesArgIndex); // scopes = modified scopes array
+
+                        // Initialize _moveNext = Closure.BindMoveNext(delegate, scopesArray, boundArgs)
+                        // so await continuations can resume this step method.
+                        ilEncoder.LoadLocal(0);  // for stfld _moveNext later
+
+                        var callableId = MethodBody.CallableId
+                            ?? throw new InvalidOperationException("Async generator method is missing CallableId.");
+                        var reader = _serviceProvider.GetService<ICallableDeclarationReader>()
+                            ?? throw new InvalidOperationException("ICallableDeclarationReader service is not available.");
+                        if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                        {
+                            throw new InvalidOperationException($"Failed to resolve MethodDefinitionHandle for async generator callable {callableId}.");
+                        }
+
+                        var methodHandle = (MethodDefinitionHandle)token;
+
+                        int jsParamCount = callableId.JsParamCount;
+
+                        if (methodDescriptor.IsStatic)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                        }
+                        ilEncoder.OpCode(ILOpCode.Ldftn);
+                        ilEncoder.Token(methodHandle);
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+
+                        // Load modified scopes array
+                        ilEncoder.LoadArgument(scopesArgIndex);
+
+                        // Build boundArgs = new object[jsParamCount] filled from method arguments (excluding scopes).
+                        ilEncoder.LoadConstantI4(jsParamCount);
+                        ilEncoder.OpCode(ILOpCode.Newarr);
+                        ilEncoder.Token(_bclReferences.ObjectType);
+
+                        for (var i = 0; i < jsParamCount; i++)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Dup);
+                            ilEncoder.LoadConstantI4(i);
+                            ilEncoder.LoadArgument(GetIlArgIndexForJsParameter(methodDescriptor, i));
+                            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                        }
+
+                        var bindMoveNextRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            nameof(JavaScriptRuntime.Closure.BindMoveNext),
+                            parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(bindMoveNextRef);
+
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_moveNext");
+
+                        // Return new AsyncGeneratorObject(scopes)
+                        ilEncoder.LoadArgument(scopesArgIndex);
+                        var asyncGenObjCtor = _memberRefRegistry.GetOrAddConstructor(
+                            typeof(JavaScriptRuntime.AsyncGeneratorObject),
+                            parameterTypes: new[] { typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(asyncGenObjCtor);
+                        ilEncoder.OpCode(ILOpCode.Ret);
+
+                        // --- Step path ---
+                        ilEncoder.MarkLabel(stepLabel);
+                        ilEncoder.StoreLocal(0);
+
+                        // Restore async locals across awaits (only meaningful when there are awaits).
+                        var asyncInfoForAsyncGen = MethodBody.AsyncInfo;
+                        if (asyncInfoForAsyncGen != null && asyncInfoForAsyncGen.HasAwaits)
+                        {
+                            EmitEnsureAsyncLocalsArray(ilEncoder);
+
+                            var skipRestoreLabel = ilEncoder.DefineLabel();
+                            ilEncoder.LoadLocal(0);
+                            EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
+                            ilEncoder.LoadConstantI4(0);
+                            ilEncoder.Branch(ILOpCode.Ble_s, skipRestoreLabel);
+                            EmitRestoreVariableSlotsFromAsyncLocalsArray(ilEncoder);
+                            ilEncoder.MarkLabel(skipRestoreLabel);
+
+                            if (asyncInfoForAsyncGen.MaxResumeStateId > 0)
+                            {
+                                EmitAsyncStateSwitch(ilEncoder, labelMap, asyncInfoForAsyncGen);
+                            }
+                        }
+
+                        // Generator state dispatch: resume from the last yield site.
+                        var genInfo = MethodBody.GeneratorInfo;
+                        if (genInfo != null && genInfo.ResumeLabels.Count > 0)
+                        {
+                            // Load _genState
+                            ilEncoder.LoadLocal(0);
+                            EmitLoadFieldByName(ilEncoder, scopeName, "_genState");
+
+                            var defaultLabel = ilEncoder.DefineLabel();
+
+                            int maxStateId = 0;
+                            foreach (var kvp in genInfo.ResumeLabels)
+                            {
+                                if (kvp.Key > maxStateId) maxStateId = kvp.Key;
+                            }
+
+                            int branchCount = maxStateId + 1;
+                            var switchTargets = new LabelHandle[branchCount];
+                            for (int i = 0; i < branchCount; i++)
+                            {
+                                switchTargets[i] = defaultLabel;
+                            }
+
+                            foreach (var kvp in genInfo.ResumeLabels.Where(kvp => kvp.Key > 0 && kvp.Key < branchCount))
+                            {
+                                var stateId = kvp.Key;
+                                var labelId = kvp.Value;
+                                if (!labelMap.TryGetValue(labelId, out var resumeLabel))
+                                {
+                                    resumeLabel = ilEncoder.DefineLabel();
+                                    labelMap[labelId] = resumeLabel;
+                                }
+                                switchTargets[stateId] = resumeLabel;
+                            }
+
+                            var switchEncoder = ilEncoder.Switch(branchCount);
+                            for (int i = 0; i < branchCount; i++)
+                            {
+                                switchEncoder.Branch(switchTargets[i]);
+                            }
+
+                            ilEncoder.MarkLabel(defaultLabel);
+                        }
+
+                        break;
+                    }
+
                     // For async functions with awaits, we need special handling:
                     // - On initial call: create scope, build modified scopes array with scope at [0]
                     // - On resume: scopes array already has our scope at [0] (was built on initial call)

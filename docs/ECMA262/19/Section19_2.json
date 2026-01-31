@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "19.2",
   "title": "Function Properties of the Global Object",
-  "status": "Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-function-properties-of-the-global-object",
   "parent": {
     "clause": "19"
@@ -12,97 +12,97 @@
     {
       "clause": "19.2.1",
       "title": "eval ( x )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-eval-x"
     },
     {
       "clause": "19.2.1.1",
       "title": "PerformEval ( x , strictCaller , direct )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-performeval"
     },
     {
       "clause": "19.2.1.2",
       "title": "HostEnsureCanCompileStrings ( calleeRealm , parameterStrings , bodyString , direct )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-hostensurecancompilestrings"
     },
     {
       "clause": "19.2.1.3",
       "title": "EvalDeclarationInstantiation ( body , varEnv , lexEnv , privateEnv , strict )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-evaldeclarationinstantiation"
     },
     {
       "clause": "19.2.2",
       "title": "isFinite ( number )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-isfinite-number"
     },
     {
       "clause": "19.2.3",
       "title": "isNaN ( number )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-isnan-number"
     },
     {
       "clause": "19.2.4",
       "title": "parseFloat ( string )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-parsefloat-string"
     },
     {
       "clause": "19.2.5",
       "title": "parseInt ( string , radix )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-parseint-string-radix"
     },
     {
       "clause": "19.2.6",
       "title": "URI Handling Functions",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-uri-handling-functions"
     },
     {
       "clause": "19.2.6.1",
       "title": "decodeURI ( encodedURI )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-decodeuri-encodeduri"
     },
     {
       "clause": "19.2.6.2",
       "title": "decodeURIComponent ( encodedURIComponent )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-decodeuricomponent-encodeduricomponent"
     },
     {
       "clause": "19.2.6.3",
       "title": "encodeURI ( uri )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-encodeuri-uri"
     },
     {
       "clause": "19.2.6.4",
       "title": "encodeURIComponent ( uriComponent )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-encodeuricomponent-uricomponent"
     },
     {
       "clause": "19.2.6.5",
       "title": "Encode ( string , extraUnescaped )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-encode"
     },
     {
       "clause": "19.2.6.6",
       "title": "Decode ( string , preserveEscapeSet )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-decode"
     },
     {
       "clause": "19.2.6.7",
       "title": "ParseHexOctet ( string , position )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-parsehexoctet"
     }
   ],
@@ -111,12 +111,12 @@
       {
         "clause": "19.2.5",
         "feature": "parseInt(string, radix)",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-parseint-string-radix",
         "testScripts": [
           "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Basic.js"
         ],
-        "notes": "Implements the global parseInt(string, radix) function and returns a JS Number (unboxed double)."
+        "notes": "Implemented by JavaScriptRuntime.GlobalThis.parseInt and returns a JS Number (unboxed double). Coverage is partial (e.g., larger-than-Int64 inputs and full edge-case parity may differ)."
       }
     ]
   }

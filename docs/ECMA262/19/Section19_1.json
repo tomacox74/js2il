@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "19.1",
   "title": "Value Properties of the Global Object",
-  "status": "Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-value-properties-of-the-global-object",
   "parent": {
     "clause": "19"
@@ -12,26 +12,60 @@
     {
       "clause": "19.1.1",
       "title": "globalThis",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-globalthis"
     },
     {
       "clause": "19.1.2",
       "title": "Infinity",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-infinity"
     },
     {
       "clause": "19.1.3",
       "title": "NaN",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-nan"
     },
     {
       "clause": "19.1.4",
       "title": "undefined",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-undefined"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "19.1.2",
+        "feature": "Infinity global value",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-infinity",
+        "testScripts": [
+          "Js2IL.Tests/Math/JavaScript/Math_Hypot_Infinity_NaN.js"
+        ],
+        "notes": "Exposed as JavaScriptRuntime.GlobalThis.Infinity (double.PositiveInfinity)."
+      },
+      {
+        "clause": "19.1.3",
+        "feature": "NaN global value",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-nan",
+        "testScripts": [
+          "Js2IL.Tests/Math/JavaScript/Math_Hypot_Infinity_NaN.js"
+        ],
+        "notes": "Exposed as JavaScriptRuntime.GlobalThis.NaN (double.NaN)."
+      },
+      {
+        "clause": "19.1.4",
+        "feature": "undefined value",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-undefined",
+        "testScripts": [
+          "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js"
+        ],
+        "notes": "Modeled as CLR null rather than a writable/configurable global property. This supports common read/compare/typeof patterns, but does not model property attributes of the global 'undefined' binding."
+      }
+    ]
+  }
 }

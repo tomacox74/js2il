@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "19.4",
   "title": "Other Properties of the Global Object",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-other-properties-of-the-global-object",
   "parent": {
     "clause": "19"
@@ -12,26 +12,52 @@
     {
       "clause": "19.4.1",
       "title": "Atomics",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-atomics"
     },
     {
       "clause": "19.4.2",
       "title": "JSON",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-json"
     },
     {
       "clause": "19.4.3",
       "title": "Math",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-math"
     },
     {
       "clause": "19.4.4",
       "title": "Reflect",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-reflect"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "19.4.2",
+        "feature": "JSON intrinsic object is available (JSON.parse)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-json",
+        "testScripts": [
+          "Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
+        ],
+        "notes": "JavaScriptRuntime.JSON implements JSON.parse only. JSON.stringify and the optional reviver/replacer behaviors are not implemented. Parsing errors are translated to JavaScript SyntaxError."
+      },
+      {
+        "clause": "19.4.3",
+        "feature": "Math intrinsic object is available (common Math.* functions and constants)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-math",
+        "testScripts": [
+          "Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js",
+          "Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js",
+          "Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js"
+        ],
+        "notes": "Implemented by JavaScriptRuntime.Math, backed by System.Math with JS-style argument coercions. Coverage is partial (Supported with Limitations)."
+      }
+    ]
+  }
 }

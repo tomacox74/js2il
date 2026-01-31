@@ -8,19 +8,19 @@ _Lists clause numbers/titles/links only (no spec text)._
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 27.6 | AsyncGenerator Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-objects) |
+| 27.6 | AsyncGenerator Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-objects) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 27.6.1 | The %AsyncGeneratorPrototype% Object | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-asyncgenerator-prototype) |
+| 27.6.1 | The %AsyncGeneratorPrototype% Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-asyncgenerator-prototype) |
 | 27.6.1.1 | %AsyncGeneratorPrototype%.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-constructor) |
-| 27.6.1.2 | %AsyncGeneratorPrototype%.next ( value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-next) |
-| 27.6.1.3 | %AsyncGeneratorPrototype%.return ( value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-return) |
-| 27.6.1.4 | %AsyncGeneratorPrototype%.throw ( exception ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-throw) |
+| 27.6.1.2 | %AsyncGeneratorPrototype%.next ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-next) |
+| 27.6.1.3 | %AsyncGeneratorPrototype%.return ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-return) |
+| 27.6.1.4 | %AsyncGeneratorPrototype%.throw ( exception ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-throw) |
 | 27.6.1.5 | %AsyncGeneratorPrototype% [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-%symbol.tostringtag%) |
-| 27.6.2 | Properties of AsyncGenerator Instances | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-asyncgenerator-intances) |
+| 27.6.2 | Properties of AsyncGenerator Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-asyncgenerator-intances) |
 | 27.6.3 | AsyncGenerator Abstract Operations | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-abstract-operations) |
 | 27.6.3.1 | AsyncGeneratorRequest Records | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorrequest-records) |
 | 27.6.3.2 | AsyncGeneratorStart ( generator , generatorBody ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorstart) |
@@ -32,4 +32,14 @@ _Lists clause numbers/titles/links only (no spec text)._
 | 27.6.3.8 | AsyncGeneratorYield ( value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratoryield) |
 | 27.6.3.9 | AsyncGeneratorAwaitReturn ( generator ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratorawaitreturn) |
 | 27.6.3.10 | AsyncGeneratorDrainQueue ( generator ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-asyncgeneratordrainqueue) |
+
+## Support
+
+Feature-level support tracking with test script references.
+
+### 27.6.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-next))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| async generator objects returned from `async function*` support next/return/throw and are consumable by `for await..of` | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js) | Async generator objects are implemented as a runtime type implementing the async iterator protocol. Prototype intrinsics (e.g. %AsyncGeneratorPrototype% identity, toStringTag) are not fully modeled yet. |
 
