@@ -1,5 +1,6 @@
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using System.Reflection.Metadata;
 using Xunit;
 
@@ -46,26 +47,10 @@ public class PortablePdbLocalsTests
         using var provider = MetadataReaderProvider.FromPortablePdbStream(pdbStream);
         var pdbReader = provider.GetMetadataReader();
 
-        bool foundX = false;
-        foreach (var scopeHandle in pdbReader.LocalScopes)
-        {
-            var scope = pdbReader.GetLocalScope(scopeHandle);
-            foreach (var localHandle in scope.GetLocalVariables())
-            {
-                var local = pdbReader.GetLocalVariable(localHandle);
-                var name = pdbReader.GetString(local.Name);
-                if (string.Equals(name, "x", StringComparison.Ordinal))
-                {
-                    foundX = true;
-                    break;
-                }
-            }
-
-            if (foundX)
-            {
-                break;
-            }
-        }
+        var foundX = pdbReader.LocalScopes
+            .Select(pdbReader.GetLocalScope)
+            .SelectMany(scope => scope.GetLocalVariables().Select(pdbReader.GetLocalVariable))
+            .Any(local => string.Equals(pdbReader.GetString(local.Name), "x", StringComparison.Ordinal));
 
         Assert.True(foundX, "Expected Portable PDB to include a LocalVariable named 'x' so the debugger can display it.");
     }

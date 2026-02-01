@@ -1,5 +1,6 @@
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using Xunit;
@@ -41,20 +42,13 @@ public class DebuggerDisplayAttributeTests
         Assert.True(!scopeTypeHandle.IsNil, "Expected at least one generated type with a field named 'x'.");
 
         var typeDef = reader.GetTypeDefinition(scopeTypeHandle);
-        CustomAttribute? debuggerDisplay = null;
-        foreach (var caHandle in typeDef.GetCustomAttributes())
-        {
-            var ca = reader.GetCustomAttribute(caHandle);
-            if (IsDebuggerDisplayAttribute(reader, ca.Constructor))
-            {
-                debuggerDisplay = ca;
-                break;
-            }
-        }
+        var debuggerDisplayCaHandle = typeDef.GetCustomAttributes()
+            .FirstOrDefault(handle => IsDebuggerDisplayAttribute(reader, reader.GetCustomAttribute(handle).Constructor));
 
-        Assert.True(debuggerDisplay.HasValue, "Expected DebuggerDisplayAttribute on a scope type when EmitPdb=true.");
+        Assert.True(!debuggerDisplayCaHandle.IsNil, "Expected DebuggerDisplayAttribute on a scope type when EmitPdb=true.");
 
-        var br = reader.GetBlobReader(debuggerDisplay.Value.Value);
+        var debuggerDisplay = reader.GetCustomAttribute(debuggerDisplayCaHandle);
+        var br = reader.GetBlobReader(debuggerDisplay.Value);
         Assert.Equal(0x0001, br.ReadUInt16());
 
         var displayString = br.ReadSerializedString();
@@ -96,29 +90,23 @@ public class DebuggerDisplayAttributeTests
         Assert.True(!scopeTypeHandle.IsNil, "Expected at least one generated type with a field named 'x'.");
 
         var typeDef = reader.GetTypeDefinition(scopeTypeHandle);
-        foreach (var caHandle in typeDef.GetCustomAttributes())
-        {
-            var ca = reader.GetCustomAttribute(caHandle);
-            Assert.False(IsDebuggerDisplayAttribute(reader, ca.Constructor), "Did not expect DebuggerDisplayAttribute when EmitPdb=false.");
-        }
+        Assert.DoesNotContain(
+            typeDef.GetCustomAttributes(),
+            handle => IsDebuggerDisplayAttribute(reader, reader.GetCustomAttribute(handle).Constructor));
     }
 
     private static TypeDefinitionHandle FindTypeWithFieldNamed(MetadataReader reader, string fieldName)
     {
-        foreach (var typeHandle in reader.TypeDefinitions)
-        {
-            var typeDef = reader.GetTypeDefinition(typeHandle);
-            foreach (var fieldHandle in typeDef.GetFields())
+        return reader.TypeDefinitions
+            .FirstOrDefault(typeHandle =>
             {
-                var fieldDef = reader.GetFieldDefinition(fieldHandle);
-                if (string.Equals(reader.GetString(fieldDef.Name), fieldName, StringComparison.Ordinal))
+                var typeDef = reader.GetTypeDefinition(typeHandle);
+                return typeDef.GetFields().Any(fieldHandle =>
                 {
-                    return typeHandle;
-                }
-            }
-        }
-
-        return default;
+                    var fieldDef = reader.GetFieldDefinition(fieldHandle);
+                    return string.Equals(reader.GetString(fieldDef.Name), fieldName, StringComparison.Ordinal);
+                });
+            });
     }
 
     private static bool IsDebuggerDisplayAttribute(MetadataReader reader, EntityHandle ctorHandle)

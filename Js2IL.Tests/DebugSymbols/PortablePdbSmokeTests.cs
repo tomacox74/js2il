@@ -1,5 +1,6 @@
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using Xunit;
@@ -56,23 +57,11 @@ public class PortablePdbSmokeTests
             Assert.True(pdbReader.Documents.Any(), "Expected at least one document row in the PDB.");
             Assert.True(pdbReader.MethodDebugInformation.Any(), "Expected MethodDebugInformation rows in the PDB.");
 
-            bool foundSequencePoints = false;
-            foreach (var mdiHandle in pdbReader.MethodDebugInformation)
+            var foundSequencePoints = pdbReader.MethodDebugInformation.Any(mdiHandle =>
             {
                 var mdi = pdbReader.GetMethodDebugInformation(mdiHandle);
-                if (!mdi.Document.IsNil)
-                {
-                    // At minimum we expect a document to be associated when emitting sequence points.
-                    foundSequencePoints = true;
-                    break;
-                }
-
-                if (!mdi.SequencePointsBlob.IsNil)
-                {
-                    foundSequencePoints = true;
-                    break;
-                }
-            }
+                return !mdi.Document.IsNil || !mdi.SequencePointsBlob.IsNil;
+            });
 
             Assert.True(foundSequencePoints, "Expected at least one method to have sequence points.");
         }

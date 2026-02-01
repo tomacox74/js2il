@@ -1,5 +1,6 @@
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using Xunit;
@@ -38,21 +39,13 @@ public class DebuggableAttributeTests
         var reader = peReader.GetMetadataReader();
 
         var assemblyDef = reader.GetAssemblyDefinition();
-        CustomAttribute? debuggableCa = null;
+        var debuggableCaHandle = assemblyDef.GetCustomAttributes()
+            .FirstOrDefault(handle => IsDebuggableAttribute(reader, reader.GetCustomAttribute(handle).Constructor));
 
-        foreach (var caHandle in assemblyDef.GetCustomAttributes())
-        {
-            var ca = reader.GetCustomAttribute(caHandle);
-            if (IsDebuggableAttribute(reader, ca.Constructor))
-            {
-                debuggableCa = ca;
-                break;
-            }
-        }
+        Assert.True(!debuggableCaHandle.IsNil, "Expected DebuggableAttribute custom attribute on assembly when EmitPdb=true.");
 
-        Assert.True(debuggableCa.HasValue, "Expected DebuggableAttribute custom attribute on assembly when EmitPdb=true.");
-
-        var br = reader.GetBlobReader(debuggableCa.Value.Value);
+        var debuggableCa = reader.GetCustomAttribute(debuggableCaHandle);
+        var br = reader.GetBlobReader(debuggableCa.Value);
         var prolog = br.ReadUInt16();
         Assert.Equal(0x0001, prolog);
 
@@ -94,11 +87,9 @@ public class DebuggableAttributeTests
         var reader = peReader.GetMetadataReader();
 
         var assemblyDef = reader.GetAssemblyDefinition();
-        foreach (var caHandle in assemblyDef.GetCustomAttributes())
-        {
-            var ca = reader.GetCustomAttribute(caHandle);
-            Assert.False(IsDebuggableAttribute(reader, ca.Constructor), "Did not expect DebuggableAttribute custom attribute on assembly when EmitPdb=false.");
-        }
+        Assert.DoesNotContain(
+            assemblyDef.GetCustomAttributes(),
+            handle => IsDebuggableAttribute(reader, reader.GetCustomAttribute(handle).Constructor));
     }
 
     private static bool IsDebuggableAttribute(MetadataReader reader, EntityHandle ctorHandle)

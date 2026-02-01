@@ -338,8 +338,8 @@ namespace Js2IL.Tests
                     alc.Unload();
                 }
 
-                try { File.Delete(uniquePath); } catch { }
-                try { File.Delete(Path.ChangeExtension(uniquePath, ".pdb")); } catch { }
+                TryDeleteFile(uniquePath);
+                TryDeleteFile(Path.ChangeExtension(uniquePath, ".pdb"));
             }
 
             return outText;
@@ -381,6 +381,21 @@ namespace Js2IL.Tests
             private readonly StringBuilder _sb = new();
             public void WriteLine(string line) => _sb.AppendLine(line);
             public string GetOutput() => _sb.ToString();
+        }
+
+        private static void TryDeleteFile(string path)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to delete temp file '{path}': {ex.Message}");
+            }
         }
 
         private (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
