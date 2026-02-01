@@ -55,7 +55,8 @@ namespace Js2IL.Tests
 
                 var options = new CompilerOptions
                 {
-                    OutputDirectory = _outputPath
+                    OutputDirectory = _outputPath,
+                    EmitPdb = true
                 };
 
                 var testLogger = new TestLogger();

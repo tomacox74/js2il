@@ -4,8 +4,11 @@ namespace Js2IL.Tests;
 /// Mock file system implementation for testing that stores files in memory.
 /// </summary>
 public class MockFileSystem : IFileSystem
+	, ISourceFilePathResolver
 {
     private readonly Dictionary<string, string> _files = new(StringComparer.OrdinalIgnoreCase);
+
+    private readonly Dictionary<string, string> _sourceFilePaths = new(StringComparer.OrdinalIgnoreCase);
 
     private static string NormalizePath(string path)
     {
@@ -36,6 +39,26 @@ public class MockFileSystem : IFileSystem
     public void AddFile(string path, string content)
     {
         _files[NormalizePath(path)] = content;
+    }
+
+    /// <summary>
+    /// Adds a file to the mock file system, with an optional on-disk source path to be used for debugging symbols.
+    /// </summary>
+    public void AddFile(string path, string content, string? sourceFilePath)
+    {
+        var normalized = NormalizePath(path);
+        _files[normalized] = content;
+
+        if (!string.IsNullOrWhiteSpace(sourceFilePath))
+        {
+            _sourceFilePaths[normalized] = sourceFilePath;
+        }
+    }
+
+    public bool TryGetSourceFilePath(string logicalPath, out string sourceFilePath)
+    {
+        var normalized = NormalizePath(logicalPath);
+        return _sourceFilePaths.TryGetValue(normalized, out sourceFilePath!);
     }
 
     /// <summary>

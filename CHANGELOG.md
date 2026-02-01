@@ -9,6 +9,7 @@ All notable changes to this project are documented here.
 - Runtime: expose global `Boolean` as a callable function value (enables patterns like `array.filter(Boolean)`) (fixes #511).
 - Validator: report references to missing global identifiers/functions as validation errors (fixes #511).
 - AsyncGenerators/spec: support `async function*` (async generator functions) and async generator objects, including consumption via `for await..of` (fixes #342).
+- Debugging: optionally emit Portable PDBs (sequence points + local variable names) for stepping and improved VS Code debugging (fixes #325).
 
 ## v0.7.4 - 2026-01-30
 

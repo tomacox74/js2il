@@ -7,6 +7,7 @@ using Js2IL.Services.VariableBindings;
 using System.Linq;
 using Js2IL.Utilities.Ecma335;
 using Js2IL.Utilities;
+using System.Text;
 
 namespace Js2IL.Services
 {
@@ -22,7 +23,9 @@ namespace Js2IL.Services
         private readonly MethodBodyStreamEncoder _methodBodyStream;
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes;
         private readonly Dictionary<string, List<FieldDefinitionHandle>> _scopeFields;
+        private readonly Dictionary<string, List<string>> _scopeFieldNames;
         private readonly VariableRegistry _variableRegistry;
+        private readonly bool _emitDebuggerDisplay;
         private readonly int _deferredCtorStartRow;
         private int _nextDeferredCtorRow;
         private readonly List<(string ScopeKey, string Namespace, string TypeName, bool IsAsync, bool IsGenerator, MethodDefinitionHandle ExpectedCtor)> _deferredCtorPlan;
@@ -32,7 +35,8 @@ namespace Js2IL.Services
             BaseClassLibraryReferences bclReferences,
             MethodBodyStreamEncoder methodBodyStream,
             VariableRegistry variableRegistry,
-            int deferredCtorStartRow)
+            int deferredCtorStartRow,
+            bool emitDebuggerDisplay)
         {
             _metadataBuilder = metadataBuilder;
             _bclReferences = bclReferences;
@@ -40,9 +44,11 @@ namespace Js2IL.Services
             _variableRegistry = variableRegistry;
             _scopeTypes = new Dictionary<string, TypeDefinitionHandle>();
             _scopeFields = new Dictionary<string, List<FieldDefinitionHandle>>();
+            _scopeFieldNames = new Dictionary<string, List<string>>();
             _deferredCtorStartRow = deferredCtorStartRow;
             _nextDeferredCtorRow = deferredCtorStartRow;
             _deferredCtorPlan = new List<(string, string, string, bool, bool, MethodDefinitionHandle)>();
+            _emitDebuggerDisplay = emitDebuggerDisplay;
         }
 
         /// <summary>
@@ -146,6 +152,9 @@ namespace Js2IL.Services
             _scopeFields[scopeKey] = new List<FieldDefinitionHandle>();
             var scopeFields = _scopeFields[scopeKey];
 
+            _scopeFieldNames[scopeKey] = new List<string>();
+            var scopeFieldNames = _scopeFieldNames[scopeKey];
+
             // Check if this is an arrow function scope (arrow functions always need parameter fields for closure semantics)
             bool isArrowFunction = scope.AstNode is Acornima.Ast.ArrowFunctionExpression;
 
@@ -226,17 +235,18 @@ namespace Js2IL.Services
                 );
 
                 scopeFields.Add(fieldHandle);
+                scopeFieldNames.Add(binding.Name);
             }
 
             // Add awaited result storage fields for async function scopes: _awaited1, _awaited2, etc.
             // State IDs start at 1, so await point N stores its result in _awaitedN.
             if (scope.IsAsync)
             {
-                AddAwaitedResultFields(typeBuilder, scopeFields, scope.AwaitPointCount, scopeKey);
+                AddAwaitedResultFields(typeBuilder, scopeFields, scopeFieldNames, scope.AwaitPointCount, scopeKey);
             }
         }
 
-        private void AddAwaitedResultFields(TypeBuilder typeBuilder, List<FieldDefinitionHandle> scopeFields, int awaitPointCount, string scopeName)
+        private void AddAwaitedResultFields(TypeBuilder typeBuilder, List<FieldDefinitionHandle> scopeFields, List<string> scopeFieldNames, int awaitPointCount, string scopeName)
         {
             for (int i = 1; i <= awaitPointCount; i++)
             {
@@ -249,6 +259,7 @@ namespace Js2IL.Services
                     _metadataBuilder.GetOrAddBlob(awaitedFieldSig)
                 );
                 scopeFields.Add(awaitedFieldHandle);
+                scopeFieldNames.Add(fieldName);
                 _variableRegistry.ScopeMetadata.RegisterField(scopeName, fieldName, awaitedFieldHandle);
                 _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, fieldName, typeof(object));
             }
@@ -343,12 +354,18 @@ namespace Js2IL.Services
                 firstFieldOverride: null,
                 firstMethodOverride: ctorHandle);
 
+            var scopeKey = GetRegistryScopeName(scope);
+
+            if (_emitDebuggerDisplay)
+            {
+                EmitDebuggerDisplayAttribute(typeHandle, scopeKey, typeName);
+            }
+
             // NOTE: We intentionally do NOT emit NestedClass table rows here.
             // Nesting relationships are established later in a single pass (sorted by nested type token)
             // so the NestedClass table satisfies ECMA-335 sorting requirements.
 
             // Store the type handle and constructor for later reference
-            var scopeKey = GetRegistryScopeName(scope);
             _scopeTypes[scopeKey] = typeHandle;
             // Register the scope type immediately so even scopes without variables can be instantiated later.
             _variableRegistry.EnsureScopeType(scopeKey, typeHandle);
@@ -356,6 +373,151 @@ namespace Js2IL.Services
             _deferredCtorPlan.Add((scopeKey, actualNamespace, typeName, scope.IsAsync, scope.IsGenerator, ctorHandle));
 
             return typeHandle;
+        }
+
+        private void EmitDebuggerDisplayAttribute(TypeDefinitionHandle typeHandle, string scopeKey, string typeName)
+        {
+            if (!_scopeFieldNames.TryGetValue(scopeKey, out var names) || names.Count == 0)
+            {
+                return;
+            }
+
+            // DebuggerDisplay uses a C#-like expression language; only include identifiers that are valid
+            // without escaping (common case: x, allBits, value, etc.).
+            var userFieldNames = names.Where(n => !n.StartsWith("_", StringComparison.Ordinal)).ToList();
+            if (userFieldNames.Count == 0)
+            {
+                userFieldNames = names;
+            }
+
+            var included = new List<string>();
+            foreach (var name in userFieldNames)
+            {
+                if (IsValidDebuggerIdentifier(name))
+                {
+                    included.Add(name);
+                }
+                if (included.Count >= 8)
+                {
+                    break;
+                }
+            }
+
+            if (included.Count == 0)
+            {
+                // Still provide a minimal display rather than risking broken expressions.
+                included.Add("(scope)");
+            }
+
+            var display = new StringBuilder();
+            display.Append(typeName);
+
+            if (included.Count == 1 && included[0] == "(scope)")
+            {
+                // No fields safely renderable.
+            }
+            else
+            {
+                display.Append(" ");
+                for (int i = 0; i < included.Count; i++)
+                {
+                    if (i > 0)
+                    {
+                        display.Append(", ");
+                    }
+
+                    var fieldName = included[i];
+                    display.Append(fieldName);
+                    display.Append("={");
+                    display.Append(fieldName);
+                    display.Append("}");
+                }
+
+                if (userFieldNames.Count > included.Count)
+                {
+                    display.Append(", …");
+                }
+            }
+
+            var valueBlob = CreateSingleStringCustomAttributeValue(display.ToString());
+            _metadataBuilder.AddCustomAttribute(
+                parent: typeHandle,
+                constructor: _bclReferences.DebuggerDisplayAttribute_Ctor_Ref,
+                value: valueBlob);
+        }
+
+        private static bool IsValidDebuggerIdentifier(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return false;
+            }
+
+            // Conservative check: debugger expression identifiers are roughly C# identifiers.
+            // We intentionally do not attempt to support keywords or special chars (e.g. '$').
+            if (!(char.IsLetter(name[0]) || name[0] == '_'))
+            {
+                return false;
+            }
+
+            for (int i = 1; i < name.Length; i++)
+            {
+                var ch = name[i];
+                if (!(char.IsLetterOrDigit(ch) || ch == '_'))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private BlobHandle CreateSingleStringCustomAttributeValue(string value)
+        {
+            // ECMA-335 CustomAttribute blob format:
+            // - prolog: 0x0001 (UInt16)
+            // - fixed args: SerString
+            // - named args count: UInt16 (0)
+            var blob = new BlobBuilder();
+            blob.WriteUInt16(0x0001);
+            WriteSerString(blob, value);
+            blob.WriteUInt16(0);
+            return _metadataBuilder.GetOrAddBlob(blob);
+        }
+
+        private static void WriteSerString(BlobBuilder blob, string value)
+        {
+            var utf8 = Encoding.UTF8.GetBytes(value);
+            WriteCompressedUInt32(blob, (uint)utf8.Length);
+            blob.WriteBytes(utf8);
+        }
+
+        private static void WriteCompressedUInt32(BlobBuilder blob, uint value)
+        {
+            // ECMA-335 II.23.2 Blobs and signatures (compressed unsigned integer)
+            if (value <= 0x7Fu)
+            {
+                blob.WriteByte((byte)value);
+                return;
+            }
+
+            if (value <= 0x3FFFu)
+            {
+                blob.WriteByte((byte)((value >> 8) | 0x80u));
+                blob.WriteByte((byte)(value & 0xFFu));
+                return;
+            }
+
+            if (value <= 0x1FFFFFFFu)
+            {
+                blob.WriteByte((byte)((value >> 24) | 0xC0u));
+                blob.WriteByte((byte)((value >> 16) & 0xFFu));
+                blob.WriteByte((byte)((value >> 8) & 0xFFu));
+                blob.WriteByte((byte)(value & 0xFFu));
+                return;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(value), "Value too large for compressed integer encoding.");
         }
 
 

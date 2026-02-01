@@ -121,7 +121,15 @@ public class ModuleLoader
         Acornima.Ast.Program ast;
         try
         {
-            ast = _parser.ParseJavaScript(jsSource, modulePath);
+            var sourceFileForDebugging = modulePath;
+            if (_fileSystem is ISourceFilePathResolver resolver
+                && resolver.TryGetSourceFilePath(modulePath, out var resolved)
+                && !string.IsNullOrWhiteSpace(resolved))
+            {
+                sourceFileForDebugging = resolved;
+            }
+
+            ast = _parser.ParseJavaScript(jsSource, sourceFileForDebugging);
         }
         catch (Exception ex)
         {

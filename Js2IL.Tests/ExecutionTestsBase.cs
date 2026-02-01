@@ -35,26 +35,58 @@ namespace Js2IL.Tests
 
         protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
         {
-            var js = GetJavaScript(testName);
+            var (js, jsSourcePath) = GetJavaScriptAndSourcePath(testName, sourceFilePath);
             var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
 
+            // Prefer a stable on-disk path (within the repo) as the logical module path.
+            // This ensures the PDB "document" points at a file VS Code can open when clicking stack frames.
+            var entryPathForCompilation = jsSourcePath ?? testFilePath;
+
+            // If we couldn't resolve a stable on-disk source path, write the JS to the temp location
+            // so debuggers can still open the file when the PDB points at it.
+            if (entryPathForCompilation == testFilePath && !File.Exists(testFilePath))
+            {
+                var testDir = Path.GetDirectoryName(testFilePath);
+                if (!string.IsNullOrWhiteSpace(testDir))
+                {
+                    Directory.CreateDirectory(testDir);
+                }
+                File.WriteAllText(testFilePath, js);
+            }
+
             var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile(testFilePath, js);
+            mockFileSystem.AddFile(entryPathForCompilation, js, jsSourcePath);
 
             // Add additional scripts to the mock file system
             if (additionalScripts != null)
             {
                 foreach (var scriptName in additionalScripts)
                 {
-                    var scriptContent = GetJavaScript(scriptName);
-                    var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
-                    mockFileSystem.AddFile(scriptPath, scriptContent);
+                    var (scriptContent, scriptSourcePath) = GetJavaScriptAndSourcePath(scriptName, sourceFilePath);
+
+                    // Same rule as the entry file: prefer the stable source path so module resolution + PDB
+                    // documents stay rooted in the repo.
+                    var scriptTempPath = Path.Combine(_outputPath, $"{scriptName}.js");
+                    var scriptPathForCompilation = scriptSourcePath ?? scriptTempPath;
+
+                    if (scriptPathForCompilation == scriptTempPath && !File.Exists(scriptTempPath))
+                    {
+                        var scriptDir = Path.GetDirectoryName(scriptTempPath);
+                        if (!string.IsNullOrWhiteSpace(scriptDir))
+                        {
+                            Directory.CreateDirectory(scriptDir);
+                        }
+                        File.WriteAllText(scriptTempPath, scriptContent);
+                    }
+
+                    mockFileSystem.AddFile(scriptPathForCompilation, scriptContent, scriptSourcePath);
                 }
             }
 
             var options = new CompilerOptions
             {
-                OutputDirectory = _outputPath
+                OutputDirectory = _outputPath,
+                EmitPdb = true
             };
 
             var testLogger = new TestLogger();
@@ -66,7 +98,7 @@ namespace Js2IL.Tests
             IRPipelineMetrics.Reset();
             try
             {
-                if (!compiler.Compile(testFilePath))
+                if (!compiler.Compile(entryPathForCompilation))
                 {
                     var details = string.IsNullOrWhiteSpace(testLogger.Errors)
                         ? string.Empty
@@ -90,6 +122,12 @@ namespace Js2IL.Tests
             // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
             var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
             var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
+
+            if (options.EmitPdb)
+            {
+                var expectedPdbPath = Path.Combine(_outputPath, $"{assemblyName}.pdb");
+                Assert.True(File.Exists(expectedPdbPath), $"Expected PDB to be emitted at '{expectedPdbPath}'.");
+            }
 
             var il = preferOutOfProc
                 ? ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName)
@@ -191,6 +229,15 @@ namespace Js2IL.Tests
                 {
                     File.Copy(assemblyPath, uniquePath, overwrite: true);
 
+                    // Copy PDB alongside the copied DLL so we can load symbols from a stream.
+                    // This enables source/line info even when the assembly itself is loaded from bytes.
+                    var sourcePdbPath = Path.ChangeExtension(assemblyPath, ".pdb");
+                    var uniquePdbPath = Path.ChangeExtension(uniquePath, ".pdb");
+                    if (File.Exists(sourcePdbPath))
+                    {
+                        File.Copy(sourcePdbPath, uniquePdbPath, overwrite: true);
+                    }
+
                     // Load the generated assembly into an isolated collectible ALC per test to avoid
                     // collisions when multiple tests compile to the same assembly name (e.g., many
                     // CommonJS tests have an entry module named "a").
@@ -200,7 +247,15 @@ namespace Js2IL.Tests
                     // Load from stream so we can delete the copied DLL without relying on GC.Collect
                     // to release file locks.
                     using var stream = File.OpenRead(uniquePath);
-                    assembly = alc.LoadFromStream(stream);
+                    if (File.Exists(uniquePdbPath))
+                    {
+                        using var pdbStream = File.OpenRead(uniquePdbPath);
+                        assembly = alc.LoadFromStream(stream, pdbStream);
+                    }
+                    else
+                    {
+                        assembly = alc.LoadFromStream(stream);
+                    }
                 }
                 else
                 {
@@ -284,6 +339,7 @@ namespace Js2IL.Tests
                 }
 
                 try { File.Delete(uniquePath); } catch { }
+                try { File.Delete(Path.ChangeExtension(uniquePath, ".pdb")); } catch { }
             }
 
             return outText;
@@ -327,7 +383,7 @@ namespace Js2IL.Tests
             public string GetOutput() => _sb.ToString();
         }
 
-        private string GetJavaScript(string testName)
+        private (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
         {
             var assembly = Assembly.GetExecutingAssembly();
             // Support nested module paths in tests (e.g., "CommonJS_Require_X/helpers/b").
@@ -336,7 +392,16 @@ namespace Js2IL.Tests
 
             var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{resourceKey}.js";
             var legacy = $"Js2IL.Tests.JavaScript.{resourceKey}.js";
-            using (var stream = assembly.GetManifestResourceStream(categorySpecific) ?? assembly.GetManifestResourceStream(legacy))
+
+            Stream? stream = assembly.GetManifestResourceStream(categorySpecific);
+            var resolvedResourceName = categorySpecific;
+            if (stream == null)
+            {
+                stream = assembly.GetManifestResourceStream(legacy);
+                resolvedResourceName = legacy;
+            }
+
+            using (stream)
             {
                 if (stream == null)
                 {
@@ -344,9 +409,93 @@ namespace Js2IL.Tests
                 }
                 using (var reader = new StreamReader(stream))
                 {
-                    return reader.ReadToEnd();
+                    var script = reader.ReadToEnd();
+                    var sourcePath = TryGetOriginalSourcePathFromEmbeddedResource(assembly, resolvedResourceName, callerSourceFilePath);
+                    if (string.IsNullOrWhiteSpace(sourcePath))
+                    {
+                        // Fallback: derive the repo path from known test layout:
+                        // Js2IL.Tests/<Category>/JavaScript/<testName>.js
+                        var category = GetType().Namespace?.Split('.').Last();
+                        if (!string.IsNullOrWhiteSpace(category))
+                        {
+                            var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
+                            if (projectRoot != null)
+                            {
+                                var relative = Path.Combine(
+                                    category,
+                                    "JavaScript",
+                                    testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js");
+
+                                var candidate = Path.GetFullPath(Path.Combine(projectRoot, relative));
+                                if (File.Exists(candidate))
+                                {
+                                    sourcePath = candidate;
+                                }
+                            }
+                        }
+                    }
+                    return (script, sourcePath);
                 }
             }
+        }
+
+        private static string? TryGetOriginalSourcePathFromEmbeddedResource(Assembly assembly, string jsResourceName, string callerSourceFilePath)
+        {
+            // For each embedded "*.js" test script, we also embed a "*.path" text resource
+            // containing the project-relative path to the original on-disk JS file.
+            var pathResourceName = jsResourceName.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+                ? jsResourceName.Substring(0, jsResourceName.Length - 3) + ".path"
+                : jsResourceName + ".path";
+
+            using var pathStream = assembly.GetManifestResourceStream(pathResourceName);
+            if (pathStream == null)
+            {
+                return null;
+            }
+
+            using var reader = new StreamReader(pathStream);
+            var relativePath = reader.ReadToEnd().Trim();
+            if (string.IsNullOrWhiteSpace(relativePath))
+            {
+                return null;
+            }
+
+            if (Path.IsPathRooted(relativePath))
+            {
+                return relativePath;
+            }
+
+            var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
+            if (projectRoot == null)
+            {
+                return null;
+            }
+
+            // Normalize separators to current OS.
+            relativePath = relativePath.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+            return Path.GetFullPath(Path.Combine(projectRoot, relativePath));
+        }
+
+        private static string? FindDirectoryContainingFile(string startDirectory, string fileName)
+        {
+            var current = startDirectory;
+            while (!string.IsNullOrWhiteSpace(current))
+            {
+                var candidate = Path.Combine(current, fileName);
+                if (File.Exists(candidate))
+                {
+                    return current;
+                }
+
+                var parent = Directory.GetParent(current);
+                if (parent == null)
+                {
+                    break;
+                }
+                current = parent.FullName;
+            }
+
+            return null;
         }
     }
 }

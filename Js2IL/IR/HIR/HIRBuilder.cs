@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Immutable;
 using Acornima.Ast;
+using Js2IL.DebugSymbols;
 using Js2IL.Services;
 using Js2IL.Services.TwoPhaseCompilation;
 using ScopesCallableKind = Js2IL.Services.ScopesAbi.CallableKind;
@@ -504,8 +505,15 @@ class HIRMethodBuilder
         hirStatements = new List<HIRStatement>(_statements.Count + 16);
         hirStatements.AddRange(_statements);
 
+        var documentId = GetCurrentDocumentId();
+
         foreach (var statement in statements)
         {
+            hirStatements.Add(new HIRSequencePointStatement
+            {
+                Span = SourceSpan.FromNode(statement, documentId)
+            });
+
             if (!TryParseStatement(statement, out var hirStatement))
             {
                 return false;
@@ -514,6 +522,19 @@ class HIRMethodBuilder
         }
 
         return true;
+    }
+
+    private string GetCurrentDocumentId()
+    {
+        // Currently the best stable identifier available throughout the pipeline is the module id
+        // (global scope name). PDB generation can later map this to an actual file path.
+        var scope = _currentScope;
+        while (scope.Parent != null)
+        {
+            scope = scope.Parent;
+        }
+
+        return scope.Name;
     }
 
     public bool TryParseExpressionForPrologue([In, NotNull] Acornima.Ast.Expression expression, out HIRExpression? hirExpression)

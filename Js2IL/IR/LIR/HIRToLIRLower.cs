@@ -1205,6 +1205,11 @@ public sealed class HIRToLIRLowerer
 
         switch (statement)
         {
+            case HIRSequencePointStatement sequencePoint:
+                {
+                    lirInstructions.Add(new LIRSequencePoint(sequencePoint.Span));
+                    return true;
+                }
             case HIRStoreUserClassInstanceFieldStatement storeInstanceField:
                 {
                     if (!TryLowerExpression(storeInstanceField.Value, out var valueTemp))

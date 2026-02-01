@@ -1,3 +1,4 @@
+using Js2IL.DebugSymbols;
 using Js2IL.IR;
 using Js2IL.Services;
 using Js2IL.Services.ILGenerators;
@@ -21,6 +22,13 @@ internal sealed partial class LIRToILCompiler
         var methodBlob = new BlobBuilder();
         var controlFlowBuilder = new ControlFlowBuilder();
         var ilEncoder = new InstructionEncoder(methodBlob, controlFlowBuilder);
+
+        // Capture sequence points as (IL offset -> source span) markers.
+        // These are later consumed by Portable PDB emission at the assembly writer layer.
+        _sequencePoints = new List<MethodSequencePoint>();
+        _localVariablesSignature = default;
+        _ilLength = 0;
+        _locals = null;
 
         // All temps start as "needs materialization". Stackify will mark which ones can stay on stack.
         var shouldMaterialize = new bool[MethodBody.Temps.Count];
@@ -238,6 +246,12 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.MarkLabel(labelMap[lirLabel.LabelId]);
                     continue;
 
+                case LIRSequencePoint sp:
+                    // Marker emits no IL. Associate the next real IL instruction with this span.
+                    // IL offset is the current method IL byte length.
+                    _sequencePoints.Add(new MethodSequencePoint(methodBlob.Count, sp.Span));
+                    continue;
+
                 case LIRBranch branch:
                     ilEncoder.Branch(ILOpCode.Br, labelMap[branch.TargetLabel]);
                     continue;
@@ -418,6 +432,20 @@ internal sealed partial class LIRToILCompiler
         }
 
         var localVariablesSignature = CreateLocalVariablesSignature(allocation);
+        _localVariablesSignature = localVariablesSignature;
+
+        // Emit local variable names for source-level variable slots (exclude leaf-scope local and temp locals).
+        // IL local layout is:
+        // - [0] leaf scope local (optional)
+        // - [scopeOffset..scopeOffset+VariableNames.Count-1] source locals
+        // - remaining locals are temps (unnamed)
+        int scopeOffset = (MethodBody.NeedsLeafScopeLocal && !MethodBody.LeafScopeId.IsNil) ? 1 : 0;
+        if (MethodBody.VariableNames.Count > 0)
+        {
+            _locals = MethodBody.VariableNames
+                .Select((name, i) => new DebugSymbolRegistry.MethodLocal(scopeOffset + i, name))
+                .ToArray();
+        }
 
         var bodyAttributes = MethodBodyAttributes.None;
         if (MethodBody.VariableNames.Count > 0 || allocation.SlotStorages.Count > 0)
@@ -430,6 +458,9 @@ internal sealed partial class LIRToILCompiler
                 maxStack: 32,
                 localVariablesSignature: localVariablesSignature,
                 attributes: bodyAttributes);
+
+        // IL length for LocalScope ranges (relative to start of method IL stream).
+        _ilLength = methodBlob.Count;
 
         return true;
     }

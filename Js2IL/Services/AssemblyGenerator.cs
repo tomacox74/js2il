@@ -3,6 +3,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using System.Text;
+using Js2IL.DebugSymbols;
 using Js2IL.Services.ILGenerators;
 using Js2IL.Services.Contracts;
 using Js2IL.Services.TwoPhaseCompilation;
@@ -54,6 +55,8 @@ namespace Js2IL.Services
         {
             createAssemblyMetadata(assemblyName);
 
+            EmitDebuggableAttributeIfEnabled();
+
             EmitCompiledModuleManifest(modules);
 
             // Add the <Module> type first (as required by .NET metadata) using TypeBuilder
@@ -74,12 +77,14 @@ namespace Js2IL.Services
             // Scope types are generated before callables are compiled (so variable binding has FieldDef handles),
             // but scope constructors are emitted later. We create a single TypeGenerator instance so it can
             // remember deferred ctor plans across all modules.
+            var compileOptions = _serviceProvider.GetRequiredService<CompilerOptions>();
             var typeGenerator = new TypeGenerator(
                 _metadataBuilder,
                 _bclReferences,
                 methodBodyStream,
                 _variableRegistry,
-                deferredCtorStartRow: _metadataBuilder.GetRowCount(TableIndex.MethodDef) + totalCallableMethods + totalModuleInitMethods + 1);
+                deferredCtorStartRow: _metadataBuilder.GetRowCount(TableIndex.MethodDef) + totalCallableMethods + totalModuleInitMethods + 1,
+                emitDebuggerDisplay: compileOptions.EmitPdb);
 
             var moduleList = modules._modules.Values.ToList();
 
@@ -222,6 +227,39 @@ namespace Js2IL.Services
             _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>().EmitAllSorted(_metadataBuilder);
 
             this.CreateAssembly(assemblyName, outputPath);
+        }
+
+        private void EmitDebuggableAttributeIfEnabled()
+        {
+            var options = _serviceProvider.GetRequiredService<CompilerOptions>();
+            if (!options.EmitPdb)
+            {
+                return;
+            }
+
+            // This attribute improves debugging/stepping fidelity (notably in VS Code) by
+            // reducing JIT optimizations/inlining when debugging generated assemblies.
+            if (_assemblyDefinition.IsNil)
+            {
+                throw new InvalidOperationException("Assembly definition handle not initialized.");
+            }
+
+            var ctorRef = _bclReferences.DebuggableAttribute_Ctor_Ref;
+            // ECMA-335 CustomAttribute blob format:
+            // - prolog: 0x0001 (UInt16)
+            // - fixed args: bool, bool
+            // - named args count: UInt16 (0)
+            var blob = new BlobBuilder();
+            blob.WriteUInt16(0x0001);
+            // DebuggableAttribute(bool isJITTrackingEnabled, bool isJITOptimizerDisabled)
+            blob.WriteByte(1); // true
+            blob.WriteByte(1); // true
+            blob.WriteUInt16(0);
+
+            _metadataBuilder.AddCustomAttribute(
+                parent: _assemblyDefinition,
+                constructor: ctorRef,
+                value: _metadataBuilder.GetOrAddBlob(blob));
         }
 
         /// <summary>
@@ -438,13 +476,28 @@ namespace Js2IL.Services
 
         private void CreateAssembly(string name, string outputPath)
         {
+            var options = _serviceProvider.GetRequiredService<CompilerOptions>();
+
+            DebugDirectoryBuilder? debugDirectoryBuilder = null;
+            if (options.EmitPdb)
+            {
+                var pdbPath = Path.Combine(outputPath, $"{name}.pdb");
+
+                var debugRegistry = _serviceProvider.GetRequiredService<DebugSymbolRegistry>();
+                var (pdbContentId, portablePdbVersion) = PortablePdbEmitter.Emit(_metadataBuilder, debugRegistry, pdbPath, this._entryPoint);
+
+                debugDirectoryBuilder = new DebugDirectoryBuilder();
+                debugDirectoryBuilder.AddCodeViewEntry(Path.GetFileName(pdbPath), pdbContentId, portablePdbVersion);
+            }
+
             var pe = new ManagedPEBuilder(
                 PEHeaderBuilder.CreateLibraryHeader(),
                 new MetadataRootBuilder(_metadataBuilder),
                 _ilBuilder,
                 mappedFieldData: null,
                 entryPoint: this._entryPoint,
-                flags: CorFlags.ILOnly);
+                flags: CorFlags.ILOnly,
+                debugDirectoryBuilder: debugDirectoryBuilder);
 
             var peImage = new BlobBuilder();
             pe.Serialize(peImage);

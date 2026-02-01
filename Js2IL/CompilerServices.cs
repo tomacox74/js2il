@@ -5,6 +5,7 @@ using Js2IL.Services.ScopesAbi;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Services.VariableBindings;
 using Js2IL.Services;
+using Js2IL.DebugSymbols;
  
 namespace Js2IL;
  
@@ -36,6 +37,9 @@ public static class CompilerServices
         // compiler and compiler options
         services.AddSingleton(options);
         services.AddSingleton<Compiler>();
+
+        // Debug symbol collection (Portable PDB)
+        services.AddSingleton<DebugSymbolRegistry>();
 
 
         // if this compiler is extended to generate multiple assemblies in a single run
