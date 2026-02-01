@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.0 - 2026-02-01
+
 - IR: support `?.` (optional chaining) lowering in the new IR pipeline (fixes #500).
 - IR: support `??` (nullish coalescing) lowering in the new IR pipeline (fixes #501).
 - Runtime: expose global `Boolean` as a callable function value (enables patterns like `array.filter(Boolean)`) (fixes #511).
