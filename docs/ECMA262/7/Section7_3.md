@@ -58,7 +58,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Property get on object literals and host objects | Supported with Limitations | [`JSON_Parse_SimpleObject.js`](../../../Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js)<br>[`Function_ClosureEscapesScope_ObjectLiteralProperty.js`](../../../Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js) | Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. Prototype chain, symbols, and full property descriptor semantics are not implemented. |
+| Property get on object literals and host objects | Supported with Limitations | [`JSON_Parse_SimpleObject.js`](../../../Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js)<br>[`Function_ClosureEscapesScope_ObjectLiteralProperty.js`](../../../Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js) | Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. Prototype chain lookup is supported when prototype-chain mode is enabled; symbols and full property descriptor semantics are not implemented. |
 
 ### 7.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-set-o-p-v-throw))
 
@@ -70,7 +70,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Property presence checks (in operator / HasProperty) | Supported with Limitations | [`BinaryOperator_In_Object_OwnAndMissing.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js)<br>[`ControlFlow_ForIn_Object_Basic.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js) | Implemented by runtime helper for object literals (ExpandoObject), arrays, typed arrays, and strings. Prototype chain and symbols are not supported. |
+| Property presence checks (in operator / HasProperty) | Supported with Limitations | [`BinaryOperator_In_Object_OwnAndMissing.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js)<br>[`ControlFlow_ForIn_Object_Basic.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js) | Implemented by runtime helper for object literals (ExpandoObject), arrays, typed arrays, and strings. Prototype chain traversal is supported when prototype-chain mode is enabled; symbols are not supported. |
 
 ### 7.3.13 ([tc39.es](https://tc39.es/ecma262/#sec-call))
 

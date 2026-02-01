@@ -9,6 +9,7 @@ using Js2IL.Services.Contracts;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
+using Js2IL.Validation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services
@@ -87,6 +88,15 @@ namespace Js2IL.Services
                 emitDebuggerDisplay: compileOptions.EmitPdb);
 
             var moduleList = modules._modules.Values.ToList();
+
+            // Prototype-chain behavior is opt-in: only enable it when explicitly requested by options
+            // or when the script clearly uses prototype-related features.
+            compileOptions.PrototypeChainEnabled = compileOptions.PrototypeChain switch
+            {
+                PrototypeChainMode.On => true,
+                PrototypeChainMode.Off => false,
+                _ => moduleList.Any(m => PrototypeFeatureDetector.UsesPrototypeFeatures(m.Ast))
+            };
 
             // Multi-module assemblies must keep TypeDef.MethodList monotonic across the entire TypeDef table.
             // Additionally, nested types must have their enclosing TypeDef created earlier in the TypeDef table

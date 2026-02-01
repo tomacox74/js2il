@@ -311,7 +311,7 @@
         "testScripts": [
           "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js"
         ],
-        "notes": "Implements key in obj via JavaScriptRuntime.Object.HasPropertyIn. Supports own properties on ExpandoObject/object literals and numeric/string keys; does not yet traverse prototype chain or throw TypeError for non-object RHS beyond null/undefined."
+        "notes": "Implements key in obj via JavaScriptRuntime.Operators.In / runtime helpers. Supports own-property checks for ExpandoObject/object literals and array-like indices, with optional prototype-chain traversal when prototype-chain mode is enabled. Does not yet implement full spec TypeError behavior for non-object RHS beyond null/undefined and does not support symbols."
       },
       {
         "clause": "13.5.16",

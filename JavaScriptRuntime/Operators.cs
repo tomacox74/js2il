@@ -256,36 +256,68 @@ namespace JavaScriptRuntime
             // Convert property to string
             var propName = DotNet2JSConversions.ToString(property);
             
-            // Check if object has the property
-            if (obj is System.Collections.IDictionary dict)
+            static bool HasOwn(object target, string name)
             {
-                return dict.Contains(propName);
+                if (target is System.Collections.IDictionary dict)
+                {
+                    return dict.Contains(name);
+                }
+
+                // For arrays, check if index exists
+                if (target is object?[] array)
+                {
+                    if (int.TryParse(name, out var index))
+                    {
+                        return index >= 0 && index < array.Length;
+                    }
+                    return false;
+                }
+
+                // For generic objects (ExpandoObject, dynamic objects)
+                if (target is System.Dynamic.ExpandoObject expando)
+                {
+                    var dict2 = (System.Collections.Generic.IDictionary<string, object?>)expando;
+                    return dict2.ContainsKey(name);
+                }
+
+                // Fallback: check using reflection (not cached - see performance note above)
+                var type = target.GetType();
+                var prop = type.GetProperty(name);
+                if (prop != null)
+                    return true;
+                var field = type.GetField(name);
+                return field != null;
             }
 
-            // For arrays, check if index exists
-            if (obj is object?[] array)
+            if (HasOwn(obj, propName))
             {
-                if (int.TryParse(propName, out var index))
-                {
-                    return index >= 0 && index < array.Length;
-                }
+                return true;
+            }
+
+            if (!JavaScriptRuntime.PrototypeChain.Enabled)
+            {
                 return false;
             }
 
-            // For generic objects (ExpandoObject, dynamic objects)
-            if (obj is System.Dynamic.ExpandoObject expando)
+            var visited = new System.Collections.Generic.HashSet<object>(System.Collections.Generic.ReferenceEqualityComparer.Instance);
+            object? current = obj;
+            while (current != null && visited.Add(current))
             {
-                var dict2 = (System.Collections.Generic.IDictionary<string, object?>)expando;
-                return dict2.ContainsKey(propName);
+                var proto = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
+                if (proto is null || proto is JsNull)
+                {
+                    return false;
+                }
+
+                if (HasOwn(proto, propName))
+                {
+                    return true;
+                }
+
+                current = proto;
             }
 
-            // Fallback: check using reflection (not cached - see performance note above)
-            var type = obj.GetType();
-            var prop = type.GetProperty(propName);
-            if (prop != null)
-                return true;
-            var field = type.GetField(propName);
-            return field != null;
+            return false;
         }
 
         /// <summary>

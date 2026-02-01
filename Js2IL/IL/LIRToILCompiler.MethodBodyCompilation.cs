@@ -80,6 +80,23 @@ internal sealed partial class LIRToILCompiler
             ilEncoder.Call(_bclReferences.Object_Ctor_Ref);
         }
 
+        // Opt-in prototype chain support: enable runtime behavior only when the compiler detected
+        // prototype-related usage (or the user forced it via options). Emit this once per module init.
+        if (string.Equals(methodDescriptor.Name, "__js_module_init__", StringComparison.Ordinal))
+        {
+            var options = _serviceProvider.GetService<CompilerOptions>();
+            if (options?.PrototypeChainEnabled == true)
+            {
+                var enableProto = _memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.PrototypeChain),
+                    nameof(JavaScriptRuntime.PrototypeChain.Enable),
+                    parameterTypes: Type.EmptyTypes);
+
+                ilEncoder.OpCode(ILOpCode.Call);
+                ilEncoder.Token(enableProto);
+            }
+        }
+
         // NOTE: For async functions, the state switch is emitted AFTER LIRCreateLeafScopeInstance
         // because we need the scope instance to be in local 0 first (either newly created or
         // loaded from arg.0[0] on resume). The state switch is emitted inline with that instruction.

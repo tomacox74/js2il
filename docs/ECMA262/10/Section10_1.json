@@ -12,25 +12,25 @@
     {
       "clause": "10.1.1",
       "title": "[[GetPrototypeOf]] ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getprototypeof"
     },
     {
       "clause": "10.1.1.1",
       "title": "OrdinaryGetPrototypeOf ( O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinarygetprototypeof"
     },
     {
       "clause": "10.1.2",
       "title": "[[SetPrototypeOf]] ( V )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-setprototypeof-v"
     },
     {
       "clause": "10.1.2.1",
       "title": "OrdinarySetPrototypeOf ( O , V )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinarysetprototypeof"
     },
     {
@@ -196,7 +196,17 @@
           "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js",
           "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js"
         ],
-        "notes": "Supports a pragmatic subset of [[Get]]/[[Set]]/[[HasProperty]] over ExpandoObject/object literals and reflection-backed host objects. Full internal-slot and descriptor mechanics are not implemented."
+        "notes": "Supports a pragmatic subset of [[Get]]/[[Set]]/[[HasProperty]] over ExpandoObject/object literals and reflection-backed host objects. Prototype-chain lookup is supported when prototype-chain mode is enabled. Full internal-slot and descriptor mechanics are not implemented."
+      },
+      {
+        "clause": "10.1.1",
+        "feature": "[[GetPrototypeOf]]/[[SetPrototypeOf]] (prototype chain storage + lookup)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getprototypeof",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js"
+        ],
+        "notes": "JS2IL does not implement ECMAScript internal slots directly; instead, when prototype-chain mode is enabled, JavaScriptRuntime.PrototypeChain stores an optional prototype reference in a side-table and runtime property helpers walk that chain on misses. Extensibility/invariant checks and exotic objects are not modeled."
       },
       {
         "clause": "10.1.6",
