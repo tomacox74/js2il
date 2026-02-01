@@ -27,6 +27,10 @@ public class Js2ILArgs
     [ArgShortcut("a")]
     public bool AnalyzeUnused { get; set; }
 
+    [ArgDescription("Emit Portable PDB debug symbols (.pdb) alongside the generated assembly")]
+    [ArgShortcut("--pdb")]
+    public bool EmitPdb { get; set; }
+
     [ArgDescription("Show version information and exit")]
     [ArgShortcut("--version")]
     public bool Version { get; set; }
@@ -61,7 +65,8 @@ class Program
             {
                 OutputDirectory = parsed.OutputPath,
                 Verbose = parsed.Verbose,
-                AnalyzeUnused = parsed.AnalyzeUnused
+                AnalyzeUnused = parsed.AnalyzeUnused,
+                EmitPdb = parsed.EmitPdb
             });
             var logger = servicesProvider.GetRequiredService<ILogger>();
 
@@ -108,6 +113,7 @@ class Program
         logger.WriteLineError("-o, --output           The output directory for the generated IL (created if missing)");
         logger.WriteLineError("-v, --verbose          Enable verbose output");
         logger.WriteLineError("-a, --analyzeunused    Analyze and report unused properties and methods");
+        logger.WriteLineError("--pdb                  Emit Portable PDB debug symbols (.pdb)");
         logger.WriteLineError("--version              Show version information and exit");
         logger.WriteLineError("-h, -?, --help         Show help and exit");
     }

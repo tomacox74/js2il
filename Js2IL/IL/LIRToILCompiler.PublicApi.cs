@@ -5,6 +5,7 @@ using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Services.VariableBindings;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
+using Js2IL.DebugSymbols;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -13,6 +14,11 @@ namespace Js2IL.IL;
 
 internal sealed partial class LIRToILCompiler
 {
+    private List<MethodSequencePoint>? _sequencePoints;
+    private StandaloneSignatureHandle _localVariablesSignature;
+    private int _ilLength;
+    private DebugSymbolRegistry.MethodLocal[]? _locals;
+
     #region Public API
 
     /// <summary>
@@ -44,6 +50,14 @@ internal sealed partial class LIRToILCompiler
 
         var methodAttributes = ComputeMethodAttributes(methodDescriptor);
 
+        var points = _sequencePoints?.ToArray() ?? Array.Empty<MethodSequencePoint>();
+        _serviceProvider.GetService<DebugSymbolRegistry>()?.SetMethodDebugInfo(
+            expectedMethodDef,
+            points,
+            _localVariablesSignature,
+            _ilLength,
+            _locals ?? Array.Empty<DebugSymbolRegistry.MethodLocal>());
+
         var result = new CompiledCallableBody
         {
             Callable = callable,
@@ -52,7 +66,8 @@ internal sealed partial class LIRToILCompiler
             Attributes = methodAttributes,
             Signature = methodSig,
             BodyOffset = bodyOffset,
-            ParameterNames = methodDescriptor.Parameters.Select(p => p.Name).ToArray()
+            ParameterNames = methodDescriptor.Parameters.Select(p => p.Name).ToArray(),
+            SequencePoints = points
         };
         result.Validate();
         return result;
@@ -93,6 +108,14 @@ internal sealed partial class LIRToILCompiler
             methodDescriptor.Name,
             methodSig,
             bodyOffset);
+
+        var points = _sequencePoints?.ToArray() ?? Array.Empty<MethodSequencePoint>();
+        _serviceProvider.GetService<DebugSymbolRegistry>()?.SetMethodDebugInfo(
+            methodDefinitionHandle,
+            points,
+            _localVariablesSignature,
+            _ilLength,
+            _locals ?? Array.Empty<DebugSymbolRegistry.MethodLocal>());
 
         // Add parameter names to metadata (sequence starts at 1 for first parameter)
         int sequence = 1;

@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Metadata;
+using Js2IL.DebugSymbols;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -28,6 +29,12 @@ public sealed record CompiledCallableBody
     public required int BodyOffset { get; init; }
 
     public required string[] ParameterNames { get; init; }
+
+    /// <summary>
+    /// IL offset → source span mappings for this method (statement-level for now).
+    /// Populated during IL emission and later consumed by Portable PDB generation.
+    /// </summary>
+    public MethodSequencePoint[] SequencePoints { get; init; } = Array.Empty<MethodSequencePoint>();
 
     public void Validate()
     {
