@@ -12,10 +12,10 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 10.1.1 | [[GetPrototypeOf]] ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getprototypeof) |
-| 10.1.1.1 | OrdinaryGetPrototypeOf ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ordinarygetprototypeof) |
-| 10.1.2 | [[SetPrototypeOf]] ( V ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-setprototypeof-v) |
-| 10.1.2.1 | OrdinarySetPrototypeOf ( O , V ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ordinarysetprototypeof) |
+| 10.1.1 | [[GetPrototypeOf]] ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getprototypeof) |
+| 10.1.1.1 | OrdinaryGetPrototypeOf ( O ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ordinarygetprototypeof) |
+| 10.1.2 | [[SetPrototypeOf]] ( V ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-setprototypeof-v) |
+| 10.1.2.1 | OrdinarySetPrototypeOf ( O , V ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ordinarysetprototypeof) |
 | 10.1.3 | [[IsExtensible]] ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-isextensible) |
 | 10.1.3.1 | OrdinaryIsExtensible ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ordinaryisextensible) |
 | 10.1.4 | [[PreventExtensions]] ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-preventextensions) |
@@ -50,7 +50,8 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Ordinary object property get/set (object literals + host objects) | Supported with Limitations | [`ObjectLiteral_PropertyAssign.js`](../../../Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js)<br>[`Variable_AssignmentTargets_MemberAndIndex.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js)<br>[`BinaryOperator_In_Object_OwnAndMissing.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js) | Supports a pragmatic subset of [[Get]]/[[Set]]/[[HasProperty]] over ExpandoObject/object literals and reflection-backed host objects. Full internal-slot and descriptor mechanics are not implemented. |
+| [[GetPrototypeOf]]/[[SetPrototypeOf]] (prototype chain storage + lookup) | Supported with Limitations | [`PrototypeChain_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js) | JS2IL does not implement ECMAScript internal slots directly; instead, when prototype-chain mode is enabled, JavaScriptRuntime.PrototypeChain stores an optional prototype reference in a side-table and runtime property helpers walk that chain on misses. Extensibility/invariant checks and exotic objects are not modeled. |
+| Ordinary object property get/set (object literals + host objects) | Supported with Limitations | [`ObjectLiteral_PropertyAssign.js`](../../../Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js)<br>[`Variable_AssignmentTargets_MemberAndIndex.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js)<br>[`BinaryOperator_In_Object_OwnAndMissing.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js) | Supports a pragmatic subset of [[Get]]/[[Set]]/[[HasProperty]] over ExpandoObject/object literals and reflection-backed host objects. Prototype-chain lookup is supported when prototype-chain mode is enabled. Full internal-slot and descriptor mechanics are not implemented. |
 
 ### 10.1.6 ([tc39.es](https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-defineownproperty-p-desc))
 

@@ -20,5 +20,8 @@ namespace Js2IL.Tests.Object
 
         [Fact]
         public Task ObjectLiteral_ShorthandAndMethod() { var testName = nameof(ObjectLiteral_ShorthandAndMethod); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task PrototypeChain_Basic() { var testName = nameof(PrototypeChain_Basic); return ExecutionTest(testName); }
     }
 }

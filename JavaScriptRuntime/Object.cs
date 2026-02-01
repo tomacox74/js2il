@@ -11,6 +11,72 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Object", IntrinsicCallKind.ObjectConstruct)]
     public class Object
     {
+        private static bool IsObjectLikeForPrototype(object value)
+        {
+            // JS null/undefined are not objects.
+            if (value is null) return false;
+            if (value is JsNull) return false;
+
+            // JS primitives (string/number/boolean/etc) are not objects.
+            if (value is string) return false;
+            if (value.GetType().IsValueType) return false;
+
+            return true;
+        }
+
+        private static bool IsValidPrototypeValue(object? value)
+        {
+            // In JS, [[Prototype]] must be an object or null.
+            if (value is JsNull) return true;
+            return TypeUtilities.IsConstructorReturnOverride(value);
+        }
+
+        /// <summary>
+        /// Minimal implementation of <c>Object.getPrototypeOf(obj)</c>.
+        /// Note: this runtime does not currently model a default Object.prototype; if no prototype
+        /// has been explicitly assigned, this returns CLR null (the runtime's representation of
+        /// JavaScript <c>undefined</c>).
+        /// </summary>
+        public static object? getPrototypeOf(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+            if (!IsObjectLikeForPrototype(obj))
+            {
+                throw new TypeError("Object.getPrototypeOf called on non-object");
+            }
+
+            // Calling getPrototypeOf is itself an opt-in signal.
+            PrototypeChain.Enable();
+
+            return PrototypeChain.TryGetPrototype(obj, out var prototype) ? prototype : null;
+        }
+
+        /// <summary>
+        /// Minimal implementation of <c>Object.setPrototypeOf(obj, proto)</c>.
+        /// Returns the target object.
+        /// </summary>
+        public static object setPrototypeOf(object obj, object? prototype)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+            if (!IsObjectLikeForPrototype(obj))
+            {
+                throw new TypeError("Object.setPrototypeOf called on non-object");
+            }
+            if (!IsValidPrototypeValue(prototype))
+            {
+                throw new TypeError("Object prototype may only be an Object or null");
+            }
+
+            PrototypeChain.SetPrototype(obj, prototype);
+            return obj;
+        }
+
         /// <summary>
         /// Implements the JavaScript Object() callable semantics: returns a new empty object.
         /// </summary>
@@ -228,24 +294,20 @@ namespace JavaScriptRuntime
             // 3) ExpandoObject (object literal): properties may contain function delegates
             if (receiver is System.Dynamic.ExpandoObject exp)
             {
-                var dict = (IDictionary<string, object?>)exp;
-                if (dict.TryGetValue(methodName, out var propValue) && propValue != null)
+                var propValue = GetProperty(receiver, methodName);
+                if (propValue is Delegate)
                 {
-                    // If the property value is a delegate, invoke it using Closure.InvokeWithArgs
-                    if (propValue is Delegate)
+                    var previousThis = RuntimeServices.SetCurrentThis(receiver);
+                    try
                     {
-                        var previousThis = RuntimeServices.SetCurrentThis(receiver);
-                        try
-                        {
-                            return Closure.InvokeWithArgs(propValue, System.Array.Empty<object>(), callArgs);
-                        }
-                        finally
-                        {
-                            RuntimeServices.SetCurrentThis(previousThis);
-                        }
+                        return Closure.InvokeWithArgs(propValue, System.Array.Empty<object>(), callArgs);
                     }
-                    throw new TypeError($"{methodName} is not a function");
+                    finally
+                    {
+                        RuntimeServices.SetCurrentThis(previousThis);
+                    }
                 }
+
                 throw new TypeError($"{methodName} is not a function");
             }
 
@@ -284,6 +346,123 @@ namespace JavaScriptRuntime
             return DotNet2JSConversions.ToString(key);
         }
 
+        private static bool TryGetOwnPropertyValue(object target, string propName, out object? value)
+        {
+            // ExpandoObject properties
+            if (target is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                return dict.TryGetValue(propName, out value);
+            }
+
+            // JavaScriptRuntime.Array / typed arrays: no custom properties yet
+            if (target is Array || target is Int32Array)
+            {
+                value = null;
+                return false;
+            }
+
+            static bool TryGetValue(Type type, object instance, string name, out object? result)
+            {
+                var prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public);
+                if (prop != null && prop.CanRead)
+                {
+                    result = prop.GetValue(instance);
+                    return true;
+                }
+
+                var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public);
+                if (field != null)
+                {
+                    result = field.GetValue(instance);
+                    return true;
+                }
+
+                var baseType = type.BaseType;
+                if (baseType != null && baseType != typeof(object))
+                {
+                    return TryGetValue(baseType, instance, name, out result);
+                }
+
+                result = null;
+                return false;
+            }
+
+            try
+            {
+                return TryGetValue(target.GetType(), target, propName, out value);
+            }
+            catch
+            {
+                value = null;
+                return false;
+            }
+        }
+
+        private static bool TryGetInheritedPropertyValue(object receiver, string propName, out object? value)
+        {
+            value = null;
+
+            if (!PrototypeChain.Enabled)
+            {
+                return false;
+            }
+
+            var current = receiver;
+            var proto = PrototypeChain.GetPrototypeOrNull(current);
+            if (proto is null || proto is JsNull)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(proto, receiver))
+            {
+                return false;
+            }
+
+            if (TryGetOwnPropertyValue(proto, propName, out value))
+            {
+                return true;
+            }
+
+            current = proto;
+            proto = PrototypeChain.GetPrototypeOrNull(current);
+            if (proto is null || proto is JsNull)
+            {
+                value = null;
+                return false;
+            }
+
+            // Only allocate cycle-detection state if there is a chain to walk.
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance)
+            {
+                receiver,
+                current
+            };
+
+            while (true)
+            {
+                if (!visited.Add(proto))
+                {
+                    value = null;
+                    return false;
+                }
+
+                if (TryGetOwnPropertyValue(proto, propName, out value))
+                {
+                    return true;
+                }
+
+                current = proto;
+                proto = PrototypeChain.GetPrototypeOrNull(current);
+                if (proto is null || proto is JsNull)
+                {
+                    value = null;
+                    return false;
+                }
+            }
+        }
+
         public static object GetItem(object obj, object index)
         {
             // If the key is a Symbol (or a non-numeric string), it must be treated as a property key.
@@ -299,6 +478,18 @@ namespace JavaScriptRuntime
                     {
                         return value!;
                     }
+
+                    // Legacy __proto__ accessor (opt-in)
+                    if (PrototypeChain.Enabled && string.Equals(propName, "__proto__", StringComparison.Ordinal))
+                    {
+                        return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto! : null!;
+                    }
+
+                    if (TryGetInheritedPropertyValue(obj, propName, out var inherited))
+                    {
+                        return inherited!;
+                    }
+
                     return null!;
                 }
 
@@ -315,6 +506,18 @@ namespace JavaScriptRuntime
                     {
                         return value!;
                     }
+
+                    // Legacy __proto__ accessor (opt-in)
+                    if (PrototypeChain.Enabled && string.Equals(sKey, "__proto__", StringComparison.Ordinal))
+                    {
+                        return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto! : null!;
+                    }
+
+                    if (TryGetInheritedPropertyValue(obj, sKey, out var inherited))
+                    {
+                        return inherited!;
+                    }
+
                     return null!;
                 }
 
@@ -481,6 +684,18 @@ namespace JavaScriptRuntime
             if (obj is System.Dynamic.ExpandoObject exp)
             {
                 var dict = (IDictionary<string, object?>)exp;
+
+                // Legacy __proto__ mutator (opt-in). In JS, setting __proto__ changes [[Prototype]]
+                // when the RHS is an object or null; otherwise it is ignored.
+                if (PrototypeChain.Enabled && string.Equals(propName, "__proto__", StringComparison.Ordinal))
+                {
+                    if (IsValidPrototypeValue(value))
+                    {
+                        PrototypeChain.SetPrototype(obj, value);
+                    }
+                    return value;
+                }
+
                 dict[propName] = value;
                 return value;
             }
@@ -1708,58 +1923,19 @@ namespace JavaScriptRuntime
         {
             // Null/undefined -> undefined (modeled as null)
             if (obj is null) return null;
-            // ExpandoObject properties
-            if (obj is System.Dynamic.ExpandoObject exp)
+
+            // Legacy __proto__ accessor (opt-in)
+            if (PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
             {
-                var dict = (IDictionary<string, object?>)exp;
-                if (dict.TryGetValue(name, out var value))
-                {
-                    return value;
-                }
-                return null; // closest to JS undefined for now
+                return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto : null;
             }
 
-            // JavaScriptRuntime.Array: expose known properties via dot (length handled elsewhere)
-            if (obj is Array || obj is Int32Array)
+            if (TryGetOwnPropertyValue(obj, name, out var ownValue))
             {
-                // No custom properties yet; return null as missing
-                return null;
+                return ownValue;
             }
 
-            object? GetValue(Type type)
-            {
-                var prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public);
-                if (prop != null && prop.CanRead)
-                {
-                    return prop.GetValue(obj);
-                }
-                var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public);
-                if (field != null)
-                {
-                    return field.GetValue(obj);
-                }
-
-                var baseType = type.BaseType;
-                if (baseType != null && baseType != typeof(object))
-                {
-                    return GetValue(baseType);
-                }
-
-                return null;
-            }
-
-            // Reflection fallback: expose public instance properties/fields of host objects
-            try
-            {
-                return GetValue(obj.GetType());
-            }
-            catch
-            {
-                // Swallow and return undefined/null on reflection failures
-            }
-
-            // Property not found; return undefined (null)
-            return null;
+            return TryGetInheritedPropertyValue(obj, name, out var inherited) ? inherited : null;
         }
 
         /// <summary>
@@ -1774,6 +1950,17 @@ namespace JavaScriptRuntime
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
             if (string.IsNullOrEmpty(name)) return value;
+
+            // Legacy __proto__ mutator (opt-in). In JS, setting __proto__ changes [[Prototype]]
+            // when the RHS is an object or null; otherwise it is ignored.
+            if (PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
+            {
+                if (IsValidPrototypeValue(value))
+                {
+                    PrototypeChain.SetPrototype(obj, value);
+                }
+                return value;
+            }
 
             // ExpandoObject support
             if (obj is System.Dynamic.ExpandoObject exp)
@@ -2025,53 +2212,118 @@ namespace JavaScriptRuntime
                 _ => DotNet2JSConversions.ToString(key)
             } ?? string.Empty;
 
-            // ExpandoObject (object literal)
-            if (obj is System.Dynamic.ExpandoObject exp)
+            static bool HasOwnProperty(object target, string name)
             {
-                var dict = (IDictionary<string, object?>)exp;
-                return dict.ContainsKey(propName);
-            }
-
-            // JS Array (numeric indexes + length)
-            if (obj is Array jsArr)
-            {
-                if (propName == "length") return true;
-                if (int.TryParse(propName, out var ai))
+                // ExpandoObject (object literal)
+                if (target is System.Dynamic.ExpandoObject exp)
                 {
-                    return ai >= 0 && ai < jsArr.length;
+                    var dict = (IDictionary<string, object?>)exp;
+                    return dict.ContainsKey(name);
                 }
+
+                // JS Array (numeric indexes + length)
+                if (target is Array jsArr)
+                {
+                    if (name == "length") return true;
+                    if (int.TryParse(name, out var ai))
+                    {
+                        return ai >= 0 && ai < jsArr.length;
+                    }
+                    return false;
+                }
+
+                // Int32Array (typed array minimal support)
+                if (target is Int32Array i32)
+                {
+                    if (name == "length") return true;
+                    if (int.TryParse(name, out var ti))
+                    {
+                        return ti >= 0 && ti < i32.length;
+                    }
+                    return false;
+                }
+
+                // string (indices + length)
+                if (target is string str)
+                {
+                    if (name == "length") return true;
+                    if (int.TryParse(name, out var si))
+                    {
+                        return si >= 0 && si < str.Length;
+                    }
+                    return false;
+                }
+
+                // Fallback: reflection public instance property/field presence
+                var type = target.GetType();
+                var pi = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                if (pi != null) return true;
+                var fi = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                if (fi != null) return true;
                 return false;
             }
 
-            // Int32Array (typed array minimal support)
-            if (obj is Int32Array i32)
+            if (HasOwnProperty(obj, propName))
             {
-                if (propName == "length") return true;
-                if (int.TryParse(propName, out var ti))
-                {
-                    return ti >= 0 && ti < i32.length;
-                }
+                return true;
+            }
+
+            if (!PrototypeChain.Enabled)
+            {
                 return false;
             }
 
-            // string (indices + length)
-            if (obj is string str)
+            // Avoid allocating cycle-detection state for the common case where no prototype
+            // has been assigned.
+            var current = obj;
+            var proto = PrototypeChain.GetPrototypeOrNull(current);
+            if (proto is null || proto is JsNull)
             {
-                if (propName == "length") return true;
-                if (int.TryParse(propName, out var si))
-                {
-                    return si >= 0 && si < str.Length;
-                }
                 return false;
             }
 
-            // Fallback: reflection public instance property/field presence
-            var type = obj.GetType();
-            var pi = type.GetProperty(propName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-            if (pi != null) return true;
-            var fi = type.GetField(propName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-            if (fi != null) return true;
-            return false;
+            if (ReferenceEquals(proto, obj))
+            {
+                return false;
+            }
+
+            if (HasOwnProperty(proto, propName))
+            {
+                return true;
+            }
+
+            current = proto;
+            proto = PrototypeChain.GetPrototypeOrNull(current);
+            if (proto is null || proto is JsNull)
+            {
+                return false;
+            }
+
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance)
+            {
+                obj,
+                current
+            };
+
+            while (true)
+            {
+                if (!visited.Add(proto))
+                {
+                    return false;
+                }
+
+                if (HasOwnProperty(proto, propName))
+                {
+                    return true;
+                }
+
+                current = proto;
+                proto = PrototypeChain.GetPrototypeOrNull(current);
+                if (proto is null || proto is JsNull)
+                {
+                    return false;
+                }
+            }
         }
     }
 }
