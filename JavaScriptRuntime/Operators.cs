@@ -299,12 +299,41 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var visited = new System.Collections.Generic.HashSet<object>(System.Collections.Generic.ReferenceEqualityComparer.Instance);
-            object? current = obj;
-            while (current != null && visited.Add(current))
+            // Avoid allocating cycle-detection state for the common case where no prototype
+            // has been assigned.
+            var current = obj;
+            var proto = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
+            if (proto is null || proto is JsNull)
             {
-                var proto = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
-                if (proto is null || proto is JsNull)
+                return false;
+            }
+
+            if (ReferenceEquals(proto, obj))
+            {
+                return false;
+            }
+
+            if (HasOwn(proto, propName))
+            {
+                return true;
+            }
+
+            current = proto;
+            proto = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
+            if (proto is null || proto is JsNull)
+            {
+                return false;
+            }
+
+            var visited = new System.Collections.Generic.HashSet<object>(System.Collections.Generic.ReferenceEqualityComparer.Instance)
+            {
+                obj,
+                current
+            };
+
+            while (true)
+            {
+                if (!visited.Add(proto))
                 {
                     return false;
                 }
@@ -315,9 +344,12 @@ namespace JavaScriptRuntime
                 }
 
                 current = proto;
+                proto = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
+                if (proto is null || proto is JsNull)
+                {
+                    return false;
+                }
             }
-
-            return false;
         }
 
         /// <summary>

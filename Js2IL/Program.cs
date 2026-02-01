@@ -31,6 +31,10 @@ public class Js2ILArgs
     [ArgShortcut("--pdb")]
     public bool EmitPdb { get; set; }
 
+    [ArgDescription("Prototype chain mode: Auto, On, or Off")]
+    [ArgShortcut("--prototypeChain")]
+    public PrototypeChainMode PrototypeChain { get; set; } = PrototypeChainMode.Auto;
+
     [ArgDescription("Show version information and exit")]
     [ArgShortcut("--version")]
     public bool Version { get; set; }
@@ -66,7 +70,8 @@ class Program
                 OutputDirectory = parsed.OutputPath,
                 Verbose = parsed.Verbose,
                 AnalyzeUnused = parsed.AnalyzeUnused,
-                EmitPdb = parsed.EmitPdb
+                EmitPdb = parsed.EmitPdb,
+                PrototypeChain = parsed.PrototypeChain
             });
             var logger = servicesProvider.GetRequiredService<ILogger>();
 
@@ -114,6 +119,7 @@ class Program
         logger.WriteLineError("-v, --verbose          Enable verbose output");
         logger.WriteLineError("-a, --analyzeunused    Analyze and report unused properties and methods");
         logger.WriteLineError("--pdb                  Emit Portable PDB debug symbols (.pdb)");
+        logger.WriteLineError("--prototypeChain        Prototype chain mode: Auto, On, or Off");
         logger.WriteLineError("--version              Show version information and exit");
         logger.WriteLineError("-h, -?, --help         Show help and exit");
     }
