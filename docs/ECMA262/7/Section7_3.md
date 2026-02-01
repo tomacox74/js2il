@@ -19,7 +19,7 @@
 | 7.3.5 | CreateDataProperty ( O , P , V ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-createdataproperty) |
 | 7.3.6 | CreateDataPropertyOrThrow ( O , P , V ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-createdatapropertyorthrow) |
 | 7.3.7 | CreateNonEnumerableDataPropertyOrThrow ( O , P , V ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-createnonenumerabledatapropertyorthrow) |
-| 7.3.8 | DefinePropertyOrThrow ( O , P , desc ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-definepropertyorthrow) |
+| 7.3.8 | DefinePropertyOrThrow ( O , P , desc ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-definepropertyorthrow) |
 | 7.3.9 | DeletePropertyOrThrow ( O , P ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-deletepropertyorthrow) |
 | 7.3.10 | GetMethod ( V , P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-getmethod) |
 | 7.3.11 | HasProperty ( O , P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-hasproperty) |
@@ -58,13 +58,19 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Property get on object literals and host objects | Supported with Limitations | [`JSON_Parse_SimpleObject.js`](../../../Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js)<br>[`Function_ClosureEscapesScope_ObjectLiteralProperty.js`](../../../Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js) | Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. Prototype chain lookup is supported when prototype-chain mode is enabled; symbols and full property descriptor semantics are not implemented. |
+| Property get on object literals and host objects | Supported with Limitations | [`JSON_Parse_SimpleObject.js`](../../../Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js)<br>[`Function_ClosureEscapesScope_ObjectLiteralProperty.js`](../../../Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js) | Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. When descriptor APIs are used, accessor getters and prototype chain lookup are supported via side-tables. Symbol-keyed properties and many exotic/internal-method behaviors are not implemented. |
 
 ### 7.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-set-o-p-v-throw))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Property set on object literals and host objects | Supported with Limitations | [`ObjectLiteral_PropertyAssign.js`](../../../Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js)<br>[`Variable_AssignmentTargets_MemberAndIndex.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js) | Supported via runtime set dispatch for ExpandoObject/object literals and reflection for host objects. Strict Throw behavior, descriptors, and prototype interactions are not implemented. |
+| Property set on object literals and host objects | Supported with Limitations | [`ObjectLiteral_PropertyAssign.js`](../../../Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js)<br>[`Variable_AssignmentTargets_MemberAndIndex.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js) | Supported via runtime set dispatch for ExpandoObject/object literals and reflection for host objects. When descriptor APIs are used, accessor setters and non-writable data properties are approximated via a side-table descriptor store; full Throw behavior, redefinition validation, and invariant checks are not implemented. |
+
+### 7.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-definepropertyorthrow))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| DefinePropertyOrThrow (approx.) | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectDefineProperty_Enumerable_ForIn.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js) | Approximated by JavaScriptRuntime.Object.defineProperty/defineProperties/create using a ConditionalWeakTable-backed descriptor store. Supports defining data and accessor descriptors and respecting enumerable:false for for..in enumeration. Many spec validation and invariant checks (including strict throw behavior) are not implemented. |
 
 ### 7.3.11 ([tc39.es](https://tc39.es/ecma262/#sec-hasproperty))
 

@@ -1,0 +1,178 @@
+﻿// IL code: ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x217e
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 290 (0x122)
+		.maxstack 32
+		.locals init (
+			[0] class Modules.ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor/Scope,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] bool,
+			[5] object
+		)
+
+		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
+		IL_0005: newobj instance void Modules.ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor/Scope::.ctor()
+		IL_000a: stloc.0
+		IL_000b: ldc.i4.0
+		IL_000c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Object::create(object)
+		IL_0016: stloc.1
+		IL_0017: ldloc.1
+		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+		IL_001d: stloc.3
+		IL_001e: ldloc.3
+		IL_001f: ldc.i4.0
+		IL_0020: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0025: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_002a: stloc.s 4
+		IL_002c: ldloc.s 4
+		IL_002e: box [System.Runtime]System.Boolean
+		IL_0033: stloc.s 5
+		IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldloc.s 5
+		IL_0044: stelem.ref
+		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004a: pop
+		IL_004b: ldloc.1
+		IL_004c: ldstr "toString"
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0056: ldnull
+		IL_0057: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_005c: stloc.s 4
+		IL_005e: ldloc.s 4
+		IL_0060: box [System.Runtime]System.Boolean
+		IL_0065: stloc.s 5
+		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006c: ldc.i4.1
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: dup
+		IL_0073: ldc.i4.0
+		IL_0074: ldloc.s 5
+		IL_0076: stelem.ref
+		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007c: pop
+		IL_007d: ldloc.1
+		IL_007e: ldstr "x"
+		IL_0083: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0088: dup
+		IL_0089: ldstr "value"
+		IL_008e: ldc.r8 1
+		IL_0097: box [System.Runtime]System.Double
+		IL_009c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00a1: dup
+		IL_00a2: ldstr "enumerable"
+		IL_00a7: ldc.i4.1
+		IL_00a8: box [System.Runtime]System.Boolean
+		IL_00ad: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_00b7: pop
+		IL_00b8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bd: ldc.i4.1
+		IL_00be: newarr [System.Runtime]System.Object
+		IL_00c3: dup
+		IL_00c4: ldc.i4.0
+		IL_00c5: ldloc.1
+		IL_00c6: ldstr "x"
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00d0: stelem.ref
+		IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00d6: pop
+		IL_00d7: ldloc.1
+		IL_00d8: ldstr "x"
+		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyDescriptor(object, object)
+		IL_00e2: stloc.2
+		IL_00e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e8: ldc.i4.1
+		IL_00e9: newarr [System.Runtime]System.Object
+		IL_00ee: dup
+		IL_00ef: ldc.i4.0
+		IL_00f0: ldloc.2
+		IL_00f1: ldstr "value"
+		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00fb: stelem.ref
+		IL_00fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0101: pop
+		IL_0102: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0107: ldc.i4.1
+		IL_0108: newarr [System.Runtime]System.Object
+		IL_010d: dup
+		IL_010e: ldc.i4.0
+		IL_010f: ldloc.2
+		IL_0110: ldstr "enumerable"
+		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_011a: stelem.ref
+		IL_011b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0120: pop
+		IL_0121: ret
+	} // end of method ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor::__js_module_init__
+
+} // end of class Modules.ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2187
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -23,5 +23,17 @@ namespace Js2IL.Tests.Object
 
         [Fact]
         public Task PrototypeChain_Basic() { var testName = nameof(PrototypeChain_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor() { var testName = nameof(ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ObjectDefineProperty_Accessor() { var testName = nameof(ObjectDefineProperty_Accessor); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ObjectDefineProperty_Enumerable_ForIn() { var testName = nameof(ObjectDefineProperty_Enumerable_ForIn); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ObjectCreate_WithPropertyDescriptors() { var testName = nameof(ObjectCreate_WithPropertyDescriptors); return ExecutionTest(testName); }
     }
 }
