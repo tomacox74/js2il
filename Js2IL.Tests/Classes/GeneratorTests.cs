@@ -203,5 +203,8 @@ namespace Js2IL.Tests.Classes
 
         // #505: derived class extending intrinsic Array must compile.
         [Fact] public Task Classes_IntrinsicInheritance_ExtendsArray_SuperLength() { var testName = nameof(Classes_IntrinsicInheritance_ExtendsArray_SuperLength); return GenerateTest(testName); }
+
+        // #505: super() with no args should compile and initialize Array correctly.
+        [Fact] public Task Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs() { var testName = nameof(Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs); return GenerateTest(testName); }
     }
 }
