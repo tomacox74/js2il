@@ -144,7 +144,15 @@ internal static class ExportMemberResolver
     {
         var callArgs = NormalizeArgs(args);
 
-        var parameters = d.Method.GetParameters();
+        // IMPORTANT:
+        // Use the delegate type's Invoke signature, not d.Method.
+        // For open-instance delegates, d.Method.GetParameters() omits the receiver
+        // (because it's an instance method), but Delegate.DynamicInvoke expects the
+        // full Invoke parameter list (which includes the receiver).
+        var invokeMethod = d.GetType().GetMethod("Invoke")
+            ?? throw new ArgumentException($"Delegate type '{d.GetType()}' does not define Invoke().", nameof(d));
+
+        var parameters = invokeMethod.GetParameters();
         if (parameters.Length == 0)
         {
             return d.DynamicInvoke(Array.Empty<object?>());

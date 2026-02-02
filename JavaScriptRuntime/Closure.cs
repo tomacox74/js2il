@@ -65,8 +65,15 @@ namespace JavaScriptRuntime
                 finalArgs[finalIndex++] = i < args.Length ? args[i] : null;
             }
 
-            // Delegate.DynamicInvoke returns boxed value types; null for void.
-            return target.DynamicInvoke(finalArgs)!;
+            try
+            {
+                // Delegate.DynamicInvoke returns boxed value types; null for void.
+                return target.DynamicInvoke(finalArgs)!;
+            }
+            catch (TargetInvocationException tie) when (tie.InnerException != null)
+            {
+                throw tie.InnerException;
+            }
         }
 
         private static Delegate CreateBoundDelegate(Delegate target, object[] boundScopes, object? boundThis)
