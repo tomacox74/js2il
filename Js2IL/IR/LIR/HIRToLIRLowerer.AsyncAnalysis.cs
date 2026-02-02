@@ -2,6 +2,7 @@ using Acornima.Ast;
 using Js2IL.HIR;
 using Js2IL.Services;
 using Js2IL.Services.ScopesAbi;
+using System.Linq;
 using TwoPhase = Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Utilities;
 using Js2IL.SymbolTables;
@@ -120,9 +121,10 @@ public sealed partial class HIRToLIRLowerer
                 count += CountAwaitExpressionsInExpression(condExpr.Alternate);
                 break;
             case HIRArrayExpression arrayExpr:
-                foreach (var elem in arrayExpr.Elements)
-                    if (elem != null)
-                        count += CountAwaitExpressionsInExpression(elem);
+                foreach (var elem in arrayExpr.Elements.Where(static elem => elem != null))
+                {
+                    count += CountAwaitExpressionsInExpression(elem!);
+                }
                 break;
             case HIRObjectExpression objExpr:
                 foreach (var member in objExpr.Members)

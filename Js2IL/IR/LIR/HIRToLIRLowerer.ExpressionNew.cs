@@ -355,15 +355,9 @@ public sealed partial class HIRToLIRLowerer
         // Build a stable CallableId for the constructor so LIR remains AST-free.
         // This mirrors CallableDiscovery.DiscoverClass.
         var moduleName = rootScope.Name;
-        string declaringScopeName;
-        if (classScope.Parent == null || classScope.Parent.Kind == ScopeKind.Global)
-        {
-            declaringScopeName = moduleName;
-        }
-        else
-        {
-            declaringScopeName = $"{moduleName}/{classScope.Parent.GetQualifiedName()}";
-        }
+        string declaringScopeName = (classScope.Parent == null || classScope.Parent.Kind == ScopeKind.Global)
+            ? moduleName
+            : $"{moduleName}/{classScope.Parent.GetQualifiedName()}";
 
         var className = classDecl.Id is Identifier cid ? cid.Name : classScope.Name;
         var ctorCallableId = new TwoPhase.CallableId

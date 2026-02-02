@@ -49,8 +49,10 @@ public sealed partial class HIRToLIRLowerer
                 FieldName: propAccessExpr.PropertyName,
                 IsPrivateField: false,
                 Result: resultTempVar));
-            var fieldClrType = typeof(object);
-            _classRegistry.TryGetFieldClrType(currentClass, propAccessExpr.PropertyName, out fieldClrType);
+            if (!_classRegistry.TryGetFieldClrType(currentClass, propAccessExpr.PropertyName, out var fieldClrType))
+            {
+                fieldClrType = typeof(object);
+            }
             var storageKind = (fieldClrType == typeof(double)
                 || fieldClrType == typeof(bool)
                 || fieldClrType == typeof(JavaScriptRuntime.JsNull))
@@ -220,8 +222,10 @@ public sealed partial class HIRToLIRLowerer
                 FieldName: literalFieldName,
                 IsPrivateField: false,
                 Result: resultTempVar));
-            var fieldClrType = typeof(object);
-            _classRegistry.TryGetFieldClrType(currentClass, literalFieldName, out fieldClrType);
+            if (!_classRegistry.TryGetFieldClrType(currentClass, literalFieldName, out var fieldClrType))
+            {
+                fieldClrType = typeof(object);
+            }
             var storageKind = (fieldClrType == typeof(double)
                 || fieldClrType == typeof(bool)
                 || fieldClrType == typeof(JavaScriptRuntime.JsNull))
@@ -245,15 +249,9 @@ public sealed partial class HIRToLIRLowerer
 
         var boxedObject = EnsureObject(objectTemp);
         var indexStorage = GetTempStorage(indexTemp);
-        TempVariable indexForGet;
-        if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
-        {
-            indexForGet = indexTemp;
-        }
-        else
-        {
-            indexForGet = EnsureObject(indexTemp);
-        }
+        TempVariable indexForGet = indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double)
+            ? indexTemp
+            : EnsureObject(indexTemp);
         _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, indexForGet, resultTempVar));
 
         // If the receiver is statically known to be an Int32Array and the index is numeric,

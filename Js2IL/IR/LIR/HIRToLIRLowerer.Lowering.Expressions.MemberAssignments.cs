@@ -177,8 +177,7 @@ public sealed partial class HIRToLIRLowerer
         {
             return false;
         }
-        TempVariable boxedIndex = default;
-        bool hasBoxedIndex = false;
+        TempVariable? boxedIndex = null;
 
         TempVariable valueToStore;
         if (assignExpr.Operator == Acornima.Operator.Assignment)
@@ -200,8 +199,7 @@ public sealed partial class HIRToLIRLowerer
             else
             {
                 boxedIndex = EnsureObject(indexTemp);
-                hasBoxedIndex = true;
-                indexForGet = boxedIndex;
+                indexForGet = boxedIndex.Value;
             }
 
             var current = CreateTempVariable();
@@ -232,12 +230,8 @@ public sealed partial class HIRToLIRLowerer
         }
         else
         {
-            if (!hasBoxedIndex)
-            {
-                boxedIndex = EnsureObject(indexTemp);
-                hasBoxedIndex = true;
-            }
-            indexForSet = boxedIndex;
+            boxedIndex ??= EnsureObject(indexTemp);
+            indexForSet = boxedIndex.Value;
         }
 
         if (!canUseNumericSetItem)

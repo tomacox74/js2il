@@ -270,7 +270,7 @@ public sealed partial class HIRToLIRLowerer
                 if (_environmentLayout != null)
                 {
                     var storage = _environmentLayout.GetStorage(binding);
-                    if (storage == null && _scope != null)
+                    if (storage == null && _scope != null && binding.IsCaptured)
                     {
                         // Fallback: if the environment layout didn't include this binding (e.g., due to
                         // a BindingInfo identity mismatch or overly-conservative storage map), try to
@@ -278,37 +278,34 @@ public sealed partial class HIRToLIRLowerer
                         //
                         // This is only valid for captured bindings that are stored as fields on their
                         // declaring scope type.
-                        if (binding.IsCaptured)
+                        var declaringScope = _scope;
+                        while (declaringScope != null)
                         {
-                            var declaringScope = _scope;
-                            while (declaringScope != null)
+                            if (declaringScope.Bindings.TryGetValue(binding.Name, out var candidate)
+                                && ReferenceEquals(candidate, binding))
                             {
-                                if (declaringScope.Bindings.TryGetValue(binding.Name, out var candidate)
-                                    && ReferenceEquals(candidate, binding))
-                                {
-                                    break;
-                                }
-                                declaringScope = declaringScope.Parent;
+                                break;
                             }
+                            declaringScope = declaringScope.Parent;
+                        }
 
-                            if (declaringScope != null)
+                        if (declaringScope != null)
+                        {
+                            var declaringRegistryName = ScopeNaming.GetRegistryScopeName(declaringScope);
+                            var scopeId = new ScopeId(declaringRegistryName);
+                            var fieldId = new FieldId(declaringRegistryName, binding.Name);
+
+                            if (!ReferenceEquals(declaringScope, _scope))
                             {
-                                var declaringRegistryName = ScopeNaming.GetRegistryScopeName(declaringScope);
-                                var scopeId = new ScopeId(declaringRegistryName);
-                                var fieldId = new FieldId(declaringRegistryName, binding.Name);
-
-                                if (!ReferenceEquals(declaringScope, _scope))
+                                var parentIndex = _environmentLayout.ScopeChain.IndexOf(declaringRegistryName);
+                                if (parentIndex >= 0)
                                 {
-                                    var parentIndex = _environmentLayout.ScopeChain.IndexOf(declaringRegistryName);
-                                    if (parentIndex >= 0)
-                                    {
-                                        storage = BindingStorage.ForParentScopeField(fieldId, scopeId, parentIndex);
-                                    }
+                                    storage = BindingStorage.ForParentScopeField(fieldId, scopeId, parentIndex);
                                 }
-                                else
-                                {
-                                    storage = BindingStorage.ForLeafScopeField(fieldId, scopeId);
-                                }
+                            }
+                            else
+                            {
+                                storage = BindingStorage.ForLeafScopeField(fieldId, scopeId);
                             }
                         }
                     }
@@ -555,8 +552,7 @@ public sealed partial class HIRToLIRLowerer
 
         foreach (var child in current.Children)
         {
-            var found = FindScopeByAstNode(astNode, child);
-            if (found != null)
+            if (FindScopeByAstNode(astNode, child) is { } found)
             {
                 return found;
             }

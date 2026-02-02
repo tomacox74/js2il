@@ -713,11 +713,13 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        foreach (var method in classDecl.Body.Body
+        foreach (var funcExpr in classDecl.Body.Body
             .OfType<MethodDefinition>()
-            .Where(m => m.Value is FunctionExpression && (m.Key as Identifier)?.Name != "constructor"))
+            .Where(m => (m.Key as Identifier)?.Name != "constructor")
+            .Select(m => m.Value)
+            .OfType<FunctionExpression>())
         {
-            if (method.Value is FunctionExpression funcExpr && MethodBodyRequiresParentScopes(funcExpr.Body, classScope))
+            if (MethodBodyRequiresParentScopes(funcExpr.Body, classScope))
             {
                 return true;
             }
@@ -822,12 +824,11 @@ public sealed partial class HIRToLIRLowerer
         var current = startScope;
         while (current != null)
         {
-            foreach (var child in current.Children)
+            foreach (var child in current.Children.Where(child =>
+                         child.Kind == ScopeKind.Class
+                         && string.Equals(child.Name, className, StringComparison.Ordinal)))
             {
-                if (child.Kind == ScopeKind.Class && string.Equals(child.Name, className, StringComparison.Ordinal))
-                {
-                    return child;
-                }
+                return child;
             }
 
             current = current.Parent;

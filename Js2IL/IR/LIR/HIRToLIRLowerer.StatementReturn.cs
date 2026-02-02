@@ -26,13 +26,13 @@ public sealed partial class HIRToLIRLowerer
 
             ctorReturnTemp = EnsureObject(ctorReturnTemp);
 
-            if (!TryGetEnclosingClassRegistryName(out var registryClassName) || registryClassName == null)
+            if (!TryGetEnclosingClassRegistryName(out var registryClassName))
             {
                 return false;
             }
 
             lirInstructions.Add(new LIRStoreUserClassInstanceField(
-                RegistryClassName: registryClassName,
+                RegistryClassName: registryClassName!,
                 FieldName: "__js2il_ctorReturn",
                 IsPrivateField: true,
                 Value: ctorReturnTemp));

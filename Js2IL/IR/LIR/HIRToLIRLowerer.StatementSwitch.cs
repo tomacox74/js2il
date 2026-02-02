@@ -71,12 +71,9 @@ public sealed partial class HIRToLIRLowerer
             for (int i = 0; i < switchStmt.Cases.Length; i++)
             {
                 lirInstructions.Add(new LIRLabel(caseLabels[i]));
-                foreach (var cons in switchStmt.Cases[i].Consequent)
+                if (!TryLowerStatements(switchStmt.Cases[i].Consequent))
                 {
-                    if (!TryLowerStatement(cons))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 

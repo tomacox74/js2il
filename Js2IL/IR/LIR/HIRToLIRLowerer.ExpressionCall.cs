@@ -632,28 +632,17 @@ public sealed partial class HIRToLIRLowerer
                 {
                     // Choose the same overload we will emit in IL (see LIRToILCompiler.EmitIntrinsicStaticCall)
                     var argCount = callExpr.Arguments.Count();
-                    System.Reflection.MethodInfo? chosen = null;
-                    foreach (var mi in staticMethods)
+
+                    bool ExactArityMatch(System.Reflection.MethodInfo mi) => mi.GetParameters().Length == argCount;
+
+                    bool ParamsArrayMatch(System.Reflection.MethodInfo mi)
                     {
-                        if (mi.GetParameters().Length == argCount)
-                        {
-                            chosen = mi;
-                            break;
-                        }
+                        var ps = mi.GetParameters();
+                        return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
                     }
 
-                    if (chosen == null)
-                    {
-                        foreach (var mi in staticMethods)
-                        {
-                            var ps = mi.GetParameters();
-                            if (ps.Length == 1 && ps[0].ParameterType == typeof(object[]))
-                            {
-                                chosen = mi;
-                                break;
-                            }
-                        }
-                    }
+                    var chosen = staticMethods.Find(ExactArityMatch)
+                        ?? staticMethods.Find(ParamsArrayMatch);
                     // If we can't select a compatible overload for the intrinsic static call,
                     // fall back to generic member-dispatch below.
                     if (chosen != null)
@@ -699,7 +688,6 @@ public sealed partial class HIRToLIRLowerer
         if (calleePropAccess.Object is HIRVariableExpression classVarExpr &&
             classVarExpr.Name.BindingInfo.DeclarationNode is ClassDeclaration classDecl)
         {
-            var className = classVarExpr.Name.Name;
             var memberName = calleePropAccess.PropertyName;
 
             var member = classDecl.Body.Body

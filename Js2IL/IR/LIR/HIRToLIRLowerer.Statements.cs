@@ -2,6 +2,7 @@ using Acornima.Ast;
 using Js2IL.HIR;
 using Js2IL.Services;
 using Js2IL.Services.ScopesAbi;
+using System.Linq;
 using TwoPhase = Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Utilities;
 using Js2IL.SymbolTables;
@@ -12,15 +13,15 @@ public sealed partial class HIRToLIRLowerer
 {
     public bool TryLowerStatements(IEnumerable<HIRStatement> statements)
     {
-        foreach (var statement in statements)
+        return statements.All(statement =>
         {
-            if (!TryLowerStatement(statement))
+            if (TryLowerStatement(statement))
             {
-                IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering statement {statement.GetType().Name}");
-                return false;
+                return true;
             }
-        }
 
-        return true;
+            IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering statement {statement.GetType().Name}");
+            return false;
+        });
     }
 }
