@@ -85,5 +85,11 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_ObjectLiteralMethod_ThisBinding() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_MaxParameters_16() { var testName = nameof(Function_MaxParameters_16); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_MaxParameters_32_CallViaVariable() { var testName = nameof(Function_MaxParameters_32_CallViaVariable); return GenerateTest(testName); }
     }
 }

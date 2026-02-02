@@ -470,9 +470,39 @@ internal sealed partial class LIRToILCompiler
             bodyAttributes |= MethodBodyAttributes.InitLocals;
         }
 
+        int maxStack = 32;
+        foreach (var instr in MethodBody.Instructions)
+        {
+            int estimated = instr switch
+            {
+                // Static function calls: scopes + JS args
+                LIRCallFunction callFunction => 1 + callFunction.Arguments.Count,
+
+                // Known CLR instance method calls: receiver + args
+                LIRCallInstanceMethod callInstance => 1 + callInstance.Arguments.Count,
+
+                // Early-bound user-class method calls: receiver + optional scopes + args
+                LIRCallTypedMember callTypedMember => 1 + (callTypedMember.HasScopesParameter ? 1 : 0) + callTypedMember.Arguments.Count,
+                LIRCallTypedMemberWithFallback callTypedFallback => 1 + (callTypedFallback.HasScopesParameter ? 1 : 0) + callTypedFallback.Arguments.Count,
+                LIRCallUserClassInstanceMethod callUserInstance => 1 + (callUserInstance.HasScopesParameter ? 1 : 0) + callUserInstance.Arguments.Count,
+                LIRCallUserClassBaseConstructor callBaseCtor => 1 + (callBaseCtor.HasScopesParameter ? 1 : 0) + callBaseCtor.Arguments.Count,
+                LIRCallUserClassBaseInstanceMethod callBaseInstance => 1 + (callBaseInstance.HasScopesParameter ? 1 : 0) + callBaseInstance.Arguments.Count,
+
+                // Declared callable call: assume args list matches signature
+                LIRCallDeclaredCallable callDeclared => callDeclared.Arguments.Count,
+
+                _ => 0
+            };
+
+            if (estimated > maxStack)
+            {
+                maxStack = estimated;
+            }
+        }
+
         bodyOffset = methodBodyStreamEncoder.AddMethodBody(
                 ilEncoder,
-            maxStack: 256,
+            maxStack: maxStack,
                 localVariablesSignature: localVariablesSignature,
                 attributes: bodyAttributes);
 
