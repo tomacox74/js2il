@@ -36,18 +36,6 @@ public record LIRConstNull(TempVariable Result) : LIRInstruction;
 /// </summary>
 public record LIRGetUserClassType(string RegistryClassName, TempVariable Result) : LIRInstruction;
 
-public record LIRGetIntrinsicGlobal(string Name, TempVariable Result) : LIRInstruction;
-
-public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
-
-/// <summary>
-/// Calls a global intrinsic function exposed as a public static method on <see cref="JavaScriptRuntime.GlobalThis"/>
-/// (e.g., setTimeout, clearTimeout, setImmediate).
-/// Arguments are JS arguments (boxed as object). The IL emitter handles ParamArray (params object[])
-/// expansion to match the reflected method signature.
-/// </summary>
-public record LIRCallIntrinsicGlobalFunction(string FunctionName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
-
 /// <summary>
 /// Calls a known CLR instance method on a known receiver type.
 /// The receiver temp is expected to already be of <paramref name="ReceiverClrType"/>.
@@ -60,23 +48,6 @@ public record LIRCallInstanceMethod(
     string MethodName,
     IReadOnlyList<TempVariable> Arguments,
     TempVariable Result) : LIRInstruction;
-
-/// <summary>
-/// Calls a static method on an intrinsic object (e.g., Array.isArray, Math.abs, JSON.parse).
-/// The intrinsic type is resolved via IntrinsicObjectRegistry using the IntrinsicName.
-/// </summary>
-/// <param name="IntrinsicName">The JavaScript intrinsic name (e.g., "Array", "Math", "JSON").</param>
-/// <param name="MethodName">The method name to call (e.g., "isArray", "abs", "parse").</param>
-/// <param name="Arguments">The argument temps (already boxed as object).</param>
-/// <param name="Result">The temp variable to store the call result.</param>
-public record LIRCallIntrinsicStatic(string IntrinsicName, string MethodName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
-
-/// <summary>
-/// Calls a static method on an intrinsic object where the return value is intentionally ignored.
-/// This is used to represent statement-level calls (e.g., throw helpers) without creating an
-/// artificial/unused result temp.
-/// </summary>
-public record LIRCallIntrinsicStaticVoid(string IntrinsicName, string MethodName, IReadOnlyList<TempVariable> Arguments) : LIRInstruction;
 
 /// <summary>
 /// Loads the current receiver ('this') for instance callables (class methods/constructors).
@@ -195,18 +166,6 @@ public record LIRCallUserClassBaseConstructor(
     MethodDefinitionHandle ConstructorHandle,
     bool HasScopesParameter,
     int MaxParamCount,
-    IReadOnlyList<TempVariable> Arguments) : LIRInstruction;
-
-/// <summary>
-/// Calls an intrinsic base-class constructor from a derived class constructor (i.e., JavaScript <c>super(...)</c>
-/// where the base is an intrinsic like Array).
-///
-/// For Array-derived classes, this is emitted as:
-/// - ldarg.0; call instance void JavaScriptRuntime.Array::.ctor()
-/// - ldarg.0; newarr object[argc]; callvirt instance void JavaScriptRuntime.Array::ConstructInto(object[])
-/// </summary>
-public record LIRCallIntrinsicBaseConstructor(
-    string IntrinsicName,
     IReadOnlyList<TempVariable> Arguments) : LIRInstruction;
 
 /// <summary>
@@ -385,13 +344,6 @@ public record LIRThrowNewTypeError(string Message) : LIRInstruction;
 /// Constructs a built-in JavaScriptRuntime Error type (Error, TypeError, etc.) with optional message.
 /// </summary>
 public record LIRNewBuiltInError(string ErrorTypeName, TempVariable? Message, TempVariable Result) : LIRInstruction;
-
-/// <summary>
-/// Creates a new instance of a JavaScriptRuntime intrinsic type via its constructor.
-/// The intrinsic type is resolved via IntrinsicObjectRegistry using IntrinsicName.
-/// Supported ctor shapes are intentionally minimal and selected by arity.
-/// </summary>
-public record LIRNewIntrinsicObject(string IntrinsicName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Creates a new instance of a user-defined JavaScript class (compiled as a .NET type).
