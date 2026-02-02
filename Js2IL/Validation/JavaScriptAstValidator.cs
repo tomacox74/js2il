@@ -1420,10 +1420,10 @@ public class JavaScriptAstValidator : IAstValidator
 
         int paramCount = parameters?.Count ?? 0;
 
-        // Check for parameter count limit (issue #220)
-        if (paramCount > 6)
+        // Check for parameter count limit
+        if (paramCount > 32)
         {
-            result.Errors.Add($"Functions with more than 6 parameters are not yet supported (line {node.Location.Start.Line})");
+            result.Errors.Add($"Functions with more than 32 parameters are not yet supported (line {node.Location.Start.Line})");
             result.IsValid = false;
         }
 

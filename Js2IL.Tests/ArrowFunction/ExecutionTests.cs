@@ -49,5 +49,8 @@ namespace Js2IL.Tests.ArrowFunction
 
         [Fact]
         public Task ArrowFunction_ClosureMutatesOuterVariable() { var testName = nameof(ArrowFunction_ClosureMutatesOuterVariable); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_MaxParameters_32() { var testName = nameof(ArrowFunction_MaxParameters_32); return ExecutionTest(testName); }
     }
 }

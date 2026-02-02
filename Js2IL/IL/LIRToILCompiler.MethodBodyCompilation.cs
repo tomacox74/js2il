@@ -472,7 +472,7 @@ internal sealed partial class LIRToILCompiler
 
         bodyOffset = methodBodyStreamEncoder.AddMethodBody(
                 ilEncoder,
-                maxStack: 32,
+            maxStack: 256,
                 localVariablesSignature: localVariablesSignature,
                 attributes: bodyAttributes);
 

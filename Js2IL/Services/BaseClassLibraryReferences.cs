@@ -8,16 +8,54 @@ namespace Js2IL.Services
     {
         private readonly TypeReferenceRegistry _typeRefRegistry;
         private readonly MemberReferenceRegistry _memberRefRegistry;
-        private readonly Dictionary<int, Type> _funcTypesByParamCount = new()
+
+        // JS function delegates follow the js2il ABI:
+        //   (object[] scopes, object? a1..aN) -> object?
+        // System.Func<> supports only up to 15 generic args, which limits us to 14 JS parameters
+        // (because scopes is the first parameter). For larger arities we use custom delegates.
+        private static Type GetFunctionDelegateType(int jsParamCount)
         {
-            { 0, typeof(System.Func<object[], object>) },
-            { 1, typeof(System.Func<object[], object, object>) },
-            { 2, typeof(System.Func<object[], object, object, object>) },
-            { 3, typeof(System.Func<object[], object, object, object, object>) },
-            { 4, typeof(System.Func<object[], object, object, object, object, object>) },
-            { 5, typeof(System.Func<object[], object, object, object, object, object, object>) },
-            { 6, typeof(System.Func<object[], object, object, object, object, object, object, object>) }
-        };
+            return jsParamCount switch
+            {
+                0 => typeof(System.Func<object[], object?>),
+                1 => typeof(System.Func<object[], object?, object?>),
+                2 => typeof(System.Func<object[], object?, object?, object?>),
+                3 => typeof(System.Func<object[], object?, object?, object?, object?>),
+                4 => typeof(System.Func<object[], object?, object?, object?, object?, object?>),
+                5 => typeof(System.Func<object[], object?, object?, object?, object?, object?, object?>),
+                6 => typeof(System.Func<object[], object?, object?, object?, object?, object?, object?, object?>),
+                7 => typeof(System.Func<object[], object?, object?, object?, object?, object?, object?, object?, object?>),
+                8 => typeof(System.Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?>),
+                9 => typeof(System.Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
+                10 => typeof(System.Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
+                11 => typeof(System.Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
+                12 => typeof(System.Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
+                13 => typeof(System.Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
+                14 => typeof(System.Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
+
+                15 => typeof(JavaScriptRuntime.JsFunc15),
+                16 => typeof(JavaScriptRuntime.JsFunc16),
+                17 => typeof(JavaScriptRuntime.JsFunc17),
+                18 => typeof(JavaScriptRuntime.JsFunc18),
+                19 => typeof(JavaScriptRuntime.JsFunc19),
+                20 => typeof(JavaScriptRuntime.JsFunc20),
+                21 => typeof(JavaScriptRuntime.JsFunc21),
+                22 => typeof(JavaScriptRuntime.JsFunc22),
+                23 => typeof(JavaScriptRuntime.JsFunc23),
+                24 => typeof(JavaScriptRuntime.JsFunc24),
+                25 => typeof(JavaScriptRuntime.JsFunc25),
+                26 => typeof(JavaScriptRuntime.JsFunc26),
+                27 => typeof(JavaScriptRuntime.JsFunc27),
+                28 => typeof(JavaScriptRuntime.JsFunc28),
+                29 => typeof(JavaScriptRuntime.JsFunc29),
+                30 => typeof(JavaScriptRuntime.JsFunc30),
+                31 => typeof(JavaScriptRuntime.JsFunc31),
+                32 => typeof(JavaScriptRuntime.JsFunc32),
+
+                _ => throw new NotSupportedException(
+                    $"Delegate for {jsParamCount} parameters not supported (max supported is 32)")
+            };
+        }
 
         public BaseClassLibraryReferences(TypeReferenceRegistry typeRefRegistr, MemberReferenceRegistry memberRefRegistr)
         {
@@ -64,22 +102,14 @@ namespace Js2IL.Services
 
         public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
         {
-            if (!_funcTypesByParamCount.TryGetValue(jsParamCount, out var funcType))
-            {
-                throw new NotSupportedException($"Delegate for {jsParamCount} parameters not supported");
-            }
-
-            return _memberRefRegistry.GetOrAddConstructor(funcType);
+            var delegateType = GetFunctionDelegateType(jsParamCount);
+            return _memberRefRegistry.GetOrAddConstructor(delegateType);
         }
 
         public MemberReferenceHandle GetFuncInvokeRef(int jsParamCount)
         {
-            if (!_funcTypesByParamCount.TryGetValue(jsParamCount, out var funcType))
-            {
-                throw new NotSupportedException($"Delegate for {jsParamCount} parameters not supported");
-            }
-
-            return _memberRefRegistry.GetOrAddMethod(funcType, nameof(System.Func<object[], object>.Invoke));
+            var delegateType = GetFunctionDelegateType(jsParamCount);
+            return _memberRefRegistry.GetOrAddMethod(delegateType, "Invoke");
         }
     }
 }

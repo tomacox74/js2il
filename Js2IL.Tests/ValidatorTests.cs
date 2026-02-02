@@ -620,25 +620,25 @@ class Counter {
     }
 
     [Fact]
-    public void Validate_FunctionWithMoreThan6Parameters_ReportsError()
+    public void Validate_FunctionWithMoreThan32Parameters_ReportsError()
     {
-        // Issue #220: Functions with >6 parameters are not supported
-        var js = "function foo(a, b, c, d, e, f, g) { return a + b + c + d + e + f + g; }";
+        // Functions with >32 parameters are not supported
+        var js = "function foo(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16,a17,a18,a19,a20,a21,a22,a23,a24,a25,a26,a27,a28,a29,a30,a31,a32,a33) { return a33; }";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("more than 6 parameters"));
+        Assert.Contains(result.Errors, e => e.Contains("more than 32 parameters"));
     }
 
     [Fact]
-    public void Validate_ArrowFunctionWithMoreThan6Parameters_ReportsError()
+    public void Validate_ArrowFunctionWithMoreThan32Parameters_ReportsError()
     {
-        // Issue #220: Arrow functions with >6 parameters are not supported
-        var js = "const foo = (a, b, c, d, e, f, g) => a + b + c + d + e + f + g;";
+        // Arrow functions with >32 parameters are not supported
+        var js = "const foo = (a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16,a17,a18,a19,a20,a21,a22,a23,a24,a25,a26,a27,a28,a29,a30,a31,a32,a33) => a33;";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("more than 6 parameters"));
+        Assert.Contains(result.Errors, e => e.Contains("more than 32 parameters"));
     }
 
     [Fact]
