@@ -15,8 +15,8 @@ namespace JavaScriptRuntime;
 /// - Before yielding a key, it re-checks that the key is still present and enumerable.
 ///
 /// Prototype chain support in this runtime is currently approximated for CLR objects by walking
-/// the CLR type hierarchy (declared members per type). ExpandoObject/IDictionary do not currently
-/// have a JS-observable [[Prototype]] chain.
+/// the CLR type hierarchy (declared members per type). For ExpandoObject/IDictionary, an explicit
+/// JS-observable [[Prototype]] chain is supported via the opt-in PrototypeChain side-table.
 /// </summary>
 public sealed class ForInIterator : IJavaScriptIterator<string>
 {

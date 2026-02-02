@@ -101,7 +101,13 @@ namespace JavaScriptRuntime
             // Explicitly set [[Prototype]] (including null-proto via JsNull).
             PrototypeChain.SetPrototype(obj, prototype);
 
-            if (properties is not null && properties is not JsNull)
+            // Per ToObject(null/undefined), an explicit null properties argument must throw.
+            if (properties is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (properties is not null)
             {
                 defineProperties(obj, properties);
             }
@@ -120,7 +126,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var key = ToPropertyKeyString(prop ?? string.Empty);
+            var key = ToPropertyKeyString(prop);
 
             if (TryGetOwnPropertyDescriptor(obj, key, out var desc))
             {
@@ -146,7 +152,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Property description must be an object");
             }
 
-            var key = ToPropertyKeyString(prop ?? string.Empty);
+            var key = ToPropertyKeyString(prop);
 
             // Determine descriptor kind.
             // Prefer the resolved get/set values; this is robust even when the attribute object
@@ -221,9 +227,11 @@ namespace JavaScriptRuntime
             {
                 throw new TypeError("Cannot convert undefined or null to object");
             }
+
+            // Per ToObject(null/undefined), an explicit null/undefined Properties argument must throw.
             if (properties is null || properties is JsNull)
             {
-                return obj;
+                throw new TypeError("Cannot convert undefined or null to object");
             }
 
             // Snapshot keys first; if we cannot enumerate, throw rather than partially apply.
@@ -504,7 +512,7 @@ namespace JavaScriptRuntime
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
 
-        private static string ToPropertyKeyString(object key)
+        private static string ToPropertyKeyString(object? key)
         {
             if (key is Symbol sym)
             {

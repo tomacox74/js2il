@@ -75,6 +75,6 @@ internal static class PropertyDescriptorStore
 
     public static bool IsEnumerableOrDefaultTrue(object target, string key)
     {
-        return TryGetOwn(target, key, out var desc) ? desc.Enumerable : true;
+        return !TryGetOwn(target, key, out var desc) || desc.Enumerable;
     }
 }
