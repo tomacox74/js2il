@@ -303,6 +303,23 @@ namespace Js2IL.Services.ILGenerators
                         classNeedsParentScopes = true;
                     }
                 }
+                else
+                {
+                    // Intrinsic base classes (e.g., `extends Array`) are resolved via IntrinsicObjectRegistry
+                    // and emitted as a CLR base type reference.
+                    try
+                    {
+                        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(superId.Name);
+                        if (intrinsicType != null && intrinsicType.IsClass && !intrinsicType.IsSealed)
+                        {
+                            baseTypeHandle = _bcl.TypeReferenceRegistry.GetOrAdd(intrinsicType);
+                        }
+                    }
+                    catch
+                    {
+                        // Leave baseTypeHandle as System.Object if the intrinsic cannot be resolved.
+                    }
+                }
             }
 
             // Fields (instance + static)

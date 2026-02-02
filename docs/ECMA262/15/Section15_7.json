@@ -311,6 +311,16 @@
         "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods."
       },
       {
+        "clause": "15.7.1",
+        "feature": "Class inheritance from intrinsic Array (class X extends Array)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_IntrinsicInheritance_ExtendsArray_SuperLength.js"
+        ],
+        "notes": "JS2IL resolves `extends Array` to the runtime CLR base type JavaScriptRuntime.Array. `super(...)` in derived constructors calls Array::.ctor() and then applies JS Array constructor semantics via Array.ConstructInto(args). Limitation: only `extends Array` is handled today; other intrinsic bases are not yet supported."
+      },
+      {
         "clause": "15.7.2",
         "feature": "Class elements: methods vs. fields vs. constructors",
         "status": "Supported with Limitations",

@@ -198,6 +198,18 @@ public record LIRCallUserClassBaseConstructor(
     IReadOnlyList<TempVariable> Arguments) : LIRInstruction;
 
 /// <summary>
+/// Calls an intrinsic base-class constructor from a derived class constructor (i.e., JavaScript <c>super(...)</c>
+/// where the base is an intrinsic like Array).
+///
+/// For Array-derived classes, this is emitted as:
+/// - ldarg.0; call instance void JavaScriptRuntime.Array::.ctor()
+/// - ldarg.0; newarr object[argc]; callvirt instance void JavaScriptRuntime.Array::ConstructInto(object[])
+/// </summary>
+public record LIRCallIntrinsicBaseConstructor(
+    string IntrinsicName,
+    IReadOnlyList<TempVariable> Arguments) : LIRInstruction;
+
+/// <summary>
 /// Calls a base class instance method directly on the implicit 'this' (i.e., JavaScript <c>super.m(...)</c>).
 /// Uses non-virtual dispatch (IL <c>call</c>) to ensure the base method is invoked.
 /// </summary>

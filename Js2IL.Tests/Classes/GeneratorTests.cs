@@ -200,5 +200,8 @@ namespace Js2IL.Tests.Classes
         // Additional coverage: captured scopes and nested derived class
         [Fact] public Task Classes_Inheritance_SuperCapturedScopeVar() { var testName = nameof(Classes_Inheritance_SuperCapturedScopeVar); return GenerateTest(testName); }
         [Fact] public Task Classes_Inheritance_NestedClassExtendsGlobal() { var testName = nameof(Classes_Inheritance_NestedClassExtendsGlobal); return GenerateTest(testName); }
+
+        // #505: derived class extending intrinsic Array must compile.
+        [Fact] public Task Classes_IntrinsicInheritance_ExtendsArray_SuperLength() { var testName = nameof(Classes_IntrinsicInheritance_ExtendsArray_SuperLength); return GenerateTest(testName); }
     }
 }

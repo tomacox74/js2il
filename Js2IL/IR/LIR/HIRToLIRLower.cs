@@ -771,6 +771,55 @@ public sealed class HIRToLIRLowerer
         return true;
     }
 
+    private string? GetEnclosingSuperClassIntrinsicName()
+    {
+        if (_scope == null)
+        {
+            return null;
+        }
+
+        var current = _scope;
+        while (current != null && current.Kind != ScopeKind.Class)
+        {
+            current = current.Parent;
+        }
+
+        if (current == null)
+        {
+            return null;
+        }
+
+        var superExpr = current.AstNode switch
+        {
+            ClassDeclaration cd => cd.SuperClass,
+            ClassExpression ce => ce.SuperClass,
+            _ => null
+        };
+
+        if (superExpr is not Identifier superId)
+        {
+            return null;
+        }
+
+        // Only support intrinsic bases that map cleanly to CLR base types.
+        // Today the primary blocker is `extends Array` (issue #505).
+        if (!string.Equals(superId.Name, "Array", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        try
+        {
+            return JavaScriptRuntime.IntrinsicObjectRegistry.GetInfo(superId.Name) != null
+                ? superId.Name
+                : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     /// <summary>
     /// Emits LIRCreateLeafScopeInstance at the start of the method if any bindings
     /// are stored in leaf scope fields.
@@ -4743,52 +4792,66 @@ public sealed class HIRToLIRLowerer
                 return false;
             }
 
-            if (_classRegistry == null)
+            // First try: user-defined base class in the ClassRegistry.
+            if (_classRegistry != null
+                && TryGetEnclosingBaseClassRegistryName(out var baseRegistryClassName)
+                && baseRegistryClassName != null
+                && _classRegistry.TryGetConstructor(baseRegistryClassName, out var baseCtorHandle, out var baseCtorHasScopesParam, out var _, out var baseCtorMaxParamCount))
             {
-                return false;
+                var callArgs = new List<TempVariable>();
+
+                // Lower JS arguments (extras are evaluated for side effects, but ignored).
+                for (int i = 0; i < callExpr.Arguments.Length; i++)
+                {
+                    if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
+                    {
+                        return false;
+                    }
+
+                    if (i < baseCtorMaxParamCount)
+                    {
+                        callArgs.Add(EnsureObject(argTemp));
+                    }
+                }
+
+                // Pad missing args with undefined (null).
+                while (callArgs.Count < baseCtorMaxParamCount)
+                {
+                    var undefTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefTemp));
+                    DefineTempStorage(undefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    callArgs.Add(undefTemp);
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRCallUserClassBaseConstructor(
+                    baseRegistryClassName,
+                    baseCtorHandle,
+                    baseCtorHasScopesParam,
+                    baseCtorMaxParamCount,
+                    callArgs));
             }
-
-            if (!TryGetEnclosingBaseClassRegistryName(out var baseRegistryClassName) || baseRegistryClassName == null)
+            else
             {
-                return false;
-            }
-
-            if (!_classRegistry.TryGetConstructor(baseRegistryClassName, out var baseCtorHandle, out var baseCtorHasScopesParam, out var _, out var baseCtorMaxParamCount))
-            {
-                return false;
-            }
-
-            var callArgs = new List<TempVariable>();
-
-            // Lower JS arguments (extras are evaluated for side effects, but ignored).
-            for (int i = 0; i < callExpr.Arguments.Length; i++)
-            {
-                if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
+                // Fallback: intrinsic base class (e.g., `extends Array`).
+                // For intrinsics, we preserve JS argument list semantics (do not truncate/pad).
+                var intrinsicName = GetEnclosingSuperClassIntrinsicName();
+                if (intrinsicName == null)
                 {
                     return false;
                 }
 
-                if (i < baseCtorMaxParamCount)
+                var callArgs = new List<TempVariable>();
+                for (int i = 0; i < callExpr.Arguments.Length; i++)
                 {
+                    if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
+                    {
+                        return false;
+                    }
                     callArgs.Add(EnsureObject(argTemp));
                 }
-            }
 
-            // Pad missing args with undefined (null).
-            while (callArgs.Count < baseCtorMaxParamCount)
-            {
-                var undefTemp = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefTemp));
-                DefineTempStorage(undefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                callArgs.Add(undefTemp);
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicBaseConstructor(intrinsicName, callArgs));
             }
-
-            _methodBodyIR.Instructions.Add(new LIRCallUserClassBaseConstructor(
-                baseRegistryClassName,
-                baseCtorHandle,
-                baseCtorHasScopesParam,
-                baseCtorMaxParamCount,
-                callArgs));
 
             // After super() the constructor is considered initialized.
             _superConstructorCalled = true;
