@@ -904,6 +904,12 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallIntrinsicBaseConstructor callIntrinsicBaseCtor:
+                {
+                    EmitIntrinsicBaseConstructorCallCore(callIntrinsicBaseCtor, ilEncoder, allocation, methodDescriptor);
+                    break;
+                }
+
             case LIRCallUserClassBaseInstanceMethod callBaseMethod:
                 {
                     if (callBaseMethod.MethodHandle.IsNil)

@@ -445,6 +445,13 @@ internal static class TempLocalAllocator
                 }
                 break;
 
+            case LIRCallIntrinsicBaseConstructor callIntrinsicBaseCtor:
+                foreach (var a in callIntrinsicBaseCtor.Arguments)
+                {
+                    yield return a;
+                }
+                break;
+
             case LIRCallUserClassBaseInstanceMethod callBaseMethod:
                 foreach (var a in callBaseMethod.Arguments)
                 {
@@ -864,6 +871,10 @@ internal static class TempLocalAllocator
                 return true;
 
             case LIRCallUserClassBaseConstructor:
+                defined = default;
+                return false;
+
+            case LIRCallIntrinsicBaseConstructor:
                 defined = default;
                 return false;
 

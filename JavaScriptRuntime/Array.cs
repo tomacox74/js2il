@@ -136,6 +136,23 @@ namespace JavaScriptRuntime
             return new Array(args);
         }
 
+        /// <summary>
+        /// Implements Array constructor semantics against an existing Array instance.
+        /// This is used by derived CLR types (e.g., JS class extending Array) where the
+        /// instance is already constructed and needs to be initialized by a `super(...)` call.
+        /// </summary>
+        public void ConstructInto(object[] args)
+        {
+            var constructed = Construct(args ?? System.Array.Empty<object>());
+            this.Clear();
+
+            // Preserve JS semantics: length is Count, and missing elements are represented as null (undefined).
+            if (constructed.Count > 0)
+            {
+                this.AddRange(constructed);
+            }
+        }
+
         public static Array Empty => new Array();
         public static implicit operator Array(object[] array)
         {

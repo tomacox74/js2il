@@ -761,7 +761,9 @@ public class JavaScriptAstValidator : IAstValidator
 
                             var isIntrinsic = IsIntrinsicObjectName(name);
                             var usedAsMemberBase = parent is MemberExpression meObj && ReferenceEquals(meObj.Object, id);
-                            if (isIntrinsic && usedAsMemberBase)
+                            var usedAsExtendsBase = (parent is ClassDeclaration cd && ReferenceEquals(cd.SuperClass, id))
+                                || (parent is ClassExpression classExpr && ReferenceEquals(classExpr.SuperClass, id));
+                            if (isIntrinsic && (usedAsMemberBase || usedAsExtendsBase))
                             {
                                 break;
                             }
