@@ -16,14 +16,14 @@
 | 20.1.1.1 | Object ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object-value) |
 | 20.1.2 | Properties of the Object Constructor | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-object-constructor) |
 | 20.1.2.1 | Object.assign ( target , ... sources ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.assign) |
-| 20.1.2.2 | Object.create ( O , Properties ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.create) |
-| 20.1.2.3 | Object.defineProperties ( O , Properties ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.defineproperties) |
+| 20.1.2.2 | Object.create ( O , Properties ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.create) |
+| 20.1.2.3 | Object.defineProperties ( O , Properties ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.defineproperties) |
 | 20.1.2.3.1 | ObjectDefineProperties ( O , Properties ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-objectdefineproperties) |
-| 20.1.2.4 | Object.defineProperty ( O , P , Attributes ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.defineproperty) |
+| 20.1.2.4 | Object.defineProperty ( O , P , Attributes ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.defineproperty) |
 | 20.1.2.5 | Object.entries ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.entries) |
 | 20.1.2.6 | Object.freeze ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.freeze) |
 | 20.1.2.7 | Object.fromEntries ( iterable ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.fromentries) |
-| 20.1.2.8 | Object.getOwnPropertyDescriptor ( O , P ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertydescriptor) |
+| 20.1.2.8 | Object.getOwnPropertyDescriptor ( O , P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertydescriptor) |
 | 20.1.2.9 | Object.getOwnPropertyDescriptors ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertydescriptors) |
 | 20.1.2.10 | Object.getOwnPropertyNames ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertynames) |
 | 20.1.2.11 | Object.getOwnPropertySymbols ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertysymbols) |
@@ -68,6 +68,30 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Object(value) (callable semantics) | Supported with Limitations | [`IntrinsicCallables_Object_Callable_ReturnsObject.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Object_Callable_ReturnsObject.js) | Calls to Object(...) are lowered to JavaScriptRuntime.Object.Construct(...). Null/undefined return a new empty object; non-null values are returned unchanged (no ToObject boxing/wrapping of primitives). |
+
+### 20.1.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-object.create))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Object.create | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js) | Implemented in JavaScriptRuntime.Object.create using the opt-in PrototypeChain side-table to set [[Prototype]] (including null-prototype objects via JS null). When a properties bag is provided, it is applied via defineProperties. This does not implement full OrdinaryObjectCreate invariants or exotic object behaviors. |
+
+### 20.1.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-object.defineproperties))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Object.defineProperties | Supported with Limitations | [`ObjectCreate_WithPropertyDescriptors.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js) | Implemented in JavaScriptRuntime.Object.defineProperties with a best-effort all-or-throw behavior (enumerates descriptor keys first, then applies). Supports defining data/accessor descriptors and enumerable filtering. Full validation, ordering rules, and invariant checks are not implemented. |
+
+### 20.1.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-object.defineproperty))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Object.defineProperty | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectDefineProperty_Enumerable_ForIn.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js) | Implemented in JavaScriptRuntime.Object.defineProperty using a ConditionalWeakTable-backed descriptor store. Supports data and accessor descriptors, and respects enumerable:false for for..in enumeration. Default attribute values follow the spec (missing fields default to false), but full descriptor redefinition rules and many throw/invariant cases are not implemented. |
+
+### 20.1.2.8 ([tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertydescriptor))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Object.getOwnPropertyDescriptor | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js) | Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns a descriptor object for properties defined via defineProperty/defineProperties; falls back to a simplified default descriptor for plain ExpandoObject properties. Symbol-keyed properties and full host-object descriptor fidelity are not implemented. |
 
 ### 20.1.2.12 ([tc39.es](https://tc39.es/ecma262/#sec-object.getprototypeof))
 

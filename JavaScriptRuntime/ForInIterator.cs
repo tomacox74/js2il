@@ -15,13 +15,18 @@ namespace JavaScriptRuntime;
 /// - Before yielding a key, it re-checks that the key is still present and enumerable.
 ///
 /// Prototype chain support in this runtime is currently approximated for CLR objects by walking
-/// the CLR type hierarchy (declared members per type). ExpandoObject/IDictionary do not currently
-/// have a JS-observable [[Prototype]] chain.
+/// the CLR type hierarchy (declared members per type). For ExpandoObject/IDictionary, an explicit
+/// JS-observable [[Prototype]] chain is supported via the opt-in PrototypeChain side-table.
 /// </summary>
 public sealed class ForInIterator : IJavaScriptIterator<string>
 {
     private readonly object _root;
     private readonly HashSet<string> _visited = new(StringComparer.Ordinal);
+
+    // When an explicit [[Prototype]] chain is enabled/assigned for the root object,
+    // we enumerate own enumerable keys for each level in that chain.
+    private readonly bool _usePrototypeChain;
+    private object? _currentTarget;
 
     // For non-reflection targets, we enumerate a single "level" and then complete.
     private bool _doneSingleTarget;
@@ -37,8 +42,14 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
     {
         _root = root ?? throw new ArgumentNullException(nameof(root));
 
+        _currentTarget = _root;
+        _usePrototypeChain = PrototypeChain.Enabled
+            && PrototypeChain.GetPrototypeOrNull(_root) is not null
+            && PrototypeChain.GetPrototypeOrNull(_root) is not JsNull;
+
         // Only CLR objects (non-expando, non-array-like) use a type chain.
-        _useTypeChain = !(root is ExpandoObject)
+        _useTypeChain = !_usePrototypeChain
+            && !(root is ExpandoObject)
             && root is not JavaScriptRuntime.Array
             && root is not JavaScriptRuntime.Int32Array
             && root is not string
@@ -54,6 +65,42 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
     {
         while (true)
         {
+            if (_usePrototypeChain)
+            {
+                if (_currentTarget == null || _currentTarget is JsNull)
+                {
+                    return IteratorResult.Create<string>(null, done: true);
+                }
+
+                if (_currentKeys == null)
+                {
+                    _currentKeys = GetOwnEnumerableKeysSingleTarget(_currentTarget);
+                    _currentIndex = 0;
+                }
+
+                while (_currentIndex < _currentKeys.Count)
+                {
+                    var key = _currentKeys[_currentIndex++];
+                    if (_visited.Contains(key))
+                    {
+                        continue;
+                    }
+
+                    if (!IsEnumerableAndPresent(_currentTarget, key))
+                    {
+                        continue;
+                    }
+
+                    _visited.Add(key);
+                    return IteratorResult.Create(key, done: false);
+                }
+
+                // Advance to the next prototype.
+                _currentKeys = null;
+                _currentTarget = PrototypeChain.GetPrototypeOrNull(_currentTarget);
+                continue;
+            }
+
             if (_useTypeChain)
             {
                 if (_currentType == null || _currentType == typeof(object))
@@ -144,7 +191,9 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         if (target is ExpandoObject exp)
         {
             var dict = (IDictionary<string, object?>)exp;
-            return dict.Keys.ToList();
+            return dict.Keys
+                .Where(k => PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, k))
+                .ToList();
         }
 
         // JS Array: enumerate indices
@@ -186,7 +235,11 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             var keys = new List<string>();
             foreach (var k in dictObj.Keys)
             {
-                keys.Add(DotNet2JSConversions.ToString(k));
+                var strKey = DotNet2JSConversions.ToString(k);
+                if (strKey != null && PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, strKey))
+                {
+                    keys.Add(strKey);
+                }
             }
             return keys;
         }
@@ -225,7 +278,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         if (target is ExpandoObject exp)
         {
             var dict = (IDictionary<string, object?>)exp;
-            return dict.ContainsKey(key);
+            return dict.ContainsKey(key) && PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, key);
         }
 
         // JS Array
@@ -265,7 +318,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             {
                 if (string.Equals(DotNet2JSConversions.ToString(k), key, StringComparison.Ordinal))
                 {
-                    return true;
+                    return PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, key);
                 }
             }
             return false;

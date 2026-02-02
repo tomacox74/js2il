@@ -36,13 +36,13 @@
     {
       "clause": "20.1.2.2",
       "title": "Object.create ( O , Properties )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.create"
     },
     {
       "clause": "20.1.2.3",
       "title": "Object.defineProperties ( O , Properties )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.defineproperties"
     },
     {
@@ -54,7 +54,7 @@
     {
       "clause": "20.1.2.4",
       "title": "Object.defineProperty ( O , P , Attributes )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.defineproperty"
     },
     {
@@ -78,7 +78,7 @@
     {
       "clause": "20.1.2.8",
       "title": "Object.getOwnPropertyDescriptor ( O , P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.getownpropertydescriptor"
     },
     {
@@ -297,6 +297,50 @@
           "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Object_Callable_ReturnsObject.js"
         ],
         "notes": "Calls to Object(...) are lowered to JavaScriptRuntime.Object.Construct(...). Null/undefined return a new empty object; non-null values are returned unchanged (no ToObject boxing/wrapping of primitives)."
+      },
+      {
+        "clause": "20.1.2.2",
+        "feature": "Object.create",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.create",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.create using the opt-in PrototypeChain side-table to set [[Prototype]] (including null-prototype objects via JS null). When a properties bag is provided, it is applied via defineProperties. This does not implement full OrdinaryObjectCreate invariants or exotic object behaviors."
+      },
+      {
+        "clause": "20.1.2.3",
+        "feature": "Object.defineProperties",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.defineproperties",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.defineProperties with a best-effort all-or-throw behavior (enumerates descriptor keys first, then applies). Supports defining data/accessor descriptors and enumerable filtering. Full validation, ordering rules, and invariant checks are not implemented."
+      },
+      {
+        "clause": "20.1.2.4",
+        "feature": "Object.defineProperty",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.defineproperty",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.defineProperty using a ConditionalWeakTable-backed descriptor store. Supports data and accessor descriptors, and respects enumerable:false for for..in enumeration. Default attribute values follow the spec (missing fields default to false), but full descriptor redefinition rules and many throw/invariant cases are not implemented."
+      },
+      {
+        "clause": "20.1.2.8",
+        "feature": "Object.getOwnPropertyDescriptor",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.getownpropertydescriptor",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns a descriptor object for properties defined via defineProperty/defineProperties; falls back to a simplified default descriptor for plain ExpandoObject properties. Symbol-keyed properties and full host-object descriptor fidelity are not implemented."
       },
       {
         "clause": "20.1.2.12",

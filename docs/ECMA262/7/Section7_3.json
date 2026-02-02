@@ -54,7 +54,7 @@
     {
       "clause": "7.3.8",
       "title": "DefinePropertyOrThrow ( O , P , desc )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-definepropertyorthrow"
     },
     {
@@ -243,7 +243,7 @@
           "Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js",
           "Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js"
         ],
-        "notes": "Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. Prototype chain lookup is supported when prototype-chain mode is enabled; symbols and full property descriptor semantics are not implemented."
+        "notes": "Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. When descriptor APIs are used, accessor getters and prototype chain lookup are supported via side-tables. Symbol-keyed properties and many exotic/internal-method behaviors are not implemented."
       },
       {
         "clause": "7.3.4",
@@ -254,7 +254,19 @@
           "Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js",
           "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
         ],
-        "notes": "Supported via runtime set dispatch for ExpandoObject/object literals and reflection for host objects. Strict Throw behavior, descriptors, and prototype interactions are not implemented."
+        "notes": "Supported via runtime set dispatch for ExpandoObject/object literals and reflection for host objects. When descriptor APIs are used, accessor setters and non-writable data properties are approximated via a side-table descriptor store; full Throw behavior, redefinition validation, and invariant checks are not implemented."
+      },
+      {
+        "clause": "7.3.8",
+        "feature": "DefinePropertyOrThrow (approx.)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-definepropertyorthrow",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
+        ],
+        "notes": "Approximated by JavaScriptRuntime.Object.defineProperty/defineProperties/create using a ConditionalWeakTable-backed descriptor store. Supports defining data and accessor descriptors and respecting enumerable:false for for..in enumeration. Many spec validation and invariant checks (including strict throw behavior) are not implemented."
       },
       {
         "clause": "7.3.11",

@@ -78,6 +78,185 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// ECMA-262 Object.create(proto [, properties]).
+        /// Minimal implementation used for descriptor/prototype-heavy libraries (e.g., domino).
+        /// </summary>
+        public static object create(object? prototype)
+        {
+            return create(prototype, properties: null);
+        }
+
+        /// <summary>
+        /// ECMA-262 Object.create(proto [, properties]).
+        /// </summary>
+        public static object create(object? prototype, object? properties)
+        {
+            if (!IsValidPrototypeValue(prototype))
+            {
+                throw new TypeError("Object prototype may only be an Object or null");
+            }
+
+            var obj = new System.Dynamic.ExpandoObject();
+
+            // Explicitly set [[Prototype]] (including null-proto via JsNull).
+            PrototypeChain.SetPrototype(obj, prototype);
+
+            // Per ToObject(null/undefined), an explicit null properties argument must throw.
+            if (properties is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (properties is not null)
+            {
+                defineProperties(obj, properties);
+            }
+
+            return obj;
+        }
+
+        /// <summary>
+        /// ECMA-262 Object.getOwnPropertyDescriptor(O, P).
+        /// Returns undefined (CLR null) when the property is not an own property.
+        /// </summary>
+        public static object? getOwnPropertyDescriptor(object obj, object? prop)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var key = ToPropertyKeyString(prop);
+
+            if (TryGetOwnPropertyDescriptor(obj, key, out var desc))
+            {
+                return CreateDescriptorObject(desc);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// ECMA-262 Object.defineProperty(O, P, Attributes).
+        /// Returns the target object.
+        /// </summary>
+        public static object defineProperty(object obj, object? prop, object? attributes)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (attributes is null || attributes is JsNull)
+            {
+                throw new TypeError("Property description must be an object");
+            }
+
+            var key = ToPropertyKeyString(prop);
+
+            // Determine descriptor kind.
+            // Prefer the resolved get/set values; this is robust even when the attribute object
+            // is not a plain ExpandoObject.
+            var getValue = GetProperty(attributes, "get");
+            var setValue = GetProperty(attributes, "set");
+            bool isAccessor = (getValue is not null && getValue is not JsNull)
+                || (setValue is not null && setValue is not JsNull)
+                || HasOwnProperty(attributes, "get")
+                || HasOwnProperty(attributes, "set");
+
+            // In ECMAScript, absent boolean fields default to false.
+            bool enumerable = HasOwnProperty(attributes, "enumerable") && TypeUtilities.ToBoolean(GetProperty(attributes, "enumerable"));
+            bool configurable = HasOwnProperty(attributes, "configurable") && TypeUtilities.ToBoolean(GetProperty(attributes, "configurable"));
+
+            if (isAccessor)
+            {
+                var desc = new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Accessor,
+                    Enumerable = enumerable,
+                    Configurable = configurable,
+                    Get = getValue,
+                    Set = setValue
+                };
+
+                // Ensure key presence for ExpandoObject enumeration.
+                if (obj is System.Dynamic.ExpandoObject exp)
+                {
+                    var dict = (IDictionary<string, object?>)exp;
+                    if (!dict.ContainsKey(key))
+                    {
+                        dict[key] = null;
+                    }
+                }
+
+                PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
+                return obj;
+            }
+
+            bool writable = HasOwnProperty(attributes, "writable") && TypeUtilities.ToBoolean(GetProperty(attributes, "writable"));
+            var value = HasOwnProperty(attributes, "value") ? GetProperty(attributes, "value") : null;
+
+            var dataDesc = new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = enumerable,
+                Configurable = configurable,
+                Writable = writable,
+                Value = value
+            };
+
+            PropertyDescriptorStore.DefineOrUpdate(obj, key, dataDesc);
+
+            // Best-effort backing store update for ExpandoObject.
+            if (obj is System.Dynamic.ExpandoObject exp2)
+            {
+                var dict = (IDictionary<string, object?>)exp2;
+                dict[key] = value;
+            }
+
+            return obj;
+        }
+
+        /// <summary>
+        /// ECMA-262 Object.defineProperties(O, Properties).
+        /// Minimal implementation with best-effort all-or-throw behavior.
+        /// </summary>
+        public static object defineProperties(object obj, object? properties)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            // Per ToObject(null/undefined), an explicit null/undefined Properties argument must throw.
+            if (properties is null || properties is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            // Snapshot keys first; if we cannot enumerate, throw rather than partially apply.
+            var keys = GetEnumerableKeys(properties);
+            var pending = new List<(string Key, object? Attributes)>(keys.Count);
+            for (int i = 0; i < keys.Count; i++)
+            {
+                var k = DotNet2JSConversions.ToString(keys[i]) ?? string.Empty;
+                var attrs = GetProperty(properties, k);
+                if (attrs is null || attrs is JsNull)
+                {
+                    throw new TypeError("Property description must be an object");
+                }
+                pending.Add((k, attrs));
+            }
+
+            foreach (var (k, attrs) in pending)
+            {
+                defineProperty(obj, k, attrs);
+            }
+
+            return obj;
+        }
+
+        /// <summary>
         /// Implements the JavaScript Object() callable semantics: returns a new empty object.
         /// </summary>
         public static object Construct()
@@ -333,7 +512,7 @@ namespace JavaScriptRuntime
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
 
-        private static string ToPropertyKeyString(object key)
+        private static string ToPropertyKeyString(object? key)
         {
             if (key is Symbol sym)
             {
@@ -346,8 +525,146 @@ namespace JavaScriptRuntime
             return DotNet2JSConversions.ToString(key);
         }
 
+        private static bool HasOwnProperty(object target, string name)
+        {
+            if (target is null || target is JsNull)
+            {
+                return false;
+            }
+
+            if (PropertyDescriptorStore.TryGetOwn(target, name, out _))
+            {
+                return true;
+            }
+
+            if (target is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                return dict.ContainsKey(name);
+            }
+
+            if (target is System.Collections.IDictionary dictObj)
+            {
+                if (dictObj.Contains(name)) return true;
+                foreach (var k in dictObj.Keys)
+                {
+                    if (string.Equals(DotNet2JSConversions.ToString(k), name, StringComparison.Ordinal))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            try
+            {
+                var type = target.GetType();
+                return type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) != null
+                    || type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) != null;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static object? InvokeCallable(object? callable, object thisArg, object?[] args)
+        {
+            if (callable is null || callable is JsNull)
+            {
+                return null;
+            }
+
+            if (callable is Delegate)
+            {
+                var previousThis = RuntimeServices.SetCurrentThis(thisArg);
+                try
+                {
+                    return Closure.InvokeWithArgs(callable, System.Array.Empty<object>(), args);
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+
+            throw new TypeError("Property accessor is not a function");
+        }
+
+        private static bool TryGetOwnPropertyDescriptor(object target, string propName, out JsPropertyDescriptor descriptor)
+        {
+            if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
+            {
+                return true;
+            }
+
+            // Default descriptors for existing properties (no attribute fidelity yet).
+            if (target is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                if (dict.TryGetValue(propName, out var v))
+                {
+                    descriptor = new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Data,
+                        Enumerable = true,
+                        Configurable = true,
+                        Writable = true,
+                        Value = v
+                    };
+                    return true;
+                }
+            }
+
+            // No implicit descriptor support for arrays/typed arrays/strings here.
+            descriptor = null!;
+            return false;
+        }
+
+        private static object CreateDescriptorObject(JsPropertyDescriptor desc)
+        {
+            var exp = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)exp;
+
+            dict["enumerable"] = desc.Enumerable;
+            dict["configurable"] = desc.Configurable;
+
+            if (desc.Kind == JsPropertyDescriptorKind.Accessor)
+            {
+                dict["get"] = desc.Get;
+                dict["set"] = desc.Set;
+            }
+            else
+            {
+                dict["value"] = desc.Value;
+                dict["writable"] = desc.Writable;
+            }
+
+            return exp;
+        }
+
         private static bool TryGetOwnPropertyValue(object target, string propName, out object? value)
         {
+            return TryGetOwnPropertyValue(target, propName, target, out value);
+        }
+
+        private static bool TryGetOwnPropertyValue(object target, string propName, object receiverForAccessors, out object? value)
+        {
+            // Descriptor-defined properties (data/accessor)
+            if (PropertyDescriptorStore.TryGetOwn(target, propName, out var desc))
+            {
+                if (desc.Kind == JsPropertyDescriptorKind.Accessor)
+                {
+                    value = desc.Get is null || desc.Get is JsNull
+                        ? null
+                        : InvokeCallable(desc.Get, receiverForAccessors, System.Array.Empty<object>());
+                    return true;
+                }
+
+                value = desc.Value;
+                return true;
+            }
+
             // ExpandoObject properties
             if (target is System.Dynamic.ExpandoObject exp)
             {
@@ -420,7 +737,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (TryGetOwnPropertyValue(proto, propName, out value))
+            if (TryGetOwnPropertyValue(proto, propName, receiver, out value))
             {
                 return true;
             }
@@ -448,7 +765,7 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                if (TryGetOwnPropertyValue(proto, propName, out value))
+                if (TryGetOwnPropertyValue(proto, propName, receiver, out value))
                 {
                     return true;
                 }
@@ -463,6 +780,54 @@ namespace JavaScriptRuntime
             }
         }
 
+        private static bool TryInvokePrototypeSetter(object receiver, string propName, object? value)
+        {
+            if (!PrototypeChain.Enabled)
+            {
+                return false;
+            }
+
+            var current = receiver;
+            var proto = PrototypeChain.GetPrototypeOrNull(current);
+            if (proto is null || proto is JsNull)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(proto, receiver))
+            {
+                return false;
+            }
+
+            // Only allocate cycle-detection state if there is a chain to walk.
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance)
+            {
+                receiver
+            };
+
+            while (proto is not null && proto is not JsNull)
+            {
+                if (!visited.Add(proto))
+                {
+                    return false;
+                }
+
+                if (PropertyDescriptorStore.TryGetOwn(proto, propName, out var desc)
+                    && desc.Kind == JsPropertyDescriptorKind.Accessor
+                    && desc.Set is not null
+                    && desc.Set is not JsNull)
+                {
+                    InvokeCallable(desc.Set, receiver, new object?[] { value });
+                    return true;
+                }
+
+                current = proto;
+                proto = PrototypeChain.GetPrototypeOrNull(current);
+            }
+
+            return false;
+        }
+
         public static object GetItem(object obj, object index)
         {
             // If the key is a Symbol (or a non-numeric string), it must be treated as a property key.
@@ -471,56 +836,12 @@ namespace JavaScriptRuntime
             if (index is Symbol)
             {
                 var propName = ToPropertyKeyString(index);
-                if (obj is System.Dynamic.ExpandoObject expSym)
-                {
-                    var dict = (IDictionary<string, object?>)expSym;
-                    if (dict.TryGetValue(propName, out var value))
-                    {
-                        return value!;
-                    }
-
-                    // Legacy __proto__ accessor (opt-in)
-                    if (PrototypeChain.Enabled && string.Equals(propName, "__proto__", StringComparison.Ordinal))
-                    {
-                        return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto! : null!;
-                    }
-
-                    if (TryGetInheritedPropertyValue(obj, propName, out var inherited))
-                    {
-                        return inherited!;
-                    }
-
-                    return null!;
-                }
-
                 return GetProperty(obj, propName)!;
             }
 
             if (index is string sKey && !int.TryParse(sKey, out _))
             {
                 // JS ToPropertyKey for non-index strings.
-                if (obj is System.Dynamic.ExpandoObject expStr)
-                {
-                    var dict = (IDictionary<string, object?>)expStr;
-                    if (dict.TryGetValue(sKey, out var value))
-                    {
-                        return value!;
-                    }
-
-                    // Legacy __proto__ accessor (opt-in)
-                    if (PrototypeChain.Enabled && string.Equals(sKey, "__proto__", StringComparison.Ordinal))
-                    {
-                        return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto! : null!;
-                    }
-
-                    if (TryGetInheritedPropertyValue(obj, sKey, out var inherited))
-                    {
-                        return inherited!;
-                    }
-
-                    return null!;
-                }
-
                 return GetProperty(obj, sKey)!;
             }
 
@@ -555,13 +876,8 @@ namespace JavaScriptRuntime
             // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
             if (obj is System.Dynamic.ExpandoObject exp)
             {
-                var dict = (IDictionary<string, object?>)exp;
                 var propName = ToPropertyKeyString(index);
-                if (dict.TryGetValue(propName, out var value))
-                {
-                    return value!;
-                }
-                return null!; // closest to JS 'undefined' (we model as null)
+                return GetProperty(obj, propName)!;
             }
 
             if (obj is Array array)
@@ -605,13 +921,8 @@ namespace JavaScriptRuntime
             // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
             if (obj is System.Dynamic.ExpandoObject exp)
             {
-                var dict = (IDictionary<string, object?>)exp;
                 var propName = ToPropertyKeyString(index);
-                if (dict.TryGetValue(propName, out var value))
-                {
-                    return value!;
-                }
-                return null!; // closest to JS 'undefined' (we model as null)
+                return GetProperty(obj, propName)!;
             }
 
             if (obj is Array array)
@@ -683,21 +994,7 @@ namespace JavaScriptRuntime
             // ExpandoObject (object literal): assign by property name
             if (obj is System.Dynamic.ExpandoObject exp)
             {
-                var dict = (IDictionary<string, object?>)exp;
-
-                // Legacy __proto__ mutator (opt-in). In JS, setting __proto__ changes [[Prototype]]
-                // when the RHS is an object or null; otherwise it is ignored.
-                if (PrototypeChain.Enabled && string.Equals(propName, "__proto__", StringComparison.Ordinal))
-                {
-                    if (IsValidPrototypeValue(value))
-                    {
-                        PrototypeChain.SetPrototype(obj, value);
-                    }
-                    return value;
-                }
-
-                dict[propName] = value;
-                return value;
+                return SetProperty(obj, propName, value);
             }
 
             // JS Array index assignment
@@ -1722,7 +2019,10 @@ namespace JavaScriptRuntime
             if (obj is System.Dynamic.ExpandoObject exp)
             {
                 var dict = (IDictionary<string, object?>)exp;
-                var keys = new JavaScriptRuntime.Array(dict.Keys.Cast<object?>());
+                var keys = new JavaScriptRuntime.Array(
+                    dict.Keys
+                        .Where(k => PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, k))
+                        .Cast<object?>());
                 return keys;
             }
 
@@ -1765,7 +2065,11 @@ namespace JavaScriptRuntime
                 var keys = new JavaScriptRuntime.Array();
                 foreach (var k in dictObj.Keys)
                 {
-                    keys.Add(DotNet2JSConversions.ToString(k));
+                    var strKey = DotNet2JSConversions.ToString(k);
+                    if (strKey != null && PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, strKey))
+                    {
+                        keys.Add(strKey);
+                    }
                 }
                 return keys;
             }
@@ -1790,6 +2094,7 @@ namespace JavaScriptRuntime
             {
                 var dict = (IDictionary<string, object?>)exp;
                 dict.Remove(key);
+                PropertyDescriptorStore.Delete(receiver, key);
                 return true;
             }
 
@@ -1816,6 +2121,8 @@ namespace JavaScriptRuntime
                 {
                     dictObj.Remove(match);
                 }
+
+                PropertyDescriptorStore.Delete(receiver, key);
                 return true;
             }
 
@@ -1962,10 +2269,43 @@ namespace JavaScriptRuntime
                 return value;
             }
 
+            // Descriptor-defined own property handling (accessors + writable enforcement)
+            if (PropertyDescriptorStore.TryGetOwn(obj, name, out var desc))
+            {
+                if (desc.Kind == JsPropertyDescriptorKind.Accessor)
+                {
+                    if (desc.Set is not null && desc.Set is not JsNull)
+                    {
+                        InvokeCallable(desc.Set, obj, new object?[] { value });
+                    }
+                    return value;
+                }
+
+                if (desc.Writable)
+                {
+                    desc.Value = value;
+                    PropertyDescriptorStore.DefineOrUpdate(obj, name, desc);
+                    if (obj is System.Dynamic.ExpandoObject expDesc)
+                    {
+                        var dict = (IDictionary<string, object?>)expDesc;
+                        dict[name] = value;
+                    }
+                }
+                return value;
+            }
+
             // ExpandoObject support
             if (obj is System.Dynamic.ExpandoObject exp)
             {
                 var dict = (IDictionary<string, object?>)exp;
+
+                // Prototype-setter semantics: if no own property exists, and a prototype accessor
+                // defines a setter, route the assignment to that setter.
+                if (!dict.ContainsKey(name) && TryInvokePrototypeSetter(obj, name, value))
+                {
+                    return value;
+                }
+
                 dict[name] = value;
                 return value;
             }
@@ -2214,6 +2554,11 @@ namespace JavaScriptRuntime
 
             static bool HasOwnProperty(object target, string name)
             {
+                if (PropertyDescriptorStore.TryGetOwn(target, name, out _))
+                {
+                    return true;
+                }
+
                 // ExpandoObject (object literal)
                 if (target is System.Dynamic.ExpandoObject exp)
                 {
