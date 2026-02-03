@@ -156,7 +156,7 @@
     {
       "clause": "19.3.25",
       "title": "Proxy ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-proxy"
     },
     {
@@ -264,6 +264,18 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "19.3.25",
+        "feature": "Proxy (global constructor property)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-proxy",
+        "testScripts": [
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js"
+        ],
+        "notes": "Supports new Proxy(target, handler) and routes get/set/has behavior through handler traps for core property access and the in operator. Does not implement full Proxy constructor/function object semantics or Proxy.revocable."
+      },
       {
         "clause": "19.3.7",
         "feature": "Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean))",

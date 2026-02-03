@@ -830,6 +830,13 @@ namespace JavaScriptRuntime
 
         public static object GetItem(object obj, object index)
         {
+            // Proxy get trap: treat item access as property access using ToPropertyKey
+            if (obj is JavaScriptRuntime.Proxy)
+            {
+                var propName = ToPropertyKeyString(index);
+                return GetProperty(obj, propName)!;
+            }
+
             // If the key is a Symbol (or a non-numeric string), it must be treated as a property key.
             // The previous implementation coerced all keys to an integer index first, which caused
             // Symbol keys (e.g. Symbol.asyncIterator) to incorrectly read index 0 on arrays.
@@ -905,6 +912,13 @@ namespace JavaScriptRuntime
 
         public static object GetItem(object obj, double index)
         {
+            // Proxy get trap: numeric index coerces to property key
+            if (obj is JavaScriptRuntime.Proxy)
+            {
+                var propName = ToPropertyKeyString(index);
+                return GetProperty(obj, propName)!;
+            }
+
             // Coerce index to int (JS ToInt32-ish truncation)
             int intIndex = (int)index;
 
@@ -984,6 +998,12 @@ namespace JavaScriptRuntime
             }
 
             var propName = ToPropertyKeyString(index);
+
+            // Proxy set trap
+            if (obj is JavaScriptRuntime.Proxy)
+            {
+                return SetProperty(obj, propName, value);
+            }
 
             // Strings are immutable in JS; silently ignore and return value.
             if (obj is string)
@@ -2230,6 +2250,17 @@ namespace JavaScriptRuntime
         {
             // Null/undefined -> undefined (modeled as null)
             if (obj is null) return null;
+            // Proxy get trap
+            if (obj is JavaScriptRuntime.Proxy proxy)
+            {
+                var getTrap = GetProperty(proxy.Handler, "get");
+                if (getTrap is not null && getTrap is not JsNull)
+                {
+                    return InvokeCallable(getTrap, proxy.Handler, new object?[] { proxy.Target, name, obj });
+                }
+
+                return GetProperty(proxy.Target, name);
+            }
 
             // Legacy __proto__ accessor (opt-in)
             if (PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
@@ -2257,6 +2288,18 @@ namespace JavaScriptRuntime
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
             if (string.IsNullOrEmpty(name)) return value;
+            // Proxy set trap
+            if (obj is JavaScriptRuntime.Proxy proxy)
+            {
+                var setTrap = GetProperty(proxy.Handler, "set");
+                if (setTrap is not null && setTrap is not JsNull)
+                {
+                    _ = InvokeCallable(setTrap, proxy.Handler, new object?[] { proxy.Target, name, value, obj });
+                    return value;
+                }
+
+                return SetProperty(proxy.Target, name, value);
+            }
 
             // Legacy __proto__ mutator (opt-in). In JS, setting __proto__ changes [[Prototype]]
             // when the RHS is an object or null; otherwise it is ignored.

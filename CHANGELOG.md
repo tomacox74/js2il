@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- Runtime/spec: implement minimal `Proxy` support (constructor + `get`/`set`/`has` traps) (fixes #502).
 
 ## v0.8.1 - 2026-02-03
 

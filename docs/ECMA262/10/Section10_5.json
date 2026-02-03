@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "10.5",
   "title": "Proxy Object Internal Methods and Internal Slots",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots",
   "parent": {
     "clause": "10"
@@ -12,92 +12,126 @@
     {
       "clause": "10.5.1",
       "title": "[[GetPrototypeOf]] ( )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getprototypeof"
     },
     {
       "clause": "10.5.2",
       "title": "[[SetPrototypeOf]] ( V )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-setprototypeof-v"
     },
     {
       "clause": "10.5.3",
       "title": "[[IsExtensible]] ( )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-isextensible"
     },
     {
       "clause": "10.5.4",
       "title": "[[PreventExtensions]] ( )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-preventextensions"
     },
     {
       "clause": "10.5.5",
       "title": "[[GetOwnProperty]] ( P )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getownproperty-p"
     },
     {
       "clause": "10.5.6",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-defineownproperty-p-desc"
     },
     {
       "clause": "10.5.7",
       "title": "[[HasProperty]] ( P )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-hasproperty-p"
     },
     {
       "clause": "10.5.8",
       "title": "[[Get]] ( P , Receiver )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-get-p-receiver"
     },
     {
       "clause": "10.5.9",
       "title": "[[Set]] ( P , V , Receiver )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-set-p-v-receiver"
     },
     {
       "clause": "10.5.10",
       "title": "[[Delete]] ( P )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-delete-p"
     },
     {
       "clause": "10.5.11",
       "title": "[[OwnPropertyKeys]] ( )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys"
     },
     {
       "clause": "10.5.12",
       "title": "[[Call]] ( thisArgument , argumentsList )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-call-thisargument-argumentslist"
     },
     {
       "clause": "10.5.13",
       "title": "[[Construct]] ( argumentsList , newTarget )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-construct-argumentslist-newtarget"
     },
     {
       "clause": "10.5.14",
       "title": "ValidateNonRevokedProxy ( proxy )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-validatenonrevokedproxy"
     },
     {
       "clause": "10.5.15",
       "title": "ProxyCreate ( target , handler )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxycreate"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "10.5.8",
+        "feature": "get trap (handler.get)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-get-p-receiver",
+        "testScripts": [
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js"
+        ],
+        "notes": "Routes basic property reads through handler.get(target, propertyKey, receiver) when present; does not implement full invariants/edge-case behaviors."
+      },
+      {
+        "clause": "10.5.9",
+        "feature": "set trap (handler.set)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-set-p-v-receiver",
+        "testScripts": [
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js"
+        ],
+        "notes": "Routes basic property writes through handler.set(target, propertyKey, value, receiver) when present; does not implement full invariants/edge-case behaviors."
+      },
+      {
+        "clause": "10.5.7",
+        "feature": "has trap (handler.has)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-hasproperty-p",
+        "testScripts": [
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js"
+        ],
+        "notes": "Routes the in operator through handler.has(target, propertyKey) when present; does not implement full invariants/edge-case behaviors."
+      }
+    ]
+  }
 }
