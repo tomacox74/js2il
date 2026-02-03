@@ -174,61 +174,6 @@ namespace JavaScriptRuntime
             return CreateBoundDelegate(del, boundScopes, boundThis);
         }
 
-        private static Type GetFunctionDelegateType(int jsParamCount)
-        {
-            return jsParamCount switch
-            {
-                0 => typeof(Func<object[], object?>),
-                1 => typeof(Func<object[], object?, object?>),
-                2 => typeof(Func<object[], object?, object?, object?>),
-                3 => typeof(Func<object[], object?, object?, object?, object?>),
-                4 => typeof(Func<object[], object?, object?, object?, object?, object?>),
-                5 => typeof(Func<object[], object?, object?, object?, object?, object?, object?>),
-                6 => typeof(Func<object[], object?, object?, object?, object?, object?, object?, object?>),
-                7 => typeof(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?>),
-                8 => typeof(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?>),
-                9 => typeof(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
-                10 => typeof(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
-                11 => typeof(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
-                12 => typeof(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
-                13 => typeof(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
-                14 => typeof(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?>),
-                15 => typeof(JsFunc15),
-                16 => typeof(JsFunc16),
-                17 => typeof(JsFunc17),
-                18 => typeof(JsFunc18),
-                19 => typeof(JsFunc19),
-                20 => typeof(JsFunc20),
-                21 => typeof(JsFunc21),
-                22 => typeof(JsFunc22),
-                23 => typeof(JsFunc23),
-                24 => typeof(JsFunc24),
-                25 => typeof(JsFunc25),
-                26 => typeof(JsFunc26),
-                27 => typeof(JsFunc27),
-                28 => typeof(JsFunc28),
-                29 => typeof(JsFunc29),
-                30 => typeof(JsFunc30),
-                31 => typeof(JsFunc31),
-                32 => typeof(JsFunc32),
-                _ => throw new NotSupportedException($"Unsupported parameter count {jsParamCount} (max supported is 32)")
-            };
-        }
-
-        // Creates a delegate instance pointing to the provided method with the standard js2il
-        // signature: Func<object[], [object x N], object>. The number of additional object
-        // parameters is specified by paramCount.
-        public static object CreateSelfDelegate(MethodBase method, int paramCount)
-        {
-            if (method is not MethodInfo mi)
-            {
-                throw new ArgumentException("Expected MethodInfo", nameof(method));
-            }
-
-            var delegateType = GetFunctionDelegateType(paramCount);
-            return Delegate.CreateDelegate(delegateType, null, mi);
-        }
-
         // Invoke a function delegate with runtime type inspection to determine the correct arity.
         // This is used when calling a function stored in a variable where the parameter count isn't known at compile time.
         // args should NOT include the scopes array - this method will prepend it.
