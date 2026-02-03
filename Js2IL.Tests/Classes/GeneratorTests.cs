@@ -206,5 +206,8 @@ namespace Js2IL.Tests.Classes
 
         // #505: super() with no args should compile and initialize Array correctly.
         [Fact] public Task Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs() { var testName = nameof(Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Classes_ClassMethod_MaxParameters_32() { var testName = nameof(Classes_ClassMethod_MaxParameters_32); return GenerateTest(testName); }
     }
 }

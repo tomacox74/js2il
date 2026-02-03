@@ -470,11 +470,161 @@ internal sealed partial class LIRToILCompiler
             bodyAttributes |= MethodBodyAttributes.InitLocals;
         }
 
+        // Default maxstack of 8 matches MethodBodyStreamEncoder's safe default and is
+        // sufficient for many simple methods, but js2il emits inline array/object construction
+        // (e.g. building object[] argument arrays containing object literals) that can exceed 8.
+        // We estimate maxstack using LIR patterns and (when temps are not materialized) account
+        // for the peak stack usage of inline temp emission.
+        int maxStack = 8;
+
+        // Build a quick map from temp -> defining instruction so we can estimate inlined temp emission.
+        var defByTemp = new Dictionary<int, LIRInstruction>();
+        for (int i = 0; i < MethodBody.Instructions.Count; i++)
+        {
+            var instr = MethodBody.Instructions[i];
+            if (TempLocalAllocator.TryGetDefinedTemp(instr, out var defined) && defined.Index >= 0)
+            {
+                defByTemp[defined.Index] = instr;
+            }
+        }
+
+        var tempLoadPeakCache = new Dictionary<int, int>();
+        var tempConstructionPeakCache = new Dictionary<int, int>();
+
+        int EstimateTempConstructionPeak(TempVariable temp)
+        {
+            if (temp.Index < 0)
+            {
+                return 1;
+            }
+
+            if (tempConstructionPeakCache.TryGetValue(temp.Index, out var cached))
+            {
+                return cached;
+            }
+
+            // Default: loading a simple value produces a single stack item.
+            var peak = 1;
+
+            if (defByTemp.TryGetValue(temp.Index, out var def))
+            {
+                peak = def switch
+                {
+                    // Inline object[] construction: dup + index + element
+                    LIRBuildArray buildArray => 3 + (buildArray.Elements.Count == 0 ? 0 : buildArray.Elements.Max(EstimateTempConstructionPeak)),
+
+                    // Inline scopes array construction: dup + index + scopeInstance
+                    LIRBuildScopesArray buildScopes => 3 + (buildScopes.Slots.Count == 0 ? 0 : 1),
+
+                    // Inline JavaScriptRuntime.Array construction: dup + element
+                    LIRNewJsArray newJsArray => 2 + (newJsArray.Elements.Count == 0 ? 0 : newJsArray.Elements.Max(EstimateTempConstructionPeak)),
+
+                    // Inline ExpandoObject/object literal: dup + key + value
+                    LIRNewJsObject newJsObject => 3 + (newJsObject.Properties.Count == 0 ? 0 : newJsObject.Properties.Max(p => EstimateTempConstructionPeak(p.Value))),
+
+                    // Leaf scope/global loads/constants/etc.
+                    LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull or LIRGetIntrinsicGlobal or LIRLoadParameter or LIRLoadThis
+                        => 1,
+
+                    _ => 1
+                };
+            }
+
+            // Clamp to at least 1.
+            if (peak < 1)
+            {
+                peak = 1;
+            }
+
+            tempConstructionPeakCache[temp.Index] = peak;
+            return peak;
+        }
+
+        int EstimateTempLoadPeak(TempVariable temp)
+        {
+            if (temp.Index < 0)
+            {
+                return 1;
+            }
+
+            if (IsMaterialized(temp, allocation))
+            {
+                return 1;
+            }
+
+            if (tempLoadPeakCache.TryGetValue(temp.Index, out var cached))
+            {
+                return cached;
+            }
+
+            var peak = EstimateTempConstructionPeak(temp);
+            tempLoadPeakCache[temp.Index] = peak;
+            return peak;
+        }
+
+        foreach (var instr in MethodBody.Instructions)
+        {
+            int estimated = instr switch
+            {
+                // Direct user-defined function call:
+                //   ldnull, ldftn, newobj (delegate) -> +1
+                //   scopes + declared JS params (including ldnull padding)
+                // Peak stack before callvirt: delegate + scopes + jsParamCount
+                LIRCallFunction callFunction => 2 + (callFunction.CallableId?.JsParamCount ?? callFunction.Arguments.Count),
+
+                // Function value call via runtime dispatch: target + scopesArray + argsArray (argsArray may be inlined)
+                LIRCallFunctionValue callValue => 2 + EstimateTempLoadPeak(callValue.ArgumentsArray),
+
+                // Member call via runtime dispatch: receiver + methodName + argsArray (argsArray may be inlined)
+                LIRCallMember callMember => 2 + EstimateTempLoadPeak(callMember.ArgumentsArray),
+
+                // Known CLR instance method calls: receiver + args (no padding)
+                LIRCallInstanceMethod callInstance => 1 + callInstance.Arguments.Count,
+
+                // Early-bound typed member calls: receiver + optional scopes + declared JS params (including padding)
+                LIRCallTypedMember callTypedMember => 1 + (callTypedMember.HasScopesParameter ? 1 : 0) + callTypedMember.MaxParamCount,
+
+                // Typed member calls with fallback have an additional 'dup' on the typed receiver during the type-test.
+                // Be conservative and account for 2 receivers on the stack at the peak.
+                LIRCallTypedMemberWithFallback callTypedFallback => 2 + (callTypedFallback.HasScopesParameter ? 1 : 0) + callTypedFallback.MaxParamCount,
+
+                // Direct user-class instance method calls: receiver + optional scopes + declared JS params (including padding)
+                LIRCallUserClassInstanceMethod callUserInstance => 1 + (callUserInstance.HasScopesParameter ? 1 : 0) + callUserInstance.MaxParamCount,
+                LIRCallUserClassBaseConstructor callBaseCtor => 1 + (callBaseCtor.HasScopesParameter ? 1 : 0) + callBaseCtor.MaxParamCount,
+                LIRCallUserClassBaseInstanceMethod callBaseInstance => 1 + (callBaseInstance.HasScopesParameter ? 1 : 0) + callBaseInstance.MaxParamCount,
+
+                // Declared callable call: args list already matches signature at the call site.
+                LIRCallDeclaredCallable callDeclared => callDeclared.Arguments.Count,
+
+                // New user class: optional scopes + declared ctor param count.
+                // Use the declared max arg count since emission pads missing args.
+                LIRNewUserClass newUserClass => (newUserClass.NeedsScopes ? 1 : 0) + newUserClass.MaxArgCount,
+
+                _ => 0
+            };
+
+            // Also account for deep stack usage inside the instruction that defines a temp
+            // (e.g. nested object/array literals), regardless of whether the temp is materialized.
+            if (TempLocalAllocator.TryGetDefinedTemp(instr, out var definedTemp) && definedTemp.Index >= 0)
+            {
+                var constructionPeak = EstimateTempConstructionPeak(definedTemp);
+                if (constructionPeak > estimated)
+                {
+                    estimated = constructionPeak;
+                }
+            }
+
+            if (estimated > maxStack)
+            {
+                maxStack = estimated;
+            }
+        }
+
         bodyOffset = methodBodyStreamEncoder.AddMethodBody(
-                ilEncoder,
-                maxStack: 32,
-                localVariablesSignature: localVariablesSignature,
-                attributes: bodyAttributes);
+            ilEncoder,
+            maxStack: maxStack,
+            localVariablesSignature: localVariablesSignature,
+            attributes: bodyAttributes);
 
         // IL length for LocalScope ranges (relative to start of method IL stream).
         _ilLength = methodBlob.Count;

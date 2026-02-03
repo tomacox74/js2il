@@ -1,10 +1,25 @@
 using System;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace JavaScriptRuntime
 {
     public static class Closure
     {
+        private static readonly MethodInfo InvokeWithArgsMethod = typeof(Closure).GetMethod(
+            nameof(InvokeWithArgs),
+            BindingFlags.Public | BindingFlags.Static,
+            binder: null,
+            types: new[] { typeof(object), typeof(object[]), typeof(object[]) },
+            modifiers: null)
+            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeWithArgs(object, object[], object[]).");
+
+        private static readonly MethodInfo InvokeWithArgsWithThisMethod = typeof(Closure).GetMethod(
+            nameof(InvokeWithArgsWithThis),
+            BindingFlags.NonPublic | BindingFlags.Static)
+            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeWithArgsWithThis(...).");
+
         private static T InvokeWithThis<T>(object? boundThis, Func<T> invoke)
         {
             var previous = RuntimeServices.SetCurrentThis(boundThis);
@@ -18,6 +33,101 @@ namespace JavaScriptRuntime
             }
         }
 
+        private static object InvokeWithArgsWithThis(object? boundThis, object target, object[] scopes, object?[] args)
+        {
+            return InvokeWithThis(boundThis, () => InvokeWithArgs(target, scopes, args));
+        }
+
+        private static object InvokeDelegateWithArgs(Delegate target, object[] scopes, object?[] args)
+        {
+            var invoke = target.GetType().GetMethod("Invoke")
+                ?? throw new ArgumentException($"Delegate type '{target.GetType()}' does not define Invoke().", nameof(target));
+            var parameters = invoke.GetParameters();
+
+            bool hasScopes = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
+            int jsParamStart = hasScopes ? 1 : 0;
+            int expectedJsParamCount = parameters.Length - jsParamStart;
+
+            // Build argument list matching delegate signature.
+            // - If delegate includes scopes: first arg is scopes
+            // - Missing JS args => null
+            // - Extra JS args ignored
+            var finalArgs = new object?[parameters.Length];
+
+            int finalIndex = 0;
+            if (hasScopes)
+            {
+                finalArgs[finalIndex++] = scopes;
+            }
+
+            for (int i = 0; i < expectedJsParamCount; i++)
+            {
+                finalArgs[finalIndex++] = i < args.Length ? args[i] : null;
+            }
+
+            try
+            {
+                // Delegate.DynamicInvoke returns boxed value types; null for void.
+                return target.DynamicInvoke(finalArgs)!;
+            }
+            catch (TargetInvocationException tie) when (tie.InnerException != null)
+            {
+                throw tie.InnerException;
+            }
+        }
+
+        private static Delegate CreateBoundDelegate(Delegate target, object[] boundScopes, object? boundThis)
+        {
+            var delegateType = target.GetType();
+            var invoke = delegateType.GetMethod("Invoke")
+                ?? throw new ArgumentException($"Delegate type '{delegateType}' does not define Invoke().", nameof(target));
+
+            var parameters = invoke.GetParameters();
+            var lambdaParameters = parameters
+                .Select((p, i) => Expression.Parameter(p.ParameterType, p.Name ?? $"p{i}"))
+                .ToArray();
+
+            bool hasScopes = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
+            int jsParamStart = hasScopes ? 1 : 0;
+
+            var jsArgs = lambdaParameters
+                .Skip(jsParamStart)
+                .Select(p => (Expression)Expression.Convert(p, typeof(object)))
+                .ToArray();
+            var argsArray = Expression.NewArrayInit(typeof(object), jsArgs);
+
+            Expression invokeWithArgsCall;
+            if (boundThis == null)
+            {
+                invokeWithArgsCall = Expression.Call(
+                    InvokeWithArgsMethod,
+                    Expression.Constant((object)target, typeof(object)),
+                    Expression.Constant(boundScopes, typeof(object[])),
+                    argsArray);
+            }
+            else
+            {
+                invokeWithArgsCall = Expression.Call(
+                    InvokeWithArgsWithThisMethod,
+                    Expression.Constant(boundThis, typeof(object)),
+                    Expression.Constant((object)target, typeof(object)),
+                    Expression.Constant(boundScopes, typeof(object[])),
+                    argsArray);
+            }
+
+            Expression body;
+            if (invoke.ReturnType == typeof(void))
+            {
+                body = Expression.Block(invokeWithArgsCall, Expression.Empty());
+            }
+            else
+            {
+                body = Expression.Convert(invokeWithArgsCall, invoke.ReturnType);
+            }
+
+            return Expression.Lambda(delegateType, body, lambdaParameters).Compile();
+        }
+
         // Bind a function delegate (object-typed) to a fixed scopes array AND a fixed set of JS arguments.
         // Returns a Func<object[], object> suitable for AsyncScope._moveNext (resume invokes with scopes only).
         public static object BindMoveNext(object target, object[] boundScopes, object?[] boundArgs)
@@ -26,81 +136,26 @@ namespace JavaScriptRuntime
             if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
             if (boundArgs == null) throw new ArgumentNullException(nameof(boundArgs));
 
-            if (target is Func<object[], object> f0)
-            {
-                return (Func<object[], object>)(_ => f0(boundScopes));
-            }
-
-            var a1 = boundArgs.Length > 0 ? boundArgs[0] : null;
-            var a2 = boundArgs.Length > 1 ? boundArgs[1] : null;
-            var a3 = boundArgs.Length > 2 ? boundArgs[2] : null;
-            var a4 = boundArgs.Length > 3 ? boundArgs[3] : null;
-            var a5 = boundArgs.Length > 4 ? boundArgs[4] : null;
-            var a6 = boundArgs.Length > 5 ? boundArgs[5] : null;
-
-            if (target is Func<object[], object?, object> f1)
-            {
-                return (Func<object[], object>)(_ => f1(boundScopes, a1));
-            }
-            if (target is Func<object[], object?, object?, object> f2)
-            {
-                return (Func<object[], object>)(_ => f2(boundScopes, a1, a2));
-            }
-            if (target is Func<object[], object?, object?, object?, object> f3)
-            {
-                return (Func<object[], object>)(_ => f3(boundScopes, a1, a2, a3));
-            }
-            if (target is Func<object[], object?, object?, object?, object?, object> f4)
-            {
-                return (Func<object[], object>)(_ => f4(boundScopes, a1, a2, a3, a4));
-            }
-            if (target is Func<object[], object?, object?, object?, object?, object?, object> f5)
-            {
-                return (Func<object[], object>)(_ => f5(boundScopes, a1, a2, a3, a4, a5));
-            }
-            if (target is Func<object[], object?, object?, object?, object?, object?, object?, object> f6)
-            {
-                return (Func<object[], object>)(_ => f6(boundScopes, a1, a2, a3, a4, a5, a6));
-            }
-
-            throw new ArgumentException("Unsupported delegate type for MoveNext binding", nameof(target));
+            // Always return a Func<object[], object?> regardless of underlying delegate arity.
+            // - Ignores the provided scopes at invocation time
+            // - Uses the captured scopes + captured args
+            return (Func<object[], object?>)(_ => InvokeWithArgs(target, boundScopes, boundArgs));
         }
 
         // Bind a function delegate (object-typed) to a fixed scopes array.
-        // Supports Func<object[], object> and Func<object[], object, object>.
+        // Returns a delegate of the same type as the input, but ignores the scopes argument
+        // and uses the captured scopes array.
         public static object Bind(object target, object[] boundScopes)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            if (target is Func<object[], object> f0)
+
+            if (target is not Delegate del)
             {
-                return (Func<object[], object>)(_ => f0(boundScopes));
+                throw new ArgumentException("Expected a delegate for closure binding", nameof(target));
             }
-            if (target is Func<object[], object, object> f1)
-            {
-                return (Func<object[], object, object>)((_, a1) => f1(boundScopes, a1));
-            }
-            if (target is Func<object[], object, object, object> f2)
-            {
-                return (Func<object[], object, object, object>)((_, a1, a2) => f2(boundScopes, a1, a2));
-            }
-            if (target is Func<object[], object, object, object, object> f3)
-            {
-                return (Func<object[], object, object, object, object>)((_, a1, a2, a3) => f3(boundScopes, a1, a2, a3));
-            }
-            if (target is Func<object[], object, object, object, object, object> f4)
-            {
-                return (Func<object[], object, object, object, object, object>)((_, a1, a2, a3, a4) => f4(boundScopes, a1, a2, a3, a4));
-            }
-            if (target is Func<object[], object, object, object, object, object, object> f5)
-            {
-                return (Func<object[], object, object, object, object, object, object>)((_, a1, a2, a3, a4, a5) => f5(boundScopes, a1, a2, a3, a4, a5));
-            }
-            if (target is Func<object[], object, object, object, object, object, object, object> f6)
-            {
-                return (Func<object[], object, object, object, object, object, object, object>)((_, a1, a2, a3, a4, a5, a6) => f6(boundScopes, a1, a2, a3, a4, a5, a6));
-            }
-            throw new ArgumentException("Unsupported delegate type for closure binding", nameof(target));
+
+            return CreateBoundDelegate(del, boundScopes, boundThis: null);
         }
 
         // Bind an arrow function delegate to a fixed scopes array AND a fixed lexical 'this'.
@@ -108,124 +163,15 @@ namespace JavaScriptRuntime
         // overrides it for the duration of the arrow function body to match ECMA-262 lexical semantics.
         public static object BindArrow(object target, object[] boundScopes, object? boundThis)
         {
-            if (target is Func<object[], object> f0)
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
+
+            if (target is not Delegate del)
             {
-                return BindArrow0(f0, boundScopes, boundThis);
-            }
-            if (target is Func<object[], object?, object> f1)
-            {
-                return BindArrow1(f1, boundScopes, boundThis);
-            }
-            if (target is Func<object[], object?, object?, object> f2)
-            {
-                return BindArrow2(f2, boundScopes, boundThis);
-            }
-            if (target is Func<object[], object?, object?, object?, object> f3)
-            {
-                return BindArrow3(f3, boundScopes, boundThis);
-            }
-            if (target is Func<object[], object?, object?, object?, object?, object> f4)
-            {
-                return BindArrow4(f4, boundScopes, boundThis);
-            }
-            if (target is Func<object[], object?, object?, object?, object?, object?, object> f5)
-            {
-                return BindArrow5(f5, boundScopes, boundThis);
-            }
-            if (target is Func<object[], object?, object?, object?, object?, object?, object?, object> f6)
-            {
-                return BindArrow6(f6, boundScopes, boundThis);
+                throw new ArgumentException("Expected a delegate for arrow closure binding", nameof(target));
             }
 
-            throw new ArgumentException("Unsupported delegate type for arrow closure binding", nameof(target));
-        }
-
-        public static Func<object[], object> BindArrow0(Func<object[], object> target, object[] boundScopes, object? boundThis)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            return (Func<object[], object>)(_ => InvokeWithThis(boundThis, () => target(boundScopes)));
-        }
-
-        public static Func<object[], object?, object> BindArrow1(Func<object[], object?, object> target, object[] boundScopes, object? boundThis)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            return (Func<object[], object?, object>)((_, a1) => InvokeWithThis(boundThis, () => target(boundScopes, a1)));
-        }
-
-        public static Func<object[], object?, object?, object> BindArrow2(Func<object[], object?, object?, object> target, object[] boundScopes, object? boundThis)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            return (Func<object[], object?, object?, object>)((_, a1, a2) => InvokeWithThis(boundThis, () => target(boundScopes, a1, a2)));
-        }
-
-        public static Func<object[], object?, object?, object?, object> BindArrow3(Func<object[], object?, object?, object?, object> target, object[] boundScopes, object? boundThis)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            return (Func<object[], object?, object?, object?, object>)((_, a1, a2, a3) => InvokeWithThis(boundThis, () => target(boundScopes, a1, a2, a3)));
-        }
-
-        public static Func<object[], object?, object?, object?, object?, object> BindArrow4(Func<object[], object?, object?, object?, object?, object> target, object[] boundScopes, object? boundThis)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            return (Func<object[], object?, object?, object?, object?, object>)((_, a1, a2, a3, a4) => InvokeWithThis(boundThis, () => target(boundScopes, a1, a2, a3, a4)));
-        }
-
-        public static Func<object[], object?, object?, object?, object?, object?, object> BindArrow5(Func<object[], object?, object?, object?, object?, object?, object> target, object[] boundScopes, object? boundThis)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            return (Func<object[], object?, object?, object?, object?, object?, object>)((_, a1, a2, a3, a4, a5) => InvokeWithThis(boundThis, () => target(boundScopes, a1, a2, a3, a4, a5)));
-        }
-
-        public static Func<object[], object?, object?, object?, object?, object?, object?, object> BindArrow6(Func<object[], object?, object?, object?, object?, object?, object?, object> target, object[] boundScopes, object? boundThis)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            return (Func<object[], object?, object?, object?, object?, object?, object?, object>)((_, a1, a2, a3, a4, a5, a6) => InvokeWithThis(boundThis, () => target(boundScopes, a1, a2, a3, a4, a5, a6)));
-        }
-
-        // Bind a zero-parameter JS function (aside from the scopes array) to a fixed scopes array
-        public static Func<object[], object> Bind(Func<object[], object> target, object[] boundScopes)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            return _ => target(boundScopes);
-        }
-
-        // Bind a one-parameter JS function (besides scopes) to a fixed scopes array; pass along the remaining arg
-        public static Func<object[], object, object> Bind(Func<object[], object, object> target, object[] boundScopes)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
-            return (ignoredScopes, a1) => target(boundScopes, a1);
-        }
-
-        // Creates a delegate instance pointing to the provided method with the standard js2il
-        // signature: Func<object[], [object x N], object>. The number of additional object
-        // parameters is specified by paramCount.
-        public static object CreateSelfDelegate(MethodBase method, int paramCount)
-        {
-            if (method is not MethodInfo mi)
-            {
-                throw new ArgumentException("Expected MethodInfo", nameof(method));
-            }
-
-            return paramCount switch
-            {
-                0 => (object)Delegate.CreateDelegate(typeof(Func<object[], object>), null, mi),
-                1 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object>), null, mi),
-                2 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object, object>), null, mi),
-                3 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object, object, object>), null, mi),
-                4 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object, object, object, object>), null, mi),
-                5 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object, object, object, object, object>), null, mi),
-                6 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object, object, object, object, object, object>), null, mi),
-                _ => throw new NotSupportedException($"Unsupported parameter count {paramCount} for self delegate")
-            };
+            return CreateBoundDelegate(del, boundScopes, boundThis);
         }
 
         // Invoke a function delegate with runtime type inspection to determine the correct arity.
@@ -243,88 +189,15 @@ namespace JavaScriptRuntime
                 return require(args.Length > 0 ? args[0] : null)!;
             }
 
-            // JavaScript semantics: missing args are 'undefined' (modeled as CLR null); extra args are ignored.
-            // Dispatch on delegate type (arity) rather than args.Length.
-            if (target is Func<object[], bool> b0)
+            if (target is Delegate del)
             {
-                return b0(scopes);
-            }
-            if (target is Func<object[], object?, bool> b1)
-            {
-                return b1(scopes, args.Length > 0 ? args[0] : null);
-            }
-            if (target is Func<object[], object?, object?, bool> b2)
-            {
-                return b2(scopes,
-                    args.Length > 0 ? args[0] : null,
-                    args.Length > 1 ? args[1] : null);
-            }
-            if (target is Func<object[], object?, object?, object?, bool> b3)
-            {
-                return b3(scopes,
-                    args.Length > 0 ? args[0] : null,
-                    args.Length > 1 ? args[1] : null,
-                    args.Length > 2 ? args[2] : null);
-            }
-            if (target is Func<object[], object?, object?, object?, object?, bool> b4)
-            {
-                return b4(scopes,
-                    args.Length > 0 ? args[0] : null,
-                    args.Length > 1 ? args[1] : null,
-                    args.Length > 2 ? args[2] : null,
-                    args.Length > 3 ? args[3] : null);
+                // JavaScript semantics: missing args are 'undefined' (modeled as CLR null); extra args are ignored.
+                return InvokeDelegateWithArgs(del, scopes, args);
             }
 
-            if (target is Func<object[], object> f0)
-            {
-                return f0(scopes);
-            }
-            if (target is Func<object[], object?, object> f1)
-            {
-                return f1(scopes, args.Length > 0 ? args[0] : null);
-            }
-            if (target is Func<object[], object?, object?, object> f2)
-            {
-                return f2(scopes,
-                    args.Length > 0 ? args[0] : null,
-                    args.Length > 1 ? args[1] : null);
-            }
-            if (target is Func<object[], object?, object?, object?, object> f3)
-            {
-                return f3(scopes,
-                    args.Length > 0 ? args[0] : null,
-                    args.Length > 1 ? args[1] : null,
-                    args.Length > 2 ? args[2] : null);
-            }
-            if (target is Func<object[], object?, object?, object?, object?, object> f4)
-            {
-                return f4(scopes,
-                    args.Length > 0 ? args[0] : null,
-                    args.Length > 1 ? args[1] : null,
-                    args.Length > 2 ? args[2] : null,
-                    args.Length > 3 ? args[3] : null);
-            }
-            if (target is Func<object[], object?, object?, object?, object?, object?, object> f5)
-            {
-                return f5(scopes,
-                    args.Length > 0 ? args[0] : null,
-                    args.Length > 1 ? args[1] : null,
-                    args.Length > 2 ? args[2] : null,
-                    args.Length > 3 ? args[3] : null,
-                    args.Length > 4 ? args[4] : null);
-            }
-            if (target is Func<object[], object?, object?, object?, object?, object?, object?, object> f6)
-            {
-                return f6(scopes,
-                    args.Length > 0 ? args[0] : null,
-                    args.Length > 1 ? args[1] : null,
-                    args.Length > 2 ? args[2] : null,
-                    args.Length > 3 ? args[3] : null,
-                    args.Length > 4 ? args[4] : null,
-                    args.Length > 5 ? args[5] : null);
-            }
-
-            throw new ArgumentException($"Unsupported delegate type for function call: target type = {target.GetType()}, args length = {args.Length}", nameof(target));
+            throw new ArgumentException(
+                $"Unsupported callable type for function call: target type = {target.GetType()}, args length = {args.Length}",
+                nameof(target));
         }
     }
 }

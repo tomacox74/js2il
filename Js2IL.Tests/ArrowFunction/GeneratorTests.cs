@@ -83,5 +83,8 @@ namespace Js2IL.Tests.ArrowFunction
                 }
             });
         }
+
+        [Fact]
+        public Task ArrowFunction_MaxParameters_32() { var testName = nameof(ArrowFunction_MaxParameters_32); return GenerateTest(testName); }
     }
 }

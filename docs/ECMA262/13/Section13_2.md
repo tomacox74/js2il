@@ -79,7 +79,7 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Function expressions (anonymous) | Supported | [`Function_IIFE_Classic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_IIFE_Classic.js) | Emitted as static methods with delegate creation and closure binding as needed; supports immediate invocation patterns (IIFE). |
-| Named function expressions (internal self-binding for recursion) | Supported | [`Function_IIFE_Recursive.js`](../../../Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js) | On first entry, the internal name is eagerly bound to a self-delegate via JavaScriptRuntime.Closure.CreateSelfDelegate(MethodBase, int), enabling recursion from within the function body. |
+| Named function expressions (internal self-binding for recursion) | Supported | [`Function_IIFE_Recursive.js`](../../../Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js) | On first entry, the internal name is eagerly bound to the function delegate instance (constructed via ldftn + newobj) enabling recursion from within the function body. |
 
 ### 13.2.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-literals-runtime-semantics-evaluation))
 

@@ -8,6 +8,8 @@ All notable changes to this project are documented here.
 - Runtime/spec: implement descriptor-based Object APIs: `Object.create`, `Object.defineProperty`, `Object.defineProperties`, and `Object.getOwnPropertyDescriptor`, including accessor descriptors and enumerable filtering for `for...in` (fixes #503).
 - Docs(ecma262): update Sections 7.3, 10.1, 13.5, and 20.1 status/notes for prototype-chain support.
 - Classes/spec: support `class X extends Array` (intrinsic base class) and `super(...)` Array constructor initialization semantics (fixes #505).
+- Functions/runtime: support simple parameter lists up to 32 parameters (validator + codegen delegate arity) (fixes #506).
+- Runtime: simplify unknown-callable dispatch via `Delegate.DynamicInvoke` fallback (fixes #513).
 
 ## v0.8.0 - 2026-02-01
 
@@ -603,7 +605,7 @@ _Note: This is experimental infrastructure. Full feature parity with the legacy 
 ### Fixed
 - Functions: recursive IIFE crash when function pre-registered in registry with nil handle. Implemented three-way branch logic:
   1. Registered function with valid handle → compile-time ldftn + newobj Func
-  2. Pre-registered function with nil handle → runtime GetCurrentMethod() + CreateSelfDelegate()
+  2. Pre-registered function with nil handle → direct delegate construction (ldftn + newobj) and closure binding
   3. Not registered → ldnull (uses InvokeWithArgs for dynamic calls)
 - Functions: eliminated TypeLoadException when emitting ldftn with nil method handles by adding runtime self-binding path for pre-registered functions.
 - Classes: constructor calls now support fewer arguments than parameters when defaults are present (e.g., `new Person("Alice")` for constructor with 2 params).
@@ -647,8 +649,7 @@ Fixed
 ## v0.1.7 - 2025-11-12
 
 Added
-- Functions: internal self-binding for named function expressions to enable recursion (e.g., const f = function g(){ return g(); }). Implemented via a small prologue that binds the internal name on first entry using a new runtime helper `JavaScriptRuntime.Closure.CreateSelfDelegate`.
-- Runtime: `Closure.CreateSelfDelegate(MethodBase, int paramCount)` to construct the correct `Func<object[], ... , object>` delegate shape for self-calls across arities.
+- Functions: internal self-binding for named function expressions to enable recursion (e.g., const f = function g(){ return g(); }). Implemented by constructing the function delegate directly (ldftn + newobj) and binding the internal name to that delegate on first entry.
 - Tests: generator and execution coverage for classic IIFE and recursive IIFE; new SymbolTable tests for IIFE scopes (anonymous and named) and internal self-binding visibility.
 Changed
 - Hoisting: ensure local function variables are initialized before top-level statement emission so functions can reference each other by variable name prior to IIFE invocation.
