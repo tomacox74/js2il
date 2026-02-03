@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "28.2",
   "title": "Proxy Objects",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-proxy-objects",
   "parent": {
     "clause": "28"
@@ -12,26 +12,48 @@
     {
       "clause": "28.2.1",
       "title": "The Proxy Constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-constructor"
     },
     {
       "clause": "28.2.1.1",
       "title": "Proxy ( target , handler )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-target-handler"
     },
     {
       "clause": "28.2.2",
       "title": "Properties of the Proxy Constructor",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-proxy-constructor"
     },
     {
       "clause": "28.2.2.1",
       "title": "Proxy.revocable ( target , handler )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy.revocable"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "28.2.1.1",
+        "feature": "Proxy (target, handler) (constructor)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy-target-handler",
+        "testScripts": [
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js"
+        ],
+        "notes": "Supports creating Proxy instances via new Proxy(target, handler) with get/set/has trap routing for core property access and the in operator. Does not implement full spec invariants, revocation, or other traps (e.g., ownKeys, getOwnPropertyDescriptor, defineProperty, deleteProperty, apply, construct)."
+      },
+      {
+        "clause": "28.2.2.1",
+        "feature": "Proxy.revocable",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy.revocable"
+      }
+    ]
+  }
 }

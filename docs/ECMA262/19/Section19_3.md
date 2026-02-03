@@ -36,7 +36,7 @@
 | 19.3.22 | Number ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-number) |
 | 19.3.23 | Object ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-object) |
 | 19.3.24 | Promise ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-promise) |
-| 19.3.25 | Proxy ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-proxy) |
+| 19.3.25 | Proxy ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-proxy) |
 | 19.3.26 | RangeError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-rangeerror) |
 | 19.3.27 | ReferenceError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-referenceerror) |
 | 19.3.28 | RegExp ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-regexp) |
@@ -64,4 +64,10 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean)) | Supported with Limitations | [`Compile_Scripts_DecompileGeneratorTest.js`](../../../Js2IL.Tests/Integration/JavaScript/Compile_Scripts_DecompileGeneratorTest.js) | js2il supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics. |
+
+### 19.3.25 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-proxy))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Proxy (global constructor property) | Supported with Limitations | [`Proxy_GetTrap_OverridesProperty.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js)<br>[`Proxy_SetTrap_InterceptsWrites.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js)<br>[`Proxy_HasTrap_AffectsInOperator.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js) | Supports new Proxy(target, handler) and routes get/set/has behavior through handler traps for core property access and the in operator. Does not implement full Proxy constructor/function object semantics or Proxy.revocable. |
 
