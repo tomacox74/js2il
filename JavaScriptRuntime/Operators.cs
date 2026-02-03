@@ -253,6 +253,31 @@ namespace JavaScriptRuntime
             if (obj == null)
                 return false;
 
+            // Proxy has trap
+            if (obj is JavaScriptRuntime.Proxy proxy)
+            {
+                // Convert property to string key (minimal; symbols not yet surfaced here)
+                var proxyPropName = DotNet2JSConversions.ToString(property);
+
+                var hasTrap = JavaScriptRuntime.Object.GetProperty(proxy.Handler, "has");
+                if (hasTrap is not null && hasTrap is not JsNull)
+                {
+                    var prev = RuntimeServices.SetCurrentThis(proxy.Handler);
+                    try
+                    {
+                        var trapResult = Closure.InvokeWithArgs(hasTrap, System.Array.Empty<object>(), new object?[] { proxy.Target, proxyPropName });
+                        return TypeUtilities.ToBoolean(trapResult);
+                    }
+                    finally
+                    {
+                        RuntimeServices.SetCurrentThis(prev);
+                    }
+                }
+
+                // Fallback: apply normal 'in' semantics to the proxy target.
+                return In(proxyPropName, proxy.Target);
+            }
+
             // Convert property to string
             var propName = DotNet2JSConversions.ToString(property);
             
