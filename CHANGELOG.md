@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.1 - 2026-02-03
+
 - Runtime/spec: add opt-in prototype-chain behavior (side-table [[Prototype]] storage) with `__proto__`, `Object.getPrototypeOf`, `Object.setPrototypeOf`, prototype-walking lookup, and prototype-aware `in` (fixes #504).
 - Runtime/spec: implement descriptor-based Object APIs: `Object.create`, `Object.defineProperty`, `Object.defineProperties`, and `Object.getOwnPropertyDescriptor`, including accessor descriptors and enumerable filtering for `for...in` (fixes #503).
 - Docs(ecma262): update Sections 7.3, 10.1, 13.5, and 20.1 status/notes for prototype-chain support.
