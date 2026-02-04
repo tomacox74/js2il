@@ -910,7 +910,7 @@ namespace JavaScriptRuntime
                 var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
-                    // No implicit descriptor support for arrays/typed arrays/strings here.
+
             if (obj is Array array)
             {
                 // Bounds check: return undefined (null) when OOB to mimic JS behavior
@@ -1035,7 +1035,6 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-                    // JavaScriptRuntime.Array / typed arrays: no custom properties yet
             if (obj is System.Dynamic.ExpandoObject exp)
             {
                 return SetProperty(obj, propName, value);

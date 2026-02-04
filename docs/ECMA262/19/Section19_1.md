@@ -25,7 +25,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| globalThis global value | Supported with Limitations | [`IntrinsicCallables_GlobalThis_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalThis_Basic.js) | Exposed as JavaScriptRuntime.GlobalThis.globalThis. Backed by a per-thread ExpandoObject seeded with common globals and delegate-valued global functions. Does not attempt to model all host environment properties/attributes. |
+| globalThis global value | Supported with Limitations | [`IntrinsicCallables_GlobalThis_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalThis_Basic.js)<br>[`IntrinsicCallables_GlobalThis_Enumerability.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalThis_Enumerability.js) | Exposed as JavaScriptRuntime.GlobalThis.globalThis. Backed by a per-thread ExpandoObject seeded with common globals and delegate-valued global functions. Does not attempt to model all host environment properties/attributes. |
 
 ### 19.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-infinity))
 
