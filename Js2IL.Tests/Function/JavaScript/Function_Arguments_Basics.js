@@ -16,7 +16,7 @@ function outer(a) {
         console.log(arguments[0]);
     };
 
-    arrow();
+    arrow(99);
 }
 
 outer(7, 8, 9);
@@ -29,4 +29,4 @@ function g() {
     inner(1, 2);
 }
 
-g();
+g(1, 2, 3);
