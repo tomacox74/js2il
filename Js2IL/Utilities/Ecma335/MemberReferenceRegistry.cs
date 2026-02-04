@@ -239,7 +239,7 @@ namespace Js2IL.Utilities.Ecma335
             var specBlob = new BlobBuilder();
             var genInst = new BlobEncoder(specBlob)
                 .TypeSpecificationSignature()
-                .GenericInstantiation(openTypeRef, genericArgs.Length, isValueType: false);
+                .GenericInstantiation(openTypeRef, genericArgs.Length, isValueType: openType.IsValueType);
 
             // Encode each generic argument
             foreach (var arg in genericArgs)
@@ -389,7 +389,7 @@ namespace Js2IL.Utilities.Ecma335
                 var openTypeRef = _typeRefRegistry.GetOrAdd(openType);
                 var genericArgs = type.GetGenericArguments();
 
-                var inst = encoder.GenericInstantiation(openTypeRef, genericArgs.Length, isValueType: false);
+                var inst = encoder.GenericInstantiation(openTypeRef, genericArgs.Length, isValueType: openType.IsValueType);
                 foreach (var arg in genericArgs)
                 {
                     EncodeGenericArgument(inst.AddArgument(), arg);
