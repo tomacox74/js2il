@@ -23,7 +23,7 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, double> _numberFunctionValue = static (_, value) =>
             JavaScriptRuntime.TypeUtilities.ToNumber(value);
 
-        private static readonly Func<object[], object?> _functionConstructorValue = static _ =>
+        private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Function constructor is not supported yet.");
 
         internal static ServiceContainer? ServiceProvider
@@ -54,26 +54,26 @@ namespace JavaScriptRuntime
         /// ECMAScript global Boolean conversion function value.
         /// This enables patterns like <c>array.filter(Boolean)</c>.
         /// </summary>
-        public static object Boolean => _booleanFunctionValue;
+        public static Func<object[], object?, bool> Boolean => _booleanFunctionValue;
 
         /// <summary>
         /// ECMAScript global String conversion function value.
         /// This enables patterns like <c>array.map(String)</c> and type-marker comparisons (e.g., <c>x === String</c>).
         /// </summary>
-        public static object String => _stringFunctionValue;
+        public static Func<object[], object?, string> String => _stringFunctionValue;
 
         /// <summary>
         /// ECMAScript global Number conversion function value.
         /// This enables patterns like <c>array.map(Number)</c> and type-marker comparisons (e.g., <c>x === Number</c>).
         /// </summary>
-        public static object Number => _numberFunctionValue;
+        public static Func<object[], object?, double> Number => _numberFunctionValue;
 
         /// <summary>
         /// ECMAScript global Function constructor value (placeholder).
         /// Currently exposed as a callable function value so libraries can reference it as a global identifier.
         /// Invoking it will throw until Function constructor semantics are implemented.
         /// </summary>
-        public static object Function => _functionConstructorValue;
+        public static Func<object[], object?, Delegate> Function => _functionConstructorValue;
 
         /// <summary>
         /// ECMAScript global Infinity value (+∞).
