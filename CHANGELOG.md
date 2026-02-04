@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 - Runtime/spec: implement minimal `Proxy` support (constructor + `get`/`set`/`has` traps) (fixes #502).
 - Runtime/spec: expose standard global builtins and numeric helpers (`String`, `Number`, `Function`, `parseFloat`, `isFinite`) (fixes #528).
+- Runtime/spec: support `globalThis` identifier (ECMA-262 §19.1.1) as a first-class global value (fixes #532).
 - Runtime/validator: expose host timer APIs as first-class global function values (`setTimeout`, `clearTimeout`, `setInterval`, `clearInterval`) so DOM polyfills (e.g., domino WindowTimers) validate and compile successfully (fixes #534).
 - Compiler/validator: add `--strictMode=Warn|Ignore` to relax missing top-level `"use strict";` directive prologues for CommonJS modules (fixes #531).
 - Functions/spec: implement minimal implicit `arguments` binding for non-arrow functions (including lexical capture from nested arrow functions) and preserve full call-site arguments only when needed; mapped-arguments aliasing and full Arguments Exotic Object behaviors are not implemented.

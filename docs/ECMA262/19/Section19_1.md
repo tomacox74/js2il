@@ -12,7 +12,7 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 19.1.1 | globalThis | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-globalthis) |
+| 19.1.1 | globalThis | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-globalthis) |
 | 19.1.2 | Infinity | Supported | [tc39.es](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-infinity) |
 | 19.1.3 | NaN | Supported | [tc39.es](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-nan) |
 | 19.1.4 | undefined | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-undefined) |
@@ -20,6 +20,12 @@
 ## Support
 
 Feature-level support tracking with test script references.
+
+### 19.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-globalthis))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| globalThis global value | Supported with Limitations | [`IntrinsicCallables_GlobalThis_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalThis_Basic.js) | Exposed as JavaScriptRuntime.GlobalThis.globalThis. Backed by a per-thread ExpandoObject seeded with common globals and delegate-valued global functions. Does not attempt to model all host environment properties/attributes. |
 
 ### 19.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-infinity))
 

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Dynamic;
 using JavaScriptRuntime.DependencyInjection;
 
 namespace JavaScriptRuntime
@@ -10,6 +12,11 @@ namespace JavaScriptRuntime
     public static class GlobalThis
     {
         private static readonly ThreadLocal<ServiceContainer?> _serviceProvider = new(() => null);
+
+        // Per-"realm" (thread) global object. This backs the ECMAScript globalThis value.
+        // We represent it as an ExpandoObject so member get/set and delegate-valued properties
+        // work with the existing Object.GetProperty/SetProperty/CallMember dispatch.
+        private static readonly ThreadLocal<ExpandoObject?> _globalObject = new(() => null);
 
         // Some ECMAScript globals are callable (e.g., Boolean(x)). When used in expression position
         // (e.g., arr.filter(Boolean)), we expose them as function values (delegates) so the compiler
@@ -30,6 +37,58 @@ namespace JavaScriptRuntime
         {
             get => _serviceProvider.Value;
             set => _serviceProvider.Value = value;
+        }
+
+        /// <summary>
+        /// ECMA-262 globalThis value.
+        /// Returns the global object for the current execution context.
+        /// </summary>
+        /// <remarks>
+        /// JS2IL models the global object as a dynamic bag (ExpandoObject) seeded with common globals.
+        /// This allows libraries to read/write properties via globalThis (e.g., globalThis.window = ...).
+        /// </remarks>
+        public static object globalThis => GetOrCreateGlobalObject();
+
+        private static ExpandoObject GetOrCreateGlobalObject()
+        {
+            var obj = _globalObject.Value;
+            if (obj == null)
+            {
+                obj = new ExpandoObject();
+                _globalObject.Value = obj;
+            }
+
+            SeedGlobalObjectIfMissing(obj);
+            return obj;
+        }
+
+        private static void SeedGlobalObjectIfMissing(ExpandoObject obj)
+        {
+            var dict = (IDictionary<string, object?>)obj;
+
+            // Self reference.
+            dict["globalThis"] = obj;
+
+            // Seed common globals without overwriting user overrides.
+            dict.TryAdd("console", console);
+            dict.TryAdd("process", process);
+            dict.TryAdd("Infinity", Infinity);
+            dict.TryAdd("NaN", NaN);
+            dict.TryAdd("Boolean", Boolean);
+            dict.TryAdd("String", String);
+            dict.TryAdd("Number", Number);
+            dict.TryAdd("Function", Function);
+
+            // Global functions exposed as delegates.
+            dict.TryAdd("setTimeout", (Func<object, object, object[], object>)setTimeout);
+            dict.TryAdd("clearTimeout", (Func<object, object?>)clearTimeout);
+            dict.TryAdd("setImmediate", (Func<object, object[], object>)setImmediate);
+            dict.TryAdd("clearImmediate", (Func<object, object?>)clearImmediate);
+            dict.TryAdd("setInterval", (Func<object, object, object[], object>)setInterval);
+            dict.TryAdd("clearInterval", (Func<object, object?>)clearInterval);
+            dict.TryAdd("parseInt", (Func<object?, object?, double>)parseInt);
+            dict.TryAdd("parseFloat", (Func<object?, double>)parseFloat);
+            dict.TryAdd("isFinite", (Func<object?, bool>)isFinite);
         }
 
         /// <summary>

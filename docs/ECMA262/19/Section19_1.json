@@ -12,7 +12,7 @@
     {
       "clause": "19.1.1",
       "title": "globalThis",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-globalthis"
     },
     {
@@ -36,6 +36,16 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "19.1.1",
+        "feature": "globalThis global value",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-globalthis",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalThis_Basic.js"
+        ],
+        "notes": "Exposed as JavaScriptRuntime.GlobalThis.globalThis. Backed by a per-thread ExpandoObject seeded with common globals and delegate-valued global functions. Does not attempt to model all host environment properties/attributes."
+      },
       {
         "clause": "19.1.2",
         "feature": "Infinity global value",
