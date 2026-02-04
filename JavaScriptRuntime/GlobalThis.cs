@@ -45,7 +45,14 @@ namespace JavaScriptRuntime
         internal static ServiceContainer? ServiceProvider
         {
             get => _serviceProvider.Value;
-            set => _serviceProvider.Value = value;
+            set
+            {
+                _serviceProvider.Value = value;
+
+                // Each configured runtime corresponds to a new execution context/realm.
+                // Ensure we don't leak a prior global object across Engine.Execute calls on the same thread.
+                _globalObject.Value = null;
+            }
         }
 
         DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
@@ -77,11 +84,13 @@ namespace JavaScriptRuntime
 
         public void Add(KeyValuePair<string, object?> item) => Properties.Add(item);
 
-        public void Clear() => Properties.Clear();
+        void ICollection<KeyValuePair<string, object?>>.Clear() =>
+            throw new NotSupportedException("Clearing the global object is not supported.");
 
         public bool Contains(KeyValuePair<string, object?> item) => Properties.Contains(item);
 
-        public void CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex) => Properties.CopyTo(array, arrayIndex);
+        void ICollection<KeyValuePair<string, object?>>.CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex) =>
+            Properties.CopyTo(array, arrayIndex);
 
         public bool Remove(KeyValuePair<string, object?> item) => Properties.Remove(item);
 
@@ -110,33 +119,78 @@ namespace JavaScriptRuntime
             return obj;
         }
 
+        private void DefineNonEnumerableDataProperty(string key, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(this, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = value
+            });
+        }
+
         private void SeedGlobalObjectIfMissing()
         {
             var dict = (IDictionary<string, object?>)this;
 
             // Self reference.
             dict[nameof(GlobalThis.globalThis)] = this;
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.globalThis), this);
 
             // Seed common globals without overwriting user overrides.
             dict.TryAdd(nameof(GlobalThis.console), console);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.console), dict[nameof(GlobalThis.console)]);
+
             dict.TryAdd(nameof(GlobalThis.process), process);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.process), dict[nameof(GlobalThis.process)]);
+
             dict.TryAdd(nameof(GlobalThis.Infinity), Infinity);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Infinity), dict[nameof(GlobalThis.Infinity)]);
+
             dict.TryAdd(nameof(GlobalThis.NaN), NaN);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.NaN), dict[nameof(GlobalThis.NaN)]);
+
             dict.TryAdd(nameof(GlobalThis.Boolean), Boolean);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Boolean), dict[nameof(GlobalThis.Boolean)]);
+
             dict.TryAdd(nameof(GlobalThis.String), String);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.String), dict[nameof(GlobalThis.String)]);
+
             dict.TryAdd(nameof(GlobalThis.Number), Number);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Number), dict[nameof(GlobalThis.Number)]);
+
             dict.TryAdd(nameof(GlobalThis.Function), Function);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Function), dict[nameof(GlobalThis.Function)]);
 
             // Global functions exposed as delegates.
             dict.TryAdd(nameof(GlobalThis.setTimeout), (Func<object, object, object[], object>)setTimeout);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.setTimeout), dict[nameof(GlobalThis.setTimeout)]);
+
             dict.TryAdd(nameof(GlobalThis.clearTimeout), (Func<object, object?>)clearTimeout);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.clearTimeout), dict[nameof(GlobalThis.clearTimeout)]);
+
             dict.TryAdd(nameof(GlobalThis.setImmediate), (Func<object, object[], object>)setImmediate);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.setImmediate), dict[nameof(GlobalThis.setImmediate)]);
+
             dict.TryAdd(nameof(GlobalThis.clearImmediate), (Func<object, object?>)clearImmediate);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.clearImmediate), dict[nameof(GlobalThis.clearImmediate)]);
+
             dict.TryAdd(nameof(GlobalThis.setInterval), (Func<object, object, object[], object>)setInterval);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.setInterval), dict[nameof(GlobalThis.setInterval)]);
+
             dict.TryAdd(nameof(GlobalThis.clearInterval), (Func<object, object?>)clearInterval);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.clearInterval), dict[nameof(GlobalThis.clearInterval)]);
+
             dict.TryAdd(nameof(GlobalThis.parseInt), (Func<object?, object?, double>)parseInt);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.parseInt), dict[nameof(GlobalThis.parseInt)]);
+
             dict.TryAdd(nameof(GlobalThis.parseFloat), (Func<object?, double>)parseFloat);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.parseFloat), dict[nameof(GlobalThis.parseFloat)]);
+
             dict.TryAdd(nameof(GlobalThis.isFinite), (Func<object?, bool>)isFinite);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.isFinite), dict[nameof(GlobalThis.isFinite)]);
         }
 
         /// <summary>

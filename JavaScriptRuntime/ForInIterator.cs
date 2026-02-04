@@ -53,7 +53,8 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             && root is not JavaScriptRuntime.Array
             && root is not JavaScriptRuntime.Int32Array
             && root is not string
-            && root is not IDictionary;
+            && root is not IDictionary
+            && root is not IDictionary<string, object?>;
 
         if (_useTypeChain)
         {
@@ -229,6 +230,14 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             return keys;
         }
 
+        // IDictionary<string, object?>: enumerate keys
+        if (target is IDictionary<string, object?> dictGeneric)
+        {
+            return dictGeneric.Keys
+                .Where(k => PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, k))
+                .ToList();
+        }
+
         // IDictionary: enumerate keys (stringified)
         if (target is IDictionary dictObj)
         {
@@ -309,6 +318,11 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
                 return false;
             }
             return idx < s.Length;
+        }
+
+        if (target is IDictionary<string, object?> dictGeneric)
+        {
+            return dictGeneric.ContainsKey(key) && PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, key);
         }
 
         // IDictionary: re-check by stringifying current keys.
