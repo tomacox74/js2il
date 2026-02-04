@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "11.2",
   "title": "Types of Source Code",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-types-of-source-code",
   "parent": {
     "clause": "11"
@@ -12,13 +12,13 @@
     {
       "clause": "11.2.1",
       "title": "Directive Prologues and the Use Strict Directive",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-directive-prologues-and-the-use-strict-directive"
     },
     {
       "clause": "11.2.2",
       "title": "Strict Mode Code",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-strict-mode-code"
     },
     {
@@ -33,5 +33,16 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-non-ecmascript-functions"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "11.2.1",
+        "feature": "Directive prologues; configurable enforcement of \"use strict\"",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-directive-prologues-and-the-use-strict-directive",
+        "notes": "JS2IL recognizes directive prologues and (by default) requires a top-level \"use strict\" directive. For third-party CommonJS modules that omit the directive, the compiler can downgrade the missing prologue to a warning via --strictMode=Warn (or suppress via --strictMode=Ignore). JS2IL still compiles using strict-mode semantics; this option only changes reporting severity for the missing directive prologue."
+      }
+    ]
+  }
 }

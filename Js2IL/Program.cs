@@ -35,6 +35,10 @@ public class Js2ILArgs
     [ArgShortcut("--prototypeChain")]
     public PrototypeChainMode PrototypeChain { get; set; } = PrototypeChainMode.Auto;
 
+    [ArgDescription("Strict-mode directive prologue enforcement: Error, Warn, or Ignore")]
+    [ArgShortcut("--strictMode")]
+    public StrictModeDirectivePrologueMode StrictMode { get; set; } = StrictModeDirectivePrologueMode.Error;
+
     [ArgDescription("Show version information and exit")]
     [ArgShortcut("--version")]
     public bool Version { get; set; }
@@ -71,7 +75,8 @@ class Program
                 Verbose = parsed.Verbose,
                 AnalyzeUnused = parsed.AnalyzeUnused,
                 EmitPdb = parsed.EmitPdb,
-                PrototypeChain = parsed.PrototypeChain
+                PrototypeChain = parsed.PrototypeChain,
+                StrictMode = parsed.StrictMode
             });
             var logger = servicesProvider.GetRequiredService<ILogger>();
 
@@ -120,6 +125,7 @@ class Program
         logger.WriteLineError("-a, --analyzeunused    Analyze and report unused properties and methods");
         logger.WriteLineError("--pdb                  Emit Portable PDB debug symbols (.pdb)");
         logger.WriteLineError("--prototypeChain        Prototype chain mode: Auto, On, or Off");
+        logger.WriteLineError("--strictMode           Strict-mode directive prologue enforcement: Error, Warn, or Ignore");
         logger.WriteLineError("--version              Show version information and exit");
         logger.WriteLineError("-h, -?, --help         Show help and exit");
     }

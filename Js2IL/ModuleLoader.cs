@@ -13,7 +13,7 @@ namespace Js2IL;
 public class ModuleLoader
 {
     private readonly JavaScriptParser _parser = new JavaScriptParser();
-    private readonly JavaScriptAstValidator _validator = new JavaScriptAstValidator();
+    private readonly JavaScriptAstValidator _validator;
     private readonly IFileSystem _fileSystem;
     private readonly ILogger _logger;
 
@@ -22,6 +22,7 @@ public class ModuleLoader
     public ModuleLoader(CompilerOptions options, IFileSystem fileSystem, ILogger logger)
     {
         _verbose = options.Verbose;
+        _validator = new JavaScriptAstValidator(options.StrictMode);
         _fileSystem = fileSystem;
         _logger = logger;
     }

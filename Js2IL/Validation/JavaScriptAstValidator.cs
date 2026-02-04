@@ -1,4 +1,5 @@
 using Acornima.Ast;
+using Js2IL;
 using Js2IL.Services;
 using Js2IL.Utilities;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace Js2IL.Validation;
 
 public class JavaScriptAstValidator : IAstValidator
 {
+    private readonly StrictModeDirectivePrologueMode _strictModeDirectivePrologueMode;
+
     private static readonly Lazy<HashSet<string>> SupportedRequireModules = new(() =>
     {
         var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -28,13 +31,18 @@ public class JavaScriptAstValidator : IAstValidator
         return set;
     });
 
+    public JavaScriptAstValidator(StrictModeDirectivePrologueMode strictModeDirectivePrologueMode = StrictModeDirectivePrologueMode.Error)
+    {
+        _strictModeDirectivePrologueMode = strictModeDirectivePrologueMode;
+    }
+
     public ValidationResult Validate(Acornima.Ast.Program ast)
     {
         var result = new ValidationResult { IsValid = true };
 
         // JS2IL currently only supports strict-mode semantics.
         // Require every module/script to include a directive prologue containing "use strict".
-        ValidateUseStrictDirectivePrologue(ast, result);
+        ValidateUseStrictDirectivePrologue(ast, result, _strictModeDirectivePrologueMode);
 
         // Validate spec-level early errors that Acornima may parse but considers static errors.
         // In particular, break/continue target rules are specified under iteration statements.
@@ -808,7 +816,10 @@ public class JavaScriptAstValidator : IAstValidator
             });
     }
 
-    private static void ValidateUseStrictDirectivePrologue(Acornima.Ast.Program ast, ValidationResult result)
+    private static void ValidateUseStrictDirectivePrologue(
+        Acornima.Ast.Program ast,
+        ValidationResult result,
+        StrictModeDirectivePrologueMode strictModeDirectivePrologueMode)
     {
         var hasUseStrict = false;
 
@@ -830,10 +841,29 @@ public class JavaScriptAstValidator : IAstValidator
 
         if (!hasUseStrict)
         {
-            AddError(
-                result,
-                "JS2IL requires strict mode: add a \"use strict\"; directive prologue at the start of the module",
-                ast);
+            switch (strictModeDirectivePrologueMode)
+            {
+                case StrictModeDirectivePrologueMode.Error:
+                    AddError(
+                        result,
+                        "JS2IL requires strict mode: add a \"use strict\"; directive prologue at the start of the module",
+                        ast);
+                    break;
+                case StrictModeDirectivePrologueMode.Warn:
+                    AddWarning(
+                        result,
+                        "JS2IL requires strict mode: add a \"use strict\"; directive prologue at the start of the module",
+                        ast);
+                    break;
+                case StrictModeDirectivePrologueMode.Ignore:
+                    break;
+                default:
+                    AddError(
+                        result,
+                        "JS2IL requires strict mode: add a \"use strict\"; directive prologue at the start of the module",
+                        ast);
+                    break;
+            }
         }
     }
 
@@ -1061,6 +1091,12 @@ public class JavaScriptAstValidator : IAstValidator
         var loc = node.Location.Start;
         result.Errors.Add($"{message} (line {loc.Line}, col {loc.Column})");
         result.IsValid = false;
+    }
+
+    private static void AddWarning(ValidationResult result, string message, Node node)
+    {
+        var loc = node.Location.Start;
+        result.Warnings.Add($"{message} (line {loc.Line}, col {loc.Column})");
     }
 
     private enum BreakableKind
