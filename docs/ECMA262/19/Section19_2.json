@@ -36,7 +36,7 @@
     {
       "clause": "19.2.2",
       "title": "isFinite ( number )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-isfinite-number"
     },
     {
@@ -48,7 +48,7 @@
     {
       "clause": "19.2.4",
       "title": "parseFloat ( string )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-parsefloat-string"
     },
     {
@@ -108,6 +108,26 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "19.2.2",
+        "feature": "isFinite(number)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-isfinite-number",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js"
+        ],
+        "notes": "Implemented by JavaScriptRuntime.GlobalThis.isFinite using JS-like ToNumber coercion (JavaScriptRuntime.TypeUtilities.ToNumber) and IEEE-754 finiteness checks. This is sufficient for common libraries, but is not intended as a full spec conformance test suite."
+      },
+      {
+        "clause": "19.2.4",
+        "feature": "parseFloat(string)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-parsefloat-string",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js"
+        ],
+        "notes": "Implemented by JavaScriptRuntime.GlobalThis.parseFloat. Supports leading whitespace, sign, decimals, optional exponent, and Infinity tokens, and stops parsing at the first invalid character."
+      },
       {
         "clause": "19.2.5",
         "feature": "parseInt(string, radix)",

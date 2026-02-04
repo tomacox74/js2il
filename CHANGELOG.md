@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - Runtime/spec: implement minimal `Proxy` support (constructor + `get`/`set`/`has` traps) (fixes #502).
+- Runtime/spec: expose standard global builtins and numeric helpers (`String`, `Number`, `Function`, `parseFloat`, `isFinite`) (fixes #528).
 
 ## v0.8.1 - 2026-02-03
 

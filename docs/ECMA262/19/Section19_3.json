@@ -102,7 +102,7 @@
     {
       "clause": "19.3.16",
       "title": "Function ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function"
     },
     {
@@ -285,6 +285,36 @@
           "Js2IL.Tests/Integration/JavaScript/Compile_Scripts_DecompileGeneratorTest.js"
         ],
         "notes": "js2il supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics."
+      },
+      {
+        "clause": "19.3.31",
+        "feature": "Global String is available as a first-class value (e.g., x === String, array.map(String))",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-string",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js"
+        ],
+        "notes": "Exposes JavaScriptRuntime.GlobalThis.String as a delegate value. Direct calls String(x) are lowered as primitive conversions. In js2il output, JavaScript String values are represented as CLR string. Full String constructor/prototype semantics are not implemented."
+      },
+      {
+        "clause": "19.3.22",
+        "feature": "Global Number is available as a first-class value (e.g., x === Number, array.map(Number))",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-number",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js"
+        ],
+        "notes": "Exposes JavaScriptRuntime.GlobalThis.Number as a delegate value. Direct calls Number(x) are lowered as primitive conversions. In js2il output, JavaScript Number values are represented as unboxed CLR double. Full Number constructor/prototype semantics are not implemented."
+      },
+      {
+        "clause": "19.3.16",
+        "feature": "Global Function identifier is exposed (placeholder)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js"
+        ],
+        "notes": "Exposes JavaScriptRuntime.GlobalThis.Function as a callable function value so libraries can reference Function as a global identifier (e.g., Function.prototype...). Invoking Function(...) throws NotSupportedException until Function constructor semantics are implemented."
       }
     ]
   }

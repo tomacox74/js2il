@@ -16,9 +16,9 @@
 | 19.2.1.1 | PerformEval ( x , strictCaller , direct ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-performeval) |
 | 19.2.1.2 | HostEnsureCanCompileStrings ( calleeRealm , parameterStrings , bodyString , direct ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-hostensurecancompilestrings) |
 | 19.2.1.3 | EvalDeclarationInstantiation ( body , varEnv , lexEnv , privateEnv , strict ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaldeclarationinstantiation) |
-| 19.2.2 | isFinite ( number ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-isfinite-number) |
+| 19.2.2 | isFinite ( number ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-isfinite-number) |
 | 19.2.3 | isNaN ( number ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-isnan-number) |
-| 19.2.4 | parseFloat ( string ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-parsefloat-string) |
+| 19.2.4 | parseFloat ( string ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-parsefloat-string) |
 | 19.2.5 | parseInt ( string , radix ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-parseint-string-radix) |
 | 19.2.6 | URI Handling Functions | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uri-handling-functions) |
 | 19.2.6.1 | decodeURI ( encodedURI ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-decodeuri-encodeduri) |
@@ -32,6 +32,18 @@
 ## Support
 
 Feature-level support tracking with test script references.
+
+### 19.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-isfinite-number))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| isFinite(number) | Supported with Limitations | [`IntrinsicCallables_ParseFloat_IsFinite_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js) | Implemented by JavaScriptRuntime.GlobalThis.isFinite using JS-like ToNumber coercion (JavaScriptRuntime.TypeUtilities.ToNumber) and IEEE-754 finiteness checks. This is sufficient for common libraries, but is not intended as a full spec conformance test suite. |
+
+### 19.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-parsefloat-string))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| parseFloat(string) | Supported with Limitations | [`IntrinsicCallables_ParseFloat_IsFinite_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js) | Implemented by JavaScriptRuntime.GlobalThis.parseFloat. Supports leading whitespace, sign, decimals, optional exponent, and Infinity tokens, and stops parsing at the first invalid character. |
 
 ### 19.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-parseint-string-radix))
 

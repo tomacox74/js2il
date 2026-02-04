@@ -17,6 +17,15 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, bool> _booleanFunctionValue = static (_, value) =>
             JavaScriptRuntime.TypeUtilities.ToBoolean(value);
 
+        private static readonly Func<object[], object?, string> _stringFunctionValue = static (_, value) =>
+            JavaScriptRuntime.DotNet2JSConversions.ToString(value);
+
+        private static readonly Func<object[], object?, double> _numberFunctionValue = static (_, value) =>
+            JavaScriptRuntime.TypeUtilities.ToNumber(value);
+
+        private static readonly Func<object[], object?> _functionConstructorValue = static _ =>
+            throw new NotSupportedException("The Function constructor is not supported yet.");
+
         internal static ServiceContainer? ServiceProvider
         {
             get => _serviceProvider.Value;
@@ -48,6 +57,25 @@ namespace JavaScriptRuntime
         public static object Boolean => _booleanFunctionValue;
 
         /// <summary>
+        /// ECMAScript global String conversion function value.
+        /// This enables patterns like <c>array.map(String)</c> and type-marker comparisons (e.g., <c>x === String</c>).
+        /// </summary>
+        public static object String => _stringFunctionValue;
+
+        /// <summary>
+        /// ECMAScript global Number conversion function value.
+        /// This enables patterns like <c>array.map(Number)</c> and type-marker comparisons (e.g., <c>x === Number</c>).
+        /// </summary>
+        public static object Number => _numberFunctionValue;
+
+        /// <summary>
+        /// ECMAScript global Function constructor value (placeholder).
+        /// Currently exposed as a callable function value so libraries can reference it as a global identifier.
+        /// Invoking it will throw until Function constructor semantics are implemented.
+        /// </summary>
+        public static object Function => _functionConstructorValue;
+
+        /// <summary>
         /// ECMAScript global Infinity value (+∞).
         /// Exposed as a static property so identifiers bind at compile-time.
         /// </summary>
@@ -71,6 +99,14 @@ namespace JavaScriptRuntime
                     return process;
                 case "console":
                     return console;
+                case "Boolean":
+                    return Boolean;
+                case "String":
+                    return String;
+                case "Number":
+                    return Number;
+                case "Function":
+                    return Function;
                 case "Infinity":
                     return Infinity;
                 case "NaN":
@@ -196,6 +232,96 @@ namespace JavaScriptRuntime
             }
 
             return (double)(sign * value);
+        }
+
+        /// <summary>
+        /// Minimal parseFloat implementation.
+        /// Accepts leading whitespace, an optional sign, decimals, and an optional exponent.
+        /// Stops parsing at the first invalid character; returns NaN if no valid prefix.
+        /// </summary>
+        public static double parseFloat(object? input)
+        {
+            if (input == null) return double.NaN;
+
+            var text = DotNet2JSConversions.ToString(input).TrimStart();
+            if (text.Length == 0) return double.NaN;
+
+            // Infinity tokens
+            if (text.StartsWith("Infinity", StringComparison.Ordinal)) return double.PositiveInfinity;
+            if (text.StartsWith("+Infinity", StringComparison.Ordinal)) return double.PositiveInfinity;
+            if (text.StartsWith("-Infinity", StringComparison.Ordinal)) return double.NegativeInfinity;
+
+            int i = 0;
+            if (text[i] == '+' || text[i] == '-')
+            {
+                i++;
+                if (i >= text.Length) return double.NaN;
+            }
+
+            bool sawDigit = false;
+            while (i < text.Length && char.IsDigit(text[i]))
+            {
+                sawDigit = true;
+                i++;
+            }
+
+            if (i < text.Length && text[i] == '.')
+            {
+                i++;
+                while (i < text.Length && char.IsDigit(text[i]))
+                {
+                    sawDigit = true;
+                    i++;
+                }
+            }
+
+            // Optional exponent
+            if (sawDigit && i < text.Length && (text[i] == 'e' || text[i] == 'E'))
+            {
+                int expStart = i;
+                i++;
+                if (i < text.Length && (text[i] == '+' || text[i] == '-'))
+                {
+                    i++;
+                }
+
+                int expDigits = 0;
+                while (i < text.Length && char.IsDigit(text[i]))
+                {
+                    expDigits++;
+                    i++;
+                }
+
+                if (expDigits == 0)
+                {
+                    // Roll back; exponent marker not followed by digits.
+                    i = expStart;
+                }
+            }
+
+            if (!sawDigit)
+            {
+                return double.NaN;
+            }
+
+            var prefix = text.Substring(0, i);
+            return double.TryParse(
+                prefix,
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var parsed)
+                ? parsed
+                : double.NaN;
+        }
+
+        /// <summary>
+        /// Minimal global isFinite implementation.
+        /// Coerces to number and returns true only when the result is a finite IEEE754 double.
+        /// </summary>
+        public static bool isFinite(object? number)
+        {
+            var d = TypeUtilities.ToNumber(number);
+            return !double.IsNaN(d) && !double.IsInfinity(d);
         }
 
         private static Timers GetTimers()

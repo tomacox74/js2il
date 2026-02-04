@@ -38,6 +38,18 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_ParseFloat_IsFinite_Basic()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_ParseFloat_IsFinite_Basic));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_GlobalBuiltins_AsValues_Basic()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_GlobalBuiltins_AsValues_Basic));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Symbol_Callable_Basic()
         {
             return ExecutionTest(nameof(IntrinsicCallables_Symbol_Callable_Basic));
