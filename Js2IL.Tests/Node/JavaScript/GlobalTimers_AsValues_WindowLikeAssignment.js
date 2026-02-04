@@ -13,3 +13,9 @@ console.log(typeof window.setTimeout);
 console.log(typeof window.clearTimeout);
 console.log(typeof window.setInterval);
 console.log(typeof window.clearInterval);
+
+// Ensure calling via the assigned function value works when the underlying intrinsic expects
+// a trailing params array (third argument for setTimeout/setInterval).
+const id = window.setTimeout(function () { }, 100000);
+window.clearTimeout(id);
+console.log("ok");
