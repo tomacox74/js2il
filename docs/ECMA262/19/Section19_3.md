@@ -27,7 +27,7 @@
 | 19.3.13 | Float16Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-float16array) |
 | 19.3.14 | Float32Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-float32array) |
 | 19.3.15 | Float64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-float64array) |
-| 19.3.16 | Function ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function) |
+| 19.3.16 | Function ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function) |
 | 19.3.17 | Int8Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-int8array) |
 | 19.3.18 | Int16Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-int16array) |
 | 19.3.19 | Int32Array ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-int32array) |
@@ -65,9 +65,27 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean)) | Supported with Limitations | [`Compile_Scripts_DecompileGeneratorTest.js`](../../../Js2IL.Tests/Integration/JavaScript/Compile_Scripts_DecompileGeneratorTest.js) | js2il supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics. |
 
+### 19.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Global Function identifier is exposed (placeholder) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) | Exposes JavaScriptRuntime.GlobalThis.Function as a callable function value so libraries can reference Function as a global identifier (e.g., Function.prototype...). Invoking Function(...) throws NotSupportedException until Function constructor semantics are implemented. |
+
+### 19.3.22 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-number))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Global Number is available as a first-class value (e.g., x === Number, array.map(Number)) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) | Exposes JavaScriptRuntime.GlobalThis.Number as a delegate value. Direct calls Number(x) are lowered as primitive conversions. In js2il output, JavaScript Number values are represented as unboxed CLR double. Full Number constructor/prototype semantics are not implemented. |
+
 ### 19.3.25 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-proxy))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Proxy (global constructor property) | Supported with Limitations | [`Proxy_GetTrap_OverridesProperty.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js)<br>[`Proxy_SetTrap_InterceptsWrites.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js)<br>[`Proxy_HasTrap_AffectsInOperator.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js) | Supports new Proxy(target, handler) and routes get/set/has behavior through handler traps for core property access and the in operator. Does not implement full Proxy constructor/function object semantics or Proxy.revocable. |
+
+### 19.3.31 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-string))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Global String is available as a first-class value (e.g., x === String, array.map(String)) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) | Exposes JavaScriptRuntime.GlobalThis.String as a delegate value. Direct calls String(x) are lowered as primitive conversions. In js2il output, JavaScript String values are represented as CLR string. Full String constructor/prototype semantics are not implemented. |
 

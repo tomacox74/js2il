@@ -144,6 +144,38 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_GlobalBuiltins_StringNumberFunction_AsValues_ReturnsValid()
+    {
+        var js = @"
+            const s = String;
+            const n = Number;
+            const f = Function;
+            console.log(s !== undefined);
+            console.log(n !== undefined);
+            console.log(f !== undefined);
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_GlobalFunctions_ParseFloat_IsFinite_ReturnsValid()
+    {
+        var js = @"
+            const x = parseFloat('1.25abc');
+            const y = isFinite(x);
+            console.log(x);
+            console.log(y);
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_Require_DynamicArgument_ReportsError()
     {
         var js = "const name = './b'; const m = require(name);";

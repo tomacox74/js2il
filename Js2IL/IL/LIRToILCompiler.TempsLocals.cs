@@ -15,6 +15,57 @@ internal sealed partial class LIRToILCompiler
 {
     #region Temp/Local Variable Management
 
+    private void EmitSignatureClrType(SignatureTypeEncoder typeEncoder, Type clrType)
+    {
+        if (clrType == typeof(object))
+        {
+            typeEncoder.Object();
+            return;
+        }
+
+        if (clrType == typeof(string))
+        {
+            typeEncoder.String();
+            return;
+        }
+
+        if (clrType == typeof(double))
+        {
+            typeEncoder.Double();
+            return;
+        }
+
+        if (clrType == typeof(bool))
+        {
+            typeEncoder.Boolean();
+            return;
+        }
+
+        if (clrType.IsArray && clrType.GetElementType() == typeof(object))
+        {
+            typeEncoder.SZArray().Object();
+            return;
+        }
+
+        if (clrType.IsGenericType && !clrType.IsGenericTypeDefinition)
+        {
+            var openGeneric = clrType.GetGenericTypeDefinition();
+            var openTypeRef = _typeReferenceRegistry.GetOrAdd(openGeneric);
+            var genericArgs = clrType.GetGenericArguments();
+
+            var inst = typeEncoder.GenericInstantiation(openTypeRef, genericArgs.Length, isValueType: clrType.IsValueType);
+            foreach (var argType in genericArgs)
+            {
+                EmitSignatureClrType(inst.AddArgument(), argType);
+            }
+
+            return;
+        }
+
+        var typeRef = _typeReferenceRegistry.GetOrAdd(clrType);
+        typeEncoder.Type(typeRef, isValueType: clrType.IsValueType);
+    }
+
     private void EmitLocalType(SignatureTypeEncoder typeEncoder, ValueStorage storage, bool allowUnboxedJsNull)
     {
         if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
@@ -68,6 +119,14 @@ internal sealed partial class LIRToILCompiler
 
         if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
         {
+            // If the local is a constructed generic type (e.g. Func<...>), it must be encoded
+            // as a generic instantiation in the local signature (not as the open generic type).
+            if (storage.ClrType.IsGenericType && !storage.ClrType.IsGenericTypeDefinition)
+            {
+                EmitSignatureClrType(typeEncoder, storage.ClrType);
+                return;
+            }
+
             // Preserve known runtime reference types for declared variables (e.g., JavaScriptRuntime.Array)
             // so later lowering/emission can take advantage of typed locals.
             var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
