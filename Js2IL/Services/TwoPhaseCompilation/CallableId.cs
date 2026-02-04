@@ -105,6 +105,12 @@ public sealed record CallableId
     /// Used for delegate type selection at call sites.
     /// </summary>
     public int JsParamCount { get; init; }
+
+    /// <summary>
+    /// True when this callable's nearest non-arrow function scope requires an implicit `arguments` object.
+    /// This is used to select call-site emission that preserves the full runtime arguments list.
+    /// </summary>
+    public bool NeedsArgumentsObject { get; init; }
     
     /// <summary>
     /// Optional reference to the original AST node for diagnostics.

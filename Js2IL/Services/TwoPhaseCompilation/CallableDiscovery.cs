@@ -77,6 +77,7 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = funcName,
                 JsParamCount = paramCount,
+                NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
                 AstNode = funcDecl
             };
             
@@ -99,6 +100,7 @@ public sealed class CallableDiscovery
                 Name = funcName, // May be null for anonymous
                 Location = location,
                 JsParamCount = paramCount,
+                NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
                 AstNode = funcExpr
             };
             
@@ -125,6 +127,7 @@ public sealed class CallableDiscovery
                 Name = null,
                 Location = location,
                 JsParamCount = paramCount,
+                NeedsArgumentsObject = false,
                 AstNode = arrowExpr
             };
             

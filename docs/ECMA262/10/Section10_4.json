@@ -4,6 +4,7 @@
   "title": "Built-in Exotic Object Internal Methods and Slots",
   "status": "Untracked",
   "specUrl": "https://tc39.es/ecma262/#sec-built-in-exotic-object-internal-methods-and-slots",
+  "intro": "This section covers spec-defined *exotic objects* and their internal methods/slots (Bound Function, Array, String, Arguments, TypedArray, etc.). JS2IL currently does not attempt to model these internal-method details as specified. For the intrinsic function-scope `arguments` binding, JS2IL implements a minimal behavior tracked under Section 10.2 (non-arrow functions materialize `arguments` lazily as a JS Array snapshot; arrow functions capture `arguments` lexically). The full spec **Arguments Exotic Object** behavior (including mapped-arguments aliasing) remains not implemented.",
   "parent": {
     "clause": "10"
   },
@@ -102,61 +103,61 @@
     {
       "clause": "10.4.4",
       "title": "Arguments Exotic Objects",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects"
     },
     {
       "clause": "10.4.4.1",
       "title": "[[GetOwnProperty]] ( P )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-getownproperty-p"
     },
     {
       "clause": "10.4.4.2",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-defineownproperty-p-desc"
     },
     {
       "clause": "10.4.4.3",
       "title": "[[Get]] ( P , Receiver )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-get-p-receiver"
     },
     {
       "clause": "10.4.4.4",
       "title": "[[Set]] ( P , V , Receiver )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-set-p-v-receiver"
     },
     {
       "clause": "10.4.4.5",
       "title": "[[Delete]] ( P )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-delete-p"
     },
     {
       "clause": "10.4.4.6",
       "title": "CreateUnmappedArgumentsObject ( argumentsList )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-createunmappedargumentsobject"
     },
     {
       "clause": "10.4.4.7",
       "title": "CreateMappedArgumentsObject ( func , formals , argumentsList , env )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-createmappedargumentsobject"
     },
     {
       "clause": "10.4.4.7.1",
       "title": "MakeArgGetter ( name , env )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-makearggetter"
     },
     {
       "clause": "10.4.4.7.2",
       "title": "MakeArgSetter ( name , env )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-makeargsetter"
     },
     {
@@ -375,5 +376,16 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-set-immutable-prototype"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "10.4.4",
+        "feature": "Arguments Exotic Objects (mapped/unmapped semantics)",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects",
+        "notes": "JS2IL does not implement the spec Arguments Exotic Object internal methods (including mapped-arguments aliasing). The compiler/runtime currently materialize a minimal function-scope `arguments` value as a JavaScriptRuntime.Array snapshot when referenced; see Section 10.2 tracking for the supported subset."
+      }
+    ]
+  }
 }

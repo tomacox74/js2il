@@ -78,6 +78,15 @@ namespace Js2IL.Tests.Function
         public Task Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter() { var testName = nameof(Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_Arguments_Basics() { var testName = nameof(Function_Arguments_Basics); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Arguments_NoFalsePositive_ObjectLiteralKey() { var testName = nameof(Function_Arguments_NoFalsePositive_ObjectLiteralKey); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Arguments_ComputedKey_TriggersBinding() { var testName = nameof(Function_Arguments_ComputedKey_TriggersBinding); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter() { var testName = nameof(Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter); return GenerateTest(testName); }
 
         [Fact]

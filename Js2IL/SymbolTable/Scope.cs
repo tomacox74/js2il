@@ -80,6 +80,13 @@ public class Scope
     public bool ReferencesParentScopeVariables { get; set; }
 
     /// <summary>
+    /// True when this (non-arrow) function scope requires an implicit <c>arguments</c> object.
+    /// This is set during symbol table construction when an Identifier reference to <c>arguments</c>
+    /// occurs within this function or within an arrow function nested inside it.
+    /// </summary>
+    public bool NeedsArgumentsObject { get; set; }
+
+    /// <summary>
     /// Indicates whether this is an async function scope.
     /// Set during symbol table construction for function scopes.
     /// Used by TypeGenerator to add async state fields (_asyncState, _deferred).

@@ -40,6 +40,47 @@ internal sealed partial class LIRToILCompiler
 
                     var methodHandle = (MethodDefinitionHandle)token;
 
+                    // If the callee needs an `arguments` object, preserve the full runtime args list.
+                    // We route through Closure.InvokeDirectWithArgs which sets the ambient arguments context.
+                    if (callableId.NeedsArgumentsObject)
+                    {
+                        // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                        ilEncoder.OpCode(ILOpCode.Ldftn);
+                        ilEncoder.Token(methodHandle);
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(callableId.JsParamCount));
+
+                        // Load scopes array
+                        EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+
+                        // Build args array from call-site arguments (no truncation)
+                        ilEncoder.LoadConstantI4(callFunc.Arguments.Count);
+                        ilEncoder.OpCode(ILOpCode.Newarr);
+                        ilEncoder.Token(_bclReferences.ObjectType);
+
+                        for (int i = 0; i < callFunc.Arguments.Count; i++)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Dup);
+                            ilEncoder.LoadConstantI4(i);
+                            EmitLoadTemp(callFunc.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(_bclReferences.GetInvokeDirectWithArgsRef(callableId.JsParamCount));
+
+                        if (IsMaterialized(callFunc.Result, allocation))
+                        {
+                            EmitStoreTemp(callFunc.Result, ilEncoder, allocation);
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                        }
+                        break;
+                    }
+
                     // IMPORTANT: use the callee's declared parameter count, not the call-site argument count.
                     // The call-site may omit args (default parameters), but the delegate signature must match
                     // the target method signature, otherwise the JIT can crash the process.

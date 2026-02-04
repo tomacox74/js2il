@@ -1,0 +1,195 @@
+﻿// IL code: Function_Arguments_ComputedKey_TriggersBinding
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Function_Arguments_ComputedKey_TriggersBinding
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit f
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 1b 53 63 6f 70 65 20 61 72 67 75 6d 65 6e
+				74 73 3d 7b 61 72 67 75 6d 65 6e 74 73 7d 00 00
+			)
+			// Fields
+			.field public object arguments
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2130
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x20b8
+			// Header size: 12
+			// Code size: 99 (0x63)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.Function_Arguments_ComputedKey_TriggersBinding/f/Scope,
+				[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+				[2] object
+			)
+
+			IL_0000: newobj instance void Modules.Function_Arguments_ComputedKey_TriggersBinding/f/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject()
+			IL_000c: stfld object Modules.Function_Arguments_ComputedKey_TriggersBinding/f/Scope::arguments
+			IL_0011: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+			IL_0016: stloc.1
+			IL_0017: ldloc.0
+			IL_0018: ldfld object Modules.Function_Arguments_ComputedKey_TriggersBinding/f/Scope::arguments
+			IL_001d: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0022: box [System.Runtime]System.Double
+			IL_0027: stloc.2
+			IL_0028: ldloc.1
+			IL_0029: ldloc.2
+			IL_002a: ldc.r8 123
+			IL_0033: box [System.Runtime]System.Double
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_003d: pop
+			IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0043: ldc.i4.1
+			IL_0044: newarr [System.Runtime]System.Object
+			IL_0049: dup
+			IL_004a: ldc.i4.0
+			IL_004b: ldloc.1
+			IL_004c: ldc.r8 3
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_005a: stelem.ref
+			IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0060: pop
+			IL_0061: ldnull
+			IL_0062: ret
+		} // end of method f::__js_call__
+
+	} // end of class f
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 0b 53 63 6f 70 65 20 66 3d 7b 66 7d 00 00
+		)
+		// Fields
+		.field public object f
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2127
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 92 (0x5c)
+		.maxstack 8
+		.locals (
+			[0] class Modules.Function_Arguments_ComputedKey_TriggersBinding/Scope
+		)
+
+		IL_0000: newobj instance void Modules.Function_Arguments_ComputedKey_TriggersBinding/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Function_Arguments_ComputedKey_TriggersBinding/f::__js_call__(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: ldc.i4.3
+		IL_001d: newarr [System.Runtime]System.Object
+		IL_0022: dup
+		IL_0023: ldc.i4.0
+		IL_0024: ldc.r8 1
+		IL_002d: box [System.Runtime]System.Double
+		IL_0032: stelem.ref
+		IL_0033: dup
+		IL_0034: ldc.i4.1
+		IL_0035: ldc.r8 2
+		IL_003e: box [System.Runtime]System.Double
+		IL_0043: stelem.ref
+		IL_0044: dup
+		IL_0045: ldc.i4.2
+		IL_0046: ldc.r8 3
+		IL_004f: box [System.Runtime]System.Double
+		IL_0054: stelem.ref
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [System.Runtime]System.Func`2<object[], object>, object[], object[])
+		IL_005a: pop
+		IL_005b: ret
+	} // end of method Function_Arguments_ComputedKey_TriggersBinding::__js_module_init__
+
+} // end of class Modules.Function_Arguments_ComputedKey_TriggersBinding
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2139
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Function_Arguments_ComputedKey_TriggersBinding::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
