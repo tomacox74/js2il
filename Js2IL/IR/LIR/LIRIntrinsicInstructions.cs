@@ -8,6 +8,13 @@ namespace Js2IL.IR;
 
 public record LIRGetIntrinsicGlobal(string Name, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// Loads a global intrinsic function (e.g., setTimeout) as a first-class value.
+/// This is used when a GlobalThis static method is referenced in expression position
+/// (e.g., <c>window.setTimeout = setTimeout</c>).
+/// </summary>
+public record LIRGetIntrinsicGlobalFunction(string FunctionName, TempVariable Result) : LIRInstruction;
+
 public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>

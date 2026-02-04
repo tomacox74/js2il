@@ -37,17 +37,17 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| isFinite(number) | Supported with Limitations | [`IntrinsicCallables_ParseFloat_IsFinite_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js) | Implemented by JavaScriptRuntime.GlobalThis.isFinite using JS-like ToNumber coercion (JavaScriptRuntime.TypeUtilities.ToNumber) and IEEE-754 finiteness checks. This is sufficient for common libraries, but is not intended as a full spec conformance test suite. |
+| isFinite(number) | Supported with Limitations | [`IntrinsicCallables_ParseFloat_IsFinite_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js)<br>[`IntrinsicCallables_GlobalFunctions_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalFunctions_AsValues_Basic.js) | Implemented by JavaScriptRuntime.GlobalThis.isFinite using JS-like ToNumber coercion (JavaScriptRuntime.TypeUtilities.ToNumber) and IEEE-754 finiteness checks. Also supported as a first-class function value (e.g., passed around or assigned). This is sufficient for common libraries, but is not intended as a full spec conformance test suite. |
 
 ### 19.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-parsefloat-string))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| parseFloat(string) | Supported with Limitations | [`IntrinsicCallables_ParseFloat_IsFinite_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js) | Implemented by JavaScriptRuntime.GlobalThis.parseFloat. Supports leading whitespace, sign, decimals, optional exponent, and Infinity tokens, and stops parsing at the first invalid character. |
+| parseFloat(string) | Supported with Limitations | [`IntrinsicCallables_ParseFloat_IsFinite_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js)<br>[`IntrinsicCallables_GlobalFunctions_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalFunctions_AsValues_Basic.js) | Implemented by JavaScriptRuntime.GlobalThis.parseFloat. Supports leading whitespace, sign, decimals, optional exponent, and Infinity tokens, and stops parsing at the first invalid character. Also supported as a first-class function value (e.g., passed around or assigned). |
 
 ### 19.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-parseint-string-radix))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| parseInt(string, radix) | Supported with Limitations | [`IntrinsicCallables_ParseInt_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Basic.js) | Implemented by JavaScriptRuntime.GlobalThis.parseInt and returns a JS Number (unboxed double). Coverage is partial (e.g., larger-than-Int64 inputs and full edge-case parity may differ). |
+| parseInt(string, radix) | Supported with Limitations | [`IntrinsicCallables_ParseInt_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Basic.js)<br>[`IntrinsicCallables_GlobalFunctions_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalFunctions_AsValues_Basic.js) | Implemented by JavaScriptRuntime.GlobalThis.parseInt and returns a JS Number (unboxed double). Also supported as a first-class function value (e.g., passed around or assigned). Coverage is partial (e.g., larger-than-Int64 inputs and full edge-case parity may differ). |
 

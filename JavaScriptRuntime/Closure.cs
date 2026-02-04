@@ -48,6 +48,16 @@ namespace JavaScriptRuntime
             int jsParamStart = hasScopes ? 1 : 0;
             int expectedJsParamCount = parameters.Length - jsParamStart;
 
+            // ParamArrayAttribute is not preserved on delegate Invoke() parameters when a delegate is created
+            // from a method using ldftn/newobj. For intrinsic delegates (e.g., timers), treat a trailing
+            // object[] parameter as a params-array as well.
+            bool hasParamsArray = expectedJsParamCount > 0
+                && (
+                    Attribute.IsDefined(parameters[^1], typeof(ParamArrayAttribute))
+                    || (parameters[^1].ParameterType.IsArray && parameters[^1].ParameterType.GetElementType() == typeof(object))
+                );
+            int fixedJsParamCount = hasParamsArray ? expectedJsParamCount - 1 : expectedJsParamCount;
+
             // Build argument list matching delegate signature.
             // - If delegate includes scopes: first arg is scopes
             // - Missing JS args => null
@@ -60,9 +70,41 @@ namespace JavaScriptRuntime
                 finalArgs[finalIndex++] = scopes;
             }
 
-            for (int i = 0; i < expectedJsParamCount; i++)
+            // Fixed parameters
+            for (int i = 0; i < fixedJsParamCount; i++)
             {
-                finalArgs[finalIndex++] = i < args.Length ? args[i] : null;
+                if (i < args.Length)
+                {
+                    finalArgs[finalIndex++] = args[i];
+                    continue;
+                }
+
+                // Missing JS args are 'undefined' (modeled as null), but for array-typed CLR params we prefer
+                // passing an empty array to avoid null dereferences in intrinsic implementations.
+                var parameterType = parameters[jsParamStart + i].ParameterType;
+                if (parameterType.IsArray)
+                {
+                    var elementType = parameterType.GetElementType() ?? typeof(object);
+                    finalArgs[finalIndex++] = System.Array.CreateInstance(elementType, 0);
+                }
+                else
+                {
+                    finalArgs[finalIndex++] = null;
+                }
+            }
+
+            // params array parameter packs remaining args (including zero args) into a CLR array.
+            if (hasParamsArray)
+            {
+                var paramsElementType = parameters[^1].ParameterType.GetElementType() ?? typeof(object);
+
+                int restCount = args.Length > fixedJsParamCount ? args.Length - fixedJsParamCount : 0;
+                var packed = System.Array.CreateInstance(paramsElementType, restCount);
+                for (int i = 0; i < restCount; i++)
+                {
+                    packed.SetValue(args[fixedJsParamCount + i], i);
+                }
+                finalArgs[finalIndex] = packed;
             }
 
             try

@@ -664,6 +664,9 @@ internal static class TempLocalAllocator
             case LIRGetIntrinsicGlobal g:
                 defined = g.Result;
                 return true;
+            case LIRGetIntrinsicGlobalFunction gf:
+                defined = gf.Result;
+                return true;
             case LIRAddNumber add:
                 defined = add.Result;
                 return true;

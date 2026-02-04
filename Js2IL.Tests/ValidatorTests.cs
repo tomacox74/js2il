@@ -161,6 +161,30 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_GlobalTimerFunctions_AsValues_ReturnsValid()
+    {
+        // Domino's WindowTimers polyfill pattern assigns host timer functions onto a window-like object.
+        // This requires timer APIs to be available as first-class global function values.
+        var js = @"
+            const window = {};
+            window.setTimeout = setTimeout;
+            window.clearTimeout = clearTimeout;
+            window.setInterval = setInterval;
+            window.clearInterval = clearInterval;
+
+            const st = window.setTimeout;
+            const ci = window.clearInterval;
+            console.log(typeof st);
+            console.log(typeof ci);
+        ";
+
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_GlobalFunctions_ParseFloat_IsFinite_ReturnsValid()
     {
         var js = @"

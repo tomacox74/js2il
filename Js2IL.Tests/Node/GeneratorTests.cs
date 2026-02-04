@@ -20,6 +20,10 @@ namespace Js2IL.Tests.Node
             nameof(Global___dirname_PrintsDirectory));
 
         [Fact]
+        public Task GlobalTimers_AsValues_WindowLikeAssignment() => GenerateTest(
+            nameof(GlobalTimers_AsValues_WindowLikeAssignment));
+
+        [Fact]
         public Task PerfHooks_PerformanceNow_Basic() => GenerateTest(
             nameof(PerfHooks_PerformanceNow_Basic));
 

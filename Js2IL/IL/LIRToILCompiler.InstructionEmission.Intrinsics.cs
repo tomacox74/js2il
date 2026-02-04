@@ -53,6 +53,15 @@ internal sealed partial class LIRToILCompiler
                 EmitLoadIntrinsicGlobalVariable(getIntrinsicGlobal.Name, ilEncoder);
                 EmitStoreTemp(getIntrinsicGlobal.Result, ilEncoder, allocation);
                 break;
+
+            case LIRGetIntrinsicGlobalFunction getIntrinsicGlobalFunction:
+                if (!IsMaterialized(getIntrinsicGlobalFunction.Result, allocation))
+                {
+                    break;
+                }
+                EmitLoadIntrinsicGlobalFunctionValue(getIntrinsicGlobalFunction.FunctionName, ilEncoder);
+                EmitStoreTemp(getIntrinsicGlobalFunction.Result, ilEncoder, allocation);
+                break;
             case LIRCallIntrinsic callIntrinsic:
                 EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(callIntrinsic.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
