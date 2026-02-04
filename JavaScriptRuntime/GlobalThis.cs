@@ -22,6 +22,11 @@ namespace JavaScriptRuntime
         private readonly ExpandoObject _expando = new();
         private IDictionary<string, object?> Properties => (IDictionary<string, object?>)_expando;
 
+        public GlobalThis()
+        {
+            SeedGlobalObjectIfMissing();
+        }
+
         // Some ECMAScript globals are callable (e.g., Boolean(x)). When used in expression position
         // (e.g., arr.filter(Boolean)), we expose them as function values (delegates) so the compiler
         // can bind them as intrinsic globals.
@@ -102,17 +107,15 @@ namespace JavaScriptRuntime
                 obj = new GlobalThis();
                 _globalObject.Value = obj;
             }
-
-            SeedGlobalObjectIfMissing(obj);
             return obj;
         }
 
-        private static void SeedGlobalObjectIfMissing(GlobalThis obj)
+        private void SeedGlobalObjectIfMissing()
         {
-            var dict = (IDictionary<string, object?>)obj;
+            var dict = (IDictionary<string, object?>)this;
 
             // Self reference.
-            dict["globalThis"] = obj;
+            dict["globalThis"] = this;
 
             // Seed common globals without overwriting user overrides.
             dict.TryAdd("console", console);
