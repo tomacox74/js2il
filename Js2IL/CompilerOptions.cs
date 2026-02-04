@@ -17,11 +17,35 @@ public enum PrototypeChainMode
     On = 2
 }
 
+public enum StrictModeDirectivePrologueMode
+{
+    /// <summary>
+    /// Missing "use strict" is a validation error.
+    /// </summary>
+    Error = 0,
+
+    /// <summary>
+    /// Missing "use strict" is downgraded to a warning.
+    /// </summary>
+    Warn = 1,
+
+    /// <summary>
+    /// Missing "use strict" is ignored (no error/warning).
+    /// </summary>
+    Ignore = 2
+}
+
 public class CompilerOptions
 {
     public string? OutputDirectory { get; set; } = null;
     public bool Verbose { get; set; } = false;
     public bool AnalyzeUnused { get; set; } = false;    
+
+    /// <summary>
+    /// Controls how missing strict-mode directive prologues ("use strict"; at the start of a module/script)
+    /// are reported.
+    /// </summary>
+    public StrictModeDirectivePrologueMode StrictMode { get; set; } = StrictModeDirectivePrologueMode.Error;
 
     /// <summary>
     /// When true, emits Portable PDB debug symbols alongside the generated assembly.
