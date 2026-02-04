@@ -45,6 +45,16 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_GlobalThisIdentifier_IsSupported()
+    {
+        var js = "var x = globalThis; console.log(x);";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_SimpleAddition_ReturnsValid()
     {
         // Arrange

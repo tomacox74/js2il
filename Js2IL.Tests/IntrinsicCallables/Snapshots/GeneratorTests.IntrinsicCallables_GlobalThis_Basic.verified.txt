@@ -1,0 +1,158 @@
+﻿// IL code: IntrinsicCallables_GlobalThis_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.IntrinsicCallables_GlobalThis_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x214c
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 240 (0xf0)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.IntrinsicCallables_GlobalThis_Basic/Scope,
+			[1] object,
+			[2] bool,
+			[3] object
+		)
+
+		IL_0000: newobj instance void Modules.IntrinsicCallables_GlobalThis_Basic/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
+		IL_000b: ldstr "console"
+		IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0015: stloc.1
+		IL_0016: ldloc.1
+		IL_0017: ldstr "log"
+		IL_001c: ldc.i4.1
+		IL_001d: newarr [System.Runtime]System.Object
+		IL_0022: dup
+		IL_0023: ldc.i4.0
+		IL_0024: ldstr "globalThis ok"
+		IL_0029: stelem.ref
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_002f: pop
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
+		IL_0035: stloc.1
+		IL_0036: ldloc.1
+		IL_0037: ldstr "__js2il_test"
+		IL_003c: ldc.r8 123
+		IL_0045: box [System.Runtime]System.Double
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_004f: pop
+		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0055: ldc.i4.1
+		IL_0056: newarr [System.Runtime]System.Object
+		IL_005b: dup
+		IL_005c: ldc.i4.0
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
+		IL_0062: ldstr "__js2il_test"
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_006c: stelem.ref
+		IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0072: pop
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
+		IL_0078: ldstr "globalThis"
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
+		IL_0087: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_008c: stloc.2
+		IL_008d: ldloc.2
+		IL_008e: box [System.Runtime]System.Boolean
+		IL_0093: stloc.3
+		IL_0094: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0099: ldc.i4.1
+		IL_009a: newarr [System.Runtime]System.Object
+		IL_009f: dup
+		IL_00a0: ldc.i4.0
+		IL_00a1: ldloc.3
+		IL_00a2: stelem.ref
+		IL_00a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00a8: pop
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
+		IL_00ae: stloc.1
+		IL_00af: ldloc.1
+		IL_00b0: ldstr "parseInt"
+		IL_00b5: ldc.i4.2
+		IL_00b6: newarr [System.Runtime]System.Object
+		IL_00bb: dup
+		IL_00bc: ldc.i4.0
+		IL_00bd: ldstr "11"
+		IL_00c2: stelem.ref
+		IL_00c3: dup
+		IL_00c4: ldc.i4.1
+		IL_00c5: ldc.r8 2
+		IL_00ce: box [System.Runtime]System.Double
+		IL_00d3: stelem.ref
+		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00d9: stloc.1
+		IL_00da: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00df: ldc.i4.1
+		IL_00e0: newarr [System.Runtime]System.Object
+		IL_00e5: dup
+		IL_00e6: ldc.i4.0
+		IL_00e7: ldloc.1
+		IL_00e8: stelem.ref
+		IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ee: pop
+		IL_00ef: ret
+	} // end of method IntrinsicCallables_GlobalThis_Basic::__js_module_init__
+
+} // end of class Modules.IntrinsicCallables_GlobalThis_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2155
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.IntrinsicCallables_GlobalThis_Basic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

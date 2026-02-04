@@ -56,6 +56,18 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_GlobalThis_Basic()
+        {
+            return GenerateTest(nameof(IntrinsicCallables_GlobalThis_Basic));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_GlobalThis_Enumerability()
+        {
+            return GenerateTest(nameof(IntrinsicCallables_GlobalThis_Enumerability));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Symbol_Callable_Basic()
         {
             return GenerateTest(nameof(IntrinsicCallables_Symbol_Callable_Basic));
