@@ -543,6 +543,11 @@ namespace JavaScriptRuntime
                 return dict.ContainsKey(name);
             }
 
+            if (target is IDictionary<string, object?> dictGeneric)
+            {
+                return dictGeneric.ContainsKey(name);
+            }
+
             if (target is System.Collections.IDictionary dictObj)
             {
                 if (dictObj.Contains(name)) return true;
@@ -616,6 +621,20 @@ namespace JavaScriptRuntime
                 }
             }
 
+            if (target is IDictionary<string, object?> dictGeneric
+                && dictGeneric.TryGetValue(propName, out var v2))
+            {
+                descriptor = new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = true,
+                    Configurable = true,
+                    Writable = true,
+                    Value = v2
+                };
+                return true;
+            }
+
             // No implicit descriptor support for arrays/typed arrays/strings here.
             descriptor = null!;
             return false;
@@ -670,6 +689,11 @@ namespace JavaScriptRuntime
             {
                 var dict = (IDictionary<string, object?>)exp;
                 return dict.TryGetValue(propName, out value);
+            }
+
+            if (target is IDictionary<string, object?> dictGeneric)
+            {
+                return dictGeneric.TryGetValue(propName, out value);
             }
 
             // JavaScriptRuntime.Array / typed arrays: no custom properties yet
@@ -886,7 +910,7 @@ namespace JavaScriptRuntime
                 var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
-
+                    // No implicit descriptor support for arrays/typed arrays/strings here.
             if (obj is Array array)
             {
                 // Bounds check: return undefined (null) when OOB to mimic JS behavior
@@ -1011,7 +1035,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            // ExpandoObject (object literal): assign by property name
+                    // JavaScriptRuntime.Array / typed arrays: no custom properties yet
             if (obj is System.Dynamic.ExpandoObject exp)
             {
                 return SetProperty(obj, propName, value);
@@ -2046,6 +2070,15 @@ namespace JavaScriptRuntime
                 return keys;
             }
 
+            if (obj is IDictionary<string, object?> dictGeneric)
+            {
+                var keys = new JavaScriptRuntime.Array(
+                    dictGeneric.Keys
+                        .Where(k => PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
+                        .Cast<object?>());
+                return keys;
+            }
+
             // JS Array: enumerate indices
             if (obj is JavaScriptRuntime.Array jsArr)
             {
@@ -2114,6 +2147,13 @@ namespace JavaScriptRuntime
             {
                 var dict = (IDictionary<string, object?>)exp;
                 dict.Remove(key);
+                PropertyDescriptorStore.Delete(receiver, key);
+                return true;
+            }
+
+            if (receiver is IDictionary<string, object?> dictGeneric)
+            {
+                dictGeneric.Remove(key);
                 PropertyDescriptorStore.Delete(receiver, key);
                 return true;
             }
@@ -2333,6 +2373,10 @@ namespace JavaScriptRuntime
                         var dict = (IDictionary<string, object?>)expDesc;
                         dict[name] = value;
                     }
+                    else if (obj is IDictionary<string, object?> dictDesc)
+                    {
+                        dictDesc[name] = value;
+                    }
                 }
                 return value;
             }
@@ -2350,6 +2394,17 @@ namespace JavaScriptRuntime
                 }
 
                 dict[name] = value;
+                return value;
+            }
+
+            if (obj is IDictionary<string, object?> dictGeneric)
+            {
+                if (!dictGeneric.ContainsKey(name) && TryInvokePrototypeSetter(obj, name, value))
+                {
+                    return value;
+                }
+
+                dictGeneric[name] = value;
                 return value;
             }
 

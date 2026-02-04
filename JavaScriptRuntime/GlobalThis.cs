@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq.Expressions;
 using JavaScriptRuntime.DependencyInjection;
 
 namespace JavaScriptRuntime
@@ -9,14 +11,16 @@ namespace JavaScriptRuntime
     /// Holds global intrinsic variables for the current program (Node-like today, extensible later).
     /// Minimal surface for js2il codegen: __dirname, __filename, and process.exitCode.
     /// </summary>
-    public static class GlobalThis
+    public class GlobalThis : IDynamicMetaObjectProvider, IDictionary<string, object?>
     {
         private static readonly ThreadLocal<ServiceContainer?> _serviceProvider = new(() => null);
 
         // Per-"realm" (thread) global object. This backs the ECMAScript globalThis value.
-        // We represent it as an ExpandoObject so member get/set and delegate-valued properties
-        // work with the existing Object.GetProperty/SetProperty/CallMember dispatch.
-        private static readonly ThreadLocal<ExpandoObject?> _globalObject = new(() => null);
+        // We represent it as a GlobalThis instance with ExpandoObject-like behavior.
+        private static readonly ThreadLocal<GlobalThis?> _globalObject = new(() => null);
+
+        private readonly ExpandoObject _expando = new();
+        private IDictionary<string, object?> Properties => (IDictionary<string, object?>)_expando;
 
         // Some ECMAScript globals are callable (e.g., Boolean(x)). When used in expression position
         // (e.g., arr.filter(Boolean)), we expose them as function values (delegates) so the compiler
@@ -39,6 +43,47 @@ namespace JavaScriptRuntime
             set => _serviceProvider.Value = value;
         }
 
+        DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
+        {
+            return ((IDynamicMetaObjectProvider)_expando).GetMetaObject(parameter);
+        }
+
+        public object? this[string key]
+        {
+            get => Properties[key];
+            set => Properties[key] = value;
+        }
+
+        public ICollection<string> Keys => Properties.Keys;
+
+        public ICollection<object?> Values => Properties.Values;
+
+        public int Count => Properties.Count;
+
+        public bool IsReadOnly => Properties.IsReadOnly;
+
+        public void Add(string key, object? value) => Properties.Add(key, value);
+
+        public bool ContainsKey(string key) => Properties.ContainsKey(key);
+
+        public bool Remove(string key) => Properties.Remove(key);
+
+        public bool TryGetValue(string key, out object? value) => Properties.TryGetValue(key, out value);
+
+        public void Add(KeyValuePair<string, object?> item) => Properties.Add(item);
+
+        public void Clear() => Properties.Clear();
+
+        public bool Contains(KeyValuePair<string, object?> item) => Properties.Contains(item);
+
+        public void CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex) => Properties.CopyTo(array, arrayIndex);
+
+        public bool Remove(KeyValuePair<string, object?> item) => Properties.Remove(item);
+
+        public IEnumerator<KeyValuePair<string, object?>> GetEnumerator() => Properties.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => Properties.GetEnumerator();
+
         /// <summary>
         /// ECMA-262 globalThis value.
         /// Returns the global object for the current execution context.
@@ -49,12 +94,12 @@ namespace JavaScriptRuntime
         /// </remarks>
         public static object globalThis => GetOrCreateGlobalObject();
 
-        private static ExpandoObject GetOrCreateGlobalObject()
+        private static GlobalThis GetOrCreateGlobalObject()
         {
             var obj = _globalObject.Value;
             if (obj == null)
             {
-                obj = new ExpandoObject();
+                obj = new GlobalThis();
                 _globalObject.Value = obj;
             }
 
@@ -62,7 +107,7 @@ namespace JavaScriptRuntime
             return obj;
         }
 
-        private static void SeedGlobalObjectIfMissing(ExpandoObject obj)
+        private static void SeedGlobalObjectIfMissing(GlobalThis obj)
         {
             var dict = (IDictionary<string, object?>)obj;
 
