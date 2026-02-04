@@ -2,6 +2,7 @@ using Js2IL.IR;
 using Js2IL.Services.ILGenerators;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using System.Linq.Expressions;
 
 namespace Js2IL.IL;
 
@@ -27,13 +28,37 @@ internal sealed partial class LIRToILCompiler
     /// </summary>
     public void EmitLoadIntrinsicGlobalFunctionValue(string functionName, InstructionEncoder ilEncoder)
     {
-        ilEncoder.Ldstr(_metadataBuilder, functionName);
-        var getFunctionValue = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.GlobalThis),
-            nameof(JavaScriptRuntime.GlobalThis.GetFunctionValue),
-            parameterTypes: new[] { typeof(string) });
-        ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(getFunctionValue);
+        var gvType = typeof(JavaScriptRuntime.GlobalThis);
+        var methodInfo = gvType.GetMethod(
+            functionName,
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+        if (methodInfo == null)
+        {
+            throw new InvalidOperationException($"Unknown GlobalThis intrinsic function: {functionName}");
+        }
+
+        var parameters = methodInfo.GetParameters();
+        var paramTypes = parameters.Select(p => p.ParameterType).ToArray();
+
+        Type delegateType;
+        if (methodInfo.ReturnType == typeof(void))
+        {
+            delegateType = Expression.GetActionType(paramTypes);
+        }
+        else
+        {
+            var funcTypes = paramTypes.Concat(new[] { methodInfo.ReturnType }).ToArray();
+            delegateType = Expression.GetFuncType(funcTypes);
+        }
+
+        // Create delegate: ldnull, ldftn, newobj <delegateType>::.ctor(object, native int)
+        ilEncoder.OpCode(ILOpCode.Ldnull);
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.GlobalThis), methodInfo.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Ldftn);
+        ilEncoder.Token(methodRef);
+        var ctorRef = _memberRefRegistry.GetOrAddConstructor(delegateType, new[] { typeof(object), typeof(IntPtr) });
+        ilEncoder.OpCode(ILOpCode.Newobj);
+        ilEncoder.Token(ctorRef);
     }
 
     public void EmitInvokeIntrinsicMethod(Type declaringType, string methodName, InstructionEncoder ilEncoder)
