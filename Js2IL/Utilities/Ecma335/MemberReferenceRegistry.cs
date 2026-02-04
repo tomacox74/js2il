@@ -275,6 +275,12 @@ namespace Js2IL.Utilities.Ecma335
             else if (type == typeof(int[])) encoder.SZArray().Int32();
             // IntPtr for delegate constructors
             else if (type == typeof(IntPtr)) encoder.IntPtr();
+            // Delegate types (for typed callable globals and other delegate-valued APIs)
+            else if (type == typeof(Delegate) || type == typeof(MulticastDelegate))
+            {
+                var bclTypeReference = _typeRefRegistry.GetOrAdd(type);
+                encoder.Type(bclTypeReference, isValueType: false);
+            }
             // Other types via type reference
             else if (type.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
             {
@@ -375,6 +381,21 @@ namespace Js2IL.Utilities.Ecma335
                 encoder.GenericTypeParameter(type.GenericParameterPosition);
                 return;
             }
+
+            // Constructed generic types (e.g., Func<object[], object?, bool>)
+            if (type.IsGenericType && !type.IsGenericTypeDefinition)
+            {
+                var openType = type.GetGenericTypeDefinition();
+                var openTypeRef = _typeRefRegistry.GetOrAdd(openType);
+                var genericArgs = type.GetGenericArguments();
+
+                var inst = encoder.GenericInstantiation(openTypeRef, genericArgs.Length, isValueType: false);
+                foreach (var arg in genericArgs)
+                {
+                    EncodeGenericArgument(inst.AddArgument(), arg);
+                }
+                return;
+            }
             
             // Primitive types
             if (type == typeof(object)) encoder.Object();
@@ -396,7 +417,7 @@ namespace Js2IL.Utilities.Ecma335
             else if (type == typeof(object[])) encoder.SZArray().Object();
             else if (type == typeof(string[])) encoder.SZArray().String();
             // Common BCL types (should we just open it up for all types)
-            else if (type == typeof(Type) || type == typeof(Action) || type == typeof(System.Reflection.MethodBase))
+            else if (type == typeof(Type) || type == typeof(Action) || type == typeof(System.Reflection.MethodBase) || type == typeof(Delegate) || type == typeof(MulticastDelegate))
             {
                 var bclTypeReference = _typeRefRegistry.GetOrAdd(type);
                 encoder.Type(bclTypeReference, isValueType: false);
