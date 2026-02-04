@@ -387,6 +387,19 @@ public sealed partial class HIRToLIRLowerer
                             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, gvProp.PropertyType));
                             return true;
                         }
+
+                        // Global functions (GlobalThis static methods) may also be referenced as values.
+                        // e.g., window.setTimeout = setTimeout
+                        var gvMethod = gvType.GetMethod(
+                            globalName,
+                            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+                        if (gvMethod != null)
+                        {
+                            resultTempVar = CreateTempVariable();
+                            _methodBodyIR.Instructions.Add(new LIRGetIntrinsicGlobalFunction(globalName, resultTempVar));
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                            return true;
+                        }
                     }
 
                     // Function declarations are compiled separately and are not SSA-assigned in the HIR body.

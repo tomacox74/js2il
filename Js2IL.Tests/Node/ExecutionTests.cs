@@ -65,6 +65,9 @@ namespace Js2IL.Tests.Node
                 });
 
         [Fact]
+        public Task GlobalTimers_AsValues_WindowLikeAssignment() => ExecutionTest(nameof(GlobalTimers_AsValues_WindowLikeAssignment));
+
+        [Fact]
         public Task PerfHooks_PerformanceNow_Basic()
             => ExecutionTest(
                 nameof(PerfHooks_PerformanceNow_Basic),

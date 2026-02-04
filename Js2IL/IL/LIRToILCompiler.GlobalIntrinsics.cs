@@ -22,6 +22,20 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.Token(getterMref);
     }
 
+    /// <summary>
+    /// Loads a GlobalThis-backed intrinsic function as a first-class value (delegate).
+    /// </summary>
+    public void EmitLoadIntrinsicGlobalFunctionValue(string functionName, InstructionEncoder ilEncoder)
+    {
+        ilEncoder.Ldstr(_metadataBuilder, functionName);
+        var getFunctionValue = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.GlobalThis),
+            nameof(JavaScriptRuntime.GlobalThis.GetFunctionValue),
+            parameterTypes: new[] { typeof(string) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(getFunctionValue);
+    }
+
     public void EmitInvokeIntrinsicMethod(Type declaringType, string methodName, InstructionEncoder ilEncoder)
     {
         var methodMref = _memberRefRegistry.GetOrAddMethod(declaringType, methodName);

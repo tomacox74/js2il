@@ -765,6 +765,13 @@ public class JavaScriptAstValidator : IAstValidator
                                 break;
                             }
 
+                            // Host-provided globals exposed as GlobalThis static methods (e.g., setTimeout) must also be
+                            // usable as first-class values so libraries can assign/forward them.
+                            if (GlobalThisMethodNames.Value.Contains(name))
+                            {
+                                break;
+                            }
+
                             var isIntrinsic = IsIntrinsicObjectName(name);
                             var usedAsMemberBase = parent is MemberExpression meObj && ReferenceEquals(meObj.Object, id);
                             var usedAsExtendsBase = (parent is ClassDeclaration cd && ReferenceEquals(cd.SuperClass, id))

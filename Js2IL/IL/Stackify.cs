@@ -339,6 +339,10 @@ internal static class Stackify
             case LIRGetIntrinsicGlobal:
                 return true;
 
+            // Intrinsic global function-value loads - pure lookup of cached delegate
+            case LIRGetIntrinsicGlobalFunction:
+                return true;
+
             // Scopes array creation - creates a small array, safe to inline
             // Used once per closure creation, no observable side effects
             case LIRBuildScopesArray:
@@ -604,6 +608,7 @@ internal static class Stackify
             case LIRConstUndefined:
             case LIRConstNull:
             case LIRGetIntrinsicGlobal:
+            case LIRGetIntrinsicGlobalFunction:
             case LIRLoadUserClassStaticField:
             case LIRLoadParameter:
             case LIRLoadThis:

@@ -487,6 +487,10 @@ internal sealed partial class LIRToILCompiler
                 // Emit inline: call IntrinsicObjectRegistry.GetOrDefault
                 EmitLoadIntrinsicGlobalVariable(getIntrinsicGlobal.Name, ilEncoder);
                 break;
+            case LIRGetIntrinsicGlobalFunction getIntrinsicGlobalFunction:
+                // Emit inline: call GlobalThis.GetFunctionValue("name")
+                EmitLoadIntrinsicGlobalFunctionValue(getIntrinsicGlobalFunction.FunctionName, ilEncoder);
+                break;
             case LIRBuildScopesArray buildScopes:
                 // Emit inline: create scopes array with scope instances
                 if (buildScopes.Slots.Count == 0)
