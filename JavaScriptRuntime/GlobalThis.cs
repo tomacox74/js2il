@@ -87,35 +87,6 @@ namespace JavaScriptRuntime
         /// </summary>
         public static double NaN => double.NaN;
 
-        /// <summary>
-        /// Dynamic lookup for well-known globals by name.
-        /// Returns null when the name is unknown.
-        /// </summary>
-        public static object? Get(string name)
-        {
-            switch (name)
-            {
-                case "process":
-                    return process;
-                case "console":
-                    return console;
-                case "Boolean":
-                    return Boolean;
-                case "String":
-                    return String;
-                case "Number":
-                    return Number;
-                case "Function":
-                    return Function;
-                case "Infinity":
-                    return Infinity;
-                case "NaN":
-                    return NaN;
-                default:
-                    return null;
-            }
-        }
-
         public static object setTimeout(object callback, object delay, params object[] args)
         {
             return GetTimers().setTimeout(callback, delay, args);
