@@ -116,9 +116,12 @@
         "testScripts": [
           "Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js",
           "Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionWithMultipleParameters.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Arguments_NoFalsePositive_ObjectLiteralKey.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js",
           "Js2IL.Tests/Function/JavaScript/Function_ReturnsStaticValueAndLogs.js"
         ],
-        "notes": "Supports basic calling convention and return semantics for supported language subset. Full argument object semantics and strict-mode differences are not implemented."
+        "notes": "Supports basic calling convention and return semantics for supported language subset. Non-arrow functions have a minimal implicit `arguments` binding (materialized lazily when referenced) that captures the full runtime call-site argument list (including extras) as a JS Array snapshot. Arrow functions capture `arguments` lexically from the nearest enclosing non-arrow function. Limitations: does not implement mapped-arguments aliasing or the full spec Arguments Exotic Object behaviors."
       },
       {
         "clause": "10.2.1",
@@ -129,7 +132,7 @@
           "Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ReturnsThis_IsSelf_Log.js"
         ],
-        "notes": "Supports this binding for object-literal and class method calls. Arrow-function lexical this and strict-mode edge cases may differ from spec."
+        "notes": "Supports this binding for object-literal and class method calls. Arrow functions use lexical this; strict-mode and environment-record edge cases may differ from spec."
       },
       {
         "clause": "10.2.2",
@@ -153,7 +156,7 @@
           "Js2IL.Tests/Function/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js",
           "Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js"
         ],
-        "notes": "Closure semantics are implemented via scope-as-class instances and parent scope capture. Arguments object aliasing and several environment-record details are not implemented."
+        "notes": "Closure semantics are implemented via scope-as-class instances and parent scope capture. A minimal implicit `arguments` binding is supported for non-arrow functions when referenced, including lexical capture from nested arrow functions. Limitations: mapped arguments aliasing and several environment-record details are not implemented."
       }
     ]
   }

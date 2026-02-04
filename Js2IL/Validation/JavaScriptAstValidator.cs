@@ -574,6 +574,9 @@ public class JavaScriptAstValidator : IAstValidator
                             DeclaredNames = new HashSet<string>(StringComparer.Ordinal),
                             IsFunctionScope = true
                         });
+
+                        // ECMA-262: non-arrow functions have an implicit 'arguments' binding.
+                        scopeStack.Peek().DeclaredNames.Add("arguments");
                         foreach (var p in fd.Params)
                         {
                             if (p != null) DeclarePatternNames(p, scopeStack.Peek());
@@ -592,6 +595,9 @@ public class JavaScriptAstValidator : IAstValidator
                             DeclaredNames = new HashSet<string>(StringComparer.Ordinal),
                             IsFunctionScope = true
                         });
+
+                        // ECMA-262: non-arrow functions have an implicit 'arguments' binding.
+                        scopeStack.Peek().DeclaredNames.Add("arguments");
                         // Named function expressions bind their name in their own scope.
                         if (fe.Id != null)
                         {

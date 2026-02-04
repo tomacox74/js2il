@@ -535,10 +535,13 @@ namespace Js2IL.SymbolTables
                                     }
                                 }
                             }
+
                             if (mfunc.Body is BlockStatement mblock)
                             {
                                 foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodScope);
                             }
+
+                            AddImplicitArgumentsBinding(methodScope);
                         }
                     }
                     break;
@@ -558,6 +561,7 @@ namespace Js2IL.SymbolTables
                     currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, currentScope, funcDecl);
                         // Register parameters (identifiers + object pattern properties) via helper
                         BindObjectPatternParameters(funcDecl.Params, funcScope);
+
                         if (funcScope.IsGenerator)
                         {
                             // Generator frames suspend/resume; parameter bindings must live on the leaf scope.
@@ -580,6 +584,8 @@ namespace Js2IL.SymbolTables
                         {
                             BuildScopeRecursive(globalScope, funcDecl.Body, funcScope);
                         }
+
+                        AddImplicitArgumentsBinding(funcScope);
                         break;
                 case FunctionExpression funcExpr:
                     // Global de-duplication: if we've already processed this exact FunctionExpression node,
@@ -614,6 +620,7 @@ namespace Js2IL.SymbolTables
                         funcExprScope.Bindings[internalId.Name] = new BindingInfo(internalId.Name, BindingKind.Function, funcExprScope, funcExpr);
                     }
                     BindObjectPatternParameters(funcExpr.Params, funcExprScope);
+
                     if (funcExprScope.IsGenerator)
                     {
                         foreach (var p in funcExprScope.Parameters.Where(funcExprScope.Bindings.ContainsKey))
@@ -636,6 +643,8 @@ namespace Js2IL.SymbolTables
                         // Non-block body (expression body)
                         BuildScopeRecursive(globalScope, funcExpr.Body, funcExprScope);
                     }
+
+                    AddImplicitArgumentsBinding(funcExprScope);
                     break;
                 case VariableDeclaration varDecl:
                     foreach (var decl in varDecl.Declarations)
@@ -882,6 +891,40 @@ namespace Js2IL.SymbolTables
                         BuildScopeRecursive(globalScope, arrowFunc.Body, arrowScope);
                     }
                     break;
+
+                case ObjectExpression objExpr:
+                    // Object literal keys are not identifier references unless computed.
+                    // Handle explicitly so ProcessChildNodes doesn't walk non-computed keys and
+                    // accidentally treat `{ arguments: 1 }` as a reference to the intrinsic `arguments`.
+                    foreach (var prop in objExpr.Properties)
+                    {
+                        BuildScopeRecursive(globalScope, prop as Node, currentScope);
+                    }
+                    break;
+
+                case Property prop:
+                    if (prop.Computed)
+                    {
+                        BuildScopeRecursive(globalScope, prop.Key as Node, currentScope);
+                    }
+                    BuildScopeRecursive(globalScope, prop.Value as Node, currentScope);
+                    break;
+
+                case MethodDefinition methodDef:
+                    // Class method keys are not identifier references unless computed.
+                    if (methodDef.Computed)
+                    {
+                        BuildScopeRecursive(globalScope, methodDef.Key as Node, currentScope);
+                    }
+                    BuildScopeRecursive(globalScope, methodDef.Value as Node, currentScope);
+                    break;
+
+                case Identifier id:
+                    if (string.Equals(id.Name, "arguments", StringComparison.Ordinal))
+                    {
+                        MarkNearestArgumentsOwnerScopeAsNeedingArguments(currentScope);
+                    }
+                    break;
                 case CallExpression callExpr:
                     // Process callee and arguments but don't create scopes for call expressions themselves
                     BuildScopeRecursive(globalScope, callExpr.Callee, currentScope);
@@ -1067,6 +1110,63 @@ namespace Js2IL.SymbolTables
                     ProcessChildNodes(globalScope, node, currentScope);
                     break;
                 // Add more cases as needed for other node types
+            }
+        }
+
+        private static void AddImplicitArgumentsBinding(Scope functionScope)
+        {
+            // Only non-arrow function scopes have an implicit `arguments` binding.
+            if (functionScope.Kind != ScopeKind.Function)
+            {
+                return;
+            }
+
+            if (functionScope.AstNode is ArrowFunctionExpression)
+            {
+                return;
+            }
+
+            // Don't force an arguments binding unless it is actually referenced.
+            // This matches typical engine behavior (lazy arguments materialization) and
+            // prevents every function from requiring a scope instance/field.
+            if (!functionScope.NeedsArgumentsObject)
+            {
+                return;
+            }
+
+            // Do not override a user-declared binding named 'arguments' (parameters/vars/etc).
+            if (functionScope.Bindings.ContainsKey("arguments"))
+            {
+                return;
+            }
+
+            // Use the function node as the declaration node so we can distinguish this implicit binding.
+            var binding = new BindingInfo("arguments", BindingKind.Var, functionScope, functionScope.AstNode)
+            {
+                // Inform downstream analysis/normalization; still emit as object field/local.
+                ClrType = typeof(JavaScriptRuntime.Array),
+                IsStableType = false,
+                // Force backing storage as a scope field so reads/writes are representable without
+                // synthesizing an explicit JS var declaration.
+                IsCaptured = true
+            };
+
+            functionScope.Bindings["arguments"] = binding;
+        }
+
+        private static void MarkNearestArgumentsOwnerScopeAsNeedingArguments(Scope currentScope)
+        {
+            // Walk upward to the nearest *non-arrow* function scope.
+            var scope = currentScope;
+            while (scope != null)
+            {
+                if (scope.Kind == ScopeKind.Function && scope.AstNode is not ArrowFunctionExpression)
+                {
+                    scope.NeedsArgumentsObject = true;
+                    return;
+                }
+
+                scope = scope.Parent;
             }
         }
 

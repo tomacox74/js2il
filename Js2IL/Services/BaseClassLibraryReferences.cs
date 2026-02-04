@@ -13,7 +13,7 @@ namespace Js2IL.Services
         //   (object[] scopes, object? a1..aN) -> object?
         // System.Func<> supports only up to 15 generic args, which limits us to 14 JS parameters
         // (because scopes is the first parameter). For larger arities we use custom delegates.
-        private static Type GetFunctionDelegateType(int jsParamCount)
+        internal static Type GetFunctionDelegateType(int jsParamCount)
         {
             return jsParamCount switch
             {
@@ -110,6 +110,15 @@ namespace Js2IL.Services
         {
             var delegateType = GetFunctionDelegateType(jsParamCount);
             return _memberRefRegistry.GetOrAddMethod(delegateType, "Invoke");
+        }
+
+        public MemberReferenceHandle GetInvokeDirectWithArgsRef(int jsParamCount)
+        {
+            var delegateType = GetFunctionDelegateType(jsParamCount);
+            return _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.Closure),
+                nameof(JavaScriptRuntime.Closure.InvokeDirectWithArgs),
+                new[] { delegateType, typeof(object[]), typeof(object[]) });
         }
     }
 }

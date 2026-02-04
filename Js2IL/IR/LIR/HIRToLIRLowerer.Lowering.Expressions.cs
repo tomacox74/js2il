@@ -630,6 +630,25 @@ public sealed partial class HIRToLIRLowerer
             return null;
         }
 
+        static Scope? FindCallableBodyScope(Scope scope, Node decl)
+        {
+            if (scope.Kind == ScopeKind.Function && scope.AstNode != null && ReferenceEquals(scope.AstNode, decl))
+            {
+                return scope;
+            }
+
+            foreach (var child in scope.Children)
+            {
+                var match = FindCallableBodyScope(child, decl);
+                if (match != null)
+                {
+                    return match;
+                }
+            }
+
+            return null;
+        }
+
         // For named function expressions, the function name is bound inside the function scope,
         // but the callable itself is declared in the parent scope (Phase 1 discovery uses the parent).
         // If we detect that pattern, shift the DeclaringScopeName to the parent scope.
@@ -653,6 +672,9 @@ public sealed partial class HIRToLIRLowerer
             ? moduleName
             : $"{moduleName}/{callableDeclaringScope.GetQualifiedName()}";
 
+        var bodyScope = FindCallableBodyScope(declaringScope, declNode);
+        var needsArgumentsObject = bodyScope?.NeedsArgumentsObject ?? false;
+
         switch (declNode)
         {
             case FunctionDeclaration funcDecl:
@@ -662,6 +684,7 @@ public sealed partial class HIRToLIRLowerer
                     DeclaringScopeName = declaringScopeName,
                     Name = symbol.Name,
                     JsParamCount = funcDecl.Params.Count,
+                    NeedsArgumentsObject = needsArgumentsObject,
                     AstNode = funcDecl
                 };
 
@@ -673,6 +696,7 @@ public sealed partial class HIRToLIRLowerer
                     Name = (funcExpr.Id as Identifier)?.Name,
                     Location = Js2IL.Services.TwoPhaseCompilation.SourceLocation.FromNode(funcExpr),
                     JsParamCount = funcExpr.Params.Count,
+                    NeedsArgumentsObject = needsArgumentsObject,
                     AstNode = funcExpr
                 };
 

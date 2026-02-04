@@ -182,6 +182,10 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+
             // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
             // the standard js2il scopes array parameter. Support calling it via the generic dispatcher.
             if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
@@ -198,6 +202,552 @@ namespace JavaScriptRuntime
             throw new ArgumentException(
                 $"Unsupported callable type for function call: target type = {target.GetType()}, args length = {args.Length}",
                 nameof(target));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        private static object? GetArg(object?[] args, int index)
+        {
+            return index < args.Length ? args[index] : null;
+        }
+
+        // Optimized direct-call path used by the compiler when the callee is known and needs
+        // an implicit `arguments` object. This avoids the reflective dispatcher in InvokeWithArgs.
+        public static object? InvokeDirectWithArgs(Func<object[], object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc15 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc16 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc17 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc18 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc19 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc20 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc21 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc22 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc23 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc24 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc25 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc26 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
+                    GetArg(args, 25));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc27 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
+                    GetArg(args, 25), GetArg(args, 26));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc28 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
+                    GetArg(args, 25), GetArg(args, 26), GetArg(args, 27));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc29 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
+                    GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc30 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
+                    GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc31 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
+                    GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29),
+                    GetArg(args, 30));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
+        }
+
+        public static object? InvokeDirectWithArgs(JsFunc32 target, object[] scopes, object?[] args)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            try
+            {
+                return target(scopes,
+                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
+                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
+                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
+                    GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19),
+                    GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24),
+                    GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29),
+                    GetArg(args, 30), GetArg(args, 31));
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
         }
     }
 }

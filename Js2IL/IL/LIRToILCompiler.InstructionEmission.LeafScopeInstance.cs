@@ -13,6 +13,25 @@ namespace Js2IL.IL;
 
 internal sealed partial class LIRToILCompiler
 {
+    private void EmitInitArgumentsObjectIfNeeded(InstructionEncoder ilEncoder, string scopeName)
+    {
+        var callableId = MethodBody.CallableId;
+        if (callableId is null || !callableId.NeedsArgumentsObject)
+        {
+            return;
+        }
+
+        // scope.arguments = RuntimeServices.CreateArgumentsObject();
+        ilEncoder.LoadLocal(0);
+        var createArgsRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.CreateArgumentsObject),
+            Type.EmptyTypes);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(createArgsRef);
+        EmitStoreFieldByName(ilEncoder, scopeName, "arguments");
+    }
+
     private bool? TryCompileInstructionToIL_LeafScopeInstance(
         LIRInstruction instruction,
         InstructionEncoder ilEncoder,
@@ -62,6 +81,8 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Newobj);
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
+
+                        EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName);
 
                         // Build modified scopes array with leaf at [0]
                         ilEncoder.LoadLocal(0); // leafScope
@@ -244,6 +265,8 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Newobj);
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
+
+                        EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName);
 
                         // Build modified scopes array using runtime helper:
                         // scopes = Promise.PrependScopeToArray(leafScope, scopes)
@@ -475,9 +498,12 @@ internal sealed partial class LIRToILCompiler
                             createScope.Scope.Name,
                             "LIRCreateLeafScopeInstance instruction");
                         var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
+                        var scopeName = createScope.Scope.Name;
                         ilEncoder.OpCode(ILOpCode.Newobj);
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
+
+                        EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName);
                     }
                     break;
                 }
