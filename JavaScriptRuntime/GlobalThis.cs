@@ -115,28 +115,28 @@ namespace JavaScriptRuntime
             var dict = (IDictionary<string, object?>)this;
 
             // Self reference.
-            dict["globalThis"] = this;
+            dict[nameof(GlobalThis.globalThis)] = this;
 
             // Seed common globals without overwriting user overrides.
-            dict.TryAdd("console", console);
-            dict.TryAdd("process", process);
-            dict.TryAdd("Infinity", Infinity);
-            dict.TryAdd("NaN", NaN);
-            dict.TryAdd("Boolean", Boolean);
-            dict.TryAdd("String", String);
-            dict.TryAdd("Number", Number);
-            dict.TryAdd("Function", Function);
+            dict.TryAdd(nameof(GlobalThis.console), console);
+            dict.TryAdd(nameof(GlobalThis.process), process);
+            dict.TryAdd(nameof(GlobalThis.Infinity), Infinity);
+            dict.TryAdd(nameof(GlobalThis.NaN), NaN);
+            dict.TryAdd(nameof(GlobalThis.Boolean), Boolean);
+            dict.TryAdd(nameof(GlobalThis.String), String);
+            dict.TryAdd(nameof(GlobalThis.Number), Number);
+            dict.TryAdd(nameof(GlobalThis.Function), Function);
 
             // Global functions exposed as delegates.
-            dict.TryAdd("setTimeout", (Func<object, object, object[], object>)setTimeout);
-            dict.TryAdd("clearTimeout", (Func<object, object?>)clearTimeout);
-            dict.TryAdd("setImmediate", (Func<object, object[], object>)setImmediate);
-            dict.TryAdd("clearImmediate", (Func<object, object?>)clearImmediate);
-            dict.TryAdd("setInterval", (Func<object, object, object[], object>)setInterval);
-            dict.TryAdd("clearInterval", (Func<object, object?>)clearInterval);
-            dict.TryAdd("parseInt", (Func<object?, object?, double>)parseInt);
-            dict.TryAdd("parseFloat", (Func<object?, double>)parseFloat);
-            dict.TryAdd("isFinite", (Func<object?, bool>)isFinite);
+            dict.TryAdd(nameof(GlobalThis.setTimeout), (Func<object, object, object[], object>)setTimeout);
+            dict.TryAdd(nameof(GlobalThis.clearTimeout), (Func<object, object?>)clearTimeout);
+            dict.TryAdd(nameof(GlobalThis.setImmediate), (Func<object, object[], object>)setImmediate);
+            dict.TryAdd(nameof(GlobalThis.clearImmediate), (Func<object, object?>)clearImmediate);
+            dict.TryAdd(nameof(GlobalThis.setInterval), (Func<object, object, object[], object>)setInterval);
+            dict.TryAdd(nameof(GlobalThis.clearInterval), (Func<object, object?>)clearInterval);
+            dict.TryAdd(nameof(GlobalThis.parseInt), (Func<object?, object?, double>)parseInt);
+            dict.TryAdd(nameof(GlobalThis.parseFloat), (Func<object?, double>)parseFloat);
+            dict.TryAdd(nameof(GlobalThis.isFinite), (Func<object?, bool>)isFinite);
         }
 
         /// <summary>
