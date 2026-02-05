@@ -82,7 +82,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Function and method calls | Supported with Limitations | [`Function_HelloWorld.js`](../../../Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`Function_ObjectLiteralMethod_ThisBinding.js`](../../../Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js)<br>[`Function_CallViaVariable_Reassignment.js`](../../../Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js) | Supports calling declared functions, function expressions, and delegates stored as object-literal properties. Full Function.prototype.call/apply/bind behavior is not implemented. |
+| Function and method calls | Supported with Limitations | [`Function_HelloWorld.js`](../../../Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`Function_ObjectLiteralMethod_ThisBinding.js`](../../../Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js)<br>[`Function_CallViaVariable_Reassignment.js`](../../../Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js)<br>[`Function_Apply_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js)<br>[`Function_Bind_Basic_PartialApplication.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js) | Supports calling declared functions, function expressions, and delegates stored as object-literal properties. Function.prototype.apply and Function.prototype.bind are implemented for delegate-backed function values; Function.prototype.call is not implemented. |
 
 ### 7.3.14 ([tc39.es](https://tc39.es/ecma262/#sec-construct))
 

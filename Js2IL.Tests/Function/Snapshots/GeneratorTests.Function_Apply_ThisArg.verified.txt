@@ -1,0 +1,185 @@
+﻿// IL code: Function_Apply_ThisArg
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Function_Apply_ThisArg
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit addBase
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2115
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object x
+			) cil managed 
+		{
+			// Method begins at RVA 0x20e8
+			// Header size: 12
+			// Code size: 24 (0x18)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0005: ldstr "base"
+			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_000f: ldarg.1
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0015: stloc.0
+			IL_0016: ldloc.0
+			IL_0017: ret
+		} // end of method addBase::__js_call__
+
+	} // end of class addBase
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 17 53 63 6f 70 65 20 61 64 64 42 61 73 65
+			3d 7b 61 64 64 42 61 73 65 7d 00 00
+		)
+		// Fields
+		.field public object addBase
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x210c
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 138 (0x8a)
+		.maxstack 9
+		.locals init (
+			[0] class Modules.Function_Apply_ThisArg/Scope,
+			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Modules.Function_Apply_ThisArg/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_000b: dup
+		IL_000c: ldstr "base"
+		IL_0011: ldc.r8 10
+		IL_001a: box [System.Runtime]System.Double
+		IL_001f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0024: stloc.1
+		IL_0025: ldnull
+		IL_0026: ldftn object Modules.Function_Apply_ThisArg/addBase::__js_call__(object[], object)
+		IL_002c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0031: ldc.i4.1
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldloc.0
+		IL_003a: stelem.ref
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0040: stloc.2
+		IL_0041: ldloc.2
+		IL_0042: ldstr "apply"
+		IL_0047: ldc.i4.2
+		IL_0048: newarr [System.Runtime]System.Object
+		IL_004d: dup
+		IL_004e: ldc.i4.0
+		IL_004f: ldloc.1
+		IL_0050: stelem.ref
+		IL_0051: dup
+		IL_0052: ldc.i4.1
+		IL_0053: ldc.i4.1
+		IL_0054: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0059: dup
+		IL_005a: ldc.r8 5
+		IL_0063: box [System.Runtime]System.Double
+		IL_0068: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_006d: stelem.ref
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0073: stloc.2
+		IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0079: ldc.i4.1
+		IL_007a: newarr [System.Runtime]System.Object
+		IL_007f: dup
+		IL_0080: ldc.i4.0
+		IL_0081: ldloc.2
+		IL_0082: stelem.ref
+		IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0088: pop
+		IL_0089: ret
+	} // end of method Function_Apply_ThisArg::__js_module_init__
+
+} // end of class Modules.Function_Apply_ThisArg
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x211e
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Function_Apply_ThisArg::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

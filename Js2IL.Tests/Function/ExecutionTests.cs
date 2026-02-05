@@ -111,6 +111,24 @@ namespace Js2IL.Tests.Function
         public Task Function_ObjectLiteralMethod_ThisBinding_AsyncAwait() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding_AsyncAwait); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_Apply_Basic() { var testName = nameof(Function_Apply_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Apply_ThisArg() { var testName = nameof(Function_Apply_ThisArg); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Apply_NullArgArray_TreatedAsEmpty() { var testName = nameof(Function_Apply_NullArgArray_TreatedAsEmpty); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Bind_Basic_PartialApplication() { var testName = nameof(Function_Bind_Basic_PartialApplication); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Bind_ThisBinding_IgnoresCallReceiver() { var testName = nameof(Function_Bind_ThisBinding_IgnoresCallReceiver); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ApplyBind_DominoPushAll() { var testName = nameof(Function_ApplyBind_DominoPushAll); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_MaxParameters_16() { var testName = nameof(Function_MaxParameters_16); return ExecutionTest(testName); }
 
         [Fact]

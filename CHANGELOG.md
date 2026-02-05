@@ -4,7 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- Runtime/spec: support `Function.prototype.apply` and `Function.prototype.bind` for delegate-backed function values (fixes #536).
+- Docs(ecma262): update Section 20.2 and 7.3 status/notes for `apply`/`bind`.
 
 ## v0.8.2 - 2026-02-04
 

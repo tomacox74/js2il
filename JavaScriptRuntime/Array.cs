@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,37 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
     public class Array : List<object?>
     {
+        internal static readonly ExpandoObject Prototype = CreatePrototype();
+
+        private static ExpandoObject CreatePrototype()
+        {
+            var exp = new ExpandoObject();
+            var dict = (IDictionary<string, object?>)exp;
+            dict["push"] = (Func<object[], object?[], object?>)PrototypePush;
+            return exp;
+        }
+
+        private static object PrototypePush(object[] scopes, object?[]? args)
+        {
+            var receiver = RuntimeServices.GetCurrentThis();
+            if (receiver is not JavaScriptRuntime.Array jsArray)
+            {
+                throw new TypeError("Array.prototype.push called on non-array");
+            }
+
+            if (args == null || args.Length == 0)
+            {
+                return jsArray.push();
+            }
+
+            var converted = new object[args.Length];
+            for (int i = 0; i < args.Length; i++)
+            {
+                converted[i] = args[i]!;
+            }
+            return jsArray.push(converted);
+        }
+
         public Array() : base()
         {
         }

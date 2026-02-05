@@ -1,0 +1,203 @@
+﻿// IL code: Function_Bind_Basic_PartialApplication
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Function_Bind_Basic_PartialApplication
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit sum3
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2123
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object a,
+				object b,
+				object c
+			) cil managed 
+		{
+			// Method begins at RVA 0x20fc
+			// Header size: 12
+			// Code size: 18 (0x12)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
+			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0007: stloc.0
+			IL_0008: ldloc.0
+			IL_0009: ldarg.3
+			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: ret
+		} // end of method sum3::__js_call__
+
+	} // end of class sum3
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 11 53 63 6f 70 65 20 73 75 6d 33 3d 7b 73
+			75 6d 33 7d 00 00
+		)
+		// Fields
+		.field public object sum3
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x211a
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 159 (0x9f)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Function_Bind_Basic_PartialApplication/Scope,
+			[1] object,
+			[2] object,
+			[3] object[]
+		)
+
+		IL_0000: newobj instance void Modules.Function_Bind_Basic_PartialApplication/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Function_Bind_Basic_PartialApplication/sum3::__js_call__(object[], object, object, object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: ldstr "bind"
+		IL_0028: ldc.i4.3
+		IL_0029: newarr [System.Runtime]System.Object
+		IL_002e: dup
+		IL_002f: ldc.i4.0
+		IL_0030: ldc.i4.0
+		IL_0031: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0036: stelem.ref
+		IL_0037: dup
+		IL_0038: ldc.i4.1
+		IL_0039: ldc.r8 1
+		IL_0042: box [System.Runtime]System.Double
+		IL_0047: stelem.ref
+		IL_0048: dup
+		IL_0049: ldc.i4.2
+		IL_004a: ldc.r8 2
+		IL_0053: box [System.Runtime]System.Double
+		IL_0058: stelem.ref
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_005e: stloc.1
+		IL_005f: ldc.i4.1
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldc.r8 3
+		IL_0070: box [System.Runtime]System.Double
+		IL_0075: stelem.ref
+		IL_0076: stloc.3
+		IL_0077: ldloc.1
+		IL_0078: ldc.i4.1
+		IL_0079: newarr [System.Runtime]System.Object
+		IL_007e: dup
+		IL_007f: ldc.i4.0
+		IL_0080: ldnull
+		IL_0081: stelem.ref
+		IL_0082: ldloc.3
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0088: stloc.2
+		IL_0089: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008e: ldc.i4.1
+		IL_008f: newarr [System.Runtime]System.Object
+		IL_0094: dup
+		IL_0095: ldc.i4.0
+		IL_0096: ldloc.2
+		IL_0097: stelem.ref
+		IL_0098: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_009d: pop
+		IL_009e: ret
+	} // end of method Function_Bind_Basic_PartialApplication::__js_module_init__
+
+} // end of class Modules.Function_Bind_Basic_PartialApplication
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x212c
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Function_Bind_Basic_PartialApplication::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
