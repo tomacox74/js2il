@@ -423,6 +423,10 @@ public sealed partial class HIRToLIRLowerer
                         resultTempVar = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(callableId, scopesTemp, resultTempVar));
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                        // Cache the function value so repeated reads of the identifier within the same
+                        // method return the same object identity (required for `.prototype` mutations).
+                        _variableMap[binding] = resultTempVar;
                         return true;
                     }
 

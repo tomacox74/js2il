@@ -311,7 +311,32 @@ namespace JavaScriptRuntime
 
             if (constructor is Delegate del)
             {
-                return Closure.InvokeWithArgs(del, System.Array.Empty<object>(), callArgs);
+                // JS `new` semantics for function constructors:
+                // 1) Create a new instance object
+                // 2) Set its [[Prototype]] to ctor.prototype when available
+                // 3) Invoke the constructor with `this` bound to the instance
+                // 4) If ctor returns an object, use that; otherwise return the instance
+
+                var instance = new System.Dynamic.ExpandoObject();
+
+                // Default proto: ctor.prototype when it is an object; otherwise undefined.
+                // If undefined/non-object, we intentionally skip prototype assignment (minimal behavior).
+                var proto = GetProperty(del, "prototype");
+                if (IsValidPrototypeValue(proto) && proto is not null)
+                {
+                    PrototypeChain.SetPrototype(instance, proto);
+                }
+
+                var previousThis = RuntimeServices.SetCurrentThis(instance);
+                try
+                {
+                    var result = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), callArgs);
+                    return TypeUtilities.IsConstructorReturnOverride(result) ? result : instance;
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
             }
 
             if (constructor is System.Dynamic.ExpandoObject exp)
@@ -2431,6 +2456,27 @@ namespace JavaScriptRuntime
             // Arrays / typed arrays: ignore arbitrary properties for now
             if (obj is Array || obj is Int32Array)
             {
+                return value;
+            }
+
+            // Function values (delegates) behave like objects in JavaScript and can have ad-hoc
+            // properties (e.g., MyEvent.prototype = ...). Store these in the descriptor table.
+            if (obj is Delegate)
+            {
+                if (TryInvokePrototypeSetter(obj, name, value))
+                {
+                    return value;
+                }
+
+                PropertyDescriptorStore.DefineOrUpdate(obj, name, new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = true,
+                    Configurable = true,
+                    Writable = true,
+                    Value = value
+                });
+
                 return value;
             }
 
