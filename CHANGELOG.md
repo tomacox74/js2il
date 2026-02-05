@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 - Runtime/spec: support `Function.prototype.apply` and `Function.prototype.bind` for delegate-backed function values (fixes #536).
 - Docs(ecma262): update Section 20.2 and 7.3 status/notes for `apply`/`bind`.
+- Runtime/spec: expose global `Object` as a first-class value (including `Object.prototype`) and support Domino-style `Fn.prototype = Object.create(Object.prototype, descriptors)` patterns (fixes #546).
+- Docs(ecma262): update Sections 19.3, 20.1, and 20.2 for `Object.prototype` and function-instance `prototype` behavior.
 
 ## v0.8.2 - 2026-02-04
 

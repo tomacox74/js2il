@@ -77,6 +77,12 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | Global Number is available as a first-class value (e.g., x === Number, array.map(Number)) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) | Exposes JavaScriptRuntime.GlobalThis.Number as a delegate value. Direct calls Number(x) are lowered as primitive conversions. In js2il output, JavaScript Number values are represented as unboxed CLR double. Full Number constructor/prototype semantics are not implemented. |
 
+### 19.3.23 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-object))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Global Object is available as a first-class value (e.g., Object.prototype, Object.create(Object.prototype, ...)) | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js) | Exposes JavaScriptRuntime.GlobalThis.Object as a callable function value so libraries can reference Object as a global identifier and access Object.prototype. The exposed Object.prototype is a minimal placeholder object intended for Object.create/setPrototypeOf patterns; it does not implement the full set of Object.prototype methods or invariants. |
+
 ### 19.3.25 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-proxy))
 
 | Feature name | Status | Test scripts | Notes |

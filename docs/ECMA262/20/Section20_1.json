@@ -162,7 +162,7 @@
     {
       "clause": "20.1.2.21",
       "title": "Object.prototype",
-      "status": "Not Yet Supported",
+	  "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.prototype"
     },
     {
@@ -305,9 +305,20 @@
         "specUrl": "https://tc39.es/ecma262/#sec-object.create",
         "testScripts": [
           "Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
-          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.Object.create using the opt-in PrototypeChain side-table to set [[Prototype]] (including null-prototype objects via JS null). When a properties bag is provided, it is applied via defineProperties. This does not implement full OrdinaryObjectCreate invariants or exotic object behaviors."
+      },
+      {
+        "clause": "20.1.2.21",
+        "feature": "Object.prototype (constructor property)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.prototype",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
+        ],
+        "notes": "Object.prototype is available as a value via the global Object function value (JavaScriptRuntime.GlobalThis.Object). The runtime currently exposes a minimal placeholder object to support patterns like Object.create(Object.prototype, ...); the full Object.prototype API surface is not implemented."
       },
       {
         "clause": "20.1.2.3",

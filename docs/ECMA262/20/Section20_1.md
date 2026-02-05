@@ -37,7 +37,7 @@
 | 20.1.2.18 | Object.isSealed ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.issealed) |
 | 20.1.2.19 | Object.keys ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.keys) |
 | 20.1.2.20 | Object.preventExtensions ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.preventextensions) |
-| 20.1.2.21 | Object.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.prototype) |
+| 20.1.2.21 | Object.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.prototype) |
 | 20.1.2.22 | Object.seal ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.seal) |
 | 20.1.2.23 | Object.setPrototypeOf ( O , proto ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.setprototypeof) |
 | 20.1.2.24 | Object.values ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.values) |
@@ -73,7 +73,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.create | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js) | Implemented in JavaScriptRuntime.Object.create using the opt-in PrototypeChain side-table to set [[Prototype]] (including null-prototype objects via JS null). When a properties bag is provided, it is applied via defineProperties. This does not implement full OrdinaryObjectCreate invariants or exotic object behaviors. |
+| Object.create | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js) | Implemented in JavaScriptRuntime.Object.create using the opt-in PrototypeChain side-table to set [[Prototype]] (including null-prototype objects via JS null). When a properties bag is provided, it is applied via defineProperties. This does not implement full OrdinaryObjectCreate invariants or exotic object behaviors. |
 
 ### 20.1.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-object.defineproperties))
 
@@ -98,6 +98,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Object.getPrototypeOf | Supported with Limitations | [`PrototypeChain_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js) | Implemented in JavaScriptRuntime.Object.getPrototypeOf using an opt-in side-table prototype store (JavaScriptRuntime.PrototypeChain). This does not currently model default Object.prototype; if no prototype has been explicitly assigned, this returns undefined (null). |
+
+### 20.1.2.21 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Object.prototype (constructor property) | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js) | Object.prototype is available as a value via the global Object function value (JavaScriptRuntime.GlobalThis.Object). The runtime currently exposes a minimal placeholder object to support patterns like Object.create(Object.prototype, ...); the full Object.prototype API surface is not implemented. |
 
 ### 20.1.2.23 ([tc39.es](https://tc39.es/ecma262/#sec-object.setprototypeof))
 

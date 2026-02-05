@@ -265,6 +265,16 @@
   "support": {
     "entries": [
       {
+        "clause": "19.3.23",
+        "feature": "Global Object is available as a first-class value (e.g., Object.prototype, Object.create(Object.prototype, ...))",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-object",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
+        ],
+        "notes": "Exposes JavaScriptRuntime.GlobalThis.Object as a callable function value so libraries can reference Object as a global identifier and access Object.prototype. The exposed Object.prototype is a minimal placeholder object intended for Object.create/setPrototypeOf patterns; it does not implement the full set of Object.prototype methods or invariants."
+      },
+      {
         "clause": "19.3.25",
         "feature": "Proxy (global constructor property)",
         "status": "Supported with Limitations",
