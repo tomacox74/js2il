@@ -1150,6 +1150,54 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(targetType);
                     break;
                 }
+
+            case LIRSetItem setItem:
+                {
+                    // Inline the assignment-expression result of setting an object index/key.
+                    // This is required for CommonJS patterns like: exports = module.exports = { ... };
+                    var indexStorage = GetTempStorage(setItem.Index);
+                    var valueStorage = GetTempStorage(setItem.Value);
+
+                    if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
+                        valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
+                    {
+                        EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(setItem.Index, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                        var setItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.SetItem),
+                            parameterTypes: new[] { typeof(object), typeof(double), typeof(double) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(setItemMethod);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(setItem.Index, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                        var setItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.SetItem),
+                            parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(setItemMethod);
+                    }
+
+                    // Adjust to the expected temp storage type, if we tracked a more specific representation.
+                    var resultStorage = GetTempStorage(temp);
+                    if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                    {
+                        var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.TypeUtilities),
+                            nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(toNumberMref);
+                    }
+
+                    break;
+                }
             default:
                 throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - unsupported instruction {def.GetType().Name}");
         }
