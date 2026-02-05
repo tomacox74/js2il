@@ -114,6 +114,9 @@ namespace Js2IL.Tests.Function
         public Task Function_ApplyBind_DominoPushAll() { var testName = nameof(Function_ApplyBind_DominoPushAll); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_Prototype_ObjectCreate_ObjectPrototype() { var testName = nameof(Function_Prototype_ObjectCreate_ObjectPrototype); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_MaxParameters_16() { var testName = nameof(Function_MaxParameters_16); return GenerateTest(testName); }
 
         [Fact]

@@ -102,7 +102,7 @@
     {
       "clause": "20.2.4.3",
       "title": "prototype",
-      "status": "Not Yet Supported",
+	  "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-function-instances-prototype"
     },
     {
@@ -124,6 +124,16 @@
           "Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js"
         ],
         "notes": "JavaScript functions are compiled to CLR delegates and invoked directly (or via a small runtime dispatcher). Function.prototype.apply and Function.prototype.bind are supported for delegate-backed function values; most other Function.prototype APIs are not implemented."
+      },
+      {
+        "clause": "20.2.4.3",
+        "feature": "Function instance 'prototype' property is readable/writable and used by `new`",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-instances-prototype",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
+        ],
+        "notes": "Delegate-backed function values behave like JavaScript objects and can carry ad-hoc properties via the runtime descriptor store (including 'prototype'). The runtime's dynamic constructor path (Object.ConstructValue) uses ctor.prototype to set the new instance's [[Prototype]] when it is object-like. Full Function exotic object semantics, metadata, and invariants are not implemented."
       },
       {
         "clause": "20.2.3.1",

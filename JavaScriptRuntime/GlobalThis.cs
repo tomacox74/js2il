@@ -48,6 +48,16 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
 
+        // Object constructor/function value. This enables patterns like `Object.prototype` and
+        // allows libraries to pass `Object` around as a value.
+        private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
+            JavaScriptRuntime.Object.Construct(value);
+
+        // Minimal Object.prototype object used for descriptor/prototype-heavy libraries.
+        // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
+        // opt into prototype semantics as needed.
+        private static readonly object _objectPrototypeValue = new ExpandoObject();
+
         static GlobalThis()
         {
             // Attach minimal prototypes to callable globals so patterns like
@@ -68,6 +78,16 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = JavaScriptRuntime.Array.Prototype
+            });
+
+            // Provide Object.prototype for patterns like `Object.create(Object.prototype, ...)`.
+            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _objectPrototypeValue
             });
         }
 
@@ -196,6 +216,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Array), Array);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Array), dict[nameof(GlobalThis.Array)]);
 
+            dict.TryAdd(nameof(GlobalThis.Object), Object);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Object), dict[nameof(GlobalThis.Object)]);
+
             // Global functions exposed as delegates.
             dict.TryAdd(nameof(GlobalThis.setTimeout), (Func<object, object, object[], object>)setTimeout);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.setTimeout), dict[nameof(GlobalThis.setTimeout)]);
@@ -274,6 +297,8 @@ namespace JavaScriptRuntime
         /// Invoking it will throw until Array constructor semantics are implemented.
         /// </summary>
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
+
+        public static Func<object[], object?, object> Object => _objectConstructorValue;
 
         /// <summary>
         /// ECMAScript global Infinity value (+∞).

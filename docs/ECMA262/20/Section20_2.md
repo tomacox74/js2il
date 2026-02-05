@@ -27,7 +27,7 @@
 | 20.2.4 | Function Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-instances) |
 | 20.2.4.1 | length | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-length) |
 | 20.2.4.2 | name | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-name) |
-| 20.2.4.3 | prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-prototype) |
+| 20.2.4.3 | prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-prototype) |
 | 20.2.5 | HostHasSourceTextAvailable ( func ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-hosthassourcetextavailable) |
 
 ## Support
@@ -53,4 +53,10 @@ Feature-level support tracking with test script references.
 | Closures capture and mutate outer variables | Supported with Limitations | [`Function_Closure_MultiLevel_ReadWriteAcrossScopes.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Closure_MultiLevel_ReadWriteAcrossScopes.js) | Closures are implemented via the scope-as-class model (scope instances hold variables as fields). |
 | Function instances are callable (basic invocation) | Supported with Limitations | [`Function_HelloWorld.js`](../../../Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`Function_CallViaVariable_Reassignment.js`](../../../Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js) | JavaScript functions are compiled to CLR delegates and invoked directly (or via a small runtime dispatcher). Function.prototype.apply and Function.prototype.bind are supported for delegate-backed function values; most other Function.prototype APIs are not implemented. |
 | Method calls set dynamic this; arrow functions capture lexical this | Supported with Limitations | [`Function_ObjectLiteralMethod_ThisBinding.js`](../../../Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js)<br>[`ArrowFunction_LexicalThis_CreatedInMethod.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_CreatedInMethod.js) | Normal functions support receiver-based this for member calls; arrow functions implement lexical this binding via runtime helpers. |
+
+### 20.2.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances-prototype))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Function instance 'prototype' property is readable/writable and used by `new` | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js) | Delegate-backed function values behave like JavaScript objects and can carry ad-hoc properties via the runtime descriptor store (including 'prototype'). The runtime's dynamic constructor path (Object.ConstructValue) uses ctor.prototype to set the new instance's [[Prototype]] when it is object-like. Full Function exotic object semantics, metadata, and invariants are not implemented. |
 

@@ -311,7 +311,7 @@ namespace JavaScriptRuntime
 
             if (constructor is Delegate del)
             {
-                return Closure.InvokeWithArgs(del, System.Array.Empty<object>(), callArgs);
+                return JavaScriptRuntime.Function.Construct(del, callArgs);
             }
 
             if (constructor is System.Dynamic.ExpandoObject exp)
@@ -2431,6 +2431,27 @@ namespace JavaScriptRuntime
             // Arrays / typed arrays: ignore arbitrary properties for now
             if (obj is Array || obj is Int32Array)
             {
+                return value;
+            }
+
+            // Function values (delegates) behave like objects in JavaScript and can have ad-hoc
+            // properties (e.g., MyEvent.prototype = ...). Store these in the descriptor table.
+            if (obj is Delegate)
+            {
+                if (TryInvokePrototypeSetter(obj, name, value))
+                {
+                    return value;
+                }
+
+                PropertyDescriptorStore.DefineOrUpdate(obj, name, new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = true,
+                    Configurable = true,
+                    Writable = true,
+                    Value = value
+                });
+
                 return value;
             }
 
