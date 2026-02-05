@@ -178,5 +178,14 @@ namespace Js2IL.Tests.CommonJS
                 nameof(CommonJS_Export_ObjectWithClosure),
                 new[] { "CommonJS_Export_ObjectWithClosure_Lib" });
         }
+
+        [Fact]
+        public Task CommonJS_Global_ErrorPrototype_Read()
+        {
+            // Issue #550 repro: IR pipeline crash lowering `Error.prototype` property access in a CommonJS module.
+            return GenerateTest(
+                nameof(CommonJS_Global_ErrorPrototype_Read),
+                new[] { "CommonJS_Global_ErrorPrototype_Read_Lib" });
+        }
     }
 }

@@ -53,6 +53,15 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
             JavaScriptRuntime.Object.Construct(value);
 
+        // Placeholder Error constructor value.
+        // Exposed so libraries can reference `Error` and access `Error.prototype`.
+        // Calling it as a constructor/function is not implemented yet.
+        private static readonly Func<object[], object?[], object?> _errorConstructorValue = static (_, __) =>
+            throw new NotSupportedException("The Error constructor is not supported as a callable value yet.");
+
+        // Minimal Error.prototype object. Libraries may attach properties here.
+        private static readonly object _errorPrototypeValue = new ExpandoObject();
+
         // Minimal Object.prototype object used for descriptor/prototype-heavy libraries.
         // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
         // opt into prototype semantics as needed.
@@ -88,6 +97,16 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = _objectPrototypeValue
+            });
+
+            // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
+            PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _errorPrototypeValue
             });
         }
 
@@ -219,6 +238,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Object), Object);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Object), dict[nameof(GlobalThis.Object)]);
 
+            dict.TryAdd(nameof(GlobalThis.Error), Error);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Error), dict[nameof(GlobalThis.Error)]);
+
             // Global functions exposed as delegates.
             dict.TryAdd(nameof(GlobalThis.setTimeout), (Func<object, object, object[], object>)setTimeout);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.setTimeout), dict[nameof(GlobalThis.setTimeout)]);
@@ -299,6 +321,13 @@ namespace JavaScriptRuntime
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
 
         public static Func<object[], object?, object> Object => _objectConstructorValue;
+
+        /// <summary>
+        /// ECMAScript global Error constructor value (placeholder).
+        /// Exposed as a callable function value so libraries can reference it as a global identifier and
+        /// access <c>Error.prototype</c>.
+        /// </summary>
+        public static Func<object[], object?[], object?> Error => _errorConstructorValue;
 
         /// <summary>
         /// ECMAScript global Infinity value (+∞).

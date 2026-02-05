@@ -14,9 +14,9 @@
 |---:|---|---|---|
 | 20.5.1 | The Error Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-error-constructor) |
 | 20.5.1.1 | Error ( message [ , options ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-error-message) |
-| 20.5.2 | Properties of the Error Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-error-constructor) |
+| 20.5.2 | Properties of the Error Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-error-constructor) |
 | 20.5.2.1 | Error.isError ( arg ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-error.iserror) |
-| 20.5.2.2 | Error.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-error.prototype) |
+| 20.5.2.2 | Error.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-error.prototype) |
 | 20.5.3 | Properties of the Error Prototype Object | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-error-prototype-object) |
 | 20.5.3.1 | Error.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-error.prototype.constructor) |
 | 20.5.3.2 | Error.prototype.message | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-error.prototype.message) |
@@ -63,6 +63,12 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | Error(message) (callable creates instance) | Supported with Limitations | [`IntrinsicCallables_Error_Callable_CreatesInstances.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_Callable_CreatesInstances.js) | Compiler lowers built-in error callables (Error/TypeError/...) to construction of JavaScriptRuntime error types. Currently supports 0 or 1 argument; the optional 'options' parameter is not supported. |
 | new Error(message) and new NativeError(message) | Supported with Limitations | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js) | Constructs JavaScriptRuntime.Error (and derived types) with message stringification via DotNet2JSConversions.ToString. The runtime does not currently model spec prototype objects; behavior is closer to .NET exceptions with JS-like surface properties. |
+
+### 20.5.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Error.prototype data property exists (minimal) | Supported with Limitations | [`CommonJS_Global_ErrorPrototype_Read.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read.js)<br>[`CommonJS_Global_ErrorPrototype_Read_Lib.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read_Lib.js) | Exposes the global Error value as a first-class intrinsic and provides a writable Error.prototype object for libraries that read/attach prototype members (e.g., CommonJS polyfills). Error(...) invocation and standard prototype methods/properties are not yet implemented as spec-defined objects. |
 
 ### 20.5.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-error-instances))
 
