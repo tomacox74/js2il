@@ -187,5 +187,12 @@ namespace Js2IL.Tests.CommonJS
                 nameof(CommonJS_Global_ErrorPrototype_Read),
                 additionalScripts: new[] { "CommonJS_Global_ErrorPrototype_Read_Lib" });
         }
+
+        [Fact]
+        public Task CommonJS_Module_Exports_ClassExpression_ExtendsArray()
+        {
+            // Issue #552 repro: IR pipeline crash compiling a CommonJS module that exports a class expression.
+            return ExecutionTest(nameof(CommonJS_Module_Exports_ClassExpression_ExtendsArray));
+        }
     }
 }

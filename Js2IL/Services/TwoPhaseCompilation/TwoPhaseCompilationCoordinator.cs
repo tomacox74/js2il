@@ -559,12 +559,12 @@ public sealed class TwoPhaseCompilationCoordinator
 
         foreach (var classScope in EnumerateClassScopesInDeclarationOrder(symbolTable.Root))
         {
-            if (classScope.AstNode is not ClassDeclaration classDecl)
+            if (!TryGetClassBody(classScope, out var classBody))
             {
                 continue;
             }
 
-            foreach (var callable in GetClassCallablesInDeclarationOrder(classScope, classDecl))
+            foreach (var callable in GetClassCallablesInDeclarationOrder(classScope, classBody))
             {
                 if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
                 {
@@ -621,12 +621,12 @@ public sealed class TwoPhaseCompilationCoordinator
 
         foreach (var classScope in EnumerateClassScopesInDeclarationOrder(symbolTable.Root))
         {
-            if (classScope.AstNode is not ClassDeclaration classDecl)
+            if (!TryGetClassBody(classScope, out var classBody))
             {
                 continue;
             }
 
-            foreach (var callable in GetClassCallablesInDeclarationOrder(classScope, classDecl))
+            foreach (var callable in GetClassCallablesInDeclarationOrder(classScope, classBody))
             {
                 // Idempotent: if token already set, do not overwrite.
                 if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
@@ -693,7 +693,8 @@ public sealed class TwoPhaseCompilationCoordinator
                 throw new InvalidOperationException($"[TwoPhase] Class callable has nil token: {callable.DisplayName}");
             }
 
-            var (classScope, classDecl, className) = ResolveClassScope(symbolTable, callable);
+            var (classScope, classNode, className) = ResolveClassScope(symbolTable, callable);
+            var classBody = GetClassBodyOrThrow(classNode);
             var hasScopes = classRegistry.TryGetPrivateField(className, "_scopes", out var scopesField);
 
             CompiledCallableBody body;
@@ -701,17 +702,13 @@ public sealed class TwoPhaseCompilationCoordinator
             {
                 case CallableKind.ClassConstructor:
                 {
-                    FunctionExpression? ctorFunc = null;
-                    if (callable.AstNode is Acornima.Ast.MethodDefinition ctorDef)
+                    Node? ctorNodeOverride = callable.AstNode as Acornima.Ast.MethodDefinition;
+                    if (ctorNodeOverride == null)
                     {
-                        ctorFunc = ctorDef.Value as FunctionExpression;
-                    }
-                    else
-                    {
-                        var ctorMember = classDecl.Body.Body
+                        // For synthetic constructor callables, prefer the actual constructor MethodDefinition if present.
+                        ctorNodeOverride = classBody.Body
                             .OfType<Acornima.Ast.MethodDefinition>()
                             .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
-                        ctorFunc = ctorMember?.Value as FunctionExpression;
                     }
 
                     body = methodCompiler.CompileClassConstructorBodyTwoPhase(
@@ -720,8 +717,8 @@ public sealed class TwoPhaseCompilationCoordinator
                         methodBodyStreamEncoder: methodBodyStreamEncoder,
                         symbolTable: symbolTable,
                         classScope: classScope,
-                        classDecl: classDecl,
-                        ctorFunc: ctorFunc,
+                        classNode: classNode,
+                        ctorNodeOverride: ctorNodeOverride,
                         needsScopes: hasScopes);
                     break;
                 }
@@ -733,7 +730,7 @@ public sealed class TwoPhaseCompilationCoordinator
                         expectedMethodDef: expected,
                         methodBodyStreamEncoder: methodBodyStreamEncoder,
                         classScope: classScope,
-                        classDecl: classDecl);
+                        classNode: classNode);
                     break;
                 }
 
@@ -776,7 +773,7 @@ public sealed class TwoPhaseCompilationCoordinator
         // Finalize MethodDef/Param rows in TypeDef order (class declaration order), preserving per-type contiguity.
         foreach (var classScope in EnumerateClassScopesInDeclarationOrder(symbolTable.Root))
         {
-            if (classScope.AstNode is not ClassDeclaration classDecl)
+            if (!TryGetClassBody(classScope, out var classBody))
             {
                 continue;
             }
@@ -785,7 +782,7 @@ public sealed class TwoPhaseCompilationCoordinator
             var name = classScope.DotNetTypeName ?? classScope.Name;
             var tb = new TypeBuilder(metadataBuilder, ns, name);
 
-            foreach (var callable in GetClassCallablesInDeclarationOrder(classScope, classDecl))
+            foreach (var callable in GetClassCallablesInDeclarationOrder(classScope, classBody))
             {
                 if (!compiled.TryGetValue(callable, out var body))
                 {
@@ -813,12 +810,12 @@ public sealed class TwoPhaseCompilationCoordinator
         }
     }
 
-    private IEnumerable<CallableId> GetClassCallablesInDeclarationOrder(Scope classScope, ClassDeclaration classDecl)
+    private IEnumerable<CallableId> GetClassCallablesInDeclarationOrder(Scope classScope, ClassBody classBody)
     {
         var className = classScope.Name;
 
         // Constructor (explicit or synthetic)
-        var ctorMember = classDecl.Body.Body
+        var ctorMember = classBody.Body
             .OfType<Acornima.Ast.MethodDefinition>()
             .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
 
@@ -836,7 +833,7 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         // Methods/accessors in source order
-        foreach (var member in classDecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>().Where(m => m.Key is Identifier))
+        foreach (var member in classBody.Body.OfType<Acornima.Ast.MethodDefinition>().Where(m => m.Key is Identifier))
         {
             var methodName = ((Identifier)member.Key).Name;
             if (methodName == "constructor") continue;
@@ -848,7 +845,7 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         // Static initializer (.cctor) if needed (legacy ordering: after methods)
-        bool hasStaticFieldInits = classDecl.Body.Body.OfType<Acornima.Ast.PropertyDefinition>()
+        bool hasStaticFieldInits = classBody.Body.OfType<Acornima.Ast.PropertyDefinition>()
             .Any(p => p.Static && p.Value != null);
         if (hasStaticFieldInits)
         {
@@ -860,7 +857,7 @@ public sealed class TwoPhaseCompilationCoordinator
         }
     }
 
-    private static (Scope ClassScope, ClassDeclaration ClassDecl, string ClassName) ResolveClassScope(SymbolTable symbolTable, CallableId callable)
+    private static (Scope ClassScope, Node ClassNode, string ClassName) ResolveClassScope(SymbolTable symbolTable, CallableId callable)
     {
         if (string.IsNullOrEmpty(callable.Name))
         {
@@ -878,17 +875,47 @@ public sealed class TwoPhaseCompilationCoordinator
 
         var declaringScope = ResolveScopeByPath(symbolTable, callable.DeclaringScopeName);
         var classScope = declaringScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Class && string.Equals(s.Name, className, StringComparison.Ordinal));
-        if (classScope == null || classScope.AstNode is not ClassDeclaration classDecl)
+        if (classScope == null || classScope.AstNode is not (ClassDeclaration or ClassExpression))
         {
             throw new InvalidOperationException($"[TwoPhase] Class scope not found for callable: {callable.DisplayName} (DeclaringScope='{callable.DeclaringScopeName}', ClassName='{className}')");
         }
+
+        var classNode = (Node)classScope.AstNode;
 
         // ClassRegistry keys use CLR full names (namespace + type) to avoid collisions across modules.
         var ns = classScope.DotNetNamespace ?? "Classes";
         var typeName = classScope.DotNetTypeName ?? classScope.Name;
         var registryClassName = $"{ns}.{typeName}";
 
-        return (classScope, classDecl, registryClassName);
+        return (classScope, classNode, registryClassName);
+    }
+
+    private static bool TryGetClassBody(Scope classScope, out ClassBody classBody)
+    {
+        if (classScope.AstNode is ClassDeclaration classDecl)
+        {
+            classBody = classDecl.Body;
+            return true;
+        }
+
+        if (classScope.AstNode is ClassExpression classExpr)
+        {
+            classBody = classExpr.Body;
+            return true;
+        }
+
+        classBody = null!;
+        return false;
+    }
+
+    private static ClassBody GetClassBodyOrThrow(Node classNode)
+    {
+        return classNode switch
+        {
+            ClassDeclaration classDecl => classDecl.Body,
+            ClassExpression classExpr => classExpr.Body,
+            _ => throw new InvalidOperationException($"[TwoPhase] Unsupported class node type: {classNode.Type}")
+        };
     }
 
     private static Scope ResolveScopeByPath(SymbolTable symbolTable, string scopePath)

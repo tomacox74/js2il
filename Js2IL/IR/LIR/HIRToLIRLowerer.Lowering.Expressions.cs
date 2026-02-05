@@ -458,6 +458,11 @@ public sealed partial class HIRToLIRLowerer
                 return TryLowerArrowFunctionExpression(arrowExpr, out resultTempVar);
             case HIRFunctionExpression funcExpr:
                 return TryLowerFunctionExpression(funcExpr, out resultTempVar);
+            case Js2IL.HIR.HIRUserClassTypeExpression userClassType:
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRGetUserClassType(userClassType.RegistryClassName, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                return true;
             // Handle different expression types here
             default:
                 // Unsupported expression type

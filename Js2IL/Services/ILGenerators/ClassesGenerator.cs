@@ -187,7 +187,7 @@ namespace Js2IL.Services.ILGenerators
         {
             foreach (var child in scope.Children)
             {
-                if (child.Kind == ScopeKind.Class && child.AstNode is ClassDeclaration cdecl)
+                if (child.Kind == ScopeKind.Class && child.AstNode is (ClassDeclaration or ClassExpression))
                 {
                     // Nest module-scope classes under Modules.<ModuleName>, and function-local classes
                     // under the enclosing function owner type.
@@ -195,16 +195,32 @@ namespace Js2IL.Services.ILGenerators
                         ? resolved
                         : default;
 
-                    DeclareClassTwoPhase(child, cdecl, parentType);
+                    DeclareClassTwoPhase(child, child.AstNode, parentType);
                 }
 
                 EmitClassesRecursiveTwoPhase(child, moduleTypeHandle);
             }
         }
 
-        private TypeDefinitionHandle DeclareClassTwoPhase(Scope classScope, ClassDeclaration cdecl, TypeDefinitionHandle parentType)
+        private TypeDefinitionHandle DeclareClassTwoPhase(Scope classScope, Acornima.Ast.Node classNode, TypeDefinitionHandle parentType)
         {
             var callableRegistry = _serviceProvider.GetRequiredService<CallableRegistry>();
+
+            ClassBody classBody;
+            Expression? superClass;
+            switch (classNode)
+            {
+                case ClassDeclaration classDecl:
+                    classBody = classDecl.Body;
+                    superClass = classDecl.SuperClass;
+                    break;
+                case ClassExpression classExpr:
+                    classBody = classExpr.Body;
+                    superClass = classExpr.SuperClass;
+                    break;
+                default:
+                    throw new InvalidOperationException($"[Classes] Unexpected class AST node type: {classNode.Type}");
+            }
 
             var jsClassName = classScope.Name;
             var registryClassName = GetRegistryClassName(classScope);
@@ -233,7 +249,7 @@ namespace Js2IL.Services.ILGenerators
             bool classNeedsParentScopes = classScope.ReferencesParentScopeVariables;
             if (!classNeedsParentScopes)
             {
-                var ctor = cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+                var ctor = classBody.Body.OfType<Acornima.Ast.MethodDefinition>()
                     .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
                 if (ctor?.Value is FunctionExpression ctorExpr)
                 {
@@ -242,7 +258,7 @@ namespace Js2IL.Services.ILGenerators
 
                 if (!classNeedsParentScopes)
                 {
-                    foreach (var method in cdecl.Body.Body
+                    foreach (var method in classBody.Body
                         .OfType<Acornima.Ast.MethodDefinition>()
                         .Where(m => m.Value is FunctionExpression && (m.Key as Identifier)?.Name != "constructor"))
                     {
@@ -259,7 +275,7 @@ namespace Js2IL.Services.ILGenerators
             // If this is a derived class (extends), ensure it can pass scopes to the base class constructor
             // when the base class requires it.
             EntityHandle baseTypeHandle = _bcl.ObjectType;
-            if (cdecl.SuperClass is Identifier superId)
+            if (superClass is Identifier superId)
             {
                 var baseScope = FindClassScope(classScope, superId.Name);
                 if (baseScope != null)
@@ -273,9 +289,10 @@ namespace Js2IL.Services.ILGenerators
 
                     // Propagate base scope requirements.
                     bool baseNeedsParentScopes = baseScope.ReferencesParentScopeVariables;
-                    if (!baseNeedsParentScopes && baseScope.AstNode is ClassDeclaration baseDecl)
+                    if (!baseNeedsParentScopes && baseScope.AstNode is (ClassDeclaration or ClassExpression))
                     {
-                        var baseCtor = baseDecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+                        var baseBody = baseScope.AstNode is ClassDeclaration bcd ? bcd.Body : ((ClassExpression)baseScope.AstNode).Body;
+                        var baseCtor = baseBody.Body.OfType<Acornima.Ast.MethodDefinition>()
                             .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
                         if (baseCtor?.Value is FunctionExpression baseCtorExpr)
                         {
@@ -284,7 +301,7 @@ namespace Js2IL.Services.ILGenerators
 
                         if (!baseNeedsParentScopes)
                         {
-                            foreach (var method in baseDecl.Body.Body
+                            foreach (var method in baseBody.Body
                                 .OfType<Acornima.Ast.MethodDefinition>()
                                 .Where(m => m.Value is FunctionExpression && (m.Key as Identifier)?.Name != "constructor"))
                             {
@@ -386,7 +403,7 @@ namespace Js2IL.Services.ILGenerators
                 return classScope.StableInstanceFieldClrTypes.TryGetValue(fieldName, out var t) ? t : null;
             }
 
-            foreach (var pdef in cdecl.Body.Body.OfType<Acornima.Ast.PropertyDefinition>())
+            foreach (var pdef in classBody.Body.OfType<Acornima.Ast.PropertyDefinition>())
             {
                 if (pdef.Key is Acornima.Ast.PrivateIdentifier priv)
                 {
@@ -511,7 +528,7 @@ namespace Js2IL.Services.ILGenerators
                 return false;
             }
 
-            var ctorMemberForReturn = cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+            var ctorMemberForReturn = classBody.Body.OfType<Acornima.Ast.MethodDefinition>()
                 .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
 
             if (ctorMemberForReturn?.Value is FunctionExpression ctorFuncForReturn
@@ -569,7 +586,7 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
-            foreach (var m in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
+            foreach (var m in classBody.Body.OfType<Acornima.Ast.MethodDefinition>())
             {
                 if (m.Value is FunctionExpression fe && fe.Body is BlockStatement body)
                 {
@@ -596,7 +613,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Identify the constructor callable and use its preallocated MethodDef as the first method.
-            var ctorMember = cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+            var ctorMember = classBody.Body.OfType<Acornima.Ast.MethodDefinition>()
                 .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
 
             CallableId ctorCallable;
@@ -610,7 +627,7 @@ namespace Js2IL.Services.ILGenerators
             else
             {
                 // CallableDiscovery uses ClassBody as the synthetic ctor AST node.
-                if (!callableRegistry.TryGetCallableIdForAstNode(cdecl.Body, out ctorCallable))
+                if (!callableRegistry.TryGetCallableIdForAstNode(classBody, out ctorCallable))
                 {
                     throw new InvalidOperationException($"[Classes] Missing CallableId for synthetic class constructor: {jsClassName}");
                 }
@@ -632,14 +649,15 @@ namespace Js2IL.Services.ILGenerators
 
             // Register constructor signature for call-site validation.
             var ctorParamCount = (ctorMember?.Value as FunctionExpression)?.Params.Count ?? 0;
-            if (ctorMember == null && cdecl.SuperClass is Identifier superClassId)
+            if (ctorMember == null && superClass is Identifier superClassId)
             {
                 // Default derived constructors in JS accept arguments and forward them to super(...).
                 // We approximate by matching the base constructor's max parameter count when resolvable.
                 var baseScope = FindClassScope(classScope, superClassId.Name);
-                if (baseScope?.AstNode is ClassDeclaration baseDecl)
+                if (baseScope?.AstNode is (ClassDeclaration or ClassExpression))
                 {
-                    var baseCtor = baseDecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+                    var baseBody = baseScope.AstNode is ClassDeclaration bcd ? bcd.Body : ((ClassExpression)baseScope.AstNode).Body;
+                    var baseCtor = baseBody.Body.OfType<Acornima.Ast.MethodDefinition>()
                         .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
                     if (baseCtor?.Value is FunctionExpression baseCtorFunc
                         && !baseCtorFunc.Params.Any(p => p is RestElement))
@@ -664,7 +682,7 @@ namespace Js2IL.Services.ILGenerators
             _classRegistry.RegisterConstructor(registryClassName, ctorMethodDef, ctorSig, classNeedsParentScopes, ctorMinUserParams, ctorParamCount);
 
             // Register instance methods (tokens are preallocated in Phase 1, bodies emitted in Phase 2).
-            foreach (var member in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>().Where(m => m.Key is Identifier))
+            foreach (var member in classBody.Body.OfType<Acornima.Ast.MethodDefinition>().Where(m => m.Key is Identifier))
             {
                 var memberName = ((Identifier)member.Key).Name;
                 if (string.Equals(memberName, "constructor", StringComparison.Ordinal))

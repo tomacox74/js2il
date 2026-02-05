@@ -144,14 +144,30 @@ public sealed class CallableDiscovery
     private void DiscoverClass(Scope classScope, string parentScopeName)
     {
         var astNode = classScope.AstNode;
-        
-        if (astNode is not ClassDeclaration classDecl)
+
+        ClassBody? classBody = null;
+        Node? classNodeForCctor = null;
+        string className;
+
+        if (astNode is ClassDeclaration classDecl)
+        {
+            classBody = classDecl.Body;
+            classNodeForCctor = classDecl;
+            className = (classDecl.Id as Identifier)?.Name ?? classScope.Name;
+        }
+        else if (astNode is ClassExpression classExpr)
+        {
+            classBody = classExpr.Body;
+            classNodeForCctor = classExpr;
+            className = (classExpr.Id as Identifier)?.Name ?? classScope.Name;
+        }
+        else
+        {
             return;
-            
-        var className = (classDecl.Id as Identifier)?.Name ?? classScope.Name;
+        }
         
         // Discover constructor
-        var ctor = classDecl.Body.Body
+        var ctor = classBody.Body
             .OfType<MethodDefinition>()
             .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
             
@@ -182,14 +198,14 @@ public sealed class CallableDiscovery
                 // For synthetic callables we still want a stable AST node for indexing,
                 // but it must be unique per callable (CallableRegistry indexes Node -> CallableId).
                 // Use ClassBody for the default ctor; use ClassDeclaration for .cctor.
-                AstNode = classDecl.Body
+                AstNode = classBody
             };
             
             _discovered.Add(ctorId);
         }
         
         // Check if the class has static fields with initializers -> needs a .cctor
-        bool hasStaticFieldInits = classDecl.Body.Body.OfType<PropertyDefinition>()
+        bool hasStaticFieldInits = classBody.Body.OfType<PropertyDefinition>()
             .Any(p => p.Static && p.Value != null);
         if (hasStaticFieldInits)
         {
@@ -199,13 +215,13 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = 0,
-                AstNode = classDecl
+                AstNode = classNodeForCctor!
             };
             _discovered.Add(cctorId);
         }
         
         // Discover methods
-        foreach (var member in classDecl.Body.Body.OfType<MethodDefinition>().Where(m => m.Key is Identifier))
+        foreach (var member in classBody.Body.OfType<MethodDefinition>().Where(m => m.Key is Identifier))
         {
             var methodKey = (Identifier)member.Key;
             
