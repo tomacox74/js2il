@@ -149,21 +149,48 @@ internal sealed class JsMethodCompiler
         MethodBodyStreamEncoder methodBodyStreamEncoder,
         SymbolTable symbolTable,
         Scope classScope,
-        ClassDeclaration classDecl,
-        FunctionExpression? ctorFunc,
+        Node classNode,
+        Node? ctorNodeOverride,
         bool needsScopes)
     {
         if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
+
+        var (classBody, superClass) = classNode switch
+        {
+            ClassDeclaration classDecl => (classDecl.Body, classDecl.SuperClass),
+            ClassExpression classExpr => (classExpr.Body, classExpr.SuperClass),
+            _ => throw new InvalidOperationException($"Unsupported class node type: {classNode.Type}")
+        };
 
         // Prefer IR pipeline (AST -> HIR -> LIR -> IL). HIRBuilder injects:
         // - this._scopes = scopes (when needsScopes)
         // - instance field initializers
         // LIRToILCompiler injects:
         // - base System.Object::.ctor() call for constructors
-        var ctorNode = (Node?)ctorFunc ?? classDecl.Body;
-        var ctorScope = ctorFunc != null
-            ? (symbolTable.FindScopeByAstNode(ctorFunc) ?? classScope)
-            : classScope;
+        // Preserve legacy behavior for ClassDeclaration constructors (compile the FunctionExpression),
+        // but prefer MethodDefinition for ClassExpression constructors so HIRBuilder has class context.
+        Node ctorNode;
+        Scope ctorScope;
+        if (ctorNodeOverride is Acornima.Ast.MethodDefinition ctorMethodDef && ctorMethodDef.Value is FunctionExpression ctorFunc)
+        {
+            if (classNode is ClassDeclaration)
+            {
+                ctorNode = ctorFunc;
+            }
+            else
+            {
+                ctorNode = ctorMethodDef;
+            }
+
+            ctorScope = symbolTable.FindScopeByAstNode(ctorFunc)
+                ?? symbolTable.FindScopeByAstNode(ctorMethodDef)
+                ?? classScope;
+        }
+        else
+        {
+            ctorNode = classBody;
+            ctorScope = classScope;
+        }
 
         var irBody = TryCompileCallableBody(
             callable: callable,
@@ -177,7 +204,7 @@ internal sealed class JsMethodCompiler
             scopesFieldHandle: null,
             returnsVoid: true,
             callableKindOverride: ScopesCallableKind.Constructor,
-            isDerivedConstructor: classDecl.SuperClass != null);
+            isDerivedConstructor: superClass != null);
 
         if (irBody != null)
         {
@@ -195,7 +222,7 @@ internal sealed class JsMethodCompiler
         MethodDefinitionHandle expectedMethodDef,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
         Scope classScope,
-        ClassDeclaration classDecl)
+        Node classNode)
     {
         if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
 
@@ -203,7 +230,7 @@ internal sealed class JsMethodCompiler
             callable: callable,
             expectedMethodDef: expectedMethodDef,
             ilMethodName: ".cctor",
-            node: classDecl,
+            node: classNode,
             scope: classScope,
             methodBodyStreamEncoder: methodBodyStreamEncoder,
             isInstanceMethod: false,
@@ -218,7 +245,7 @@ internal sealed class JsMethodCompiler
         }
 
         throw new NotSupportedException(
-            $"IR pipeline could not compile class static initializer body for callable '{callable}' (node={classDecl.Type}, scope='{classScope.GetQualifiedName()}').");
+            $"IR pipeline could not compile class static initializer body for callable '{callable}' (node={classNode.Type}, scope='{classScope.GetQualifiedName()}').");
     }
 
     public CompiledCallableBody CompileClassMethodBodyTwoPhase(

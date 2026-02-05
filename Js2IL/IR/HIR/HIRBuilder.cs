@@ -1805,6 +1805,21 @@ class HIRMethodBuilder
                 hirExpr = new HIRPropertyAccessExpression(objectExpr!, propertyIdentifier.Name);
                 return true;
 
+            case ClassExpression classExpr:
+                {
+                    // ClassExpression used as a value (e.g., module.exports = class Foo {...}).
+                    // The class is emitted as a CLR type; the expression value is the System.Type.
+                    var classExprScope = FindChildScopeForAstNode(classExpr);
+                    if (classExprScope == null)
+                    {
+                        return false;
+                    }
+
+                    var registryClassName = $"{(classExprScope.DotNetNamespace ?? "Classes")}.{(classExprScope.DotNetTypeName ?? classExprScope.Name)}";
+                    hirExpr = new HIRUserClassTypeExpression(registryClassName);
+                    return true;
+                }
+
             case ArrowFunctionExpression arrowExpr:
                 // PL3.7: ArrowFunctionExpression as an expression (closure creation)
                 // We treat the arrow as an opaque callable value; its body is compiled separately.

@@ -242,6 +242,41 @@ namespace Js2IL.SymbolTables
                     }
                     return false;
 
+                case ClassExpression classExpr:
+                    foreach (var element in classExpr.Body.Body)
+                    {
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            var methodLocals = new HashSet<string>(localVariables);
+                            foreach (var param in mfunc.Params)
+                            {
+                                if (param is Identifier pid)
+                                {
+                                    methodLocals.Add(pid.Name);
+                                }
+                            }
+
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var stmt in mblock.Body)
+                                {
+                                    if (ContainsFreeVariable(stmt, methodLocals))
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        else if (element is PropertyDefinition propDef)
+                        {
+                            if (propDef.Value != null && ContainsFreeVariable(propDef.Value, localVariables))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+
                 // Stop at nested function boundaries - they have their own scope
                 case FunctionExpression:
                 case FunctionDeclaration:
@@ -528,6 +563,115 @@ namespace Js2IL.SymbolTables
                                             methodScope.Parameters.Add(bindId.Name);
                                         }
                                         // Track that this is a destructured parameter (needs field for storage)
+                                        if (bindId != null && !methodScope.DestructuredParameters.Contains(bindId.Name))
+                                        {
+                                            methodScope.DestructuredParameters.Add(bindId.Name);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodScope);
+                            }
+
+                            AddImplicitArgumentsBinding(methodScope);
+                        }
+                    }
+                    break;
+
+                case ClassExpression classExpr:
+                    // Model class expressions as a class scope so the IR pipeline and class emitters can
+                    // treat `module.exports = class Foo { ... }` as exporting the compiled class type.
+                    // NOTE: The class name (if present) is a binding within the class body, not the
+                    // enclosing scope.
+                    var classExprName = (classExpr.Id as Identifier)?.Name;
+                    if (string.IsNullOrWhiteSpace(classExprName))
+                    {
+                        // Deterministic naming for anonymous class expressions.
+                        var classCol1Based = classExpr.Location.Start.Column + 1;
+                        classExprName = $"ClassExpression_L{classExpr.Location.Start.Line}C{classCol1Based}";
+                    }
+
+                    var classExprScope = new Scope(classExprName!, ScopeKind.Class, currentScope, classExpr);
+                    classExprScope.DotNetNamespace = DefaultClassesNamespace + "." + globalScope.Name;
+                    classExprScope.DotNetTypeName = SanitizeForMetadata(classExprName!);
+
+                    // Named class expressions create an internal binding for the class name that is only
+                    // visible inside the class body.
+                    if (!classExprScope.Bindings.ContainsKey(classExprName!))
+                    {
+                        classExprScope.Bindings[classExprName!] = new BindingInfo(classExprName!, BindingKind.Let, classExprScope, classExpr);
+                    }
+
+                    foreach (var element in classExpr.Body.Body)
+                    {
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
+                            var methodScope = new Scope(mname, ScopeKind.Function, classExprScope, mfunc);
+
+                            methodScope.IsAsync = mfunc.Async;
+                            if (mfunc.Async)
+                            {
+                                methodScope.AwaitPointCount = CountAwaitExpressions(mfunc.Body);
+                            }
+                            methodScope.IsGenerator = mfunc.Generator;
+                            if (mfunc.Generator)
+                            {
+                                methodScope.YieldPointCount = CountYieldExpressions(mfunc.Body);
+                            }
+
+                            var sanitizedMemberName = SanitizeForMetadata(mname);
+                            if (string.Equals(mname, "constructor", StringComparison.Ordinal))
+                            {
+                                methodScope.DotNetTypeName = "Scope_ctor";
+                            }
+                            else if (mdef.Kind == PropertyKind.Get)
+                            {
+                                methodScope.DotNetTypeName = $"Scope_get_{sanitizedMemberName}";
+                            }
+                            else if (mdef.Kind == PropertyKind.Set)
+                            {
+                                methodScope.DotNetTypeName = $"Scope_set_{sanitizedMemberName}";
+                            }
+                            else
+                            {
+                                methodScope.DotNetTypeName = $"Scope_{sanitizedMemberName}";
+                            }
+
+                            foreach (var p in mfunc.Params)
+                            {
+                                if (p is Identifier pid)
+                                {
+                                    methodScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, methodScope, pid);
+                                    methodScope.Parameters.Add(pid.Name);
+                                }
+                                else if (p is AssignmentPattern ap && ap.Left is Identifier apId)
+                                {
+                                    methodScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, methodScope, apId);
+                                    methodScope.Parameters.Add(apId.Name);
+                                }
+                                else if (p is ObjectPattern op)
+                                {
+                                    foreach (var prop in op.Properties.OfType<Property>())
+                                    {
+                                        Identifier? bindId = null;
+                                        if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
+                                        {
+                                            bindId = apLeftId;
+                                        }
+                                        else
+                                        {
+                                            bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                        }
+
+                                        if (bindId != null && !methodScope.Bindings.ContainsKey(bindId.Name))
+                                        {
+                                            methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, methodScope, bindId);
+                                            methodScope.Parameters.Add(bindId.Name);
+                                        }
                                         if (bindId != null && !methodScope.DestructuredParameters.Contains(bindId.Name))
                                         {
                                             methodScope.DestructuredParameters.Add(bindId.Name);
