@@ -105,5 +105,38 @@ namespace JavaScriptRuntime
                 }
             });
         }
+
+        public static object? Construct(Delegate constructor, object[]? args)
+        {
+            if (constructor is null) throw new ArgumentNullException(nameof(constructor));
+
+            // JS `new` semantics for function constructors:
+            // 1) Create a new instance object
+            // 2) Set its [[Prototype]] to ctor.prototype when available
+            // 3) Invoke the constructor with `this` bound to the instance
+            // 4) If ctor returns an object, use that; otherwise return the instance
+
+            var callArgs = args ?? System.Array.Empty<object>();
+            var instance = new System.Dynamic.ExpandoObject();
+
+            // Default proto: ctor.prototype when it is an object or null; otherwise undefined.
+            // If undefined/non-object, we intentionally skip prototype assignment (minimal behavior).
+            var proto = JavaScriptRuntime.Object.GetItem(constructor, "prototype");
+            if (proto is JsNull || TypeUtilities.IsConstructorReturnOverride(proto))
+            {
+                PrototypeChain.SetPrototype(instance, proto);
+            }
+
+            var previousThis = RuntimeServices.SetCurrentThis(instance);
+            try
+            {
+                var result = Closure.InvokeWithArgs(constructor, System.Array.Empty<object>(), callArgs);
+                return TypeUtilities.IsConstructorReturnOverride(result) ? result : instance;
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
     }
 }
