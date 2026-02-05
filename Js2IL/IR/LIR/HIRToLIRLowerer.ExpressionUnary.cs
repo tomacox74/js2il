@@ -13,6 +13,20 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        // void operator: evaluate operand for side-effects, then yield `undefined`.
+        // This is commonly used by transpiled/compiled JS as `void 0`.
+        if (unaryExpr.Operator == Acornima.Operator.Void)
+        {
+            if (!TryLowerExpressionDiscardResult(unaryExpr.Argument))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // delete operator requires lvalue semantics (delete obj[prop] / delete obj.prop)
         if (unaryExpr.Operator == Acornima.Operator.Delete)
         {
