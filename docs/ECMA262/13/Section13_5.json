@@ -30,13 +30,13 @@
     {
       "clause": "13.5.2",
       "title": "The void Operator",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-void-operator"
     },
     {
       "clause": "13.5.2.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-void-operator-runtime-semantics-evaluation"
     },
     {
@@ -102,6 +102,16 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "13.5.2",
+        "feature": "Unary void operator (void)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-void-operator",
+        "testScripts": [
+          "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_VoidOperator.js"
+        ],
+        "notes": "Evaluates operand for side effects and yields undefined (commonly used as `void 0` by transpiled/compiled JS). Implemented in IR lowering (HIR->LIR)."
+      },
       {
         "clause": "13.5.1",
         "feature": "Binary + (Addition)",

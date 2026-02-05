@@ -57,5 +57,8 @@ namespace Js2IL.Tests.UnaryOperator
 
         [Fact]
         public Task UnaryOperator_DoubleNot_NaNTruthiness() => ExecutionTest(nameof(UnaryOperator_DoubleNot_NaNTruthiness));
+
+        [Fact]
+        public Task UnaryOperator_VoidOperator() => ExecutionTest(nameof(UnaryOperator_VoidOperator));
     }
 }

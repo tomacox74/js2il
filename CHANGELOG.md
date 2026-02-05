@@ -11,6 +11,7 @@ All notable changes to this project are documented here.
 - Runtime/spec: expose global `Error` as a first-class value (including `Error.prototype`) for CommonJS/polyfill compatibility (fixes #550).
 - Docs(ecma262): update Section 20.5 status/notes for `Error.prototype`.
 - IR/CommonJS: compile `module.exports = class ... extends Array { ... }` without crashing (fixes #552).
+- IR: support unary `void` operator (`void 0`) lowering (fixes #554).
 
 ## v0.8.2 - 2026-02-04
 

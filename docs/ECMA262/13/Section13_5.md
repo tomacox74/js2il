@@ -15,8 +15,8 @@
 | 13.5.1 | The delete Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-delete-operator) |
 | 13.5.1.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-delete-operator-static-semantics-early-errors) |
 | 13.5.1.2 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-delete-operator-runtime-semantics-evaluation) |
-| 13.5.2 | The void Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-void-operator) |
-| 13.5.2.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-void-operator-runtime-semantics-evaluation) |
+| 13.5.2 | The void Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-void-operator) |
+| 13.5.2.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-void-operator-runtime-semantics-evaluation) |
 | 13.5.3 | The typeof Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-typeof-operator) |
 | 13.5.3.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-typeof-operator-runtime-semantics-evaluation) |
 | 13.5.4 | Unary + Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-unary-plus-operator) |
@@ -43,6 +43,7 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Binary - (Subtraction) | Supported | [`BinaryOperator_SubNumberNumber.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_SubNumberNumber.js)<br>[`Classes_ClassConstructor_TwoParams_SubtractMethod.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js) | Numeric subtraction; matches JS semantics for non-numeric via coercion helpers where applicable. |
+| Unary void operator (void) | Supported | [`UnaryOperator_VoidOperator.js`](../../../Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_VoidOperator.js) | Evaluates operand for side effects and yields undefined (commonly used as `void 0` by transpiled/compiled JS). Implemented in IR lowering (HIR->LIR). |
 
 ### 13.5.3 ([tc39.es](https://tc39.es/ecma262/#sec-typeof-operator))
 
