@@ -35,5 +35,10 @@ namespace Js2IL.Tests.Object
 
         [Fact]
         public Task ObjectCreate_WithPropertyDescriptors() { var testName = nameof(ObjectCreate_WithPropertyDescriptors); return ExecutionTest(testName); }
+
+        // #544: LIRSetItem result temp must be treated as a defined SSA temp;
+        // otherwise IL emission can crash when storing the assignment-expression result into a scope field.
+        [Fact]
+        public Task Object_AssignmentExpression_PropertySet_ResultStoredToScopeField() { var testName = nameof(Object_AssignmentExpression_PropertySet_ResultStoredToScopeField); return ExecutionTest(testName); }
     }
 }

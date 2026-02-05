@@ -928,6 +928,18 @@ internal static class TempLocalAllocator
             case LIRGetItem getItem:
                 defined = getItem.Result;
                 return true;
+
+            case LIRSetItem setItem:
+                defined = setItem.Result;
+                return true;
+
+            case LIRSetJsArrayElement setJsArray:
+                defined = setJsArray.Result;
+                return true;
+
+            case LIRSetInt32ArrayElement setInt32Array:
+                defined = setInt32Array.Result;
+                return true;
             case LIRGetJsArrayElement getJsArray:
                 defined = getJsArray.Result;
                 return true;
