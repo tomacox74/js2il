@@ -167,16 +167,28 @@ internal sealed class JsMethodCompiler
         // - instance field initializers
         // LIRToILCompiler injects:
         // - base System.Object::.ctor() call for constructors
-        var ctorNode = ctorNodeOverride ?? classBody;
+        // Preserve legacy behavior for ClassDeclaration constructors (compile the FunctionExpression),
+        // but prefer MethodDefinition for ClassExpression constructors so HIRBuilder has class context.
+        Node ctorNode;
         Scope ctorScope;
         if (ctorNodeOverride is Acornima.Ast.MethodDefinition ctorMethodDef && ctorMethodDef.Value is FunctionExpression ctorFunc)
         {
+            if (classNode is ClassDeclaration)
+            {
+                ctorNode = ctorFunc;
+            }
+            else
+            {
+                ctorNode = ctorMethodDef;
+            }
+
             ctorScope = symbolTable.FindScopeByAstNode(ctorFunc)
                 ?? symbolTable.FindScopeByAstNode(ctorMethodDef)
                 ?? classScope;
         }
         else
         {
+            ctorNode = classBody;
             ctorScope = classScope;
         }
 
