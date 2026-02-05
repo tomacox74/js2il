@@ -78,6 +78,15 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Module_Exports_ChainedAssignment()
+        {
+            // Issue #558 repro: chained assignment `exports = module.exports = {...}` must compile and behave.
+            return ExecutionTest(
+                nameof(CommonJS_Module_Exports_ChainedAssignment),
+                additionalScripts: new[] { "CommonJS_Module_Exports_ChainedAssignment_Lib" });
+        }
+
+        [Fact]
         public Task CommonJS_Module_Exports_Function()
         {
             // Test assigning a function to module.exports
