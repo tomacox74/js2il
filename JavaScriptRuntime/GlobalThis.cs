@@ -42,6 +42,35 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Function constructor is not supported yet.");
 
+        // Placeholder Array constructor value. JS2IL uses dedicated codegen paths for `new Array(...)`.
+        // We expose a callable value so libraries can reference `Array` as a global identifier and
+        // access `Array.prototype.*` members.
+        private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
+            throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
+
+        static GlobalThis()
+        {
+            // Attach minimal prototypes to callable globals so patterns like
+            // `Function.prototype.apply.bind(Array.prototype.push)` work even when code only
+            // references GlobalThis static properties and never touches the globalThis object.
+            PropertyDescriptorStore.DefineOrUpdate(_functionConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = JavaScriptRuntime.Function.Prototype
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_arrayConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = JavaScriptRuntime.Array.Prototype
+            });
+        }
+
         internal static ServiceContainer? ServiceProvider
         {
             get => _serviceProvider.Value;
@@ -164,6 +193,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Function), Function);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Function), dict[nameof(GlobalThis.Function)]);
 
+            dict.TryAdd(nameof(GlobalThis.Array), Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Array), dict[nameof(GlobalThis.Array)]);
+
             // Global functions exposed as delegates.
             dict.TryAdd(nameof(GlobalThis.setTimeout), (Func<object, object, object[], object>)setTimeout);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.setTimeout), dict[nameof(GlobalThis.setTimeout)]);
@@ -235,6 +267,13 @@ namespace JavaScriptRuntime
         /// Invoking it will throw until Function constructor semantics are implemented.
         /// </summary>
         public static Func<object[], object?, Delegate> Function => _functionConstructorValue;
+
+        /// <summary>
+        /// ECMAScript global Array constructor value (placeholder).
+        /// Exposed as a callable function value so libraries can reference it as a global identifier.
+        /// Invoking it will throw until Array constructor semantics are implemented.
+        /// </summary>
+        public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
 
         /// <summary>
         /// ECMAScript global Infinity value (+∞).

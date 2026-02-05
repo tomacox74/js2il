@@ -365,6 +365,27 @@ namespace JavaScriptRuntime
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
             var callArgs = args ?? System.Array.Empty<object>();
 
+            // Function.prototype.apply / Function.prototype.bind support.
+            // In JS2IL, function values are represented as CLR delegates.
+            if (receiver is Delegate del)
+            {
+                if (string.Equals(methodName, "apply", StringComparison.Ordinal))
+                {
+                    var thisArg = callArgs.Length > 0 ? callArgs[0] : null;
+                    var argArray = callArgs.Length > 1 ? callArgs[1] : null;
+                    return JavaScriptRuntime.Function.Apply(del, thisArg, argArray);
+                }
+
+                if (string.Equals(methodName, "bind", StringComparison.Ordinal))
+                {
+                    var boundThis = callArgs.Length > 0 ? callArgs[0] : null;
+                    var boundArgs = callArgs.Length > 1
+                        ? callArgs.Skip(1).Cast<object?>().ToArray()
+                        : System.Array.Empty<object?>();
+                    return JavaScriptRuntime.Function.Bind(del, boundThis, boundArgs);
+                }
+            }
+
             // 1) String receiver -> route to JavaScriptRuntime.String static methods
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
             {

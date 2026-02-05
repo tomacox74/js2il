@@ -96,6 +96,24 @@ namespace Js2IL.Tests.Function
         public Task Function_ObjectLiteralMethod_ThisBinding() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_Apply_Basic() { var testName = nameof(Function_Apply_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Apply_ThisArg() { var testName = nameof(Function_Apply_ThisArg); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Apply_NullArgArray_TreatedAsEmpty() { var testName = nameof(Function_Apply_NullArgArray_TreatedAsEmpty); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Bind_Basic_PartialApplication() { var testName = nameof(Function_Bind_Basic_PartialApplication); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Bind_ThisBinding_IgnoresCallReceiver() { var testName = nameof(Function_Bind_ThisBinding_IgnoresCallReceiver); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_ApplyBind_DominoPushAll() { var testName = nameof(Function_ApplyBind_DominoPushAll); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_MaxParameters_16() { var testName = nameof(Function_MaxParameters_16); return GenerateTest(testName); }
 
         [Fact]

@@ -42,19 +42,19 @@
     {
       "clause": "20.2.3",
       "title": "Properties of the Function Prototype Object",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object"
     },
     {
       "clause": "20.2.3.1",
       "title": "Function.prototype.apply ( thisArg , argArray )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.apply"
     },
     {
       "clause": "20.2.3.2",
       "title": "Function.prototype.bind ( thisArg , ... args )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.bind"
     },
     {
@@ -123,7 +123,30 @@
           "Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js",
           "Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js"
         ],
-        "notes": "JavaScript functions are compiled to CLR delegates and invoked directly (or via a small runtime dispatcher). This does not imply a full spec-level Function object with Function.prototype methods."
+        "notes": "JavaScript functions are compiled to CLR delegates and invoked directly (or via a small runtime dispatcher). Function.prototype.apply and Function.prototype.bind are supported for delegate-backed function values; most other Function.prototype APIs are not implemented."
+      },
+      {
+        "clause": "20.2.3.1",
+        "feature": "Function.prototype.apply ( thisArg , argArray )",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.apply",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Apply_ThisArg.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Apply_NullArgArray_TreatedAsEmpty.js"
+        ],
+        "notes": "Implemented for delegate-backed function values via the runtime member-call dispatcher. Supports null/undefined argArray as an empty argument list. Full CreateListFromArrayLike semantics and non-delegate callable objects are not implemented."
+      },
+      {
+        "clause": "20.2.3.2",
+        "feature": "Function.prototype.bind ( thisArg , ... args )",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.bind",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js"
+        ],
+        "notes": "Implemented for delegate-backed function values via the runtime member-call dispatcher. Supports binding this and partial application of arguments. Bound functions are modeled as delegates and do not currently implement full spec metadata (length/name/prototype)."
       },
       {
         "clause": "20.2.4",
