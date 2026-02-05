@@ -24,7 +24,7 @@
     {
       "clause": "20.5.2",
       "title": "Properties of the Error Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-error-constructor"
     },
     {
@@ -36,7 +36,7 @@
     {
       "clause": "20.5.2.2",
       "title": "Error.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-error.prototype"
     },
     {
@@ -271,6 +271,17 @@
           "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js"
         ],
         "notes": "Constructs JavaScriptRuntime.Error (and derived types) with message stringification via DotNet2JSConversions.ToString. The runtime does not currently model spec prototype objects; behavior is closer to .NET exceptions with JS-like surface properties."
+      },
+      {
+        "clause": "20.5.2.2",
+        "feature": "Error.prototype data property exists (minimal)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-error.prototype",
+        "testScripts": [
+          "Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read.js",
+          "Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read_Lib.js"
+        ],
+        "notes": "Exposes the global Error value as a first-class intrinsic and provides a writable Error.prototype object for libraries that read/attach prototype members (e.g., CommonJS polyfills). Error(...) invocation and standard prototype methods/properties are not yet implemented as spec-defined objects."
       },
       {
         "clause": "20.5.4",
