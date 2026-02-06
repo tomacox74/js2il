@@ -1560,7 +1560,26 @@ class HIRMethodBuilder
                 // - PL3.3g: intrinsic runtime constructors (Date/RegExp/Set/Promise/Int32Array/etc.)
                 if (newExpr.Callee is not Identifier newCalleeId)
                 {
-                    return false;
+                    // Dynamic/new-on-value fallback: allow `new <expr>(...)` where the constructor
+                    // is computed (e.g., `new impl.Window(...)`). Lowering will emit a call to
+                    // JavaScriptRuntime.Object.ConstructValue.
+                    if (!TryParseExpression(newExpr.Callee, out var dynamicCallee) || dynamicCallee == null)
+                    {
+                        return false;
+                    }
+
+                    var dynamicArgs = new List<HIRExpression>();
+                    foreach (var arg in newExpr.Arguments)
+                    {
+                        if (!TryParseExpression(arg, out var argHirExpr) || argHirExpr == null)
+                        {
+                            return false;
+                        }
+                        dynamicArgs.Add(argHirExpr);
+                    }
+
+                    hirExpr = new HIRNewExpression(dynamicCallee, dynamicArgs);
+                    return true;
                 }
 
                 var newCalleeSymbol = _currentScope.FindSymbol(newCalleeId.Name);

@@ -124,5 +124,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_NewExpression_CapturesOuterCtor() { var testName = nameof(Function_NewExpression_CapturesOuterCtor); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_NewExpression_MemberCallee_Compiles() { var testName = nameof(Function_NewExpression_MemberCallee_Compiles); return GenerateTest(testName); }
     }
 }
