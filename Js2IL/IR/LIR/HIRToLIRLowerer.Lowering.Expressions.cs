@@ -164,7 +164,7 @@ public sealed partial class HIRToLIRLowerer
             case HIRNewExpression newExpr:
                 if (!TryLowerNewExpression(newExpr, out resultTempVar))
                 {
-                    IRPipelineMetrics.RecordFailure($"HIR->LIR: failed lowering NewExpression (callee={newExpr.Callee.GetType().Name})");
+                    IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering NewExpression (callee={newExpr.Callee.GetType().Name})");
                     return false;
                 }
                 return true;

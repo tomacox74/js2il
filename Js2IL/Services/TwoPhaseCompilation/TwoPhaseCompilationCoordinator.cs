@@ -1244,8 +1244,14 @@ public sealed class TwoPhaseCompilationCoordinator
 
         if (compiledBody == null)
         {
+            var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
+            var extra = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $"\nIR failure: {lastFailure}";
+
+            var location = funcExpr.Location;
+            var locText = $"(line {location.Start.Line}, col {location.Start.Column})";
+
             throw new NotSupportedException(
-                $"[TwoPhase] IR pipeline could not compile function expression '{funcTypeName}' in scope '{funcScope.GetQualifiedName()}'.");
+                $"[TwoPhase] IR pipeline could not compile function expression '{funcTypeName}' in module '{moduleName}' {locText} in scope '{funcScope.GetQualifiedName()}'.{extra}");
         }
 
         // Two-phase: the IR compiler returns a body-only representation. We must finalize it into

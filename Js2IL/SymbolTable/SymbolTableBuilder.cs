@@ -164,6 +164,10 @@ namespace Js2IL.SymbolTables
                     return ContainsFreeVariable(ce.Callee, localVariables) ||
                            ce.Arguments.Any(arg => ContainsFreeVariable(arg as Node, localVariables));
 
+                case NewExpression ne:
+                    return ContainsFreeVariable(ne.Callee, localVariables) ||
+                           ne.Arguments.Any(arg => ContainsFreeVariable(arg as Node, localVariables));
+
                 case MemberExpression me:
                     return ContainsFreeVariable(me.Object, localVariables) ||
                            (me.Computed && ContainsFreeVariable(me.Property as Node, localVariables));
@@ -1492,6 +1496,14 @@ namespace Js2IL.SymbolTables
                 case CallExpression ce:
                     CollectFreeVariables(ce.Callee, localVariables, targetVariables, result);
                     foreach (var arg in ce.Arguments)
+                    {
+                        CollectFreeVariables(arg as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case NewExpression ne:
+                    CollectFreeVariables(ne.Callee, localVariables, targetVariables, result);
+                    foreach (var arg in ne.Arguments)
                     {
                         CollectFreeVariables(arg as Node, localVariables, targetVariables, result);
                     }

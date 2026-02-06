@@ -136,5 +136,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_MaxParameters_32_CallViaVariable() { var testName = nameof(Function_MaxParameters_32_CallViaVariable); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_NewExpression_CapturesOuterCtor() { var testName = nameof(Function_NewExpression_CapturesOuterCtor); return ExecutionTest(testName); }
     }
 }
