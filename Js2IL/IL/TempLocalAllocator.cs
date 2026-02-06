@@ -368,6 +368,10 @@ internal static class TempLocalAllocator
                 yield return inOp.Left;
                 yield return inOp.Right;
                 break;
+            case LIRInstanceOfOperator instOf:
+                yield return instOf.Left;
+                yield return instOf.Right;
+                break;
             case LIREqualDynamic equalDyn:
                 yield return equalDyn.Left;
                 yield return equalDyn.Right;
@@ -832,6 +836,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRInOperator inOp:
                 defined = inOp.Result;
+                return true;
+            case LIRInstanceOfOperator instOf:
+                defined = instOf.Result;
                 return true;
             case LIREqualDynamic equalDyn:
                 defined = equalDyn.Result;

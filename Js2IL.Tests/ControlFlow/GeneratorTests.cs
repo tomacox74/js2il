@@ -42,6 +42,12 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForLoop_CountToFive() { var testName = "ControlFlow_ForLoop_CountToFive"; return GenerateTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForLoop_Update_SequenceExpression() { var testName = nameof(ControlFlow_ForLoop_Update_SequenceExpression); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_LabeledStatement_CapturesParentVar() { var testName = nameof(ControlFlow_LabeledStatement_CapturesParentVar); return GenerateTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForLoop_GreaterThanOrEqual() { var testName = "ControlFlow_ForLoop_GreaterThanOrEqual"; return GenerateTest(testName); }
 
         [Fact]

@@ -1198,7 +1198,31 @@ internal sealed partial class LIRToILCompiler
 
                     break;
                 }
+
+            case LIRConstructValue constructValue:
+                {
+                    // Inline construction when stackification eliminates the destination local.
+                    // LIRConstructValue is pure aside from invoking the constructor value.
+                    EmitLoadTempAsObject(constructValue.ConstructorValue, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(constructValue.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+                    var mref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.ConstructValue),
+                        new[] { typeof(object), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(mref);
+                    break;
+                }
             default:
+                if (def is LIRCopyTemp copyTemp)
+                {
+                    // If stackification eliminates the destination local, just load the source value.
+                    // This is safe because temps are SSA and LIRCopyTemp is a pure move.
+                    EmitLoadTemp(copyTemp.Source, ilEncoder, allocation, methodDescriptor);
+                    break;
+                }
+
                 throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - unsupported instruction {def.GetType().Name}");
         }
     }
@@ -1685,6 +1709,15 @@ internal sealed partial class LIRToILCompiler
         {
             if (stackifyResult.CanStackify[i])
             {
+                // LIRCopyTemp is used as a snapshot/materialization barrier (e.g., postfix updates).
+                // Its destination must never be left unmaterialized, otherwise the emitter will try
+                // to re-emit the defining instruction at the load site (unsupported/incorrect).
+                var defInstr = TryFindDefInstruction(new TempVariable(i));
+                if (defInstr is LIRCopyTemp)
+                {
+                    continue;
+                }
+
                 // This temp can stay on the stack - mark it as not needing materialization
                 shouldMaterializeTemp[i] = false;
             }

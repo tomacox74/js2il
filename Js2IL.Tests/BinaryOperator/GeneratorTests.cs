@@ -63,6 +63,9 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_GreaterThanOrEqual() { var testName = nameof(BinaryOperator_GreaterThanOrEqual); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_InstanceOf_Basic() { var testName = nameof(BinaryOperator_InstanceOf_Basic); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_LeftShiftBit31() { var testName = nameof(BinaryOperator_LeftShiftBit31); return GenerateTest(testName); }
 
         [Fact]

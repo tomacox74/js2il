@@ -378,6 +378,93 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Implements JavaScript <c>instanceof</c> operator.
+        /// Minimal semantics: checks whether <paramref name="value"/>'s prototype chain contains <c>ctor.prototype</c>.
+        /// </summary>
+        public static bool InstanceOf(object? value, object? ctor)
+        {
+            // Primitives (including undefined/null) are never instances.
+            if (value is null) return false;
+            if (value is JsNull) return false;
+            if (value is string) return false;
+            if (value.GetType().IsValueType) return false;
+
+            if (ctor is null || ctor is JsNull)
+            {
+                throw new TypeError("Right-hand side of 'instanceof' is not callable");
+            }
+
+            // Minimal: require a callable delegate-backed function value.
+            if (ctor is not Delegate)
+            {
+                throw new TypeError("Right-hand side of 'instanceof' is not callable");
+            }
+
+            // Spec: let proto = ctor.prototype; if proto is not an object, throw.
+            var proto = JavaScriptRuntime.Object.GetItem(ctor, "prototype");
+            if (proto is null || proto is JsNull || proto is string || proto.GetType().IsValueType)
+            {
+                throw new TypeError("Function has non-object prototype in instanceof check");
+            }
+
+            if (!JavaScriptRuntime.PrototypeChain.Enabled)
+            {
+                // If prototype chains are not enabled/assigned, we cannot observe any inheritance.
+                return false;
+            }
+
+            var current = value;
+            var next = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
+            if (next is null || next is JsNull)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(next, proto))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(next, current))
+            {
+                return false;
+            }
+
+            current = next;
+            next = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
+            if (next is null || next is JsNull)
+            {
+                return false;
+            }
+
+            var visited = new System.Collections.Generic.HashSet<object>(System.Collections.Generic.ReferenceEqualityComparer.Instance)
+            {
+                value,
+                current
+            };
+
+            while (true)
+            {
+                if (!visited.Add(next))
+                {
+                    return false;
+                }
+
+                if (ReferenceEquals(next, proto))
+                {
+                    return true;
+                }
+
+                current = next;
+                next = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(current);
+                if (next is null || next is JsNull)
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Tests if a value is truthy according to JavaScript semantics.
         /// </summary>
         public static bool IsTruthy(double value)

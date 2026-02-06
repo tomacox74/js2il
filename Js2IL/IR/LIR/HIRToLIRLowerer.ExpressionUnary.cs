@@ -11,7 +11,7 @@ public sealed partial class HIRToLIRLowerer
 {
     private bool TryLowerUnaryExpression(HIRUnaryExpression unaryExpr, out TempVariable resultTempVar)
     {
-        resultTempVar = CreateTempVariable();
+        resultTempVar = default;
 
         // void operator: evaluate operand for side-effects, then yield `undefined`.
         // This is commonly used by transpiled/compiled JS as `void 0`.
@@ -22,6 +22,7 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
+            resultTempVar = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
@@ -30,6 +31,8 @@ public sealed partial class HIRToLIRLowerer
         // delete operator requires lvalue semantics (delete obj[prop] / delete obj.prop)
         if (unaryExpr.Operator == Acornima.Operator.Delete)
         {
+            resultTempVar = CreateTempVariable();
+
             switch (unaryExpr.Argument)
             {
                 case HIRPropertyAccessExpression propAccess:
@@ -86,14 +89,24 @@ public sealed partial class HIRToLIRLowerer
 
         if (unaryExpr.Operator == Acornima.Operator.TypeOf)
         {
+            resultTempVar = CreateTempVariable();
             unaryArgTempVar = EnsureObject(unaryArgTempVar);
             _methodBodyIR.Instructions.Add(new LIRTypeof(unaryArgTempVar, resultTempVar));
             this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
             return true;
         }
 
+        if (unaryExpr.Operator == Acornima.Operator.UnaryPlus)
+        {
+            // JS unary plus: numeric coercion (ToNumber).
+            // Prefer returning a typed double when already known.
+            resultTempVar = EnsureNumber(unaryArgTempVar);
+            return true;
+        }
+
         if (unaryExpr.Operator == Acornima.Operator.LogicalNot)
         {
+            resultTempVar = CreateTempVariable();
             // JS logical not: coerce to boolean (truthiness) then invert.
             // Prefer keeping typed/unboxed values when possible; IL emission will select
             // the appropriate TypeUtilities.ToBoolean overload to avoid boxing.
@@ -104,11 +117,9 @@ public sealed partial class HIRToLIRLowerer
 
         if (unaryExpr.Operator == Acornima.Operator.UnaryNegation)
         {
-            // Minimal: only support numeric (double) negation for now
-            if (GetTempStorage(unaryArgTempVar).ClrType != typeof(double))
-            {
-                return false;
-            }
+            resultTempVar = CreateTempVariable();
+            // JS unary negation: numeric coercion (ToNumber) then negate.
+            unaryArgTempVar = EnsureNumber(unaryArgTempVar);
             _methodBodyIR.Instructions.Add(new LIRNegateNumber(unaryArgTempVar, resultTempVar));
             this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
             return true;
@@ -116,6 +127,7 @@ public sealed partial class HIRToLIRLowerer
 
         if (unaryExpr.Operator == Acornima.Operator.BitwiseNot)
         {
+            resultTempVar = CreateTempVariable();
             // Minimal: ~x where x is numeric (double). Legacy pipeline coerces via ToNumber;
             // IR pipeline currently only supports number operands for this operator.
             if (GetTempStorage(unaryArgTempVar).ClrType != typeof(double))

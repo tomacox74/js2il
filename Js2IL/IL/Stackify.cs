@@ -706,6 +706,7 @@ internal static class Stackify
             case LIRRightShift:
             case LIRUnsignedRightShift:
             case LIRInOperator:
+            case LIRInstanceOfOperator:
             case LIREqualDynamic:
             case LIRNotEqualDynamic:
             case LIRStrictEqualDynamic:

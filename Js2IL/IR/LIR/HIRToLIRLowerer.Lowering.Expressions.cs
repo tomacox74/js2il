@@ -20,6 +20,18 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerUpdateExpression(updateExpr, out _, resultUsed: false);
         }
 
+        if (expression is HIRSequenceExpression seqExpr)
+        {
+            for (int i = 0; i < seqExpr.Expressions.Count; i++)
+            {
+                if (!TryLowerExpressionDiscardResult(seqExpr.Expressions[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         return TryLowerExpression(expression, out _);
     }
 
@@ -29,6 +41,25 @@ public sealed partial class HIRToLIRLowerer
 
         switch (expression)
         {
+            case HIRSequenceExpression seqExpr:
+                {
+                    if (seqExpr.Expressions.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    // Evaluate each expression left-to-right; the sequence's value is the last.
+                    for (int i = 0; i < seqExpr.Expressions.Count - 1; i++)
+                    {
+                        if (!TryLowerExpressionDiscardResult(seqExpr.Expressions[i]))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return TryLowerExpression(seqExpr.Expressions[seqExpr.Expressions.Count - 1], out resultTempVar);
+                }
+
             case HIROptionalPropertyAccessExpression optionalPropAccessExpr:
                 return TryLowerOptionalPropertyAccessExpression(optionalPropAccessExpr, out resultTempVar);
 
@@ -164,7 +195,7 @@ public sealed partial class HIRToLIRLowerer
             case HIRNewExpression newExpr:
                 if (!TryLowerNewExpression(newExpr, out resultTempVar))
                 {
-                    IRPipelineMetrics.RecordFailure($"HIR->LIR: failed lowering NewExpression (callee={newExpr.Callee.GetType().Name})");
+                    IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering NewExpression (callee={newExpr.Callee.GetType().Name})");
                     return false;
                 }
                 return true;
@@ -232,6 +263,22 @@ public sealed partial class HIRToLIRLowerer
                 // Look up the binding using the Symbol's BindingInfo directly
                 // This correctly resolves shadowed variables to the right binding
                 var binding = varExpr.Name.BindingInfo;
+
+                // Class declarations are compiled separately (as CLR types) and are not SSA-assigned.
+                // Always lower a class identifier to a runtime System.Type so it can cross module boundaries
+                // (e.g., `module.exports = { Counter }`).
+                if (binding.DeclarationNode is ClassDeclaration classDecl)
+                {
+                    if (!TryGetRegistryClassNameForClassDeclaration(classDecl, out var registryClassName))
+                    {
+                        return false;
+                    }
+
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                    return true;
+                }
 
                 static ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
                 {
@@ -427,22 +474,6 @@ public sealed partial class HIRToLIRLowerer
                         // Cache the function value so repeated reads of the identifier within the same
                         // method return the same object identity (required for `.prototype` mutations).
                         _variableMap[binding] = resultTempVar;
-                        return true;
-                    }
-
-                    // Class declarations are compiled separately (as CLR types) and are not SSA-assigned.
-                    // When a class identifier is used as a value (e.g., `module.exports = MyClass`),
-                    // lower it to a runtime System.Type so it can cross module boundaries.
-                    if (varExpr.Name.BindingInfo.DeclarationNode is ClassDeclaration classDecl)
-                    {
-                        if (!TryGetRegistryClassNameForClassDeclaration(classDecl, out var registryClassName))
-                        {
-                            return false;
-                        }
-
-                        resultTempVar = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, resultTempVar));
-                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
                         return true;
                     }
 
