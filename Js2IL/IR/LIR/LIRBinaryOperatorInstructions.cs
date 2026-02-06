@@ -166,3 +166,9 @@ public record LIRCopyTemp(TempVariable Source, TempVariable Destination) : LIRIn
 /// Calls Operators.In runtime helper.
 /// </summary>
 public record LIRInOperator(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// JavaScript 'instanceof' operator. Checks if an object's prototype chain includes ctor.prototype.
+/// Calls Operators.InstanceOf runtime helper.
+/// </summary>
+public record LIRInstanceOfOperator(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;

@@ -131,6 +131,16 @@ public sealed partial class HIRToLIRLowerer
         var leftType = GetTempStorage(leftTempVar).ClrType;
         var rightType = GetTempStorage(rightTempVar).ClrType;
 
+        // Handle 'instanceof'
+        if (binaryExpr.Operator == Acornima.Operator.InstanceOf)
+        {
+            var leftBoxed = EnsureObject(leftTempVar);
+            var rightBoxed = EnsureObject(rightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRInstanceOfOperator(leftBoxed, rightBoxed, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            return true;
+        }
+
         // Handle addition
         if (binaryExpr.Operator == Acornima.Operator.Addition)
         {

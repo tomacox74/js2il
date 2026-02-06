@@ -85,6 +85,23 @@ namespace Js2IL.SymbolTables
                 case ReturnStatement rs:
                     return ContainsFreeVariable(rs.Argument, localVariables);
 
+                case ThrowStatement ts:
+                    return ContainsFreeVariable(ts.Argument, localVariables);
+
+                case TryStatement ts:
+                    return ContainsFreeVariable(ts.Block, localVariables) ||
+                           ContainsFreeVariable(ts.Handler, localVariables) ||
+                           ContainsFreeVariable(ts.Finalizer, localVariables);
+
+                case CatchClause cc:
+                    // catch (e) { ... } introduces a new local binding for the catch parameter.
+                    var catchLocals = new HashSet<string>(localVariables);
+                    if (cc.Param is Identifier catchId)
+                    {
+                        catchLocals.Add(catchId.Name);
+                    }
+                    return ContainsFreeVariable(cc.Body, catchLocals);
+
                 case IfStatement ifs:
                     return ContainsFreeVariable(ifs.Test, localVariables) ||
                            ContainsFreeVariable(ifs.Consequent, localVariables) ||
@@ -149,6 +166,21 @@ namespace Js2IL.SymbolTables
                 case DoWhileStatement dws:
                     return ContainsFreeVariable(dws.Body, localVariables) ||
                            ContainsFreeVariable(dws.Test, localVariables);
+
+                case SwitchStatement ss:
+                    return ContainsFreeVariable(ss.Discriminant, localVariables) ||
+                           ss.Cases.Any(c => ContainsFreeVariable(c, localVariables));
+
+                case SwitchCase sc:
+                    if (ContainsFreeVariable(sc.Test, localVariables))
+                    {
+                        return true;
+                    }
+                    return sc.Consequent.Any(stmt => ContainsFreeVariable(stmt, localVariables));
+
+                case LabeledStatement labeled:
+                    // Labels do not introduce bindings; traverse into the labeled body.
+                    return ContainsFreeVariable(labeled.Body, localVariables);
 
                 case BinaryExpression be:
                     return ContainsFreeVariable(be.Left, localVariables) ||
@@ -744,10 +776,17 @@ namespace Js2IL.SymbolTables
                     }
                     _visitedFunctionExpressions.Add(funcExpr);
                     // Naming must align with function-expression naming: FunctionExpression_<assignmentTarget> OR FunctionExpression_L{line}C{col}
-                    var funcExprName = (funcExpr.Id as Identifier)?.Name ??
+                    // Additionally, scope names must be unique among siblings; duplicate names can cause type/metadata collisions.
+                    var baseFuncExprName = (funcExpr.Id as Identifier)?.Name ??
                         (!string.IsNullOrEmpty(_currentAssignmentTarget)
                             ? $"FunctionExpression_{_currentAssignmentTarget}"
                             : $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}");
+
+                    var funcExprName = baseFuncExprName;
+                    if (currentScope.Children.Any(c => c.Name == baseFuncExprName))
+                    {
+                        funcExprName = $"{baseFuncExprName}_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+                    }
                     // Create the scope (constructor links it to the parent); no manual add to avoid duplicates
                     var funcExprScope = new Scope(funcExprName, ScopeKind.Function, currentScope, funcExpr);
                     funcExprScope.IsAsync = funcExpr.Async;
@@ -1406,6 +1445,26 @@ namespace Js2IL.SymbolTables
                     CollectFreeVariables(rs.Argument, localVariables, targetVariables, result);
                     break;
 
+                case ThrowStatement ts:
+                    CollectFreeVariables(ts.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case TryStatement ts:
+                    CollectFreeVariables(ts.Block, localVariables, targetVariables, result);
+                    CollectFreeVariables(ts.Handler, localVariables, targetVariables, result);
+                    CollectFreeVariables(ts.Finalizer, localVariables, targetVariables, result);
+                    break;
+
+                case CatchClause cc:
+                    // catch (e) { ... } introduces a new local binding for the catch parameter.
+                    var catchLocals = new HashSet<string>(localVariables);
+                    if (cc.Param is Identifier catchId)
+                    {
+                        catchLocals.Add(catchId.Name);
+                    }
+                    CollectFreeVariables(cc.Body, catchLocals, targetVariables, result);
+                    break;
+
                 case IfStatement ifs:
                     CollectFreeVariables(ifs.Test, localVariables, targetVariables, result);
                     CollectFreeVariables(ifs.Consequent, localVariables, targetVariables, result);
@@ -1478,6 +1537,27 @@ namespace Js2IL.SymbolTables
                 case DoWhileStatement dws:
                     CollectFreeVariables(dws.Body, localVariables, targetVariables, result);
                     CollectFreeVariables(dws.Test, localVariables, targetVariables, result);
+                    break;
+
+                case SwitchStatement ss:
+                    CollectFreeVariables(ss.Discriminant, localVariables, targetVariables, result);
+                    foreach (var c in ss.Cases)
+                    {
+                        CollectFreeVariables(c, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case SwitchCase sc:
+                    CollectFreeVariables(sc.Test, localVariables, targetVariables, result);
+                    foreach (var stmt in sc.Consequent)
+                    {
+                        CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case LabeledStatement labeled:
+                    // Labels do not introduce bindings; traverse the labeled body.
+                    CollectFreeVariables(labeled.Body, localVariables, targetVariables, result);
                     break;
 
                 case BinaryExpression be:

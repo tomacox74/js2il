@@ -24,6 +24,14 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(inOp.Result, ilEncoder, allocation);
                 return true;
 
+            // 'instanceof' operator - calls Operators.InstanceOf
+            case LIRInstanceOfOperator instOf:
+                EmitLoadTemp(instOf.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(instOf.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsInstanceOf(ilEncoder);
+                EmitStoreTemp(instOf.Result, ilEncoder, allocation);
+                return true;
+
             // Dynamic equality - calls Operators.Equal
             case LIREqualDynamic equalDynamic:
                 EmitLoadTemp(equalDynamic.Left, ilEncoder, allocation, methodDescriptor);

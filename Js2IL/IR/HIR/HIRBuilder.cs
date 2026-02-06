@@ -1402,6 +1402,23 @@ class HIRMethodBuilder
                 // (MemberExpression/CallExpression) with Optional=true.
                 return TryParseExpression(chainExpr.Expression, out hirExpr);
 
+            case SequenceExpression seqExpr:
+                {
+                    // Comma operator: evaluate left-to-right, result is the last expression.
+                    var expressions = new List<HIRExpression>(seqExpr.Expressions.Count);
+                    foreach (var e in seqExpr.Expressions)
+                    {
+                        if (!TryParseExpression(e, out var parsed) || parsed == null)
+                        {
+                            return false;
+                        }
+                        expressions.Add(parsed);
+                    }
+
+                    hirExpr = new HIRSequenceExpression(expressions);
+                    return true;
+                }
+
             case AwaitExpression awaitExpr:
                 {
                     if (!TryParseExpression(awaitExpr.Argument, out var awaitedArg) || awaitedArg == null)

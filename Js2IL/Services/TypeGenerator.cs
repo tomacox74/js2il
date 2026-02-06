@@ -24,6 +24,7 @@ namespace Js2IL.Services
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes;
         private readonly Dictionary<string, List<FieldDefinitionHandle>> _scopeFields;
         private readonly Dictionary<string, List<string>> _scopeFieldNames;
+        private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _scopeFieldHandlesByName;
         private readonly VariableRegistry _variableRegistry;
         private readonly bool _emitDebuggerDisplay;
         private readonly int _deferredCtorStartRow;
@@ -45,6 +46,7 @@ namespace Js2IL.Services
             _scopeTypes = new Dictionary<string, TypeDefinitionHandle>();
             _scopeFields = new Dictionary<string, List<FieldDefinitionHandle>>();
             _scopeFieldNames = new Dictionary<string, List<string>>();
+            _scopeFieldHandlesByName = new Dictionary<string, Dictionary<string, FieldDefinitionHandle>>();
             _deferredCtorStartRow = deferredCtorStartRow;
             _nextDeferredCtorRow = deferredCtorStartRow;
             _deferredCtorPlan = new List<(string, string, string, bool, bool, MethodDefinitionHandle)>();
@@ -155,19 +157,25 @@ namespace Js2IL.Services
             _scopeFieldNames[scopeKey] = new List<string>();
             var scopeFieldNames = _scopeFieldNames[scopeKey];
 
+            if (!_scopeFieldHandlesByName.ContainsKey(scopeKey))
+                _scopeFieldHandlesByName[scopeKey] = new Dictionary<string, FieldDefinitionHandle>();
+
             // Check if this is an arrow function scope (arrow functions always need parameter fields for closure semantics)
             bool isArrowFunction = scope.AstNode is Acornima.Ast.ArrowFunctionExpression;
 
-            foreach (var binding in scope.Bindings.Values)
+            foreach (var kvp in scope.Bindings)
             {
+                var variableName = kvp.Key;
+                var binding = kvp.Value;
+
                 // Parameters are treated as fields on the scope when:
                 // 1. The parameter is captured (referenced from nested functions), OR
                 // 2. This is an arrow function (needs fields for proper this binding and closure), OR
                 // 3. The parameter comes from destructuring (needs storage to extract from object)
                 // Simple identifier parameters that aren't captured can use ldarg directly.
-                bool isParameter = scope.Parameters.Contains(binding.Name);
+                bool isParameter = scope.Parameters.Contains(variableName);
                 bool isFunction = binding.Kind == BindingKind.Function;
-                bool isDestructuredParameter = scope.DestructuredParameters.Contains(binding.Name);
+                bool isDestructuredParameter = scope.DestructuredParameters.Contains(variableName);
                 
                 // Skip field creation for parameters that:
                 // - Are NOT captured (not referenced by child scopes)
@@ -230,12 +238,13 @@ namespace Js2IL.Services
                 // Create the field definition
                 var fieldHandle = typeBuilder.AddFieldDefinition(
                     fieldAttributes,
-                    binding.Name,
+                    variableName,
                     fieldSignatureHandle
                 );
 
                 scopeFields.Add(fieldHandle);
-                scopeFieldNames.Add(binding.Name);
+                scopeFieldNames.Add(variableName);
+                _scopeFieldHandlesByName[scopeKey][variableName] = fieldHandle;
             }
 
             // Add awaited result storage fields for async function scopes: _awaited1, _awaited2, etc.
@@ -619,8 +628,6 @@ namespace Js2IL.Services
             _variableRegistry.EnsureScopeType(registryName, scopeTypeHandle);
 
             // Add each binding as a variable in the registry
-            int fieldIndex = 0;
-
             // Check if this is an arrow function scope (arrow functions always need parameter fields)
             bool isArrowFunction = scope.AstNode is Acornima.Ast.ArrowFunctionExpression;
             
@@ -664,23 +671,24 @@ namespace Js2IL.Services
 
                 if (fieldCreatedForThisBinding)
                 {
-                    // Map this binding to the next created field (order matches CreateTypeFields enumeration)
-                    if (fieldIndex < scopeFields.Count)
+                    if (!_scopeFieldHandlesByName.TryGetValue(registryName, out var fieldsByName) ||
+                        !fieldsByName.TryGetValue(variableName, out var fieldHandle) ||
+                        fieldHandle.IsNil)
                     {
-                        var fieldHandle = scopeFields[fieldIndex];
-                        _variableRegistry.AddVariable(
-                            registryName,  // Use registry name (qualified for class members, simple for functions)
-                            variableName,
-                            variableType,
-                            fieldHandle,
-                            scopeTypeHandle,
-                            bindingInfo.Kind,
-                            bindingInfo.ClrType,
-                            bindingInfo.IsStableType
-                        );
+                        throw new InvalidOperationException(
+                            $"TypeGenerator field mapping missing for '{variableName}' in scope '{registryName}'.");
                     }
-                    // Only advance when a field exists for this binding
-                    fieldIndex++;
+
+                    _variableRegistry.AddVariable(
+                        registryName,  // Use registry name (qualified for class members, simple for functions)
+                        variableName,
+                        variableType,
+                        fieldHandle,
+                        scopeTypeHandle,
+                        bindingInfo.Kind,
+                        bindingInfo.ClrType,
+                        bindingInfo.IsStableType
+                    );
                 }
                 else
                 {

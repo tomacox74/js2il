@@ -47,6 +47,9 @@ namespace Js2IL.Tests.UnaryOperator
         public Task UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction() => ExecutionTest(nameof(UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction));
 
         [Fact]
+        public Task UnaryOperator_PlusPlusMinusMinus_MemberAndIndexTargets() => ExecutionTest(nameof(UnaryOperator_PlusPlusMinusMinus_MemberAndIndexTargets));
+
+        [Fact]
         public Task UnaryOperator_Typeof() => ExecutionTest(nameof(UnaryOperator_Typeof));
 
         [Fact]
@@ -60,5 +63,8 @@ namespace Js2IL.Tests.UnaryOperator
 
         [Fact]
         public Task UnaryOperator_VoidOperator() => ExecutionTest(nameof(UnaryOperator_VoidOperator));
+
+        [Fact]
+        public Task UnaryOperator_UnaryNegation_CoercesToNumber() => ExecutionTest(nameof(UnaryOperator_UnaryNegation_CoercesToNumber));
     }
 }

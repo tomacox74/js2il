@@ -18,10 +18,33 @@ public sealed partial class HIRToLIRLowerer
         // materializing the postfix return value.
         var needsPostfixValue = resultUsed && !updateExpr.Prefix;
 
-        // Only support ++/-- on identifiers
         if (updateExpr.Operator != Acornima.Operator.Increment && updateExpr.Operator != Acornima.Operator.Decrement)
         {
             return false;
+        }
+
+        var isIncrement = updateExpr.Operator == Acornima.Operator.Increment;
+
+        // Support ++/-- on identifiers, property access, and index access.
+        // This is needed for common JS patterns like `obj.prop++` and `obj[idx]++`.
+        if (updateExpr.Argument is HIRPropertyAccessExpression propAccessExpr)
+        {
+            return TryLowerUpdatePropertyAccessExpression(
+                propAccessExpr,
+                isIncrement,
+                updateExpr.Prefix,
+                needsPostfixValue,
+                out resultTempVar);
+        }
+
+        if (updateExpr.Argument is HIRIndexAccessExpression indexAccessExpr)
+        {
+            return TryLowerUpdateIndexAccessExpression(
+                indexAccessExpr,
+                isIncrement,
+                updateExpr.Prefix,
+                needsPostfixValue,
+                out resultTempVar);
         }
 
         if (updateExpr.Argument is not HIRVariableExpression updateVarExpr)
@@ -30,7 +53,6 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var updateBinding = updateVarExpr.Name.BindingInfo;
-        var isIncrement = updateExpr.Operator == Acornima.Operator.Increment;
 
         // Updating a const is a runtime TypeError.
         if (updateBinding.Kind == BindingKind.Const)
@@ -252,6 +274,177 @@ public sealed partial class HIRToLIRLowerer
 
         // Postfix returns the original value.
         resultTempVar = needsPostfixValue ? boxedOriginalForPostfix!.Value : EnsureObject(updatedTemp);
+        return true;
+    }
+
+    private bool TryLowerUpdatePropertyAccessExpression(
+        HIRPropertyAccessExpression propAccessExpr,
+        bool isIncrement,
+        bool prefix,
+        bool needsPostfixValue,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (!TryLowerExpression(propAccessExpr.Object, out var objTemp))
+        {
+            return false;
+        }
+        objTemp = EnsureObject(objTemp);
+
+        var keyTemp = EmitConstString(propAccessExpr.PropertyName);
+        var boxedKey = EnsureObject(keyTemp);
+
+        var current = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, boxedKey, current));
+        DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var currentNumber = EnsureNumber(current);
+
+        TempVariable? originalSnapshotForPostfix = null;
+        if (needsPostfixValue)
+        {
+            var snapshotValue = EnsureObject(currentNumber);
+            var snapshot = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(snapshotValue, snapshot));
+            DefineTempStorage(snapshot, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            originalSnapshotForPostfix = snapshot;
+        }
+
+        var deltaOneTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, deltaOneTemp));
+        DefineTempStorage(deltaOneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        var updatedNumber = CreateTempVariable();
+        if (isIncrement)
+        {
+            _methodBodyIR.Instructions.Add(new LIRAddNumber(currentNumber, deltaOneTemp, updatedNumber));
+        }
+        else
+        {
+            _methodBodyIR.Instructions.Add(new LIRSubNumber(currentNumber, deltaOneTemp, updatedNumber));
+        }
+        DefineTempStorage(updatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        var updatedBoxed = EnsureObject(updatedNumber);
+
+        var setResult = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, updatedBoxed, setResult));
+        DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        if (prefix)
+        {
+            resultTempVar = updatedBoxed;
+            return true;
+        }
+
+        resultTempVar = needsPostfixValue ? originalSnapshotForPostfix!.Value : updatedBoxed;
+        return true;
+    }
+
+    private bool TryLowerUpdateIndexAccessExpression(
+        HIRIndexAccessExpression indexAccessExpr,
+        bool isIncrement,
+        bool prefix,
+        bool needsPostfixValue,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (!TryLowerExpression(indexAccessExpr.Object, out var objTemp))
+        {
+            return false;
+        }
+        objTemp = EnsureObject(objTemp);
+
+        if (!TryLowerExpression(indexAccessExpr.Index, out var indexTemp))
+        {
+            return false;
+        }
+
+        TempVariable? boxedIndex = null;
+        var indexStorageForGet = GetTempStorage(indexTemp);
+        TempVariable indexForGet;
+        if (indexStorageForGet.Kind == ValueStorageKind.UnboxedValue && indexStorageForGet.ClrType == typeof(double))
+        {
+            indexForGet = indexTemp;
+        }
+        else
+        {
+            boxedIndex = EnsureObject(indexTemp);
+            indexForGet = boxedIndex.Value;
+        }
+
+        var current = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, indexForGet, current));
+        DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var currentNumber = EnsureNumber(current);
+
+        TempVariable? originalSnapshotForPostfix = null;
+        if (needsPostfixValue)
+        {
+            var snapshotValue = EnsureObject(currentNumber);
+            var snapshot = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(snapshotValue, snapshot));
+            DefineTempStorage(snapshot, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            originalSnapshotForPostfix = snapshot;
+        }
+
+        var deltaOneTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, deltaOneTemp));
+        DefineTempStorage(deltaOneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        var updatedNumber = CreateTempVariable();
+        if (isIncrement)
+        {
+            _methodBodyIR.Instructions.Add(new LIRAddNumber(currentNumber, deltaOneTemp, updatedNumber));
+        }
+        else
+        {
+            _methodBodyIR.Instructions.Add(new LIRSubNumber(currentNumber, deltaOneTemp, updatedNumber));
+        }
+        DefineTempStorage(updatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        // Use numeric SetItem when possible (avoids boxing updatedNumber for the store).
+        var indexStorage = GetTempStorage(indexTemp);
+        bool canUseNumericSetItem = indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double);
+
+        TempVariable indexForSet;
+        if (canUseNumericSetItem)
+        {
+            indexForSet = indexTemp;
+        }
+        else
+        {
+            boxedIndex ??= EnsureObject(indexTemp);
+            indexForSet = boxedIndex.Value;
+        }
+
+        TempVariable valueForSet;
+        TempVariable updatedBoxed;
+        if (canUseNumericSetItem)
+        {
+            valueForSet = updatedNumber;
+            updatedBoxed = EnsureObject(updatedNumber);
+        }
+        else
+        {
+            updatedBoxed = EnsureObject(updatedNumber);
+            valueForSet = updatedBoxed;
+        }
+
+        var setResult = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueForSet, setResult));
+        DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        if (prefix)
+        {
+            resultTempVar = updatedBoxed;
+            return true;
+        }
+
+        resultTempVar = needsPostfixValue ? originalSnapshotForPostfix!.Value : updatedBoxed;
         return true;
     }
 

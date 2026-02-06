@@ -86,6 +86,13 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.Token(methodRef);
     }
 
+    private void EmitOperatorsInstanceOf(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.InstanceOf));
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
     private void EmitOperatorsEqual(InstructionEncoder ilEncoder)
     {
         var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.Equal));
