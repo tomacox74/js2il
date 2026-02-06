@@ -22,9 +22,9 @@ public sealed partial class HIRToLIRLowerer
 
         if (expression is HIRSequenceExpression seqExpr)
         {
-            foreach (var subExpr in seqExpr.Expressions)
+            for (int i = 0; i < seqExpr.Expressions.Count; i++)
             {
-                if (!TryLowerExpressionDiscardResult(subExpr))
+                if (!TryLowerExpressionDiscardResult(seqExpr.Expressions[i]))
                 {
                     return false;
                 }
