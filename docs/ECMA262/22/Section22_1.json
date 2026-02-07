@@ -72,7 +72,7 @@
     {
       "clause": "22.1.3.3",
       "title": "String.prototype.charCodeAt ( pos )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.charcodeat"
     },
     {
@@ -246,7 +246,7 @@
     {
       "clause": "22.1.3.28",
       "title": "String.prototype.toLowerCase ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.tolowercase"
     },
     {
@@ -258,7 +258,7 @@
     {
       "clause": "22.1.3.30",
       "title": "String.prototype.toUpperCase ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.touppercase"
     },
     {
@@ -401,6 +401,36 @@
           "Js2IL.Tests/String/JavaScript/String_LocaleCompare_Numeric.js"
         ],
         "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
+      },
+      {
+        "clause": "22.1.3.3",
+        "feature": "String.prototype.charCodeAt",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.charcodeat",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_CharCodeAt_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.CharCodeAt for definite string receivers. Returns a boxed number. Edge cases such as out-of-range indices and surrogate handling are not fully validated." 
+      },
+      {
+        "clause": "22.1.3.28",
+        "feature": "String.prototype.toLowerCase",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.tolowercase",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_ToLowerCase_ToUpperCase_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.ToLowerCase for definite string receivers. Uses CLR casing semantics; full ECMAScript Unicode case mapping nuances are not guaranteed."
+      },
+      {
+        "clause": "22.1.3.30",
+        "feature": "String.prototype.toUpperCase",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.touppercase",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_ToLowerCase_ToUpperCase_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.ToUpperCase for definite string receivers. Uses CLR casing semantics; full ECMAScript Unicode case mapping nuances are not guaranteed."
       }
     ]
   }

@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "22.2",
   "title": "RegExp (Regular Expression) Objects",
-  "status": "Untracked",
+  "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-regexp-regular-expression-objects",
   "parent": {
     "clause": "22"
@@ -336,7 +336,7 @@
     {
       "clause": "22.2.6",
       "title": "Properties of the RegExp Prototype Object",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-regexp-prototype-object"
     },
     {
@@ -372,7 +372,7 @@
     {
       "clause": "22.2.6.5",
       "title": "get RegExp.prototype.global",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.global"
     },
     {
@@ -384,7 +384,7 @@
     {
       "clause": "22.2.6.7",
       "title": "get RegExp.prototype.ignoreCase",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.ignorecase"
     },
     {
@@ -402,7 +402,7 @@
     {
       "clause": "22.2.6.10",
       "title": "get RegExp.prototype.multiline",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.multiline"
     },
     {
@@ -420,7 +420,7 @@
     {
       "clause": "22.2.6.13",
       "title": "get RegExp.prototype.source",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.source"
     },
     {
@@ -567,5 +567,49 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-regexp-string-iterator-instances"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "22.2.6.5",
+        "feature": "get RegExp.prototype.global",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.global",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp based on stored flags. Full RegExp exotic object semantics and cross-realm behaviors are not implemented."
+      },
+      {
+        "clause": "22.2.6.7",
+        "feature": "get RegExp.prototype.ignoreCase",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.ignorecase",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp based on stored flags."
+      },
+      {
+        "clause": "22.2.6.10",
+        "feature": "get RegExp.prototype.multiline",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.multiline",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp based on stored flags."
+      },
+      {
+        "clause": "22.2.6.13",
+        "feature": "get RegExp.prototype.source",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.source",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp using the original pattern text. Does not attempt to normalize/escape patterns exactly per spec."
+      }
+    ]
+  }
 }

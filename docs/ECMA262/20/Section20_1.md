@@ -25,7 +25,7 @@
 | 20.1.2.7 | Object.fromEntries ( iterable ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.fromentries) |
 | 20.1.2.8 | Object.getOwnPropertyDescriptor ( O , P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertydescriptor) |
 | 20.1.2.9 | Object.getOwnPropertyDescriptors ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertydescriptors) |
-| 20.1.2.10 | Object.getOwnPropertyNames ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertynames) |
+| 20.1.2.10 | Object.getOwnPropertyNames ( O ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertynames) |
 | 20.1.2.11 | Object.getOwnPropertySymbols ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertysymbols) |
 | 20.1.2.11.1 | GetOwnPropertyKeys ( O , type ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-getownpropertykeys) |
 | 20.1.2.12 | Object.getPrototypeOf ( O ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.getprototypeof) |
@@ -43,7 +43,7 @@
 | 20.1.2.24 | Object.values ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.values) |
 | 20.1.3 | Properties of the Object Prototype Object | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-object-prototype-object) |
 | 20.1.3.1 | Object.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.prototype.constructor) |
-| 20.1.3.2 | Object.prototype.hasOwnProperty ( V ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.prototype.hasownproperty) |
+| 20.1.3.2 | Object.prototype.hasOwnProperty ( V ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.prototype.hasownproperty) |
 | 20.1.3.3 | Object.prototype.isPrototypeOf ( V ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.prototype.isprototypeof) |
 | 20.1.3.4 | Object.prototype.propertyIsEnumerable ( V ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable) |
 | 20.1.3.5 | Object.prototype.toLocaleString ( [ reserved1 [ , reserved2 ] ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.prototype.tolocalestring) |
@@ -93,6 +93,12 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | Object.getOwnPropertyDescriptor | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js) | Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns a descriptor object for properties defined via defineProperty/defineProperties; falls back to a simplified default descriptor for plain ExpandoObject properties. Symbol-keyed properties and full host-object descriptor fidelity are not implemented. |
 
+### 20.1.2.10 ([tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertynames))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Object.getOwnPropertyNames | Supported with Limitations | [`Object_GetOwnPropertyNames_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js) | Implemented in JavaScriptRuntime.Object.getOwnPropertyNames using a ConditionalWeakTable-backed descriptor store plus ExpandoObject keys. Symbol-keyed properties and full spec ordering guarantees are not implemented. |
+
 ### 20.1.2.12 ([tc39.es](https://tc39.es/ecma262/#sec-object.getprototypeof))
 
 | Feature name | Status | Test scripts | Notes |
@@ -110,6 +116,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Object.setPrototypeOf | Supported with Limitations | [`PrototypeChain_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js) | Implemented in JavaScriptRuntime.Object.setPrototypeOf using an opt-in side-table prototype store. Rejects null/undefined targets; accepts object-like targets. Does not yet implement full invariant checks, extensibility, or exotic object behaviors. |
+
+### 20.1.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype.hasownproperty))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Object.prototype.hasOwnProperty | Supported with Limitations | [`Object_Prototype_HasOwnProperty_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Prototype_HasOwnProperty_Basic.js) | Seeded onto Object.prototype via JavaScriptRuntime.GlobalThis. Works when invoked via Object.prototype.hasOwnProperty (e.g., using apply/call). Default Object.prototype wiring for all object literals is incomplete. |
 
 ### 20.1.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype.__proto__))
 

@@ -22,7 +22,7 @@
 | 22.1.3 | Properties of the String Prototype Object | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-string-prototype-object) |
 | 22.1.3.1 | String.prototype.at ( index ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.at) |
 | 22.1.3.2 | String.prototype.charAt ( pos ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charat) |
-| 22.1.3.3 | String.prototype.charCodeAt ( pos ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charcodeat) |
+| 22.1.3.3 | String.prototype.charCodeAt ( pos ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charcodeat) |
 | 22.1.3.4 | String.prototype.codePointAt ( pos ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.codepointat) |
 | 22.1.3.5 | String.prototype.concat ( ... args ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.concat) |
 | 22.1.3.6 | String.prototype.constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.constructor) |
@@ -51,9 +51,9 @@
 | 22.1.3.25 | String.prototype.substring ( start , end ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.substring) |
 | 22.1.3.26 | String.prototype.toLocaleLowerCase ( [ reserved1 [ , reserved2 ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocalelowercase) |
 | 22.1.3.27 | String.prototype.toLocaleUpperCase ( [ reserved1 [ , reserved2 ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocaleuppercase) |
-| 22.1.3.28 | String.prototype.toLowerCase ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolowercase) |
+| 22.1.3.28 | String.prototype.toLowerCase ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolowercase) |
 | 22.1.3.29 | String.prototype.toString ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tostring) |
-| 22.1.3.30 | String.prototype.toUpperCase ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.touppercase) |
+| 22.1.3.30 | String.prototype.toUpperCase ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.touppercase) |
 | 22.1.3.31 | String.prototype.toWellFormed ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.towellformed) |
 | 22.1.3.32 | String.prototype.trim ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trim) |
 | 22.1.3.32.1 | TrimString ( string , where ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-trimstring) |
@@ -72,6 +72,12 @@
 ## Support
 
 Feature-level support tracking with test script references.
+
+### 22.1.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charcodeat))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.charCodeAt | Supported with Limitations | [`String_CharCodeAt_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_CharCodeAt_Basic.js) | Implemented in JavaScriptRuntime.String.CharCodeAt for definite string receivers. Returns a boxed number. Edge cases such as out-of-range indices and surrogate handling are not fully validated. |
 
 ### 22.1.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.endswith))
 
@@ -108,4 +114,16 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | String.prototype.startsWith | Supported | [`String_StartsWith_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js) | Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed). |
+
+### 22.1.3.28 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolowercase))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.toLowerCase | Supported with Limitations | [`String_ToLowerCase_ToUpperCase_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_ToLowerCase_ToUpperCase_Basic.js) | Implemented in JavaScriptRuntime.String.ToLowerCase for definite string receivers. Uses CLR casing semantics; full ECMAScript Unicode case mapping nuances are not guaranteed. |
+
+### 22.1.3.30 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.touppercase))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.toUpperCase | Supported with Limitations | [`String_ToLowerCase_ToUpperCase_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_ToLowerCase_ToUpperCase_Basic.js) | Implemented in JavaScriptRuntime.String.ToUpperCase for definite string receivers. Uses CLR casing semantics; full ECMAScript Unicode case mapping nuances are not guaranteed. |
 
