@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2141
+				// Method begins at RVA 0x2161
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x2114
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -87,7 +87,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2138
+			// Method begins at RVA 0x2158
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -113,76 +113,88 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 150 (0x96)
+		// Code size: 182 (0xb6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope,
 			[1] object,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[3] object,
-			[4] object
+			[2] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 0.0
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
-		IL_001a: ldc.i4.0
-		IL_001b: stloc.1
-		IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0021: stloc.2
-		IL_0022: ldloc.1
-		IL_0023: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0028: stloc.3
-		IL_0029: ldloc.3
-		IL_002a: brfalse IL_0066
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/key::__js_call__(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldloc.0
+		IL_0023: ldc.r8 0.0
+		IL_002c: box [System.Runtime]System.Double
+		IL_0031: stfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
+		IL_0036: ldc.i4.0
+		IL_0037: stloc.2
+		IL_0038: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003d: stloc.3
+		IL_003e: ldloc.2
+		IL_003f: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0044: stloc.s 4
+		IL_0046: ldloc.s 4
+		IL_0048: brfalse IL_0086
 
-		IL_002f: ldloc.3
-		IL_0030: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0035: brtrue IL_0066
+		IL_004d: ldloc.s 4
+		IL_004f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0054: brtrue IL_0086
 
-		IL_003a: ldnull
-		IL_003b: ldftn object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/key::__js_call__(object[])
-		IL_0041: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0046: ldc.i4.1
-		IL_0047: newarr [System.Runtime]System.Object
-		IL_004c: dup
-		IL_004d: ldc.i4.0
-		IL_004e: ldloc.0
-		IL_004f: stelem.ref
-		IL_0050: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0055: stloc.s 4
-		IL_0057: ldloc.3
-		IL_0058: ldloc.s 4
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_005f: stloc.s 4
-		IL_0061: br IL_0069
+		IL_0059: ldnull
+		IL_005a: ldftn object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/key::__js_call__(object[])
+		IL_0060: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0065: ldc.i4.1
+		IL_0066: newarr [System.Runtime]System.Object
+		IL_006b: dup
+		IL_006c: ldc.i4.0
+		IL_006d: ldloc.0
+		IL_006e: stelem.ref
+		IL_006f: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0074: stloc.s 5
+		IL_0076: ldloc.s 4
+		IL_0078: ldloc.s 5
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_007f: stloc.s 5
+		IL_0081: br IL_0089
 
-		IL_0066: ldnull
-		IL_0067: stloc.s 4
+		IL_0086: ldnull
+		IL_0087: stloc.s 5
 
-		IL_0069: ldloc.2
-		IL_006a: ldc.i4.1
-		IL_006b: newarr [System.Runtime]System.Object
-		IL_0070: dup
-		IL_0071: ldc.i4.0
-		IL_0072: ldloc.s 4
-		IL_0074: stelem.ref
-		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007a: pop
-		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0080: ldc.i4.1
-		IL_0081: newarr [System.Runtime]System.Object
-		IL_0086: dup
-		IL_0087: ldc.i4.0
-		IL_0088: ldloc.0
-		IL_0089: ldfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
-		IL_008e: stelem.ref
-		IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0094: pop
-		IL_0095: ret
+		IL_0089: ldloc.3
+		IL_008a: ldc.i4.1
+		IL_008b: newarr [System.Runtime]System.Object
+		IL_0090: dup
+		IL_0091: ldc.i4.0
+		IL_0092: ldloc.s 5
+		IL_0094: stelem.ref
+		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_009a: pop
+		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a0: ldc.i4.1
+		IL_00a1: newarr [System.Runtime]System.Object
+		IL_00a6: dup
+		IL_00a7: ldc.i4.0
+		IL_00a8: ldloc.0
+		IL_00a9: ldfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
+		IL_00ae: stelem.ref
+		IL_00af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00b4: pop
+		IL_00b5: ret
 	} // end of method BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit::__js_module_init__
 
 } // end of class Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit
@@ -194,7 +206,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214a
+		// Method begins at RVA 0x216a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

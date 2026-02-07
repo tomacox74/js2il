@@ -41,7 +41,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x238a
+						// Method begins at RVA 0x23aa
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -61,7 +61,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2393
+						// Method begins at RVA 0x23b3
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -79,7 +79,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2381
+					// Method begins at RVA 0x23a1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -99,7 +99,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x239c
+					// Method begins at RVA 0x23bc
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -127,7 +127,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2378
+				// Method begins at RVA 0x2398
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -147,7 +147,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20b8
+			// Method begins at RVA 0x20d8
 			// Header size: 12
 			// Code size: 643 (0x283)
 			.maxstack 8
@@ -432,7 +432,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23a5
+				// Method begins at RVA 0x23c5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -452,7 +452,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2348
+			// Method begins at RVA 0x2368
 			// Header size: 12
 			// Code size: 27 (0x1b)
 			.maxstack 8
@@ -489,7 +489,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x236f
+			// Method begins at RVA 0x238f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -515,13 +515,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 92 (0x5c)
+		// Code size: 122 (0x7a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_TryFinally_FinallyThrowOverridesOriginal/Scope,
 			[1] object,
 			[2] object,
-			[3] object[]
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Async_TryFinally_FinallyThrowOverridesOriginal/Scope::.ctor()
@@ -535,10 +536,10 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
-		IL_001c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0021: stloc.1
 		IL_0022: ldnull
-		IL_0023: ldftn object Modules.Async_TryFinally_FinallyThrowOverridesOriginal/ArrowFunction_L20C13::__js_call__(object[])
+		IL_0023: ldftn object Modules.Async_TryFinally_FinallyThrowOverridesOriginal/test::__js_call__(object[])
 		IL_0029: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_002e: ldc.i4.1
 		IL_002f: newarr [System.Runtime]System.Object
@@ -546,22 +547,33 @@
 		IL_0035: ldc.i4.0
 		IL_0036: ldloc.0
 		IL_0037: stelem.ref
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0042: stloc.2
-		IL_0043: ldc.i4.1
-		IL_0044: newarr [System.Runtime]System.Object
-		IL_0049: dup
-		IL_004a: ldc.i4.0
-		IL_004b: ldloc.2
-		IL_004c: stelem.ref
-		IL_004d: stloc.3
-		IL_004e: ldloc.1
-		IL_004f: ldstr "then"
-		IL_0054: ldloc.3
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_005a: pop
-		IL_005b: ret
+		IL_0038: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_003d: stloc.2
+		IL_003e: ldnull
+		IL_003f: ldftn object Modules.Async_TryFinally_FinallyThrowOverridesOriginal/ArrowFunction_L20C13::__js_call__(object[])
+		IL_0045: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.0
+		IL_0053: stelem.ref
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_005e: stloc.3
+		IL_005f: ldc.i4.1
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldloc.3
+		IL_0068: stelem.ref
+		IL_0069: stloc.s 4
+		IL_006b: ldloc.2
+		IL_006c: ldstr "then"
+		IL_0071: ldloc.s 4
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0078: pop
+		IL_0079: ret
 	} // end of method Async_TryFinally_FinallyThrowOverridesOriginal::__js_module_init__
 
 } // end of class Modules.Async_TryFinally_FinallyThrowOverridesOriginal
@@ -573,7 +585,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23ae
+		// Method begins at RVA 0x23ce
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2661
+				// Method begins at RVA 0x2681
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20a0
+			// Method begins at RVA 0x20c0
 			// Header size: 12
 			// Code size: 529 (0x211)
 			.maxstack 8
@@ -274,7 +274,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x266a
+				// Method begins at RVA 0x268a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -298,7 +298,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x267c
+					// Method begins at RVA 0x269c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -316,7 +316,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2673
+				// Method begins at RVA 0x2693
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -336,7 +336,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x22c0
+			// Method begins at RVA 0x22e0
 			// Header size: 12
 			// Code size: 908 (0x38c)
 			.maxstack 8
@@ -758,7 +758,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2658
+			// Method begins at RVA 0x2678
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -784,7 +784,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 65 (0x41)
+		// Code size: 100 (0x64)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.AsyncGenerator_ForAwaitOf/Scope,
@@ -795,7 +795,7 @@
 		IL_0000: newobj instance void Modules.AsyncGenerator_ForAwaitOf/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2::__js_call__(object[])
+		IL_0007: ldftn object Modules.AsyncGenerator_ForAwaitOf/g::__js_call__(object[])
 		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -803,23 +803,37 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0026: stloc.1
-		IL_0027: ldc.i4.0
-		IL_0028: newarr [System.Runtime]System.Object
-		IL_002d: stloc.2
-		IL_002e: ldloc.1
-		IL_002f: ldc.i4.1
-		IL_0030: newarr [System.Runtime]System.Object
-		IL_0035: dup
-		IL_0036: ldc.i4.0
-		IL_0037: ldnull
-		IL_0038: stelem.ref
-		IL_0039: ldloc.2
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_003f: pop
-		IL_0040: ret
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldloc.0
+		IL_0023: ldloc.1
+		IL_0024: stfld object Modules.AsyncGenerator_ForAwaitOf/Scope::g
+		IL_0029: ldnull
+		IL_002a: ldftn object Modules.AsyncGenerator_ForAwaitOf/ArrowFunction_L8C2::__js_call__(object[])
+		IL_0030: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0035: ldc.i4.1
+		IL_0036: newarr [System.Runtime]System.Object
+		IL_003b: dup
+		IL_003c: ldc.i4.0
+		IL_003d: ldloc.0
+		IL_003e: stelem.ref
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0049: stloc.1
+		IL_004a: ldc.i4.0
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: stloc.2
+		IL_0051: ldloc.1
+		IL_0052: ldc.i4.1
+		IL_0053: newarr [System.Runtime]System.Object
+		IL_0058: dup
+		IL_0059: ldc.i4.0
+		IL_005a: ldnull
+		IL_005b: stelem.ref
+		IL_005c: ldloc.2
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0062: pop
+		IL_0063: ret
 	} // end of method AsyncGenerator_ForAwaitOf::__js_module_init__
 
 } // end of class Modules.AsyncGenerator_ForAwaitOf
@@ -831,7 +845,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2685
+		// Method begins at RVA 0x26a5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

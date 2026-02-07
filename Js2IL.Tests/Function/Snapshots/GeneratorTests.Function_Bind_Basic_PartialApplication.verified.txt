@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2123
+				// Method begins at RVA 0x2127
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 				object c
 			) cil managed 
 		{
-			// Method begins at RVA 0x20fc
+			// Method begins at RVA 0x2100
 			// Header size: 12
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -77,7 +77,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211a
+			// Method begins at RVA 0x211e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -103,13 +103,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 159 (0x9f)
+		// Code size: 161 (0xa1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Bind_Basic_PartialApplication/Scope,
 			[1] object,
 			[2] object,
-			[3] object[]
+			[3] object[],
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Bind_Basic_PartialApplication/Scope::.ctor()
@@ -124,8 +125,8 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.2
-		IL_0022: ldloc.2
+		IL_0021: stloc.1
+		IL_0022: ldloc.1
 		IL_0023: ldstr "bind"
 		IL_0028: ldc.i4.3
 		IL_0029: newarr [System.Runtime]System.Object
@@ -145,7 +146,7 @@
 		IL_0053: box [System.Runtime]System.Double
 		IL_0058: stelem.ref
 		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_005e: stloc.1
+		IL_005e: stloc.2
 		IL_005f: ldc.i4.1
 		IL_0060: newarr [System.Runtime]System.Object
 		IL_0065: dup
@@ -154,7 +155,7 @@
 		IL_0070: box [System.Runtime]System.Double
 		IL_0075: stelem.ref
 		IL_0076: stloc.3
-		IL_0077: ldloc.1
+		IL_0077: ldloc.2
 		IL_0078: ldc.i4.1
 		IL_0079: newarr [System.Runtime]System.Object
 		IL_007e: dup
@@ -163,17 +164,17 @@
 		IL_0081: stelem.ref
 		IL_0082: ldloc.3
 		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0088: stloc.2
-		IL_0089: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008e: ldc.i4.1
-		IL_008f: newarr [System.Runtime]System.Object
-		IL_0094: dup
-		IL_0095: ldc.i4.0
-		IL_0096: ldloc.2
-		IL_0097: stelem.ref
-		IL_0098: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_009d: pop
-		IL_009e: ret
+		IL_0088: stloc.s 4
+		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008f: ldc.i4.1
+		IL_0090: newarr [System.Runtime]System.Object
+		IL_0095: dup
+		IL_0096: ldc.i4.0
+		IL_0097: ldloc.s 4
+		IL_0099: stelem.ref
+		IL_009a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_009f: pop
+		IL_00a0: ret
 	} // end of method Function_Bind_Basic_PartialApplication::__js_module_init__
 
 } // end of class Modules.Function_Bind_Basic_PartialApplication
@@ -185,7 +186,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212c
+		// Method begins at RVA 0x2130
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

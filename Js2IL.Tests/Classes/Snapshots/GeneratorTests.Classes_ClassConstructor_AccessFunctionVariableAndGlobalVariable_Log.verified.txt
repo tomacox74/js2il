@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2134
+					// Method begins at RVA 0x2150
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x213d
+					// Method begins at RVA 0x2159
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -65,7 +65,7 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x20c4
+				// Method begins at RVA 0x20e0
 				// Header size: 12
 				// Code size: 82 (0x52)
 				.maxstack 8
@@ -126,7 +126,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212b
+				// Method begins at RVA 0x2147
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -146,7 +146,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x208c
+			// Method begins at RVA 0x20a8
 			// Header size: 12
 			// Code size: 41 (0x29)
 			.maxstack 8
@@ -198,7 +198,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2122
+			// Method begins at RVA 0x213e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -224,29 +224,41 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 46 (0x2e)
+		// Code size: 74 (0x4a)
 		.maxstack 8
-		.locals (
-			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope
+		.locals init (
+			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldstr "Hello from global"
-		IL_000c: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope::GLOBAL_VALUE
-		IL_0011: ldnull
-		IL_0012: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction::__js_call__(object[])
-		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_001d: ldc.i4.1
-		IL_001e: newarr [System.Runtime]System.Object
-		IL_0023: dup
-		IL_0024: ldc.i4.0
-		IL_0025: ldloc.0
-		IL_0026: stelem.ref
-		IL_0027: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_002c: pop
-		IL_002d: ret
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction::__js_call__(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldloc.0
+		IL_0023: ldstr "Hello from global"
+		IL_0028: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope::GLOBAL_VALUE
+		IL_002d: ldnull
+		IL_002e: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction::__js_call__(object[])
+		IL_0034: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0039: ldc.i4.1
+		IL_003a: newarr [System.Runtime]System.Object
+		IL_003f: dup
+		IL_0040: ldc.i4.0
+		IL_0041: ldloc.0
+		IL_0042: stelem.ref
+		IL_0043: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0048: pop
+		IL_0049: ret
 	} // end of method Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log
@@ -258,7 +270,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2146
+		// Method begins at RVA 0x2162
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ae
+				// Method begins at RVA 0x21ca
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21c0
+					// Method begins at RVA 0x21dc
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b7
+				// Method begins at RVA 0x21d3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -81,7 +81,7 @@
 				object callback
 			) cil managed 
 		{
-			// Method begins at RVA 0x20bc
+			// Method begins at RVA 0x20d8
 			// Header size: 12
 			// Code size: 84 (0x54)
 			.maxstack 8
@@ -153,7 +153,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21d2
+					// Method begins at RVA 0x21ee
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -174,7 +174,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c9
+				// Method begins at RVA 0x21e5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -195,7 +195,7 @@
 				object id
 			) cil managed 
 		{
-			// Method begins at RVA 0x211c
+			// Method begins at RVA 0x2138
 			// Header size: 12
 			// Code size: 125 (0x7d)
 			.maxstack 8
@@ -276,7 +276,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21a5
+			// Method begins at RVA 0x21c1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -302,17 +302,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 94 (0x5e)
+		// Code size: 122 (0x7a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_StrictEqualCapturedVariable/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_StrictEqualCapturedVariable/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L14C9::__js_call__(object[], object)
+		IL_0007: ldftn object Modules.BinaryOperator_StrictEqualCapturedVariable/process::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -320,31 +321,42 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0026: stloc.1
-		IL_0027: ldnull
-		IL_0028: ldftn object Modules.BinaryOperator_StrictEqualCapturedVariable/process::__js_call__(object[], object)
-		IL_002e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0033: ldc.i4.1
-		IL_0034: newarr [System.Runtime]System.Object
-		IL_0039: dup
-		IL_003a: ldc.i4.0
-		IL_003b: ldloc.0
-		IL_003c: stelem.ref
-		IL_003d: ldloc.1
-		IL_003e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0043: pop
-		IL_0044: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0049: ldc.i4.1
-		IL_004a: newarr [System.Runtime]System.Object
-		IL_004f: dup
-		IL_0050: ldc.i4.0
-		IL_0051: ldstr "done"
-		IL_0056: stelem.ref
-		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005c: pop
-		IL_005d: ret
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldnull
+		IL_0023: ldftn object Modules.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L14C9::__js_call__(object[], object)
+		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0042: stloc.2
+		IL_0043: ldnull
+		IL_0044: ldftn object Modules.BinaryOperator_StrictEqualCapturedVariable/process::__js_call__(object[], object)
+		IL_004a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_004f: ldc.i4.1
+		IL_0050: newarr [System.Runtime]System.Object
+		IL_0055: dup
+		IL_0056: ldc.i4.0
+		IL_0057: ldloc.0
+		IL_0058: stelem.ref
+		IL_0059: ldloc.2
+		IL_005a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_005f: pop
+		IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0065: ldc.i4.1
+		IL_0066: newarr [System.Runtime]System.Object
+		IL_006b: dup
+		IL_006c: ldc.i4.0
+		IL_006d: ldstr "done"
+		IL_0072: stelem.ref
+		IL_0073: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0078: pop
+		IL_0079: ret
 	} // end of method BinaryOperator_StrictEqualCapturedVariable::__js_module_init__
 
 } // end of class Modules.BinaryOperator_StrictEqualCapturedVariable
@@ -356,7 +368,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21db
+		// Method begins at RVA 0x21f7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
