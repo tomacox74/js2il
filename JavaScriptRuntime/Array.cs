@@ -246,6 +246,48 @@ namespace JavaScriptRuntime
             {
                 return this.Count;
             }
+            set
+            {
+                // Minimal JS semantics for setting length:
+                //  - Must be a non-negative integer.
+                //  - Truncates/extends the array.
+                // NOTE: We clamp to int.MaxValue because this runtime is backed by List<T>.
+                double d = value;
+                if (double.IsNaN(d) || double.IsInfinity(d) || d < 0)
+                {
+                    throw new RangeError("Invalid array length");
+                }
+
+                // Per ECMAScript, a non-integer length must throw RangeError.
+                double truncated = global::System.Math.Truncate(d);
+                if (truncated != d)
+                {
+                    throw new RangeError("Invalid array length");
+                }
+
+                d = truncated;
+                if (d > int.MaxValue)
+                {
+                    throw new RangeError("Invalid array length");
+                }
+
+                int newLen = (int)d;
+                if (newLen < 0)
+                {
+                    throw new RangeError("Invalid array length");
+                }
+
+                if (newLen < this.Count)
+                {
+                    this.RemoveRange(newLen, this.Count - newLen);
+                    return;
+                }
+
+                while (this.Count < newLen)
+                {
+                    this.Add(null);
+                }
+            }
         }
 
         /// <summary>

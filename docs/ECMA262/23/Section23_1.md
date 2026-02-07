@@ -87,12 +87,6 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | Array.isArray | Supported | [`Array_IsArray_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js) | Returns true for JavaScriptRuntime.Array instances; false otherwise. |
 
-### 23.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-array.from))
-
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Array.length property (read) | Supported | [`Array_LengthProperty_ReturnsCount.js`](../../../Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js)<br>[`Array_EmptyLength_IsZero.js`](../../../Js2IL.Tests/Array/JavaScript/Array_EmptyLength_IsZero.js) | length getter returns number of elements. Lowered via JavaScriptRuntime.Object.GetLength(object) and specialized to direct Array/Int32Array length intrinsics when the receiver type is proven. Used by for-of implementation. |
-
 ### 23.1.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.filter))
 
 | Feature name | Status | Test scripts | Notes |
@@ -133,7 +127,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Array.prototype.slice | Supported | [`Array_Slice_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Slice_Basic.js) | Returns a shallow copy; handles negative indices and undefined end per spec. |
+| Array.prototype.slice | Supported | [`Array_Slice_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Slice_Basic.js)<br>[`Array_Slice_FromCharCode_Apply.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js) | Returns a shallow copy; handles negative indices and undefined end per spec. |
 
 ### 23.1.3.29 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.some))
 
@@ -146,4 +140,11 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Array.prototype.splice | Supported | [`Array_Splice_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Splice_Basic.js)<br>[`Array_Splice_InsertAndDelete.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Splice_InsertAndDelete.js) | Mutates the array by removing and/or inserting elements; returns an array of removed elements. |
+
+### 23.1.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-array-instances-length))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Array.length property (read) | Supported | [`Array_LengthProperty_ReturnsCount.js`](../../../Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js)<br>[`Array_EmptyLength_IsZero.js`](../../../Js2IL.Tests/Array/JavaScript/Array_EmptyLength_IsZero.js) | length getter returns number of elements. Lowered via JavaScriptRuntime.Object.GetLength(object) and specialized to direct Array/Int32Array length intrinsics when the receiver type is proven. Used by for-of implementation. |
+| Array.length property (write) | Supported with Limitations |  | Implemented for JavaScriptRuntime.Array: setting length truncates/extends the backing List (extending fills with undefined). This is a minimal subset intended to support common library patterns (e.g., buf.length = 0). Full spec behavior for non-writable length, sparse arrays, and array exotic objects is not implemented. |
 

@@ -44,6 +44,9 @@ namespace Js2IL.Tests.Array
         public Task Array_Slice_Basic() { var testName = nameof(Array_Slice_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Array_Slice_FromCharCode_Apply() { var testName = nameof(Array_Slice_FromCharCode_Apply); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Array_Sort_Basic() { var testName = nameof(Array_Sort_Basic); return ExecutionTest(testName); }
 
         [Fact]
@@ -85,8 +88,14 @@ namespace Js2IL.Tests.Array
         [Fact]
         public Task Array_Callable_Construct() { var testName = nameof(Array_Callable_Construct); return ExecutionTest(testName); }
 
-    // Repro: computed index using (arr.length - 1) should be treated as numeric
-    [Fact]
-    public Task Array_Index_UsingLengthMinusOne_Read() { var testName = nameof(Array_Index_UsingLengthMinusOne_Read); return ExecutionTest(testName); }
+        // Repro: computed index using (arr.length - 1) should be treated as numeric
+        [Fact]
+        public Task Array_Index_UsingLengthMinusOne_Read() { var testName = nameof(Array_Index_UsingLengthMinusOne_Read); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Canonical_Index_StringKeys() { var testName = nameof(Array_Canonical_Index_StringKeys); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Length_Set_Fractional_ThrowsRangeError() { var testName = nameof(Array_Length_Set_Fractional_ThrowsRangeError); return ExecutionTest(testName); }
     }
 }

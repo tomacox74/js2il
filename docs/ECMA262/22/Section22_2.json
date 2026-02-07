@@ -348,7 +348,7 @@
     {
       "clause": "22.2.6.2",
       "title": "RegExp.prototype.exec ( string )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.exec"
     },
     {
@@ -528,7 +528,7 @@
     {
       "clause": "22.2.8.1",
       "title": "lastIndex",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-lastindex"
     },
     {
@@ -570,6 +570,26 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "22.2.6.2",
+        "feature": "RegExp.prototype.exec",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.exec",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp.exec as a minimal subset. Supports returning an Array of captures and attaches .index and .input. Full RegExp exotic object semantics, sticky (/y), unicode modes, named groups, and @@exec overrides are not implemented."
+      },
+      {
+        "clause": "22.2.8.1",
+        "feature": "RegExp instance lastIndex",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-lastindex",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp as a numeric property. Currently participates in exec() only for /g (global) regexes; when no match is found lastIndex is reset to 0."
+      },
       {
         "clause": "22.2.6.5",
         "feature": "get RegExp.prototype.global",

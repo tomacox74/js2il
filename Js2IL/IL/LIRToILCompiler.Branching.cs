@@ -32,11 +32,20 @@ internal sealed partial class LIRToILCompiler
             tempDefinitions.TryGetValue(condition.Index, out var definingInstruction) &&
             BranchConditionOptimizer.IsComparisonInstruction(definingInstruction))
         {
+            var emitLoad = definingInstruction is LIRCompareNumberLessThan
+                or LIRCompareNumberGreaterThan
+                or LIRCompareNumberLessThanOrEqual
+                or LIRCompareNumberGreaterThanOrEqual
+                or LIRCompareNumberEqual
+                or LIRCompareNumberNotEqual
+                ? (Action<TempVariable, InstructionEncoder>)((temp, encoder) => EmitLoadTempAsNumber(temp, encoder, allocation, methodDescriptor))
+                : (temp, encoder) => EmitLoadTemp(temp, encoder, allocation, methodDescriptor);
+
             // Emit the comparison inline without storing to a local
             BranchConditionOptimizer.EmitInlineComparison(
                 definingInstruction,
                 ilEncoder,
-                (temp, encoder) => EmitLoadTemp(temp, encoder, allocation, methodDescriptor));
+                emitLoad);
         }
         else
         {

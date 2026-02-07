@@ -11,6 +11,131 @@ namespace JavaScriptRuntime
     public static class String
     {
         /// <summary>
+        /// Implements String.prototype.substring(start[, end]).
+        /// Semantics (subset):
+        ///  - start/end are coerced to numbers, NaN -> 0
+        ///  - values are truncated toward zero
+        ///  - negatives clamp to 0, values > length clamp to length
+        ///  - if start > end, the arguments are swapped
+        /// </summary>
+        public static string Substring(string input, object? start)
+        {
+            return Substring(input, start, null);
+        }
+
+        public static string Substring(string input, object? start, object? end)
+        {
+            input ??= string.Empty;
+
+            int len = input.Length;
+
+            static int ToClampedIndex(object? value, int length, int defaultValue)
+            {
+                if (value == null)
+                {
+                    return defaultValue;
+                }
+
+                double d;
+                try
+                {
+                    d = JavaScriptRuntime.TypeUtilities.ToNumber(value);
+                }
+                catch
+                {
+                    d = double.NaN;
+                }
+
+                if (double.IsNaN(d)) d = 0d;
+                if (double.IsNegativeInfinity(d)) d = 0d;
+                if (double.IsPositiveInfinity(d)) d = length;
+
+                d = global::System.Math.Truncate(d);
+
+                if (d < 0) d = 0;
+                if (d > length) d = length;
+                return (int)d;
+            }
+
+            int startIndex = ToClampedIndex(start, len, defaultValue: 0);
+            int endIndex = ToClampedIndex(end, len, defaultValue: len);
+
+            if (startIndex > endIndex)
+            {
+                (startIndex, endIndex) = (endIndex, startIndex);
+            }
+
+            int count = endIndex - startIndex;
+            if (count <= 0)
+            {
+                return string.Empty;
+            }
+
+            return input.Substring(startIndex, count);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.match(regexp).
+        /// Minimal semantics to support common libraries:
+        ///  - If regexp is a RegExp with /g, returns an Array of matched substrings or null.
+        ///  - Otherwise returns the result of RegExp.exec (Array with groups/index/input) or null.
+        ///  - Non-RegExp values are coerced to string and treated as a RegExp pattern.
+        /// </summary>
+        public static object Match(string input, object? regexp)
+        {
+            input ??= string.Empty;
+
+            JavaScriptRuntime.RegExp re = regexp as JavaScriptRuntime.RegExp
+                ?? new JavaScriptRuntime.RegExp(DotNet2JSConversions.ToString(regexp));
+
+            if (!re.Global)
+            {
+                var single = re.exec(input);
+                return single is JsNull ? JsNull.Null : single;
+            }
+
+            // Global match: collect full-match strings.
+            var result = new JavaScriptRuntime.Array();
+            re.lastIndex = 0;
+
+            while (true)
+            {
+                double lastIndexBefore = re.lastIndex;
+                var exec = re.exec(input);
+                if (exec is JsNull)
+                {
+                    break;
+                }
+
+                if (exec is JavaScriptRuntime.Array matchArray)
+                {
+                    var full = matchArray.Count > 0 ? matchArray[0] : null;
+                    result.Add(full);
+
+                    // Prevent infinite loops on empty matches.
+                    // RegExp.exec should advance lastIndex for empty matches, but keep a guard
+                    // in case of future behavior differences.
+                    if (full is string s && s.Length == 0 && re.lastIndex == lastIndexBefore)
+                    {
+                        re.lastIndex = lastIndexBefore + 1;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+
+                if (re.lastIndex > input.Length)
+                {
+                    break;
+                }
+            }
+
+            re.lastIndex = 0;
+            return result.Count == 0 ? JsNull.Null : result;
+        }
+
+        /// <summary>
         /// Implements String.prototype.charCodeAt([index]).
         /// Returns a UTF-16 code unit as a number, or NaN when out of range.
         /// </summary>

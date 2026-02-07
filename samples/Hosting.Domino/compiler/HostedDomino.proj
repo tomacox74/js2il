@@ -6,7 +6,7 @@
     <!-- Hardcoded domino entry file (current limitation: no package.json-based resolution) -->
     <JavaScriptFile>$([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)','node_modules','@mixmark-io','domino','lib','index.js'))</JavaScriptFile>
 
-    <OutputDir>$(MSBuildThisFileDirectory)out</OutputDir>
+    <OutputDir Condition="'$(OutputDir)' == ''">$(MSBuildThisFileDirectory)out</OutputDir>
 
     <!-- Prefer the global js2il tool by default (important for release smoke tests). -->
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == ''">false</UseLocalJs2ILProject>

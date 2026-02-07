@@ -34,6 +34,36 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Match_NonGlobal()
+        {
+            return ExecutionTest(nameof(String_Match_NonGlobal));
+        }
+
+        [Fact]
+        public Task String_Match_Global()
+        {
+            return ExecutionTest(nameof(String_Match_Global));
+        }
+
+        [Fact]
+        public Task String_RegExp_Exec_LastIndex_Global()
+        {
+            return ExecutionTest(nameof(String_RegExp_Exec_LastIndex_Global));
+        }
+
+        [Fact]
+        public Task String_RegExp_Exec_LastIndex_EmptyMatch_Global()
+        {
+            return ExecutionTest(nameof(String_RegExp_Exec_LastIndex_EmptyMatch_Global));
+        }
+
+        [Fact]
+        public Task String_Substring()
+        {
+            return ExecutionTest(nameof(String_Substring));
+        }
+
+        [Fact]
         public Task String_Split_Basic()
         {
             return ExecutionTest(nameof(String_Split_Basic));

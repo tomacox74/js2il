@@ -72,6 +72,15 @@ public sealed partial class HIRToLIRLowerer
         if (currentSlot == -1 || currentSlot == slot)
         {
             SetTempVariableSlot(value, slot);
+
+            // Keep the variable slot's declared storage in sync with the temp we're pinning to it.
+            // This ensures the IL local signature matches actual emitted loads/stores (e.g., bool temps
+            // shouldn't be stored into object-typed variable locals).
+            if (slot >= 0 && slot < _methodBodyIR.VariableStorages.Count)
+            {
+                _methodBodyIR.VariableStorages[slot] = GetTempStorage(value);
+            }
+
             return value;
         }
 
@@ -80,6 +89,12 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRCopyTemp(value, copy));
         DefineTempStorage(copy, GetTempStorage(value));
         SetTempVariableSlot(copy, slot);
+
+        if (slot >= 0 && slot < _methodBodyIR.VariableStorages.Count)
+        {
+            _methodBodyIR.VariableStorages[slot] = GetTempStorage(copy);
+        }
+
         return copy;
     }
 }

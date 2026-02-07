@@ -522,17 +522,46 @@ namespace Js2IL.Services
             // Fail-fast: validate metadata invariants that would otherwise surface later as
             // BadImageFormatException during Assembly.Load.
             ClrMetadataConsistencyValidator.ValidateOrThrow(peBytes, label: name);
-            const int maxAttempts = 20;
-            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            // Windows can keep the output DLL briefly locked (AV/indexing/build hosts). Writing the final
+            // file repeatedly can prolong the lock (each write can re-trigger scanning), so we write to a
+            // unique temp file first and then retry only the final replace.
+            string tempDll = assemblyDll + ".tmp_" + Guid.NewGuid().ToString("N");
+            File.WriteAllBytes(tempDll, peBytes);
+
+            try
+            {
+                const int maxReplaceWaitMs = 60_000;
+                long startTick = Environment.TickCount64;
+                int attempt = 0;
+                while (true)
+                {
+                    attempt++;
+                    try
+                    {
+                        File.Move(tempDll, assemblyDll, overwrite: true);
+                        break;
+                    }
+                    catch (IOException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
+                    {
+                        int delayMs = Math.Min(1000, 50 * attempt);
+                        Thread.Sleep(delayMs);
+                    }
+                    catch (UnauthorizedAccessException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
+                    {
+                        int delayMs = Math.Min(1000, 50 * attempt);
+                        Thread.Sleep(delayMs);
+                    }
+                }
+            }
+            finally
             {
                 try
                 {
-                    File.WriteAllBytes(assemblyDll, peBytes);
-                    break;
+                    if (File.Exists(tempDll)) File.Delete(tempDll);
                 }
-                catch (IOException) when (attempt < maxAttempts)
+                catch (IOException)
                 {
-                    Thread.Sleep(25 * attempt);
+                    // Best-effort cleanup; temp files are safe to leave behind.
                 }
             }
 

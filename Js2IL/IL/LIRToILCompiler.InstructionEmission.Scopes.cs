@@ -88,9 +88,23 @@ internal sealed partial class LIRToILCompiler
                     {
                         EmitLoadTempAsDouble(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
                     }
+                    else if (fieldClrType == typeof(bool))
+                    {
+                        EmitLoadTempAsBoolean(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (fieldClrType == typeof(string))
+                    {
+                        EmitLoadTempAsString(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
                     else
                     {
-                        EmitLoadTemp(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
+
+                        if (fieldClrType != typeof(object) && !fieldClrType.IsValueType)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Castclass);
+                            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
+                        }
                     }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);

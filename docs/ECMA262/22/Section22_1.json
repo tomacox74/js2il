@@ -30,7 +30,7 @@
     {
       "clause": "22.1.2.1",
       "title": "String.fromCharCode ( ... codeUnits )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.fromcharcode"
     },
     {
@@ -132,7 +132,7 @@
     {
       "clause": "22.1.3.13",
       "title": "String.prototype.match ( regexp )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.match"
     },
     {
@@ -228,7 +228,7 @@
     {
       "clause": "22.1.3.25",
       "title": "String.prototype.substring ( start , end )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.substring"
     },
     {
@@ -349,6 +349,16 @@
   "support": {
     "entries": [
       {
+        "clause": "22.1.2.1",
+        "feature": "String.fromCharCode",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.fromcharcode",
+        "testScripts": [
+          "Js2IL.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.GlobalThis by exposing a String.fromCharCode function. Supports ToNumber coercion and ToUint16 code-unit truncation. Does not aim to match all edge-case observable behaviors (e.g., exotic receivers, property attributes) beyond common library usage."
+      },
+      {
         "clause": "22.1.3.24",
         "feature": "String.prototype.startsWith",
         "status": "Supported",
@@ -401,6 +411,27 @@
           "Js2IL.Tests/String/JavaScript/String_LocaleCompare_Numeric.js"
         ],
         "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
+      },
+      {
+        "clause": "22.1.3.13",
+        "feature": "String.prototype.match",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.match",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_Match_NonGlobal.js",
+          "Js2IL.Tests/String/JavaScript/String_Match_Global.js"
+        ],
+        "notes": "Implemented via JavaScriptRuntime.String.Match with limited RegExp integration. For /g, returns an Array of full-match substrings (or null). For non-global, returns an exec-like Array with groups and sets .index/.input. Symbol.match and advanced RegExp behaviors are not implemented."
+      },
+      {
+        "clause": "22.1.3.25",
+        "feature": "String.prototype.substring",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.substring",
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_Substring.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.Substring. Coerces arguments via ToNumber, clamps to [0, length], truncates toward zero, and swaps start/end when start > end."
       },
       {
         "clause": "22.1.3.3",

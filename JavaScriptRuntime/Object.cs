@@ -646,6 +646,63 @@ namespace JavaScriptRuntime
             return DotNet2JSConversions.ToString(key);
         }
 
+        // Determines whether a computed key should be treated as an array index.
+        // We intentionally require a *canonical* decimal representation for string keys:
+        //  - "0", "1", ... are indices
+        //  - "01", "1.0", "-1", "length", "true" are properties
+        private static bool TryGetCanonicalArrayIndex(object index, string propName, out int intIndex)
+        {
+            intIndex = 0;
+
+            switch (index)
+            {
+                case int ii:
+                    if (ii < 0) return false;
+                    intIndex = ii;
+                    return true;
+                case long ll:
+                    if (ll < 0 || ll > int.MaxValue) return false;
+                    intIndex = (int)ll;
+                    return true;
+                case short ss:
+                    if (ss < 0) return false;
+                    intIndex = ss;
+                    return true;
+                case byte bb:
+                    intIndex = bb;
+                    return true;
+                case double dd:
+                    if (double.IsNaN(dd) || double.IsInfinity(dd)) return false;
+                    if (dd < 0 || dd > int.MaxValue) return false;
+                    if (!double.IsInteger(dd)) return false;
+                    intIndex = (int)dd;
+                    return true;
+                case float ff:
+                    if (float.IsNaN(ff) || float.IsInfinity(ff)) return false;
+                    if (ff < 0 || ff > int.MaxValue) return false;
+                    if (!float.IsInteger(ff)) return false;
+                    intIndex = (int)ff;
+                    return true;
+                case string s:
+                    return TryParseCanonicalIndexString(s, out intIndex);
+            }
+
+            // Fallback: try the ToPropertyKey string representation.
+            return TryParseCanonicalIndexString(propName, out intIndex);
+
+            static bool TryParseCanonicalIndexString(string s, out int parsed)
+            {
+                parsed = 0;
+                if (string.IsNullOrEmpty(s)) return false;
+                if (!int.TryParse(s, global::System.Globalization.NumberStyles.None, global::System.Globalization.CultureInfo.InvariantCulture, out parsed))
+                {
+                    return false;
+                }
+                if (parsed < 0) return false;
+                return parsed.ToString(global::System.Globalization.CultureInfo.InvariantCulture) == s;
+            }
+        }
+
         private static bool HasOwnProperty(object target, string name)
         {
             if (target is null || target is JsNull)
@@ -1003,49 +1060,29 @@ namespace JavaScriptRuntime
 
         public static object GetItem(object obj, object index)
         {
+            var propName = ToPropertyKeyString(index);
+
             // Proxy get trap: treat item access as property access using ToPropertyKey
             if (obj is JavaScriptRuntime.Proxy)
             {
-                var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
 
-            // If the key is a Symbol (or a non-numeric string), it must be treated as a property key.
-            // The previous implementation coerced all keys to an integer index first, which caused
-            // Symbol keys (e.g. Symbol.asyncIterator) to incorrectly read index 0 on arrays.
+            // Symbol keys are always properties.
             if (index is Symbol)
             {
-                var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
 
-            if (index is string sKey && !int.TryParse(sKey, out _))
-            {
-                // JS ToPropertyKey for non-index strings.
-                return GetProperty(obj, sKey)!;
-            }
-
-            // Coerce index to int (JS ToInt32-ish truncation)
-            int intIndex = 0;
-            switch (index)
-            {
-                case int ii: intIndex = ii; break;
-                case double dd: intIndex = (int)dd; break;
-                case float ff: intIndex = (int)ff; break;
-                case long ll: intIndex = (int)ll; break;
-                case short ss: intIndex = ss; break;
-                case byte bb: intIndex = bb; break;
-                case string s when int.TryParse(s, out var pi): intIndex = pi; break;
-                case bool b: intIndex = b ? 1 : 0; break;
-                default:
-                    try { intIndex = Convert.ToInt32(index); }
-                    catch { intIndex = 0; }
-                    break;
-            }
+            bool isIndex = TryGetCanonicalArrayIndex(index, propName, out int intIndex);
 
             // String: return character at index as a 1-length string
             if (obj is string str)
             {
+                if (!isIndex)
+                {
+                    return GetProperty(obj, propName)!;
+                }
                 if (intIndex < 0 || intIndex >= str.Length)
                 {
                     return null!; // undefined
@@ -1056,12 +1093,15 @@ namespace JavaScriptRuntime
             // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
             if (obj is System.Dynamic.ExpandoObject exp)
             {
-                var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
 
             if (obj is Array array)
             {
+                if (!isIndex)
+                {
+                    return GetProperty(array, propName)!;
+                }
                 // Bounds check: return undefined (null) when OOB to mimic JS behavior
                 if (intIndex < 0 || intIndex >= array.Count)
                 {
@@ -1071,6 +1111,10 @@ namespace JavaScriptRuntime
             }
             else if (obj is Int32Array i32)
             {
+                if (!isIndex)
+                {
+                    return GetProperty(i32, propName)!;
+                }
                 // Reads outside bounds return 0 per typed array semantics
                 return i32[(double)intIndex];
             }
@@ -1078,7 +1122,6 @@ namespace JavaScriptRuntime
             {
                 // Generic object index access: treat index as a property key (JS ToPropertyKey -> string)
                 // and fall back to dynamic property lookup (public fields/properties and ExpandoObject).
-                var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
         }
@@ -1152,25 +1195,8 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
             }
 
-            // Compute both numeric index and property key string.
-            int intIndex;
-            switch (index)
-            {
-                case int ii: intIndex = ii; break;
-                case double dd: intIndex = (int)dd; break;
-                case float ff: intIndex = (int)ff; break;
-                case long ll: intIndex = (int)ll; break;
-                case short ss: intIndex = ss; break;
-                case byte bb: intIndex = bb; break;
-                case string s when int.TryParse(s, out var pi): intIndex = pi; break;
-                case bool b: intIndex = b ? 1 : 0; break;
-                default:
-                    try { intIndex = Convert.ToInt32(index); }
-                    catch { intIndex = 0; }
-                    break;
-            }
-
             var propName = ToPropertyKeyString(index);
+            bool isIndex = TryGetCanonicalArrayIndex(index, propName, out int intIndex);
 
             // Proxy set trap
             if (obj is JavaScriptRuntime.Proxy)
@@ -1192,9 +1218,9 @@ namespace JavaScriptRuntime
             // JS Array index assignment
             if (obj is Array array)
             {
-                if (intIndex < 0)
+                if (!isIndex)
                 {
-                    // Negative indices behave like properties in JS; treat as property for host safety.
+                    // Non-index keys behave like properties in JS (e.g. "length").
                     return SetProperty(array, propName, value);
                 }
 
@@ -1222,6 +1248,10 @@ namespace JavaScriptRuntime
             // Typed arrays: coerce and store when in-bounds
             if (obj is Int32Array i32)
             {
+                if (!isIndex)
+                {
+                    return SetProperty(i32, propName, value);
+                }
                 // Index/value are numeric for typed arrays; coerce here so Int32Array can remain numeric.
                 i32[(double)intIndex] = JavaScriptRuntime.TypeUtilities.ToNumber(value);
                 return value;
@@ -2556,9 +2586,33 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            // Arrays / typed arrays: ignore arbitrary properties for now
+            // Arrays / typed arrays: allow ad-hoc properties (arrays are objects in JS).
+            // Numeric index semantics are handled elsewhere; this path covers things like
+            // RegExp exec results setting `match.index` / `match.input`.
             if (obj is Array || obj is Int32Array)
             {
+                if (obj is Array arr && string.Equals(name, "length", StringComparison.Ordinal))
+                {
+                    // Array.length is special: setting it truncates/extends the array.
+                    // This is used heavily by parsers to clear buffers (e.g., buf.length = 0).
+                    arr.length = JavaScriptRuntime.TypeUtilities.ToNumber(value);
+                    return value;
+                }
+
+                if (TryInvokePrototypeSetter(obj, name, value))
+                {
+                    return value;
+                }
+
+                PropertyDescriptorStore.DefineOrUpdate(obj, name, new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Value = value,
+                    Writable = true,
+                    Enumerable = true,
+                    Configurable = true
+                });
+
                 return value;
             }
 
