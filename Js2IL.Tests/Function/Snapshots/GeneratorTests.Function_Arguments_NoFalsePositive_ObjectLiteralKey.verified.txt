@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20d5
+				// Method begins at RVA 0x20f1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2080
+			// Method begins at RVA 0x209c
 			// Header size: 12
 			// Code size: 64 (0x40)
 			.maxstack 8
@@ -83,7 +83,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20cc
+			// Method begins at RVA 0x20e8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -109,10 +109,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 35 (0x23)
+		// Code size: 63 (0x3f)
 		.maxstack 8
-		.locals (
-			[0] class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope
+		.locals init (
+			[0] class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/Scope::.ctor()
@@ -126,9 +127,20 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
-		IL_001c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0021: pop
-		IL_0022: ret
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldnull
+		IL_0023: ldftn object Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/f::__js_call__(object[])
+		IL_0029: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_003d: pop
+		IL_003e: ret
 	} // end of method Function_Arguments_NoFalsePositive_ObjectLiteralKey::__js_module_init__
 
 } // end of class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey
@@ -140,7 +152,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20de
+		// Method begins at RVA 0x20fa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

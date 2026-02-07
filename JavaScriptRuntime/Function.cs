@@ -21,6 +21,7 @@ namespace JavaScriptRuntime
             var exp = new ExpandoObject();
             var dict = (IDictionary<string, object?>)exp;
             dict["apply"] = (Func<object[], object?[], object?>)PrototypeApply;
+            dict["call"] = (Func<object[], object?[], object?>)PrototypeCall;
             return exp;
         }
 
@@ -35,6 +36,22 @@ namespace JavaScriptRuntime
             var thisArg = args != null && args.Length > 0 ? args[0] : null;
             var argArray = args != null && args.Length > 1 ? args[1] : null;
             return Apply(del, thisArg, argArray);
+        }
+
+        private static object? PrototypeCall(object[] scopes, object?[]? args)
+        {
+            var target = RuntimeServices.GetCurrentThis();
+            if (target is not Delegate del)
+            {
+                throw new TypeError("Function.prototype.call called on non-function");
+            }
+
+            var thisArg = args != null && args.Length > 0 ? args[0] : null;
+            var callArgs = args != null && args.Length > 1
+                ? args.Skip(1).ToArray()
+                : System.Array.Empty<object?>();
+
+            return Call(del, thisArg, callArgs);
         }
 
         public static object? Apply(Delegate target, object? thisArg, object? argArray)
@@ -72,6 +89,22 @@ namespace JavaScriptRuntime
             try
             {
                 return Closure.InvokeWithArgs(target, System.Array.Empty<object>(), argsList);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(prevThis);
+            }
+        }
+
+        public static object? Call(Delegate target, object? thisArg, object?[] args)
+        {
+            if (target is null) throw new ArgumentNullException(nameof(target));
+            args ??= System.Array.Empty<object?>();
+
+            var prevThis = RuntimeServices.SetCurrentThis(thisArg);
+            try
+            {
+                return Closure.InvokeWithArgs(target, System.Array.Empty<object>(), args);
             }
             finally
             {

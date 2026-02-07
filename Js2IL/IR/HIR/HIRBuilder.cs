@@ -505,6 +505,58 @@ class HIRMethodBuilder
         hirStatements = new List<HIRStatement>(_statements.Count + 16);
         hirStatements.AddRange(_statements);
 
+        // Function declarations are hoisted in JavaScript: the binding is initialized to the function
+        // object before any statements execute (including `module.exports = Foo;` patterns).
+        // The two-phase compilation pipeline compiles the callable bodies separately, but we still
+        // must emit runtime initialization in the executable body.
+        if (_currentScope.Kind is ScopeKind.Global or ScopeKind.Function)
+        {
+            foreach (var fd in statements.OfType<FunctionDeclaration>())
+            {
+                if (fd.Id is not Identifier id || string.IsNullOrWhiteSpace(id.Name))
+                {
+                    // Named function declarations are the supported/expected shape here.
+                    // Anonymous function declarations are not valid in standard JavaScript syntax.
+                    continue;
+                }
+
+                if (!HIRBuilder.ParamsSupportedForIR(fd.Params))
+                {
+                    return false;
+                }
+
+                var functionScope = FindChildScopeForAstNode(fd);
+                if (functionScope == null)
+                {
+                    return false;
+                }
+
+                var root = _currentScope;
+                while (root.Parent != null)
+                {
+                    root = root.Parent;
+                }
+                var moduleName = root.Name;
+                var declaringScopeName = _currentScope.Kind == ScopeKind.Global
+                    ? moduleName
+                    : $"{moduleName}/{_currentScope.GetQualifiedName()}";
+
+                var callableId = new CallableId
+                {
+                    Kind = CallableKind.FunctionDeclaration,
+                    DeclaringScopeName = declaringScopeName,
+                    Name = id.Name,
+                    JsParamCount = fd.Params.Count,
+                    NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+                    AstNode = null
+                };
+
+                var funcValue = new HIRFunctionExpression(callableId, functionScope);
+                var symbol = _currentScope.FindSymbol(id.Name);
+                hirStatements.Add(new HIRVariableDeclaration(symbol, funcValue));
+            }
+        }
+
         var documentId = GetCurrentDocumentId();
 
         foreach (var statement in statements)

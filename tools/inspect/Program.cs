@@ -13,6 +13,11 @@ class Program
 {
     static int Main(string[] args)
     {
+        if (args.Length >= 3 && string.Equals(args[0], "--typeinfo", StringComparison.OrdinalIgnoreCase))
+        {
+            return DumpTypeInfo(args[1], args[2]);
+        }
+
         if (args.Length >= 2 && (string.Equals(args[0], "--load-alc", StringComparison.OrdinalIgnoreCase) ||
                                  string.Equals(args[0], "--load-default-alc", StringComparison.OrdinalIgnoreCase)))
         {
@@ -532,6 +537,94 @@ class Program
         return 0;
     }
 
+    static int DumpTypeInfo(string assemblyPath, string query)
+    {
+        if (!File.Exists(assemblyPath))
+        {
+            Console.WriteLine("File not found: " + assemblyPath);
+            return 2;
+        }
+
+        using var fs = File.OpenRead(assemblyPath);
+        using var pe = new PEReader(fs);
+
+        if (!pe.HasMetadata)
+        {
+            Console.WriteLine("No metadata: " + assemblyPath);
+            return 3;
+        }
+
+        var md = pe.GetMetadataReader();
+
+        bool Matches(string name, string ns)
+        {
+            if (string.Equals(name, query, StringComparison.Ordinal)) return true;
+            if (string.Equals(name, query, StringComparison.OrdinalIgnoreCase)) return true;
+            if (name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0) return true;
+            if (!string.IsNullOrEmpty(ns))
+            {
+                var full = ns + "." + name;
+                if (string.Equals(full, query, StringComparison.OrdinalIgnoreCase)) return true;
+                if (full.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0) return true;
+            }
+            return false;
+        }
+
+        int matchCount = 0;
+        foreach (var tdHandle in md.TypeDefinitions)
+        {
+            var td = md.GetTypeDefinition(tdHandle);
+            var name = md.GetString(td.Name);
+            var ns = md.GetString(td.Namespace);
+
+            if (!Matches(name, ns))
+            {
+                continue;
+            }
+
+            matchCount++;
+            var token = MetadataTokens.GetToken(tdHandle);
+            var flags = (int)td.Attributes;
+            var visibility = td.Attributes & TypeAttributes.VisibilityMask;
+            var isNested = visibility != TypeAttributes.Public && visibility != TypeAttributes.NotPublic;
+
+            Console.WriteLine($"TypeDef 0x{token:X8}: name='{name}' ns='{ns}' flags=0x{flags:X8} visibility={visibility}");
+
+            if (isNested)
+            {
+                var enclosingHandle = td.GetDeclaringType();
+                if (enclosingHandle.IsNil)
+                {
+                    Console.WriteLine("  Enclosing: <missing declaring type>");
+                }
+                else
+                {
+                    var enclosingTd = md.GetTypeDefinition(enclosingHandle);
+                    var enclosingName = md.GetString(enclosingTd.Name);
+                    var enclosingNs = md.GetString(enclosingTd.Namespace);
+                    var enclosingToken = MetadataTokens.GetToken(enclosingHandle);
+                    var enclosingRid = MetadataTokens.GetRowNumber(enclosingHandle);
+                    var nestedRid = MetadataTokens.GetRowNumber(tdHandle);
+                    Console.WriteLine($"  Enclosing: 0x{enclosingToken:X8} name='{enclosingName}' ns='{enclosingNs}' (enclosingRID={enclosingRid}, nestedRID={nestedRid})");
+                }
+            }
+            else
+            {
+                Console.WriteLine("  Enclosing: <none>");
+            }
+
+            Console.WriteLine();
+        }
+
+        if (matchCount == 0)
+        {
+            Console.WriteLine("No matching TypeDef names.");
+            return 1;
+        }
+
+        return 0;
+    }
+
     private static int ListAssemblyReferences(string assemblyPath)
     {
         assemblyPath = Path.GetFullPath(assemblyPath);
@@ -877,8 +970,23 @@ class Program
             return 7;
         }
 
+        uint typeDefCount = rowCounts[(int)TableIndex.TypeDef];
         uint lastNested = 0;
         bool sortedByNested = true;
+
+        var seenNested = new HashSet<uint>();
+        int duplicateNestedCount = 0;
+        uint firstDuplicateNested = 0;
+        int outOfRangeCount = 0;
+        int zeroRefCount = 0;
+        int enclosingAfterNestedCount = 0;
+        uint firstEnclosingAfterNestedNested = 0;
+        uint firstEnclosingAfterNestedEnclosing = 0;
+        var enclosingAfterNestedExamples = new List<(uint nested, uint enclosing)>();
+
+        const uint invokeRid = 0x00C8; // token 0x020000C8
+        bool foundInvokeRow = false;
+        uint invokeEnclosing = 0;
 
         for (int i = 0; i < nestedCount; i++)
         {
@@ -889,6 +997,43 @@ class Program
             uint enclosing = typeDefIndexSize == 2
                 ? ReadUInt16(tables, rowOff + typeDefIndexSize)
                 : ReadUInt32(tables, rowOff + typeDefIndexSize);
+
+            if (nested == 0 || enclosing == 0)
+            {
+                zeroRefCount++;
+            }
+            if (enclosing >= nested && enclosing != 0 && nested != 0)
+            {
+                enclosingAfterNestedCount++;
+                if (firstEnclosingAfterNestedNested == 0)
+                {
+                    firstEnclosingAfterNestedNested = nested;
+                    firstEnclosingAfterNestedEnclosing = enclosing;
+                }
+
+                if (enclosingAfterNestedExamples.Count < 10)
+                {
+                    enclosingAfterNestedExamples.Add((nested, enclosing));
+                }
+            }
+            if (nested > typeDefCount || enclosing > typeDefCount)
+            {
+                outOfRangeCount++;
+            }
+            if (!seenNested.Add(nested))
+            {
+                duplicateNestedCount++;
+                if (firstDuplicateNested == 0)
+                {
+                    firstDuplicateNested = nested;
+                }
+            }
+
+            if (nested == invokeRid)
+            {
+                foundInvokeRow = true;
+                invokeEnclosing = enclosing;
+            }
 
             if (i > 0 && nested < lastNested)
             {
@@ -903,6 +1048,21 @@ class Program
         }
 
         Console.WriteLine($"NestedClass sorted by nested TypeDef index: {sortedByNested}");
+        Console.WriteLine($"NestedClass duplicate nested entries: {duplicateNestedCount}" + (firstDuplicateNested != 0 ? $" (first duplicate rid=0x{firstDuplicateNested:X4})" : ""));
+        Console.WriteLine($"NestedClass zero refs: {zeroRefCount}");
+        Console.WriteLine($"NestedClass out-of-range refs: {outOfRangeCount} (TypeDef count={typeDefCount})");
+        Console.WriteLine($"NestedClass enclosing RID >= nested RID: {enclosingAfterNestedCount}" + (firstEnclosingAfterNestedNested != 0 ? $" (first nested=0x{firstEnclosingAfterNestedNested:X4}, enclosing=0x{firstEnclosingAfterNestedEnclosing:X4})" : ""));
+        if (enclosingAfterNestedExamples.Count > 0)
+        {
+            Console.WriteLine("Examples (nested -> enclosing):");
+            foreach (var (nested, enclosing) in enclosingAfterNestedExamples)
+            {
+                Console.WriteLine($"  0x0200{nested:X4} -> 0x0200{enclosing:X4}");
+            }
+        }
+        Console.WriteLine(foundInvokeRow
+            ? $"NestedClass row for invoke (0x020000C8): enclosing=0x0200{invokeEnclosing:X4}"
+            : "NestedClass row for invoke (0x020000C8): NOT FOUND");
 
         // Dump TypeDef flags/name/namespace for the Scope type (row 2) and module type (row 7) if present.
         if (((validMask >> (int)TableIndex.TypeDef) & 1UL) != 0 && stringsStream != null)

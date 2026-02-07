@@ -105,6 +105,9 @@ namespace Js2IL.Tests.Function
         public Task Function_Apply_NullArgArray_TreatedAsEmpty() { var testName = nameof(Function_Apply_NullArgArray_TreatedAsEmpty); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_Call_Basic() { var testName = nameof(Function_Call_Basic); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_Bind_Basic_PartialApplication() { var testName = nameof(Function_Bind_Basic_PartialApplication); return GenerateTest(testName); }
 
         [Fact]

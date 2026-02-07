@@ -29,7 +29,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x220e
+					// Method begins at RVA 0x222a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -53,7 +53,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2220
+						// Method begins at RVA 0x223c
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -71,7 +71,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2217
+					// Method begins at RVA 0x2233
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -91,7 +91,7 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x210c
+				// Method begins at RVA 0x2128
 				// Header size: 12
 				// Code size: 209 (0xd1)
 				.maxstack 8
@@ -217,7 +217,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2205
+				// Method begins at RVA 0x2221
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -238,7 +238,7 @@
 				object callback
 			) cil managed 
 		{
-			// Method begins at RVA 0x209c
+			// Method begins at RVA 0x20b8
 			// Header size: 12
 			// Code size: 76 (0x4c)
 			.maxstack 8
@@ -302,7 +302,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2229
+				// Method begins at RVA 0x2245
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -323,7 +323,7 @@
 				object v
 			) cil managed 
 		{
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x2110
 			// Header size: 1
 			// Code size: 23 (0x17)
 			.maxstack 8
@@ -357,7 +357,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21fc
+			// Method begins at RVA 0x2218
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -383,17 +383,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 64 (0x40)
+		// Code size: 92 (0x5c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_ClosureCallback/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForOf_ClosureCallback/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/FunctionExpression_L11C6::__js_call__(object[], object)
+		IL_0007: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -404,7 +405,7 @@
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0021: stloc.1
 		IL_0022: ldnull
-		IL_0023: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer::__js_call__(object[], object)
+		IL_0023: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/FunctionExpression_L11C6::__js_call__(object[], object)
 		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_002e: ldc.i4.1
 		IL_002f: newarr [System.Runtime]System.Object
@@ -412,10 +413,21 @@
 		IL_0035: ldc.i4.0
 		IL_0036: ldloc.0
 		IL_0037: stelem.ref
-		IL_0038: ldloc.1
-		IL_0039: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_003e: pop
-		IL_003f: ret
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_003d: stloc.2
+		IL_003e: ldnull
+		IL_003f: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer::__js_call__(object[], object)
+		IL_0045: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.0
+		IL_0053: stelem.ref
+		IL_0054: ldloc.2
+		IL_0055: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_005a: pop
+		IL_005b: ret
 	} // end of method ControlFlow_ForOf_ClosureCallback::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_ClosureCallback
@@ -427,7 +439,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2232
+		// Method begins at RVA 0x224e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

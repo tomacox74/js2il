@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x217c
+					// Method begins at RVA 0x2198
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -43,7 +43,7 @@
 					object n
 				) cil managed 
 			{
-				// Method begins at RVA 0x2148
+				// Method begins at RVA 0x2164
 				// Header size: 12
 				// Code size: 22 (0x16)
 				.maxstack 8
@@ -79,7 +79,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2173
+				// Method begins at RVA 0x218f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -100,7 +100,7 @@
 				object offset
 			) cil managed 
 		{
-			// Method begins at RVA 0x20a4
+			// Method begins at RVA 0x20c0
 			// Header size: 12
 			// Code size: 152 (0x98)
 			.maxstack 8
@@ -184,7 +184,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x216a
+			// Method begins at RVA 0x2186
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -210,11 +210,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 70 (0x46)
+		// Code size: 98 (0x62)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter/Scope::.ctor()
@@ -228,20 +229,31 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
-		IL_001c: ldc.r8 10
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_002f: stloc.1
-		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0035: ldc.i4.1
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: dup
-		IL_003c: ldc.i4.0
-		IL_003d: ldloc.1
-		IL_003e: stelem.ref
-		IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0044: pop
-		IL_0045: ret
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldnull
+		IL_0023: ldftn object Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter/makeOffsetMapper::__js_call__(object[], object)
+		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: ldc.r8 10
+		IL_0041: box [System.Runtime]System.Double
+		IL_0046: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_004b: stloc.2
+		IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldloc.2
+		IL_005a: stelem.ref
+		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0060: pop
+		IL_0061: ret
 	} // end of method Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter::__js_module_init__
 
 } // end of class Modules.Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter
@@ -253,7 +265,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2185
+		// Method begins at RVA 0x21a1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Reflection;
+using System.Linq;
 
 namespace JavaScriptRuntime.CommonJS
 {
@@ -56,6 +57,21 @@ namespace JavaScriptRuntime.CommonJS
 
             if (_instances.TryGetValue(key, out var existing))
             {
+                // Local module circular-dependency semantics:
+                // during evaluation, module.exports may be reassigned (e.g., `module.exports = fn;`).
+                // _instances is primed before execution for circular dependency support, but must not
+                // become a stale snapshot. If we have a Module object, always return its current exports.
+                if (_modules.TryGetValue(key, out var existingLocalModule))
+                {
+                    // Track parent-child relationship for already-loaded modules
+                    if (_currentParentModule != null)
+                    {
+                        _currentParentModule.AddChild(existingLocalModule);
+                    }
+
+                    return existingLocalModule.exports;
+                }
+
                 // Track parent-child relationship for already-loaded modules
                 if (_currentParentModule != null && _modules.TryGetValue(key, out var existingModule))
                 {
@@ -177,6 +193,34 @@ namespace JavaScriptRuntime.CommonJS
                 // Restore parent and mark module as loaded
                 _currentParentModule = parentModule;
                 module.MarkLoaded();
+            }
+
+            if (Environment.GetEnvironmentVariable("JS2IL_DOMINO_DIAG") == "1")
+            {
+                // Keep this narrowly scoped to avoid flooding output.
+                if (key.EndsWith("/Document", StringComparison.OrdinalIgnoreCase)
+                    || key.EndsWith("/Document.js", StringComparison.OrdinalIgnoreCase)
+                    || key.EndsWith("/DOMImplementation", StringComparison.OrdinalIgnoreCase)
+                    || key.EndsWith("/DOMImplementation.js", StringComparison.OrdinalIgnoreCase)
+                    || key.EndsWith("/HTMLParser", StringComparison.OrdinalIgnoreCase)
+                    || key.EndsWith("/HTMLParser.js", StringComparison.OrdinalIgnoreCase))
+                {
+                    var exports = module.exports;
+                    var exportsType = exports?.GetType().FullName ?? "<null>";
+
+                    string? expandoKeys = null;
+                    if (exports is ExpandoObject exp)
+                    {
+                        var dict = (IDictionary<string, object?>)exp;
+                        expandoKeys = string.Join(", ", dict.Keys.Order(StringComparer.Ordinal).Take(12));
+                        if (dict.Count > 12)
+                        {
+                            expandoKeys += ", ...";
+                        }
+                    }
+
+                    System.Console.WriteLine($"[diag] require loaded '{key}': module.exports={exportsType}" + (expandoKeys != null ? $" keys=[{expandoKeys}]" : string.Empty));
+                }
             }
 
             // Return module.exports (which may have been reassigned during execution)

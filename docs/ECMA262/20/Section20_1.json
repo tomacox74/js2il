@@ -90,7 +90,7 @@
     {
       "clause": "20.1.2.10",
       "title": "Object.getOwnPropertyNames ( O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.getownpropertynames"
     },
     {
@@ -198,7 +198,7 @@
     {
       "clause": "20.1.3.2",
       "title": "Object.prototype.hasOwnProperty ( V )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.hasownproperty"
     },
     {
@@ -382,6 +382,26 @@
           "Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js"
         ],
         "notes": "Supported via special-casing the \"__proto__\" key in runtime property get/set helpers when prototype-chain mode is enabled. This approximates legacy accessor semantics but does not fully implement Object.prototype as an actual intrinsic object with accessor descriptors."
+      },
+      {
+        "clause": "20.1.2.10",
+        "feature": "Object.getOwnPropertyNames",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.getownpropertynames",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyNames using a ConditionalWeakTable-backed descriptor store plus ExpandoObject keys. Symbol-keyed properties and full spec ordering guarantees are not implemented."
+      },
+      {
+        "clause": "20.1.3.2",
+        "feature": "Object.prototype.hasOwnProperty",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.hasownproperty",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_Prototype_HasOwnProperty_Basic.js"
+        ],
+        "notes": "Seeded onto Object.prototype via JavaScriptRuntime.GlobalThis. Works when invoked via Object.prototype.hasOwnProperty (e.g., using apply/call). Default Object.prototype wiring for all object literals is incomplete."
       }
     ]
   }

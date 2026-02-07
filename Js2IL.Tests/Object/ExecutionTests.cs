@@ -40,5 +40,11 @@ namespace Js2IL.Tests.Object
         // otherwise IL emission can crash when storing the assignment-expression result into a scope field.
         [Fact]
         public Task Object_AssignmentExpression_PropertySet_ResultStoredToScopeField() { var testName = nameof(Object_AssignmentExpression_PropertySet_ResultStoredToScopeField); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_GetOwnPropertyNames_Basic() { var testName = nameof(Object_GetOwnPropertyNames_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Prototype_HasOwnProperty_Basic() { var testName = nameof(Object_Prototype_HasOwnProperty_Basic); return ExecutionTest(testName); }
     }
 }

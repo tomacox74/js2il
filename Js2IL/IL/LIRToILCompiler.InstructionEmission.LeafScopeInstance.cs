@@ -13,6 +13,36 @@ namespace Js2IL.IL;
 
 internal sealed partial class LIRToILCompiler
 {
+    private void EmitInitModuleParameterFieldsIfNeeded(
+        InstructionEncoder ilEncoder,
+        MethodDescriptor methodDescriptor,
+        string scopeName)
+    {
+        // Module built-in parameters (exports/require/module/__filename/__dirname) are injected
+        // by the CommonJS wrapper and are not part of the AST/HIR parameter list.
+        // If any of these parameters are captured, the environment layout stores them as
+        // leaf-scope fields. We must copy the IL arguments into those fields here so
+        // module init code can safely read them via scope.<param>.
+        if (!string.Equals(methodDescriptor.Name, "__js_module_init__", StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        int jsParamIndex = 0;
+        foreach (var name in JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames)
+        {
+            if (_scopeMetadataRegistry.TryGetFieldHandle(scopeName, name, out var fieldHandle))
+            {
+                ilEncoder.LoadLocal(0);
+                ilEncoder.LoadArgument(GetIlArgIndexForJsParameter(methodDescriptor, jsParamIndex));
+                ilEncoder.OpCode(ILOpCode.Stfld);
+                ilEncoder.Token(fieldHandle);
+            }
+
+            jsParamIndex++;
+        }
+    }
+
     private void EmitInitArgumentsObjectIfNeeded(InstructionEncoder ilEncoder, string scopeName)
     {
         var callableId = MethodBody.CallableId;
@@ -502,6 +532,8 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Newobj);
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
+
+                        EmitInitModuleParameterFieldsIfNeeded(ilEncoder, methodDescriptor, scopeName);
 
                         EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName);
                     }

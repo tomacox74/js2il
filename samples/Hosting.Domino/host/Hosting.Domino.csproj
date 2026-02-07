@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <JavaScriptRuntimePackageVersion Condition="'$(JavaScriptRuntimePackageVersion)' == ''">0.7.3</JavaScriptRuntimePackageVersion>
+
+    <ModuleName>index</ModuleName>
+    <ModuleProj>$(MSBuildProjectDirectory)\..\compiler\HostedDomino.proj</ModuleProj>
+    <ModuleDll>$(MSBuildProjectDirectory)\..\compiler\out\$(ModuleName).dll</ModuleDll>
+
+    <!-- Prefer global js2il by default when building the sample from this repo checkout. -->
+    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == ''">false</UseLocalJs2ILProject>
+
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\..\'))</RepoRoot>
+    <LocalJavaScriptRuntimeProject>$(RepoRoot)JavaScriptRuntime\JavaScriptRuntime.csproj</LocalJavaScriptRuntimeProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(LocalJavaScriptRuntimeProject)"
+                      Condition="'$(UseLocalJs2ILProject)' == 'true' And Exists('$(LocalJavaScriptRuntimeProject)')" />
+    <PackageReference Include="JavaScriptRuntime" Version="$(JavaScriptRuntimePackageVersion)"
+                      Condition="'$(UseLocalJs2ILProject)' != 'true' Or !Exists('$(LocalJavaScriptRuntimeProject)')" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="sample.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="BuildHostedModule" BeforeTargets="Build">
+    <MSBuild Projects="$(ModuleProj)" Targets="Build" Properties="UseLocalJs2ILProject=$(UseLocalJs2ILProject)" />
+  </Target>
+
+  <Target Name="CopyHostedModuleToOutput" AfterTargets="Build" DependsOnTargets="BuildHostedModule"
+          Inputs="$(ModuleDll)" Outputs="$(TargetDir)$(ModuleName).dll">
+    <Copy SourceFiles="$(ModuleDll)" DestinationFiles="$(TargetDir)$(ModuleName).dll" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

@@ -60,7 +60,7 @@
     {
       "clause": "20.2.3.3",
       "title": "Function.prototype.call ( thisArg , ... args )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.call"
     },
     {
@@ -157,6 +157,16 @@
           "Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js"
         ],
         "notes": "Implemented for delegate-backed function values via the runtime member-call dispatcher. Supports binding this and partial application of arguments. Bound functions are modeled as delegates and do not currently implement full spec metadata (length/name/prototype)."
+      },
+      {
+        "clause": "20.2.3.3",
+        "feature": "Function.prototype.call ( thisArg , ... args )",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.call",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Basic.js"
+        ],
+        "notes": "Implemented for delegate-backed function values via JavaScriptRuntime.Function.Call. Non-delegate callable objects and full CreateListFromArrayLike semantics are not implemented."
       },
       {
         "clause": "20.2.4",

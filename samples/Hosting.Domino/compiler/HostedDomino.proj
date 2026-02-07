@@ -1,0 +1,39 @@
+<Project>
+
+  <PropertyGroup>
+    <ModuleName>index</ModuleName>
+
+    <!-- Hardcoded domino entry file (current limitation: no package.json-based resolution) -->
+    <JavaScriptFile>$([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)','node_modules','@mixmark-io','domino','lib','index.js'))</JavaScriptFile>
+
+    <OutputDir>$(MSBuildThisFileDirectory)out</OutputDir>
+
+    <!-- Prefer the global js2il tool by default (important for release smoke tests). -->
+    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == ''">false</UseLocalJs2ILProject>
+
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\'))</RepoRoot>
+    <LocalJs2ILProject>$(RepoRoot)Js2IL\Js2IL.csproj</LocalJs2ILProject>
+  </PropertyGroup>
+
+  <Target Name="NpmRestore">
+    <Exec Condition="'$(SkipNpmRestore)' != 'true'" WorkingDirectory="$(MSBuildThisFileDirectory)" Command="npm ci" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="NpmRestore">
+    <MakeDir Directories="$(OutputDir)" />
+
+    <Error Condition="'$(UseLocalJs2ILProject)' == 'true' And !Exists('$(LocalJs2ILProject)')"
+         Text="UseLocalJs2ILProject=true but local project not found: $(LocalJs2ILProject)" />
+
+    <Exec Condition="'$(UseLocalJs2ILProject)' == 'true'"
+        Command="dotnet run --project &quot;$(LocalJs2ILProject)&quot; -c Release -- &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot; --strictMode Ignore" />
+
+    <Exec Condition="'$(UseLocalJs2ILProject)' != 'true'"
+        Command="js2il &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot; --strictMode Ignore" />
+  </Target>
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(OutputDir)" />
+  </Target>
+
+</Project>

@@ -11,7 +11,7 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi abstract sealed beforefieldinit inner
+		.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_Ctor
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x215d
+					// Method begins at RVA 0x2193
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,55 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x20f0
+				// Method begins at RVA 0x212d
+				// Header size: 1
+				// Code size: 32 (0x20)
+				.maxstack 8
+
+				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+				IL_0005: ldstr "value"
+				IL_000a: ldc.r8 123
+				IL_0013: box [System.Runtime]System.Double
+				IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_001d: pop
+				IL_001e: ldnull
+				IL_001f: ret
+			} // end of method FunctionExpression_Ctor::__js_call__
+
+		} // end of class FunctionExpression_Ctor
+
+		.class nested public auto ansi abstract sealed beforefieldinit inner
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested private auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x219c
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes
+				) cil managed 
+			{
+				// Method begins at RVA 0x2150
 				// Header size: 12
 				// Code size: 37 (0x25)
 				.maxstack 8
@@ -67,54 +115,6 @@
 
 		} // end of class inner
 
-		.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_Ctor
-			extends [System.Runtime]System.Object
-		{
-			// Nested Types
-			.class nested private auto ansi beforefieldinit Scope
-				extends [System.Runtime]System.Object
-			{
-				// Methods
-				.method public hidebysig specialname rtspecialname 
-					instance void .ctor () cil managed 
-				{
-					// Method begins at RVA 0x2154
-					// Header size: 1
-					// Code size: 8 (0x8)
-					.maxstack 8
-
-					IL_0000: ldarg.0
-					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-					IL_0006: nop
-					IL_0007: ret
-				} // end of method Scope::.ctor
-
-			} // end of class Scope
-
-
-			// Methods
-			.method public hidebysig static 
-				object __js_call__ (
-					object[] scopes
-				) cil managed 
-			{
-				// Method begins at RVA 0x2121
-				// Header size: 1
-				// Code size: 32 (0x20)
-				.maxstack 8
-
-				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-				IL_0005: ldstr "value"
-				IL_000a: ldc.r8 123
-				IL_0013: box [System.Runtime]System.Double
-				IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-				IL_001d: pop
-				IL_001e: ldnull
-				IL_001f: ret
-			} // end of method FunctionExpression_Ctor::__js_call__
-
-		} // end of class FunctionExpression_Ctor
-
 		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
@@ -131,7 +131,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x214b
+				// Method begins at RVA 0x218a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -151,21 +151,22 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2094
+			// Method begins at RVA 0x20b0
 			// Header size: 12
-			// Code size: 79 (0x4f)
+			// Code size: 113 (0x71)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_NewExpression_CapturesOuterCtor/outer/Scope,
-				[1] object
+				[1] object,
+				[2] object
 			)
 
 			IL_0000: newobj instance void Modules.Function_NewExpression_CapturesOuterCtor/outer/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldnull
-			IL_0007: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer/FunctionExpression_Ctor::__js_call__(object[])
+			IL_0007: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer/inner::__js_call__(object[])
 			IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-			IL_0012: ldc.i4.1
+			IL_0012: ldc.i4.2
 			IL_0013: newarr [System.Runtime]System.Object
 			IL_0018: dup
 			IL_0019: ldc.i4.0
@@ -173,30 +174,47 @@
 			IL_001b: ldc.i4.0
 			IL_001c: ldelem.ref
 			IL_001d: stelem.ref
-			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_0023: stloc.1
-			IL_0024: ldloc.0
-			IL_0025: ldloc.1
-			IL_0026: stfld object Modules.Function_NewExpression_CapturesOuterCtor/outer/Scope::Ctor
-			IL_002b: ldnull
-			IL_002c: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer/inner::__js_call__(object[])
-			IL_0032: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-			IL_0037: ldc.i4.2
-			IL_0038: newarr [System.Runtime]System.Object
-			IL_003d: dup
-			IL_003e: ldc.i4.0
-			IL_003f: ldarg.0
-			IL_0040: ldc.i4.0
-			IL_0041: ldelem.ref
-			IL_0042: stelem.ref
-			IL_0043: dup
-			IL_0044: ldc.i4.1
-			IL_0045: ldloc.0
-			IL_0046: stelem.ref
-			IL_0047: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-			IL_004c: stloc.1
-			IL_004d: ldloc.1
-			IL_004e: ret
+			IL_001e: dup
+			IL_001f: ldc.i4.1
+			IL_0020: ldloc.0
+			IL_0021: stelem.ref
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_0027: stloc.1
+			IL_0028: ldnull
+			IL_0029: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer/FunctionExpression_Ctor::__js_call__(object[])
+			IL_002f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_0034: ldc.i4.1
+			IL_0035: newarr [System.Runtime]System.Object
+			IL_003a: dup
+			IL_003b: ldc.i4.0
+			IL_003c: ldarg.0
+			IL_003d: ldc.i4.0
+			IL_003e: ldelem.ref
+			IL_003f: stelem.ref
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_0045: stloc.2
+			IL_0046: ldloc.0
+			IL_0047: ldloc.2
+			IL_0048: stfld object Modules.Function_NewExpression_CapturesOuterCtor/outer/Scope::Ctor
+			IL_004d: ldnull
+			IL_004e: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer/inner::__js_call__(object[])
+			IL_0054: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_0059: ldc.i4.2
+			IL_005a: newarr [System.Runtime]System.Object
+			IL_005f: dup
+			IL_0060: ldc.i4.0
+			IL_0061: ldarg.0
+			IL_0062: ldc.i4.0
+			IL_0063: ldelem.ref
+			IL_0064: stelem.ref
+			IL_0065: dup
+			IL_0066: ldc.i4.1
+			IL_0067: ldloc.0
+			IL_0068: stelem.ref
+			IL_0069: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+			IL_006e: stloc.2
+			IL_006f: ldloc.2
+			IL_0070: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -215,7 +233,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2142
+			// Method begins at RVA 0x2181
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -241,11 +259,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 56 (0x38)
+		// Code size: 84 (0x54)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NewExpression_CapturesOuterCtor/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_NewExpression_CapturesOuterCtor/Scope::.ctor()
@@ -259,18 +278,29 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
-		IL_001c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0021: stloc.1
-		IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0027: ldc.i4.1
-		IL_0028: newarr [System.Runtime]System.Object
-		IL_002d: dup
-		IL_002e: ldc.i4.0
-		IL_002f: ldloc.1
-		IL_0030: stelem.ref
-		IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0036: pop
-		IL_0037: ret
+		IL_0022: ldnull
+		IL_0023: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer::__js_call__(object[])
+		IL_0029: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_003d: stloc.2
+		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0043: ldc.i4.1
+		IL_0044: newarr [System.Runtime]System.Object
+		IL_0049: dup
+		IL_004a: ldc.i4.0
+		IL_004b: ldloc.2
+		IL_004c: stelem.ref
+		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0052: pop
+		IL_0053: ret
 	} // end of method Function_NewExpression_CapturesOuterCtor::__js_module_init__
 
 } // end of class Modules.Function_NewExpression_CapturesOuterCtor
@@ -282,7 +312,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2166
+		// Method begins at RVA 0x21a5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

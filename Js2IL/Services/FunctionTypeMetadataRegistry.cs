@@ -9,13 +9,21 @@ namespace Js2IL.Services;
 /// </summary>
 public sealed class FunctionTypeMetadataRegistry
 {
-    private readonly Dictionary<string, Dictionary<string, TypeDefinitionHandle>> _byModule = new(StringComparer.Ordinal);
+    // Keying by function name alone is not sufficient for real-world code:
+    // nested function declarations can reuse the same name in different scopes.
+    // We key by module -> declaringScopeName -> functionName.
+    private readonly Dictionary<string, Dictionary<string, Dictionary<string, TypeDefinitionHandle>>> _byModule = new(StringComparer.Ordinal);
 
-    public void Add(string moduleName, string functionName, TypeDefinitionHandle typeHandle)
+    public void Add(string moduleName, string declaringScopeName, string functionName, TypeDefinitionHandle typeHandle)
     {
         if (string.IsNullOrWhiteSpace(moduleName))
         {
             throw new ArgumentException("Module name is required.", nameof(moduleName));
+        }
+
+        if (string.IsNullOrWhiteSpace(declaringScopeName))
+        {
+            throw new ArgumentException("Declaring scope name is required.", nameof(declaringScopeName));
         }
 
         if (string.IsNullOrWhiteSpace(functionName))
@@ -30,26 +38,42 @@ public sealed class FunctionTypeMetadataRegistry
 
         if (!_byModule.TryGetValue(moduleName, out var map))
         {
-            map = new Dictionary<string, TypeDefinitionHandle>(StringComparer.Ordinal);
+            map = new Dictionary<string, Dictionary<string, TypeDefinitionHandle>>(StringComparer.Ordinal);
             _byModule[moduleName] = map;
         }
 
-        map[functionName] = typeHandle;
+        if (!map.TryGetValue(declaringScopeName, out var byName))
+        {
+            byName = new Dictionary<string, TypeDefinitionHandle>(StringComparer.Ordinal);
+            map[declaringScopeName] = byName;
+        }
+
+        byName[functionName] = typeHandle;
     }
 
-    public bool TryGet(string moduleName, string functionName, out TypeDefinitionHandle typeHandle)
+    public bool TryGet(string moduleName, string declaringScopeName, string functionName, out TypeDefinitionHandle typeHandle)
     {
         typeHandle = default;
-        return _byModule.TryGetValue(moduleName, out var map) && map.TryGetValue(functionName, out typeHandle);
+        return _byModule.TryGetValue(moduleName, out var map)
+            && map.TryGetValue(declaringScopeName, out var byName)
+            && byName.TryGetValue(functionName, out typeHandle);
     }
 
-    public IReadOnlyDictionary<string, TypeDefinitionHandle> GetAllForModule(string moduleName)
+    // Backward-compatible overloads for legacy callsites.
+    // For top-level function declarations, declaringScopeName == moduleName.
+    public void Add(string moduleName, string functionName, TypeDefinitionHandle typeHandle) =>
+        Add(moduleName, declaringScopeName: moduleName, functionName, typeHandle);
+
+    public bool TryGet(string moduleName, string functionName, out TypeDefinitionHandle typeHandle) =>
+        TryGet(moduleName, declaringScopeName: moduleName, functionName, out typeHandle);
+
+    public IReadOnlyDictionary<string, Dictionary<string, TypeDefinitionHandle>> GetAllForModule(string moduleName)
     {
         if (_byModule.TryGetValue(moduleName, out var map))
         {
             return map;
         }
 
-        return new Dictionary<string, TypeDefinitionHandle>();
+        return new Dictionary<string, Dictionary<string, TypeDefinitionHandle>>();
     }
 }

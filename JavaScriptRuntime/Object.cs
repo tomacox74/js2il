@@ -137,6 +137,85 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// ECMA-262 Object.getOwnPropertyNames(O).
+        /// Minimal implementation returning string keys for own properties.
+        /// </summary>
+        public static object getOwnPropertyNames(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var keys = new List<string>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            static void AddKey(List<string> keys, HashSet<string> seen, string? key)
+            {
+                if (string.IsNullOrEmpty(key))
+                {
+                    return;
+                }
+
+                if (seen.Add(key))
+                {
+                    keys.Add(key);
+                }
+            }
+
+            foreach (var k in PropertyDescriptorStore.GetOwnKeys(obj))
+            {
+                AddKey(keys, seen, k);
+            }
+
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                foreach (var k in dict.Keys)
+                {
+                    AddKey(keys, seen, k);
+                }
+            }
+
+            if (obj is IDictionary<string, object?> dictGeneric)
+            {
+                foreach (var k in dictGeneric.Keys)
+                {
+                    AddKey(keys, seen, k);
+                }
+            }
+
+            if (obj is System.Collections.IDictionary dictObj)
+            {
+                var convertedKeys = new List<string>();
+                foreach (var k in dictObj.Keys)
+                {
+                    convertedKeys.Add(DotNet2JSConversions.ToString(k));
+                }
+
+                // IDictionary key ordering can be unstable; sort for determinism.
+                convertedKeys.Sort(StringComparer.Ordinal);
+                foreach (var k in convertedKeys)
+                {
+                    AddKey(keys, seen, k);
+                }
+            }
+
+            // Reflection fallback for host objects.
+            var type = obj.GetType();
+            foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(p => p.Name, StringComparer.Ordinal))
+            {
+                AddKey(keys, seen, p.Name);
+            }
+            foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(f => f.Name, StringComparer.Ordinal))
+            {
+                AddKey(keys, seen, f.Name);
+            }
+
+            return new JavaScriptRuntime.Array(keys);
+        }
+
+        /// <summary>
         /// ECMA-262 Object.defineProperty(O, P, Attributes).
         /// Returns the target object.
         /// </summary>
@@ -349,6 +428,18 @@ namespace JavaScriptRuntime
                 throw tie.InnerException;
             }
 
+            if (Environment.GetEnvironmentVariable("JS2IL_DOMINO_DIAG") == "1" && constructor is System.Dynamic.ExpandoObject expDiag)
+            {
+                var dict = (IDictionary<string, object?>)expDiag;
+                var keys = string.Join(", ", dict.Keys.OrderBy(k => k, StringComparer.Ordinal).Take(12));
+                if (dict.Count > 12)
+                {
+                    keys += ", ...";
+                }
+
+                throw new NotSupportedException($"Value is not constructible: {constructor.GetType().FullName} keys=[{keys}]");
+            }
+
             throw new NotSupportedException($"Value is not constructible: {constructor.GetType().FullName}");
         }
 
@@ -374,6 +465,15 @@ namespace JavaScriptRuntime
                     var thisArg = callArgs.Length > 0 ? callArgs[0] : null;
                     var argArray = callArgs.Length > 1 ? callArgs[1] : null;
                     return JavaScriptRuntime.Function.Apply(del, thisArg, argArray);
+                }
+
+                if (string.Equals(methodName, "call", StringComparison.Ordinal))
+                {
+                    var thisArg = callArgs.Length > 0 ? callArgs[0] : null;
+                    var rest = callArgs.Length > 1
+                        ? callArgs.Skip(1).Cast<object?>().ToArray()
+                        : System.Array.Empty<object?>();
+                    return JavaScriptRuntime.Function.Call(del, thisArg, rest);
                 }
 
                 if (string.Equals(methodName, "bind", StringComparison.Ordinal))
@@ -722,6 +822,34 @@ namespace JavaScriptRuntime
             {
                 value = null;
                 return false;
+            }
+
+            // Delegate-backed functions behave like JS Function objects and must have a default
+            // `.prototype` property (used heavily by real-world libraries like domino).
+            // We model this lazily so existing tests that don't touch it don't pay for allocation.
+            if (target is Delegate del && string.Equals(propName, "prototype", StringComparison.Ordinal))
+            {
+                var protoObj = new System.Dynamic.ExpandoObject();
+                PropertyDescriptorStore.DefineOrUpdate(del, "prototype", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = false,
+                    Writable = true,
+                    Value = protoObj
+                });
+
+                PropertyDescriptorStore.DefineOrUpdate(protoObj, "constructor", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = true,
+                    Value = del
+                });
+
+                value = protoObj;
+                return true;
             }
 
             static bool TryGetValue(Type type, object instance, string name, out object? result)

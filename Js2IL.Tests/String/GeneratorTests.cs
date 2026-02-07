@@ -68,5 +68,19 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_New_Sugar);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_CharCodeAt_Basic()
+        {
+            var testName = nameof(String_CharCodeAt_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_ToLowerCase_ToUpperCase_Basic()
+        {
+            var testName = nameof(String_ToLowerCase_ToUpperCase_Basic);
+            return GenerateTest(testName);
+        }
     }
 }

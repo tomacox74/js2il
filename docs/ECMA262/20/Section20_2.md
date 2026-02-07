@@ -20,7 +20,7 @@
 | 20.2.3 | Properties of the Function Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object) |
 | 20.2.3.1 | Function.prototype.apply ( thisArg , argArray ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.apply) |
 | 20.2.3.2 | Function.prototype.bind ( thisArg , ... args ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.bind) |
-| 20.2.3.3 | Function.prototype.call ( thisArg , ... args ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.call) |
+| 20.2.3.3 | Function.prototype.call ( thisArg , ... args ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.call) |
 | 20.2.3.4 | Function.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.constructor) |
 | 20.2.3.5 | Function.prototype.toString ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.tostring) |
 | 20.2.3.6 | Function.prototype [ %Symbol.hasInstance% ] ( V ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype-%symbol.hasinstance%) |
@@ -45,6 +45,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Function.prototype.bind ( thisArg , ... args ) | Supported with Limitations | [`Function_Bind_Basic_PartialApplication.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js)<br>[`Function_Bind_ThisBinding_IgnoresCallReceiver.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js) | Implemented for delegate-backed function values via the runtime member-call dispatcher. Supports binding this and partial application of arguments. Bound functions are modeled as delegates and do not currently implement full spec metadata (length/name/prototype). |
+
+### 20.2.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-function.prototype.call))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Function.prototype.call ( thisArg , ... args ) | Supported with Limitations | [`Function_Call_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Call_Basic.js) | Implemented for delegate-backed function values via JavaScriptRuntime.Function.Call. Non-delegate callable objects and full CreateListFromArrayLike semantics are not implemented. |
 
 ### 20.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances))
 

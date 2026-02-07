@@ -20,6 +20,12 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_RegExp_Prototype_Getters_Basic()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_RegExp_Prototype_Getters_Basic));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Error_Callable_CreatesInstances()
         {
             return ExecutionTest(nameof(IntrinsicCallables_Error_Callable_CreatesInstances));

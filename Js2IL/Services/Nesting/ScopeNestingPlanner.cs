@@ -160,7 +160,11 @@ internal sealed class ScopeNestingPlanner
             //   .class ... Modules.<Module>.Scope/<FunctionName>
             if (child.Kind == ScopeKind.Function && child.AstNode is FunctionDeclaration)
             {
-                if (_functionTypeMetadataRegistry.TryGet(moduleName, child.Name, out var ownerTypeHandle) && !ownerTypeHandle.IsNil)
+                var declaringScopeName = child.Parent != null
+                    ? Utilities.ScopeNaming.GetRegistryScopeName(child.Parent)
+                    : moduleName;
+
+                if (_functionTypeMetadataRegistry.TryGet(moduleName, declaringScopeName, child.Name, out var ownerTypeHandle) && !ownerTypeHandle.IsNil)
                 {
                     relationships.Add((childTypeHandle, ownerTypeHandle));
                     CollectScopeNestingRelationships(moduleName, child, ownerTypeHandle, relationships, visited);
