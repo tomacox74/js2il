@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- CI: run performance comparison before samples in the Linux smoke workflow.
 
 ## v0.8.4 - 2026-02-07
 
