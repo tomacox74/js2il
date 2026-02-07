@@ -39,14 +39,14 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(addDynamic.Result, ilEncoder, allocation);
                 break;
             case LIRAddDynamicDoubleObject addDynamicDoubleObject:
-                EmitLoadTemp(addDynamicDoubleObject.LeftDouble, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(addDynamicDoubleObject.RightObject, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsDouble(addDynamicDoubleObject.LeftDouble, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(addDynamicDoubleObject.RightObject, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsAddDoubleObject(ilEncoder);
                 EmitStoreTemp(addDynamicDoubleObject.Result, ilEncoder, allocation);
                 break;
             case LIRAddDynamicObjectDouble addDynamicObjectDouble:
-                EmitLoadTemp(addDynamicObjectDouble.LeftObject, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(addDynamicObjectDouble.RightDouble, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(addDynamicObjectDouble.LeftObject, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsDouble(addDynamicObjectDouble.RightDouble, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsAddObjectDouble(ilEncoder);
                 EmitStoreTemp(addDynamicObjectDouble.Result, ilEncoder, allocation);
                 break;
@@ -209,8 +209,8 @@ internal sealed partial class LIRToILCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpLt.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpLt.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpLt.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpLt.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Clt);
                 EmitStoreTemp(cmpLt.Result, ilEncoder, allocation);
                 break;
@@ -219,8 +219,8 @@ internal sealed partial class LIRToILCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpGt.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpGt.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpGt.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpGt.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Cgt);
                 EmitStoreTemp(cmpGt.Result, ilEncoder, allocation);
                 break;
@@ -229,8 +229,8 @@ internal sealed partial class LIRToILCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpLe.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpLe.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpLe.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpLe.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Cgt);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);
@@ -241,8 +241,8 @@ internal sealed partial class LIRToILCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpGe.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpGe.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpGe.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpGe.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Clt);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);
@@ -253,8 +253,8 @@ internal sealed partial class LIRToILCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpEq.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpEq.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpEq.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpEq.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 EmitStoreTemp(cmpEq.Result, ilEncoder, allocation);
                 break;
@@ -263,8 +263,8 @@ internal sealed partial class LIRToILCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpNe.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpNe.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpNe.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpNe.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);

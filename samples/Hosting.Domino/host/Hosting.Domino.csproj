@@ -11,7 +11,8 @@
 
     <ModuleName>index</ModuleName>
     <ModuleProj>$(MSBuildProjectDirectory)\..\compiler\HostedDomino.proj</ModuleProj>
-    <ModuleDll>$(MSBuildProjectDirectory)\..\compiler\out\$(ModuleName).dll</ModuleDll>
+    <ModuleOutputDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\$(BaseIntermediateOutputPath)HostedDomino'))</ModuleOutputDir>
+    <ModuleDll>$(ModuleOutputDir)\$(ModuleName).dll</ModuleDll>
 
     <!-- Prefer global js2il by default when building the sample from this repo checkout. -->
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == ''">false</UseLocalJs2ILProject>
@@ -34,7 +35,7 @@
   </ItemGroup>
 
   <Target Name="BuildHostedModule" BeforeTargets="Build">
-    <MSBuild Projects="$(ModuleProj)" Targets="Build" Properties="UseLocalJs2ILProject=$(UseLocalJs2ILProject)" />
+    <MSBuild Projects="$(ModuleProj)" Targets="Build" Properties="UseLocalJs2ILProject=$(UseLocalJs2ILProject);OutputDir=$(ModuleOutputDir)" />
   </Target>
 
   <Target Name="CopyHostedModuleToOutput" AfterTargets="Build" DependsOnTargets="BuildHostedModule"

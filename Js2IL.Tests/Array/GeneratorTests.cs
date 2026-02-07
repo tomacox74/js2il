@@ -49,6 +49,9 @@ namespace Js2IL.Tests.Array
         public Task Array_Slice_Basic() { var testName = nameof(Array_Slice_Basic); return GenerateTest(testName); }
 
         [Fact]
+        public Task Array_Slice_FromCharCode_Apply() { var testName = nameof(Array_Slice_FromCharCode_Apply); return GenerateTest(testName); }
+
+        [Fact]
         public Task Array_Sort_Basic() { var testName = nameof(Array_Sort_Basic); return GenerateTest(testName); }
 
         [Fact]
@@ -84,8 +87,11 @@ namespace Js2IL.Tests.Array
         [Fact]
         public Task Array_Stringification_Basic() { var testName = nameof(Array_Stringification_Basic); return GenerateTest(testName); }
 
-    // Repro: computed index using (arr.length - 1)
-    [Fact]
-    public Task Array_Index_UsingLengthMinusOne_Read() { var testName = nameof(Array_Index_UsingLengthMinusOne_Read); return GenerateTest(testName); }
+        // Repro: computed index using (arr.length - 1)
+        [Fact]
+        public Task Array_Index_UsingLengthMinusOne_Read() { var testName = nameof(Array_Index_UsingLengthMinusOne_Read); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_Canonical_Index_StringKeys() { var testName = nameof(Array_Canonical_Index_StringKeys); return GenerateTest(testName); }
     }
 }

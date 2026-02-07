@@ -119,6 +119,10 @@ namespace Js2IL.Tests.Function
         [Fact]
         public Task Function_Apply_NullArgArray_TreatedAsEmpty() { var testName = nameof(Function_Apply_NullArgArray_TreatedAsEmpty); return ExecutionTest(testName); }
 
+        // Regression: storing a captured boolean into a typed scope field must emit the correct value type.
+        [Fact]
+        public Task Function_Closure_CapturedBoolean_AssignAndRead() { var testName = nameof(Function_Closure_CapturedBoolean_AssignAndRead); return ExecutionTest(testName); }
+
         [Fact]
         public Task Function_Call_Basic() { var testName = nameof(Function_Call_Basic); return ExecutionTest(testName); }
 

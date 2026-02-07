@@ -64,9 +64,23 @@ internal sealed partial class LIRToILCompiler
                     {
                         EmitLoadTempAsDouble(storeScopeFieldTemp.Value, ilEncoder, allocation, methodDescriptor);
                     }
+                    else if (fieldClrType == typeof(bool))
+                    {
+                        EmitLoadTempAsBoolean(storeScopeFieldTemp.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (fieldClrType == typeof(string))
+                    {
+                        EmitLoadTempAsString(storeScopeFieldTemp.Value, ilEncoder, allocation, methodDescriptor);
+                    }
                     else
                     {
-                        EmitLoadTemp(storeScopeFieldTemp.Value, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(storeScopeFieldTemp.Value, ilEncoder, allocation, methodDescriptor);
+
+                        if (fieldClrType != typeof(object) && !fieldClrType.IsValueType)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Castclass);
+                            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
+                        }
                     }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
@@ -130,9 +144,23 @@ internal sealed partial class LIRToILCompiler
                     {
                         EmitLoadTempAsDouble(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
                     }
+                    else if (fieldClrType == typeof(bool))
+                    {
+                        EmitLoadTempAsBoolean(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (fieldClrType == typeof(string))
+                    {
+                        EmitLoadTempAsString(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
                     else
                     {
-                        EmitLoadTemp(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
+
+                        if (fieldClrType != typeof(object) && !fieldClrType.IsValueType)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Castclass);
+                            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
+                        }
                     }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
@@ -152,9 +180,23 @@ internal sealed partial class LIRToILCompiler
                     {
                         EmitLoadTempAsDouble(storeScopeField.Value, ilEncoder, allocation, methodDescriptor);
                     }
+                    else if (fieldClrType == typeof(bool))
+                    {
+                        EmitLoadTempAsBoolean(storeScopeField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (fieldClrType == typeof(string))
+                    {
+                        EmitLoadTempAsString(storeScopeField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
                     else
                     {
-                        EmitLoadTemp(storeScopeField.Value, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(storeScopeField.Value, ilEncoder, allocation, methodDescriptor);
+
+                        if (fieldClrType != typeof(object) && !fieldClrType.IsValueType)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Castclass);
+                            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
+                        }
                     }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);

@@ -256,37 +256,37 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
             case LIRCompareNumberLessThan cmpLt:
-                EmitLoadTemp(cmpLt.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpLt.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpLt.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpLt.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Clt);
                 break;
             case LIRCompareNumberGreaterThan cmpGt:
-                EmitLoadTemp(cmpGt.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpGt.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpGt.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpGt.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Cgt);
                 break;
             case LIRCompareNumberLessThanOrEqual cmpLe:
-                EmitLoadTemp(cmpLe.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpLe.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpLe.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpLe.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Cgt);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 break;
             case LIRCompareNumberGreaterThanOrEqual cmpGe:
-                EmitLoadTemp(cmpGe.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpGe.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpGe.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpGe.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Clt);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 break;
             case LIRCompareNumberEqual cmpEq:
-                EmitLoadTemp(cmpEq.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpEq.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpEq.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpEq.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 break;
             case LIRCompareNumberNotEqual cmpNe:
-                EmitLoadTemp(cmpNe.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(cmpNe.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpNe.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(cmpNe.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);
@@ -400,14 +400,14 @@ internal sealed partial class LIRToILCompiler
                 break;
             case LIRAddDynamicDoubleObject addDynamicDoubleObject:
                 // Mixed dynamic addition: left is unboxed double, right is boxed object
-                EmitLoadTemp(addDynamicDoubleObject.LeftDouble, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(addDynamicDoubleObject.RightObject, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsDouble(addDynamicDoubleObject.LeftDouble, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(addDynamicDoubleObject.RightObject, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsAddDoubleObject(ilEncoder);
                 break;
             case LIRAddDynamicObjectDouble addDynamicObjectDouble:
                 // Mixed dynamic addition: left is boxed object, right is unboxed double
-                EmitLoadTemp(addDynamicObjectDouble.LeftObject, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(addDynamicObjectDouble.RightDouble, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(addDynamicObjectDouble.LeftObject, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsDouble(addDynamicObjectDouble.RightDouble, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsAddObjectDouble(ilEncoder);
                 break;
             case LIRLoadLeafScopeField loadLeafField:
@@ -1276,6 +1276,17 @@ internal sealed partial class LIRToILCompiler
                 ilEncoder.LoadArgument(ilArgIndex);
                 return true;
             case LIRConvertToObject convertToObject:
+                // ConvertToObject is only meaningful for unboxed value types.
+                // Some upstream normalization paths may still introduce ConvertToObject for
+                // reference-typed values (notably `undefined` which is represented as ldnull).
+                // Emitting `ldnull; box <valuetype>` produces invalid IL, so just forward the
+                // reference value as-is.
+                if (GetTempStorage(convertToObject.Source).Kind == ValueStorageKind.Reference)
+                {
+                    EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+                    return true;
+                }
+
                 EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Box);
                 if (convertToObject.SourceType == typeof(bool))
@@ -1420,6 +1431,30 @@ internal sealed partial class LIRToILCompiler
                 ilEncoder.Token(_bclReferences.DoubleType);
             }
         }
+    }
+
+    /// <summary>
+    /// Emits IL to load a temp as an unboxed JS number (float64) on the evaluation stack.
+    /// If the temp is not already an unboxed double, emits JS ToNumber coercion.
+    /// </summary>
+    private void EmitLoadTempAsNumber(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
+    {
+        var storage = GetTempStorage(temp);
+
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+        {
+            EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        // Fallback: box if needed, then ToNumber(object)
+        EmitLoadTempAsObject(temp, ilEncoder, allocation, methodDescriptor);
+        var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.TypeUtilities),
+            nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+            parameterTypes: new[] { typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(toNumberMref);
     }
 
     private void EmitConvertToBooleanCore(TempVariable source, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)

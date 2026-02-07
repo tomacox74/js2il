@@ -134,7 +134,50 @@ internal sealed partial class LIRToILCompiler
                         return false;
                     }
 
-                    EmitLoadTemp(storeStaticField.Value, ilEncoder, allocation, methodDescriptor);
+                    var fieldClrType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        storeStaticField.RegistryClassName,
+                        storeStaticField.FieldName,
+                        isPrivateField: false,
+                        isStaticField: true);
+
+                    if (fieldClrType == typeof(double))
+                    {
+                        EmitLoadTempAsDouble(storeStaticField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (fieldClrType == typeof(bool))
+                    {
+                        EmitLoadTempAsBoolean(storeStaticField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (fieldClrType == typeof(string))
+                    {
+                        EmitLoadTempAsString(storeStaticField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(storeStaticField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    if (TryGetDeclaredUserClassFieldTypeHandle(
+                        classRegistry,
+                        storeStaticField.RegistryClassName,
+                        storeStaticField.FieldName,
+                        isPrivateField: false,
+                        isStaticField: true,
+                        out var declaredTypeHandle))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(declaredTypeHandle);
+                    }
+                    else if (fieldClrType != typeof(object)
+                        && fieldClrType != typeof(string)
+                        && fieldClrType != typeof(double)
+                        && fieldClrType != typeof(bool)
+                        && !fieldClrType.IsValueType)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
+                    }
                     ilEncoder.OpCode(ILOpCode.Stsfld);
                     ilEncoder.Token(fieldHandle);
                     break;

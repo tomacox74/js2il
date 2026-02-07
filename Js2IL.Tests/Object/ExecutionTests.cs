@@ -21,6 +21,10 @@ namespace Js2IL.Tests.Object
         [Fact]
         public Task ObjectLiteral_ShorthandAndMethod() { var testName = nameof(ObjectLiteral_ShorthandAndMethod); return ExecutionTest(testName); }
 
+        // Regression: object literals emitted inline should not introduce invalid type tokens/casts.
+        [Fact]
+        public Task ObjectLiteral_InlinePropertyInit() { var testName = nameof(ObjectLiteral_InlinePropertyInit); return ExecutionTest(testName); }
+
         [Fact]
         public Task PrototypeChain_Basic() { var testName = nameof(PrototypeChain_Basic); return ExecutionTest(testName); }
 

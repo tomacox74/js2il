@@ -59,6 +59,75 @@ namespace JavaScriptRuntime
                 );
             int fixedJsParamCount = hasParamsArray ? expectedJsParamCount - 1 : expectedJsParamCount;
 
+            // Fast-path: most JS2IL-generated functions are strongly typed as Func<object[], object, ... , object>.
+            // Avoid Delegate.DynamicInvoke() for these common cases to reduce overhead and (on some runtimes)
+            // sidestep reflection invoke stub/JIT edge cases.
+            if (!hasParamsArray)
+            {
+                object? Arg(int i) => i < args.Length ? args[i] : null;
+
+                if (hasScopes)
+                {
+                    switch (fixedJsParamCount)
+                    {
+                        case 0:
+                            if (target is Func<object[], object?> f0) return f0(scopes)!;
+                            if (target is Action<object[]> a0) { a0(scopes); return null!; }
+                            break;
+                        case 1:
+                            if (target is Func<object[], object, object?> f1) return f1(scopes, Arg(0)!)!;
+                            if (target is Action<object[], object> a1) { a1(scopes, Arg(0)!); return null!; }
+                            break;
+                        case 2:
+                            if (target is Func<object[], object, object, object?> f2) return f2(scopes, Arg(0)!, Arg(1)!)!;
+                            if (target is Action<object[], object, object> a2) { a2(scopes, Arg(0)!, Arg(1)!); return null!; }
+                            break;
+                        case 3:
+                            if (target is Func<object[], object, object, object, object?> f3) return f3(scopes, Arg(0)!, Arg(1)!, Arg(2)!)!;
+                            if (target is Action<object[], object, object, object> a3) { a3(scopes, Arg(0)!, Arg(1)!, Arg(2)!); return null!; }
+                            break;
+                        case 4:
+                            if (target is Func<object[], object, object, object, object, object?> f4) return f4(scopes, Arg(0)!, Arg(1)!, Arg(2)!, Arg(3)!)!;
+                            if (target is Action<object[], object, object, object, object> a4) { a4(scopes, Arg(0)!, Arg(1)!, Arg(2)!, Arg(3)!); return null!; }
+                            break;
+                        case 5:
+                            if (target is Func<object[], object, object, object, object, object, object?> f5) return f5(scopes, Arg(0)!, Arg(1)!, Arg(2)!, Arg(3)!, Arg(4)!)!;
+                            if (target is Action<object[], object, object, object, object, object> a5) { a5(scopes, Arg(0)!, Arg(1)!, Arg(2)!, Arg(3)!, Arg(4)!); return null!; }
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (fixedJsParamCount)
+                    {
+                        case 0:
+                            if (target is Func<object?> g0) return g0()!;
+                            if (target is Action ga0) { ga0(); return null!; }
+                            break;
+                        case 1:
+                            if (target is Func<object, object?> g1) return g1(Arg(0)!)!;
+                            if (target is Action<object> ga1) { ga1(Arg(0)!); return null!; }
+                            break;
+                        case 2:
+                            if (target is Func<object, object, object?> g2) return g2(Arg(0)!, Arg(1)!)!;
+                            if (target is Action<object, object> ga2) { ga2(Arg(0)!, Arg(1)!); return null!; }
+                            break;
+                        case 3:
+                            if (target is Func<object, object, object, object?> g3) return g3(Arg(0)!, Arg(1)!, Arg(2)!)!;
+                            if (target is Action<object, object, object> ga3) { ga3(Arg(0)!, Arg(1)!, Arg(2)!); return null!; }
+                            break;
+                        case 4:
+                            if (target is Func<object, object, object, object, object?> g4) return g4(Arg(0)!, Arg(1)!, Arg(2)!, Arg(3)!)!;
+                            if (target is Action<object, object, object, object> ga4) { ga4(Arg(0)!, Arg(1)!, Arg(2)!, Arg(3)!); return null!; }
+                            break;
+                        case 5:
+                            if (target is Func<object, object, object, object, object, object?> g5) return g5(Arg(0)!, Arg(1)!, Arg(2)!, Arg(3)!, Arg(4)!)!;
+                            if (target is Action<object, object, object, object, object> ga5) { ga5(Arg(0)!, Arg(1)!, Arg(2)!, Arg(3)!, Arg(4)!); return null!; }
+                            break;
+                    }
+                }
+            }
+
             // Build argument list matching delegate signature.
             // - If delegate includes scopes: first arg is scopes
             // - Missing JS args => null

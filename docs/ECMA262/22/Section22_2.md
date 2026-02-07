@@ -68,7 +68,7 @@
 | 22.2.5.3 | get RegExp [ %Symbol.species% ] | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp-%symbol.species%) |
 | 22.2.6 | Properties of the RegExp Prototype Object | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-regexp-prototype-object) |
 | 22.2.6.1 | RegExp.prototype.constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.constructor) |
-| 22.2.6.2 | RegExp.prototype.exec ( string ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.exec) |
+| 22.2.6.2 | RegExp.prototype.exec ( string ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.exec) |
 | 22.2.6.3 | get RegExp.prototype.dotAll | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll) |
 | 22.2.6.4 | get RegExp.prototype.flags | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.flags) |
 | 22.2.6.4.1 | RegExpHasFlag ( R , codeUnit ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexphasflag) |
@@ -98,7 +98,7 @@
 | 22.2.7.7 | GetMatchIndexPair ( S , match ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-getmatchindexpair) |
 | 22.2.7.8 | MakeMatchIndicesIndexPairArray ( S , indices , groupNames , hasGroups ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-makematchindicesindexpairarray) |
 | 22.2.8 | Properties of RegExp Instances | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-regexp-instances) |
-| 22.2.8.1 | lastIndex | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-lastindex) |
+| 22.2.8.1 | lastIndex | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-lastindex) |
 | 22.2.9 | RegExp String Iterator Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp-string-iterator-objects) |
 | 22.2.9.1 | CreateRegExpStringIterator ( R , S , global , fullUnicode ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-createregexpstringiterator) |
 | 22.2.9.2 | The %RegExpStringIteratorPrototype% Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-%regexpstringiteratorprototype%-object) |
@@ -109,6 +109,12 @@
 ## Support
 
 Feature-level support tracking with test script references.
+
+### 22.2.6.2 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.exec))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| RegExp.prototype.exec | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js) | Implemented in JavaScriptRuntime.RegExp.exec as a minimal subset. Supports returning an Array of captures and attaches .index and .input. Full RegExp exotic object semantics, sticky (/y), unicode modes, named groups, and @@exec overrides are not implemented. |
 
 ### 22.2.6.5 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.global))
 
@@ -133,4 +139,10 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | get RegExp.prototype.source | Supported with Limitations | [`IntrinsicCallables_RegExp_Prototype_Getters_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js) | Implemented in JavaScriptRuntime.RegExp using the original pattern text. Does not attempt to normalize/escape patterns exactly per spec. |
+
+### 22.2.8.1 ([tc39.es](https://tc39.es/ecma262/#sec-lastindex))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| RegExp instance lastIndex | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js) | Implemented in JavaScriptRuntime.RegExp as a numeric property. Currently participates in exec() only for /g (global) regexes; when no match is found lastIndex is reset to 0. |
 

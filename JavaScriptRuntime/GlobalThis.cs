@@ -36,6 +36,40 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, string> _stringFunctionValue = static (_, value) =>
             JavaScriptRuntime.DotNet2JSConversions.ToString(value);
 
+        // String.fromCharCode(...codeUnits)
+        private static readonly Func<object[], object?[]?, object?> _stringFromCharCodeValue = static (_, args) =>
+        {
+            if (args == null || args.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var chars = new char[args.Length];
+            for (int i = 0; i < args.Length; i++)
+            {
+                double d;
+                try
+                {
+                    d = JavaScriptRuntime.TypeUtilities.ToNumber(args[i]);
+                }
+                catch
+                {
+                    d = 0;
+                }
+
+                if (double.IsNaN(d) || double.IsInfinity(d))
+                {
+                    d = 0;
+                }
+
+                // JS: ToUint16
+                uint u16 = (uint)((int)global::System.Math.Truncate(d)) & 0xFFFFu;
+                chars[i] = (char)u16;
+            }
+
+            return new string(chars);
+        };
+
         private static readonly Func<object[], object?, double> _numberFunctionValue = static (_, value) =>
             JavaScriptRuntime.TypeUtilities.ToNumber(value);
 
@@ -128,6 +162,16 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = _errorPrototypeValue
+            });
+
+            // Provide String.fromCharCode for parsers/libraries.
+            PropertyDescriptorStore.DefineOrUpdate(_stringFunctionValue, "fromCharCode", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _stringFromCharCodeValue
             });
         }
 

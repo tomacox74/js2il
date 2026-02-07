@@ -15,7 +15,7 @@
 | 22.1.1 | The String Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string-constructor) |
 | 22.1.1.1 | String ( value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string-constructor-string-value) |
 | 22.1.2 | Properties of the String Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-string-constructor) |
-| 22.1.2.1 | String.fromCharCode ( ... codeUnits ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.fromcharcode) |
+| 22.1.2.1 | String.fromCharCode ( ... codeUnits ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.fromcharcode) |
 | 22.1.2.2 | String.fromCodePoint ( ... codePoints ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.fromcodepoint) |
 | 22.1.2.3 | String.prototype | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype) |
 | 22.1.2.4 | String.raw ( template , ... substitutions ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.raw) |
@@ -32,7 +32,7 @@
 | 22.1.3.10 | String.prototype.isWellFormed ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.iswellformed) |
 | 22.1.3.11 | String.prototype.lastIndexOf ( searchString [ , position ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.lastindexof) |
 | 22.1.3.12 | String.prototype.localeCompare ( that [ , reserved1 [ , reserved2 ] ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.localecompare) |
-| 22.1.3.13 | String.prototype.match ( regexp ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.match) |
+| 22.1.3.13 | String.prototype.match ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.match) |
 | 22.1.3.14 | String.prototype.matchAll ( regexp ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.matchall) |
 | 22.1.3.15 | String.prototype.normalize ( [ form ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.normalize) |
 | 22.1.3.16 | String.prototype.padEnd ( maxLength [ , fillString ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padend) |
@@ -48,7 +48,7 @@
 | 22.1.3.22 | String.prototype.slice ( start , end ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice) |
 | 22.1.3.23 | String.prototype.split ( separator , limit ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.split) |
 | 22.1.3.24 | String.prototype.startsWith ( searchString [ , position ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.startswith) |
-| 22.1.3.25 | String.prototype.substring ( start , end ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.substring) |
+| 22.1.3.25 | String.prototype.substring ( start , end ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.substring) |
 | 22.1.3.26 | String.prototype.toLocaleLowerCase ( [ reserved1 [ , reserved2 ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocalelowercase) |
 | 22.1.3.27 | String.prototype.toLocaleUpperCase ( [ reserved1 [ , reserved2 ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocaleuppercase) |
 | 22.1.3.28 | String.prototype.toLowerCase ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolowercase) |
@@ -72,6 +72,12 @@
 ## Support
 
 Feature-level support tracking with test script references.
+
+### 22.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-string.fromcharcode))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.fromCharCode | Supported with Limitations | [`Array_Slice_FromCharCode_Apply.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js) | Implemented in JavaScriptRuntime.GlobalThis by exposing a String.fromCharCode function. Supports ToNumber coercion and ToUint16 code-unit truncation. Does not aim to match all edge-case observable behaviors (e.g., exotic receivers, property attributes) beyond common library usage. |
 
 ### 22.1.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charcodeat))
 
@@ -97,6 +103,12 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | String.prototype.localeCompare (numeric compare) | Supported | [`String_LocaleCompare_Numeric.js`](../../../Js2IL.Tests/String/JavaScript/String_LocaleCompare_Numeric.js) | Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported. |
 
+### 22.1.3.13 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.match))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.match | Supported with Limitations | [`String_Match_NonGlobal.js`](../../../Js2IL.Tests/String/JavaScript/String_Match_NonGlobal.js)<br>[`String_Match_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_Match_Global.js) | Implemented via JavaScriptRuntime.String.Match with limited RegExp integration. For /g, returns an Array of full-match substrings (or null). For non-global, returns an exec-like Array with groups and sets .index/.input. Symbol.match and advanced RegExp behaviors are not implemented. |
+
 ### 22.1.3.19 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replace))
 
 | Feature name | Status | Test scripts | Notes |
@@ -114,6 +126,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | String.prototype.startsWith | Supported | [`String_StartsWith_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js) | Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed). |
+
+### 22.1.3.25 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.substring))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.substring | Supported | [`String_Substring.js`](../../../Js2IL.Tests/String/JavaScript/String_Substring.js) | Implemented in JavaScriptRuntime.String.Substring. Coerces arguments via ToNumber, clamps to [0, length], truncates toward zero, and swaps start/end when start > end. |
 
 ### 22.1.3.28 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolowercase))
 

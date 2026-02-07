@@ -35,6 +35,34 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Match_NonGlobal()
+        {
+            var testName = nameof(String_Match_NonGlobal);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_Match_Global()
+        {
+            var testName = nameof(String_Match_Global);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_RegExp_Exec_LastIndex_Global()
+        {
+            var testName = nameof(String_RegExp_Exec_LastIndex_Global);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_Substring()
+        {
+            var testName = nameof(String_Substring);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_Split_Basic()
         {
             var testName = nameof(String_Split_Basic);
