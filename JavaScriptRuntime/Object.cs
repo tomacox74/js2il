@@ -147,11 +147,25 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var keys = new HashSet<string>(StringComparer.Ordinal);
+            var keys = new List<string>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            static void AddKey(List<string> keys, HashSet<string> seen, string? key)
+            {
+                if (string.IsNullOrEmpty(key))
+                {
+                    return;
+                }
+
+                if (seen.Add(key))
+                {
+                    keys.Add(key);
+                }
+            }
 
             foreach (var k in PropertyDescriptorStore.GetOwnKeys(obj))
             {
-                keys.Add(k);
+                AddKey(keys, seen, k);
             }
 
             if (obj is System.Dynamic.ExpandoObject exp)
@@ -159,7 +173,7 @@ namespace JavaScriptRuntime
                 var dict = (IDictionary<string, object?>)exp;
                 foreach (var k in dict.Keys)
                 {
-                    keys.Add(k);
+                    AddKey(keys, seen, k);
                 }
             }
 
@@ -167,27 +181,35 @@ namespace JavaScriptRuntime
             {
                 foreach (var k in dictGeneric.Keys)
                 {
-                    keys.Add(k);
+                    AddKey(keys, seen, k);
                 }
             }
 
             if (obj is System.Collections.IDictionary dictObj)
             {
+                var convertedKeys = new List<string>();
                 foreach (var k in dictObj.Keys)
                 {
-                    keys.Add(DotNet2JSConversions.ToString(k));
+                    convertedKeys.Add(DotNet2JSConversions.ToString(k));
+                }
+
+                // IDictionary key ordering can be unstable; sort for determinism.
+                convertedKeys.Sort(StringComparer.Ordinal);
+                foreach (var k in convertedKeys)
+                {
+                    AddKey(keys, seen, k);
                 }
             }
 
             // Reflection fallback for host objects.
             var type = obj.GetType();
-            foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(p => p.Name, StringComparer.Ordinal))
             {
-                keys.Add(p.Name);
+                AddKey(keys, seen, p.Name);
             }
-            foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
+            foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(f => f.Name, StringComparer.Ordinal))
             {
-                keys.Add(f.Name);
+                AddKey(keys, seen, f.Name);
             }
 
             return new JavaScriptRuntime.Array(keys);

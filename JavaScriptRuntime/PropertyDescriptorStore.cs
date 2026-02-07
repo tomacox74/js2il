@@ -66,7 +66,10 @@ internal static class PropertyDescriptorStore
 
         if (_slots.TryGetValue(target, out var slot))
         {
-            return slot.Descriptors.Keys;
+            // Snapshot keys to avoid exposing a live view of the dictionary.
+            var keys = new string[slot.Descriptors.Count];
+            slot.Descriptors.Keys.CopyTo(keys, 0);
+            return keys;
         }
 
         return System.Array.Empty<string>();
