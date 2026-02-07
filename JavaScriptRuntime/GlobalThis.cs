@@ -53,6 +53,9 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
             JavaScriptRuntime.Object.Construct(value);
 
+        private static readonly Func<object[], object?, object> _objectGetOwnPropertyNamesValue = static (_, value) =>
+            JavaScriptRuntime.Object.getOwnPropertyNames(value!);
+
         // Placeholder Error constructor value.
         // Exposed so libraries can reference `Error` and access `Error.prototype`.
         // Calling it as a constructor/function is not implemented yet.
@@ -98,6 +101,72 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _objectPrototypeValue
             });
+
+            // Provide Object.getOwnPropertyNames
+            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "getOwnPropertyNames", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _objectGetOwnPropertyNamesValue
+            });
+
+            // Provide Object.prototype.hasOwnProperty for descriptor-heavy libraries.
+            // This is frequently used via: Object.prototype.hasOwnProperty.call(obj, prop).
+            if (_objectPrototypeValue is ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                dict["hasOwnProperty"] = (Func<object[], object?[], object?>)((scopes, args) =>
+                {
+                    var target = args != null && args.Length > 0 ? args[0] : null;
+                    var prop = args != null && args.Length > 1 ? args[1] : null;
+
+                    if (target is null || target is JsNull)
+                    {
+                        throw new TypeError("Cannot convert undefined or null to object");
+                    }
+
+                    var name = DotNet2JSConversions.ToString(prop);
+
+                    // Own-property check (minimal):
+                    // 1) Descriptor store (our primary object-model)
+                    // 2) Expando/Dictionary
+                    // 3) Reflection for host objects
+                    if (PropertyDescriptorStore.TryGetOwn(target, name, out var _descriptor))
+                    {
+                        return true;
+                    }
+
+                    if (target is ExpandoObject exp2)
+                    {
+                        var expDict = (IDictionary<string, object?>)exp2;
+                        return expDict.ContainsKey(name);
+                    }
+
+                    if (target is IDictionary<string, object?> dictGeneric)
+                    {
+                        return dictGeneric.ContainsKey(name);
+                    }
+
+                    if (target is IDictionary dictObj)
+                    {
+                        if (dictObj.Contains(name)) return true;
+                        foreach (var k in dictObj.Keys)
+                        {
+                            if (string.Equals(DotNet2JSConversions.ToString(k), name, StringComparison.Ordinal))
+                            {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+
+                    var t = target.GetType();
+                    return t.GetProperty(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.IgnoreCase) != null
+                        || t.GetField(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.IgnoreCase) != null;
+                });
+            }
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
             PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "prototype", new JsPropertyDescriptor

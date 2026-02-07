@@ -11,6 +11,53 @@ namespace JavaScriptRuntime
     public static class String
     {
         /// <summary>
+        /// Implements String.prototype.charCodeAt([index]).
+        /// Returns a UTF-16 code unit as a number, or NaN when out of range.
+        /// </summary>
+        public static object CharCodeAt(string input)
+        {
+            return CharCodeAt(input, null);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.charCodeAt(index).
+        /// </summary>
+        public static object CharCodeAt(string input, object? index)
+        {
+            input ??= string.Empty;
+
+            // JS default index is 0 when omitted/undefined/null.
+            var idx = index == null ? 0d : JavaScriptRuntime.TypeUtilities.ToNumber(index);
+
+            if (double.IsNaN(idx) || double.IsInfinity(idx))
+            {
+                return double.NaN;
+            }
+
+            // ToIntegerOrInfinity truncates toward zero.
+            idx = global::System.Math.Truncate(idx);
+
+            if (idx < 0 || idx >= input.Length)
+            {
+                return double.NaN;
+            }
+
+            return (double)input[(int)idx];
+        }
+
+        public static string ToLowerCase(string input)
+        {
+            input ??= string.Empty;
+            return input.ToLowerInvariant();
+        }
+
+        public static string ToUpperCase(string input)
+        {
+            input ??= string.Empty;
+            return input.ToUpperInvariant();
+        }
+
+        /// <summary>
         /// Implements a subset of String.prototype.startsWith(searchString[, position]).
         /// Uses ordinal comparison and basic ToIntegerOrInfinity coercion for position.
         /// </summary>

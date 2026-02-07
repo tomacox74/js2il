@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Globalization;
+using System.Runtime.ExceptionServices;
 
 namespace Js2IL.Runtime;
 
@@ -183,7 +184,8 @@ internal static class ExportMemberResolver
         }
         catch (TargetInvocationException tie) when (tie.InnerException != null)
         {
-            throw tie.InnerException;
+            ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
+            throw;
         }
     }
 
@@ -229,7 +231,8 @@ internal static class ExportMemberResolver
                 }
                 catch (TargetInvocationException tie) when (tie.InnerException != null)
                 {
-                    throw tie.InnerException;
+                    ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
+                    throw;
                 }
                 return true;
             }

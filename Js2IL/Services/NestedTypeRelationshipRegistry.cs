@@ -21,6 +21,23 @@ namespace Js2IL.Services
         {
             if (nested.IsNil) throw new ArgumentException("Nested type handle cannot be nil.", nameof(nested));
             if (enclosing.IsNil) throw new ArgumentException("Enclosing type handle cannot be nil.", nameof(enclosing));
+
+            // CoreCLR loader requirement: enclosing type must appear before nested type in the TypeDef table.
+            // When violated, the output assembly will throw BadImageFormatException on load.
+            var nestedRid = MetadataTokens.GetRowNumber(nested);
+            var enclosingRid = MetadataTokens.GetRowNumber(enclosing);
+            if (enclosingRid >= nestedRid)
+            {
+                throw new InvalidOperationException(
+                    $"Invalid nested type relationship: enclosing TypeDef must be declared before nested TypeDef. " +
+                    $"nested=0x0200{nestedRid:X4}, enclosing=0x0200{enclosingRid:X4}. " +
+                    "This would produce a BadImageFormatException at load time.");
+            }
+
+            if (nestedRid == enclosingRid)
+            {
+                throw new InvalidOperationException("Invalid nested type relationship: a type cannot enclose itself.");
+            }
             _relationships.Add((nested, enclosing));
         }
 

@@ -4,6 +4,7 @@ These samples demonstrate consuming **compiled** JavaScript modules as a .NET li
 
 - [samples/Hosting.Basic](Hosting.Basic/README.md): load a compiled module and call exports.
 - [samples/Hosting.Typed](Hosting.Typed/README.md): typed exports + constructors/instance handles.
+- [samples/Hosting.Domino](Hosting.Domino/README.md): compile and host a real npm package (@mixmark-io/domino).
 
 ## How samples work
 

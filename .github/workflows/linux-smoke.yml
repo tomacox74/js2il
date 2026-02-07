@@ -76,6 +76,15 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Build and run Hosting.Domino sample
+        run: |
+          set -euo pipefail
+          output=$(dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:JavaScriptRuntimePackageVersion="$TOOL_VERSION")
+          echo "Program output:"
+          echo "$output"
+          echo "$output" | grep -i "title=JS2IL Domino Sample"
+          echo "$output" | grep -i "links=2"
+
       - name: Build Jint Comparison Project
         run: |
           cd tests/performance/JintComparison

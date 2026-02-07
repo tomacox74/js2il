@@ -94,6 +94,14 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_FunctionDeclaration_Hoisting_BeforeUse()
+        {
+            // Function declarations must be hoisted/initialized before executable statements.
+            // Repro: `module.exports = greet; greet.answer = 42; function greet() {}`
+            return ExecutionTest(nameof(CommonJS_FunctionDeclaration_Hoisting_BeforeUse));
+        }
+
+        [Fact]
         public Task CommonJS_Module_Identity()
         {
             // Test module.id, module.filename, and module.path properties

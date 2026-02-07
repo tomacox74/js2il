@@ -273,8 +273,28 @@ public class EnvironmentLayoutBuilder
 
         if (!paramList.HasValue)
         {
-            // Best-effort fallback; stable ordering isn't guaranteed here.
-            result.AddRange(scope.Parameters.Where(p => !scope.DestructuredParameters.Contains(p)));
+            // Non-function scopes don't have an AST parameter list. This includes the module/global
+            // scope which gets CommonJS wrapper parameters injected.
+            //
+            // IMPORTANT: module parameters have a required ordering that must match the wrapper
+            // delegate signature: (exports, require, module, __filename, __dirname).
+            // Using HashSet iteration here can scramble indices and break require/module.exports.
+            foreach (var p in JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames)
+            {
+                if (scope.Parameters.Contains(p) && !scope.DestructuredParameters.Contains(p))
+                {
+                    result.Add(p);
+                }
+            }
+
+            // Any remaining parameters (unexpected for module scope) are appended best-effort.
+            foreach (var p in scope.Parameters)
+            {
+                if (!result.Contains(p) && !scope.DestructuredParameters.Contains(p))
+                {
+                    result.Add(p);
+                }
+            }
             return result;
         }
 

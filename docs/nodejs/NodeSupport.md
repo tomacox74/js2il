@@ -1,7 +1,7 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2026-01-16T21:16:04Z`
+Generated: `2026-02-06T20:20:15Z`
 
 
 ## Modules
@@ -166,7 +166,7 @@ Docs: [https://nodejs.org/api/modules.html#requireid](https://nodejs.org/api/mod
 Implementation:
 - `JavaScriptRuntime/CommonJS/Require.cs, JavaScriptRuntime/CommonJS/ModuleContext.cs, JavaScriptRuntime/CommonJS/ModuleName.cs, JavaScriptRuntime/CommonJS/Module.cs`
 Notes:
-Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require). Does not implement node_modules/package.json resolution.
+Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require). Does not implement node_modules/package.json resolution (future plan: use package.json main/exports and module-type detection to support npm packages directly).
 Tests:
 - `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_Basic` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
 - `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_NestedNameConflict` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)

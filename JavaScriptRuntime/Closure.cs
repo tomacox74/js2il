@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace JavaScriptRuntime
 {
@@ -110,11 +111,65 @@ namespace JavaScriptRuntime
             try
             {
                 // Delegate.DynamicInvoke returns boxed value types; null for void.
+                // NOTE: Some call sites may hand us an open-instance delegate (Target == null, Method.IsStatic == false).
+                // In that case, DynamicInvoke will interpret finalArgs[0] as the instance receiver.
+                // If it is null, DynamicInvoke throws ArgumentNullException("instance").
                 return target.DynamicInvoke(finalArgs)!;
+            }
+            catch (ArgumentNullException ane)
+            {
+                var method = target.Method;
+                var delegateType = target.GetType();
+                var openInstance = target.Target == null && !method.IsStatic;
+
+                if (Environment.GetEnvironmentVariable("JS2IL_CLOSURE_DIAG") == "1")
+                {
+                    global::System.Console.WriteLine("[closure] DynamicInvoke failed: null instance");
+                    global::System.Console.WriteLine($"[closure] DelegateType: {delegateType.FullName}");
+                    global::System.Console.WriteLine($"[closure] Method: {method.DeclaringType?.FullName}::{method.Name} (IsStatic={method.IsStatic})");
+                    global::System.Console.WriteLine($"[closure] Target: {(target.Target == null ? "<null>" : target.Target.GetType().FullName)}");
+                    global::System.Console.WriteLine($"[closure] OpenInstance: {openInstance}");
+                    global::System.Console.WriteLine($"[closure] ParamTypes: {string.Join(", ", parameters.Select(p => p.ParameterType.FullName))}");
+                    global::System.Console.WriteLine($"[closure] JS args length: {args.Length}");
+                    global::System.Console.WriteLine($"[closure] CurrentThis: {(RuntimeServices.GetCurrentThis() == null ? "<null>" : RuntimeServices.GetCurrentThis()!.GetType().FullName)}");
+                    global::System.Console.WriteLine($"[closure] ArgumentNullException.ParamName: {ane.ParamName ?? "<null>"}");
+                }
+
+                // Best-effort recovery for open-instance delegates: if the delegate has NO scopes parameter and
+                // appears to be expecting an instance as its first parameter, try to use the current JS `this`.
+                if (openInstance && !hasScopes && parameters.Length > 0)
+                {
+                    var thisArg = RuntimeServices.GetCurrentThis();
+                    if (thisArg != null)
+                    {
+                        finalArgs[0] = thisArg;
+                        return target.DynamicInvoke(finalArgs)!;
+                    }
+                }
+
+                throw;
             }
             catch (TargetInvocationException tie) when (tie.InnerException != null)
             {
-                throw tie.InnerException;
+                if (Environment.GetEnvironmentVariable("JS2IL_CLOSURE_DIAG") == "1")
+                {
+                    var method = target.Method;
+                    var delegateType = target.GetType();
+
+                    global::System.Console.WriteLine("[closure] DynamicInvoke threw TargetInvocationException");
+                    global::System.Console.WriteLine($"[closure] DelegateType: {delegateType.FullName}");
+                    global::System.Console.WriteLine($"[closure] Method: {method.DeclaringType?.FullName}::{method.Name} (IsStatic={method.IsStatic})");
+                    global::System.Console.WriteLine($"[closure] Target: {(target.Target == null ? "<null>" : target.Target.GetType().FullName)}");
+                    global::System.Console.WriteLine($"[closure] Inner: {tie.InnerException.GetType().FullName}: {tie.InnerException.Message}");
+
+                    // Summarize args (avoid huge dumps)
+                    string ArgSummary(object? o) => o == null ? "<null>" : (o.GetType().FullName ?? o.GetType().Name);
+                    global::System.Console.WriteLine($"[closure] FinalArgs: {string.Join(", ", finalArgs.Select(ArgSummary))}");
+                }
+
+                // Preserve original stack trace from the invoked method.
+                ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
+                throw; // unreachable
             }
         }
 

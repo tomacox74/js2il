@@ -60,6 +60,18 @@ internal static class PropertyDescriptorStore
         slot.Descriptors[key] = descriptor;
     }
 
+    public static IEnumerable<string> GetOwnKeys(object target)
+    {
+        if (target == null) throw new ArgumentNullException(nameof(target));
+
+        if (_slots.TryGetValue(target, out var slot))
+        {
+            return slot.Descriptors.Keys;
+        }
+
+        return System.Array.Empty<string>();
+    }
+
     public static bool Delete(object target, string key)
     {
         if (target == null) throw new ArgumentNullException(nameof(target));

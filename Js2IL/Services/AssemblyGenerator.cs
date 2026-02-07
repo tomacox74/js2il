@@ -518,6 +518,10 @@ namespace Js2IL.Services
             // assembly can briefly be locked by another process. Retry a few times to avoid flaky
             // failures while still surfacing a persistent lock.
             var peBytes = peImage.ToArray();
+
+            // Fail-fast: validate metadata invariants that would otherwise surface later as
+            // BadImageFormatException during Assembly.Load.
+            ClrMetadataConsistencyValidator.ValidateOrThrow(peBytes, label: name);
             const int maxAttempts = 20;
             for (int attempt = 1; attempt <= maxAttempts; attempt++)
             {
