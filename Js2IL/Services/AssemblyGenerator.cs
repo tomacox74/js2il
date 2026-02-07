@@ -528,36 +528,41 @@ namespace Js2IL.Services
             string tempDll = assemblyDll + ".tmp_" + Guid.NewGuid().ToString("N");
             File.WriteAllBytes(tempDll, peBytes);
 
-            const int maxReplaceWaitMs = 60_000;
-            long startTick = Environment.TickCount64;
-            int attempt = 0;
-            while (true)
-            {
-                attempt++;
-                try
-                {
-                    File.Move(tempDll, assemblyDll, overwrite: true);
-                    break;
-                }
-                catch (IOException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
-                {
-                    int delayMs = Math.Min(1000, 50 * attempt);
-                    Thread.Sleep(delayMs);
-                }
-                catch (UnauthorizedAccessException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
-                {
-                    int delayMs = Math.Min(1000, 50 * attempt);
-                    Thread.Sleep(delayMs);
-                }
-            }
-
             try
             {
-                if (File.Exists(tempDll)) File.Delete(tempDll);
+                const int maxReplaceWaitMs = 60_000;
+                long startTick = Environment.TickCount64;
+                int attempt = 0;
+                while (true)
+                {
+                    attempt++;
+                    try
+                    {
+                        File.Move(tempDll, assemblyDll, overwrite: true);
+                        break;
+                    }
+                    catch (IOException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
+                    {
+                        int delayMs = Math.Min(1000, 50 * attempt);
+                        Thread.Sleep(delayMs);
+                    }
+                    catch (UnauthorizedAccessException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
+                    {
+                        int delayMs = Math.Min(1000, 50 * attempt);
+                        Thread.Sleep(delayMs);
+                    }
+                }
             }
-            catch (IOException)
+            finally
             {
-                // Best-effort cleanup; temp files are safe to leave behind.
+                try
+                {
+                    if (File.Exists(tempDll)) File.Delete(tempDll);
+                }
+                catch (IOException)
+                {
+                    // Best-effort cleanup; temp files are safe to leave behind.
+                }
             }
 
             RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, typeof(object).Assembly.GetName());

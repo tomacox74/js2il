@@ -11,8 +11,8 @@
 
     <ModuleName>index</ModuleName>
     <ModuleProj>$(MSBuildProjectDirectory)\..\compiler\HostedDomino.proj</ModuleProj>
-    <ModuleOutputDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\$(BaseIntermediateOutputPath)HostedDomino'))</ModuleOutputDir>
-    <ModuleDll>$(ModuleOutputDir)\$(ModuleName).dll</ModuleDll>
+    <ModuleOutputDir>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','$(BaseIntermediateOutputPath)','HostedDomino'))))</ModuleOutputDir>
+    <ModuleDll>$([System.IO.Path]::Combine('$(ModuleOutputDir)','$(ModuleName).dll'))</ModuleDll>
 
     <!-- Prefer global js2il by default when building the sample from this repo checkout. -->
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == ''">false</UseLocalJs2ILProject>

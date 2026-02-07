@@ -93,5 +93,8 @@ namespace Js2IL.Tests.Array
 
         [Fact]
         public Task Array_Canonical_Index_StringKeys() { var testName = nameof(Array_Canonical_Index_StringKeys); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_Length_Set_Fractional_ThrowsRangeError() { var testName = nameof(Array_Length_Set_Fractional_ThrowsRangeError); return GenerateTest(testName); }
     }
 }

@@ -63,7 +63,7 @@ namespace JavaScriptRuntime
         // Returns: Array of matches (group 0..n) or null.
         public object exec(object? input)
         {
-            var s = DotNet2JSConversions.ToString(input);
+            var s = DotNet2JSConversions.ToString(input) ?? string.Empty;
 
             int startAt = 0;
             if (_global)
@@ -76,7 +76,13 @@ namespace JavaScriptRuntime
                 else
                 {
                     startAt = (int)lastIndex;
-                    if (startAt > s.Length) startAt = s.Length;
+                    if (startAt > s.Length)
+                    {
+                        // Per RegExpBuiltinExec / lastIndex semantics, a global exec with lastIndex
+                        // beyond string length fails and resets lastIndex to 0.
+                        lastIndex = 0;
+                        return JsNull.Null;
+                    }
                 }
             }
 
@@ -93,7 +99,14 @@ namespace JavaScriptRuntime
 
             if (_global)
             {
-                lastIndex = match.Index + match.Length;
+                // Advance lastIndex. For zero-length matches we must still advance to avoid
+                // infinite loops in user code like: while (re.exec(s)) { }
+                int nextIndex = match.Index + match.Length;
+                if (match.Length == 0)
+                {
+                    nextIndex = match.Index + 1;
+                }
+                lastIndex = nextIndex;
             }
 
             var result = new JavaScriptRuntime.Array(match.Groups.Count);

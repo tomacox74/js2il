@@ -56,6 +56,13 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_RegExp_Exec_LastIndex_EmptyMatch_Global()
+        {
+            var testName = nameof(String_RegExp_Exec_LastIndex_EmptyMatch_Global);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_Substring()
         {
             var testName = nameof(String_Substring);

@@ -52,6 +52,12 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_RegExp_Exec_LastIndex_EmptyMatch_Global()
+        {
+            return ExecutionTest(nameof(String_RegExp_Exec_LastIndex_EmptyMatch_Global));
+        }
+
+        [Fact]
         public Task String_Substring()
         {
             return ExecutionTest(nameof(String_Substring));

@@ -258,7 +258,14 @@ namespace JavaScriptRuntime
                     throw new RangeError("Invalid array length");
                 }
 
-                d = global::System.Math.Truncate(d);
+                // Per ECMAScript, a non-integer length must throw RangeError.
+                double truncated = global::System.Math.Truncate(d);
+                if (truncated != d)
+                {
+                    throw new RangeError("Invalid array length");
+                }
+
+                d = truncated;
                 if (d > int.MaxValue)
                 {
                     throw new RangeError("Invalid array length");

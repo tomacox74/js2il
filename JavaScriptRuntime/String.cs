@@ -100,6 +100,7 @@ namespace JavaScriptRuntime
 
             while (true)
             {
+                double lastIndexBefore = re.lastIndex;
                 var exec = re.exec(input);
                 if (exec is JsNull)
                 {
@@ -112,9 +113,11 @@ namespace JavaScriptRuntime
                     result.Add(full);
 
                     // Prevent infinite loops on empty matches.
-                    if (full is string s && s.Length == 0)
+                    // RegExp.exec should advance lastIndex for empty matches, but keep a guard
+                    // in case of future behavior differences.
+                    if (full is string s && s.Length == 0 && re.lastIndex == lastIndexBefore)
                     {
-                        re.lastIndex = re.lastIndex + 1;
+                        re.lastIndex = lastIndexBefore + 1;
                     }
                 }
                 else

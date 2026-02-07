@@ -674,13 +674,13 @@ namespace JavaScriptRuntime
                 case double dd:
                     if (double.IsNaN(dd) || double.IsInfinity(dd)) return false;
                     if (dd < 0 || dd > int.MaxValue) return false;
-                    if (dd != global::System.Math.Truncate(dd)) return false;
+                    if (!double.IsInteger(dd)) return false;
                     intIndex = (int)dd;
                     return true;
                 case float ff:
                     if (float.IsNaN(ff) || float.IsInfinity(ff)) return false;
                     if (ff < 0 || ff > int.MaxValue) return false;
-                    if (ff != global::System.MathF.Truncate(ff)) return false;
+                    if (!float.IsInteger(ff)) return false;
                     intIndex = (int)ff;
                     return true;
                 case string s:
