@@ -16,6 +16,8 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         _runtime = runtime;
     }
 
+    internal object UnwrapExports() => _runtime.Exports ?? throw new InvalidOperationException("Runtime exports are not available.");
+
     public void Dispose() => _runtime.Dispose();
 
     /// <summary>

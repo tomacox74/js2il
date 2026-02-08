@@ -20,6 +20,16 @@ internal class JsHandleProxy : DispatchProxy
         _target = target;
     }
 
+    internal object UnwrapTarget()
+    {
+        if (Volatile.Read(ref _disposed) != 0)
+        {
+            throw new ObjectDisposedException(nameof(JsHandleProxy));
+        }
+
+        return _target ?? throw new ObjectDisposedException(nameof(JsHandleProxy));
+    }
+
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
     {
         if (targetMethod == null)
@@ -126,6 +136,16 @@ internal class JsConstructorProxy : DispatchProxy
 
         _runtime = runtime;
         _constructor = constructor;
+    }
+
+    internal object UnwrapConstructor()
+    {
+        if (Volatile.Read(ref _disposed) != 0)
+        {
+            throw new ObjectDisposedException(nameof(JsConstructorProxy));
+        }
+
+        return _constructor ?? throw new ObjectDisposedException(nameof(JsConstructorProxy));
     }
 
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)

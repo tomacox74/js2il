@@ -61,6 +61,18 @@ internal static class ExportMemberResolver
             return null;
         }
 
+        // If the host passes values that were previously returned via the hosting layer,
+        // unwrap the proxy back to the underlying JS value before invoking into the runtime.
+        // This avoids passing proxy objects through JS APIs (which typically results in missing members).
+        arg = arg switch
+        {
+            JsDynamicValueProxy proxy => proxy.Unwrap(),
+            JsDynamicExports exports => exports.UnwrapExports(),
+            JsHandleProxy handleProxy => handleProxy.UnwrapTarget(),
+            JsConstructorProxy ctorProxy => ctorProxy.UnwrapConstructor(),
+            _ => arg,
+        };
+
         // JS numbers are represented as System.Double throughout the runtime.
         // Normalize common CLR numeric primitives to double so arithmetic behaves as expected.
         return arg switch

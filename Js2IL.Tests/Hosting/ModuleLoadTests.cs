@@ -73,7 +73,20 @@ public class ModuleLoadTests
 
         dynamic win = exports.getWindow();
         Assert.Equal("Hello", (string)win.document.title);
+        Assert.Equal("Hello", (string)exports.getTitle(win));
         Assert.Equal("Hello", (string)exports.getTitleViaHost());
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Dynamic_AllowsInvokingReturnedFunctionValues()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("functionReturn", "functionReturn.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "functionReturn");
+        dynamic exports = exportsObj;
+
+        dynamic inc = exports.getIncrementer();
+        Assert.Equal(2.0, (double)inc(1));
     }
 
     [Fact]

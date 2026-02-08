@@ -407,6 +407,14 @@ namespace JavaScriptRuntime
                         {
                             return ctor.Invoke(invokeArgs);
                         }
+                        catch (ArgumentException)
+                        {
+                            continue;
+                        }
+                        catch (TargetParameterCountException)
+                        {
+                            continue;
+                        }
                         catch (TargetInvocationException tie) when (tie.InnerException != null)
                         {
                             throw tie.InnerException;

@@ -12,3 +12,7 @@ exports.getTitleViaHost = function () {
   // Useful for sanity: this should work in-script too.
   return exports.getWindow().document.title;
 };
+
+exports.getTitle = function (win) {
+  return win.document.title;
+};

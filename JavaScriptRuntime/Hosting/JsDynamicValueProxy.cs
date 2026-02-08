@@ -53,14 +53,12 @@ internal sealed class JsDynamicValueProxy : DynamicObject
             return value;
         }
 
-        // Leave delegates alone; hosting has separate call paths for exports.
-        if (value is Delegate)
-        {
-            return value;
-        }
-
+        // Wrap everything else (including delegates) so dynamic invocation and member access
+        // are marshalled to the runtime thread and use JS semantics.
         return new JsDynamicValueProxy(runtime, value);
     }
+
+    internal object Unwrap() => _target;
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
@@ -82,7 +80,8 @@ internal sealed class JsDynamicValueProxy : DynamicObject
     {
         try
         {
-            _ = _runtime.Invoke(() => JavaScriptRuntime.Object.SetItem(_target, binder.Name, value));
+            var unwrapped = NormalizeArg(value);
+            _ = _runtime.Invoke(() => JavaScriptRuntime.Object.SetItem(_target, binder.Name, unwrapped));
             return true;
         }
         catch (Exception ex)
@@ -93,12 +92,35 @@ internal sealed class JsDynamicValueProxy : DynamicObject
         }
     }
 
-    public override bool TryInvokeMember(InvokeMemberBinder binder, object?[]? args, out object? result)
+    public override bool TryInvoke(InvokeBinder binder, object?[]? args, out object? result)
     {
-        var normalizedArgs = NormalizeArgs(args);
-
         try
         {
+            var normalizedArgs = NormalizeArgs(args);
+
+            if (_target is not Delegate del)
+            {
+                result = null;
+                return false;
+            }
+
+            result = _runtime.Invoke(() => JavaScriptRuntime.Function.Call(del, thisArg: null, normalizedArgs));
+            result = Wrap(_runtime, result);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: "<invoke>", contractType: null);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
+        }
+    }
+
+    public override bool TryInvokeMember(InvokeMemberBinder binder, object?[]? args, out object? result)
+    {
+        try
+        {
+            var normalizedArgs = NormalizeArgs(args);
             result = _runtime.Invoke(() => JavaScriptRuntime.Object.CallMember(_target, binder.Name, normalizedArgs));
             result = Wrap(_runtime, result);
             return true;
@@ -132,6 +154,25 @@ internal sealed class JsDynamicValueProxy : DynamicObject
         if (arg is null)
         {
             return null;
+        }
+
+        // If the caller passes values previously returned by the hosting layer, unwrap them
+        // back to the underlying JS value so the runtime doesn't see the proxy object.
+        if (arg is JsDynamicValueProxy proxy)
+        {
+            arg = proxy.Unwrap();
+        }
+        else if (arg is JsDynamicExports exports)
+        {
+            arg = exports.UnwrapExports();
+        }
+        else if (arg is JsHandleProxy handleProxy)
+        {
+            arg = handleProxy.UnwrapTarget();
+        }
+        else if (arg is JsConstructorProxy ctorProxy)
+        {
+            arg = ctorProxy.UnwrapConstructor();
         }
 
         // JS numbers are represented as System.Double throughout the runtime.
