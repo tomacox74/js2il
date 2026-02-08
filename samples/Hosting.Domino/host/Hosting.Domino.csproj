@@ -14,18 +14,21 @@
     <ModuleOutputDir>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','$(BaseIntermediateOutputPath)','HostedDomino'))))</ModuleOutputDir>
     <ModuleDll>$([System.IO.Path]::Combine('$(ModuleOutputDir)','$(ModuleName).dll'))</ModuleDll>
 
-    <!-- Prefer global js2il by default when building the sample from this repo checkout. -->
-    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == ''">false</UseLocalJs2ILProject>
-
     <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\..\'))</RepoRoot>
     <LocalJavaScriptRuntimeProject>$(RepoRoot)JavaScriptRuntime\JavaScriptRuntime.csproj</LocalJavaScriptRuntimeProject>
+
+    <!-- In a repo checkout, prefer local runtime/compiler; allow opting out via UseLocalJs2ILProject=false. -->
+    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJavaScriptRuntimeProject)')">true</UseLocalJs2ILProject>
+    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And !Exists('$(LocalJavaScriptRuntimeProject)')">false</UseLocalJs2ILProject>
+
+    <UseLocalJs2ILProjectLower>$([System.String]::Copy('$(UseLocalJs2ILProject)').ToLowerInvariant())</UseLocalJs2ILProjectLower>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="$(LocalJavaScriptRuntimeProject)"
-                      Condition="'$(UseLocalJs2ILProject)' == 'true' And Exists('$(LocalJavaScriptRuntimeProject)')" />
+                      Condition="'$(UseLocalJs2ILProjectLower)' == 'true' And Exists('$(LocalJavaScriptRuntimeProject)')" />
     <PackageReference Include="JavaScriptRuntime" Version="$(JavaScriptRuntimePackageVersion)"
-                      Condition="'$(UseLocalJs2ILProject)' != 'true' Or !Exists('$(LocalJavaScriptRuntimeProject)')" />
+                      Condition="'$(UseLocalJs2ILProjectLower)' != 'true' Or !Exists('$(LocalJavaScriptRuntimeProject)')" />
   </ItemGroup>
 
   <ItemGroup>

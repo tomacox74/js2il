@@ -44,7 +44,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Constructing with class constructors (new) and constructor return override | Supported with Limitations | [`Classes_DeclareEmptyClass.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`Classes_Constructor_ReturnObjectOverridesThis.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js)<br>[`CommonJS_Export_ClassWithConstructor.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_Export_ClassWithConstructor.js) | Supports constructor calls for supported class subset. newTarget/super/inheritance and many exotic construction behaviors are not implemented. |
+| Constructing with class constructors (new) and constructor return override | Supported with Limitations | [`Classes_DeclareEmptyClass.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`Classes_Constructor_ReturnObjectOverridesThis.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js)<br>[`CommonJS_Export_ClassWithConstructor.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_Export_ClassWithConstructor.js)<br>[`ctorPadding.js`](../../../Js2IL.Tests/Hosting/JavaScript/ctorPadding.js) | Supports constructor calls for supported class subset, including dynamic-new-on-value patterns where the constructor is held in a variable. Missing arguments are permitted and are treated as undefined/null during constructor activation. newTarget/super/inheritance and many exotic construction behaviors are not implemented. |
 
 ### 10.2.11 ([tc39.es](https://tc39.es/ecma262/#sec-functiondeclarationinstantiation))
 

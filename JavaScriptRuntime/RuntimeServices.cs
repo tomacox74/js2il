@@ -48,6 +48,15 @@ public class RuntimeServices
         return new Array(args);
     }
 
+    /// <summary>
+    /// Creates the backing object for a JavaScript object literal.
+    /// Kept in the runtime so generated IL can avoid directly referencing BCL dynamic types.
+    /// </summary>
+    public static object CreateObjectLiteral()
+    {
+        return new System.Dynamic.ExpandoObject();
+    }
+
     public static ServiceContainer BuildServiceProvider()
     {
         var container = new ServiceContainer();

@@ -571,24 +571,27 @@ internal sealed partial class LIRToILCompiler
                 break;
             case LIRNewJsObject newJsObject:
                 {
-                    // Emit inline ExpandoObject construction
-                    var expandoCtor = _memberRefRegistry.GetOrAddConstructor(
-                        typeof(System.Dynamic.ExpandoObject),
+                    // Emit inline object-literal construction via runtime helper
+                    var createObjectLiteral = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.CreateObjectLiteral),
                         parameterTypes: Type.EmptyTypes);
-                    ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(expandoCtor);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(createObjectLiteral);
 
-                    // For each property: dup, ldstr key, load value, callvirt IDictionary.set_Item
+                    // For each property: dup, ldstr key, load value, call Object.SetItem(obj, key, value), pop
                     var setItemMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(System.Collections.Generic.IDictionary<string, object>),
-                        "set_Item");
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.SetItem),
+                        parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
                     foreach (var prop in newJsObject.Properties)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
                         ilEncoder.Ldstr(_metadataBuilder, prop.Key);
-                        EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        EmitLoadTempAsObject(prop.Value, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
+                        ilEncoder.OpCode(ILOpCode.Pop);
                     }
                     // Object reference stays on stack
                 }

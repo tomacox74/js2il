@@ -29,7 +29,8 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         try
         {
-            return _runtime.Invoke(() => ExportMemberResolver.GetExportMember(_runtime.Exports, name));
+            var value = _runtime.Invoke(() => ExportMemberResolver.GetExportMember(_runtime.Exports, name));
+            return JsDynamicValueProxy.Wrap(_runtime, value);
         }
         catch (Exception ex)
         {
@@ -44,7 +45,7 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         try
         {
-            return _runtime.Invoke(() =>
+            var value = _runtime.Invoke(() =>
             {
                 var callable = ExportMemberResolver.GetExportMember(_runtime.Exports, name);
                 if (callable is not Delegate d)
@@ -54,6 +55,7 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
 
                 return ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
             });
+            return JsDynamicValueProxy.Wrap(_runtime, value);
         }
         catch (Exception ex)
         {
@@ -68,6 +70,7 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
         try
         {
             result = _runtime.Invoke(() => ExportMemberResolver.GetExportMember(_runtime.Exports, binder.Name));
+            result = JsDynamicValueProxy.Wrap(_runtime, result);
             return true;
         }
         catch (MissingMemberException)
@@ -97,6 +100,7 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
 
                 return ExportMemberResolver.InvokeJsDelegate(d, args ?? Array.Empty<object?>());
             });
+            result = JsDynamicValueProxy.Wrap(_runtime, result);
             return true;
         }
         catch (MissingMemberException)

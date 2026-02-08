@@ -8,11 +8,14 @@
 
     <OutputDir Condition="'$(OutputDir)' == ''">$(MSBuildThisFileDirectory)out</OutputDir>
 
-    <!-- Prefer the global js2il tool by default (important for release smoke tests). -->
-    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == ''">false</UseLocalJs2ILProject>
-
     <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\'))</RepoRoot>
     <LocalJs2ILProject>$(RepoRoot)Js2IL\Js2IL.csproj</LocalJs2ILProject>
+
+    <!-- In a repo checkout, prefer the local compiler; allow opting out via UseLocalJs2ILProject=false. -->
+    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJs2ILProject)')">true</UseLocalJs2ILProject>
+    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And !Exists('$(LocalJs2ILProject)')">false</UseLocalJs2ILProject>
+
+    <UseLocalJs2ILProjectLower>$([System.String]::Copy('$(UseLocalJs2ILProject)').ToLowerInvariant())</UseLocalJs2ILProjectLower>
   </PropertyGroup>
 
   <Target Name="NpmRestore">
@@ -22,13 +25,13 @@
   <Target Name="Build" DependsOnTargets="NpmRestore">
     <MakeDir Directories="$(OutputDir)" />
 
-    <Error Condition="'$(UseLocalJs2ILProject)' == 'true' And !Exists('$(LocalJs2ILProject)')"
+    <Error Condition="'$(UseLocalJs2ILProjectLower)' == 'true' And !Exists('$(LocalJs2ILProject)')"
          Text="UseLocalJs2ILProject=true but local project not found: $(LocalJs2ILProject)" />
 
-    <Exec Condition="'$(UseLocalJs2ILProject)' == 'true'"
+    <Exec Condition="'$(UseLocalJs2ILProjectLower)' == 'true'"
         Command="dotnet run --project &quot;$(LocalJs2ILProject)&quot; -c Release -- &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot; --strictMode Ignore" />
 
-    <Exec Condition="'$(UseLocalJs2ILProject)' != 'true'"
+    <Exec Condition="'$(UseLocalJs2ILProjectLower)' != 'true'"
         Command="js2il &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot; --strictMode Ignore" />
   </Target>
 

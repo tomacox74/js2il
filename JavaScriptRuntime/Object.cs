@@ -382,6 +382,39 @@ namespace JavaScriptRuntime
                 {
                     return Activator.CreateInstance(type, callArgs);
                 }
+                catch (MissingMethodException)
+                {
+                    // JS semantics allow missing arguments; treat them as null/undefined.
+                    // Reflection activation does not pad arguments, so fall back to selecting a
+                    // public instance ctor and padding missing args with null.
+                    var ctors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
+
+                    foreach (var ctor in ctors.OrderBy(c => c.GetParameters().Length))
+                    {
+                        var parameters = ctor.GetParameters();
+                        if (callArgs.Length > parameters.Length)
+                        {
+                            continue;
+                        }
+
+                        var invokeArgs = new object?[parameters.Length];
+                        for (var i = 0; i < invokeArgs.Length; i++)
+                        {
+                            invokeArgs[i] = i < callArgs.Length ? callArgs[i] : null;
+                        }
+
+                        try
+                        {
+                            return ctor.Invoke(invokeArgs);
+                        }
+                        catch (TargetInvocationException tie) when (tie.InnerException != null)
+                        {
+                            throw tie.InnerException;
+                        }
+                    }
+
+                    throw;
+                }
                 catch (TargetInvocationException tie) when (tie.InnerException != null)
                 {
                     throw tie.InnerException;
