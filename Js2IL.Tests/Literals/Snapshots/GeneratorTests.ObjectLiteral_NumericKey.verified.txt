@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20be
+			// Method begins at RVA 0x20c0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 98 (0x62)
+		// Code size: 100 (0x64)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_NumericKey/Scope,
@@ -49,30 +49,32 @@
 
 		IL_0000: newobj instance void Modules.ObjectLiteral_NumericKey/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "10"
 		IL_0011: ldc.r8 1
 		IL_001a: box [System.Runtime]System.Double
-		IL_001f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0024: dup
-		IL_0025: ldstr "20"
-		IL_002a: ldc.r8 2
-		IL_0033: box [System.Runtime]System.Double
-		IL_0038: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_003d: stloc.1
-		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0043: ldc.i4.1
-		IL_0044: newarr [System.Runtime]System.Object
-		IL_0049: dup
-		IL_004a: ldc.i4.0
-		IL_004b: ldloc.1
-		IL_004c: ldc.r8 10
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_005a: stelem.ref
-		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0060: pop
-		IL_0061: ret
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0024: pop
+		IL_0025: dup
+		IL_0026: ldstr "20"
+		IL_002b: ldc.r8 2
+		IL_0034: box [System.Runtime]System.Double
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_003e: pop
+		IL_003f: stloc.1
+		IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0045: ldc.i4.1
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldloc.1
+		IL_004e: ldc.r8 10
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_005c: stelem.ref
+		IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0062: pop
+		IL_0063: ret
 	} // end of method ObjectLiteral_NumericKey::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_NumericKey
@@ -84,7 +86,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c7
+		// Method begins at RVA 0x20c9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

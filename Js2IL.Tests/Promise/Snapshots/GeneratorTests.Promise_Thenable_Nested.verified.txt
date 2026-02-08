@@ -252,7 +252,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 178 (0xb2)
+		// Code size: 180 (0xb4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Thenable_Nested/Scope,
@@ -289,49 +289,51 @@
 		IL_0037: stelem.ref
 		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_003d: stloc.2
-		IL_003e: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0043: dup
 		IL_0044: ldstr "then"
 		IL_0049: ldloc.1
-		IL_004a: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_004f: stloc.s 4
-		IL_0051: ldloc.0
-		IL_0052: ldloc.s 4
-		IL_0054: stfld object Modules.Promise_Thenable_Nested/Scope::innerThenable
-		IL_0059: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_005e: dup
-		IL_005f: ldstr "then"
-		IL_0064: ldloc.2
-		IL_0065: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_006a: stloc.3
-		IL_006b: ldloc.3
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_0071: stloc.s 5
-		IL_0073: ldnull
-		IL_0074: ldftn object Modules.Promise_Thenable_Nested/ArrowFunction_L15C32::__js_call__(object[], object)
-		IL_007a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_007f: ldc.i4.1
-		IL_0080: newarr [System.Runtime]System.Object
-		IL_0085: dup
-		IL_0086: ldc.i4.0
-		IL_0087: ldloc.0
-		IL_0088: stelem.ref
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0093: stloc.s 6
-		IL_0095: ldc.i4.1
-		IL_0096: newarr [System.Runtime]System.Object
-		IL_009b: dup
-		IL_009c: ldc.i4.0
-		IL_009d: ldloc.s 6
-		IL_009f: stelem.ref
-		IL_00a0: stloc.s 7
-		IL_00a2: ldloc.s 5
-		IL_00a4: ldstr "then"
-		IL_00a9: ldloc.s 7
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00b0: pop
-		IL_00b1: ret
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_004f: pop
+		IL_0050: stloc.s 4
+		IL_0052: ldloc.0
+		IL_0053: ldloc.s 4
+		IL_0055: stfld object Modules.Promise_Thenable_Nested/Scope::innerThenable
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_005f: dup
+		IL_0060: ldstr "then"
+		IL_0065: ldloc.2
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_006b: pop
+		IL_006c: stloc.3
+		IL_006d: ldloc.3
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_0073: stloc.s 5
+		IL_0075: ldnull
+		IL_0076: ldftn object Modules.Promise_Thenable_Nested/ArrowFunction_L15C32::__js_call__(object[], object)
+		IL_007c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0081: ldc.i4.1
+		IL_0082: newarr [System.Runtime]System.Object
+		IL_0087: dup
+		IL_0088: ldc.i4.0
+		IL_0089: ldloc.0
+		IL_008a: stelem.ref
+		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0095: stloc.s 6
+		IL_0097: ldc.i4.1
+		IL_0098: newarr [System.Runtime]System.Object
+		IL_009d: dup
+		IL_009e: ldc.i4.0
+		IL_009f: ldloc.s 6
+		IL_00a1: stelem.ref
+		IL_00a2: stloc.s 7
+		IL_00a4: ldloc.s 5
+		IL_00a6: ldstr "then"
+		IL_00ab: ldloc.s 7
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00b2: pop
+		IL_00b3: ret
 	} // end of method Promise_Thenable_Nested::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_Nested

@@ -115,7 +115,7 @@
 		{
 			// Method begins at RVA 0x2158
 			// Header size: 12
-			// Code size: 67 (0x43)
+			// Code size: 68 (0x44)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_ClosureEscapesScope_ObjectLiteralProperty/createCalculator/Scope,
@@ -145,14 +145,15 @@
 			IL_0028: stelem.ref
 			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 			IL_002e: stloc.1
-			IL_002f: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_0034: dup
 			IL_0035: ldstr "multiply"
 			IL_003a: ldloc.1
-			IL_003b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-			IL_0040: stloc.2
-			IL_0041: ldloc.2
-			IL_0042: ret
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_0040: pop
+			IL_0041: stloc.2
+			IL_0042: ldloc.2
+			IL_0043: ret
 		} // end of method createCalculator::__js_call__
 
 	} // end of class createCalculator

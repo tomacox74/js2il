@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2128
+			// Method begins at RVA 0x2129
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 204 (0xcc)
+		// Code size: 205 (0xcd)
 		.maxstack 8
 		.locals (
 			[0] class Modules.CommonJS_Module_Exports_Reassign/Scope
@@ -72,48 +72,49 @@
 		IL_0047: pop
 		IL_0048: ldarg.2
 		IL_0049: ldstr "exports"
-		IL_004e: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0053: dup
 		IL_0054: ldstr "newObject"
 		IL_0059: ldstr "reassigned module.exports"
-		IL_005e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0068: pop
-		IL_0069: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006e: ldc.i4.2
-		IL_006f: newarr [System.Runtime]System.Object
-		IL_0074: dup
-		IL_0075: ldc.i4.0
-		IL_0076: ldstr "module.exports.newObject:"
-		IL_007b: stelem.ref
-		IL_007c: dup
-		IL_007d: ldc.i4.1
-		IL_007e: ldarg.2
-		IL_007f: ldstr "exports"
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0089: ldstr "newObject"
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0093: stelem.ref
-		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0099: pop
-		IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009f: ldc.i4.2
-		IL_00a0: newarr [System.Runtime]System.Object
-		IL_00a5: dup
-		IL_00a6: ldc.i4.0
-		IL_00a7: ldstr "module.exports.fromExports after reassign:"
-		IL_00ac: stelem.ref
-		IL_00ad: dup
-		IL_00ae: ldc.i4.1
-		IL_00af: ldarg.2
-		IL_00b0: ldstr "exports"
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00ba: ldstr "fromExports"
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00c4: stelem.ref
-		IL_00c5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ca: pop
-		IL_00cb: ret
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0063: pop
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0069: pop
+		IL_006a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006f: ldc.i4.2
+		IL_0070: newarr [System.Runtime]System.Object
+		IL_0075: dup
+		IL_0076: ldc.i4.0
+		IL_0077: ldstr "module.exports.newObject:"
+		IL_007c: stelem.ref
+		IL_007d: dup
+		IL_007e: ldc.i4.1
+		IL_007f: ldarg.2
+		IL_0080: ldstr "exports"
+		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_008a: ldstr "newObject"
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0094: stelem.ref
+		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_009a: pop
+		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a0: ldc.i4.2
+		IL_00a1: newarr [System.Runtime]System.Object
+		IL_00a6: dup
+		IL_00a7: ldc.i4.0
+		IL_00a8: ldstr "module.exports.fromExports after reassign:"
+		IL_00ad: stelem.ref
+		IL_00ae: dup
+		IL_00af: ldc.i4.1
+		IL_00b0: ldarg.2
+		IL_00b1: ldstr "exports"
+		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00bb: ldstr "fromExports"
+		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00c5: stelem.ref
+		IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00cb: pop
+		IL_00cc: ret
 	} // end of method CommonJS_Module_Exports_Reassign::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_Reassign
@@ -125,7 +126,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2131
+		// Method begins at RVA 0x2132
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

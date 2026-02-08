@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210b
+			// Method begins at RVA 0x210c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 175 (0xaf)
+		// Code size: 176 (0xb0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_OptionalChaining_PropertyAccess/Scope,
@@ -85,41 +85,42 @@
 		IL_004a: stelem.ref
 		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0050: pop
-		IL_0051: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0056: dup
 		IL_0057: ldstr "value"
 		IL_005c: ldc.r8 123
 		IL_0065: box [System.Runtime]System.Double
-		IL_006a: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_006f: stloc.2
-		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0075: stloc.3
-		IL_0076: ldloc.2
-		IL_0077: brfalse IL_0099
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_006f: pop
+		IL_0070: stloc.2
+		IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0076: stloc.3
+		IL_0077: ldloc.2
+		IL_0078: brfalse IL_009a
 
-		IL_007c: ldloc.2
-		IL_007d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0082: brtrue IL_0099
+		IL_007d: ldloc.2
+		IL_007e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0083: brtrue IL_009a
 
-		IL_0087: ldloc.2
-		IL_0088: ldstr "value"
-		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0092: stloc.s 5
-		IL_0094: br IL_009c
+		IL_0088: ldloc.2
+		IL_0089: ldstr "value"
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0093: stloc.s 5
+		IL_0095: br IL_009d
 
-		IL_0099: ldnull
-		IL_009a: stloc.s 5
+		IL_009a: ldnull
+		IL_009b: stloc.s 5
 
-		IL_009c: ldloc.3
-		IL_009d: ldc.i4.1
-		IL_009e: newarr [System.Runtime]System.Object
-		IL_00a3: dup
-		IL_00a4: ldc.i4.0
-		IL_00a5: ldloc.s 5
-		IL_00a7: stelem.ref
-		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ad: pop
-		IL_00ae: ret
+		IL_009d: ldloc.3
+		IL_009e: ldc.i4.1
+		IL_009f: newarr [System.Runtime]System.Object
+		IL_00a4: dup
+		IL_00a5: ldc.i4.0
+		IL_00a6: ldloc.s 5
+		IL_00a8: stelem.ref
+		IL_00a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ae: pop
+		IL_00af: ret
 	} // end of method BinaryOperator_OptionalChaining_PropertyAccess::__js_module_init__
 
 } // end of class Modules.BinaryOperator_OptionalChaining_PropertyAccess
@@ -131,7 +132,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x2115
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

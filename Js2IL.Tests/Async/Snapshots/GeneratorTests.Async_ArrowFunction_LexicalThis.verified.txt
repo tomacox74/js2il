@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22c2
+				// Method begins at RVA 0x22c6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 				object 'value'
 			) cil managed 
 		{
-			// Method begins at RVA 0x2113
+			// Method begins at RVA 0x2115
 			// Header size: 1
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -91,7 +91,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22b9
+				// Method begins at RVA 0x22bd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -111,7 +111,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2134
+			// Method begins at RVA 0x2138
 			// Header size: 12
 			// Code size: 274 (0x112)
 			.maxstack 8
@@ -236,7 +236,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x229e
+				// Method begins at RVA 0x22a2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -256,7 +256,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22a7
+				// Method begins at RVA 0x22ab
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -276,7 +276,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22b0
+				// Method begins at RVA 0x22b4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -299,7 +299,7 @@
 				object initial
 			) cil managed 
 		{
-			// Method begins at RVA 0x2252
+			// Method begins at RVA 0x2256
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -315,7 +315,7 @@
 		.method public hidebysig 
 			instance object makeGetter () cil managed 
 		{
-			// Method begins at RVA 0x2264
+			// Method begins at RVA 0x2268
 			// Header size: 12
 			// Code size: 37 (0x25)
 			.maxstack 8
@@ -351,7 +351,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2295
+			// Method begins at RVA 0x2299
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -377,7 +377,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 183 (0xb7)
+		// Code size: 185 (0xb9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_ArrowFunction_LexicalThis/Scope,
@@ -398,57 +398,59 @@
 		IL_001a: ldloc.1
 		IL_001b: callvirt instance object Modules.Async_ArrowFunction_LexicalThis/Counter::makeGetter()
 		IL_0020: stloc.2
-		IL_0021: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0026: dup
 		IL_0027: ldstr "x"
 		IL_002c: ldc.r8 99
 		IL_0035: box [System.Runtime]System.Double
-		IL_003a: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_003f: dup
-		IL_0040: ldstr "g"
-		IL_0045: ldloc.2
-		IL_0046: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_004b: stloc.3
-		IL_004c: ldloc.3
-		IL_004d: ldstr "g"
-		IL_0052: ldc.i4.0
-		IL_0053: newarr [System.Runtime]System.Object
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_005d: stloc.s 4
-		IL_005f: ldnull
-		IL_0060: ldftn object Modules.Async_ArrowFunction_LexicalThis/ArrowFunction_L23C16::__js_call__(object[], object)
-		IL_0066: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_006b: ldc.i4.1
-		IL_006c: newarr [System.Runtime]System.Object
-		IL_0071: dup
-		IL_0072: ldc.i4.0
-		IL_0073: ldloc.0
-		IL_0074: stelem.ref
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_007f: stloc.s 5
-		IL_0081: ldc.i4.1
-		IL_0082: newarr [System.Runtime]System.Object
-		IL_0087: dup
-		IL_0088: ldc.i4.0
-		IL_0089: ldloc.s 5
-		IL_008b: stelem.ref
-		IL_008c: stloc.s 6
-		IL_008e: ldloc.s 4
-		IL_0090: ldstr "then"
-		IL_0095: ldloc.s 6
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_009c: pop
-		IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a2: ldc.i4.1
-		IL_00a3: newarr [System.Runtime]System.Object
-		IL_00a8: dup
-		IL_00a9: ldc.i4.0
-		IL_00aa: ldstr "After calling async getter"
-		IL_00af: stelem.ref
-		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b5: pop
-		IL_00b6: ret
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_003f: pop
+		IL_0040: dup
+		IL_0041: ldstr "g"
+		IL_0046: ldloc.2
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_004c: pop
+		IL_004d: stloc.3
+		IL_004e: ldloc.3
+		IL_004f: ldstr "g"
+		IL_0054: ldc.i4.0
+		IL_0055: newarr [System.Runtime]System.Object
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_005f: stloc.s 4
+		IL_0061: ldnull
+		IL_0062: ldftn object Modules.Async_ArrowFunction_LexicalThis/ArrowFunction_L23C16::__js_call__(object[], object)
+		IL_0068: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_006d: ldc.i4.1
+		IL_006e: newarr [System.Runtime]System.Object
+		IL_0073: dup
+		IL_0074: ldc.i4.0
+		IL_0075: ldloc.0
+		IL_0076: stelem.ref
+		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0081: stloc.s 5
+		IL_0083: ldc.i4.1
+		IL_0084: newarr [System.Runtime]System.Object
+		IL_0089: dup
+		IL_008a: ldc.i4.0
+		IL_008b: ldloc.s 5
+		IL_008d: stelem.ref
+		IL_008e: stloc.s 6
+		IL_0090: ldloc.s 4
+		IL_0092: ldstr "then"
+		IL_0097: ldloc.s 6
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_009e: pop
+		IL_009f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a4: ldc.i4.1
+		IL_00a5: newarr [System.Runtime]System.Object
+		IL_00aa: dup
+		IL_00ab: ldc.i4.0
+		IL_00ac: ldstr "After calling async getter"
+		IL_00b1: stelem.ref
+		IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00b7: pop
+		IL_00b8: ret
 	} // end of method Async_ArrowFunction_LexicalThis::__js_module_init__
 
 } // end of class Modules.Async_ArrowFunction_LexicalThis
@@ -460,7 +462,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22cb
+		// Method begins at RVA 0x22cf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

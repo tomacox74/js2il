@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211d
+				// Method begins at RVA 0x2121
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -40,7 +40,7 @@
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x20d0
+			// Method begins at RVA 0x20d4
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -85,7 +85,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2114
+			// Method begins at RVA 0x2118
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -111,7 +111,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 116 (0x74)
+		// Code size: 117 (0x75)
 		.maxstack 9
 		.locals init (
 			[0] class Modules.Function_Call_Basic/Scope,
@@ -133,40 +133,41 @@
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0021: stloc.1
-		IL_0022: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0027: dup
 		IL_0028: ldstr "x"
 		IL_002d: ldstr "T"
-		IL_0032: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0037: stloc.2
-		IL_0038: ldloc.1
-		IL_0039: ldstr "call"
-		IL_003e: ldc.i4.3
-		IL_003f: newarr [System.Runtime]System.Object
-		IL_0044: dup
-		IL_0045: ldc.i4.0
-		IL_0046: ldloc.2
-		IL_0047: stelem.ref
-		IL_0048: dup
-		IL_0049: ldc.i4.1
-		IL_004a: ldstr "A"
-		IL_004f: stelem.ref
-		IL_0050: dup
-		IL_0051: ldc.i4.2
-		IL_0052: ldstr "B"
-		IL_0057: stelem.ref
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_005d: stloc.3
-		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0063: ldc.i4.1
-		IL_0064: newarr [System.Runtime]System.Object
-		IL_0069: dup
-		IL_006a: ldc.i4.0
-		IL_006b: ldloc.3
-		IL_006c: stelem.ref
-		IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0072: pop
-		IL_0073: ret
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0037: pop
+		IL_0038: stloc.2
+		IL_0039: ldloc.1
+		IL_003a: ldstr "call"
+		IL_003f: ldc.i4.3
+		IL_0040: newarr [System.Runtime]System.Object
+		IL_0045: dup
+		IL_0046: ldc.i4.0
+		IL_0047: ldloc.2
+		IL_0048: stelem.ref
+		IL_0049: dup
+		IL_004a: ldc.i4.1
+		IL_004b: ldstr "A"
+		IL_0050: stelem.ref
+		IL_0051: dup
+		IL_0052: ldc.i4.2
+		IL_0053: ldstr "B"
+		IL_0058: stelem.ref
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_005e: stloc.3
+		IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0064: ldc.i4.1
+		IL_0065: newarr [System.Runtime]System.Object
+		IL_006a: dup
+		IL_006b: ldc.i4.0
+		IL_006c: ldloc.3
+		IL_006d: stelem.ref
+		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0073: pop
+		IL_0074: ret
 	} // end of method Function_Call_Basic::__js_module_init__
 
 } // end of class Modules.Function_Call_Basic
@@ -178,7 +179,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2126
+		// Method begins at RVA 0x212a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

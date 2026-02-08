@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x229b
+			// Method begins at RVA 0x229f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -163,7 +163,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22ad
+				// Method begins at RVA 0x22b1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -228,7 +228,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x22bf
+					// Method begins at RVA 0x22c3
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -249,7 +249,7 @@
 					object x
 				) cil managed 
 			{
-				// Method begins at RVA 0x2268
+				// Method begins at RVA 0x226c
 				// Header size: 12
 				// Code size: 39 (0x27)
 				.maxstack 8
@@ -298,7 +298,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22b6
+				// Method begins at RVA 0x22ba
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -321,7 +321,7 @@
 		{
 			// Method begins at RVA 0x2208
 			// Header size: 12
-			// Code size: 84 (0x54)
+			// Code size: 86 (0x56)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/Scope,
@@ -351,19 +351,21 @@
 			IL_0028: stelem.ref
 			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 			IL_002e: stloc.1
-			IL_002f: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_0034: dup
 			IL_0035: ldstr "multiply"
 			IL_003a: ldloc.1
-			IL_003b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-			IL_0040: dup
-			IL_0041: ldstr "factor"
-			IL_0046: ldloc.0
-			IL_0047: ldfld object Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/Scope::factor
-			IL_004c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-			IL_0051: stloc.2
-			IL_0052: ldloc.2
-			IL_0053: ret
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_0040: pop
+			IL_0041: dup
+			IL_0042: ldstr "factor"
+			IL_0047: ldloc.0
+			IL_0048: ldfld object Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/Scope::factor
+			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_0052: pop
+			IL_0053: stloc.2
+			IL_0054: ldloc.2
+			IL_0055: ret
 		} // end of method createCalculator::__js_call__
 
 	} // end of class createCalculator
@@ -390,7 +392,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22a4
+			// Method begins at RVA 0x22a8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -416,7 +418,7 @@
 	{
 		// Method begins at RVA 0x2154
 		// Header size: 12
-		// Code size: 121 (0x79)
+		// Code size: 123 (0x7b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope,
@@ -452,22 +454,24 @@
 		IL_003e: ldloc.0
 		IL_003f: ldc.r8 7
 		IL_0048: stfld float64 Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::moduleFactor
-		IL_004d: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0052: dup
 		IL_0053: ldstr "multiplyModuleFactor"
 		IL_0058: ldloc.1
-		IL_0059: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_005e: dup
-		IL_005f: ldstr "createCalculator"
-		IL_0064: ldloc.2
-		IL_0065: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_006a: stloc.3
-		IL_006b: ldarg.2
-		IL_006c: ldstr "exports"
-		IL_0071: ldloc.3
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0077: pop
-		IL_0078: ret
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_005e: pop
+		IL_005f: dup
+		IL_0060: ldstr "createCalculator"
+		IL_0065: ldloc.2
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_006b: pop
+		IL_006c: stloc.3
+		IL_006d: ldarg.2
+		IL_006e: ldstr "exports"
+		IL_0073: ldloc.3
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0079: pop
+		IL_007a: ret
 	} // end of method CommonJS_Export_ObjectWithClosure_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ObjectWithClosure_Lib
@@ -479,7 +483,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22c8
+		// Method begins at RVA 0x22cc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -224,7 +224,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 193 (0xc1)
+		// Code size: 194 (0xc2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/Scope,
@@ -248,67 +248,68 @@
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0021: stloc.1
-		IL_0022: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0027: dup
 		IL_0028: ldstr "then"
 		IL_002d: ldloc.1
-		IL_002e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0033: stloc.2
-		IL_0034: ldloc.0
-		IL_0035: ldloc.2
-		IL_0036: stfld object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/Scope::thenable
-		IL_003b: ldstr "orig"
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_0045: stloc.3
-		IL_0046: ldnull
-		IL_0047: ldftn object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/ArrowFunction_L9C32::__js_call__(object[])
-		IL_004d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0052: ldc.i4.1
-		IL_0053: newarr [System.Runtime]System.Object
-		IL_0058: dup
-		IL_0059: ldc.i4.0
-		IL_005a: ldloc.0
-		IL_005b: stelem.ref
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0066: stloc.s 4
-		IL_0068: ldc.i4.1
-		IL_0069: newarr [System.Runtime]System.Object
-		IL_006e: dup
-		IL_006f: ldc.i4.0
-		IL_0070: ldloc.s 4
-		IL_0072: stelem.ref
-		IL_0073: stloc.s 5
-		IL_0075: ldloc.3
-		IL_0076: ldstr "finally"
-		IL_007b: ldloc.s 5
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0082: stloc.3
-		IL_0083: ldnull
-		IL_0084: ldftn object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/ArrowFunction_L9C54::__js_call__(object[], object)
-		IL_008a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_008f: ldc.i4.1
-		IL_0090: newarr [System.Runtime]System.Object
-		IL_0095: dup
-		IL_0096: ldc.i4.0
-		IL_0097: ldloc.0
-		IL_0098: stelem.ref
-		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00a3: stloc.s 4
-		IL_00a5: ldc.i4.1
-		IL_00a6: newarr [System.Runtime]System.Object
-		IL_00ab: dup
-		IL_00ac: ldc.i4.0
-		IL_00ad: ldloc.s 4
-		IL_00af: stelem.ref
-		IL_00b0: stloc.s 5
-		IL_00b2: ldloc.3
-		IL_00b3: ldstr "catch"
-		IL_00b8: ldloc.s 5
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00bf: pop
-		IL_00c0: ret
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0033: pop
+		IL_0034: stloc.2
+		IL_0035: ldloc.0
+		IL_0036: ldloc.2
+		IL_0037: stfld object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/Scope::thenable
+		IL_003c: ldstr "orig"
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+		IL_0046: stloc.3
+		IL_0047: ldnull
+		IL_0048: ldftn object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/ArrowFunction_L9C32::__js_call__(object[])
+		IL_004e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0053: ldc.i4.1
+		IL_0054: newarr [System.Runtime]System.Object
+		IL_0059: dup
+		IL_005a: ldc.i4.0
+		IL_005b: ldloc.0
+		IL_005c: stelem.ref
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0067: stloc.s 4
+		IL_0069: ldc.i4.1
+		IL_006a: newarr [System.Runtime]System.Object
+		IL_006f: dup
+		IL_0070: ldc.i4.0
+		IL_0071: ldloc.s 4
+		IL_0073: stelem.ref
+		IL_0074: stloc.s 5
+		IL_0076: ldloc.3
+		IL_0077: ldstr "finally"
+		IL_007c: ldloc.s 5
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0083: stloc.3
+		IL_0084: ldnull
+		IL_0085: ldftn object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/ArrowFunction_L9C54::__js_call__(object[], object)
+		IL_008b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0090: ldc.i4.1
+		IL_0091: newarr [System.Runtime]System.Object
+		IL_0096: dup
+		IL_0097: ldc.i4.0
+		IL_0098: ldloc.0
+		IL_0099: stelem.ref
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00a4: stloc.s 4
+		IL_00a6: ldc.i4.1
+		IL_00a7: newarr [System.Runtime]System.Object
+		IL_00ac: dup
+		IL_00ad: ldc.i4.0
+		IL_00ae: ldloc.s 4
+		IL_00b0: stelem.ref
+		IL_00b1: stloc.s 5
+		IL_00b3: ldloc.3
+		IL_00b4: ldstr "catch"
+		IL_00b9: ldloc.s 5
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00c0: pop
+		IL_00c1: ret
 	} // end of method Promise_Finally_ReturnsThenable_PassThrough_Rejected::__js_module_init__
 
 } // end of class Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected
