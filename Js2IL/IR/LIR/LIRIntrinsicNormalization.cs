@@ -1,5 +1,6 @@
 using Js2IL.IL;
 using Js2IL.Services;
+using System.Linq;
 
 namespace Js2IL.IR;
 
@@ -42,7 +43,10 @@ internal static class LIRIntrinsicNormalization
             }
         }
 
-        foreach (var instruction in methodBody.Instructions)
+        foreach (var instruction in methodBody.Instructions.Where(static ins =>
+            ins is LIRConstString
+            || ins is LIRLoadUserClassInstanceField
+            || ins is LIRCopyTemp))
         {
             switch (instruction)
             {
@@ -268,6 +272,7 @@ internal static class LIRIntrinsicNormalization
                     ShiftIndicesAfterInsert(indicesToRemove, i);
                     ShiftIndicesAfterInsert(buildArrays, i);
                     ShiftIndicesAfterInsert(buildScopesArrays, i);
+                    ShiftIndicesAfterInsert(convertToObjectDefs, i);
                     i++; // call moved one slot forward
                 }
 

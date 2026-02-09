@@ -365,14 +365,9 @@ namespace JavaScriptRuntime
                 return InvokeDelegateWithArgs(del, scopes, args);
             }
 
-            // Node.js semantics: calling a non-callable throws a TypeError.
-            // We don't always have the identifier name available at runtime; use a best-effort value display.
-            var display = target is string s ? s : target.ToString();
-            if (string.IsNullOrEmpty(display))
-            {
-                display = target.GetType().Name;
-            }
-            throw new TypeError($"{display} is not a function");
+            // JavaScript/Node semantics: calling a non-callable throws a TypeError.
+            // Use a stable, type-based message since we don't always have the identifier name available here.
+            throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
             }
             finally
             {

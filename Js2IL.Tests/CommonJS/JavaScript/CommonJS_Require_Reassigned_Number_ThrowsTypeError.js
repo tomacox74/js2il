@@ -5,5 +5,5 @@ try {
     require('fs');
 } catch (e) {
     console.log(e.name);
-    console.log(e.message.endsWith('is not a function'));
+    console.log(e.message);
 }
