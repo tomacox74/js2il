@@ -153,14 +153,20 @@ internal sealed partial class LIRToILCompiler
                 {
                     // Emit: (RequireDelegate)requireValue(moduleId)
                     // This avoids the generic Closure.InvokeWithArgs dispatcher.
-                    EmitLoadTemp(callRequire.RequireValue, ilEncoder, allocation, methodDescriptor);
-
-                    var ensureRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.CommonJS.RequireInvoker),
-                        nameof(JavaScriptRuntime.CommonJS.RequireInvoker.EnsureRequireDelegate),
-                        new[] { typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(ensureRef);
+                    var requireStorage = GetTempStorage(callRequire.RequireValue);
+                    if (requireStorage.Kind == ValueStorageKind.Reference
+                        && requireStorage.ClrType == typeof(JavaScriptRuntime.CommonJS.RequireDelegate))
+                    {
+                        // Already typed (e.g., a typed local). No castclass needed.
+                        EmitLoadTemp(callRequire.RequireValue, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        // Object-typed temp: cast to the delegate type before callvirt.
+                        EmitLoadTempAsObject(callRequire.RequireValue, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.CommonJS.RequireDelegate)));
+                    }
 
                     EmitLoadTemp(callRequire.ModuleId, ilEncoder, allocation, methodDescriptor);
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
