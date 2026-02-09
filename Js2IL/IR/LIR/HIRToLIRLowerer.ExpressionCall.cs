@@ -105,54 +105,6 @@ public sealed partial class HIRToLIRLowerer
         {
             var symbol = funcVarExpr.Name;
 
-            // Fast-path: CommonJS module intrinsic require(...)
-            // Node.js semantics: `require` is just a mutable binding in the module wrapper.
-            // Only use the direct delegate call when we can conservatively prove:
-            //  - this identifier resolves to the injected module parameter binding (not shadowed), AND
-            //  - the binding is never written to (not reassigned).
-            if (string.Equals(symbol.Name, "require", StringComparison.Ordinal)
-                && symbol.BindingInfo is { } requireBinding
-                && requireBinding.DeclaringScope.Kind == ScopeKind.Global
-                && requireBinding.DeclaringScope.Parameters.Contains("require")
-                && ReferenceEquals(requireBinding.DeclarationNode, requireBinding.DeclaringScope.AstNode)
-                && !requireBinding.HasWrite)
-            {
-                // Evaluate argument expressions for side effects, but only pass the first argument.
-                TempVariable moduleIdTemp;
-                if (callExpr.Arguments.Length > 0)
-                {
-                    if (!TryLowerExpression(callExpr.Arguments[0], out moduleIdTemp))
-                    {
-                        return false;
-                    }
-                    moduleIdTemp = EnsureObject(moduleIdTemp);
-
-                    for (int i = 1; i < callExpr.Arguments.Length; i++)
-                    {
-                        if (!TryLowerExpression(callExpr.Arguments[i], out _))
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    moduleIdTemp = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(moduleIdTemp));
-                    DefineTempStorage(moduleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                }
-
-                if (!TryLowerExpression(funcVarExpr, out var requireTemp))
-                {
-                    return false;
-                }
-                requireTemp = EnsureObject(requireTemp);
-
-                _methodBodyIR.Instructions.Add(new LIRCallRequire(requireTemp, moduleIdTemp, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                return true;
-            }
-
             // PL8.1: Primitive conversion callables: String(x), Number(x), Boolean(x).
             // These are CallExpression forms (not NewExpression) and should lower to runtime conversions.
             // Semantics:
