@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x289b
+					// Method begins at RVA 0x28a5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -44,7 +44,7 @@
 			{
 				// Method begins at RVA 0x2608
 				// Header size: 12
-				// Code size: 245 (0xf5)
+				// Code size: 251 (0xfb)
 				.maxstack 8
 				.locals init (
 					[0] float64,
@@ -83,57 +83,63 @@
 				IL_004f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_0054: stloc.3
 				IL_0055: ldloc.3
-				IL_0056: brfalse IL_0082
+				IL_0056: brfalse IL_0084
 
-				IL_005b: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+				IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 				IL_0060: dup
 				IL_0061: ldstr "value"
 				IL_0066: ldstr "a"
-				IL_006b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_0070: dup
-				IL_0071: ldstr "done"
-				IL_0076: ldc.i4.0
-				IL_0077: box [System.Runtime]System.Boolean
-				IL_007c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_0081: ret
+				IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_0070: pop
+				IL_0071: dup
+				IL_0072: ldstr "done"
+				IL_0077: ldc.i4.0
+				IL_0078: box [System.Runtime]System.Boolean
+				IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_0082: pop
+				IL_0083: ret
 
-				IL_0082: ldarg.0
-				IL_0083: ldc.i4.1
-				IL_0084: ldelem.ref
-				IL_0085: castclass Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/FunctionExpression_iterable/Scope
-				IL_008a: ldfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/FunctionExpression_iterable/Scope::i
-				IL_008f: stloc.2
-				IL_0090: ldloc.2
-				IL_0091: ldc.r8 2
-				IL_009a: box [System.Runtime]System.Double
-				IL_009f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_00a4: stloc.3
-				IL_00a5: ldloc.3
-				IL_00a6: brfalse IL_00d2
+				IL_0084: ldarg.0
+				IL_0085: ldc.i4.1
+				IL_0086: ldelem.ref
+				IL_0087: castclass Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/FunctionExpression_iterable/Scope
+				IL_008c: ldfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/FunctionExpression_iterable/Scope::i
+				IL_0091: stloc.2
+				IL_0092: ldloc.2
+				IL_0093: ldc.r8 2
+				IL_009c: box [System.Runtime]System.Double
+				IL_00a1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_00a6: stloc.3
+				IL_00a7: ldloc.3
+				IL_00a8: brfalse IL_00d6
 
-				IL_00ab: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-				IL_00b0: dup
-				IL_00b1: ldstr "value"
-				IL_00b6: ldstr "b"
-				IL_00bb: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_00c0: dup
-				IL_00c1: ldstr "done"
-				IL_00c6: ldc.i4.0
-				IL_00c7: box [System.Runtime]System.Boolean
-				IL_00cc: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_00d1: ret
+				IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_00b2: dup
+				IL_00b3: ldstr "value"
+				IL_00b8: ldstr "b"
+				IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_00c2: pop
+				IL_00c3: dup
+				IL_00c4: ldstr "done"
+				IL_00c9: ldc.i4.0
+				IL_00ca: box [System.Runtime]System.Boolean
+				IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_00d4: pop
+				IL_00d5: ret
 
-				IL_00d2: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-				IL_00d7: dup
-				IL_00d8: ldstr "value"
-				IL_00dd: ldnull
-				IL_00de: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_00e3: dup
-				IL_00e4: ldstr "done"
-				IL_00e9: ldc.i4.1
-				IL_00ea: box [System.Runtime]System.Boolean
-				IL_00ef: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_00f4: ret
+				IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_00db: dup
+				IL_00dc: ldstr "value"
+				IL_00e1: ldnull
+				IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_00e7: pop
+				IL_00e8: dup
+				IL_00e9: ldstr "done"
+				IL_00ee: ldc.i4.1
+				IL_00ef: box [System.Runtime]System.Boolean
+				IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_00f9: pop
+				IL_00fa: ret
 			} // end of method FunctionExpression_iterable::__js_call__
 
 		} // end of class FunctionExpression_iterable
@@ -149,7 +155,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x28a4
+					// Method begins at RVA 0x28ae
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -169,9 +175,9 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x270c
+				// Method begins at RVA 0x2710
 				// Header size: 12
-				// Code size: 89 (0x59)
+				// Code size: 91 (0x5b)
 				.maxstack 8
 				.locals init (
 					[0] float64,
@@ -196,17 +202,19 @@
 				IL_0027: castclass Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope
 				IL_002c: ldloc.1
 				IL_002d: stfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed
-				IL_0032: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+				IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 				IL_0037: dup
 				IL_0038: ldstr "value"
 				IL_003d: ldstr "ret"
-				IL_0042: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_0047: dup
-				IL_0048: ldstr "done"
-				IL_004d: ldc.i4.1
-				IL_004e: box [System.Runtime]System.Boolean
-				IL_0053: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_0058: ret
+				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_0047: pop
+				IL_0048: dup
+				IL_0049: ldstr "done"
+				IL_004e: ldc.i4.1
+				IL_004f: box [System.Runtime]System.Boolean
+				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_0059: pop
+				IL_005a: ret
 			} // end of method FunctionExpression_iterable_L15C14::__js_call__
 
 		} // end of class FunctionExpression_iterable_L15C14
@@ -224,7 +232,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2892
+				// Method begins at RVA 0x289c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -246,7 +254,7 @@
 		{
 			// Method begins at RVA 0x24f0
 			// Header size: 12
-			// Code size: 126 (0x7e)
+			// Code size: 128 (0x80)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/FunctionExpression_iterable/Scope,
@@ -295,18 +303,20 @@
 			IL_0057: stelem.ref
 			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 			IL_005d: stloc.2
-			IL_005e: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_0063: dup
 			IL_0064: ldstr "next"
 			IL_0069: ldloc.1
-			IL_006a: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-			IL_006f: dup
-			IL_0070: ldstr "return"
-			IL_0075: ldloc.2
-			IL_0076: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-			IL_007b: stloc.3
-			IL_007c: ldloc.3
-			IL_007d: ret
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_006f: pop
+			IL_0070: dup
+			IL_0071: ldstr "return"
+			IL_0076: ldloc.2
+			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_007c: pop
+			IL_007d: stloc.3
+			IL_007e: ldloc.3
+			IL_007f: ret
 		} // end of method FunctionExpression_iterable::__js_call__
 
 	} // end of class FunctionExpression_iterable
@@ -326,7 +336,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x28fe
+					// Method begins at RVA 0x2908
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -346,9 +356,9 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x2774
+				// Method begins at RVA 0x2778
 				// Header size: 12
-				// Code size: 168 (0xa8)
+				// Code size: 170 (0xaa)
 				.maxstack 8
 				.locals init (
 					[0] float64,
@@ -387,37 +397,39 @@
 				IL_004f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_0054: stloc.3
 				IL_0055: ldloc.3
-				IL_0056: brfalse IL_0082
+				IL_0056: brfalse IL_0084
 
-				IL_005b: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+				IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 				IL_0060: dup
 				IL_0061: ldstr "value"
 				IL_0066: ldstr "x"
-				IL_006b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_0070: dup
-				IL_0071: ldstr "done"
-				IL_0076: ldc.i4.0
-				IL_0077: box [System.Runtime]System.Boolean
-				IL_007c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_0081: ret
+				IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_0070: pop
+				IL_0071: dup
+				IL_0072: ldstr "done"
+				IL_0077: ldc.i4.0
+				IL_0078: box [System.Runtime]System.Boolean
+				IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_0082: pop
+				IL_0083: ret
 
-				IL_0082: ldstr "nextboom"
-				IL_0087: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_008c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-				IL_0091: dup
-				IL_0092: isinst [System.Runtime]System.Exception
-				IL_0097: dup
-				IL_0098: brtrue IL_00a4
+				IL_0084: ldstr "nextboom"
+				IL_0089: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_008e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+				IL_0093: dup
+				IL_0094: isinst [System.Runtime]System.Exception
+				IL_0099: dup
+				IL_009a: brtrue IL_00a6
 
-				IL_009d: pop
-				IL_009e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-				IL_00a3: throw
-
-				IL_00a4: pop
+				IL_009f: pop
+				IL_00a0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 				IL_00a5: throw
 
-				IL_00a6: ldnull
-				IL_00a7: ret
+				IL_00a6: pop
+				IL_00a7: throw
+
+				IL_00a8: ldnull
+				IL_00a9: ret
 			} // end of method FunctionExpression_iterableThrow::__js_call__
 
 		} // end of class FunctionExpression_iterableThrow
@@ -433,7 +445,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2907
+					// Method begins at RVA 0x2911
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -453,9 +465,9 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x2828
+				// Method begins at RVA 0x2830
 				// Header size: 12
-				// Code size: 85 (0x55)
+				// Code size: 87 (0x57)
 				.maxstack 8
 				.locals init (
 					[0] float64,
@@ -480,17 +492,19 @@
 				IL_0027: castclass Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope
 				IL_002c: ldloc.1
 				IL_002d: stfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed2
-				IL_0032: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+				IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 				IL_0037: dup
 				IL_0038: ldstr "value"
 				IL_003d: ldnull
-				IL_003e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_0043: dup
-				IL_0044: ldstr "done"
-				IL_0049: ldc.i4.1
-				IL_004a: box [System.Runtime]System.Boolean
-				IL_004f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-				IL_0054: ret
+				IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_0043: pop
+				IL_0044: dup
+				IL_0045: ldstr "done"
+				IL_004a: ldc.i4.1
+				IL_004b: box [System.Runtime]System.Boolean
+				IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_0055: pop
+				IL_0056: ret
 			} // end of method FunctionExpression_iterableThrow_L56C14::__js_call__
 
 		} // end of class FunctionExpression_iterableThrow_L56C14
@@ -508,7 +522,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28f5
+				// Method begins at RVA 0x28ff
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -530,7 +544,7 @@
 		{
 			// Method begins at RVA 0x257c
 			// Header size: 12
-			// Code size: 126 (0x7e)
+			// Code size: 128 (0x80)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/FunctionExpression_iterableThrow/Scope,
@@ -579,18 +593,20 @@
 			IL_0057: stelem.ref
 			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 			IL_005d: stloc.2
-			IL_005e: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_0063: dup
 			IL_0064: ldstr "next"
 			IL_0069: ldloc.1
-			IL_006a: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-			IL_006f: dup
-			IL_0070: ldstr "return"
-			IL_0075: ldloc.2
-			IL_0076: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-			IL_007b: stloc.3
-			IL_007c: ldloc.3
-			IL_007d: ret
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_006f: pop
+			IL_0070: dup
+			IL_0071: ldstr "return"
+			IL_0076: ldloc.2
+			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_007c: pop
+			IL_007d: stloc.3
+			IL_007e: ldloc.3
+			IL_007f: ret
 		} // end of method FunctionExpression_iterableThrow::__js_call__
 
 	} // end of class FunctionExpression_iterableThrow
@@ -611,7 +627,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28d1
+				// Method begins at RVA 0x28db
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -635,7 +651,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x28e3
+					// Method begins at RVA 0x28ed
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -653,7 +669,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28da
+				// Method begins at RVA 0x28e4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -673,7 +689,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28ec
+				// Method begins at RVA 0x28f6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -693,7 +709,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2910
+				// Method begins at RVA 0x291a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -717,7 +733,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2922
+					// Method begins at RVA 0x292c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -735,7 +751,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2919
+				// Method begins at RVA 0x2923
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -755,7 +771,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x292b
+				// Method begins at RVA 0x2935
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -777,7 +793,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2889
+			// Method begins at RVA 0x2893
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -801,7 +817,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28b6
+				// Method begins at RVA 0x28c0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -819,7 +835,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x28ad
+			// Method begins at RVA 0x28b7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -843,7 +859,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28c8
+				// Method begins at RVA 0x28d2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -861,7 +877,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x28bf
+			// Method begins at RVA 0x28c9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -926,7 +942,7 @@
 		IL_0007: ldc.r8 0.0
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: stfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed
-		IL_001a: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_001f: stloc.1
 		IL_0020: ldstr "iterator"
 		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
@@ -1253,7 +1269,7 @@
 		IL_02ec: ldc.r8 0.0
 		IL_02f5: box [System.Runtime]System.Double
 		IL_02fa: stfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed2
-		IL_02ff: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_02ff: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0304: stloc.s 17
 		IL_0306: ldstr "iterator"
 		IL_030b: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
@@ -1412,7 +1428,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2934
+		// Method begins at RVA 0x293e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

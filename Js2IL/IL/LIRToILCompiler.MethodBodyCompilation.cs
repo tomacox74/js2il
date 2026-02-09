@@ -522,6 +522,24 @@ internal sealed partial class LIRToILCompiler
                     // Inline ExpandoObject/object literal: dup + key + value
                     LIRNewJsObject newJsObject => 3 + (newJsObject.Properties.Count == 0 ? 0 : newJsObject.Properties.Max(p => EstimateTempConstructionPeak(p.Value))),
 
+                    // Inline item get: receiver + index
+                    // Load order matters because receiver remains on stack while index is evaluated.
+                    LIRGetItem getItem => Math.Max(
+                        EstimateTempConstructionPeak(getItem.Object),
+                        1 + EstimateTempConstructionPeak(getItem.Index)),
+
+                    // Inline item set: receiver + index + value
+                    // Load order matters because earlier values remain on stack while later ones are evaluated.
+                    LIRSetItem setItem => new[]
+                    {
+                        EstimateTempConstructionPeak(setItem.Object),
+                        1 + EstimateTempConstructionPeak(setItem.Index),
+                        2 + EstimateTempConstructionPeak(setItem.Value)
+                    }.Max(),
+
+                    // Inline length get: receiver
+                    LIRGetLength getLength => EstimateTempConstructionPeak(getLength.Object),
+
                     // Leaf scope/global loads/constants/etc.
                     LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull or LIRGetIntrinsicGlobal or LIRLoadParameter or LIRLoadThis
                         => 1,

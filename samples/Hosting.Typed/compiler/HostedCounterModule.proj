@@ -7,13 +7,20 @@
 
     <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\'))</RepoRoot>
     <LocalJs2ILProject>$(RepoRoot)Js2IL\Js2IL.csproj</LocalJs2ILProject>
+
+    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJs2ILProject)')">true</UseLocalJs2ILProject>
+    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And !Exists('$(LocalJs2ILProject)')">false</UseLocalJs2ILProject>
+
+    <UseLocalJs2ILProjectLower>$([System.String]::Copy('$(UseLocalJs2ILProject)').ToLowerInvariant())</UseLocalJs2ILProjectLower>
   </PropertyGroup>
 
   <Target Name="Build">
     <MakeDir Directories="$(OutputDir)" />
-      <Exec Condition="Exists('$(LocalJs2ILProject)')"
+      <Error Condition="'$(UseLocalJs2ILProjectLower)' == 'true' And !Exists('$(LocalJs2ILProject)')"
+           Text="UseLocalJs2ILProject=true but local project not found: $(LocalJs2ILProject)" />
+      <Exec Condition="'$(UseLocalJs2ILProjectLower)' == 'true'"
         Command="dotnet run --project &quot;$(LocalJs2ILProject)&quot; -- &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot;" />
-      <Exec Condition="!Exists('$(LocalJs2ILProject)')"
+      <Exec Condition="'$(UseLocalJs2ILProjectLower)' != 'true'"
         Command="js2il &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot;" />
   </Target>
 

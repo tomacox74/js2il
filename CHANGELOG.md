@@ -4,7 +4,11 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- IL: fix maxstack estimation for inlined indexed get/set/length operations (prevents InvalidProgramException in some generated modules).
+- Hosting: wrap dynamic return values so nested `dynamic` member access and method calls route through JS runtime semantics.
+- Runtime: allow missing constructor arguments for dynamic `new` patterns (missing args treated as undefined/null for activation).
+- Samples: default `samples/**` to build with local repo `Js2IL`/`JavaScriptRuntime` projects when available (with global tool/NuGet fallback).
+- Tests: add regressions for maxstack (inlined get/set) and hosting dynamic nested return values + missing-arg construction.
 
 ## v0.8.5 - 2026-02-07
 

@@ -64,6 +64,43 @@ public class ModuleLoadTests
     }
 
     [Fact]
+    public void JsEngine_LoadModule_Dynamic_AllowsNestedMemberAccess_OnReturnedObjects()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("nestedReturn", "nestedReturn.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "nestedReturn");
+        dynamic exports = exportsObj;
+
+        dynamic win = exports.getWindow();
+        Assert.Equal("Hello", (string)win.document.title);
+        Assert.Equal("Hello", (string)exports.getTitle(win));
+        Assert.Equal("Hello", (string)exports.getTitleViaHost());
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Dynamic_AllowsInvokingReturnedFunctionValues()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("functionReturn", "functionReturn.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "functionReturn");
+        dynamic exports = exportsObj;
+
+        dynamic inc = exports.getIncrementer();
+        Assert.Equal(2.0, (double)inc(1));
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Dynamic_NewOnValue_PadsMissingArgsWithUndefined()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("ctorPadding", "ctorPadding.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "ctorPadding");
+        dynamic exports = exportsObj;
+
+        Assert.True((bool)exports.undefinedWhenMissingArgs());
+    }
+
+    [Fact]
     public void JsEngine_LoadModule_AllowsCallingExports_FromAnotherThread()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");

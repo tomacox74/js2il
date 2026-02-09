@@ -101,7 +101,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 181 (0xb5)
+		// Code size: 184 (0xb8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Proxy_GetTrap_OverridesProperty/Scope,
@@ -113,62 +113,65 @@
 
 		IL_0000: newobj instance void Modules.Proxy_GetTrap_OverridesProperty/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "a"
 		IL_0011: ldc.r8 1
 		IL_001a: box [System.Runtime]System.Double
-		IL_001f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0024: dup
-		IL_0025: ldstr "b"
-		IL_002a: ldc.r8 2
-		IL_0033: box [System.Runtime]System.Double
-		IL_0038: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_003d: stloc.1
-		IL_003e: ldnull
-		IL_003f: ldftn object Modules.Proxy_GetTrap_OverridesProperty/FunctionExpression_handler::__js_call__(object[], object, object, object)
-		IL_0045: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_004a: ldc.i4.1
-		IL_004b: newarr [System.Runtime]System.Object
-		IL_0050: dup
-		IL_0051: ldc.i4.0
-		IL_0052: ldloc.0
-		IL_0053: stelem.ref
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0059: stloc.s 4
-		IL_005b: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0060: dup
-		IL_0061: ldstr "get"
-		IL_0066: ldloc.s 4
-		IL_0068: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_006d: stloc.2
-		IL_006e: ldloc.1
-		IL_006f: ldloc.2
-		IL_0070: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_0075: stloc.3
-		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007b: ldc.i4.1
-		IL_007c: newarr [System.Runtime]System.Object
-		IL_0081: dup
-		IL_0082: ldc.i4.0
-		IL_0083: ldloc.3
-		IL_0084: ldstr "a"
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_008e: stelem.ref
-		IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0094: pop
-		IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009a: ldc.i4.1
-		IL_009b: newarr [System.Runtime]System.Object
-		IL_00a0: dup
-		IL_00a1: ldc.i4.0
-		IL_00a2: ldloc.3
-		IL_00a3: ldstr "b"
-		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00ad: stelem.ref
-		IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b3: pop
-		IL_00b4: ret
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0024: pop
+		IL_0025: dup
+		IL_0026: ldstr "b"
+		IL_002b: ldc.r8 2
+		IL_0034: box [System.Runtime]System.Double
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_003e: pop
+		IL_003f: stloc.1
+		IL_0040: ldnull
+		IL_0041: ldftn object Modules.Proxy_GetTrap_OverridesProperty/FunctionExpression_handler::__js_call__(object[], object, object, object)
+		IL_0047: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_004c: ldc.i4.1
+		IL_004d: newarr [System.Runtime]System.Object
+		IL_0052: dup
+		IL_0053: ldc.i4.0
+		IL_0054: ldloc.0
+		IL_0055: stelem.ref
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_005b: stloc.s 4
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0062: dup
+		IL_0063: ldstr "get"
+		IL_0068: ldloc.s 4
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_006f: pop
+		IL_0070: stloc.2
+		IL_0071: ldloc.1
+		IL_0072: ldloc.2
+		IL_0073: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_0078: stloc.3
+		IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007e: ldc.i4.1
+		IL_007f: newarr [System.Runtime]System.Object
+		IL_0084: dup
+		IL_0085: ldc.i4.0
+		IL_0086: ldloc.3
+		IL_0087: ldstr "a"
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0091: stelem.ref
+		IL_0092: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0097: pop
+		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009d: ldc.i4.1
+		IL_009e: newarr [System.Runtime]System.Object
+		IL_00a3: dup
+		IL_00a4: ldc.i4.0
+		IL_00a5: ldloc.3
+		IL_00a6: ldstr "b"
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00b0: stelem.ref
+		IL_00b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00b6: pop
+		IL_00b7: ret
 	} // end of method Proxy_GetTrap_OverridesProperty::__js_module_init__
 
 } // end of class Modules.Proxy_GetTrap_OverridesProperty

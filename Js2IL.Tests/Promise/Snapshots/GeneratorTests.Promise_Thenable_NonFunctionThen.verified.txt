@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ff
+				// Method begins at RVA 0x2103
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 				object 'value'
 			) cil managed 
 		{
-			// Method begins at RVA 0x20c4
+			// Method begins at RVA 0x20c8
 			// Header size: 12
 			// Code size: 38 (0x26)
 			.maxstack 8
@@ -79,7 +79,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f6
+			// Method begins at RVA 0x20fa
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -105,7 +105,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 104 (0x68)
+		// Code size: 105 (0x69)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Thenable_NonFunctionThen/Scope,
@@ -117,41 +117,42 @@
 
 		IL_0000: newobj instance void Modules.Promise_Thenable_NonFunctionThen/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "then"
 		IL_0011: ldc.r8 123
 		IL_001a: box [System.Runtime]System.Double
-		IL_001f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0024: stloc.1
-		IL_0025: ldloc.1
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_002b: stloc.2
-		IL_002c: ldnull
-		IL_002d: ldftn object Modules.Promise_Thenable_NonFunctionThen/ArrowFunction_L5C27::__js_call__(object[], object)
-		IL_0033: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0038: ldc.i4.1
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldloc.0
-		IL_0041: stelem.ref
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_004c: stloc.3
-		IL_004d: ldc.i4.1
-		IL_004e: newarr [System.Runtime]System.Object
-		IL_0053: dup
-		IL_0054: ldc.i4.0
-		IL_0055: ldloc.3
-		IL_0056: stelem.ref
-		IL_0057: stloc.s 4
-		IL_0059: ldloc.2
-		IL_005a: ldstr "then"
-		IL_005f: ldloc.s 4
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0066: pop
-		IL_0067: ret
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0024: pop
+		IL_0025: stloc.1
+		IL_0026: ldloc.1
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_002c: stloc.2
+		IL_002d: ldnull
+		IL_002e: ldftn object Modules.Promise_Thenable_NonFunctionThen/ArrowFunction_L5C27::__js_call__(object[], object)
+		IL_0034: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0039: ldc.i4.1
+		IL_003a: newarr [System.Runtime]System.Object
+		IL_003f: dup
+		IL_0040: ldc.i4.0
+		IL_0041: ldloc.0
+		IL_0042: stelem.ref
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_004d: stloc.3
+		IL_004e: ldc.i4.1
+		IL_004f: newarr [System.Runtime]System.Object
+		IL_0054: dup
+		IL_0055: ldc.i4.0
+		IL_0056: ldloc.3
+		IL_0057: stelem.ref
+		IL_0058: stloc.s 4
+		IL_005a: ldloc.2
+		IL_005b: ldstr "then"
+		IL_0060: ldloc.s 4
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0067: pop
+		IL_0068: ret
 	} // end of method Promise_Thenable_NonFunctionThen::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_NonFunctionThen
@@ -163,7 +164,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2108
+		// Method begins at RVA 0x210c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

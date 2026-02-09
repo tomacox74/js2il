@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2177
+				// Method begins at RVA 0x2179
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -63,7 +63,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x215c
+				// Method begins at RVA 0x215e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -83,7 +83,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2165
+				// Method begins at RVA 0x2167
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -103,7 +103,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216e
+				// Method begins at RVA 0x2170
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -153,7 +153,7 @@
 		{
 			// Method begins at RVA 0x20f0
 			// Header size: 12
-			// Code size: 87 (0x57)
+			// Code size: 89 (0x59)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ArrowFunction_LexicalThis_ObjectLiteralProperty/C/Scope_make,
@@ -178,19 +178,21 @@
 			IL_0023: ldarg.0
 			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
 			IL_0029: stloc.2
-			IL_002a: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_002f: dup
 			IL_0030: ldstr "x"
 			IL_0035: ldc.r8 999
 			IL_003e: box [System.Runtime]System.Double
-			IL_0043: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-			IL_0048: dup
-			IL_0049: ldstr "getValue"
-			IL_004e: ldloc.2
-			IL_004f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-			IL_0054: stloc.1
-			IL_0055: ldloc.1
-			IL_0056: ret
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_0048: pop
+			IL_0049: dup
+			IL_004a: ldstr "getValue"
+			IL_004f: ldloc.2
+			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_0055: pop
+			IL_0056: stloc.1
+			IL_0057: ldloc.1
+			IL_0058: ret
 		} // end of method C::make
 
 	} // end of class C
@@ -210,7 +212,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2153
+			// Method begins at RVA 0x2155
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -286,7 +288,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2180
+		// Method begins at RVA 0x2182
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -7,14 +7,24 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <JavaScriptRuntimePackageVersion>0.7.3</JavaScriptRuntimePackageVersion>
+    <JavaScriptRuntimePackageVersion Condition="'$(JavaScriptRuntimePackageVersion)' == ''">0.7.3</JavaScriptRuntimePackageVersion>
     <ModuleName>HostedCounterModule</ModuleName>
     <ModuleProj>$(MSBuildProjectDirectory)\..\compiler\HostedCounterModule.proj</ModuleProj>
     <ModuleDll>$(MSBuildProjectDirectory)\..\compiler\out\$(ModuleName).dll</ModuleDll>
+
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\..'))</RepoRoot>
+    <LocalJavaScriptRuntimeProject>$(RepoRoot)JavaScriptRuntime\JavaScriptRuntime.csproj</LocalJavaScriptRuntimeProject>
+
+    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJavaScriptRuntimeProject)')">true</UseLocalJs2ILProject>
+    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And !Exists('$(LocalJavaScriptRuntimeProject)')">false</UseLocalJs2ILProject>
+    <UseLocalJs2ILProjectLower>$([System.String]::Copy('$(UseLocalJs2ILProject)').ToLowerInvariant())</UseLocalJs2ILProjectLower>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JavaScriptRuntime" Version="$(JavaScriptRuntimePackageVersion)" />
+    <ProjectReference Include="$(LocalJavaScriptRuntimeProject)"
+              Condition="'$(UseLocalJs2ILProjectLower)' == 'true' And Exists('$(LocalJavaScriptRuntimeProject)')" />
+    <PackageReference Include="JavaScriptRuntime" Version="$(JavaScriptRuntimePackageVersion)"
+            Condition="'$(UseLocalJs2ILProjectLower)' != 'true' Or !Exists('$(LocalJavaScriptRuntimeProject)')" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,7 +34,7 @@
   </ItemGroup>
 
   <Target Name="BuildHostedModule" BeforeTargets="ResolveAssemblyReferences">
-    <MSBuild Projects="$(ModuleProj)" Targets="Build" />
+    <MSBuild Projects="$(ModuleProj)" Targets="Build" Properties="UseLocalJs2ILProject=$(UseLocalJs2ILProject)" />
   </Target>
 
   <Target Name="CopyHostedModuleToOutput" AfterTargets="Build" DependsOnTargets="BuildHostedModule"

@@ -88,7 +88,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Construction (new) including dynamic constructor values | Supported with Limitations | [`Classes_DeclareEmptyClass.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`CommonJS_Export_ClassWithConstructor.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_Export_ClassWithConstructor.js)<br>[`NewExpression_Number_Sugar.js`](../../../Js2IL.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js) | Supports statically-known constructors and a runtime fallback for dynamic constructor values crossing module boundaries. newTarget semantics and many exotic constructor behaviors are not implemented. |
+| Construction (new) including dynamic constructor values | Supported with Limitations | [`Classes_DeclareEmptyClass.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`CommonJS_Export_ClassWithConstructor.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_Export_ClassWithConstructor.js)<br>[`NewExpression_Number_Sugar.js`](../../../Js2IL.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js)<br>[`ctorPadding.js`](../../../Js2IL.Tests/Hosting/JavaScript/ctorPadding.js) | Supports statically-known constructors and a runtime fallback for dynamic constructor values crossing module boundaries. Missing arguments are permitted on the dynamic construction fallback and are treated as undefined/null for host constructor activation. newTarget semantics and many exotic constructor behaviors are not implemented. |
 
 ### 7.3.18 ([tc39.es](https://tc39.es/ecma262/#sec-lengthofarraylike))
 
