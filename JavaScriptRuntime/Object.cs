@@ -11,6 +11,162 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Object", IntrinsicCallKind.ObjectConstruct)]
     public class Object
     {
+        private static bool IsNullableValueType(Type type)
+        {
+            return Nullable.GetUnderlyingType(type) != null;
+        }
+
+        private static bool IsNullAssignableTo(Type parameterType)
+        {
+            return !parameterType.IsValueType || IsNullableValueType(parameterType);
+        }
+
+        private static bool TryCoerceConstructorArg(object? value, Type parameterType, out object? coerced)
+        {
+            // JS undefined/null are represented as CLR null or JsNull.
+            if (value is JsNull)
+            {
+                value = null;
+            }
+
+            if (value is null)
+            {
+                coerced = null;
+                return IsNullAssignableTo(parameterType);
+            }
+
+            // Exact / reference assignability.
+            var valueType = value.GetType();
+            if (parameterType.IsAssignableFrom(valueType))
+            {
+                coerced = value;
+                return true;
+            }
+
+            // Handle nullable value types by matching against the underlying type.
+            var underlying = Nullable.GetUnderlyingType(parameterType);
+            var targetType = underlying ?? parameterType;
+
+            // Minimal numeric coercions: JS numbers are typically doubles.
+            if (value is double d)
+            {
+                if (targetType == typeof(double))
+                {
+                    coerced = d;
+                    return true;
+                }
+
+                if (targetType == typeof(float))
+                {
+                    coerced = (float)d;
+                    return true;
+                }
+
+                if (targetType == typeof(decimal))
+                {
+                    try
+                    {
+                        coerced = (decimal)d;
+                        return true;
+                    }
+                    catch
+                    {
+                        coerced = null;
+                        return false;
+                    }
+                }
+
+                if (targetType == typeof(int))
+                {
+                    if (!double.IsFinite(d) || !double.IsInteger(d) || d < int.MinValue || d > int.MaxValue)
+                    {
+                        coerced = null;
+                        return false;
+                    }
+                    coerced = (int)d;
+                    return true;
+                }
+
+                if (targetType == typeof(long))
+                {
+                    if (!double.IsFinite(d) || !double.IsInteger(d) || d < long.MinValue || d > long.MaxValue)
+                    {
+                        coerced = null;
+                        return false;
+                    }
+                    coerced = (long)d;
+                    return true;
+                }
+
+                if (targetType == typeof(short))
+                {
+                    if (!double.IsFinite(d) || !double.IsInteger(d) || d < short.MinValue || d > short.MaxValue)
+                    {
+                        coerced = null;
+                        return false;
+                    }
+                    coerced = (short)d;
+                    return true;
+                }
+
+                if (targetType == typeof(byte))
+                {
+                    if (!double.IsFinite(d) || !double.IsInteger(d) || d < byte.MinValue || d > byte.MaxValue)
+                    {
+                        coerced = null;
+                        return false;
+                    }
+                    coerced = (byte)d;
+                    return true;
+                }
+
+                if (targetType == typeof(bool))
+                {
+                    coerced = d != 0;
+                    return true;
+                }
+            }
+
+            // Minimal string coercion.
+            if (targetType == typeof(string))
+            {
+                coerced = DotNet2JSConversions.ToString(value);
+                return true;
+            }
+
+            coerced = null;
+            return false;
+        }
+
+        private static bool IsViableConstructorCall(ParameterInfo[] parameters, object[] callArgs)
+        {
+            // Must be able to supply all parameters (missing args treated as undefined/null).
+            if (callArgs.Length > parameters.Length)
+            {
+                return false;
+            }
+
+            // Provided args must be assignable/coercible.
+            for (int i = 0; i < callArgs.Length; i++)
+            {
+                if (!TryCoerceConstructorArg(callArgs[i], parameters[i].ParameterType, out _))
+                {
+                    return false;
+                }
+            }
+
+            // Missing args become undefined/null; reject ctors that require non-nullable value types.
+            for (int i = callArgs.Length; i < parameters.Length; i++)
+            {
+                if (!IsNullAssignableTo(parameters[i].ParameterType))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private static bool IsObjectLikeForPrototype(object value)
         {
             // JS null/undefined are not objects.
@@ -392,28 +548,28 @@ namespace JavaScriptRuntime
                     foreach (var ctor in ctors.OrderBy(c => c.GetParameters().Length))
                     {
                         var parameters = ctor.GetParameters();
-                        if (callArgs.Length > parameters.Length)
+                        if (!IsViableConstructorCall(parameters, callArgs))
                         {
                             continue;
                         }
 
                         var invokeArgs = new object?[parameters.Length];
-                        for (var i = 0; i < invokeArgs.Length; i++)
+                        for (int i = 0; i < parameters.Length; i++)
                         {
-                            invokeArgs[i] = i < callArgs.Length ? callArgs[i] : null;
+                            if (i < callArgs.Length)
+                            {
+                                _ = TryCoerceConstructorArg(callArgs[i], parameters[i].ParameterType, out var coerced);
+                                invokeArgs[i] = coerced;
+                            }
+                            else
+                            {
+                                invokeArgs[i] = null;
+                            }
                         }
 
                         try
                         {
                             return ctor.Invoke(invokeArgs);
-                        }
-                        catch (ArgumentException)
-                        {
-                            continue;
-                        }
-                        catch (TargetParameterCountException)
-                        {
-                            continue;
                         }
                         catch (TargetInvocationException tie) when (tie.InnerException != null)
                         {
