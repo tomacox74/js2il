@@ -16,6 +16,10 @@
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And !Exists('$(LocalJs2ILProject)')">false</UseLocalJs2ILProject>
 
     <UseLocalJs2ILProjectLower>$([System.String]::Copy('$(UseLocalJs2ILProject)').ToLowerInvariant())</UseLocalJs2ILProjectLower>
+
+    <!-- Emit PDBs only for Debug builds. -->
+    <Js2ILPdbFlag Condition="'$(Configuration)' == 'Debug'">--pdb</Js2ILPdbFlag>
+    <Js2ILPdbFlag Condition="'$(Configuration)' != 'Debug'" />
   </PropertyGroup>
 
   <Target Name="NpmRestore">
@@ -29,10 +33,10 @@
          Text="UseLocalJs2ILProject=true but local project not found: $(LocalJs2ILProject)" />
 
     <Exec Condition="'$(UseLocalJs2ILProjectLower)' == 'true'"
-        Command="dotnet run --project &quot;$(LocalJs2ILProject)&quot; -c Release -- &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot; --strictMode Ignore" />
+      Command="dotnet run --project &quot;$(LocalJs2ILProject)&quot; -c Release -- &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot; --strictMode Ignore $(Js2ILPdbFlag)" />
 
     <Exec Condition="'$(UseLocalJs2ILProjectLower)' != 'true'"
-        Command="js2il &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot; --strictMode Ignore" />
+      Command="js2il &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot; --strictMode Ignore $(Js2ILPdbFlag)" />
   </Target>
 
   <Target Name="Clean">
