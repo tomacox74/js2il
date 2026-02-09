@@ -106,11 +106,16 @@ public sealed partial class HIRToLIRLowerer
             var symbol = funcVarExpr.Name;
 
             // Fast-path: CommonJS module intrinsic require(...)
-            // In modules, `require` is injected as a CommonJS.RequireDelegate (no scopes parameter),
-            // so we can lower this call to a direct delegate invocation.
+            // Node.js semantics: `require` is just a mutable binding in the module wrapper.
+            // Only use the direct delegate call when we can conservatively prove:
+            //  - this identifier resolves to the injected module parameter binding (not shadowed), AND
+            //  - the binding is never written to (not reassigned).
             if (string.Equals(symbol.Name, "require", StringComparison.Ordinal)
-                && symbol.BindingInfo?.DeclaringScope?.Kind == ScopeKind.Global
-                && symbol.BindingInfo.DeclaringScope.Parameters.Contains("require"))
+                && symbol.BindingInfo is { } requireBinding
+                && requireBinding.DeclaringScope.Kind == ScopeKind.Global
+                && requireBinding.DeclaringScope.Parameters.Contains("require")
+                && ReferenceEquals(requireBinding.DeclarationNode, requireBinding.DeclaringScope.AstNode)
+                && !requireBinding.HasWrite)
             {
                 // Evaluate argument expressions for side effects, but only pass the first argument.
                 TempVariable moduleIdTemp;

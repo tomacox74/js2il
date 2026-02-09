@@ -1,0 +1,254 @@
+﻿// IL code: CommonJS_Require_Shadowed_Parameter
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.CommonJS_Require_Shadowed_Parameter
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit test
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x212b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object require
+			) cil managed 
+		{
+			// Method begins at RVA 0x20d4
+			// Header size: 12
+			// Code size: 37 (0x25)
+			.maxstack 8
+			.locals init (
+				[0] object[],
+				[1] object
+			)
+
+			IL_0000: ldc.i4.1
+			IL_0001: newarr [System.Runtime]System.Object
+			IL_0006: dup
+			IL_0007: ldc.i4.0
+			IL_0008: ldstr "fs"
+			IL_000d: stelem.ref
+			IL_000e: stloc.0
+			IL_000f: ldarg.1
+			IL_0010: ldc.i4.1
+			IL_0011: newarr [System.Runtime]System.Object
+			IL_0016: dup
+			IL_0017: ldc.i4.0
+			IL_0018: ldarg.0
+			IL_0019: ldc.i4.0
+			IL_001a: ldelem.ref
+			IL_001b: stelem.ref
+			IL_001c: ldloc.0
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_0022: stloc.1
+			IL_0023: ldloc.1
+			IL_0024: ret
+		} // end of method test::__js_call__
+
+	} // end of class test
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L7C18
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 0d 53 63 6f 70 65 20 69 64 3d 7b 69 64 7d
+				00 00
+			)
+			// Fields
+			.field public object id
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2134
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object id
+			) cil managed 
+		{
+			// Method begins at RVA 0x2108
+			// Header size: 12
+			// Code size: 14 (0xe)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldstr "shadow:"
+			IL_0005: ldarg.1
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_000b: stloc.0
+			IL_000c: ldloc.0
+			IL_000d: ret
+		} // end of method ArrowFunction_L7C18::__js_call__
+
+	} // end of class ArrowFunction_L7C18
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 11 53 63 6f 70 65 20 74 65 73 74 3d 7b 74
+			65 73 74 7d 00 00
+		)
+		// Fields
+		.field public object test
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2122
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 118 (0x76)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.CommonJS_Require_Shadowed_Parameter/Scope,
+			[1] object,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Modules.CommonJS_Require_Shadowed_Parameter/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.CommonJS_Require_Shadowed_Parameter/test::__js_call__(object[], object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldnull
+		IL_0023: ldftn object Modules.CommonJS_Require_Shadowed_Parameter/ArrowFunction_L7C18::__js_call__(object[], object)
+		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0042: stloc.2
+		IL_0043: ldnull
+		IL_0044: ldftn object Modules.CommonJS_Require_Shadowed_Parameter/test::__js_call__(object[], object)
+		IL_004a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_004f: ldc.i4.1
+		IL_0050: newarr [System.Runtime]System.Object
+		IL_0055: dup
+		IL_0056: ldc.i4.0
+		IL_0057: ldloc.0
+		IL_0058: stelem.ref
+		IL_0059: ldloc.2
+		IL_005a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_005f: stloc.2
+		IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0065: ldc.i4.1
+		IL_0066: newarr [System.Runtime]System.Object
+		IL_006b: dup
+		IL_006c: ldc.i4.0
+		IL_006d: ldloc.2
+		IL_006e: stelem.ref
+		IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0074: pop
+		IL_0075: ret
+	} // end of method CommonJS_Require_Shadowed_Parameter::__js_module_init__
+
+} // end of class Modules.CommonJS_Require_Shadowed_Parameter
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x213d
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.CommonJS_Require_Shadowed_Parameter::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
