@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.6 - 2026-02-09
+
 - IL: fix maxstack estimation for inlined indexed get/set/length operations (prevents InvalidProgramException in some generated modules).
 - Hosting: wrap dynamic return values so nested `dynamic` member access and method calls route through JS runtime semantics.
 - Runtime: allow missing constructor arguments for dynamic `new` patterns (missing args treated as undefined/null for activation).
