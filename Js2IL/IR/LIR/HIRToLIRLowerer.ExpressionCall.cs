@@ -105,6 +105,49 @@ public sealed partial class HIRToLIRLowerer
         {
             var symbol = funcVarExpr.Name;
 
+            // Fast-path: CommonJS module intrinsic require(...)
+            // In modules, `require` is injected as a CommonJS.RequireDelegate (no scopes parameter),
+            // so we can lower this call to a direct delegate invocation.
+            if (string.Equals(symbol.Name, "require", StringComparison.Ordinal)
+                && symbol.BindingInfo?.DeclaringScope?.Kind == ScopeKind.Global
+                && symbol.BindingInfo.DeclaringScope.Parameters.Contains("require"))
+            {
+                // Evaluate argument expressions for side effects, but only pass the first argument.
+                TempVariable moduleIdTemp;
+                if (callExpr.Arguments.Length > 0)
+                {
+                    if (!TryLowerExpression(callExpr.Arguments[0], out moduleIdTemp))
+                    {
+                        return false;
+                    }
+                    moduleIdTemp = EnsureObject(moduleIdTemp);
+
+                    for (int i = 1; i < callExpr.Arguments.Length; i++)
+                    {
+                        if (!TryLowerExpression(callExpr.Arguments[i], out _))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    moduleIdTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(moduleIdTemp));
+                    DefineTempStorage(moduleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                }
+
+                if (!TryLowerExpression(funcVarExpr, out var requireTemp))
+                {
+                    return false;
+                }
+                requireTemp = EnsureObject(requireTemp);
+
+                _methodBodyIR.Instructions.Add(new LIRCallRequire(requireTemp, moduleIdTemp, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+            }
+
             // PL8.1: Primitive conversion callables: String(x), Number(x), Boolean(x).
             // These are CallExpression forms (not NewExpression) and should lower to runtime conversions.
             // Semantics:

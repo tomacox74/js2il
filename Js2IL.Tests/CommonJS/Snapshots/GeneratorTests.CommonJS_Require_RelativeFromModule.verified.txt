@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2145
+			// Method begins at RVA 0x2125
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,42 +40,29 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 65 (0x41)
+		// Code size: 49 (0x31)
 		.maxstack 8
-		.locals init (
-			[0] class Modules.a/Scope,
-			[1] object[]
+		.locals (
+			[0] class Modules.a/Scope
 		)
 
 		IL_0000: newobj instance void Modules.a/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.i4.1
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
-		IL_000e: ldstr "./helpers/b"
-		IL_0013: stelem.ref
-		IL_0014: stloc.1
-		IL_0015: ldarg.1
-		IL_0016: ldc.i4.1
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldnull
-		IL_001f: stelem.ref
-		IL_0020: ldloc.1
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0026: pop
-		IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002c: ldc.i4.1
-		IL_002d: newarr [System.Runtime]System.Object
-		IL_0032: dup
-		IL_0033: ldc.i4.0
-		IL_0034: ldstr "CommonJS_Require_RelativeFromModule a has been loaded"
-		IL_0039: stelem.ref
-		IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003f: pop
-		IL_0040: ret
+		IL_0006: ldarg.1
+		IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireInvoker::EnsureRequireDelegate(object)
+		IL_000c: ldstr "./helpers/b"
+		IL_0011: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0016: pop
+		IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001c: ldc.i4.1
+		IL_001d: newarr [System.Runtime]System.Object
+		IL_0022: dup
+		IL_0023: ldc.i4.0
+		IL_0024: ldstr "CommonJS_Require_RelativeFromModule a has been loaded"
+		IL_0029: stelem.ref
+		IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002f: pop
+		IL_0030: ret
 	} // end of method a::__js_module_init__
 
 } // end of class Modules.a
@@ -91,7 +78,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x214e
+			// Method begins at RVA 0x212e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -115,55 +102,42 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20a0
+		// Method begins at RVA 0x2090
 		// Header size: 12
-		// Code size: 86 (0x56)
+		// Code size: 70 (0x46)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.helpers_b/Scope,
 			[1] string,
-			[2] object[],
-			[3] string
+			[2] string
 		)
 
 		IL_0000: newobj instance void Modules.helpers_b/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "CommonJS_Require_RelativeFromModule/helpers/b"
 		IL_000b: stloc.1
-		IL_000c: ldc.i4.1
-		IL_000d: newarr [System.Runtime]System.Object
-		IL_0012: dup
-		IL_0013: ldc.i4.0
-		IL_0014: ldstr "./c"
-		IL_0019: stelem.ref
-		IL_001a: stloc.2
-		IL_001b: ldarg.1
-		IL_001c: ldc.i4.1
-		IL_001d: newarr [System.Runtime]System.Object
-		IL_0022: dup
-		IL_0023: ldc.i4.0
-		IL_0024: ldnull
-		IL_0025: stelem.ref
-		IL_0026: ldloc.2
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_002c: pop
-		IL_002d: ldloc.1
-		IL_002e: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_0033: stloc.3
-		IL_0034: ldstr "CommonJS_Require_RelativeFromModule loaded: "
-		IL_0039: ldloc.3
-		IL_003a: call string [System.Runtime]System.String::Concat(string, string)
-		IL_003f: stloc.3
-		IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0045: ldc.i4.1
-		IL_0046: newarr [System.Runtime]System.Object
-		IL_004b: dup
-		IL_004c: ldc.i4.0
-		IL_004d: ldloc.3
-		IL_004e: stelem.ref
-		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0054: pop
-		IL_0055: ret
+		IL_000c: ldarg.1
+		IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireInvoker::EnsureRequireDelegate(object)
+		IL_0012: ldstr "./c"
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_001c: pop
+		IL_001d: ldloc.1
+		IL_001e: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0023: stloc.2
+		IL_0024: ldstr "CommonJS_Require_RelativeFromModule loaded: "
+		IL_0029: ldloc.2
+		IL_002a: call string [System.Runtime]System.String::Concat(string, string)
+		IL_002f: stloc.2
+		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0035: ldc.i4.1
+		IL_0036: newarr [System.Runtime]System.Object
+		IL_003b: dup
+		IL_003c: ldc.i4.0
+		IL_003d: ldloc.2
+		IL_003e: stelem.ref
+		IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0044: pop
+		IL_0045: ret
 	} // end of method helpers_b::__js_module_init__
 
 } // end of class Modules.helpers_b
@@ -179,7 +153,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2157
+			// Method begins at RVA 0x2137
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -203,7 +177,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2104
+		// Method begins at RVA 0x20e4
 		// Header size: 12
 		// Code size: 53 (0x35)
 		.maxstack 8
@@ -245,7 +219,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2160
+		// Method begins at RVA 0x2140
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

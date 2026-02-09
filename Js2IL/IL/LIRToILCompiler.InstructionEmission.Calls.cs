@@ -149,6 +149,38 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallRequire callRequire:
+                {
+                    // Emit: (RequireDelegate)requireValue(moduleId)
+                    // This avoids the generic Closure.InvokeWithArgs dispatcher.
+                    EmitLoadTemp(callRequire.RequireValue, ilEncoder, allocation, methodDescriptor);
+
+                    var ensureRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.CommonJS.RequireInvoker),
+                        nameof(JavaScriptRuntime.CommonJS.RequireInvoker.EnsureRequireDelegate),
+                        new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(ensureRef);
+
+                    EmitLoadTemp(callRequire.ModuleId, ilEncoder, allocation, methodDescriptor);
+                    var invokeRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.CommonJS.RequireDelegate),
+                        nameof(JavaScriptRuntime.CommonJS.RequireDelegate.Invoke),
+                        new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(invokeRef);
+
+                    if (IsMaterialized(callRequire.Result, allocation))
+                    {
+                        EmitStoreTemp(callRequire.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
             case LIRConstructValue constructValue:
                 {
                     EmitLoadTempAsObject(constructValue.ConstructorValue, ilEncoder, allocation, methodDescriptor);

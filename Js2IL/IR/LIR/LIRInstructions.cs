@@ -90,6 +90,17 @@ public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, I
 public record LIRCallFunctionValue(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls the CommonJS module-scoped <c>require</c> function.
+///
+/// In js2il-hosted CommonJS modules, <c>require</c> is provided as a <see cref="JavaScriptRuntime.CommonJS.RequireDelegate"/>
+/// which does not take the standard js2il <c>scopes</c> array. For performance, this call is emitted as a direct
+/// delegate invocation instead of going through <see cref="JavaScriptRuntime.Closure.InvokeWithArgs"/>.
+///
+/// Emits: castclass RequireDelegate; callvirt RequireDelegate::Invoke
+/// </summary>
+public record LIRCallRequire(TempVariable RequireValue, TempVariable ModuleId, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Calls a member method on a receiver via runtime dispatch.
 /// This is used for method calls where the receiver type is not known at compile time,
 /// e.g., `x.join(',')` when `x` is boxed as object.
