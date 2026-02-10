@@ -29,11 +29,11 @@ public class GeneratorScope
 
     // Pending completion for try/finally lowering in generators.
     // Used when yields occur within try/finally so we cannot rely on CLR EH regions.
-    public object? _pendingException;
-    public bool _hasPendingException;
+    public object? _genPendingException;
+    public bool _hasGenPendingException;
 
-    public object? _pendingReturnValue;
-    public bool _hasPendingReturn;
+    public object? _genPendingReturnValue;
+    public bool _hasGenPendingReturn;
 
     public int GenState
     {

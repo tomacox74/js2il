@@ -390,8 +390,7 @@ public sealed partial class HIRToLIRLowerer
         // If we are inside a generator try/finally that was lowered without CLR EH regions,
         // we must not use the built-in yield-site return/throw handling. Instead, we route
         // generator.return/throw through the enclosing finally via pending completion fields.
-        var routeThrowReturnToFinally = _isGenerator
-            && !_methodBodyIR.LeafScopeId.IsNil
+        var routeThrowReturnToFinally = !_methodBodyIR.LeafScopeId.IsNil
             && _generatorTryFinallyStack.Count > 0;
 
         _methodBodyIR.Instructions.Add(new LIRYield(

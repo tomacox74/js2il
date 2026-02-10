@@ -39,10 +39,10 @@ internal sealed partial class LIRToILCompiler
     {
         try
         {
-            if (TryResolveAsyncScopeBaseFieldToken(fieldName, out var token))
+            if (TryResolveGeneratorScopeBaseFieldToken(fieldName, out var token))
                 return token;
 
-            if (TryResolveGeneratorScopeBaseFieldToken(fieldName, out token))
+            if (TryResolveAsyncScopeBaseFieldToken(fieldName, out token))
                 return token;
 
             return _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
@@ -61,9 +61,9 @@ internal sealed partial class LIRToILCompiler
     /// </summary>
     private void EmitLoadFieldByName(InstructionEncoder ilEncoder, string scopeName, string fieldName)
     {
-        var fieldHandle = TryResolveAsyncScopeBaseFieldToken(fieldName, out var token)
+        var fieldHandle = TryResolveGeneratorScopeBaseFieldToken(fieldName, out var token)
             ? token
-            : TryResolveGeneratorScopeBaseFieldToken(fieldName, out token)
+            : TryResolveAsyncScopeBaseFieldToken(fieldName, out token)
                 ? token
                 : _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         ilEncoder.OpCode(ILOpCode.Ldfld);
@@ -76,9 +76,9 @@ internal sealed partial class LIRToILCompiler
     /// </summary>
     private void EmitStoreFieldByName(InstructionEncoder ilEncoder, string scopeName, string fieldName)
     {
-        var fieldHandle = TryResolveAsyncScopeBaseFieldToken(fieldName, out var token)
+        var fieldHandle = TryResolveGeneratorScopeBaseFieldToken(fieldName, out var token)
             ? token
-            : TryResolveGeneratorScopeBaseFieldToken(fieldName, out token)
+            : TryResolveAsyncScopeBaseFieldToken(fieldName, out token)
                 ? token
                 : _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         ilEncoder.OpCode(ILOpCode.Stfld);

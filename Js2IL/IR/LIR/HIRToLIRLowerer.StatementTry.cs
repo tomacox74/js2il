@@ -37,7 +37,7 @@ public sealed partial class HIRToLIRLowerer
         // our yield lowering suspends via 'ret'. CLR requires protected regions to exit via 'leave'.
         // When yields appear within a try/catch/finally in a generator, lower it as an explicit
         // state-machine routing (similar to async-with-await try/finally lowering).
-        if (_isGenerator && hasFinally && yieldCount > 0)
+        if (_isGenerator && !_isAsync && hasFinally && yieldCount > 0)
         {
             return TryLowerGeneratorTryWithFinallyWithYield(tryStmt);
         }
@@ -181,7 +181,7 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryLowerGeneratorTryWithFinallyWithYield(HIRTryStatement tryStmt)
     {
-        if (!_isGenerator || _methodBodyIR.LeafScopeId.IsNil)
+        if (!_isGenerator || _isAsync || _methodBodyIR.LeafScopeId.IsNil)
         {
             return false;
         }
@@ -202,10 +202,10 @@ public sealed partial class HIRToLIRLowerer
 
         var scopeName = _methodBodyIR.LeafScopeId.Name;
 
-        const string pendingExceptionField = nameof(JavaScriptRuntime.GeneratorScope._pendingException);
-        const string hasPendingExceptionField = nameof(JavaScriptRuntime.GeneratorScope._hasPendingException);
-        const string pendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._pendingReturnValue);
-        const string hasPendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._hasPendingReturn);
+        const string pendingExceptionField = nameof(JavaScriptRuntime.GeneratorScope._genPendingException);
+        const string hasPendingExceptionField = nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingException);
+        const string pendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._genPendingReturnValue);
+        const string hasPendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingReturn);
 
         var afterTryLabel = CreateLabel();
         var finallyEntryLabel = CreateLabel();
@@ -270,6 +270,10 @@ public sealed partial class HIRToLIRLowerer
                 outerCtx = arr[1];
             }
 
+            var outerFinallyTarget = outerCtx != null
+                ? outerCtx.IsInFinally ? outerCtx.FinallyExitLabelId : outerCtx.FinallyEntryLabelId
+                : (int?)null;
+
             var checkReturnLabel = CreateLabel();
             {
                 var hasExTemp = CreateTempVariable();
@@ -283,7 +287,7 @@ public sealed partial class HIRToLIRLowerer
 
                 if (outerCtx != null)
                 {
-                    _methodBodyIR.Instructions.Add(new LIRBranch(outerCtx.FinallyEntryLabelId));
+                    _methodBodyIR.Instructions.Add(new LIRBranch(outerFinallyTarget!.Value));
                 }
                 else
                 {
@@ -304,7 +308,7 @@ public sealed partial class HIRToLIRLowerer
 
                 if (outerCtx != null)
                 {
-                    _methodBodyIR.Instructions.Add(new LIRBranch(outerCtx.FinallyEntryLabelId));
+                    _methodBodyIR.Instructions.Add(new LIRBranch(outerFinallyTarget!.Value));
                 }
                 else
                 {
