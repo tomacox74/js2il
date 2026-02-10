@@ -5,6 +5,8 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - Performance/CommonJS: invoke module-scoped `require` delegate directly (avoid `Closure.InvokeWithArgs` dispatcher and unnecessary argument packing).
+- Generators/spec: unwind `throw()`/`return()` through `try/finally` while suspended at `yield` (fixes #390).
+- Runtime: unwrap `TargetInvocationException` for reflected instance member calls so JS `try/catch` can observe thrown values.
 
 ## v0.8.6 - 2026-02-09
 

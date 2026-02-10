@@ -130,6 +130,36 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        // Generator try/finally lowering (when yields are present): route return through finally.
+        if (_isGenerator && !_methodBodyIR.LeafScopeId.IsNil && _generatorTryFinallyStack.Count > 0)
+        {
+            var ctx = _generatorTryFinallyStack.Peek();
+            var scopeName = _methodBodyIR.LeafScopeId.Name;
+
+            returnTempVar = EnsureObject(returnTempVar);
+
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingReturnFieldName, returnTempVar));
+
+            var trueTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, trueTemp));
+            DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingReturnFieldName, trueTemp));
+
+            // return overrides exception
+            var falseTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, falseTemp));
+            DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingExceptionFieldName, falseTemp));
+
+            var nullTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstNull(nullTemp));
+            DefineTempStorage(nullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingExceptionFieldName, nullTemp));
+
+            _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+            return true;
+        }
+
         // If we are inside a protected region with a finally handler, we must use leave
         // so finally runs before returning.
         if (_protectedControlFlowDepthStack.Count > 0 && _methodBodyIR.ReturnEpilogueLabelId.HasValue)

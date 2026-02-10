@@ -37,5 +37,14 @@ namespace Js2IL.Tests.Generator
 
         [Fact]
         public Task Generator_YieldStar_ReturnForwards() { var testName = nameof(Generator_YieldStar_ReturnForwards); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Generator_TryFinally_ReturnWhileSuspended() { var testName = nameof(Generator_TryFinally_ReturnWhileSuspended); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Generator_TryFinally_ThrowWhileSuspended() { var testName = nameof(Generator_TryFinally_ThrowWhileSuspended); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Generator_TryFinally_Nested_ReturnWhileSuspended() { var testName = nameof(Generator_TryFinally_Nested_ReturnWhileSuspended); return ExecutionTest(testName); }
     }
 }

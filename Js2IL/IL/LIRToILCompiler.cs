@@ -188,6 +188,10 @@ internal sealed partial class LIRToILCompiler
             nameof(JavaScriptRuntime.GeneratorScope._hasResumeException) => typeof(bool),
             nameof(JavaScriptRuntime.GeneratorScope._returnValue) => typeof(object),
             nameof(JavaScriptRuntime.GeneratorScope._hasReturn) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._genPendingException) => typeof(object),
+            nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingException) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._genPendingReturnValue) => typeof(object),
+            nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingReturn) => typeof(bool),
             nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode) => typeof(double),
             nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget) => typeof(object),
             nameof(JavaScriptRuntime.GeneratorScope._yieldStarIndex) => typeof(double),
@@ -203,6 +207,10 @@ internal sealed partial class LIRToILCompiler
             or nameof(JavaScriptRuntime.GeneratorScope._hasResumeException)
             or nameof(JavaScriptRuntime.GeneratorScope._returnValue)
             or nameof(JavaScriptRuntime.GeneratorScope._hasReturn)
+            or nameof(JavaScriptRuntime.GeneratorScope._genPendingException)
+            or nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingException)
+            or nameof(JavaScriptRuntime.GeneratorScope._genPendingReturnValue)
+            or nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingReturn)
             or nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode)
             or nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget)
             or nameof(JavaScriptRuntime.GeneratorScope._yieldStarIndex)
@@ -211,6 +219,12 @@ internal sealed partial class LIRToILCompiler
 
     private bool TryResolveAsyncScopeBaseFieldToken(string fieldName, out EntityHandle token)
     {
+        if (!MethodBody.IsAsync)
+        {
+            token = default;
+            return false;
+        }
+
         if (!TryGetAsyncScopeBaseFieldClrType(fieldName, out _))
         {
             token = default;
@@ -223,6 +237,12 @@ internal sealed partial class LIRToILCompiler
 
     private bool TryResolveGeneratorScopeBaseFieldToken(string fieldName, out EntityHandle token)
     {
+        if (!MethodBody.IsGenerator)
+        {
+            token = default;
+            return false;
+        }
+
         if (!TryGetGeneratorScopeBaseFieldClrType(fieldName, out _))
         {
             token = default;

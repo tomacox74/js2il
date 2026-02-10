@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -2931,6 +2932,27 @@ namespace JavaScriptRuntime
 
             var src = srcArgs;
 
+            object? InvokeChosen(object?[] invokeArgs)
+            {
+                var previousThis = RuntimeServices.SetCurrentThis(instance);
+                try
+                {
+                    try
+                    {
+                        return chosen.Invoke(instance, invokeArgs);
+                    }
+                    catch (TargetInvocationException tie) when (tie.InnerException != null)
+                    {
+                        ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
+                        throw; // unreachable
+                    }
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+
             // Resolve scopes for js2il-style calls.
             object[] ResolveScopesArray(object target)
             {
@@ -2961,15 +2983,7 @@ namespace JavaScriptRuntime
                     coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
                 }
 
-                var previousThis = RuntimeServices.SetCurrentThis(instance);
-                try
-                {
-                    return chosen.Invoke(instance, new object?[] { coerced });
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                return InvokeChosen(new object?[] { coerced });
             }
 
             if (expectsLeadingScopes)
@@ -2984,15 +2998,7 @@ namespace JavaScriptRuntime
                     coerced[i + 1] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
                 }
 
-                var previousThis = RuntimeServices.SetCurrentThis(instance);
-                try
-                {
-                    return chosen.Invoke(instance, coerced);
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                return InvokeChosen(coerced);
             }
 
             {
@@ -3003,15 +3009,7 @@ namespace JavaScriptRuntime
                     coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
                 }
 
-                var previousThis = RuntimeServices.SetCurrentThis(instance);
-                try
-                {
-                    return chosen.Invoke(instance, coerced);
-                }
-                finally
-                {
-                    RuntimeServices.SetCurrentThis(previousThis);
-                }
+                return InvokeChosen(coerced);
             }
         }
 
