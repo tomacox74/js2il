@@ -156,7 +156,25 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(nullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingExceptionFieldName, nullTemp));
 
-            _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+            if (ctx.FinallyEntryLabelId != 0)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+                return true;
+            }
+
+            // No finally in this explicit context. If there is an outer explicit context, route there;
+            // otherwise return immediately.
+            if (_generatorTryFinallyStack.Count > 1)
+            {
+                var outer = _generatorTryFinallyStack.ToArray()[1];
+                if (outer.FinallyEntryLabelId != 0)
+                {
+                    _methodBodyIR.Instructions.Add(new LIRBranch(outer.IsInFinally ? outer.FinallyExitLabelId : outer.FinallyEntryLabelId));
+                    return true;
+                }
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRReturn(returnTempVar));
             return true;
         }
 

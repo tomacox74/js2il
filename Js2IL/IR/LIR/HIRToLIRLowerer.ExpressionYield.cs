@@ -435,7 +435,29 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasReturn), falseTemp));
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingExceptionFieldName, nullTemp));
 
-            _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+            // Route return through finally when present; otherwise return immediately (or via outer explicit finally).
+            int? returnTarget = null;
+            if (ctx.FinallyEntryLabelId != 0)
+            {
+                returnTarget = ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId;
+            }
+            else if (_generatorTryFinallyStack.Count > 1)
+            {
+                var outer = _generatorTryFinallyStack.ToArray()[1];
+                if (outer.FinallyEntryLabelId != 0)
+                {
+                    returnTarget = outer.IsInFinally ? outer.FinallyExitLabelId : outer.FinallyEntryLabelId;
+                }
+            }
+
+            if (returnTarget.HasValue)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBranch(returnTarget.Value));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRReturn(returnValueTemp));
+            }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(noReturnLabel));
 
@@ -457,7 +479,37 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingReturnFieldName, falseTemp));
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasResumeException), falseTemp));
 
-            _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+            // Prefer the current catch handler when resuming into the try region.
+            int? throwTarget = null;
+            if (ctx.HasCatch && !ctx.IsInCatch && !ctx.IsInFinally)
+            {
+                throwTarget = ctx.CatchEntryLabelId;
+            }
+            else if (ctx.FinallyEntryLabelId != 0)
+            {
+                throwTarget = ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId;
+            }
+            else if (_generatorTryFinallyStack.Count > 1)
+            {
+                var outer = _generatorTryFinallyStack.ToArray()[1];
+                if (outer.HasCatch && !outer.IsInCatch && !outer.IsInFinally)
+                {
+                    throwTarget = outer.CatchEntryLabelId;
+                }
+                else if (outer.FinallyEntryLabelId != 0)
+                {
+                    throwTarget = outer.IsInFinally ? outer.FinallyExitLabelId : outer.FinallyEntryLabelId;
+                }
+            }
+
+            if (throwTarget.HasValue)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBranch(throwTarget.Value));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRThrow(resumeExceptionTemp));
+            }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(noThrowLabel));
         }

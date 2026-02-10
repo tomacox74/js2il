@@ -111,7 +111,7 @@
     "entries": [
       {
         "clause": "27.5.1",
-        "feature": "Generator objects support next/return/throw, yield*/iterator delegation, and unwinding through try/finally on return/throw while suspended",
+        "feature": "Generator objects support next/return/throw, yield*/iterator delegation, and unwinding through try/catch/finally (including while suspended at yield) on return/throw",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-generator-objects",
         "testScripts": [
@@ -119,12 +119,15 @@
           "Js2IL.Tests/Generator/JavaScript/Generator_TryFinally_ReturnWhileSuspended.js",
           "Js2IL.Tests/Generator/JavaScript/Generator_TryFinally_ThrowWhileSuspended.js",
           "Js2IL.Tests/Generator/JavaScript/Generator_TryFinally_Nested_ReturnWhileSuspended.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_TryCatchFinally_ThrowWhileSuspended_CatchYields.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_TryCatchFinally_ThrowWhileSuspended_Rethrow.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_TryCatchFinally_ThrowWhileSuspended_Nested.js",
           "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js",
           "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js",
           "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js",
           "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js"
         ],
-        "notes": "`throw()` and `return()` route through `try/finally` blocks (including while suspended at `yield`). Limitations: `try/catch/finally` with `yield` is not supported yet (tracked by #574); spec-shaped prototype properties like `constructor` and `Symbol.toStringTag` are not currently exposed."
+        "notes": "`throw()` and `return()` route through `try/catch/finally` blocks (including while suspended at `yield`). Limitations: spec-shaped prototype properties like `constructor` and `Symbol.toStringTag` are not currently exposed."
       }
     ]
   }

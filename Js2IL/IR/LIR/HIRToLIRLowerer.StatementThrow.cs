@@ -60,7 +60,38 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingReturnFieldName, falseTemp));
 
-            _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+            // If we are in the try region and this try has a catch handler, route the exception into catch.
+            if (ctx.HasCatch && !ctx.IsInCatch && !ctx.IsInFinally)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBranch(ctx.CatchEntryLabelId));
+                return true;
+            }
+
+            // Otherwise, ensure finally (if present) runs before propagating.
+            if (ctx.FinallyEntryLabelId != 0)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+                return true;
+            }
+
+            // No finally in this explicit context. If there is an outer explicit context, route there;
+            // otherwise propagate as a normal throw.
+            if (_generatorTryFinallyStack.Count > 1)
+            {
+                var outer = _generatorTryFinallyStack.ToArray()[1];
+                if (outer.HasCatch && !outer.IsInCatch && !outer.IsInFinally)
+                {
+                    _methodBodyIR.Instructions.Add(new LIRBranch(outer.CatchEntryLabelId));
+                    return true;
+                }
+                if (outer.FinallyEntryLabelId != 0)
+                {
+                    _methodBodyIR.Instructions.Add(new LIRBranch(outer.IsInFinally ? outer.FinallyExitLabelId : outer.FinallyEntryLabelId));
+                    return true;
+                }
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRThrow(argTemp));
             return true;
         }
 

@@ -46,5 +46,14 @@ namespace Js2IL.Tests.Generator
 
         [Fact]
         public Task Generator_TryFinally_Nested_ReturnWhileSuspended() { var testName = nameof(Generator_TryFinally_Nested_ReturnWhileSuspended); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Generator_TryCatchFinally_ThrowWhileSuspended_CatchYields() { var testName = nameof(Generator_TryCatchFinally_ThrowWhileSuspended_CatchYields); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Generator_TryCatchFinally_ThrowWhileSuspended_Rethrow() { var testName = nameof(Generator_TryCatchFinally_ThrowWhileSuspended_Rethrow); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Generator_TryCatchFinally_ThrowWhileSuspended_Nested() { var testName = nameof(Generator_TryCatchFinally_ThrowWhileSuspended_Nested); return ExecutionTest(testName); }
     }
 }
