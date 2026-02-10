@@ -42,9 +42,9 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Generator try/finally-with-yield routing: capture pending exception and branch to finally.
-        if (_isGenerator && !_methodBodyIR.LeafScopeId.IsNil && _generatorTryFinallyStack.Count > 0)
+        if (_isGenerator && !_methodBodyIR.LeafScopeId.IsNil && _generatorTryCatchFinallyStack.Count > 0)
         {
-            var ctx = _generatorTryFinallyStack.Peek();
+            var ctx = _generatorTryCatchFinallyStack.Peek();
             var scopeName = _methodBodyIR.LeafScopeId.Name;
 
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingExceptionFieldName, argTemp));
@@ -68,7 +68,7 @@ public sealed partial class HIRToLIRLowerer
             }
 
             // Otherwise, ensure finally (if present) runs before propagating.
-            if (ctx.FinallyEntryLabelId != 0)
+            if (ctx.FinallyEntryLabelId != -1)
             {
                 _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
                 return true;
@@ -76,15 +76,14 @@ public sealed partial class HIRToLIRLowerer
 
             // No finally in this explicit context. If there is an outer explicit context, route there;
             // otherwise propagate as a normal throw.
-            if (_generatorTryFinallyStack.Count > 1)
+            if (TryGetOuterGeneratorTryCatchFinallyContext(out var outer))
             {
-                var outer = _generatorTryFinallyStack.ToArray()[1];
                 if (outer.HasCatch && !outer.IsInCatch && !outer.IsInFinally)
                 {
                     _methodBodyIR.Instructions.Add(new LIRBranch(outer.CatchEntryLabelId));
                     return true;
                 }
-                if (outer.FinallyEntryLabelId != 0)
+                if (outer.FinallyEntryLabelId != -1)
                 {
                     _methodBodyIR.Instructions.Add(new LIRBranch(outer.IsInFinally ? outer.FinallyExitLabelId : outer.FinallyEntryLabelId));
                     return true;

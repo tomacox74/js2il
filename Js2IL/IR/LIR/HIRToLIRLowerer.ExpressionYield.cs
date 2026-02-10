@@ -391,7 +391,7 @@ public sealed partial class HIRToLIRLowerer
         // we must not use the built-in yield-site return/throw handling. Instead, we route
         // generator.return/throw through the enclosing finally via pending completion fields.
         var routeThrowReturnToFinally = !_methodBodyIR.LeafScopeId.IsNil
-            && _generatorTryFinallyStack.Count > 0;
+            && _generatorTryCatchFinallyStack.Count > 0;
 
         _methodBodyIR.Instructions.Add(new LIRYield(
             yieldedValueTemp,
@@ -402,7 +402,7 @@ public sealed partial class HIRToLIRLowerer
 
         if (routeThrowReturnToFinally)
         {
-            var ctx = _generatorTryFinallyStack.Peek();
+            var ctx = _generatorTryCatchFinallyStack.Peek();
             var scopeName = _methodBodyIR.LeafScopeId.Name;
 
             // Shared constants used by the routing logic.
@@ -437,14 +437,13 @@ public sealed partial class HIRToLIRLowerer
 
             // Route return through finally when present; otherwise return immediately (or via outer explicit finally).
             int? returnTarget = null;
-            if (ctx.FinallyEntryLabelId != 0)
+            if (ctx.FinallyEntryLabelId != -1)
             {
                 returnTarget = ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId;
             }
-            else if (_generatorTryFinallyStack.Count > 1)
+            else if (TryGetOuterGeneratorTryCatchFinallyContext(out var outer))
             {
-                var outer = _generatorTryFinallyStack.ToArray()[1];
-                if (outer.FinallyEntryLabelId != 0)
+                if (outer.FinallyEntryLabelId != -1)
                 {
                     returnTarget = outer.IsInFinally ? outer.FinallyExitLabelId : outer.FinallyEntryLabelId;
                 }
@@ -485,18 +484,17 @@ public sealed partial class HIRToLIRLowerer
             {
                 throwTarget = ctx.CatchEntryLabelId;
             }
-            else if (ctx.FinallyEntryLabelId != 0)
+            else if (ctx.FinallyEntryLabelId != -1)
             {
                 throwTarget = ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId;
             }
-            else if (_generatorTryFinallyStack.Count > 1)
+            else if (TryGetOuterGeneratorTryCatchFinallyContext(out var outer))
             {
-                var outer = _generatorTryFinallyStack.ToArray()[1];
                 if (outer.HasCatch && !outer.IsInCatch && !outer.IsInFinally)
                 {
                     throwTarget = outer.CatchEntryLabelId;
                 }
-                else if (outer.FinallyEntryLabelId != 0)
+                else if (outer.FinallyEntryLabelId != -1)
                 {
                     throwTarget = outer.IsInFinally ? outer.FinallyExitLabelId : outer.FinallyEntryLabelId;
                 }
