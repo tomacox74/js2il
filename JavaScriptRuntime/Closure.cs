@@ -365,9 +365,9 @@ namespace JavaScriptRuntime
                 return InvokeDelegateWithArgs(del, scopes, args);
             }
 
-            throw new ArgumentException(
-                $"Unsupported callable type for function call: target type = {target.GetType()}, args length = {args.Length}",
-                nameof(target));
+            // JavaScript/Node semantics: calling a non-callable throws a TypeError.
+            // Use a stable, type-based message since we don't always have the identifier name available here.
+            throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
             }
             finally
             {

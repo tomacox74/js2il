@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- Performance/CommonJS: invoke module-scoped `require` delegate directly (avoid `Closure.InvokeWithArgs` dispatcher and unnecessary argument packing).
 
 ## v0.8.6 - 2026-02-09
 

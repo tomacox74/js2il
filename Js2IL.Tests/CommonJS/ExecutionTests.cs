@@ -64,6 +64,27 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_Reassigned_Function()
+        {
+            // Node.js semantics: `require` is a mutable binding. Reassignment must be respected.
+            return ExecutionTest(nameof(CommonJS_Require_Reassigned_Function));
+        }
+
+        [Fact]
+        public Task CommonJS_Require_Reassigned_Number_ThrowsTypeError()
+        {
+            // Node.js semantics: calling a non-function throws a TypeError (not a CLR InvalidCastException).
+            return ExecutionTest(nameof(CommonJS_Require_Reassigned_Number_ThrowsTypeError));
+        }
+
+        [Fact]
+        public Task CommonJS_Require_Shadowed_Parameter()
+        {
+            // If a nested scope shadows `require`, calls must dispatch through normal JS call semantics.
+            return ExecutionTest(nameof(CommonJS_Require_Shadowed_Parameter));
+        }
+
+        [Fact]
         public Task CommonJS_Module_Exports_Object()
         {
             // Test that exports and module.exports are aliases to the same object

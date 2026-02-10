@@ -33,6 +33,12 @@ public class BindingInfo
     /// </summary>
     public bool IsStableType { get; set; }
 
+    /// <summary>
+    /// True when this binding is the target of any write operation (assignment/update/initializer).
+    /// This is used for conservative optimizations that require proving a binding is never reassigned.
+    /// </summary>
+    public bool HasWrite { get; set; }
+
     public BindingInfo(string name, BindingKind kind, Scope declaringScope, Node declarationNode)
     {
         Name = name;

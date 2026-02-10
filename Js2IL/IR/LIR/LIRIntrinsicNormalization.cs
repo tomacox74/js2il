@@ -1,4 +1,6 @@
+using Js2IL.IL;
 using Js2IL.Services;
+using System.Linq;
 
 namespace Js2IL.IR;
 
@@ -11,6 +13,9 @@ internal static class LIRIntrinsicNormalization
 {
     public static void Normalize(MethodBodyIR methodBody, ClassRegistry? classRegistry)
     {
+        // Normalize intrinsic call patterns that don't require ClassRegistry.
+        NormalizeCommonJsRequireCalls(methodBody);
+
         if (classRegistry == null)
         {
             return;
@@ -38,7 +43,10 @@ internal static class LIRIntrinsicNormalization
             }
         }
 
-        foreach (var instruction in methodBody.Instructions)
+        foreach (var instruction in methodBody.Instructions.Where(static ins =>
+            ins is LIRConstString
+            || ins is LIRLoadUserClassInstanceField
+            || ins is LIRCopyTemp))
         {
             switch (instruction)
             {
@@ -191,6 +199,233 @@ internal static class LIRIntrinsicNormalization
                         methodBody.TempStorages[setItem.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
                     }
                 }
+            }
+        }
+    }
+
+    private static void NormalizeCommonJsRequireCalls(MethodBodyIR methodBody)
+    {
+        // Map: argsArrayTempIndex -> (defInstructionIndex, elements)
+        var buildArrays = new Dictionary<int, (int DefIndex, IReadOnlyList<TempVariable> Elements)>();
+        var buildScopesArrays = new Dictionary<int, int>();
+        var convertToObjectDefs = new Dictionary<int, int>();
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            switch (methodBody.Instructions[i])
+            {
+                case LIRBuildArray buildArray when buildArray.Result.Index >= 0:
+                    buildArrays[buildArray.Result.Index] = (i, buildArray.Elements);
+                    break;
+
+                case LIRBuildScopesArray buildScopes when buildScopes.Result.Index >= 0:
+                    buildScopesArrays[buildScopes.Result.Index] = i;
+                    break;
+
+                case LIRConvertToObject convert when convert.Result.Index >= 0:
+                    convertToObjectDefs[convert.Result.Index] = i;
+                    break;
+            }
+        }
+
+        if (buildArrays.Count == 0)
+        {
+            // Still worth scanning calls; but without build arrays we can't safely extract the first arg.
+        }
+
+        var indicesToRemove = new HashSet<int>();
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is not LIRCallFunctionValue call)
+            {
+                continue;
+            }
+
+            if (call.FunctionValue.Index < 0 || call.FunctionValue.Index >= methodBody.TempStorages.Count)
+            {
+                continue;
+            }
+
+            var calleeStorage = methodBody.TempStorages[call.FunctionValue.Index];
+            if (calleeStorage.Kind != ValueStorageKind.Reference
+                || calleeStorage.ClrType != typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate))
+            {
+                continue;
+            }
+
+            // Extract moduleId = first arg, or undefined when no args.
+            TempVariable moduleIdTemp;
+            if (call.ArgumentsArray.Index >= 0
+                && buildArrays.TryGetValue(call.ArgumentsArray.Index, out var buildInfo))
+            {
+                if (buildInfo.Elements.Count > 0)
+                {
+                    moduleIdTemp = buildInfo.Elements[0];
+                }
+                else
+                {
+                    moduleIdTemp = CreateTemp(methodBody, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    methodBody.Instructions.Insert(i, new LIRConstUndefined(moduleIdTemp));
+
+                    // We inserted before the call; shift indices and adjust tracked removal indices.
+                    ShiftIndicesAfterInsert(indicesToRemove, i);
+                    ShiftIndicesAfterInsert(buildArrays, i);
+                    ShiftIndicesAfterInsert(buildScopesArrays, i);
+                    ShiftIndicesAfterInsert(convertToObjectDefs, i);
+                    i++; // call moved one slot forward
+                }
+
+                // If the args array temp is only used by its build + this call, remove the build.
+                if (!IsTempUsedOutside(methodBody, call.ArgumentsArray, ignoreInstructionIndices: new HashSet<int> { buildInfo.DefIndex, i }))
+                {
+                    indicesToRemove.Add(buildInfo.DefIndex);
+
+                    // Also remove dead boxing conversions that existed solely to populate the args array.
+                    // Keep the first element if it becomes the require(moduleId) argument.
+                    for (int argIndex = 1; argIndex < buildInfo.Elements.Count; argIndex++)
+                    {
+                        var elem = buildInfo.Elements[argIndex];
+                        if (elem.Index < 0)
+                        {
+                            continue;
+                        }
+
+                        if (!convertToObjectDefs.TryGetValue(elem.Index, out var defIndex))
+                        {
+                            continue;
+                        }
+
+                        if (!IsTempUsedOutside(methodBody, elem, ignoreInstructionIndices: new HashSet<int> { defIndex, buildInfo.DefIndex, i }))
+                        {
+                            indicesToRemove.Add(defIndex);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Unknown args array provenance; stay conservative.
+                continue;
+            }
+
+            // If the scopes array temp is only used by its build + this call, remove the build.
+            if (call.ScopesArray.Index >= 0
+                && buildScopesArrays.TryGetValue(call.ScopesArray.Index, out var scopesDefIndex)
+                && !IsTempUsedOutside(methodBody, call.ScopesArray, ignoreInstructionIndices: new HashSet<int> { scopesDefIndex, i }))
+            {
+                indicesToRemove.Add(scopesDefIndex);
+            }
+
+            methodBody.Instructions[i] = new LIRCallRequire(call.FunctionValue, moduleIdTemp, call.Result);
+
+            if (call.Result.Index >= 0 && call.Result.Index < methodBody.TempStorages.Count)
+            {
+                methodBody.TempStorages[call.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+            }
+        }
+
+        if (indicesToRemove.Count == 0)
+        {
+            return;
+        }
+
+        // Remove instructions in a single compaction pass.
+        var newInstructions = new List<LIRInstruction>(methodBody.Instructions.Count - indicesToRemove.Count);
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (!indicesToRemove.Contains(i))
+            {
+                newInstructions.Add(methodBody.Instructions[i]);
+            }
+        }
+        methodBody.Instructions.Clear();
+        methodBody.Instructions.AddRange(newInstructions);
+    }
+
+    private static TempVariable CreateTemp(MethodBodyIR methodBody, ValueStorage storage)
+    {
+        var index = methodBody.Temps.Count;
+        var temp = new TempVariable(index);
+        methodBody.Temps.Add(temp);
+        methodBody.TempStorages.Add(storage);
+        methodBody.TempVariableSlots.Add(-1);
+        return temp;
+    }
+
+    private static bool IsTempUsedOutside(MethodBodyIR methodBody, TempVariable temp, HashSet<int> ignoreInstructionIndices)
+    {
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (ignoreInstructionIndices.Contains(i))
+            {
+                continue;
+            }
+
+            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(methodBody.Instructions[i]))
+            {
+                if (used.Index == temp.Index)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static void ShiftIndicesAfterInsert(HashSet<int> indices, int insertAt)
+    {
+        if (indices.Count == 0)
+        {
+            return;
+        }
+
+        var updated = new HashSet<int>();
+        foreach (var idx in indices)
+        {
+            updated.Add(idx >= insertAt ? idx + 1 : idx);
+        }
+
+        indices.Clear();
+        foreach (var idx in updated)
+        {
+            indices.Add(idx);
+        }
+    }
+
+    private static void ShiftIndicesAfterInsert(Dictionary<int, int> indexMap, int insertAt)
+    {
+        if (indexMap.Count == 0)
+        {
+            return;
+        }
+
+        var keys = indexMap.Keys.ToArray();
+        foreach (var k in keys)
+        {
+            var v = indexMap[k];
+            if (v >= insertAt)
+            {
+                indexMap[k] = v + 1;
+            }
+        }
+    }
+
+    private static void ShiftIndicesAfterInsert(Dictionary<int, (int DefIndex, IReadOnlyList<TempVariable> Elements)> indexMap, int insertAt)
+    {
+        if (indexMap.Count == 0)
+        {
+            return;
+        }
+
+        var keys = indexMap.Keys.ToArray();
+        foreach (var k in keys)
+        {
+            var (defIndex, elems) = indexMap[k];
+            if (defIndex >= insertAt)
+            {
+                indexMap[k] = (defIndex + 1, elems);
             }
         }
     }

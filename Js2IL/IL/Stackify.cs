@@ -502,6 +502,10 @@ internal static class Stackify
             case LIRCallFunctionValue:
                 return false;
 
+            // LIRCallRequire is a direct callvirt to RequireDelegate and must never be inlined/re-emitted.
+            case LIRCallRequire:
+                return false;
+
             // LIRCallMember calls a member via runtime dispatcher.
             case LIRCallMember:
                 return false;
@@ -758,6 +762,10 @@ internal static class Stackify
             case LIRCallFunctionValue:
                 // target + scopesArray + argsArray -> result
                 return (3, 1);
+
+            case LIRCallRequire:
+                // requireValue + moduleId -> result
+                return (2, 1);
 
             case LIRCallMember:
                 // receiver + methodName + argsArray -> result

@@ -64,6 +64,24 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_Reassigned_Function()
+        {
+            return GenerateTest(nameof(CommonJS_Require_Reassigned_Function));
+        }
+
+        [Fact]
+        public Task CommonJS_Require_Reassigned_Number_ThrowsTypeError()
+        {
+            return GenerateTest(nameof(CommonJS_Require_Reassigned_Number_ThrowsTypeError));
+        }
+
+        [Fact]
+        public Task CommonJS_Require_Shadowed_Parameter()
+        {
+            return GenerateTest(nameof(CommonJS_Require_Shadowed_Parameter));
+        }
+
+        [Fact]
         public Task CommonJS_Module_Exports_Object()
         {
             // Test that exports and module.exports are aliases to the same object

@@ -19,6 +19,30 @@ namespace Js2IL.SymbolTables
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
 
+        private static BindingInfo? TryResolveBinding(Scope scope, string name)
+        {
+            var current = scope;
+            while (current != null)
+            {
+                if (current.Bindings.TryGetValue(name, out var binding))
+                {
+                    return binding;
+                }
+                current = current.Parent;
+            }
+
+            return null;
+        }
+
+        private static void MarkWritten(Scope scope, string name)
+        {
+            var binding = TryResolveBinding(scope, name);
+            if (binding != null)
+            {
+                binding.HasWrite = true;
+            }
+        }
+
         public void Build(ModuleDefinition module)
         {
             var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast);
@@ -738,7 +762,22 @@ namespace Js2IL.SymbolTables
                     {
                         funcScope.YieldPointCount = CountYieldExpressions(funcDecl.Body);
                     }
-                    currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, currentScope, funcDecl);
+                    // Function declarations are hoisted like `var` and assign a function value to the binding.
+                    // If there is an injected module parameter with the same name, do not create a new binding;
+                    // treat this as a write to the existing binding.
+                    if (currentScope.Parameters.Contains(funcName)
+                        && currentScope.Bindings.TryGetValue(funcName, out var existingParamBinding)
+                        && ReferenceEquals(existingParamBinding.DeclarationNode, currentScope.AstNode))
+                    {
+                        existingParamBinding.HasWrite = true;
+                    }
+                    else
+                    {
+                        currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, currentScope, funcDecl)
+                        {
+                            HasWrite = true
+                        };
+                    }
                         // Register parameters (identifiers + object pattern properties) via helper
                         BindObjectPatternParameters(funcDecl.Params, funcScope);
 
@@ -863,10 +902,30 @@ namespace Js2IL.SymbolTables
                                 }
                             }
 
-                            var binding = new BindingInfo(id.Name, kind, targetScope, decl);
-                            // Attempt early CLR type resolution for: const x = require('<module>')
-                            TryAssignClrTypeForRequireInit(decl, binding);
-                            targetScope.Bindings[id.Name] = binding;
+                                // If this scope already has an injected module parameter with this name,
+                                // `var <name>` must not create a new binding (JavaScript semantics).
+                                // An initializer still represents a write to the existing binding.
+                                if (kind == BindingKind.Var
+                                    && targetScope.Parameters.Contains(id.Name)
+                                    && targetScope.Bindings.TryGetValue(id.Name, out var existingModuleParamBinding)
+                                    && ReferenceEquals(existingModuleParamBinding.DeclarationNode, targetScope.AstNode))
+                                {
+                                    if (decl.Init != null)
+                                    {
+                                        existingModuleParamBinding.HasWrite = true;
+                                    }
+                                }
+                                else
+                                {
+                                    var binding = new BindingInfo(id.Name, kind, targetScope, decl);
+                                    // Attempt early CLR type resolution for: const x = require('<module>')
+                                    TryAssignClrTypeForRequireInit(decl, binding);
+                                    if (decl.Init != null)
+                                    {
+                                        binding.HasWrite = true;
+                                    }
+                                    targetScope.Bindings[id.Name] = binding;
+                                }
 
                             // Track assignment target for naming nested functions
                             if (decl.Init != null)
@@ -972,8 +1031,19 @@ namespace Js2IL.SymbolTables
                     BuildScopeRecursive(globalScope, exprStmt.Expression, currentScope);
                     break;
                 case AssignmentExpression assignExpr:
+                    if (assignExpr.Left is Identifier assignId)
+                    {
+                        MarkWritten(currentScope, assignId.Name);
+                    }
                     BuildScopeRecursive(globalScope, assignExpr.Right, currentScope);
                     BuildScopeRecursive(globalScope, assignExpr.Left, currentScope);
+                    break;
+                case UpdateExpression updateExpr:
+                    if (updateExpr.Argument is Identifier updateId)
+                    {
+                        MarkWritten(currentScope, updateId.Name);
+                    }
+                    BuildScopeRecursive(globalScope, updateExpr.Argument, currentScope);
                     break;
                 case ArrowFunctionExpression arrowFunc:
                     // Avoid duplicate scopes for the same ArrowFunctionExpression node

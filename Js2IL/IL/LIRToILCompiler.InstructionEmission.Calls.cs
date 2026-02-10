@@ -149,6 +149,44 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallRequire callRequire:
+                {
+                    // Emit: (RequireDelegate)requireValue(moduleId)
+                    // This avoids the generic Closure.InvokeWithArgs dispatcher.
+                    var requireStorage = GetTempStorage(callRequire.RequireValue);
+                    if (requireStorage.Kind == ValueStorageKind.Reference
+                        && requireStorage.ClrType == typeof(JavaScriptRuntime.CommonJS.RequireDelegate))
+                    {
+                        // Already typed (e.g., a typed local). No castclass needed.
+                        EmitLoadTemp(callRequire.RequireValue, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        // Object-typed temp: cast to the delegate type before callvirt.
+                        EmitLoadTempAsObject(callRequire.RequireValue, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.CommonJS.RequireDelegate)));
+                    }
+
+                    EmitLoadTemp(callRequire.ModuleId, ilEncoder, allocation, methodDescriptor);
+                    var invokeRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.CommonJS.RequireDelegate),
+                        nameof(JavaScriptRuntime.CommonJS.RequireDelegate.Invoke),
+                        new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(invokeRef);
+
+                    if (IsMaterialized(callRequire.Result, allocation))
+                    {
+                        EmitStoreTemp(callRequire.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
             case LIRConstructValue constructValue:
                 {
                     EmitLoadTempAsObject(constructValue.ConstructorValue, ilEncoder, allocation, methodDescriptor);
