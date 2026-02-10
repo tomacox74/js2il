@@ -365,6 +365,24 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(getPromiseRef);
                 }
+                else if (MethodBody.IsGenerator)
+                {
+                    // Generator fallthrough: mark done and return { value: undefined, done: true }
+                    var scopeName = MethodBody.LeafScopeId.Name;
+
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.LoadConstantI4(1);
+                    EmitStoreFieldByName(ilEncoder, scopeName, "_done");
+
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    ilEncoder.LoadConstantI4(1);
+                    var iterCreate = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.IteratorResult),
+                        nameof(JavaScriptRuntime.IteratorResult.Create),
+                        parameterTypes: new[] { typeof(object), typeof(bool) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(iterCreate);
+                }
                 else if (MethodBody.IsAsync && MethodBody.AsyncInfo is { HasAwaits: true })
                 {
                     // Full async state machine: resolve _deferred with undefined and return its promise.

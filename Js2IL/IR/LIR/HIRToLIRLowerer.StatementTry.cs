@@ -37,9 +37,9 @@ public sealed partial class HIRToLIRLowerer
         // our yield lowering suspends via 'ret'. CLR requires protected regions to exit via 'leave'.
         // When yields appear within a try/catch/finally in a generator, lower it as an explicit
         // state-machine routing (similar to async-with-await try/finally lowering).
-        if (_isGenerator && !_isAsync && hasFinally && yieldCount > 0)
+        if (_isGenerator && !_isAsync && (hasCatch || hasFinally) && yieldCount > 0)
         {
-            return TryLowerGeneratorTryWithFinallyWithYield(tryStmt);
+            return TryLowerGeneratorTryWithYield(tryStmt);
         }
         if (_isAsync && hasCatch && !hasFinally && awaitCount > 0)
         {
@@ -179,24 +179,17 @@ public sealed partial class HIRToLIRLowerer
         }
     }
 
-    private bool TryLowerGeneratorTryWithFinallyWithYield(HIRTryStatement tryStmt)
+    private bool TryLowerGeneratorTryWithYield(HIRTryStatement tryStmt)
     {
         if (!_isGenerator || _isAsync || _methodBodyIR.LeafScopeId.IsNil)
         {
             return false;
         }
 
-        if (tryStmt.FinallyBody == null)
+        var hasCatch = tryStmt.CatchBody != null;
+        var hasFinally = tryStmt.FinallyBody != null;
+        if (!hasCatch && !hasFinally)
         {
-            return false;
-        }
-
-        // NOTE: This initial implementation targets try/finally (no catch) semantics.
-        // It uses pending completion fields on GeneratorScope to route return/throw through finally.
-        // try/catch/finally with yields can be added later.
-        if (tryStmt.CatchBody != null)
-        {
-            IRPipelineMetrics.RecordFailureIfUnset("Generator try/catch/finally with yield is not supported yet");
             return false;
         }
 
@@ -208,8 +201,10 @@ public sealed partial class HIRToLIRLowerer
         const string hasPendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingReturn);
 
         var afterTryLabel = CreateLabel();
-        var finallyEntryLabel = CreateLabel();
-        var finallyExitLabel = CreateLabel();
+
+        var catchEntryLabel = hasCatch ? CreateLabel() : -1;
+        var finallyEntryLabel = hasFinally ? CreateLabel() : -1;
+        var finallyExitLabel = hasFinally ? CreateLabel() : -1;
 
         // Reset pending completion fields on entry.
         {
@@ -226,16 +221,19 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingReturnField, falseTemp));
         }
 
-        var ctx = new GeneratorTryFinallyContext(
+        var ctx = new GeneratorTryCatchFinallyContext(
+            HasCatch: hasCatch,
+            CatchEntryLabelId: catchEntryLabel,
             FinallyEntryLabelId: finallyEntryLabel,
             FinallyExitLabelId: finallyExitLabel,
             PendingExceptionFieldName: pendingExceptionField,
             HasPendingExceptionFieldName: hasPendingExceptionField,
             PendingReturnFieldName: pendingReturnField,
             HasPendingReturnFieldName: hasPendingReturnField,
-            IsInFinally: false);
+            IsInFinally: false,
+            IsInCatch: false);
 
-        _generatorTryFinallyStack.Push(ctx);
+        _generatorTryCatchFinallyStack.Push(ctx);
         try
         {
             // --- Try block ---
@@ -244,35 +242,91 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            // Normal completion flows into finally.
-            _methodBodyIR.Instructions.Add(new LIRBranch(finallyEntryLabel));
+            // Normal completion flows into finally (if present) or directly after try.
+            _methodBodyIR.Instructions.Add(new LIRBranch(hasFinally ? finallyEntryLabel : afterTryLabel));
+
+            // --- Catch block ---
+            if (hasCatch)
+            {
+                _methodBodyIR.Instructions.Add(new LIRLabel(catchEntryLabel));
+
+                _generatorTryCatchFinallyStack.Pop();
+                _generatorTryCatchFinallyStack.Push(ctx with { IsInCatch = true });
+
+                // Load the pending exception as the JS catch value.
+                var catchValueTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingExceptionField, catchValueTemp));
+                DefineTempStorage(catchValueTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                // Clear pending exception before executing catch (it is now handled unless re-thrown).
+                {
+                    var falseTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, falseTemp));
+                    DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, falseTemp));
+
+                    var nullTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstNull(nullTemp));
+                    DefineTempStorage(nullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, nullTemp));
+                }
+
+                if (tryStmt.CatchParamBinding != null
+                    && !TryStoreToBinding(tryStmt.CatchParamBinding, catchValueTemp, out _))
+                {
+                    return false;
+                }
+
+                if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+                {
+                    return false;
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRBranch(hasFinally ? finallyEntryLabel : afterTryLabel));
+
+                // Restore the context state to 'try' for subsequent lowering.
+                _generatorTryCatchFinallyStack.Pop();
+                _generatorTryCatchFinallyStack.Push(ctx);
+            }
 
             // --- Finally block ---
-            _methodBodyIR.Instructions.Add(new LIRLabel(finallyEntryLabel));
-
-            _generatorTryFinallyStack.Pop();
-            _generatorTryFinallyStack.Push(ctx with { IsInFinally = true });
-            if (!TryLowerStatement(tryStmt.FinallyBody))
+            if (hasFinally)
             {
-                return false;
-            }
-            _methodBodyIR.Instructions.Add(new LIRBranch(finallyExitLabel));
+                _methodBodyIR.Instructions.Add(new LIRLabel(finallyEntryLabel));
 
-            // --- After finally: dispatch based on completion ---
-            _methodBodyIR.Instructions.Add(new LIRLabel(finallyExitLabel));
+                _generatorTryCatchFinallyStack.Pop();
+                _generatorTryCatchFinallyStack.Push(ctx with { IsInFinally = true });
 
-            // If we are nested within another generator try/finally routing context, propagate
-            // the pending completion outward by jumping to the outer finally entry.
-            GeneratorTryFinallyContext? outerCtx = null;
-            if (_generatorTryFinallyStack.Count > 1)
-            {
-                var arr = _generatorTryFinallyStack.ToArray();
-                outerCtx = arr[1];
+                if (tryStmt.FinallyBody != null && !TryLowerStatement(tryStmt.FinallyBody))
+                {
+                    return false;
+                }
+                _methodBodyIR.Instructions.Add(new LIRBranch(finallyExitLabel));
+
+                // --- After finally: dispatch based on completion ---
+                _methodBodyIR.Instructions.Add(new LIRLabel(finallyExitLabel));
             }
 
-            var outerFinallyTarget = outerCtx != null
-                ? outerCtx.IsInFinally ? outerCtx.FinallyExitLabelId : outerCtx.FinallyEntryLabelId
-                : (int?)null;
+            // If we are nested within another generator try/catch/finally routing context, propagate
+            // the pending completion outward by jumping to the appropriate outer handler.
+            GeneratorTryCatchFinallyContext? outerCtx = null;
+            if (TryGetOuterGeneratorTryCatchFinallyContext(out var outer))
+            {
+                outerCtx = outer;
+            }
+
+            int? outerHandlerTarget = null;
+            if (outerCtx != null)
+            {
+                if (outerCtx.HasCatch && !outerCtx.IsInCatch && !outerCtx.IsInFinally)
+                {
+                    outerHandlerTarget = outerCtx.CatchEntryLabelId;
+                }
+                else if (outerCtx.FinallyEntryLabelId != -1)
+                {
+                    outerHandlerTarget = outerCtx.IsInFinally ? outerCtx.FinallyExitLabelId : outerCtx.FinallyEntryLabelId;
+                }
+            }
 
             var checkReturnLabel = CreateLabel();
             {
@@ -285,9 +339,9 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingExceptionField, exTemp));
                 DefineTempStorage(exTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                if (outerCtx != null)
+                if (outerHandlerTarget.HasValue)
                 {
-                    _methodBodyIR.Instructions.Add(new LIRBranch(outerFinallyTarget!.Value));
+                    _methodBodyIR.Instructions.Add(new LIRBranch(outerHandlerTarget.Value));
                 }
                 else
                 {
@@ -306,9 +360,9 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingReturnField, retTemp));
                 DefineTempStorage(retTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                if (outerCtx != null)
+                if (outerHandlerTarget.HasValue)
                 {
-                    _methodBodyIR.Instructions.Add(new LIRBranch(outerFinallyTarget!.Value));
+                    _methodBodyIR.Instructions.Add(new LIRBranch(outerHandlerTarget.Value));
                 }
                 else
                 {
@@ -322,9 +376,9 @@ public sealed partial class HIRToLIRLowerer
         finally
         {
             // Ensure the current context is popped even if lowering fails.
-            if (_generatorTryFinallyStack.Count > 0)
+            if (_generatorTryCatchFinallyStack.Count > 0)
             {
-                _generatorTryFinallyStack.Pop();
+                _generatorTryCatchFinallyStack.Pop();
             }
         }
     }

@@ -391,7 +391,7 @@ public sealed partial class HIRToLIRLowerer
         // we must not use the built-in yield-site return/throw handling. Instead, we route
         // generator.return/throw through the enclosing finally via pending completion fields.
         var routeThrowReturnToFinally = !_methodBodyIR.LeafScopeId.IsNil
-            && _generatorTryFinallyStack.Count > 0;
+            && _generatorTryCatchFinallyStack.Count > 0;
 
         _methodBodyIR.Instructions.Add(new LIRYield(
             yieldedValueTemp,
@@ -402,7 +402,7 @@ public sealed partial class HIRToLIRLowerer
 
         if (routeThrowReturnToFinally)
         {
-            var ctx = _generatorTryFinallyStack.Peek();
+            var ctx = _generatorTryCatchFinallyStack.Peek();
             var scopeName = _methodBodyIR.LeafScopeId.Name;
 
             // Shared constants used by the routing logic.
@@ -435,7 +435,28 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasReturn), falseTemp));
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingExceptionFieldName, nullTemp));
 
-            _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+            // Route return through finally when present; otherwise return immediately (or via outer explicit finally).
+            int? returnTarget = null;
+            if (ctx.FinallyEntryLabelId != -1)
+            {
+                returnTarget = ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId;
+            }
+            else if (TryGetOuterGeneratorTryCatchFinallyContext(out var outer))
+            {
+                if (outer.FinallyEntryLabelId != -1)
+                {
+                    returnTarget = outer.IsInFinally ? outer.FinallyExitLabelId : outer.FinallyEntryLabelId;
+                }
+            }
+
+            if (returnTarget.HasValue)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBranch(returnTarget.Value));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRReturn(returnValueTemp));
+            }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(noReturnLabel));
 
@@ -457,7 +478,36 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingReturnFieldName, falseTemp));
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasResumeException), falseTemp));
 
-            _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+            // Prefer the current catch handler when resuming into the try region.
+            int? throwTarget = null;
+            if (ctx.HasCatch && !ctx.IsInCatch && !ctx.IsInFinally)
+            {
+                throwTarget = ctx.CatchEntryLabelId;
+            }
+            else if (ctx.FinallyEntryLabelId != -1)
+            {
+                throwTarget = ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId;
+            }
+            else if (TryGetOuterGeneratorTryCatchFinallyContext(out var outer))
+            {
+                if (outer.HasCatch && !outer.IsInCatch && !outer.IsInFinally)
+                {
+                    throwTarget = outer.CatchEntryLabelId;
+                }
+                else if (outer.FinallyEntryLabelId != -1)
+                {
+                    throwTarget = outer.IsInFinally ? outer.FinallyExitLabelId : outer.FinallyEntryLabelId;
+                }
+            }
+
+            if (throwTarget.HasValue)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBranch(throwTarget.Value));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRThrow(resumeExceptionTemp));
+            }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(noThrowLabel));
         }
