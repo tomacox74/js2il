@@ -21,11 +21,25 @@ public sealed partial class HIRToLIRLowerer
         var awaitCountFinally = tryStmt.FinallyBody != null ? CountAwaitExpressionsInStatement(tryStmt.FinallyBody) : 0;
         var awaitCount = awaitCountTry + awaitCountCatch + awaitCountFinally;
 
+        var yieldCountTry = _isGenerator ? CountYieldExpressionsInStatement(tryStmt.TryBlock) : 0;
+        var yieldCountCatch = _isGenerator && tryStmt.CatchBody != null ? CountYieldExpressionsInStatement(tryStmt.CatchBody) : 0;
+        var yieldCountFinally = _isGenerator && tryStmt.FinallyBody != null ? CountYieldExpressionsInStatement(tryStmt.FinallyBody) : 0;
+        var yieldCount = yieldCountTry + yieldCountCatch + yieldCountFinally;
+
         // Async try/finally (and try/catch/finally) cannot use IL exception regions when awaits occur
         // within the protected region, because awaits suspend MoveNext via 'ret'.
         if (_isAsync && hasFinally && awaitCount > 0)
         {
             return TryLowerAsyncTryWithFinallyWithAwait(tryStmt);
+        }
+
+        // Generator suspension via 'yield' cannot occur within CLR EH regions (try/finally), because
+        // our yield lowering suspends via 'ret'. CLR requires protected regions to exit via 'leave'.
+        // When yields appear within a try/catch/finally in a generator, lower it as an explicit
+        // state-machine routing (similar to async-with-await try/finally lowering).
+        if (_isGenerator && hasFinally && yieldCount > 0)
+        {
+            return TryLowerGeneratorTryWithFinallyWithYield(tryStmt);
         }
         if (_isAsync && hasCatch && !hasFinally && awaitCount > 0)
         {
@@ -162,6 +176,152 @@ public sealed partial class HIRToLIRLowerer
         finally
         {
             _protectedControlFlowDepthStack.Pop();
+        }
+    }
+
+    private bool TryLowerGeneratorTryWithFinallyWithYield(HIRTryStatement tryStmt)
+    {
+        if (!_isGenerator || _methodBodyIR.LeafScopeId.IsNil)
+        {
+            return false;
+        }
+
+        if (tryStmt.FinallyBody == null)
+        {
+            return false;
+        }
+
+        // NOTE: This initial implementation targets try/finally (no catch) semantics.
+        // It uses pending completion fields on GeneratorScope to route return/throw through finally.
+        // try/catch/finally with yields can be added later.
+        if (tryStmt.CatchBody != null)
+        {
+            IRPipelineMetrics.RecordFailureIfUnset("Generator try/catch/finally with yield is not supported yet");
+            return false;
+        }
+
+        var scopeName = _methodBodyIR.LeafScopeId.Name;
+
+        const string pendingExceptionField = nameof(JavaScriptRuntime.GeneratorScope._pendingException);
+        const string hasPendingExceptionField = nameof(JavaScriptRuntime.GeneratorScope._hasPendingException);
+        const string pendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._pendingReturnValue);
+        const string hasPendingReturnField = nameof(JavaScriptRuntime.GeneratorScope._hasPendingReturn);
+
+        var afterTryLabel = CreateLabel();
+        var finallyEntryLabel = CreateLabel();
+        var finallyExitLabel = CreateLabel();
+
+        // Reset pending completion fields on entry.
+        {
+            var nullTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstNull(nullTemp));
+            DefineTempStorage(nullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, nullTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingReturnField, nullTemp));
+
+            var falseTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, falseTemp));
+            DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, falseTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingReturnField, falseTemp));
+        }
+
+        var ctx = new GeneratorTryFinallyContext(
+            FinallyEntryLabelId: finallyEntryLabel,
+            FinallyExitLabelId: finallyExitLabel,
+            PendingExceptionFieldName: pendingExceptionField,
+            HasPendingExceptionFieldName: hasPendingExceptionField,
+            PendingReturnFieldName: pendingReturnField,
+            HasPendingReturnFieldName: hasPendingReturnField,
+            IsInFinally: false);
+
+        _generatorTryFinallyStack.Push(ctx);
+        try
+        {
+            // --- Try block ---
+            if (!TryLowerStatement(tryStmt.TryBlock))
+            {
+                return false;
+            }
+
+            // Normal completion flows into finally.
+            _methodBodyIR.Instructions.Add(new LIRBranch(finallyEntryLabel));
+
+            // --- Finally block ---
+            _methodBodyIR.Instructions.Add(new LIRLabel(finallyEntryLabel));
+
+            _generatorTryFinallyStack.Pop();
+            _generatorTryFinallyStack.Push(ctx with { IsInFinally = true });
+            if (!TryLowerStatement(tryStmt.FinallyBody))
+            {
+                return false;
+            }
+            _methodBodyIR.Instructions.Add(new LIRBranch(finallyExitLabel));
+
+            // --- After finally: dispatch based on completion ---
+            _methodBodyIR.Instructions.Add(new LIRLabel(finallyExitLabel));
+
+            // If we are nested within another generator try/finally routing context, propagate
+            // the pending completion outward by jumping to the outer finally entry.
+            GeneratorTryFinallyContext? outerCtx = null;
+            if (_generatorTryFinallyStack.Count > 1)
+            {
+                var arr = _generatorTryFinallyStack.ToArray();
+                outerCtx = arr[1];
+            }
+
+            var checkReturnLabel = CreateLabel();
+            {
+                var hasExTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, hasPendingExceptionField, hasExTemp));
+                DefineTempStorage(hasExTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasExTemp, checkReturnLabel));
+
+                var exTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingExceptionField, exTemp));
+                DefineTempStorage(exTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                if (outerCtx != null)
+                {
+                    _methodBodyIR.Instructions.Add(new LIRBranch(outerCtx.FinallyEntryLabelId));
+                }
+                else
+                {
+                    _methodBodyIR.Instructions.Add(new LIRThrow(exTemp));
+                }
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(checkReturnLabel));
+            {
+                var hasReturnTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, hasPendingReturnField, hasReturnTemp));
+                DefineTempStorage(hasReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasReturnTemp, afterTryLabel));
+
+                var retTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingReturnField, retTemp));
+                DefineTempStorage(retTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                if (outerCtx != null)
+                {
+                    _methodBodyIR.Instructions.Add(new LIRBranch(outerCtx.FinallyEntryLabelId));
+                }
+                else
+                {
+                    _methodBodyIR.Instructions.Add(new LIRReturn(retTemp));
+                }
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(afterTryLabel));
+            return true;
+        }
+        finally
+        {
+            // Ensure the current context is popped even if lowering fails.
+            if (_generatorTryFinallyStack.Count > 0)
+            {
+                _generatorTryFinallyStack.Pop();
+            }
         }
     }
 }

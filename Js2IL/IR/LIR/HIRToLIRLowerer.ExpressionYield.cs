@@ -387,11 +387,81 @@ public sealed partial class HIRToLIRLowerer
 
         genInfo.RegisterResumeLabel(resumeStateId, resumeLabel);
 
+        // If we are inside a generator try/finally that was lowered without CLR EH regions,
+        // we must not use the built-in yield-site return/throw handling. Instead, we route
+        // generator.return/throw through the enclosing finally via pending completion fields.
+        var routeThrowReturnToFinally = _isGenerator
+            && !_methodBodyIR.LeafScopeId.IsNil
+            && _generatorTryFinallyStack.Count > 0;
+
         _methodBodyIR.Instructions.Add(new LIRYield(
             yieldedValueTemp,
             resumeStateId,
             resumeLabel,
-            resultTempVar));
+            resultTempVar,
+            HandleThrowReturn: !routeThrowReturnToFinally));
+
+        if (routeThrowReturnToFinally)
+        {
+            var ctx = _generatorTryFinallyStack.Peek();
+            var scopeName = _methodBodyIR.LeafScopeId.Name;
+
+            // Shared constants used by the routing logic.
+            var trueTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, trueTemp));
+            DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+            var falseTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, falseTemp));
+            DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+            var nullTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstNull(nullTemp));
+            DefineTempStorage(nullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            // if (_hasReturn) { pendingReturn = _returnValue; hasPendingReturn=true; clear pending exception; clear _hasReturn; goto finally; }
+            var hasReturnTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasReturn), hasReturnTemp));
+            DefineTempStorage(hasReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+            var noReturnLabel = CreateLabel();
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasReturnTemp, noReturnLabel));
+
+            var returnValueTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._returnValue), returnValueTemp));
+            DefineTempStorage(returnValueTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingReturnFieldName, returnValueTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingReturnFieldName, trueTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingExceptionFieldName, falseTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasReturn), falseTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingExceptionFieldName, nullTemp));
+
+            _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(noReturnLabel));
+
+            // if (_hasResumeException) { pendingException = _resumeException; hasPendingException=true; clear pending return; clear _hasResumeException; goto finally; }
+            var hasThrowTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasResumeException), hasThrowTemp));
+            DefineTempStorage(hasThrowTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+            var noThrowLabel = CreateLabel();
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasThrowTemp, noThrowLabel));
+
+            var resumeExceptionTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._resumeException), resumeExceptionTemp));
+            DefineTempStorage(resumeExceptionTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingExceptionFieldName, resumeExceptionTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingReturnFieldName, nullTemp));
+
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingExceptionFieldName, trueTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingReturnFieldName, falseTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._hasResumeException), falseTemp));
+
+            _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(noThrowLabel));
+        }
 
         return true;
     }

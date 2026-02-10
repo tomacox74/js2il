@@ -41,6 +41,29 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        // Generator try/finally-with-yield routing: capture pending exception and branch to finally.
+        if (_isGenerator && !_methodBodyIR.LeafScopeId.IsNil && _generatorTryFinallyStack.Count > 0)
+        {
+            var ctx = _generatorTryFinallyStack.Peek();
+            var scopeName = _methodBodyIR.LeafScopeId.Name;
+
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingExceptionFieldName, argTemp));
+
+            var trueTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, trueTemp));
+            DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingExceptionFieldName, trueTemp));
+
+            // exception overrides return
+            var falseTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, falseTemp));
+            DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingReturnFieldName, falseTemp));
+
+            _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+            return true;
+        }
+
         lirInstructions.Add(new LIRThrow(argTemp));
         return true;
     }
