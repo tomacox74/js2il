@@ -13,14 +13,9 @@ It is split into two parts:
 - Node.js + npm
 - `js2il` installed as a global tool (`dotnet tool install -g js2il`)
 
-## Important: hardcoded package entry (current limitation)
+## Package entry resolution
 
-Today the compiler does **not** resolve npm packages via `package.json` (e.g. `main` / `exports`) or handle module-type selection (CommonJS vs ESM) automatically.
-
-For now, this sample hardcodes the path to domino’s entry file inside `node_modules`.
-
-Future plan:
-- Add first-class npm package support to the compiler (use `package.json` to locate the entry file, determine module type, and handle resolution).
+This sample compiles domino via `--moduleid @mixmark-io/domino`, which uses Node/CommonJS `package.json` resolution (`exports` / `main` / `index.js`) at compile time.
 
 ## Running the sample
 
@@ -31,5 +26,5 @@ From `samples/Hosting.Domino/host`:
 This will:
 
 1. Run `npm ci` in `compiler/` (to restore `@mixmark-io/domino`)
-2. Compile the hardcoded domino `index.js` via `js2il`
+2. Compile domino via `js2il --moduleid @mixmark-io/domino`
 3. Run the host which loads the compiled module and prints stats for `sample.html`

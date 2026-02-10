@@ -118,7 +118,14 @@ namespace Js2IL.Services
                 var expectedInitHandle = MetadataTokens.MethodDefinitionHandle(moduleInitMethodRow++);
                 expectedModuleInitHandles[module.Name] = expectedInitHandle;
 
-                var moduleRootTypeBuilder = new TypeBuilder(_metadataBuilder, "Modules", module.Name);
+                var effectiveNamespace = !string.IsNullOrWhiteSpace(module.ClrNamespace)
+                    ? module.ClrNamespace!
+                    : (module.IsPackageModule ? "Packages" : "Modules");
+                var effectiveTypeName = !string.IsNullOrWhiteSpace(module.ClrTypeName)
+                    ? module.ClrTypeName!
+                    : module.Name;
+
+                var moduleRootTypeBuilder = new TypeBuilder(_metadataBuilder, effectiveNamespace, effectiveTypeName);
                 var moduleTypeHandle = moduleRootTypeBuilder.AddTypeDefinition(
                     TypeAttributes.NotPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
                     _bclReferences.ObjectType,
@@ -418,20 +425,66 @@ namespace Js2IL.Services
             }
 
             var ctorRef = _bclReferences.JsCompiledModuleAttribute_Ctor_Ref;
+            var typeMapCtorRef = _bclReferences.JsCompiledModuleTypeAttribute_Ctor_Ref;
 
             // Root module path is used as the base for stable relative module ids.
             var rootModulePath = modules.rootModule.Path;
 
             foreach (var module in modules._modules.Values)
             {
-                var moduleId = JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdForManifestFromPath(module.Path, rootModulePath);
-                var valueBlob = CreateSingleStringCustomAttributeValue(moduleId);
+                var canonicalModuleId = module.ModuleId;
 
-                _metadataBuilder.AddCustomAttribute(
-                    parent: _assemblyDefinition,
-                    constructor: ctorRef,
-                    value: valueBlob);
+                // Host-facing module-id discovery should include both the canonical id and any aliases.
+                var idsToPublish = new List<string> { canonicalModuleId };
+                foreach (var alias in module.AliasModuleIds)
+                {
+                    if (!idsToPublish.Contains(alias, StringComparer.OrdinalIgnoreCase))
+                    {
+                        idsToPublish.Add(alias);
+                    }
+                }
+
+                var effectiveNamespace = !string.IsNullOrWhiteSpace(module.ClrNamespace)
+                    ? module.ClrNamespace!
+                    : (module.IsPackageModule ? "Packages" : "Modules");
+                var effectiveTypeName = !string.IsNullOrWhiteSpace(module.ClrTypeName)
+                    ? module.ClrTypeName!
+                    : module.Name;
+                var typeName = $"{effectiveNamespace}.{effectiveTypeName}";
+
+                foreach (var publishedId in idsToPublish)
+                {
+                    var valueBlob = CreateSingleStringCustomAttributeValue(publishedId);
+
+                    _metadataBuilder.AddCustomAttribute(
+                        parent: _assemblyDefinition,
+                        constructor: ctorRef,
+                        value: valueBlob);
+
+                    // Emit moduleId -> (canonicalModuleId, typeName)
+                    var mapBlob = CreateThreeStringCustomAttributeValue(publishedId, canonicalModuleId, typeName);
+
+                    _metadataBuilder.AddCustomAttribute(
+                        parent: _assemblyDefinition,
+                        constructor: typeMapCtorRef,
+                        value: mapBlob);
+                }
             }
+        }
+
+        private BlobHandle CreateThreeStringCustomAttributeValue(string value1, string value2, string value3)
+        {
+            // ECMA-335 CustomAttribute blob format:
+            // - prolog: 0x0001 (UInt16)
+            // - fixed args: SerString, SerString, SerString
+            // - named args count: UInt16 (0)
+            var blob = new BlobBuilder();
+            blob.WriteUInt16(0x0001);
+            WriteSerString(blob, value1);
+            WriteSerString(blob, value2);
+            WriteSerString(blob, value3);
+            blob.WriteUInt16(0);
+            return _metadataBuilder.GetOrAddBlob(blob);
         }
 
         private BlobHandle CreateSingleStringCustomAttributeValue(string value)

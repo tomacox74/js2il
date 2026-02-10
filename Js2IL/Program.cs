@@ -11,7 +11,11 @@ public class Js2ILArgs
     [ArgDescription("The JavaScript file to convert")]
     [ArgShortcut("--input")]
     [ArgShortcut("i")]
-    public required string InputFile { get; set; }
+    public string? InputFile { get; set; }
+
+    [ArgDescription("Compile an npm/CommonJS module id (e.g. 'turndown' or '@scope/pkg') instead of a file path")]
+    [ArgShortcut("--moduleid")]
+    public string? ModuleId { get; set; }
 
     [ArgPosition(1)]
     [ArgDescription("The output directory for the generated IL")]
@@ -80,25 +84,55 @@ class Program
             });
             var logger = servicesProvider.GetRequiredService<ILogger>();
 
-            // Require InputFile unless in help/version mode (PowerArgs won't enforce without [ArgRequired])
-            if (string.IsNullOrWhiteSpace(parsed.InputFile))
+            var hasInputFile = !string.IsNullOrWhiteSpace(parsed.InputFile);
+            var hasModuleId = !string.IsNullOrWhiteSpace(parsed.ModuleId);
+
+            if (hasInputFile && hasModuleId)
             {
-                logger.WriteLineError("Error: InputFile is required.");
+                logger.WriteLineError("Error: Provide either <InputFile> or --moduleid, not both.");
                 PrintUsage(logger);
                 Environment.ExitCode = 1;
                 return;
             }
 
-            // Validate input file exists (covers cases where user provides a non-existent file)
-            if (!File.Exists(parsed.InputFile))
+            if (!hasInputFile && !hasModuleId)
             {
-                logger.WriteLineError($"Error: Input file '{parsed.InputFile}' does not exist.");
+                logger.WriteLineError("Error: Provide <InputFile> or --moduleid.");
+                PrintUsage(logger);
+                Environment.ExitCode = 1;
+                return;
+            }
+
+            string entryPath;
+            if (hasModuleId)
+            {
+                // Resolve module id to a physical .js entry file at compile time.
+                // Base directory is the current working directory.
+                var resolver = servicesProvider.GetRequiredService<Services.NodeModuleResolver>();
+                var baseDir = Environment.CurrentDirectory;
+                if (!resolver.TryResolve(parsed.ModuleId!, baseDir, out var resolved, out var resolveError))
+                {
+                    logger.WriteLineError($"Error: Failed to resolve --moduleid '{parsed.ModuleId}': {resolveError}");
+                    Environment.ExitCode = 1;
+                    return;
+                }
+                entryPath = resolved;
+            }
+            else
+            {
+                entryPath = parsed.InputFile!;
+            }
+
+            // Validate entry file exists (covers cases where user provides a non-existent file)
+            if (!File.Exists(entryPath))
+            {
+                logger.WriteLineError($"Error: Input file '{entryPath}' does not exist.");
                 Environment.ExitCode = 1;
                 return;
             }
 
             var compiler = servicesProvider.GetRequiredService<Compiler>();
-            var success = compiler.Compile(parsed.InputFile);
+            var success = compiler.Compile(entryPath, rootModuleIdOverride: hasModuleId ? parsed.ModuleId : null);
             Environment.ExitCode = success ? 0 : 1;
         }
         catch (ArgException ex)
@@ -117,9 +151,11 @@ class Program
     private static void PrintUsage(ILogger logger)
     {
         logger.WriteLineError("Usage: js2il <InputFile> [<OutputPath>] [options]");
+        logger.WriteLineError("   or: js2il --moduleid <ModuleId> [<OutputPath>] [options]");
         logger.WriteLineError("");
         logger.WriteLineError("Option                 Description");
         logger.WriteLineError("-i, --input            The JavaScript file to convert (positional supported)");
+        logger.WriteLineError("--moduleid             Compile an npm/CommonJS module id instead of a file path");
         logger.WriteLineError("-o, --output           The output directory for the generated IL (created if missing)");
         logger.WriteLineError("-v, --verbose          Enable verbose output");
         logger.WriteLineError("-a, --analyzeunused    Analyze and report unused properties and methods");

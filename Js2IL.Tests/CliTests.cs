@@ -153,7 +153,11 @@ namespace Js2IL.Tests
         {
             var (code, stdout, stderr) = RunOutOfProc();
             Assert.NotEqual(0, code);
-            Assert.Contains("InputFile is required", stderr, StringComparison.OrdinalIgnoreCase);
+            // CLI now supports either an input file or --moduleid.
+            Assert.True(
+                stderr.Contains("InputFile is required", StringComparison.OrdinalIgnoreCase)
+                || stderr.Contains("Provide <InputFile> or --moduleid", StringComparison.OrdinalIgnoreCase),
+                stderr);
             Assert.Contains("Usage:", stderr, StringComparison.OrdinalIgnoreCase);
         }
 

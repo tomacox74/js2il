@@ -1441,11 +1441,22 @@ public class JavaScriptAstValidator : IAstValidator
                     var normalizedName = JavaScriptRuntime.Node.NodeModuleRegistry.NormalizeModuleName(modName);
                     var isLocalModule = normalizedName.StartsWith(".") || normalizedName.StartsWith("/");
 
-                    if (!SupportedRequireModules.Value.Contains(normalizedName) && !isLocalModule)
+                    // Local modules are always permitted (compile-time resolution determines existence).
+                    if (isLocalModule)
+                    {
+                        return;
+                    }
+
+                    // Explicit node: prefix indicates a Node built-in module.
+                    // If it is not supported by the runtime, report an error.
+                    if (modName.TrimStart().StartsWith("node:", StringComparison.OrdinalIgnoreCase)
+                        && !SupportedRequireModules.Value.Contains(normalizedName))
                     {
                         result.Errors.Add($"Module '{modName}' is not yet supported (line {node.Location.Start.Line})");
                         result.IsValid = false;
                     }
+
+                    // Bare specifiers without node: are permitted to support npm packages.
                 }
                 else
                 {

@@ -26,7 +26,7 @@ public class Compiler
         this._logger = logger;
     }   
 
-    public bool Compile(string inputFile)
+    public bool Compile(string inputFile, string? rootModuleIdOverride = null)
     {
         // When verbose, capture IR pipeline failure reasons to aid debugging.
         if (this.verbose)
@@ -35,7 +35,7 @@ public class Compiler
             IR.IRPipelineMetrics.Reset();
         }
 
-        var modules = this._moduleLoader.LoadModules(inputFile);
+        var modules = this._moduleLoader.LoadModules(inputFile, rootModuleIdOverride);
         if (modules == null)
         {
             return false;
