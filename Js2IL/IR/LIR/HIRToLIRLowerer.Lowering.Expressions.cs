@@ -473,6 +473,25 @@ public sealed partial class HIRToLIRLowerer
                             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                             return true;
                         }
+
+                        // Conservatively support reads of unknown globals by treating them as globalThis properties.
+                        // This enables common library patterns like:
+                        //   var root = (typeof window !== 'undefined' ? window : {});
+                        // where `window` is not declared in Node-like environments.
+                        // NOTE: This is *not* a general replacement for JavaScript's ReferenceError semantics;
+                        // missing globals should still be rejected by validation unless used in safe guarded patterns.
+                        var globalThisTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRGetIntrinsicGlobal("globalThis", globalThisTemp));
+                        DefineTempStorage(globalThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                        var keyTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstString(globalName, keyTemp));
+                        DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                        resultTempVar = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(globalThisTemp), EnsureObject(keyTemp), resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        return true;
                     }
 
                     // Function declarations are compiled separately and are not SSA-assigned in the HIR body.

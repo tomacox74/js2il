@@ -60,6 +60,7 @@ public static class CompilerServices
         services.AddSingleton<VariableRegistry>();
 
         services.AddSingleton<ModuleLoader>();
+        services.AddSingleton<Services.NodeModuleResolver>();
         services.AddSingleton<Services.AssemblyGenerator>();
         services.AddSingleton<Services.BaseClassLibraryReferences>();
 

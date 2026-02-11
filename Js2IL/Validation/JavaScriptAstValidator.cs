@@ -539,6 +539,125 @@ public class JavaScriptAstValidator : IAstValidator
             result.IsValid = false;
         }
 
+        static bool IsUndefinedStringLiteral(Expression expr)
+            => expr is StringLiteral sl && string.Equals(sl.Value, "undefined", StringComparison.Ordinal);
+
+        static bool TryGetTypeofIdentifierName(Expression expr, out string name)
+        {
+            name = string.Empty;
+
+            // `typeof <identifier>` is always safe even when the identifier is undeclared.
+            if (expr is UnaryExpression ue && ue.Operator == Acornima.Operator.TypeOf && ue.Argument is Identifier id)
+            {
+                name = id.Name;
+                return !string.IsNullOrWhiteSpace(name);
+            }
+
+            // Be defensive: Acornima has a NonUpdateUnaryExpression subtype used in some APIs.
+            if (expr is NonUpdateUnaryExpression nue && nue.Operator == Acornima.Operator.TypeOf && nue.Argument is Identifier nid)
+            {
+                name = nid.Name;
+                return !string.IsNullOrWhiteSpace(name);
+            }
+
+            return false;
+        }
+
+        static bool TryGetTypeofUndefinedCheck(Expression expr, out string identifierName, out bool trueMeansDefined)
+        {
+            identifierName = string.Empty;
+            trueMeansDefined = false;
+
+            if (expr is not BinaryExpression be)
+            {
+                return false;
+            }
+
+            if (be.Operator is not (Acornima.Operator.Equality or Acornima.Operator.StrictEquality or Acornima.Operator.Inequality or Acornima.Operator.StrictInequality))
+            {
+                return false;
+            }
+
+            // Match: typeof x === 'undefined'  OR  typeof x !== 'undefined'
+            if (TryGetTypeofIdentifierName(be.Left, out var leftName) && IsUndefinedStringLiteral(be.Right))
+            {
+                identifierName = leftName;
+                trueMeansDefined = be.Operator is Acornima.Operator.Inequality or Acornima.Operator.StrictInequality;
+                return true;
+            }
+
+            // Match: 'undefined' === typeof x  OR  'undefined' !== typeof x
+            if (TryGetTypeofIdentifierName(be.Right, out var rightName) && IsUndefinedStringLiteral(be.Left))
+            {
+                identifierName = rightName;
+                trueMeansDefined = be.Operator is Acornima.Operator.Inequality or Acornima.Operator.StrictInequality;
+                return true;
+            }
+
+            return false;
+        }
+
+        bool IsTypeofArgumentIdentifier(Identifier id)
+        {
+            var parent = nodeStack.Count > 1 ? nodeStack.Skip(1).First() : null;
+            return parent is UnaryExpression ue && ue.Operator == Acornima.Operator.TypeOf && ReferenceEquals(ue.Argument, id);
+        }
+
+        bool IsGuardedByTypeofDefined(string identifierName, Identifier id)
+        {
+            // Allow identifiers used only in branches that are guarded by a typeof check.
+            // This is intentionally conservative, covering common JS patterns:
+            // - typeof x !== 'undefined' ? x : {}
+            // - typeof x === 'undefined' ? {} : x
+            // - typeof x !== 'undefined' && x
+            // - typeof x === 'undefined' || x
+            Node child = id;
+            foreach (var ancestor in nodeStack.Skip(1))
+            {
+                switch (ancestor)
+                {
+                    case ConditionalExpression ce
+                        when (ReferenceEquals(ce.Consequent, child) || ReferenceEquals(ce.Alternate, child)):
+                        {
+                            if (TryGetTypeofUndefinedCheck(ce.Test, out var testName, out var trueMeansDefined)
+                                && string.Equals(testName, identifierName, StringComparison.Ordinal))
+                            {
+                                var inConsequent = ReferenceEquals(ce.Consequent, child);
+                                // If test being true means defined, consequent is safe; otherwise alternate is safe.
+                                if ((inConsequent && trueMeansDefined) || (!inConsequent && !trueMeansDefined))
+                                {
+                                    return true;
+                                }
+                            }
+                            break;
+                        }
+
+                    case LogicalExpression le when ReferenceEquals(le.Right, child):
+                        {
+                            if (TryGetTypeofUndefinedCheck(le.Left, out var testName, out var trueMeansDefined)
+                                && string.Equals(testName, identifierName, StringComparison.Ordinal))
+                            {
+                                // For &&, right executes when left is true.
+                                if (le.Operator == Acornima.Operator.LogicalAnd && trueMeansDefined)
+                                {
+                                    return true;
+                                }
+                                // For ||, right executes when left is false.
+                                if (le.Operator == Acornima.Operator.LogicalOr && !trueMeansDefined)
+                                {
+                                    return true;
+                                }
+                            }
+                            break;
+                        }
+                }
+
+                child = ancestor;
+            }
+
+            return false;
+        }
+
         walker.VisitWithContext(
             ast,
             enterNode: node =>
@@ -701,6 +820,12 @@ public class JavaScriptAstValidator : IAstValidator
                                 break;
                             }
 
+                            // `typeof <undeclaredIdentifier>` is valid JavaScript.
+                            if (IsTypeofArgumentIdentifier(id))
+                            {
+                                break;
+                            }
+
                             // Locals and known built-in constants are always allowed.
                             if (IsDeclared(name) || KnownGlobalConstants.Value.Contains(name))
                             {
@@ -709,6 +834,14 @@ public class JavaScriptAstValidator : IAstValidator
 
                             // CommonJS injected values.
                             if (AllowedInjectedGlobals.Value.Contains(name))
+                            {
+                                break;
+                            }
+
+                            // Allow guarded global checks like:
+                            //   typeof window !== 'undefined' ? window : {}
+                            //   typeof window !== 'undefined' && window
+                            if (IsGuardedByTypeofDefined(name, id))
                             {
                                 break;
                             }
@@ -1441,11 +1574,22 @@ public class JavaScriptAstValidator : IAstValidator
                     var normalizedName = JavaScriptRuntime.Node.NodeModuleRegistry.NormalizeModuleName(modName);
                     var isLocalModule = normalizedName.StartsWith(".") || normalizedName.StartsWith("/");
 
-                    if (!SupportedRequireModules.Value.Contains(normalizedName) && !isLocalModule)
+                    // Local modules are always permitted (compile-time resolution determines existence).
+                    if (isLocalModule)
+                    {
+                        return;
+                    }
+
+                    // Explicit node: prefix indicates a Node built-in module.
+                    // If it is not supported by the runtime, report an error.
+                    if (modName.TrimStart().StartsWith("node:", StringComparison.OrdinalIgnoreCase)
+                        && !SupportedRequireModules.Value.Contains(normalizedName))
                     {
                         result.Errors.Add($"Module '{modName}' is not yet supported (line {node.Location.Start.Line})");
                         result.IsValid = false;
                     }
+
+                    // Bare specifiers without node: are permitted to support npm packages.
                 }
                 else
                 {

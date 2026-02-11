@@ -91,6 +91,9 @@ namespace Js2IL.Services
         public MemberReferenceHandle JsCompiledModuleAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsCompiledModuleAttribute), new[] { typeof(string) });
 
+        public MemberReferenceHandle JsCompiledModuleTypeAttribute_Ctor_Ref =>
+            _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsCompiledModuleTypeAttribute), new[] { typeof(string), typeof(string), typeof(string) });
+
         public MemberReferenceHandle JsModuleAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsModuleAttribute), new[] { typeof(string) });
 

@@ -1,10 +1,11 @@
 <Project>
 
   <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <ModuleName>index</ModuleName>
 
-    <!-- Hardcoded domino entry file (current limitation: no package.json-based resolution) -->
-    <JavaScriptFile>$([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)','node_modules','@mixmark-io','domino','lib','index.js'))</JavaScriptFile>
+    <!-- Compile by npm/CommonJS module id (resolved via Node-style package.json rules) -->
+    <NpmModuleId>@mixmark-io/domino</NpmModuleId>
 
     <OutputDir Condition="'$(OutputDir)' == ''">$(MSBuildThisFileDirectory)out</OutputDir>
 
@@ -33,10 +34,10 @@
          Text="UseLocalJs2ILProject=true but local project not found: $(LocalJs2ILProject)" />
 
     <Exec Condition="'$(UseLocalJs2ILProjectLower)' == 'true'"
-      Command="dotnet run --project &quot;$(LocalJs2ILProject)&quot; -c Release -- &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot; --strictMode Ignore $(Js2ILPdbFlag)" />
+      Command="dotnet run --project &quot;$(LocalJs2ILProject)&quot; -c $(Configuration) -- --moduleid &quot;$(NpmModuleId)&quot; --output &quot;$(OutputDir)&quot; --strictMode Ignore $(Js2ILPdbFlag)" />
 
     <Exec Condition="'$(UseLocalJs2ILProjectLower)' != 'true'"
-      Command="js2il &quot;$(JavaScriptFile)&quot; &quot;$(OutputDir)&quot; --strictMode Ignore $(Js2ILPdbFlag)" />
+      Command="js2il --moduleid &quot;$(NpmModuleId)&quot; --output &quot;$(OutputDir)&quot; --strictMode Ignore $(Js2ILPdbFlag)" />
   </Target>
 
   <Target Name="Clean">

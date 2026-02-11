@@ -134,17 +134,74 @@ namespace Js2IL.Tests
         {
             var expected = new HashSet<string>(StringComparer.Ordinal)
             {
-                ModuleName.GetModuleIdForManifestFromPath(rootScriptPath, rootScriptPath)
+                GetExpectedModuleId(rootScriptPath, rootScriptPath)
             };
 
             expected.UnionWith((additionalScripts ?? System.Array.Empty<string>())
                 .Select(scriptName => Path.Combine(_outputPath, $"{scriptName}.js"))
-                .Select(scriptPath => ModuleName.GetModuleIdForManifestFromPath(scriptPath, rootScriptPath)));
+                .Select(scriptPath => GetExpectedModuleId(scriptPath, rootScriptPath)));
 
             var actual = ReadCompiledModuleIdsFromManifest(assemblyPath);
 
             Assert.NotEmpty(actual);
             Assert.All(expected, moduleId => Assert.Contains(moduleId, actual));
+        }
+
+        private static string GetExpectedModuleId(string modulePath, string rootScriptPath)
+        {
+            if (TryGetPackageIdentity(modulePath, out var packageName, out var withinPackageNoExt))
+            {
+                return withinPackageNoExt.Length == 0
+                    ? packageName
+                    : packageName + "/" + withinPackageNoExt;
+            }
+
+            return ModuleName.GetModuleIdForManifestFromPath(modulePath, rootScriptPath);
+        }
+
+        private static bool TryGetPackageIdentity(string modulePath, out string packageName, out string withinPackageNoExt)
+        {
+            packageName = string.Empty;
+            withinPackageNoExt = string.Empty;
+            var full = Path.GetFullPath(modulePath);
+
+            var segments = full.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .ToArray();
+
+            var nodeModulesIndex = System.Array.FindLastIndex(segments, s => string.Equals(s, "node_modules", StringComparison.OrdinalIgnoreCase));
+            if (nodeModulesIndex < 0 || nodeModulesIndex + 1 >= segments.Length)
+            {
+                return false;
+            }
+
+            var pkgStart = nodeModulesIndex + 1;
+            if (segments[pkgStart].StartsWith("@", StringComparison.Ordinal) && pkgStart + 1 < segments.Length)
+            {
+                packageName = segments[pkgStart] + "/" + segments[pkgStart + 1];
+                pkgStart += 2;
+            }
+            else
+            {
+                packageName = segments[pkgStart];
+                pkgStart += 1;
+            }
+
+            var withinSegments = segments.Skip(pkgStart).ToArray();
+            if (withinSegments.Length == 0)
+            {
+                withinPackageNoExt = string.Empty;
+                return true;
+            }
+
+            var last = withinSegments[^1];
+            last = last.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+                ? last.Substring(0, last.Length - 3)
+                : Path.ChangeExtension(last, null) ?? last;
+            withinSegments[^1] = last;
+
+            withinPackageNoExt = string.Join("/", withinSegments);
+            return true;
         }
 
         private static IReadOnlyCollection<string> ReadCompiledModuleIdsFromManifest(string assemblyPath)

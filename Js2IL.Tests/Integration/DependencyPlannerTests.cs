@@ -17,7 +17,8 @@ public class DependencyPlannerTests
         {
             Ast = ast,
             Name = "TestModule",
-            Path = "test.js"
+            Path = "test.js",
+            ModuleId = "TestModule"
         };
 
         var builder = new SymbolTableBuilder();

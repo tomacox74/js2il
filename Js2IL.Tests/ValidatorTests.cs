@@ -153,6 +153,46 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_MissingGlobalIdentifier_ReportsError()
+    {
+        var js = "var x = window;";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Global identifier 'window'", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Validate_Typeof_UndeclaredGlobal_IsAllowed()
+    {
+        var js = "var t = typeof window;";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_TypeofGuardedConditional_AllowsGuardedGlobalReference()
+    {
+        var js = "var root = typeof window !== 'undefined' ? window : {};";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_TypeofGuardedLogicalAnd_AllowsGuardedGlobalReference()
+    {
+        var js = "var x = typeof window !== 'undefined' && window;";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_BooleanGlobalValue_AsPredicate_ReturnsValid()
     {
         // This pattern requires Boolean to be usable as a function value.

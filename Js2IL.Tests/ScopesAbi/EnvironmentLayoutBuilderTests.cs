@@ -39,7 +39,8 @@ public class EnvironmentLayoutBuilderTests
         {
             Ast = ast,
             Path = fileName,
-            Name = Path.GetFileNameWithoutExtension(fileName)
+            Name = Path.GetFileNameWithoutExtension(fileName),
+            ModuleId = Path.GetFileNameWithoutExtension(fileName)
         };
         _scopeBuilder.Build(module);
         return module.SymbolTable!;

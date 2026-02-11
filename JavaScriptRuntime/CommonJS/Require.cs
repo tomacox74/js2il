@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Reflection;
 using System.Linq;
+using Js2IL.Runtime;
 
 namespace JavaScriptRuntime.CommonJS
 {
@@ -15,6 +16,10 @@ namespace JavaScriptRuntime.CommonJS
         private readonly HashSet<string> _notFound = new(StringComparer.OrdinalIgnoreCase);
 
         private readonly Assembly? _localModulesAssembly;
+
+        // Mapping emitted by the compiler: logical module id -> CLR type name.
+        // Populated lazily from assembly attributes.
+        private Dictionary<string, (string CanonicalId, string TypeName)>? _compiledModuleTypeMap;
         
         // Track the current parent module for establishing parent-child relationships
         private Module? _currentParentModule;
@@ -23,6 +28,42 @@ namespace JavaScriptRuntime.CommonJS
         {
             // Preload local modules from the provided assembly
             _localModulesAssembly = localModulesAssembly.ModulesAssembly;
+        }
+
+        private Dictionary<string, (string CanonicalId, string TypeName)> GetCompiledModuleTypeMap()
+        {
+            if (_compiledModuleTypeMap != null)
+            {
+                return _compiledModuleTypeMap;
+            }
+
+            var map = new Dictionary<string, (string CanonicalId, string TypeName)>(StringComparer.OrdinalIgnoreCase);
+
+            if (_localModulesAssembly != null)
+            {
+                foreach (var attr in _localModulesAssembly.GetCustomAttributes<JsCompiledModuleTypeAttribute>())
+                {
+                    if (string.IsNullOrWhiteSpace(attr.ModuleId) || string.IsNullOrWhiteSpace(attr.TypeName))
+                    {
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(attr.CanonicalModuleId))
+                    {
+                        continue;
+                    }
+
+                    // Normalize IDs similar to runtime specifier normalization: forward slashes, no leading './'.
+                    var id = NormalizeModuleIdKey(attr.ModuleId);
+                    if (!map.ContainsKey(id))
+                    {
+                        map[id] = (NormalizeModuleIdKey(attr.CanonicalModuleId), attr.TypeName);
+                    }
+                }
+            }
+
+            _compiledModuleTypeMap = map;
+            return _compiledModuleTypeMap;
         }
 
         /// <summary>
@@ -51,43 +92,28 @@ namespace JavaScriptRuntime.CommonJS
             if (string.IsNullOrWhiteSpace(specifier))
                 throw new ReferenceError("require specifier must be a non-empty string"); 
 
-
             var key = Normalize(specifier);
-            var isLocalModule = key.StartsWith("./") || key.StartsWith("../") || key.StartsWith("/");
 
+            // Fast path: already-instantiated Node core module singleton.
             if (_instances.TryGetValue(key, out var existing))
             {
-                // Local module circular-dependency semantics:
-                // during evaluation, module.exports may be reassigned (e.g., `module.exports = fn;`).
-                // _instances is primed before execution for circular dependency support, but must not
-                // become a stale snapshot. If we have a Module object, always return its current exports.
-                if (_modules.TryGetValue(key, out var existingLocalModule))
-                {
-                    // Track parent-child relationship for already-loaded modules
-                    if (_currentParentModule != null)
-                    {
-                        _currentParentModule.AddChild(existingLocalModule);
-                    }
-
-                    return existingLocalModule.exports;
-                }
-
-                // Track parent-child relationship for already-loaded modules
                 if (_currentParentModule != null && _modules.TryGetValue(key, out var existingModule))
                 {
                     _currentParentModule.AddChild(existingModule);
                 }
+
                 return existing;
             }
 
-            if (isLocalModule)
-            {
-                return RequireLocalModule(key);
-            }
-            else
+            // Node core modules always win over compiled packages with the same name.
+            if (FindModuleType(key) != null)
             {
                 return RequireNodeModule(key, specifier);
             }
+
+            // Everything else (relative paths + bare specifiers resolved at compile-time) is treated
+            // as a compiled module inside the provided local modules assembly.
+            return RequireLocalModule(key);
         }
 
         /// <summary>
@@ -97,70 +123,92 @@ namespace JavaScriptRuntime.CommonJS
         {
             if (_localModulesAssembly == null)
                 throw new ReferenceError($"Cannot require local module '{key}': no local modules assembly provided");
-            
-            var moduleId = ModuleName.GetModuleIdFromSpecifier(key);
+
+            // First: use compiler-emitted mapping attributes.
+            var moduleIdKey = NormalizeModuleIdKey(key);
+            var map = GetCompiledModuleTypeMap();
+            if (TryResolveFromMap(map, moduleIdKey, out var canonicalId, out var mappedTypeName))
+            {
+                return RequireCompiledModule(canonicalId, mappedTypeName, requestKey: key);
+            }
+
+            // Fallback: legacy sanitized type name lookup (Modules.<sanitized> / Scripts.<sanitized>)
+            var legacyModuleId = ModuleName.GetModuleIdFromSpecifier(key);
             var moduleTypeNameCandidates = new[]
             {
-                $"Modules.{moduleId}",
-                $"Scripts.{moduleId}",
+                $"Modules.{legacyModuleId}",
+                $"Scripts.{legacyModuleId}",
             };
 
-            Type? localType = null;
             string? resolvedTypeName = null;
             foreach (var candidate in moduleTypeNameCandidates)
             {
-                localType = _localModulesAssembly.GetType(candidate);
-                if (localType != null)
+                var t = _localModulesAssembly.GetType(candidate);
+                if (t != null)
                 {
                     resolvedTypeName = candidate;
                     break;
                 }
             }
 
-            if (localType == null)
+            if (resolvedTypeName == null)
                 throw new ReferenceError($"Cannot find local module type '{moduleTypeNameCandidates[0]}' (or legacy '{moduleTypeNameCandidates[1]}') in assembly");
 
-            // Store current parent before we change it
+            // Legacy path: treat the legacyModuleId-derived key as canonical for relative resolution.
+            return RequireCompiledModule(legacyModuleId, resolvedTypeName, requestKey: key);
+        }
+
+        private object? RequireCompiledModule(string canonicalId, string typeName, string requestKey)
+        {
+            if (_localModulesAssembly == null)
+                throw new ReferenceError($"Cannot require compiled module '{requestKey}': no local modules assembly provided");
+
+            var cacheKey = "compiled:" + canonicalId;
+            if (_instances.TryGetValue(cacheKey, out var existing))
+            {
+                if (_modules.TryGetValue(cacheKey, out var existingModule))
+                {
+                    if (_currentParentModule != null)
+                    {
+                        _currentParentModule.AddChild(existingModule);
+                    }
+
+                    return existingModule.exports;
+                }
+
+                return existing;
+            }
+
+            var localType = _localModulesAssembly.GetType(typeName);
+            if (localType == null)
+            {
+                throw new ReferenceError($"Cannot find compiled module type '{typeName}' in assembly");
+            }
+
             var parentModule = _currentParentModule;
 
-            // Create a per-module require() delegate that resolves relative specifiers
-            // against this module's own path.
-            RequireDelegate moduleRequire = (moduleIdParam) => 
+            RequireDelegate moduleRequire = (moduleIdParam) =>
             {
                 if (moduleIdParam is not string requestedSpecifier || requestedSpecifier == null)
                 {
                     throw new TypeError("The \"id\" argument must be of type string.");
                 }
 
-                var resolved = ResolveLocalSpecifier(key, requestedSpecifier);
+                var resolved = ResolveLocalSpecifier(canonicalId, requestedSpecifier);
                 return RequireModule(resolved);
             };
 
-            var dirName = GetDirectoryNameForwardSlash(key);
-            
-            // Create the Module object for this module
-            var module = new Module(key, key, parentModule, moduleRequire);
-            _modules[key] = module;
+            var dirName = GetDirectoryNameForwardSlash(canonicalId);
+            var module = new Module(canonicalId, canonicalId, parentModule, moduleRequire);
+            _modules[cacheKey] = module;
+            _instances[cacheKey] = module.exports ?? new object();
 
-            // Cache exports before executing (for circular dependency support)
-            // The exports object is shared between `exports` param and `module.exports`
-            // Note: exports starts as ExpandoObject, so this should never be null initially,
-            // but we handle null defensively in case module.exports is set to null by user code.
-            _instances[key] = module.exports ?? new object();
-
-            // Track parent-child relationship
             if (parentModule != null)
             {
                 parentModule.AddChild(module);
             }
 
-            // Method is a static member. Prefer the current compiler output, but allow legacy names.
-            var entryPointCandidates = new[]
-            {
-                "__js_module_init__",
-                "Main",
-            };
-
+            var entryPointCandidates = new[] { "__js_module_init__", "Main" };
             MethodInfo? moduleEntryPoint = null;
             foreach (var candidate in entryPointCandidates)
             {
@@ -170,63 +218,69 @@ namespace JavaScriptRuntime.CommonJS
             }
 
             if (moduleEntryPoint == null)
-                throw new TypeError($"Local module '{resolvedTypeName ?? moduleId}' does not have a static __js_module_init__ (or legacy Main) method");
+                throw new TypeError($"Compiled module '{typeName}' does not have a static __js_module_init__ (or legacy Main) method");
 
-            var moduleDelegate = (ModuleMainDelegate)Delegate.CreateDelegate(
-                typeof(ModuleMainDelegate), moduleEntryPoint);
+            var moduleDelegate = (ModuleMainDelegate)Delegate.CreateDelegate(typeof(ModuleMainDelegate), moduleEntryPoint);
 
-            // Set this module as the current parent for any requires within
             _currentParentModule = module;
-            
             try
             {
-                // Invoke module with `exports` parameter initially pointing to module.exports.
-                // IMPORTANT: The `exports` parameter is the initial module.exports value only.
-                // If the module body later reassigns module.exports, the `exports` parameter
-                // will not be updated and may diverge from module.exports. This matches
-                // Node.js CommonJS semantics, where module.exports is the authoritative value
-                // used for caching and for the return of require().
-                moduleDelegate(module.exports, moduleRequire, module, key, dirName);
+                moduleDelegate(module.exports, moduleRequire, module, canonicalId, dirName);
             }
             finally
             {
-                // Restore parent and mark module as loaded
                 _currentParentModule = parentModule;
                 module.MarkLoaded();
             }
 
-            if (Environment.GetEnvironmentVariable("JS2IL_DOMINO_DIAG") == "1")
+            _instances[cacheKey] = module.exports!;
+            return module.exports;
+        }
+
+        private static string NormalizeModuleIdKey(string keyOrId)
+        {
+            var s = Normalize(keyOrId);
+
+            // Local module IDs in the manifest do not include a leading './'.
+            if (s.StartsWith("./", StringComparison.Ordinal))
             {
-                // Keep this narrowly scoped to avoid flooding output.
-                if (key.EndsWith("/Document", StringComparison.OrdinalIgnoreCase)
-                    || key.EndsWith("/Document.js", StringComparison.OrdinalIgnoreCase)
-                    || key.EndsWith("/DOMImplementation", StringComparison.OrdinalIgnoreCase)
-                    || key.EndsWith("/DOMImplementation.js", StringComparison.OrdinalIgnoreCase)
-                    || key.EndsWith("/HTMLParser", StringComparison.OrdinalIgnoreCase)
-                    || key.EndsWith("/HTMLParser.js", StringComparison.OrdinalIgnoreCase))
+                s = s.Substring(2);
+            }
+
+            if (s.StartsWith("/", StringComparison.Ordinal))
+            {
+                s = s.Substring(1);
+            }
+
+            if (s.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
+            {
+                s = s.Substring(0, s.Length - 3);
+            }
+
+            return s;
+        }
+
+        private static bool TryResolveFromMap(Dictionary<string, (string CanonicalId, string TypeName)> map, string moduleIdKey, out string canonicalId, out string typeName)
+        {
+            canonicalId = string.Empty;
+            typeName = string.Empty;
+
+            // Minimal probing at the module-id level (not filesystem):
+            //   id, id/index
+            // Note: map keys are stored without ".js" extension.
+            var candidates = new[] { moduleIdKey, moduleIdKey + "/index" };
+
+            foreach (var c in candidates)
+            {
+                if (map.TryGetValue(c, out var mapped))
                 {
-                    var exports = module.exports;
-                    var exportsType = exports?.GetType().FullName ?? "<null>";
-
-                    string? expandoKeys = null;
-                    if (exports is ExpandoObject exp)
-                    {
-                        var dict = (IDictionary<string, object?>)exp;
-                        expandoKeys = string.Join(", ", dict.Keys.Order(StringComparer.Ordinal).Take(12));
-                        if (dict.Count > 12)
-                        {
-                            expandoKeys += ", ...";
-                        }
-                    }
-
-                    System.Console.WriteLine($"[diag] require loaded '{key}': module.exports={exportsType}" + (expandoKeys != null ? $" keys=[{expandoKeys}]" : string.Empty));
+                    canonicalId = mapped.CanonicalId;
+                    typeName = mapped.TypeName;
+                    return true;
                 }
             }
 
-            // Return module.exports (which may have been reassigned during execution)
-            // Update cache with final exports value
-            _instances[key] = module.exports!;
-            return module.exports;
+            return false;
         }
 
         /// <summary>
