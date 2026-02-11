@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.7 - 2026-02-11
+
 - Performance/CommonJS: invoke module-scoped `require` delegate directly (avoid `Closure.InvokeWithArgs` dispatcher and unnecessary argument packing).
 - Generators/spec: unwind `throw()`/`return()` through `try/finally` while suspended at `yield` (fixes #390).
 - Generators/spec: support `try/catch/finally` containing `yield`, including `.throw()`/`.return()` routing while suspended (fixes #574).
