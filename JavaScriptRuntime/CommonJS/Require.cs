@@ -272,8 +272,7 @@ namespace JavaScriptRuntime.CommonJS
 
             foreach (var c in candidates)
             {
-                var normalized = NormalizeModuleIdKey(c);
-                if (map.TryGetValue(normalized, out var mapped))
+                if (map.TryGetValue(c, out var mapped))
                 {
                     canonicalId = mapped.CanonicalId;
                     typeName = mapped.TypeName;

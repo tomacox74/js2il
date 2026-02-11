@@ -125,7 +125,7 @@ public class ModuleLoader
             // If the override is a bare package id (e.g. "@scope/pkg"), ensure that exact package id
             // is also published as an alias to the resolved entry module.
             if (TryGetPackageIdentity(rootModule.Path, out var rootPackageName, out _)
-                && string.Equals(rootOverrideAlias, rootPackageName, StringComparison.OrdinalIgnoreCase))
+                && !string.Equals(rootOverrideAlias, rootPackageName, StringComparison.OrdinalIgnoreCase))
             {
                 AddAliasIfMissing(rootModule, rootPackageName);
             }
@@ -381,11 +381,6 @@ public class ModuleLoader
             pkgStart += 1;
         }
 
-        if (pkgStart > segments.Length)
-        {
-            return false;
-        }
-
         // Remaining segments represent the path within the package to the file.
         var withinSegments = segments.Skip(pkgStart).ToArray();
         if (withinSegments.Length == 0)
@@ -396,14 +391,9 @@ public class ModuleLoader
 
         // Remove extension from the last segment.
         var last = withinSegments[withinSegments.Length - 1];
-        if (last.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
-        {
-            last = last.Substring(0, last.Length - 3);
-        }
-        else
-        {
-            last = Path.ChangeExtension(last, null) ?? last;
-        }
+        last = last.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+            ? last.Substring(0, last.Length - 3)
+            : Path.ChangeExtension(last, null) ?? last;
         withinSegments[withinSegments.Length - 1] = last;
 
         withinPackageNoExt = string.Join("/", withinSegments);

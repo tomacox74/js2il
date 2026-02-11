@@ -187,11 +187,6 @@ namespace Js2IL.Tests
                 pkgStart += 1;
             }
 
-            if (pkgStart > segments.Length)
-            {
-                return false;
-            }
-
             var withinSegments = segments.Skip(pkgStart).ToArray();
             if (withinSegments.Length == 0)
             {
@@ -200,14 +195,9 @@ namespace Js2IL.Tests
             }
 
             var last = withinSegments[^1];
-            if (last.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
-            {
-                last = last.Substring(0, last.Length - 3);
-            }
-            else
-            {
-                last = Path.ChangeExtension(last, null) ?? last;
-            }
+            last = last.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+                ? last.Substring(0, last.Length - 3)
+                : Path.ChangeExtension(last, null) ?? last;
             withinSegments[^1] = last;
 
             withinPackageNoExt = string.Join("/", withinSegments);

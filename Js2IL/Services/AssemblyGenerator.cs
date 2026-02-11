@@ -3,6 +3,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using System.Text;
+using System.Linq;
 using Js2IL.DebugSymbols;
 using Js2IL.Services.ILGenerators;
 using Js2IL.Services.Contracts;
@@ -436,13 +437,7 @@ namespace Js2IL.Services
 
                 // Host-facing module-id discovery should include both the canonical id and any aliases.
                 var idsToPublish = new List<string> { canonicalModuleId };
-                foreach (var alias in module.AliasModuleIds)
-                {
-                    if (!idsToPublish.Contains(alias, StringComparer.OrdinalIgnoreCase))
-                    {
-                        idsToPublish.Add(alias);
-                    }
-                }
+                idsToPublish.AddRange(module.AliasModuleIds.Where(alias => !idsToPublish.Contains(alias, StringComparer.OrdinalIgnoreCase)));
 
                 var effectiveNamespace = !string.IsNullOrWhiteSpace(module.ClrNamespace)
                     ? module.ClrNamespace!

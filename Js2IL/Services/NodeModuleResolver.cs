@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Linq;
 
 namespace Js2IL.Services;
 
@@ -123,7 +124,7 @@ public sealed class NodeModuleResolver
                     return true;
                 }
 
-                // Keep searching up (Node would stop at first packageRoot found; JS2IL mirrors that).
+                // Stop searching up: Node resolves the nearest matching node_modules package directory.
                 return false;
             }
 
@@ -222,12 +223,11 @@ public sealed class NodeModuleResolver
             var root = doc.RootElement;
 
             // Prefer exports if present.
-            if (root.TryGetProperty("exports", out var exportsElement))
+            if (root.TryGetProperty("exports", out var exportsElement)
+                && TryResolveExportsTarget(exportsElement, subpathKey: ".", out var targetRel)
+                && TryResolveExportsTargetPath(packageRoot, targetRel, out resolvedPath, out error))
             {
-                if (TryResolveExportsTarget(exportsElement, subpathKey: ".", out var targetRel))
-                {
-                    return TryResolveExportsTargetPath(packageRoot, targetRel, out resolvedPath, out error);
-                }
+                return true;
             }
 
             if (root.TryGetProperty("main", out var mainElement) && mainElement.ValueKind == JsonValueKind.String)
@@ -325,13 +325,11 @@ public sealed class NodeModuleResolver
 
                     // Very small subset of pattern support: "./*".
                     // If present, substitute the single '*' with the requested subpath remainder.
-                    if (TryResolveSubpathPattern(exportsElement, subpathKey, out var patternEntry, out var wildcardValue))
+                    if (TryResolveSubpathPattern(exportsElement, subpathKey, out var patternEntry, out var wildcardValue)
+                        && TryResolveConditionalExports(patternEntry, out var patternTarget))
                     {
-                        if (TryResolveConditionalExports(patternEntry, out var patternTarget))
-                        {
-                            target = patternTarget.Replace("*", wildcardValue, StringComparison.Ordinal);
-                            return !string.IsNullOrWhiteSpace(target);
-                        }
+                        target = patternTarget.Replace("*", wildcardValue, StringComparison.Ordinal);
+                        return !string.IsNullOrWhiteSpace(target);
                     }
 
                     return false;
@@ -352,14 +350,7 @@ public sealed class NodeModuleResolver
 
     private static bool LooksLikeSubpathMap(JsonElement obj)
     {
-        foreach (var prop in obj.EnumerateObject())
-        {
-            if (prop.Name.StartsWith(".", StringComparison.Ordinal))
-            {
-                return true;
-            }
-        }
-        return false;
+        return obj.EnumerateObject().Any(p => p.Name.StartsWith(".", StringComparison.Ordinal));
     }
 
     private static bool TryResolveSubpathPattern(JsonElement exportsObj, string subpathKey, out JsonElement patternEntry, out string wildcardValue)
@@ -368,7 +359,7 @@ public sealed class NodeModuleResolver
         wildcardValue = string.Empty;
 
         // Only support single '*' patterns like "./*".
-        foreach (var prop in exportsObj.EnumerateObject())
+        foreach (var prop in exportsObj.EnumerateObject().Where(p => p.Name.Contains('*')))
         {
             var key = prop.Name;
             var starIndex = key.IndexOf('*', StringComparison.Ordinal);
@@ -425,12 +416,9 @@ public sealed class NodeModuleResolver
         var priorities = new[] { "require", "node", "default" };
         foreach (var p in priorities)
         {
-            if (entry.TryGetProperty(p, out var v))
+            if (entry.TryGetProperty(p, out var v) && TryResolveConditionalExports(v, out target))
             {
-                if (TryResolveConditionalExports(v, out target))
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
