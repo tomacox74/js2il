@@ -145,6 +145,16 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        // The conditional operator joins values from two control-flow paths.
+        // Representing that join as multiple writes to a single temp can violate SSA assumptions
+        // used by later stackification/materialization passes (notably around LIRCopyTemp).
+        // Pin the result temp to a dedicated local slot so each branch stores into the same
+        // stable location, and post-join reads observe the value from the executed branch.
+        var resultStorage = new ValueStorage(ValueStorageKind.BoxedValue, typeof(object));
+        DefineTempStorage(resultTempVar, resultStorage);
+        var resultSlot = CreateAnonymousVariableSlot("$conditional", resultStorage);
+        SetTempVariableSlot(resultTempVar, resultSlot);
+
         // Evaluate the test condition, then branch to either consequent or alternate.
         if (!TryLowerExpression(conditionalExpr.Test, out var conditionTemp))
         {
@@ -197,7 +207,6 @@ public sealed partial class HIRToLIRLowerer
 
         _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
 
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
         return true;
     }
 

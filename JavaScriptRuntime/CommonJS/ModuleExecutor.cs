@@ -44,6 +44,10 @@ internal sealed class ModuleExecutor
             requireDelegate: mainRequire
         );
 
+        // Node semantics: require.main is the entry module.
+        requireService.SetMainModule(mainModule);
+        JavaScriptRuntime.Object.SetProperty(mainRequire, "main", mainModule);
+
         // Set the main module as the current parent for require() calls
         requireService.SetCurrentParent(mainModule);
 

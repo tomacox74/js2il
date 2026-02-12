@@ -529,7 +529,12 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object? ConstructValue(object constructor, object[]? args)
         {
-            if (constructor == null) throw new ArgumentNullException(nameof(constructor));
+            // In JavaScript, `new` on null/undefined throws a TypeError (not a host exception).
+            // Libraries often probe for constructor availability inside try/catch (e.g., turndown).
+            if (constructor is null || constructor is JsNull)
+            {
+                throw new TypeError("Value is not a constructor");
+            }
 
             var callArgs = args ?? System.Array.Empty<object>();
 
@@ -2855,6 +2860,14 @@ namespace JavaScriptRuntime
             catch
             {
                 // Swallow and fall through to return value to mimic JS permissiveness
+            }
+
+            // Prototype-setter semantics for "plain" CLR objects (e.g., JS2IL-generated scope classes).
+            // If no own writable field/property exists, but a prototype accessor defines a setter,
+            // route the assignment to that setter.
+            if (TryInvokePrototypeSetter(obj, name, value))
+            {
+                return value;
             }
 
             return value;

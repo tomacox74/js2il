@@ -75,6 +75,197 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Implements String.prototype.substr(start[, length]).
+        /// Notes:
+        ///  - start is coerced to integer (NaN -> 0)
+        ///  - if start is negative, it is treated as length+start (clamped to 0)
+        ///  - length is coerced to integer; if omitted -> to end; if negative -> 0
+        /// </summary>
+        public static string Substr(string input, object? start)
+        {
+            return Substr(input, start, null);
+        }
+
+        public static string Substr(string input, object? start, object? length)
+        {
+            input ??= string.Empty;
+            int len = input.Length;
+
+            double startNum;
+            try { startNum = TypeUtilities.ToNumber(start); }
+            catch { startNum = double.NaN; }
+            if (double.IsNaN(startNum) || double.IsNegativeInfinity(startNum)) startNum = 0;
+            if (double.IsPositiveInfinity(startNum)) startNum = len;
+            startNum = global::System.Math.Truncate(startNum);
+
+            int startIndex = (int)startNum;
+            if (startIndex < 0)
+            {
+                startIndex = len + startIndex;
+                if (startIndex < 0) startIndex = 0;
+            }
+            if (startIndex > len) startIndex = len;
+
+            int maxCount = len - startIndex;
+
+            int count;
+            if (length is null)
+            {
+                count = maxCount;
+            }
+            else
+            {
+                double lengthNum;
+                try { lengthNum = TypeUtilities.ToNumber(length); }
+                catch { lengthNum = double.NaN; }
+                if (double.IsNaN(lengthNum) || double.IsNegativeInfinity(lengthNum) || lengthNum < 0) lengthNum = 0;
+                if (double.IsPositiveInfinity(lengthNum)) lengthNum = maxCount;
+                lengthNum = global::System.Math.Truncate(lengthNum);
+                count = (int)lengthNum;
+            }
+
+            if (count <= 0 || startIndex >= len)
+            {
+                return string.Empty;
+            }
+
+            if (count > maxCount) count = maxCount;
+            return input.Substring(startIndex, count);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.slice(start[, end]).
+        /// </summary>
+        public static string Slice(string input, object? start)
+        {
+            return Slice(input, start, null);
+        }
+
+        public static string Slice(string input, object? start, object? end)
+        {
+            input ??= string.Empty;
+            int len = input.Length;
+
+            static int ToSliceIndex(object? value, int length, int defaultValue)
+            {
+                if (value is null) return defaultValue;
+
+                double d;
+                try { d = TypeUtilities.ToNumber(value); }
+                catch { d = double.NaN; }
+                if (double.IsNaN(d) || double.IsNegativeInfinity(d)) d = 0;
+                if (double.IsPositiveInfinity(d)) d = length;
+                d = global::System.Math.Truncate(d);
+
+                int i = (int)d;
+                if (i < 0) i = length + i;
+                if (i < 0) i = 0;
+                if (i > length) i = length;
+                return i;
+            }
+
+            int startIndex = ToSliceIndex(start, len, defaultValue: 0);
+            int endIndex = ToSliceIndex(end, len, defaultValue: len);
+            if (endIndex < startIndex) return string.Empty;
+            return input.Substring(startIndex, endIndex - startIndex);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.indexOf(searchString[, position]).
+        /// </summary>
+        public static object IndexOf(string input, string searchString)
+        {
+            return IndexOf(input, searchString, null);
+        }
+
+        public static object IndexOf(string input, string searchString, object? position)
+        {
+            input ??= string.Empty;
+            searchString ??= string.Empty;
+
+            int startIndex = 0;
+            if (position is not null)
+            {
+                double d;
+                try { d = TypeUtilities.ToNumber(position); }
+                catch { d = double.NaN; }
+                if (double.IsNaN(d) || double.IsNegativeInfinity(d)) d = 0;
+                if (double.IsPositiveInfinity(d)) d = input.Length;
+                d = global::System.Math.Truncate(d);
+                startIndex = (int)d;
+                if (startIndex < 0) startIndex = 0;
+                if (startIndex > input.Length) startIndex = input.Length;
+            }
+
+            int idx = input.IndexOf(searchString, startIndex, StringComparison.Ordinal);
+            return (double)idx;
+        }
+
+        /// <summary>
+        /// Implements String.prototype.trim().
+        /// </summary>
+        public static string Trim(string input)
+        {
+            return (input ?? string.Empty).Trim();
+        }
+
+        /// <summary>
+        /// Implements String.prototype.trimStart()/trimLeft().
+        /// </summary>
+        public static string TrimStart(string input)
+        {
+            return (input ?? string.Empty).TrimStart();
+        }
+
+        public static string TrimLeft(string input)
+        {
+            return TrimStart(input);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.trimEnd()/trimRight().
+        /// </summary>
+        public static string TrimEnd(string input)
+        {
+            return (input ?? string.Empty).TrimEnd();
+        }
+
+        public static string TrimRight(string input)
+        {
+            return TrimEnd(input);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.repeat(count).
+        /// </summary>
+        public static string Repeat(string input, object? count)
+        {
+            input ??= string.Empty;
+
+            double d;
+            try { d = TypeUtilities.ToNumber(count); }
+            catch { d = double.NaN; }
+
+            if (double.IsNaN(d)) d = 0;
+            if (double.IsInfinity(d) || d < 0)
+            {
+                throw new RangeError("Invalid count value");
+            }
+
+            d = global::System.Math.Truncate(d);
+            int n = (int)d;
+            if (n <= 0) return string.Empty;
+
+            // Prevent pathological allocations.
+            if ((long)input.Length * n > 50_000_000)
+            {
+                throw new RangeError("Invalid string length");
+            }
+
+            return global::System.String.Concat(System.Linq.Enumerable.Repeat(input, n));
+        }
+
+        /// <summary>
         /// Implements String.prototype.match(regexp).
         /// Minimal semantics to support common libraries:
         ///  - If regexp is a RegExp with /g, returns an Array of matched substrings or null.

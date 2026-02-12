@@ -174,9 +174,12 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // For non-captured locals, support both numeric (double) and boxed/object paths.
-        var currentStorage = GetTempStorage(currentValue);
+        // Only use the unboxed-double fast path for bindings inferred as stable double.
+        // Otherwise, even if the current value temp is unboxed double (due to propagation), we must
+        // treat the variable as object-typed and store the boxed result back to its slot.
+        var isStableDoubleBinding = updateBinding.IsStableType && updateBinding.ClrType == typeof(double);
 
-        if (currentStorage.ClrType != typeof(double))
+        if (!isStableDoubleBinding)
         {
             // Boxed/local update path (e.g., object-typed locals).
             var currentNumber = EnsureNumber(currentValue);
@@ -219,17 +222,16 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        // Get or create a variable slot for this non-captured variable
+        // Stable-double non-captured local variable.
+        // Get or create a variable slot for this binding.
         // Note: Captured variables are rejected earlier (Reference/object check), so we only reach here
-        // for IlLocal bindings or when there's no environment layout
+        // for IlLocal bindings or when there's no environment layout.
         var slot = GetOrCreateVariableSlot(updateBinding, updateVarExpr.Name.Name, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
         // In SSA: ++/-- produces a new value and updates the variable binding.
         // Prefix returns updated value; postfix returns original value.
-        var originalTemp = currentValue;
-
-        // Make sure the current value is associated with the variable slot.
-        SetTempVariableSlot(originalTemp, slot);
+        // Ensure we operate on a true unboxed double even if the current value has been boxed.
+        var originalTemp = EnsureNumber(currentValue);
 
         // For postfix, capture/box the original value *before* we emit the update that overwrites
         // the stable variable local slot. Otherwise, later loads of originalTemp would observe the
@@ -258,8 +260,17 @@ public sealed partial class HIRToLIRLowerer
         // Store back to the appropriate location.
         // Note: Captured variables (LeafScopeField, ParentScopeField) are rejected earlier at line ~877
         // because they load as Reference/object type. Only IlLocal and no-environment-layout cases reach here.
-        SetTempVariableSlot(updatedTemp, slot);
-        _variableMap[updateBinding] = updatedTemp;
+        //
+        // IMPORTANT: In loops (e.g., `for (...; ...; i--)`), the updated value must be materialized
+        // into the stable variable slot at the update point so it survives the back-edge.
+        // Relying on slot mapping alone can allow later materialization/stackification to elide the
+        // store when source and destination share the same slot.
+        var storeTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(updatedTemp, storeTemp));
+        DefineTempStorage(storeTemp, GetTempStorage(updatedTemp));
+        SetTempVariableSlot(storeTemp, slot);
+
+        _variableMap[updateBinding] = storeTemp;
 
         // Update expressions (++/--) are reassignments, so the variable is not single-assignment.
         // Remove it from the single-assignment set to prevent incorrect inlining.
@@ -268,12 +279,12 @@ public sealed partial class HIRToLIRLowerer
         if (updateExpr.Prefix)
         {
             // Prefix returns the updated value, boxed to object so we can store/emit without extra locals.
-            resultTempVar = EnsureObject(updatedTemp);
+            resultTempVar = EnsureObject(storeTemp);
             return true;
         }
 
         // Postfix returns the original value.
-        resultTempVar = needsPostfixValue ? boxedOriginalForPostfix!.Value : EnsureObject(updatedTemp);
+        resultTempVar = needsPostfixValue ? boxedOriginalForPostfix!.Value : EnsureObject(storeTemp);
         return true;
     }
 
@@ -586,17 +597,50 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        // Non-captured variable - use stable variable slot
-        var storageInfo = GetTempStorage(valueToStore);
-        var slot = GetOrCreateVariableSlot(binding, binding.Name, storageInfo);
-        valueToStore = CoerceToVariableSlotStorage(slot, valueToStore);
-        _variableMap[binding] = valueToStore;
-        valueToStore = EnsureTempMappedToSlot(slot, valueToStore);
-        _variableMap[binding] = valueToStore;
-        // for..of/in assigns each iteration; do not treat as single-assignment
-        _methodBodyIR.SingleAssignmentSlots.Remove(slot);
+        // Non-captured variable - use a stable variable slot.
+        // IMPORTANT: do not derive the slot storage from the RHS temp storage.
+        // For example, `null` is represented as unboxed JsNull and must never force an
+        // object-typed JS variable into an unboxed local slot.
+        TempVariable slotValue;
+        ValueStorage slotStorage;
+        if (binding.IsStableType && binding.ClrType == typeof(double))
+        {
+            slotValue = EnsureNumber(valueToStore);
+            slotStorage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+        }
+        else if (binding.IsStableType && binding.ClrType == typeof(bool))
+        {
+            slotValue = EnsureBoolean(valueToStore);
+            slotStorage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+        }
+        else
+        {
+            slotValue = EnsureObject(valueToStore);
+            slotStorage = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+        }
 
-        storedValue = valueToStore;
+        var slot = GetOrCreateVariableSlot(binding, binding.Name, slotStorage);
+        slotValue = CoerceToVariableSlotStorage(slot, slotValue);
+
+        // IMPORTANT: locals are not truly SSA across loops/back-edges.
+        // Always materialize an assignment into the variable slot *at the assignment point*
+        // so subsequent iterations/branches observe the updated value.
+        //
+        // Do NOT rely on the source temp's slot mapping: if the source temp already maps to
+        // the same IL local slot as the destination, LIRCopyTemp can be optimized away.
+        // Copy through an intermediate temp (no slot) to force an actual store.
+        var sourceCopy = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(slotValue, sourceCopy));
+        DefineTempStorage(sourceCopy, GetTempStorage(slotValue));
+
+        var storeTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(sourceCopy, storeTemp));
+        DefineTempStorage(storeTemp, GetTempStorage(sourceCopy));
+        SetTempVariableSlot(storeTemp, slot);
+
+        _variableMap[binding] = storeTemp;
+        _methodBodyIR.SingleAssignmentSlots.Remove(slot);
+        storedValue = storeTemp;
         return true;
     }
 
@@ -873,14 +917,49 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        // Non-captured local variable - update SSA map
-        // Get or create a variable slot for this binding
-        var storageInfo = GetTempStorage(valueToStore);
-        var slot = GetOrCreateVariableSlot(binding, assignExpr.Target.Name, storageInfo);
-        valueToStore = CoerceToVariableSlotStorage(slot, valueToStore);
-        valueToStore = EnsureTempMappedToSlot(slot, valueToStore);
-        _variableMap[binding] = valueToStore;
-        resultTempVar = valueToStore;
+        // Non-captured local variable - update SSA map.
+        // IMPORTANT: do not derive the slot storage from the RHS temp storage.
+        // `null` is represented as unboxed JsNull and must never force object variables
+        // into an unboxed local slot.
+        TempVariable slotValue;
+        ValueStorage slotStorage;
+        if (binding.IsStableType && binding.ClrType == typeof(double))
+        {
+            slotValue = EnsureNumber(valueToStore);
+            slotStorage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+        }
+        else if (binding.IsStableType && binding.ClrType == typeof(bool))
+        {
+            slotValue = EnsureBoolean(valueToStore);
+            slotStorage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+        }
+        else
+        {
+            slotValue = EnsureObject(valueToStore);
+            slotStorage = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+        }
+
+        var slot = GetOrCreateVariableSlot(binding, assignExpr.Target.Name, slotStorage);
+        slotValue = CoerceToVariableSlotStorage(slot, slotValue);
+
+        // IMPORTANT: locals are not truly SSA across loops/back-edges.
+        // Always materialize an assignment into the variable slot *at the assignment point*
+        // so subsequent iterations/branches observe the updated value.
+        //
+        // Do NOT rely on the source temp's slot mapping: if the source temp already maps to
+        // the same IL local slot as the destination, LIRCopyTemp can be optimized away.
+        // Copy through an intermediate temp (no slot) to force an actual store.
+        var sourceCopy = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(slotValue, sourceCopy));
+        DefineTempStorage(sourceCopy, GetTempStorage(slotValue));
+
+        var storeTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(sourceCopy, storeTemp));
+        DefineTempStorage(storeTemp, GetTempStorage(sourceCopy));
+        SetTempVariableSlot(storeTemp, slot);
+
+        _variableMap[binding] = storeTemp;
+        resultTempVar = storeTemp;
 
         // This is a reassignment (not initial declaration), so the variable is not single-assignment.
         // Remove it from the single-assignment set to prevent incorrect inlining.

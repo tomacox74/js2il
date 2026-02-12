@@ -69,19 +69,22 @@ public sealed partial class HIRToLIRLowerer
     private TempVariable EnsureTempMappedToSlot(int slot, TempVariable value)
     {
         var currentSlot = GetTempVariableSlot(value);
-        if (currentSlot == -1 || currentSlot == slot)
+        if (currentSlot == slot)
         {
-            SetTempVariableSlot(value, slot);
-
-            // Keep the variable slot's declared storage in sync with the temp we're pinning to it.
-            // This ensures the IL local signature matches actual emitted loads/stores (e.g., bool temps
-            // shouldn't be stored into object-typed variable locals).
-            if (slot >= 0 && slot < _methodBodyIR.VariableStorages.Count)
-            {
-                _methodBodyIR.VariableStorages[slot] = GetTempStorage(value);
-            }
-
             return value;
+        }
+
+        // If this temp is not currently mapped to any slot, force a store into the variable slot.
+        // Simply tagging the temp with a slot allows stackification to keep the value on the stack
+        // and never materialize a write to the IL local, which breaks loop/back-edge semantics and
+        // can read uninitialized locals.
+        if (currentSlot == -1)
+        {
+            var firstStore = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(value, firstStore));
+            DefineTempStorage(firstStore, GetTempStorage(value));
+            SetTempVariableSlot(firstStore, slot);
+            return firstStore;
         }
 
         // Avoid retroactively changing earlier IL for this temp by remapping.
@@ -89,11 +92,6 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRCopyTemp(value, copy));
         DefineTempStorage(copy, GetTempStorage(value));
         SetTempVariableSlot(copy, slot);
-
-        if (slot >= 0 && slot < _methodBodyIR.VariableStorages.Count)
-        {
-            _methodBodyIR.VariableStorages[slot] = GetTempStorage(copy);
-        }
 
         return copy;
     }

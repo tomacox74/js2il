@@ -1747,6 +1747,15 @@ internal sealed partial class LIRToILCompiler
         {
             if (stackifyResult.CanStackify[i])
             {
+                // Temps mapped to a stable variable slot must be materialized so the underlying
+                // IL local is actually written. Otherwise, later reads of that variable slot can
+                // observe uninitialized locals (initlocals may be false) or stale values across
+                // control-flow joins/back-edges.
+                if (i >= 0 && i < MethodBody.TempVariableSlots.Count && MethodBody.TempVariableSlots[i] >= 0)
+                {
+                    continue;
+                }
+
                 // LIRCopyTemp is used as a snapshot/materialization barrier (e.g., postfix updates).
                 // Its destination must never be left unmaterialized, otherwise the emitter will try
                 // to re-emit the defining instruction at the load site (unsupported/incorrect).
