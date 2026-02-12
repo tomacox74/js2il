@@ -789,7 +789,7 @@ public partial class SymbolTableBuilder
                 }
 
                 // Array instance methods that return boolean
-                // arr.some(...) / arr.every(...) / arr.includes(...)
+                // Currently only Array.prototype.some() returns unboxed bool
                 if (ce.Callee is MemberExpression instanceMe && instanceMe.Property is Identifier methodId)
                 {
                     var receiverType = InferExpressionClrType(instanceMe.Object, scope, proposedTypes);
