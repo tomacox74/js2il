@@ -143,7 +143,7 @@ public sealed class ILVerificationTests
     {
         // For .NET 10, the system module is System.Runtime
         // We need to provide the path to the runtime assemblies directory for reference resolution
-        var runtimePath = "/usr/share/dotnet/shared/Microsoft.NETCore.App/10.0.2";
+        var runtimePath = GetRuntimeAssembliesPath();
         var outputDir = Path.GetDirectoryName(assemblyPath);
         
         var startInfo = new ProcessStartInfo
@@ -167,5 +167,56 @@ public sealed class ILVerificationTests
         process.WaitForExit();
 
         return (process.ExitCode, stdout, stderr);
+    }
+
+    private static string GetRuntimeAssembliesPath()
+    {
+        // Find the path to .NET runtime assemblies
+        // This is typically in the shared framework directory
+        var dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT");
+        if (string.IsNullOrEmpty(dotnetRoot))
+        {
+            // Common default locations
+            if (OperatingSystem.IsWindows())
+            {
+                dotnetRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "dotnet");
+            }
+            else
+            {
+                dotnetRoot = "/usr/share/dotnet";
+            }
+        }
+
+        // Look for the Microsoft.NETCore.App shared framework
+        var sharedPath = Path.Combine(dotnetRoot, "shared", "Microsoft.NETCore.App");
+        
+        if (!Directory.Exists(sharedPath))
+        {
+            throw new InvalidOperationException($"Could not find .NET shared framework at: {sharedPath}");
+        }
+
+        // Find the highest version available (preferably 10.x)
+        var versions = Directory.GetDirectories(sharedPath)
+            .Select(Path.GetFileName)
+            .Where(v => v != null && v.StartsWith("10."))
+            .OrderByDescending(v => v)
+            .ToList();
+
+        if (versions.Count == 0)
+        {
+            // Fallback to any version
+            versions = Directory.GetDirectories(sharedPath)
+                .Select(Path.GetFileName)
+                .Where(v => v != null)
+                .OrderByDescending(v => v)
+                .ToList();
+        }
+
+        if (versions.Count == 0)
+        {
+            throw new InvalidOperationException($"Could not find any .NET runtime version in: {sharedPath}");
+        }
+
+        return Path.Combine(sharedPath, versions[0]!);
     }
 }
