@@ -1760,6 +1760,18 @@ internal sealed partial class LIRToILCompiler
                 // Its destination must never be left unmaterialized, otherwise the emitter will try
                 // to re-emit the defining instruction at the load site (unsupported/incorrect).
                 var defInstr = TryFindDefInstruction(new TempVariable(i));
+                // Some temps have no defining instruction in the LIR stream.
+                // For example, generator `yield` result temps are populated by the state machine
+                // on resume (not by a normal SSA def). These must remain materialized so the
+                // emitter has a place to store the resumed value.
+                if (defInstr is null)
+                {
+                    continue;
+                }
+                if (defInstr is LIRYield)
+                {
+                    continue;
+                }
                 if (defInstr is LIRCopyTemp)
                 {
                     continue;

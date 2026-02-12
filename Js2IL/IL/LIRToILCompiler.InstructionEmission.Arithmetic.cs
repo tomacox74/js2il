@@ -171,7 +171,9 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
-                EmitLoadTemp(((LIRBitwiseNotNumber)instruction).Value, ilEncoder, allocation, methodDescriptor);
+                // JS bitwise ops perform ToInt32(ToNumber(x)).
+                // Do not apply conv.i4 directly to object refs (it becomes a pointer cast).
+                EmitLoadTempAsNumber(((LIRBitwiseNotNumber)instruction).Value, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Not);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
@@ -313,9 +315,9 @@ internal sealed partial class LIRToILCompiler
 
             // Bitwise AND: convert to int32, and, convert back to double
             case LIRBitwiseAnd bitwiseAnd:
-                EmitLoadTemp(bitwiseAnd.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(bitwiseAnd.Left, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
-                EmitLoadTemp(bitwiseAnd.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(bitwiseAnd.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.And);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
@@ -324,9 +326,9 @@ internal sealed partial class LIRToILCompiler
 
             // Bitwise OR: convert to int32, or, convert back to double
             case LIRBitwiseOr bitwiseOr:
-                EmitLoadTemp(bitwiseOr.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(bitwiseOr.Left, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
-                EmitLoadTemp(bitwiseOr.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(bitwiseOr.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Or);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
@@ -335,9 +337,9 @@ internal sealed partial class LIRToILCompiler
 
             // Bitwise XOR: convert to int32, xor, convert back to double
             case LIRBitwiseXor bitwiseXor:
-                EmitLoadTemp(bitwiseXor.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(bitwiseXor.Left, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
-                EmitLoadTemp(bitwiseXor.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(bitwiseXor.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Xor);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
@@ -346,9 +348,9 @@ internal sealed partial class LIRToILCompiler
 
             // Left shift: convert to int32, shift, convert back to double
             case LIRLeftShift leftShift:
-                EmitLoadTemp(leftShift.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(leftShift.Left, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
-                EmitLoadTemp(leftShift.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(leftShift.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Shl);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
@@ -357,9 +359,9 @@ internal sealed partial class LIRToILCompiler
 
             // Right shift (signed): convert to int32, shift, convert back to double
             case LIRRightShift rightShift:
-                EmitLoadTemp(rightShift.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(rightShift.Left, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
-                EmitLoadTemp(rightShift.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(rightShift.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Shr);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
@@ -368,10 +370,10 @@ internal sealed partial class LIRToILCompiler
 
             // Unsigned right shift: convert to int32 (to preserve negative values), reinterpret as uint32, shift, convert back to double
             case LIRUnsignedRightShift unsignedRightShift:
-                EmitLoadTemp(unsignedRightShift.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(unsignedRightShift.Left, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);  // Convert to int32 first (handles negatives)
                 ilEncoder.OpCode(ILOpCode.Conv_u4);  // Then reinterpret as uint32 (no value change, just type)
-                EmitLoadTemp(unsignedRightShift.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsNumber(unsignedRightShift.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Shr_un);
                 ilEncoder.OpCode(ILOpCode.Conv_r_un); // Convert unsigned to double
