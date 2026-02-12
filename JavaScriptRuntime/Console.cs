@@ -31,6 +31,24 @@ namespace JavaScriptRuntime
 
         public object? warn(params object?[] args) => Warn(args);
 
+        // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
+        // These forward to the main Log/Error/Warn methods.
+
+        public object? log() => Log(System.Array.Empty<object>());
+        public object? log(object? a0) => Log(new object?[] { a0 });
+        public object? log(object? a0, object? a1) => Log(new object?[] { a0, a1 });
+        public object? log(object? a0, object? a1, object? a2) => Log(new object?[] { a0, a1, a2 });
+
+        public object? error() => Error(System.Array.Empty<object>());
+        public object? error(object? a0) => Error(new object?[] { a0 });
+        public object? error(object? a0, object? a1) => Error(new object?[] { a0, a1 });
+        public object? error(object? a0, object? a1, object? a2) => Error(new object?[] { a0, a1, a2 });
+
+        public object? warn() => Warn(System.Array.Empty<object>());
+        public object? warn(object? a0) => Warn(new object?[] { a0 });
+        public object? warn(object? a0, object? a1) => Warn(new object?[] { a0, a1 });
+        public object? warn(object? a0, object? a1, object? a2) => Warn(new object?[] { a0, a1, a2 });
+
         public object? Log(params object?[] args)
         {
             // Empty prints empty line

@@ -375,6 +375,30 @@ namespace JavaScriptRuntime
             }
         }
 
+        // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
+        // These forward to the main InvokeWithArgs method, but the compiler can emit direct calls
+        // to avoid allocating the args array when the arity is known at compile time.
+
+        public static object InvokeWithArgs0(object target, object[] scopes)
+        {
+            return InvokeWithArgs(target, scopes, System.Array.Empty<object>());
+        }
+
+        public static object InvokeWithArgs1(object target, object[] scopes, object? a0)
+        {
+            return InvokeWithArgs(target, scopes, new object?[] { a0 });
+        }
+
+        public static object InvokeWithArgs2(object target, object[] scopes, object? a0, object? a1)
+        {
+            return InvokeWithArgs(target, scopes, new object?[] { a0, a1 });
+        }
+
+        public static object InvokeWithArgs3(object target, object[] scopes, object? a0, object? a1, object? a2)
+        {
+            return InvokeWithArgs(target, scopes, new object?[] { a0, a1, a2 });
+        }
+
         private static object? GetArg(object?[] args, int index)
         {
             return index < args.Length ? args[index] : null;

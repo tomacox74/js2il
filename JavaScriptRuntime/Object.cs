@@ -836,6 +836,30 @@ namespace JavaScriptRuntime
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
 
+        // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
+        // These forward to the main CallMember method, but the compiler can emit direct calls
+        // to avoid allocating the args array when the arity is known at compile time.
+
+        public static object? CallMember0(object receiver, string methodName)
+        {
+            return CallMember(receiver, methodName, System.Array.Empty<object>());
+        }
+
+        public static object? CallMember1(object receiver, string methodName, object? a0)
+        {
+            return CallMember(receiver, methodName, new object[] { a0! });
+        }
+
+        public static object? CallMember2(object receiver, string methodName, object? a0, object? a1)
+        {
+            return CallMember(receiver, methodName, new object[] { a0!, a1! });
+        }
+
+        public static object? CallMember3(object receiver, string methodName, object? a0, object? a1, object? a2)
+        {
+            return CallMember(receiver, methodName, new object[] { a0!, a1!, a2! });
+        }
+
         private static string ToPropertyKeyString(object? key)
         {
             if (key is Symbol sym)
