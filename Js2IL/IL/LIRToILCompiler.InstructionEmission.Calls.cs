@@ -126,17 +126,54 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallFunctionValue callValue:
                 {
-                    // Emit: ldarg/ldloc target, ldarg/ldloc scopesArray, ldarg/ldloc argsArray, call Closure.InvokeWithArgs
-                    EmitLoadTemp(callValue.FunctionValue, ilEncoder, allocation, methodDescriptor);
-                    EmitLoadTemp(callValue.ScopesArray, ilEncoder, allocation, methodDescriptor);
-                    EmitLoadTemp(callValue.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+                    // Emit: ldarg/ldloc target, ldarg/ldloc scopesArray, [args], call Closure.InvokeWithArgs
+                    // Try to use arity-specific overload if the argument count is known (0-3).
+                    if (TryGetBuildArraySource(callValue.ArgumentsArray, out var argElements) && argElements.Count <= 3)
+                    {
+                        // Emit target
+                        EmitLoadTemp(callValue.FunctionValue, ilEncoder, allocation, methodDescriptor);
+                        
+                        // Emit scopes array
+                        EmitLoadTemp(callValue.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                        
+                        // Emit individual arguments
+                        foreach (var arg in argElements)
+                        {
+                            EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+                        }
+                        
+                        // Select arity-specific overload
+                        Type[] paramTypes = argElements.Count switch
+                        {
+                            0 => new[] { typeof(object), typeof(object[]) },
+                            1 => new[] { typeof(object), typeof(object[]), typeof(object) },
+                            2 => new[] { typeof(object), typeof(object[]), typeof(object), typeof(object) },
+                            3 => new[] { typeof(object), typeof(object[]), typeof(object), typeof(object), typeof(object) },
+                            _ => throw new InvalidOperationException("Unexpected arity")
+                        };
+                        
+                        string methodName = argElements.Count == 0 ? "InvokeWithArgs0" : $"InvokeWithArgs{argElements.Count}";
+                        var invokeRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            methodName,
+                            paramTypes);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(invokeRef);
+                    }
+                    else
+                    {
+                        // Fall back to standard array-based call
+                        EmitLoadTemp(callValue.FunctionValue, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(callValue.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(callValue.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
 
-                    var invokeRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
-                        new[] { typeof(object), typeof(object[]), typeof(object[]) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(invokeRef);
+                        var invokeRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
+                            new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(invokeRef);
+                    }
 
                     if (IsMaterialized(callValue.Result, allocation))
                     {
@@ -335,16 +372,53 @@ internal sealed partial class LIRToILCompiler
             case LIRCallMember callMember:
                 {
                     // Runtime dispatcher member call.
-                    EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.Ldstr(_metadataBuilder, callMember.MethodName);
-                    EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+                    // Try to use arity-specific overload if the argument count is known (0-3).
+                    if (TryGetBuildArraySource(callMember.ArgumentsArray, out var argElements) && argElements.Count <= 3)
+                    {
+                        // Emit receiver
+                        EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                        
+                        // Emit method name
+                        ilEncoder.Ldstr(_metadataBuilder, callMember.MethodName);
+                        
+                        // Emit individual arguments
+                        foreach (var arg in argElements)
+                        {
+                            EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+                        }
+                        
+                        // Select arity-specific overload
+                        Type[] paramTypes = argElements.Count switch
+                        {
+                            0 => new[] { typeof(object), typeof(string) },
+                            1 => new[] { typeof(object), typeof(string), typeof(object) },
+                            2 => new[] { typeof(object), typeof(string), typeof(object), typeof(object) },
+                            3 => new[] { typeof(object), typeof(string), typeof(object), typeof(object), typeof(object) },
+                            _ => throw new InvalidOperationException("Unexpected arity")
+                        };
+                        
+                        string methodName = argElements.Count == 0 ? "CallMember0" : $"CallMember{argElements.Count}";
+                        var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            methodName,
+                            paramTypes);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(callMemberRef);
+                    }
+                    else
+                    {
+                        // Fall back to standard array-based call
+                        EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.Ldstr(_metadataBuilder, callMember.MethodName);
+                        EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
 
-                    var callMemberRefDefault = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.CallMember),
-                        new[] { typeof(object), typeof(string), typeof(object[]) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(callMemberRefDefault);
+                        var callMemberRefDefault = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.CallMember),
+                            new[] { typeof(object), typeof(string), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(callMemberRefDefault);
+                    }
 
                     if (IsMaterialized(callMember.Result, allocation))
                     {
@@ -508,5 +582,26 @@ internal sealed partial class LIRToILCompiler
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Tries to find the LIRBuildArray instruction that defines the given temp variable.
+    /// Returns true if found and the array has a fixed size, with the element temps in the out parameter.
+    /// </summary>
+    private bool TryGetBuildArraySource(TempVariable arrayTemp, out IReadOnlyList<TempVariable> elements)
+    {
+        elements = System.Array.Empty<TempVariable>();
+        
+        // Search backwards through instructions to find the LIRBuildArray that defines this temp
+        foreach (var instr in MethodBody.Instructions)
+        {
+            if (instr is LIRBuildArray buildArray && buildArray.Result.Index == arrayTemp.Index)
+            {
+                elements = buildArray.Elements;
+                return true;
+            }
+        }
+        
+        return false;
     }
 }
