@@ -69,7 +69,8 @@ public sealed class CallableDiscovery
         if (astNode is FunctionDeclaration funcDecl)
         {
             var funcName = (funcDecl.Id as Identifier)?.Name ?? functionScope.Name;
-            var paramCount = funcDecl.Params.Count;
+            // Count only regular parameters (excluding rest parameters)
+            var paramCount = CountJsParameters(funcDecl.Params);
             
             var callableId = new CallableId
             {
