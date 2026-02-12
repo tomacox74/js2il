@@ -100,3 +100,25 @@ jobs:
           echo "$output"
           echo "$output" | grep -i "title=JS2IL Domino Sample"
           echo "$output" | grep -i "links=2"
+
+      - name: Build and run Hosting.Basic sample
+        run: |
+          set -euo pipefail
+          output=$(dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:JavaScriptRuntimePackageVersion="$TOOL_VERSION")
+          echo "Program output:"
+          echo "$output"
+          echo "$output" | grep "version="
+          echo "$output" | grep "1+2="
+
+      - name: Build and run Hosting.Typed sample
+        run: |
+          set -euo pipefail
+          output=$(dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:JavaScriptRuntimePackageVersion="$TOOL_VERSION")
+          echo "Program output:"
+          echo "$output"
+          echo "$output" | grep "version="
+          echo "$output" | grep "add(1,2)="
+          echo "$output" | grep "counter.add(5)="
+          echo "$output" | grep "counter.value="
+          echo "$output" | grep "addAsync(1,2)="
+          echo "$output" | grep "created.add(1)="
