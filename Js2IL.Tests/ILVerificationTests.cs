@@ -10,6 +10,7 @@ namespace Js2IL.Tests;
 /// <summary>
 /// IL verification tests that ensure emitted assemblies are structurally valid according to CLR verifier rules.
 /// Uses ilverify to catch IL emission regressions like stack imbalance, bad exception regions, or invalid metadata.
+/// Addresses issue #580: Quality gate for IL structural validity.
 /// </summary>
 public sealed class ILVerificationTests
 {
