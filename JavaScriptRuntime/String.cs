@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace JavaScriptRuntime
@@ -10,6 +11,121 @@ namespace JavaScriptRuntime
     [IntrinsicObject("String")]
     public static class String
     {
+        private const int MaxRepeatResultLength = 50_000_000;
+
+        private static bool IsEcmaWhitespaceOrLineTerminator(char ch)
+        {
+            // ECMA-262 WhiteSpace + LineTerminator code points (BMP subset).
+            // This is intentionally explicit to avoid differences with .NET's Unicode trimming.
+            return ch switch
+            {
+                '\u0009' => true, // TAB
+                '\u000A' => true, // LF
+                '\u000B' => true, // VT
+                '\u000C' => true, // FF
+                '\u000D' => true, // CR
+                '\u0020' => true, // SPACE
+                '\u00A0' => true, // NO-BREAK SPACE
+                '\u1680' => true, // OGHAM SPACE MARK
+                '\u2000' => true, // EN QUAD
+                '\u2001' => true, // EM QUAD
+                '\u2002' => true, // EN SPACE
+                '\u2003' => true, // EM SPACE
+                '\u2004' => true, // THREE-PER-EM SPACE
+                '\u2005' => true, // FOUR-PER-EM SPACE
+                '\u2006' => true, // SIX-PER-EM SPACE
+                '\u2007' => true, // FIGURE SPACE
+                '\u2008' => true, // PUNCTUATION SPACE
+                '\u2009' => true, // THIN SPACE
+                '\u200A' => true, // HAIR SPACE
+                '\u2028' => true, // LINE SEPARATOR
+                '\u2029' => true, // PARAGRAPH SEPARATOR
+                '\u202F' => true, // NARROW NO-BREAK SPACE
+                '\u205F' => true, // MEDIUM MATHEMATICAL SPACE
+                '\u3000' => true, // IDEOGRAPHIC SPACE
+                '\uFEFF' => true, // ZERO WIDTH NO-BREAK SPACE (BOM)
+                _ => false
+            };
+        }
+
+        private static string TrimEcma(string? input)
+        {
+            var s = input ?? string.Empty;
+            if (s.Length == 0)
+            {
+                return s;
+            }
+
+            int start = 0;
+            int end = s.Length - 1;
+
+            while (start <= end && IsEcmaWhitespaceOrLineTerminator(s[start]))
+            {
+                start++;
+            }
+
+            while (end >= start && IsEcmaWhitespaceOrLineTerminator(s[end]))
+            {
+                end--;
+            }
+
+            if (start == 0 && end == s.Length - 1)
+            {
+                return s;
+            }
+
+            if (end < start)
+            {
+                return string.Empty;
+            }
+
+            return s.Substring(start, end - start + 1);
+        }
+
+        private static string TrimStartEcma(string? input)
+        {
+            var s = input ?? string.Empty;
+            if (s.Length == 0)
+            {
+                return s;
+            }
+
+            int start = 0;
+            while (start < s.Length && IsEcmaWhitespaceOrLineTerminator(s[start]))
+            {
+                start++;
+            }
+
+            if (start == 0)
+            {
+                return s;
+            }
+
+            return start >= s.Length ? string.Empty : s.Substring(start, s.Length - start);
+        }
+
+        private static string TrimEndEcma(string? input)
+        {
+            var s = input ?? string.Empty;
+            if (s.Length == 0)
+            {
+                return s;
+            }
+
+            int end = s.Length - 1;
+            while (end >= 0 && IsEcmaWhitespaceOrLineTerminator(s[end]))
+            {
+                end--;
+            }
+
+            if (end == s.Length - 1)
+            {
+                return s;
+            }
+
+            return end < 0 ? string.Empty : s.Substring(0, end + 1);
+        }
+
         /// <summary>
         /// Implements String.prototype.substring(start[, end]).
         /// Semantics (subset):
@@ -206,7 +322,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static string Trim(string input)
         {
-            return (input ?? string.Empty).Trim();
+            return TrimEcma(input);
         }
 
         /// <summary>
@@ -214,7 +330,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static string TrimStart(string input)
         {
-            return (input ?? string.Empty).TrimStart();
+            return TrimStartEcma(input);
         }
 
         public static string TrimLeft(string input)
@@ -227,7 +343,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static string TrimEnd(string input)
         {
-            return (input ?? string.Empty).TrimEnd();
+            return TrimEndEcma(input);
         }
 
         public static string TrimRight(string input)
@@ -256,13 +372,22 @@ namespace JavaScriptRuntime
             int n = (int)d;
             if (n <= 0) return string.Empty;
 
+            if (n == 1) return input;
+
             // Prevent pathological allocations.
-            if ((long)input.Length * n > 50_000_000)
+            long totalLength = (long)input.Length * n;
+            if (totalLength > MaxRepeatResultLength)
             {
                 throw new RangeError("Invalid string length");
             }
 
-            return global::System.String.Concat(System.Linq.Enumerable.Repeat(input, n));
+            var sb = new StringBuilder((int)totalLength);
+            for (int i = 0; i < n; i++)
+            {
+                sb.Append(input);
+            }
+
+            return sb.ToString();
         }
 
         /// <summary>

@@ -81,7 +81,8 @@ namespace JavaScriptRuntime
             //   const reduce = Array.prototype.reduce; reduce.call(arrayLike, cb, init)
             if (args == null || args.Length == 0)
             {
-                throw new TypeError("Reduce of empty array with no initial value");
+                // No callback provided.
+                throw new TypeError("undefined is not a function");
             }
 
             var callback = args[0];
@@ -96,25 +97,43 @@ namespace JavaScriptRuntime
             }
 
             int length = ToArrayLikeLength(receiver);
-            int k = 0;
+            int k;
 
             object? accumulator;
             if (args.Length >= 2)
             {
                 accumulator = args[1];
+                k = 0;
             }
             else
             {
-                if (length == 0)
+                // No initial value: find the first present element and use it as the accumulator.
+                bool found = false;
+                accumulator = null;
+                k = 0;
+                for (int i = 0; i < length; i++)
+                {
+                    if (JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                    {
+                        accumulator = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                        k = i + 1;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
                 {
                     throw new TypeError("Reduce of empty array with no initial value");
                 }
-                accumulator = JavaScriptRuntime.Object.GetItem(receiver, 0d);
-                k = 1;
             }
 
             for (int i = k; i < length; i++)
             {
+                if (!JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                {
+                    continue;
+                }
                 var current = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
                 accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
                 {
@@ -159,7 +178,8 @@ namespace JavaScriptRuntime
 
             if (args == null || args.Length == 0)
             {
-                throw new TypeError("Reduce of empty array with no initial value");
+                // No callback provided.
+                throw new TypeError("undefined is not a function");
             }
 
             var callback = args[0];
@@ -174,25 +194,42 @@ namespace JavaScriptRuntime
             }
 
             int length = ToArrayLikeLength(receiver);
-            if (length == 0 && args.Length < 2)
-            {
-                throw new TypeError("Reduce of empty array with no initial value");
-            }
-
-            int k = length - 1;
+            int k;
             object? accumulator;
             if (args.Length >= 2)
             {
                 accumulator = args[1];
+                k = length - 1;
             }
             else
             {
-                accumulator = JavaScriptRuntime.Object.GetItem(receiver, (double)k);
-                k--;
+                // No initial value: find the last present element and use it as the accumulator.
+                bool found = false;
+                accumulator = null;
+                k = length - 1;
+                for (int i = length - 1; i >= 0; i--)
+                {
+                    if (JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                    {
+                        accumulator = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                        k = i - 1;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    throw new TypeError("Reduce of empty array with no initial value");
+                }
             }
 
             for (int i = k; i >= 0; i--)
             {
+                if (!JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                {
+                    continue;
+                }
                 var current = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
                 accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
                 {
@@ -233,22 +270,51 @@ namespace JavaScriptRuntime
 
             // Generic array-like indexOf
             object? searchElement = args != null && args.Length > 0 ? args[0] : null;
+            int length = ToArrayLikeLength(receiver);
             double fromIndexNum = 0;
             if (args != null && args.Length > 1)
             {
                 try { fromIndexNum = TypeUtilities.ToNumber(args[1]); }
                 catch { fromIndexNum = double.NaN; }
-                if (double.IsNaN(fromIndexNum) || double.IsNegativeInfinity(fromIndexNum)) fromIndexNum = 0;
-                if (double.IsPositiveInfinity(fromIndexNum)) fromIndexNum = double.MaxValue;
-                fromIndexNum = global::System.Math.Truncate(fromIndexNum);
+                if (double.IsNaN(fromIndexNum) || double.IsNegativeInfinity(fromIndexNum))
+                {
+                    fromIndexNum = 0;
+                }
+                else if (double.IsPositiveInfinity(fromIndexNum))
+                {
+                    // +Infinity means start at/after the end.
+                    fromIndexNum = length;
+                }
+                else
+                {
+                    fromIndexNum = global::System.Math.Truncate(fromIndexNum);
+                }
             }
 
-            int length = ToArrayLikeLength(receiver);
-            int k = (int)fromIndexNum;
-            if (k < 0)
+            int k;
+            if (fromIndexNum >= length)
             {
-                k = length + k;
-                if (k < 0) k = 0;
+                k = length;
+            }
+            else if (fromIndexNum >= 0)
+            {
+                k = (int)fromIndexNum;
+            }
+            else
+            {
+                double start = length + fromIndexNum;
+                if (double.IsNaN(start) || start <= 0)
+                {
+                    k = 0;
+                }
+                else if (start >= length)
+                {
+                    k = length;
+                }
+                else
+                {
+                    k = (int)start;
+                }
             }
 
             for (int i = k; i < length; i++)
