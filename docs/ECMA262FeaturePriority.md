@@ -68,7 +68,7 @@
 - `Object.entries(obj)` - Get [key, value] pairs
 - `Object.assign(target, ...sources)` - Merge objects
 - `Object.hasOwn(obj, prop)` - Safe property check
-- `Object.is(a, b)` - Strict equality with NaN/−0 handling
+- `Object.is(a, b)` - Strict equality with NaN/-0 handling
 
 **Why Second**: Used in nearly every modern application for:
 - Object iteration
