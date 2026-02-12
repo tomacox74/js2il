@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Quality: add IL verification gate using `ilverify` to catch IL emission regressions (closes #580). Tests verify loops, control flow, exception handling, closures, and class methods.
 - Compiler: remove `--prototypeChain` CLI option; prototype-chain behavior is now always automatically enabled when code uses prototype-related features (e.g., `__proto__`, `Object.getPrototypeOf`, `Object.setPrototypeOf`) to ensure ECMAScript compliance.
 - Runtime/spec: support `Array.prototype.{reduce,reduceRight,indexOf}.call(arrayLike, ...)` for array-like receivers (e.g., DOM NodeList) (unblocks turndown/domino).
 - Runtime/spec: implement `String.prototype.repeat`, `trim`, `trimStart`, `trimEnd`, `slice`, and `indexOf` (unblocks turndown/domino).
