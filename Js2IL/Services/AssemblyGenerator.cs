@@ -90,14 +90,10 @@ namespace Js2IL.Services
 
             var moduleList = modules._modules.Values.ToList();
 
-            // Prototype-chain behavior is opt-in: only enable it when explicitly requested by options
-            // or when the script clearly uses prototype-related features.
-            compileOptions.PrototypeChainEnabled = compileOptions.PrototypeChain switch
-            {
-                PrototypeChainMode.On => true,
-                PrototypeChainMode.Off => false,
-                _ => moduleList.Any(m => PrototypeFeatureDetector.UsesPrototypeFeatures(m.Ast))
-            };
+            // Prototype-chain behavior is automatically enabled when the script uses prototype-related
+            // features (e.g. __proto__, Object.getPrototypeOf, Object.setPrototypeOf) to ensure
+            // ECMAScript compliance.
+            compileOptions.PrototypeChainEnabled = moduleList.Any(m => PrototypeFeatureDetector.UsesPrototypeFeatures(m.Ast));
 
             // Multi-module assemblies must keep TypeDef.MethodList monotonic across the entire TypeDef table.
             // Additionally, nested types must have their enclosing TypeDef created earlier in the TypeDef table
