@@ -88,7 +88,7 @@ public partial class SymbolTableBuilder
             // Expression-bodied arrows are an implicit return.
             if (arrowExpr.Body is not BlockStatement body)
             {
-                var inferredExpr = InferExpressionClrType(arrowExpr.Body);
+                var inferredExpr = InferExpressionClrType(arrowExpr.Body, callableScope);
                 return inferredExpr == typeof(double) || inferredExpr == typeof(bool)
                     ? inferredExpr
                     : null;
@@ -188,7 +188,7 @@ public partial class SymbolTableBuilder
             return null;
         }
 
-        var inferred = InferExpressionClrType(onlyReturn.Argument);
+        var inferred = InferExpressionClrType(onlyReturn.Argument, callableScope);
 
         // Only allow a small, well-understood value-like primitive set.
         // (String return typing needs additional lowering guarantees; keep it disabled for now.)
@@ -291,7 +291,7 @@ public partial class SymbolTableBuilder
                     continue;
                 }
 
-                var inferredType = InferExpressionClrType(variableDeclarator.Init);
+                var inferredType = InferExpressionClrType(variableDeclarator.Init, scope, proposedClrTypes);
                 if (inferredType != null)
                 {
                     proposedClrTypes[binding.Name] = inferredType;
@@ -309,7 +309,7 @@ public partial class SymbolTableBuilder
                     if (proposedClrTypes.TryGetValue(identifier.Name, out var inferredType))
                     {
                         // if any assigment conflicts with the inferred type, we remove the proposed type
-                           var rightType = InferExpressionClrType(assignExpr.Right);
+                           var rightType = InferExpressionClrType(assignExpr.Right, scope, proposedClrTypes);
                         if (rightType != inferredType)
                         {
                             // conflict, remove the proposed type
@@ -322,7 +322,7 @@ public partial class SymbolTableBuilder
                         {
                             // a uninitialized variable can still be a nullable type (not a value type like number)
                             // to consider.. use Nullable<T> for value types in future optimizations?
-                            var rightType = InferExpressionClrType(assignExpr.Right);
+                            var rightType = InferExpressionClrType(assignExpr.Right, scope, proposedClrTypes);
                             if (rightType?.IsValueType == false)
                             {
                                 proposedClrTypes[identifier.Name] = rightType;
@@ -717,10 +717,33 @@ public partial class SymbolTableBuilder
         }
     }
 
-    Type? InferExpressionClrType(Node expr)
+    Type? InferExpressionClrType(Node expr, Scope? scope = null, Dictionary<string, Type>? proposedTypes = null)
     {
         switch (expr)
         {
+            case Identifier id:
+            {
+                // First check proposedTypes (types being inferred in current pass)
+                if (proposedTypes != null && proposedTypes.TryGetValue(id.Name, out var proposedType))
+                {
+                    return proposedType;
+                }
+                
+                // Then look up the identifier's type from bindings in the current scope or parent scopes
+                if (scope != null)
+                {
+                    var currentScope = scope;
+                    while (currentScope != null)
+                    {
+                        if (currentScope.Bindings.TryGetValue(id.Name, out var binding) && binding.ClrType != null)
+                        {
+                            return binding.ClrType;
+                        }
+                        currentScope = currentScope.Parent;
+                    }
+                }
+                return null;
+            }
             case NumericLiteral:
                 return typeof(double);
             case StringLiteral:
@@ -759,6 +782,21 @@ public partial class SymbolTableBuilder
                             return typeof(JavaScriptRuntime.Array);
                         }
                         if (string.Equals(propId.Name, "isArray", StringComparison.Ordinal))
+                        {
+                            return typeof(bool);
+                        }
+                    }
+                }
+
+                // Array instance methods that return boolean
+                // arr.some(...) / arr.every(...) / arr.includes(...)
+                if (ce.Callee is MemberExpression instanceMe && instanceMe.Property is Identifier methodId)
+                {
+                    var receiverType = InferExpressionClrType(instanceMe.Object, scope, proposedTypes);
+                    if (receiverType == typeof(JavaScriptRuntime.Array))
+                    {
+                        // Array.prototype.some returns unboxed boolean
+                        if (string.Equals(methodId.Name, "some", StringComparison.Ordinal))
                         {
                             return typeof(bool);
                         }
