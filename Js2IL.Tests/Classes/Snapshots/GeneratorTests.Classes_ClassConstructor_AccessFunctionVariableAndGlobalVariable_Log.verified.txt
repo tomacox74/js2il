@@ -148,11 +148,12 @@
 		{
 			// Method begins at RVA 0x20a8
 			// Header size: 12
-			// Code size: 41 (0x29)
+			// Code size: 43 (0x2b)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction/Scope,
-				[1] class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction/MyClass
+				[1] object,
+				[2] class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction/MyClass
 			)
 
 			IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction/Scope::.ctor()
@@ -173,9 +174,11 @@
 			IL_001f: ldloc.0
 			IL_0020: stelem.ref
 			IL_0021: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction/MyClass::.ctor(object[])
-			IL_0026: stloc.1
-			IL_0027: ldnull
-			IL_0028: ret
+			IL_0026: stloc.2
+			IL_0027: ldloc.2
+			IL_0028: stloc.1
+			IL_0029: ldnull
+			IL_002a: ret
 		} // end of method testFunction::__js_call__
 
 	} // end of class testFunction
@@ -224,11 +227,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 74 (0x4a)
+		// Code size: 76 (0x4c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope::.ctor()
@@ -243,22 +247,24 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldloc.0
-		IL_0023: ldstr "Hello from global"
-		IL_0028: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope::GLOBAL_VALUE
-		IL_002d: ldnull
-		IL_002e: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction::__js_call__(object[])
-		IL_0034: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0039: ldc.i4.1
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: dup
-		IL_0040: ldc.i4.0
-		IL_0041: ldloc.0
-		IL_0042: stelem.ref
-		IL_0043: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0048: pop
-		IL_0049: ret
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: stloc.1
+		IL_0024: ldloc.0
+		IL_0025: ldstr "Hello from global"
+		IL_002a: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope::GLOBAL_VALUE
+		IL_002f: ldnull
+		IL_0030: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction::__js_call__(object[])
+		IL_0036: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_003b: ldc.i4.1
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldloc.0
+		IL_0044: stelem.ref
+		IL_0045: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_004a: pop
+		IL_004b: ret
 	} // end of method Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log

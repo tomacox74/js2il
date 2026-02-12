@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20a6
+			// Method begins at RVA 0x20a8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 74 (0x4a)
+		// Code size: 76 (0x4c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.IntrinsicCallables_BigInt_Callable_Basic/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.IntrinsicCallables_BigInt_Callable_Basic/Scope::.ctor()
@@ -52,27 +53,29 @@
 		IL_0006: ldc.r8 10
 		IL_000f: box [System.Runtime]System.Double
 		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.BigInt::Call(object)
-		IL_0019: stloc.1
-		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_001f: ldc.i4.1
-		IL_0020: newarr [System.Runtime]System.Object
-		IL_0025: dup
-		IL_0026: ldc.i4.0
-		IL_0027: ldloc.1
-		IL_0028: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_002d: stelem.ref
-		IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0033: pop
-		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0039: ldc.i4.1
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: dup
-		IL_0040: ldc.i4.0
-		IL_0041: ldloc.1
-		IL_0042: stelem.ref
-		IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0048: pop
-		IL_0049: ret
+		IL_0019: stloc.2
+		IL_001a: ldloc.2
+		IL_001b: stloc.1
+		IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0021: ldc.i4.1
+		IL_0022: newarr [System.Runtime]System.Object
+		IL_0027: dup
+		IL_0028: ldc.i4.0
+		IL_0029: ldloc.1
+		IL_002a: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_002f: stelem.ref
+		IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0035: pop
+		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003b: ldc.i4.1
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldloc.1
+		IL_0044: stelem.ref
+		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004a: pop
+		IL_004b: ret
 	} // end of method IntrinsicCallables_BigInt_Callable_Basic::__js_module_init__
 
 } // end of class Modules.IntrinsicCallables_BigInt_Callable_Basic
@@ -84,7 +87,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20af
+		// Method begins at RVA 0x20b1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

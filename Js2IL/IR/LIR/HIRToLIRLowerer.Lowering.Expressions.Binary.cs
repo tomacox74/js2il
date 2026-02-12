@@ -128,8 +128,10 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        var leftType = GetTempStorage(leftTempVar).ClrType;
-        var rightType = GetTempStorage(rightTempVar).ClrType;
+        var leftStorage = GetTempStorage(leftTempVar);
+        var rightStorage = GetTempStorage(rightTempVar);
+        var leftType = leftStorage.ClrType;
+        var rightType = rightStorage.ClrType;
 
         // Handle 'instanceof'
         if (binaryExpr.Operator == Acornima.Operator.InstanceOf)
@@ -144,10 +146,16 @@ public sealed partial class HIRToLIRLowerer
         // Handle addition
         if (binaryExpr.Operator == Acornima.Operator.Addition)
         {
-            // Number + Number
+            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
+            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
+
+            // Number + Number (ToNumber semantics). Only emit native numeric add when both operands
+            // are truly unboxed doubles; otherwise, coerce first.
             if (leftType == typeof(double) && rightType == typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRAddNumber(leftTempVar, rightTempVar, resultTempVar));
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRAddNumber(leftNumber, rightNumber, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
             }
@@ -161,7 +169,7 @@ public sealed partial class HIRToLIRLowerer
             }
 
             // Dynamic addition (unknown types). Prefer avoiding boxing if exactly one side is already an unboxed double.
-            if (leftType == typeof(double) && rightType != typeof(double))
+            if (leftIsUnboxedDouble && rightType != typeof(double))
             {
                 var rightBoxedForAdd = EnsureObject(rightTempVar);
                 _methodBodyIR.Instructions.Add(new LIRAddDynamicDoubleObject(leftTempVar, rightBoxedForAdd, resultTempVar));
@@ -169,7 +177,7 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
-            if (leftType != typeof(double) && rightType == typeof(double))
+            if (rightIsUnboxedDouble && leftType != typeof(double))
             {
                 var leftBoxedForAdd = EnsureObject(leftTempVar);
                 _methodBodyIR.Instructions.Add(new LIRAddDynamicObjectDouble(leftBoxedForAdd, rightTempVar, resultTempVar));
@@ -190,11 +198,12 @@ public sealed partial class HIRToLIRLowerer
         // and a native IL 'mul' rather than calling Operators.Multiply.
         if (binaryExpr.Operator == Acornima.Operator.Multiplication)
         {
-            if (leftType != typeof(double) || rightType != typeof(double))
-            {
-                leftTempVar = EnsureNumber(leftTempVar);
-                rightTempVar = EnsureNumber(rightTempVar);
-            }
+            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
+            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
+
+            // Only emit native numeric ops when both operands are truly unboxed doubles.
+            leftTempVar = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+            rightTempVar = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
 
             _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -206,11 +215,12 @@ public sealed partial class HIRToLIRLowerer
         {
             // JS '-' operator always follows numeric coercion (ToNumber) semantics.
             // Support both the fast path (double - double) and the general path via EnsureNumber.
-            if (leftType != typeof(double) || rightType != typeof(double))
-            {
-                leftTempVar = EnsureNumber(leftTempVar);
-                rightTempVar = EnsureNumber(rightTempVar);
-            }
+            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
+            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
+
+            // Only emit native numeric ops when both operands are truly unboxed doubles.
+            leftTempVar = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+            rightTempVar = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
 
             _methodBodyIR.Instructions.Add(new LIRSubNumber(leftTempVar, rightTempVar, resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -221,11 +231,12 @@ public sealed partial class HIRToLIRLowerer
         if (binaryExpr.Operator == Acornima.Operator.Division)
         {
             // JS '/' operator follows ToNumber semantics.
-            if (leftType != typeof(double) || rightType != typeof(double))
-            {
-                leftTempVar = EnsureNumber(leftTempVar);
-                rightTempVar = EnsureNumber(rightTempVar);
-            }
+            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
+            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
+
+            // Only emit native numeric ops when both operands are truly unboxed doubles.
+            leftTempVar = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+            rightTempVar = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
 
             _methodBodyIR.Instructions.Add(new LIRDivNumber(leftTempVar, rightTempVar, resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -236,11 +247,12 @@ public sealed partial class HIRToLIRLowerer
         if (binaryExpr.Operator == Acornima.Operator.Remainder)
         {
             // JS '%' operator follows ToNumber semantics.
-            if (leftType != typeof(double) || rightType != typeof(double))
-            {
-                leftTempVar = EnsureNumber(leftTempVar);
-                rightTempVar = EnsureNumber(rightTempVar);
-            }
+            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
+            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
+
+            // Only emit native numeric ops when both operands are truly unboxed doubles.
+            leftTempVar = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+            rightTempVar = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
 
             _methodBodyIR.Instructions.Add(new LIRModNumber(leftTempVar, rightTempVar, resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));

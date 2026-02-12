@@ -130,11 +130,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 94 (0x5e)
+		// Code size: 96 (0x60)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionLogsGlobalVariable/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::.ctor()
@@ -149,26 +150,28 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldloc.0
-		IL_0023: ldstr "Hello from global scope!"
-		IL_0028: stfld object Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalMessage
-		IL_002d: ldloc.0
-		IL_002e: ldc.r8 42
-		IL_0037: box [System.Runtime]System.Double
-		IL_003c: stfld object Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalNumber
-		IL_0041: ldnull
-		IL_0042: ldftn object Modules.Function_GlobalFunctionLogsGlobalVariable/logGlobalValues::__js_call__(object[])
-		IL_0048: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_004d: ldc.i4.1
-		IL_004e: newarr [System.Runtime]System.Object
-		IL_0053: dup
-		IL_0054: ldc.i4.0
-		IL_0055: ldloc.0
-		IL_0056: stelem.ref
-		IL_0057: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_005c: pop
-		IL_005d: ret
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: stloc.1
+		IL_0024: ldloc.0
+		IL_0025: ldstr "Hello from global scope!"
+		IL_002a: stfld object Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalMessage
+		IL_002f: ldloc.0
+		IL_0030: ldc.r8 42
+		IL_0039: box [System.Runtime]System.Double
+		IL_003e: stfld object Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalNumber
+		IL_0043: ldnull
+		IL_0044: ldftn object Modules.Function_GlobalFunctionLogsGlobalVariable/logGlobalValues::__js_call__(object[])
+		IL_004a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_004f: ldc.i4.1
+		IL_0050: newarr [System.Runtime]System.Object
+		IL_0055: dup
+		IL_0056: ldc.i4.0
+		IL_0057: ldloc.0
+		IL_0058: stelem.ref
+		IL_0059: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_005e: pop
+		IL_005f: ret
 	} // end of method Function_GlobalFunctionLogsGlobalVariable::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionLogsGlobalVariable

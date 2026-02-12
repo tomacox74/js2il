@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20cf
+				// Method begins at RVA 0x20d1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20aa
+			// Method begins at RVA 0x20ac
 			// Header size: 1
 			// Code size: 27 (0x1b)
 			.maxstack 8
@@ -65,7 +65,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c6
+			// Method begins at RVA 0x20c8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -91,11 +91,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 78 (0x4e)
+		// Code size: 80 (0x50)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetImmediate_ExecutesCallback/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.SetImmediate_ExecutesCallback/Scope::.ctor()
@@ -111,22 +112,24 @@
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0026: stloc.1
-		IL_0027: ldloc.1
-		IL_0028: ldc.i4.0
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0033: pop
-		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0039: ldc.i4.1
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: dup
-		IL_0040: ldc.i4.0
-		IL_0041: ldstr "setImmediate scheduled."
-		IL_0046: stelem.ref
-		IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_004c: pop
-		IL_004d: ret
+		IL_0026: stloc.2
+		IL_0027: ldloc.2
+		IL_0028: stloc.1
+		IL_0029: ldloc.1
+		IL_002a: ldc.i4.0
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0035: pop
+		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003b: ldc.i4.1
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldstr "setImmediate scheduled."
+		IL_0048: stelem.ref
+		IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004e: pop
+		IL_004f: ret
 	} // end of method SetImmediate_ExecutesCallback::__js_module_init__
 
 } // end of class Modules.SetImmediate_ExecutesCallback
@@ -138,7 +141,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d8
+		// Method begins at RVA 0x20da
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

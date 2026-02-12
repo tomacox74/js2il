@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2171
+				// Method begins at RVA 0x2179
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2124
+			// Method begins at RVA 0x212c
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -85,7 +85,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2168
+			// Method begins at RVA 0x2170
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -111,14 +111,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 197 (0xc5)
+		// Code size: 205 (0xcd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope,
 			[1] object,
 			[2] object,
-			[3] bool,
-			[4] object
+			[3] object,
+			[4] object,
+			[5] bool
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::.ctor()
@@ -133,67 +134,71 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldloc.0
-		IL_0023: ldc.r8 0.0
-		IL_002c: box [System.Runtime]System.Double
-		IL_0031: stfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-		IL_0036: ldc.r8 1
-		IL_003f: box [System.Runtime]System.Double
-		IL_0044: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0049: stloc.3
-		IL_004a: ldloc.3
-		IL_004b: brfalse IL_0075
+		IL_0021: stloc.s 4
+		IL_0023: ldloc.s 4
+		IL_0025: stloc.1
+		IL_0026: ldloc.0
+		IL_0027: ldc.r8 0.0
+		IL_0030: box [System.Runtime]System.Double
+		IL_0035: stfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+		IL_003a: ldc.r8 1
+		IL_0043: box [System.Runtime]System.Double
+		IL_0048: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_004d: stloc.s 5
+		IL_004f: ldloc.s 5
+		IL_0051: brfalse IL_007b
 
-		IL_0050: ldnull
-		IL_0051: ldftn object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(object[])
-		IL_0057: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_005c: ldc.i4.1
-		IL_005d: newarr [System.Runtime]System.Object
-		IL_0062: dup
-		IL_0063: ldc.i4.0
-		IL_0064: ldloc.0
-		IL_0065: stelem.ref
-		IL_0066: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_006b: stloc.s 4
-		IL_006d: ldloc.s 4
-		IL_006f: stloc.2
-		IL_0070: br IL_0095
+		IL_0056: ldnull
+		IL_0057: ldftn object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(object[])
+		IL_005d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0062: ldc.i4.1
+		IL_0063: newarr [System.Runtime]System.Object
+		IL_0068: dup
+		IL_0069: ldc.i4.0
+		IL_006a: ldloc.0
+		IL_006b: stelem.ref
+		IL_006c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0071: stloc.s 4
+		IL_0073: ldloc.s 4
+		IL_0075: stloc.2
+		IL_0076: br IL_009b
 
-		IL_0075: ldnull
-		IL_0076: ldftn object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(object[])
-		IL_007c: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0081: ldc.i4.1
-		IL_0082: newarr [System.Runtime]System.Object
-		IL_0087: dup
-		IL_0088: ldc.i4.0
-		IL_0089: ldloc.0
-		IL_008a: stelem.ref
-		IL_008b: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0090: stloc.s 4
-		IL_0092: ldloc.s 4
-		IL_0094: stloc.2
+		IL_007b: ldnull
+		IL_007c: ldftn object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(object[])
+		IL_0082: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0087: ldc.i4.1
+		IL_0088: newarr [System.Runtime]System.Object
+		IL_008d: dup
+		IL_008e: ldc.i4.0
+		IL_008f: ldloc.0
+		IL_0090: stelem.ref
+		IL_0091: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0096: stloc.s 4
+		IL_0098: ldloc.s 4
+		IL_009a: stloc.2
 
-		IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009a: ldc.i4.1
-		IL_009b: newarr [System.Runtime]System.Object
-		IL_00a0: dup
-		IL_00a1: ldc.i4.0
-		IL_00a2: ldloc.2
-		IL_00a3: stelem.ref
-		IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a9: pop
-		IL_00aa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00af: ldc.i4.1
-		IL_00b0: newarr [System.Runtime]System.Object
-		IL_00b5: dup
-		IL_00b6: ldc.i4.0
-		IL_00b7: ldloc.0
-		IL_00b8: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-		IL_00bd: stelem.ref
-		IL_00be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c3: pop
-		IL_00c4: ret
+		IL_009b: ldloc.2
+		IL_009c: stloc.3
+		IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a2: ldc.i4.1
+		IL_00a3: newarr [System.Runtime]System.Object
+		IL_00a8: dup
+		IL_00a9: ldc.i4.0
+		IL_00aa: ldloc.3
+		IL_00ab: stelem.ref
+		IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00b1: pop
+		IL_00b2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b7: ldc.i4.1
+		IL_00b8: newarr [System.Runtime]System.Object
+		IL_00bd: dup
+		IL_00be: ldc.i4.0
+		IL_00bf: ldloc.0
+		IL_00c0: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+		IL_00c5: stelem.ref
+		IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00cb: pop
+		IL_00cc: ret
 	} // end of method ControlFlow_Conditional_Ternary_ShortCircuit::__js_module_init__
 
 } // end of class Modules.ControlFlow_Conditional_Ternary_ShortCircuit
@@ -205,7 +210,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217a
+		// Method begins at RVA 0x2182
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

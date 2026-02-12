@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ef
+			// Method begins at RVA 0x20f0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 48 (0x30)
+		// Code size: 50 (0x32)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Global_ErrorPrototype_Read/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Global_ErrorPrototype_Read/Scope::.ctor()
@@ -52,21 +53,23 @@
 		IL_0006: ldarg.1
 		IL_0007: ldstr "./CommonJS_Global_ErrorPrototype_Read_Lib"
 		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0011: stloc.1
-		IL_0012: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0017: ldc.i4.2
-		IL_0018: newarr [System.Runtime]System.Object
-		IL_001d: dup
-		IL_001e: ldc.i4.0
-		IL_001f: ldstr "hasErrorPrototype:"
-		IL_0024: stelem.ref
-		IL_0025: dup
-		IL_0026: ldc.i4.1
-		IL_0027: ldloc.1
-		IL_0028: stelem.ref
-		IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_002e: pop
-		IL_002f: ret
+		IL_0011: stloc.2
+		IL_0012: ldloc.2
+		IL_0013: stloc.1
+		IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0019: ldc.i4.2
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldstr "hasErrorPrototype:"
+		IL_0026: stelem.ref
+		IL_0027: dup
+		IL_0028: ldc.i4.1
+		IL_0029: ldloc.1
+		IL_002a: stelem.ref
+		IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0030: pop
+		IL_0031: ret
 	} // end of method CommonJS_Global_ErrorPrototype_Read::__js_module_init__
 
 } // end of class Modules.CommonJS_Global_ErrorPrototype_Read
@@ -82,7 +85,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x20f9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -106,16 +109,15 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x208c
+		// Method begins at RVA 0x2090
 		// Header size: 12
-		// Code size: 87 (0x57)
+		// Code size: 84 (0x54)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Global_ErrorPrototype_Read_Lib/Scope,
 			[1] object,
-			[2] bool,
-			[3] object,
-			[4] object
+			[2] object,
+			[3] bool
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Global_ErrorPrototype_Read_Lib/Scope::.ctor()
@@ -126,25 +128,25 @@
 		IL_0015: stloc.1
 		IL_0016: ldloc.1
 		IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_001c: stloc.2
-		IL_001d: ldloc.2
-		IL_001e: brfalse IL_0038
+		IL_001c: stloc.3
+		IL_001d: ldloc.3
+		IL_001e: brfalse IL_0037
 
 		IL_0023: ldc.r8 1
 		IL_002c: box [System.Runtime]System.Double
-		IL_0031: stloc.s 4
-		IL_0033: br IL_0048
+		IL_0031: stloc.2
+		IL_0032: br IL_0046
 
-		IL_0038: ldc.r8 0.0
-		IL_0041: box [System.Runtime]System.Double
-		IL_0046: stloc.s 4
+		IL_0037: ldc.r8 0.0
+		IL_0040: box [System.Runtime]System.Double
+		IL_0045: stloc.2
 
-		IL_0048: ldarg.2
-		IL_0049: ldstr "exports"
-		IL_004e: ldloc.s 4
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0055: pop
-		IL_0056: ret
+		IL_0046: ldarg.2
+		IL_0047: ldstr "exports"
+		IL_004c: ldloc.2
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0052: pop
+		IL_0053: ret
 	} // end of method CommonJS_Global_ErrorPrototype_Read_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Global_ErrorPrototype_Read_Lib
@@ -156,7 +158,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2101
+		// Method begins at RVA 0x2102
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

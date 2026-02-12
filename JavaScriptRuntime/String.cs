@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace JavaScriptRuntime
@@ -10,6 +11,121 @@ namespace JavaScriptRuntime
     [IntrinsicObject("String")]
     public static class String
     {
+        private const int MaxRepeatResultLength = 50_000_000;
+
+        private static bool IsEcmaWhitespaceOrLineTerminator(char ch)
+        {
+            // ECMA-262 WhiteSpace + LineTerminator code points (BMP subset).
+            // This is intentionally explicit to avoid differences with .NET's Unicode trimming.
+            return ch switch
+            {
+                '\u0009' => true, // TAB
+                '\u000A' => true, // LF
+                '\u000B' => true, // VT
+                '\u000C' => true, // FF
+                '\u000D' => true, // CR
+                '\u0020' => true, // SPACE
+                '\u00A0' => true, // NO-BREAK SPACE
+                '\u1680' => true, // OGHAM SPACE MARK
+                '\u2000' => true, // EN QUAD
+                '\u2001' => true, // EM QUAD
+                '\u2002' => true, // EN SPACE
+                '\u2003' => true, // EM SPACE
+                '\u2004' => true, // THREE-PER-EM SPACE
+                '\u2005' => true, // FOUR-PER-EM SPACE
+                '\u2006' => true, // SIX-PER-EM SPACE
+                '\u2007' => true, // FIGURE SPACE
+                '\u2008' => true, // PUNCTUATION SPACE
+                '\u2009' => true, // THIN SPACE
+                '\u200A' => true, // HAIR SPACE
+                '\u2028' => true, // LINE SEPARATOR
+                '\u2029' => true, // PARAGRAPH SEPARATOR
+                '\u202F' => true, // NARROW NO-BREAK SPACE
+                '\u205F' => true, // MEDIUM MATHEMATICAL SPACE
+                '\u3000' => true, // IDEOGRAPHIC SPACE
+                '\uFEFF' => true, // ZERO WIDTH NO-BREAK SPACE (BOM)
+                _ => false
+            };
+        }
+
+        private static string TrimEcma(string? input)
+        {
+            var s = input ?? string.Empty;
+            if (s.Length == 0)
+            {
+                return s;
+            }
+
+            int start = 0;
+            int end = s.Length - 1;
+
+            while (start <= end && IsEcmaWhitespaceOrLineTerminator(s[start]))
+            {
+                start++;
+            }
+
+            while (end >= start && IsEcmaWhitespaceOrLineTerminator(s[end]))
+            {
+                end--;
+            }
+
+            if (start == 0 && end == s.Length - 1)
+            {
+                return s;
+            }
+
+            if (end < start)
+            {
+                return string.Empty;
+            }
+
+            return s.Substring(start, end - start + 1);
+        }
+
+        private static string TrimStartEcma(string? input)
+        {
+            var s = input ?? string.Empty;
+            if (s.Length == 0)
+            {
+                return s;
+            }
+
+            int start = 0;
+            while (start < s.Length && IsEcmaWhitespaceOrLineTerminator(s[start]))
+            {
+                start++;
+            }
+
+            if (start == 0)
+            {
+                return s;
+            }
+
+            return start >= s.Length ? string.Empty : s.Substring(start, s.Length - start);
+        }
+
+        private static string TrimEndEcma(string? input)
+        {
+            var s = input ?? string.Empty;
+            if (s.Length == 0)
+            {
+                return s;
+            }
+
+            int end = s.Length - 1;
+            while (end >= 0 && IsEcmaWhitespaceOrLineTerminator(s[end]))
+            {
+                end--;
+            }
+
+            if (end == s.Length - 1)
+            {
+                return s;
+            }
+
+            return end < 0 ? string.Empty : s.Substring(0, end + 1);
+        }
+
         /// <summary>
         /// Implements String.prototype.substring(start[, end]).
         /// Semantics (subset):
@@ -72,6 +188,206 @@ namespace JavaScriptRuntime
             }
 
             return input.Substring(startIndex, count);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.substr(start[, length]).
+        /// Notes:
+        ///  - start is coerced to integer (NaN -> 0)
+        ///  - if start is negative, it is treated as length+start (clamped to 0)
+        ///  - length is coerced to integer; if omitted -> to end; if negative -> 0
+        /// </summary>
+        public static string Substr(string input, object? start)
+        {
+            return Substr(input, start, null);
+        }
+
+        public static string Substr(string input, object? start, object? length)
+        {
+            input ??= string.Empty;
+            int len = input.Length;
+
+            double startNum;
+            try { startNum = TypeUtilities.ToNumber(start); }
+            catch { startNum = double.NaN; }
+            if (double.IsNaN(startNum) || double.IsNegativeInfinity(startNum)) startNum = 0;
+            if (double.IsPositiveInfinity(startNum)) startNum = len;
+            startNum = global::System.Math.Truncate(startNum);
+
+            int startIndex = (int)startNum;
+            if (startIndex < 0)
+            {
+                startIndex = len + startIndex;
+                if (startIndex < 0) startIndex = 0;
+            }
+            if (startIndex > len) startIndex = len;
+
+            int maxCount = len - startIndex;
+
+            int count;
+            if (length is null)
+            {
+                count = maxCount;
+            }
+            else
+            {
+                double lengthNum;
+                try { lengthNum = TypeUtilities.ToNumber(length); }
+                catch { lengthNum = double.NaN; }
+                if (double.IsNaN(lengthNum) || double.IsNegativeInfinity(lengthNum) || lengthNum < 0) lengthNum = 0;
+                if (double.IsPositiveInfinity(lengthNum)) lengthNum = maxCount;
+                lengthNum = global::System.Math.Truncate(lengthNum);
+                count = (int)lengthNum;
+            }
+
+            if (count <= 0 || startIndex >= len)
+            {
+                return string.Empty;
+            }
+
+            if (count > maxCount) count = maxCount;
+            return input.Substring(startIndex, count);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.slice(start[, end]).
+        /// </summary>
+        public static string Slice(string input, object? start)
+        {
+            return Slice(input, start, null);
+        }
+
+        public static string Slice(string input, object? start, object? end)
+        {
+            input ??= string.Empty;
+            int len = input.Length;
+
+            static int ToSliceIndex(object? value, int length, int defaultValue)
+            {
+                if (value is null) return defaultValue;
+
+                double d;
+                try { d = TypeUtilities.ToNumber(value); }
+                catch { d = double.NaN; }
+                if (double.IsNaN(d) || double.IsNegativeInfinity(d)) d = 0;
+                if (double.IsPositiveInfinity(d)) d = length;
+                d = global::System.Math.Truncate(d);
+
+                int i = (int)d;
+                if (i < 0) i = length + i;
+                if (i < 0) i = 0;
+                if (i > length) i = length;
+                return i;
+            }
+
+            int startIndex = ToSliceIndex(start, len, defaultValue: 0);
+            int endIndex = ToSliceIndex(end, len, defaultValue: len);
+            if (endIndex < startIndex) return string.Empty;
+            return input.Substring(startIndex, endIndex - startIndex);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.indexOf(searchString[, position]).
+        /// </summary>
+        public static object IndexOf(string input, string searchString)
+        {
+            return IndexOf(input, searchString, null);
+        }
+
+        public static object IndexOf(string input, string searchString, object? position)
+        {
+            input ??= string.Empty;
+            searchString ??= string.Empty;
+
+            int startIndex = 0;
+            if (position is not null)
+            {
+                double d;
+                try { d = TypeUtilities.ToNumber(position); }
+                catch { d = double.NaN; }
+                if (double.IsNaN(d) || double.IsNegativeInfinity(d)) d = 0;
+                if (double.IsPositiveInfinity(d)) d = input.Length;
+                d = global::System.Math.Truncate(d);
+                startIndex = (int)d;
+                if (startIndex < 0) startIndex = 0;
+                if (startIndex > input.Length) startIndex = input.Length;
+            }
+
+            int idx = input.IndexOf(searchString, startIndex, StringComparison.Ordinal);
+            return (double)idx;
+        }
+
+        /// <summary>
+        /// Implements String.prototype.trim().
+        /// </summary>
+        public static string Trim(string input)
+        {
+            return TrimEcma(input);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.trimStart()/trimLeft().
+        /// </summary>
+        public static string TrimStart(string input)
+        {
+            return TrimStartEcma(input);
+        }
+
+        public static string TrimLeft(string input)
+        {
+            return TrimStart(input);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.trimEnd()/trimRight().
+        /// </summary>
+        public static string TrimEnd(string input)
+        {
+            return TrimEndEcma(input);
+        }
+
+        public static string TrimRight(string input)
+        {
+            return TrimEnd(input);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.repeat(count).
+        /// </summary>
+        public static string Repeat(string input, object? count)
+        {
+            input ??= string.Empty;
+
+            double d;
+            try { d = TypeUtilities.ToNumber(count); }
+            catch { d = double.NaN; }
+
+            if (double.IsNaN(d)) d = 0;
+            if (double.IsInfinity(d) || d < 0)
+            {
+                throw new RangeError("Invalid count value");
+            }
+
+            d = global::System.Math.Truncate(d);
+            int n = (int)d;
+            if (n <= 0) return string.Empty;
+
+            if (n == 1) return input;
+
+            // Prevent pathological allocations.
+            long totalLength = (long)input.Length * n;
+            if (totalLength > MaxRepeatResultLength)
+            {
+                throw new RangeError("Invalid string length");
+            }
+
+            var sb = new StringBuilder((int)totalLength);
+            for (int i = 0; i < n; i++)
+            {
+                sb.Append(input);
+            }
+
+            return sb.ToString();
         }
 
         /// <summary>

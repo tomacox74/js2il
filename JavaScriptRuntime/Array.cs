@@ -19,6 +19,9 @@ namespace JavaScriptRuntime
             var exp = new ExpandoObject();
             var dict = (IDictionary<string, object?>)exp;
             dict["push"] = (Func<object[], object?[], object?>)PrototypePush;
+            dict["reduce"] = (Func<object[], object?[], object?>)PrototypeReduce;
+            dict["reduceRight"] = (Func<object[], object?[], object?>)PrototypeReduceRight;
+            dict["indexOf"] = (Func<object[], object?[], object?>)PrototypeIndexOf;
             return exp;
         }
 
@@ -41,6 +44,302 @@ namespace JavaScriptRuntime
                 converted[i] = args[i]!;
             }
             return jsArray.push(converted);
+        }
+
+        private static object? PrototypeReduce(object[] scopes, object?[]? args)
+        {
+            var receiver = RuntimeServices.GetCurrentThis();
+            if (receiver is null || receiver is JsNull)
+            {
+                if (!string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("JS2IL_DIAG_REDUCE")))
+                {
+                    System.Console.Error.WriteLine("[JS2IL_DIAG_REDUCE] Array.prototype.reduce called with null/undefined receiver");
+                    System.Console.Error.WriteLine(new System.Diagnostics.StackTrace(true).ToString());
+                }
+                throw new TypeError("Reduce called on null or undefined");
+            }
+
+            // Fast path: true JS array instance.
+            if (receiver is JavaScriptRuntime.Array jsArray)
+            {
+                if (args == null || args.Length == 0)
+                {
+                    return jsArray.reduce(System.Array.Empty<object>());
+                }
+
+                var converted = new object[args.Length];
+                for (int i = 0; i < args.Length; i++)
+                {
+                    converted[i] = args[i]!;
+                }
+
+                return jsArray.reduce(converted);
+            }
+
+            // Generic array-like path: supports NodeList and other array-like objects.
+            // This is needed because real-world libs often use:
+            //   const reduce = Array.prototype.reduce; reduce.call(arrayLike, cb, init)
+            if (args == null || args.Length == 0)
+            {
+                // No callback provided.
+                throw new TypeError("undefined is not a function");
+            }
+
+            var callback = args[0];
+            if (callback is null || callback is JsNull)
+            {
+                throw new TypeError("undefined is not a function");
+            }
+
+            if (callback is not Delegate callbackDel)
+            {
+                throw new TypeError("callback is not a function");
+            }
+
+            int length = ToArrayLikeLength(receiver);
+            int k;
+
+            object? accumulator;
+            if (args.Length >= 2)
+            {
+                accumulator = args[1];
+                k = 0;
+            }
+            else
+            {
+                // No initial value: find the first present element and use it as the accumulator.
+                bool found = false;
+                accumulator = null;
+                k = 0;
+                for (int i = 0; i < length; i++)
+                {
+                    if (JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                    {
+                        accumulator = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                        k = i + 1;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    throw new TypeError("Reduce of empty array with no initial value");
+                }
+            }
+
+            for (int i = k; i < length; i++)
+            {
+                if (!JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                {
+                    continue;
+                }
+                var current = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
+                {
+                    accumulator,
+                    current,
+                    (double)i,
+                    receiver
+                });
+            }
+
+            return accumulator;
+        }
+
+        private static object? PrototypeReduceRight(object[] scopes, object?[]? args)
+        {
+            var receiver = RuntimeServices.GetCurrentThis();
+            if (receiver is null || receiver is JsNull)
+            {
+                if (!string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("JS2IL_DIAG_REDUCE")))
+                {
+                    System.Console.Error.WriteLine("[JS2IL_DIAG_REDUCE] Array.prototype.reduceRight called with null/undefined receiver");
+                    System.Console.Error.WriteLine(new System.Diagnostics.StackTrace(true).ToString());
+                }
+                throw new TypeError("Reduce called on null or undefined");
+            }
+
+            if (receiver is JavaScriptRuntime.Array jsArray)
+            {
+                if (args == null || args.Length == 0)
+                {
+                    return jsArray.reduceRight(System.Array.Empty<object>());
+                }
+
+                var converted = new object[args.Length];
+                for (int i = 0; i < args.Length; i++)
+                {
+                    converted[i] = args[i]!;
+                }
+
+                return jsArray.reduceRight(converted);
+            }
+
+            if (args == null || args.Length == 0)
+            {
+                // No callback provided.
+                throw new TypeError("undefined is not a function");
+            }
+
+            var callback = args[0];
+            if (callback is null || callback is JsNull)
+            {
+                throw new TypeError("undefined is not a function");
+            }
+
+            if (callback is not Delegate callbackDel)
+            {
+                throw new TypeError("callback is not a function");
+            }
+
+            int length = ToArrayLikeLength(receiver);
+            int k;
+            object? accumulator;
+            if (args.Length >= 2)
+            {
+                accumulator = args[1];
+                k = length - 1;
+            }
+            else
+            {
+                // No initial value: find the last present element and use it as the accumulator.
+                bool found = false;
+                accumulator = null;
+                k = length - 1;
+                for (int i = length - 1; i >= 0; i--)
+                {
+                    if (JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                    {
+                        accumulator = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                        k = i - 1;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    throw new TypeError("Reduce of empty array with no initial value");
+                }
+            }
+
+            for (int i = k; i >= 0; i--)
+            {
+                if (!JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                {
+                    continue;
+                }
+                var current = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
+                {
+                    accumulator,
+                    current,
+                    (double)i,
+                    receiver
+                });
+            }
+
+            return accumulator;
+        }
+
+        private static object? PrototypeIndexOf(object[] scopes, object?[]? args)
+        {
+            var receiver = RuntimeServices.GetCurrentThis();
+            if (receiver is null || receiver is JsNull)
+            {
+                throw new TypeError("Array.prototype.indexOf called on null or undefined");
+            }
+
+            // Fast path for real JS array
+            if (receiver is JavaScriptRuntime.Array jsArray)
+            {
+                if (args == null || args.Length == 0)
+                {
+                    return jsArray.indexOf();
+                }
+
+                var converted = new object[args.Length];
+                for (int i = 0; i < args.Length; i++)
+                {
+                    converted[i] = args[i]!;
+                }
+
+                return jsArray.indexOf(converted);
+            }
+
+            // Generic array-like indexOf
+            object? searchElement = args != null && args.Length > 0 ? args[0] : null;
+            int length = ToArrayLikeLength(receiver);
+            double fromIndexNum = 0;
+            if (args != null && args.Length > 1)
+            {
+                try { fromIndexNum = TypeUtilities.ToNumber(args[1]); }
+                catch { fromIndexNum = double.NaN; }
+                if (double.IsNaN(fromIndexNum) || double.IsNegativeInfinity(fromIndexNum))
+                {
+                    fromIndexNum = 0;
+                }
+                else if (double.IsPositiveInfinity(fromIndexNum))
+                {
+                    // +Infinity means start at/after the end.
+                    fromIndexNum = length;
+                }
+                else
+                {
+                    fromIndexNum = global::System.Math.Truncate(fromIndexNum);
+                }
+            }
+
+            int k;
+            if (fromIndexNum >= length)
+            {
+                k = length;
+            }
+            else if (fromIndexNum >= 0)
+            {
+                k = (int)fromIndexNum;
+            }
+            else
+            {
+                double start = length + fromIndexNum;
+                if (double.IsNaN(start) || start <= 0)
+                {
+                    k = 0;
+                }
+                else if (start >= length)
+                {
+                    k = length;
+                }
+                else
+                {
+                    k = (int)start;
+                }
+            }
+
+            for (int i = k; i < length; i++)
+            {
+                var element = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                if (JavaScriptRuntime.Operators.StrictEqual(element, searchElement))
+                {
+                    return (double)i;
+                }
+            }
+
+            return -1d;
+        }
+
+        private static int ToArrayLikeLength(object receiver)
+        {
+            var lenValue = JavaScriptRuntime.Object.GetProperty(receiver, "length");
+            double d;
+            try { d = TypeUtilities.ToNumber(lenValue); }
+            catch { d = 0d; }
+            if (double.IsNaN(d) || double.IsNegativeInfinity(d) || d < 0) d = 0;
+            if (double.IsPositiveInfinity(d)) d = int.MaxValue;
+            d = global::System.Math.Truncate(d);
+            if (d > int.MaxValue) d = int.MaxValue;
+            return (int)d;
         }
 
         public Array() : base()
@@ -255,6 +554,11 @@ namespace JavaScriptRuntime
                 double d = value;
                 if (double.IsNaN(d) || double.IsInfinity(d) || d < 0)
                 {
+                    if (Environment.GetEnvironmentVariable("JS2IL_DIAG_ARRAY_LENGTH") == "1")
+                    {
+                        System.Console.WriteLine($"[JS2IL_DIAG_ARRAY_LENGTH] invalid length value={d}");
+                        System.Console.WriteLine(Environment.StackTrace);
+                    }
                     throw new RangeError("Invalid array length");
                 }
 
@@ -262,12 +566,22 @@ namespace JavaScriptRuntime
                 double truncated = global::System.Math.Truncate(d);
                 if (truncated != d)
                 {
+                    if (Environment.GetEnvironmentVariable("JS2IL_DIAG_ARRAY_LENGTH") == "1")
+                    {
+                        System.Console.WriteLine($"[JS2IL_DIAG_ARRAY_LENGTH] non-integer length value={d}");
+                        System.Console.WriteLine(Environment.StackTrace);
+                    }
                     throw new RangeError("Invalid array length");
                 }
 
                 d = truncated;
                 if (d > int.MaxValue)
                 {
+                    if (Environment.GetEnvironmentVariable("JS2IL_DIAG_ARRAY_LENGTH") == "1")
+                    {
+                        System.Console.WriteLine($"[JS2IL_DIAG_ARRAY_LENGTH] too-large length value={d}");
+                        System.Console.WriteLine(Environment.StackTrace);
+                    }
                     throw new RangeError("Invalid array length");
                 }
 

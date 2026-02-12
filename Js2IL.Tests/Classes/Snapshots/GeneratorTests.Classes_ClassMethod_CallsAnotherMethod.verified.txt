@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e2
+				// Method begins at RVA 0x20ea
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20eb
+				// Method begins at RVA 0x20f3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f4
+				// Method begins at RVA 0x20fc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20fd
+				// Method begins at RVA 0x2105
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +98,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2106
+				// Method begins at RVA 0x210e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -121,7 +121,7 @@
 				object name
 			) cil managed 
 		{
-			// Method begins at RVA 0x2075
+			// Method begins at RVA 0x207c
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -137,7 +137,7 @@
 		.method public hidebysig 
 			instance object hello () cil managed 
 		{
-			// Method begins at RVA 0x20b0
+			// Method begins at RVA 0x20b8
 			// Header size: 12
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -161,7 +161,7 @@
 		.method public hidebysig 
 			instance object prefix () cil managed 
 		{
-			// Method begins at RVA 0x20d2
+			// Method begins at RVA 0x20da
 			// Header size: 1
 			// Code size: 6 (0x6)
 			.maxstack 8
@@ -173,7 +173,7 @@
 		.method public hidebysig 
 			instance object logHello () cil managed 
 		{
-			// Method begins at RVA 0x2084
+			// Method begins at RVA 0x208c
 			// Header size: 12
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -206,7 +206,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d9
+			// Method begins at RVA 0x20e1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -232,22 +232,26 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 25 (0x19)
+		// Code size: 32 (0x20)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_CallsAnotherMethod/Scope,
-			[1] class Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter
+			[1] object,
+			[2] class Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_CallsAnotherMethod/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "World"
 		IL_000b: newobj instance void Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter::.ctor(object)
-		IL_0010: stloc.1
-		IL_0011: ldloc.1
-		IL_0012: callvirt instance object Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter::logHello()
-		IL_0017: pop
-		IL_0018: ret
+		IL_0010: stloc.2
+		IL_0011: ldloc.2
+		IL_0012: stloc.1
+		IL_0013: ldloc.1
+		IL_0014: castclass Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter
+		IL_0019: callvirt instance object Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter::logHello()
+		IL_001e: pop
+		IL_001f: ret
 	} // end of method Classes_ClassMethod_CallsAnotherMethod::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_CallsAnotherMethod
@@ -259,7 +263,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210f
+		// Method begins at RVA 0x2117
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

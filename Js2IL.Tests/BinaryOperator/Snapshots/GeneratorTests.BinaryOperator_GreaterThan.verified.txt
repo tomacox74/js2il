@@ -44,8 +44,8 @@
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_GreaterThan/Scope,
-			[1] bool,
-			[2] bool
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_GreaterThan/Scope::.ctor()
@@ -53,36 +53,36 @@
 		IL_0006: ldc.r8 2
 		IL_000f: ldc.r8 1
 		IL_0018: cgt
-		IL_001a: stloc.1
-		IL_001b: ldc.r8 1
-		IL_0024: ldc.r8 2
-		IL_002d: cgt
-		IL_002f: stloc.2
-		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0035: ldc.i4.2
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: dup
-		IL_003c: ldc.i4.0
-		IL_003d: ldstr "x is"
-		IL_0042: stelem.ref
-		IL_0043: dup
-		IL_0044: ldc.i4.1
-		IL_0045: ldloc.1
-		IL_0046: box [System.Runtime]System.Boolean
-		IL_004b: stelem.ref
-		IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0051: pop
-		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0057: ldc.i4.2
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldstr "y is"
-		IL_0064: stelem.ref
-		IL_0065: dup
-		IL_0066: ldc.i4.1
-		IL_0067: ldloc.2
-		IL_0068: box [System.Runtime]System.Boolean
+		IL_001a: box [System.Runtime]System.Boolean
+		IL_001f: stloc.1
+		IL_0020: ldc.r8 1
+		IL_0029: ldc.r8 2
+		IL_0032: cgt
+		IL_0034: box [System.Runtime]System.Boolean
+		IL_0039: stloc.2
+		IL_003a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003f: ldc.i4.2
+		IL_0040: newarr [System.Runtime]System.Object
+		IL_0045: dup
+		IL_0046: ldc.i4.0
+		IL_0047: ldstr "x is"
+		IL_004c: stelem.ref
+		IL_004d: dup
+		IL_004e: ldc.i4.1
+		IL_004f: ldloc.1
+		IL_0050: stelem.ref
+		IL_0051: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0056: pop
+		IL_0057: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005c: ldc.i4.2
+		IL_005d: newarr [System.Runtime]System.Object
+		IL_0062: dup
+		IL_0063: ldc.i4.0
+		IL_0064: ldstr "y is"
+		IL_0069: stelem.ref
+		IL_006a: dup
+		IL_006b: ldc.i4.1
+		IL_006c: ldloc.2
 		IL_006d: stelem.ref
 		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0073: pop

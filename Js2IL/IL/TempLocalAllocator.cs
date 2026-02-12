@@ -737,6 +737,13 @@ internal static class TempLocalAllocator
             case LIRAwait awaitInstr:
                 defined = awaitInstr.Result;
                 return true;
+
+            // Generator yield: the yield-expression result temp is populated on resume.
+            // We treat it as a defined temp for allocation purposes so the IL emitter has
+            // a local slot to store the resumed value into.
+            case LIRYield yieldInstr:
+                defined = yieldInstr.Result;
+                return true;
             case LIRAsyncLoadState loadState:
                 defined = loadState.Result;
                 return true;

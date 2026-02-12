@@ -82,14 +82,28 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        // Non-captured variable - use SSA temp
-        _variableMap[binding] = value;
+        // Non-captured variable - store into a stable local slot.
+        // IMPORTANT: declared locals should never store raw unboxed JsNull into an object-typed IL local.
+        // Use unboxed locals only for proven-stable primitives (double/bool); otherwise box to object.
+        TempVariable slotValue;
+        if (binding.IsStableType && binding.ClrType == typeof(double))
+        {
+            slotValue = EnsureNumber(value);
+        }
+        else if (binding.IsStableType && binding.ClrType == typeof(bool))
+        {
+            slotValue = EnsureBoolean(value);
+        }
+        else
+        {
+            slotValue = EnsureObject(value);
+        }
 
-        // Assign the declared variable a stable local slot and map this SSA temp to it.
-        // Track the storage type for the variable slot.
-        var storageInfo = GetTempStorage(value);
+        var storageInfo = GetTempStorage(slotValue);
         var slot = GetOrCreateVariableSlot(binding, exprStmt.Name.Name, storageInfo);
-        SetTempVariableSlot(value, slot);
+        slotValue = EnsureTempMappedToSlot(slot, slotValue);
+
+        _variableMap[binding] = slotValue;
 
         // Mark all variable slots as single-assignment initially.
         // This will be removed if the variable is reassigned later.

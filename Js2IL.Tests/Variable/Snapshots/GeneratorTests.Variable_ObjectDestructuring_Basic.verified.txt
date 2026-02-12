@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2173
+			// Method begins at RVA 0x2177
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 279 (0x117)
+		// Code size: 283 (0x11b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ObjectDestructuring_Basic/Scope,
@@ -48,7 +48,8 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_ObjectDestructuring_Basic/Scope::.ctor()
@@ -138,21 +139,23 @@
 		IL_00ef: ldloc.2
 		IL_00f0: ldloc.3
 		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00f6: stloc.s 5
-		IL_00f8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00fd: ldc.i4.2
-		IL_00fe: newarr [System.Runtime]System.Object
-		IL_0103: dup
-		IL_0104: ldc.i4.0
-		IL_0105: ldstr "sum="
-		IL_010a: stelem.ref
-		IL_010b: dup
-		IL_010c: ldc.i4.1
-		IL_010d: ldloc.s 5
-		IL_010f: stelem.ref
-		IL_0110: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0115: pop
-		IL_0116: ret
+		IL_00f6: stloc.s 6
+		IL_00f8: ldloc.s 6
+		IL_00fa: stloc.s 5
+		IL_00fc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0101: ldc.i4.2
+		IL_0102: newarr [System.Runtime]System.Object
+		IL_0107: dup
+		IL_0108: ldc.i4.0
+		IL_0109: ldstr "sum="
+		IL_010e: stelem.ref
+		IL_010f: dup
+		IL_0110: ldc.i4.1
+		IL_0111: ldloc.s 5
+		IL_0113: stelem.ref
+		IL_0114: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0119: pop
+		IL_011a: ret
 	} // end of method Variable_ObjectDestructuring_Basic::__js_module_init__
 
 } // end of class Modules.Variable_ObjectDestructuring_Basic
@@ -164,7 +167,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217c
+		// Method begins at RVA 0x2180
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -118,7 +118,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 285 (0x11d)
+		// Code size: 287 (0x11f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ObjectDestructuring_Captured/Scope,
@@ -139,96 +139,98 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0027: dup
-		IL_0028: ldstr "a"
-		IL_002d: ldc.r8 5
-		IL_0036: box [System.Runtime]System.Double
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0040: pop
-		IL_0041: dup
-		IL_0042: ldstr "b"
-		IL_0047: ldc.r8 10
-		IL_0050: box [System.Runtime]System.Double
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_005a: pop
-		IL_005b: stloc.2
-		IL_005c: ldloc.2
-		IL_005d: brfalse IL_006d
+		IL_0021: stloc.3
+		IL_0022: ldloc.3
+		IL_0023: stloc.1
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0029: dup
+		IL_002a: ldstr "a"
+		IL_002f: ldc.r8 5
+		IL_0038: box [System.Runtime]System.Double
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0042: pop
+		IL_0043: dup
+		IL_0044: ldstr "b"
+		IL_0049: ldc.r8 10
+		IL_0052: box [System.Runtime]System.Double
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_005c: pop
+		IL_005d: stloc.2
+		IL_005e: ldloc.2
+		IL_005f: brfalse IL_006f
 
-		IL_0062: ldloc.2
-		IL_0063: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0068: brfalse IL_007d
+		IL_0064: ldloc.2
+		IL_0065: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_006a: brfalse IL_007f
 
-		IL_006d: ldloc.2
-		IL_006e: ldstr "obj"
-		IL_0073: ldstr "a"
-		IL_0078: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_006f: ldloc.2
+		IL_0070: ldstr "obj"
+		IL_0075: ldstr "a"
+		IL_007a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_007d: ldloc.0
-		IL_007e: ldloc.2
-		IL_007f: ldstr "a"
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0089: stfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
-		IL_008e: ldloc.0
-		IL_008f: ldloc.2
-		IL_0090: ldstr "b"
-		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_009a: stfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
-		IL_009f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a4: ldc.i4.2
-		IL_00a5: newarr [System.Runtime]System.Object
-		IL_00aa: dup
-		IL_00ab: ldc.i4.0
-		IL_00ac: ldstr "a="
-		IL_00b1: stelem.ref
-		IL_00b2: dup
-		IL_00b3: ldc.i4.1
-		IL_00b4: ldloc.0
-		IL_00b5: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
-		IL_00ba: stelem.ref
-		IL_00bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c0: pop
-		IL_00c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c6: ldc.i4.2
-		IL_00c7: newarr [System.Runtime]System.Object
-		IL_00cc: dup
-		IL_00cd: ldc.i4.0
-		IL_00ce: ldstr "b="
-		IL_00d3: stelem.ref
-		IL_00d4: dup
-		IL_00d5: ldc.i4.1
-		IL_00d6: ldloc.0
-		IL_00d7: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
-		IL_00dc: stelem.ref
-		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e2: pop
-		IL_00e3: ldnull
-		IL_00e4: ldftn object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(object[])
-		IL_00ea: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_00ef: ldc.i4.1
-		IL_00f0: newarr [System.Runtime]System.Object
-		IL_00f5: dup
-		IL_00f6: ldc.i4.0
-		IL_00f7: ldloc.0
-		IL_00f8: stelem.ref
-		IL_00f9: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_00fe: stloc.3
-		IL_00ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0104: ldc.i4.2
-		IL_0105: newarr [System.Runtime]System.Object
-		IL_010a: dup
-		IL_010b: ldc.i4.0
-		IL_010c: ldstr "compute()="
-		IL_0111: stelem.ref
-		IL_0112: dup
-		IL_0113: ldc.i4.1
-		IL_0114: ldloc.3
-		IL_0115: stelem.ref
-		IL_0116: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_011b: pop
-		IL_011c: ret
+		IL_007f: ldloc.0
+		IL_0080: ldloc.2
+		IL_0081: ldstr "a"
+		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_008b: stfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
+		IL_0090: ldloc.0
+		IL_0091: ldloc.2
+		IL_0092: ldstr "b"
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_009c: stfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
+		IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a6: ldc.i4.2
+		IL_00a7: newarr [System.Runtime]System.Object
+		IL_00ac: dup
+		IL_00ad: ldc.i4.0
+		IL_00ae: ldstr "a="
+		IL_00b3: stelem.ref
+		IL_00b4: dup
+		IL_00b5: ldc.i4.1
+		IL_00b6: ldloc.0
+		IL_00b7: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
+		IL_00bc: stelem.ref
+		IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00c2: pop
+		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c8: ldc.i4.2
+		IL_00c9: newarr [System.Runtime]System.Object
+		IL_00ce: dup
+		IL_00cf: ldc.i4.0
+		IL_00d0: ldstr "b="
+		IL_00d5: stelem.ref
+		IL_00d6: dup
+		IL_00d7: ldc.i4.1
+		IL_00d8: ldloc.0
+		IL_00d9: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
+		IL_00de: stelem.ref
+		IL_00df: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00e4: pop
+		IL_00e5: ldnull
+		IL_00e6: ldftn object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(object[])
+		IL_00ec: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_00f1: ldc.i4.1
+		IL_00f2: newarr [System.Runtime]System.Object
+		IL_00f7: dup
+		IL_00f8: ldc.i4.0
+		IL_00f9: ldloc.0
+		IL_00fa: stelem.ref
+		IL_00fb: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0100: stloc.3
+		IL_0101: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0106: ldc.i4.2
+		IL_0107: newarr [System.Runtime]System.Object
+		IL_010c: dup
+		IL_010d: ldc.i4.0
+		IL_010e: ldstr "compute()="
+		IL_0113: stelem.ref
+		IL_0114: dup
+		IL_0115: ldc.i4.1
+		IL_0116: ldloc.3
+		IL_0117: stelem.ref
+		IL_0118: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_011d: pop
+		IL_011e: ret
 	} // end of method Variable_ObjectDestructuring_Captured::__js_module_init__
 
 } // end of class Modules.Variable_ObjectDestructuring_Captured

@@ -24,10 +24,18 @@ namespace JavaScriptRuntime.CommonJS
         // Track the current parent module for establishing parent-child relationships
         private Module? _currentParentModule;
 
+        // Node semantics: require.main should refer to the main module.
+        private Module? _mainModule;
+
         public Require(LocalModulesAssembly localModulesAssembly)
         {
             // Preload local modules from the provided assembly
             _localModulesAssembly = localModulesAssembly.ModulesAssembly;
+        }
+
+        internal void SetMainModule(Module mainModule)
+        {
+            _mainModule = mainModule;
         }
 
         private Dictionary<string, (string CanonicalId, string TypeName)> GetCompiledModuleTypeMap()
@@ -197,6 +205,13 @@ namespace JavaScriptRuntime.CommonJS
                 var resolved = ResolveLocalSpecifier(canonicalId, requestedSpecifier);
                 return RequireModule(resolved);
             };
+
+            // Support common Node.js pattern: `if (require.main === module) { ... }`
+            // Many scripts and tools rely on this to detect the entry module.
+            if (_mainModule != null)
+            {
+                JavaScriptRuntime.Object.SetProperty(moduleRequire, "main", _mainModule);
+            }
 
             var dirName = GetDirectoryNameForwardSlash(canonicalId);
             var module = new Module(canonicalId, canonicalId, parentModule, moduleRequire);

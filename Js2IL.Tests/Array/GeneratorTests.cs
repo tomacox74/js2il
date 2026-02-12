@@ -96,5 +96,11 @@ namespace Js2IL.Tests.Array
 
         [Fact]
         public Task Array_Length_Set_Fractional_ThrowsRangeError() { var testName = nameof(Array_Length_Set_Fractional_ThrowsRangeError); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_PrototypeMethods_ArrayLike_Call() { var testName = nameof(Array_PrototypeMethods_ArrayLike_Call); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_PrototypeMethods_ArrayLike_EdgeCases() { var testName = nameof(Array_PrototypeMethods_ArrayLike_EdgeCases); return GenerateTest(testName); }
     }
 }

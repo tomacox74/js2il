@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20fd
+				// Method begins at RVA 0x2101
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20d8
+			// Method begins at RVA 0x20dc
 			// Header size: 1
 			// Code size: 27 (0x1b)
 			.maxstack 8
@@ -65,7 +65,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x20f8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -91,12 +91,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 124 (0x7c)
+		// Code size: 128 (0x80)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ClearTimeout_ZeroDelay/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.ClearTimeout_ZeroDelay/Scope::.ctor()
@@ -112,36 +113,40 @@
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0026: stloc.1
-		IL_0027: ldloc.1
-		IL_0028: ldc.r8 0.0
-		IL_0031: box [System.Runtime]System.Double
-		IL_0036: ldc.i4.0
-		IL_0037: newarr [System.Runtime]System.Object
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-		IL_0041: stloc.2
-		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0047: ldc.i4.1
-		IL_0048: newarr [System.Runtime]System.Object
-		IL_004d: dup
-		IL_004e: ldc.i4.0
-		IL_004f: ldstr "setTimeout with zero delay scheduled."
-		IL_0054: stelem.ref
-		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005a: pop
-		IL_005b: ldloc.2
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearTimeout(object)
-		IL_0061: pop
-		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0067: ldc.i4.1
-		IL_0068: newarr [System.Runtime]System.Object
-		IL_006d: dup
-		IL_006e: ldc.i4.0
-		IL_006f: ldstr "Timeout cleared."
-		IL_0074: stelem.ref
-		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007a: pop
-		IL_007b: ret
+		IL_0026: stloc.3
+		IL_0027: ldloc.3
+		IL_0028: stloc.1
+		IL_0029: ldloc.1
+		IL_002a: ldc.r8 0.0
+		IL_0033: box [System.Runtime]System.Double
+		IL_0038: ldc.i4.0
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+		IL_0043: stloc.3
+		IL_0044: ldloc.3
+		IL_0045: stloc.2
+		IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004b: ldc.i4.1
+		IL_004c: newarr [System.Runtime]System.Object
+		IL_0051: dup
+		IL_0052: ldc.i4.0
+		IL_0053: ldstr "setTimeout with zero delay scheduled."
+		IL_0058: stelem.ref
+		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_005e: pop
+		IL_005f: ldloc.2
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearTimeout(object)
+		IL_0065: pop
+		IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006b: ldc.i4.1
+		IL_006c: newarr [System.Runtime]System.Object
+		IL_0071: dup
+		IL_0072: ldc.i4.0
+		IL_0073: ldstr "Timeout cleared."
+		IL_0078: stelem.ref
+		IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007e: pop
+		IL_007f: ret
 	} // end of method ClearTimeout_ZeroDelay::__js_module_init__
 
 } // end of class Modules.ClearTimeout_ZeroDelay
@@ -153,7 +158,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2106
+		// Method begins at RVA 0x210a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

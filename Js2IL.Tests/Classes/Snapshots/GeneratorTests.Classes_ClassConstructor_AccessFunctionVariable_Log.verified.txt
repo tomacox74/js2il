@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2123
+					// Method begins at RVA 0x2127
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x212c
+					// Method begins at RVA 0x2130
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -65,7 +65,7 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x20d4
+				// Method begins at RVA 0x20d8
 				// Header size: 12
 				// Code size: 49 (0x31)
 				.maxstack 8
@@ -113,7 +113,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211a
+				// Method begins at RVA 0x211e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -133,13 +133,14 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x209c
+			// Method begins at RVA 0x20a0
 			// Header size: 12
-			// Code size: 41 (0x29)
+			// Code size: 43 (0x2b)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope,
-				[1] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/MyClass
+				[1] object,
+				[2] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/MyClass
 			)
 
 			IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/Scope::.ctor()
@@ -160,9 +161,11 @@
 			IL_001f: ldloc.0
 			IL_0020: stelem.ref
 			IL_0021: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction/MyClass::.ctor(object[])
-			IL_0026: stloc.1
-			IL_0027: ldnull
-			IL_0028: ret
+			IL_0026: stloc.2
+			IL_0027: ldloc.2
+			IL_0028: stloc.1
+			IL_0029: ldnull
+			IL_002a: ret
 		} // end of method testFunction::__js_call__
 
 	} // end of class testFunction
@@ -182,7 +185,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2111
+			// Method begins at RVA 0x2115
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -208,11 +211,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 63 (0x3f)
+		// Code size: 65 (0x41)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/Scope::.ctor()
@@ -227,19 +231,21 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldnull
-		IL_0023: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction::__js_call__(object[])
-		IL_0029: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.0
-		IL_0037: stelem.ref
-		IL_0038: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_003d: pop
-		IL_003e: ret
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: stloc.1
+		IL_0024: ldnull
+		IL_0025: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction::__js_call__(object[])
+		IL_002b: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldloc.0
+		IL_0039: stelem.ref
+		IL_003a: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_003f: pop
+		IL_0040: ret
 	} // end of method Classes_ClassConstructor_AccessFunctionVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log
@@ -251,7 +257,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2135
+		// Method begins at RVA 0x2139
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

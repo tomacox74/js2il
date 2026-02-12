@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2193
+					// Method begins at RVA 0x2199
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x212d
+				// Method begins at RVA 0x2133
 				// Header size: 1
 				// Code size: 32 (0x20)
 				.maxstack 8
@@ -70,7 +70,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x219c
+					// Method begins at RVA 0x21a2
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -90,12 +90,13 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x2150
+				// Method begins at RVA 0x2154
 				// Header size: 12
-				// Code size: 37 (0x25)
+				// Code size: 39 (0x27)
 				.maxstack 8
 				.locals init (
-					[0] object
+					[0] object,
+					[1] object
 				)
 
 				IL_0000: ldarg.0
@@ -106,11 +107,13 @@
 				IL_000d: ldc.i4.0
 				IL_000e: newarr [System.Runtime]System.Object
 				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-				IL_0018: stloc.0
-				IL_0019: ldloc.0
-				IL_001a: ldstr "value"
-				IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_0024: ret
+				IL_0018: stloc.1
+				IL_0019: ldloc.1
+				IL_001a: stloc.0
+				IL_001b: ldloc.0
+				IL_001c: ldstr "value"
+				IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_0026: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner
@@ -131,7 +134,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218a
+				// Method begins at RVA 0x2190
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -151,9 +154,9 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20b0
+			// Method begins at RVA 0x20b4
 			// Header size: 12
-			// Code size: 113 (0x71)
+			// Code size: 115 (0x73)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_NewExpression_CapturesOuterCtor/outer/Scope,
@@ -179,42 +182,44 @@
 			IL_0020: ldloc.0
 			IL_0021: stelem.ref
 			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_0027: stloc.1
-			IL_0028: ldnull
-			IL_0029: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer/FunctionExpression_Ctor::__js_call__(object[])
-			IL_002f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-			IL_0034: ldc.i4.1
-			IL_0035: newarr [System.Runtime]System.Object
-			IL_003a: dup
-			IL_003b: ldc.i4.0
-			IL_003c: ldarg.0
+			IL_0027: stloc.2
+			IL_0028: ldloc.2
+			IL_0029: stloc.1
+			IL_002a: ldnull
+			IL_002b: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer/FunctionExpression_Ctor::__js_call__(object[])
+			IL_0031: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_0036: ldc.i4.1
+			IL_0037: newarr [System.Runtime]System.Object
+			IL_003c: dup
 			IL_003d: ldc.i4.0
-			IL_003e: ldelem.ref
-			IL_003f: stelem.ref
-			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_0045: stloc.2
-			IL_0046: ldloc.0
-			IL_0047: ldloc.2
-			IL_0048: stfld object Modules.Function_NewExpression_CapturesOuterCtor/outer/Scope::Ctor
-			IL_004d: ldnull
-			IL_004e: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer/inner::__js_call__(object[])
-			IL_0054: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-			IL_0059: ldc.i4.2
-			IL_005a: newarr [System.Runtime]System.Object
-			IL_005f: dup
-			IL_0060: ldc.i4.0
-			IL_0061: ldarg.0
+			IL_003e: ldarg.0
+			IL_003f: ldc.i4.0
+			IL_0040: ldelem.ref
+			IL_0041: stelem.ref
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_0047: stloc.2
+			IL_0048: ldloc.0
+			IL_0049: ldloc.2
+			IL_004a: stfld object Modules.Function_NewExpression_CapturesOuterCtor/outer/Scope::Ctor
+			IL_004f: ldnull
+			IL_0050: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer/inner::__js_call__(object[])
+			IL_0056: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_005b: ldc.i4.2
+			IL_005c: newarr [System.Runtime]System.Object
+			IL_0061: dup
 			IL_0062: ldc.i4.0
-			IL_0063: ldelem.ref
-			IL_0064: stelem.ref
-			IL_0065: dup
-			IL_0066: ldc.i4.1
-			IL_0067: ldloc.0
-			IL_0068: stelem.ref
-			IL_0069: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-			IL_006e: stloc.2
-			IL_006f: ldloc.2
-			IL_0070: ret
+			IL_0063: ldarg.0
+			IL_0064: ldc.i4.0
+			IL_0065: ldelem.ref
+			IL_0066: stelem.ref
+			IL_0067: dup
+			IL_0068: ldc.i4.1
+			IL_0069: ldloc.0
+			IL_006a: stelem.ref
+			IL_006b: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+			IL_0070: stloc.2
+			IL_0071: ldloc.2
+			IL_0072: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -233,7 +238,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2181
+			// Method begins at RVA 0x2187
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -259,7 +264,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 84 (0x54)
+		// Code size: 86 (0x56)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NewExpression_CapturesOuterCtor/Scope,
@@ -279,28 +284,30 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldnull
-		IL_0023: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer::__js_call__(object[])
-		IL_0029: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.0
-		IL_0037: stelem.ref
-		IL_0038: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_003d: stloc.2
-		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0043: ldc.i4.1
-		IL_0044: newarr [System.Runtime]System.Object
-		IL_0049: dup
-		IL_004a: ldc.i4.0
-		IL_004b: ldloc.2
-		IL_004c: stelem.ref
-		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0052: pop
-		IL_0053: ret
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: stloc.1
+		IL_0024: ldnull
+		IL_0025: ldftn object Modules.Function_NewExpression_CapturesOuterCtor/outer::__js_call__(object[])
+		IL_002b: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldloc.0
+		IL_0039: stelem.ref
+		IL_003a: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_003f: stloc.2
+		IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0045: ldc.i4.1
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldloc.2
+		IL_004e: stelem.ref
+		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0054: pop
+		IL_0055: ret
 	} // end of method Function_NewExpression_CapturesOuterCtor::__js_module_init__
 
 } // end of class Modules.Function_NewExpression_CapturesOuterCtor
@@ -312,7 +319,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a5
+		// Method begins at RVA 0x21ab
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
