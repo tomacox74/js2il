@@ -1907,7 +1907,15 @@ namespace Js2IL.SymbolTables
         /// </summary>
         private static void BindObjectPatternParameters(IEnumerable<Node> parameters, Scope scope)
         {
-            foreach (var p in parameters)
+            var paramList = parameters.ToList();
+            
+            // Check if the last parameter is a rest parameter
+            if (paramList.Count > 0 && paramList[^1] is RestElement)
+            {
+                scope.HasRestParameters = true;
+            }
+            
+            foreach (var p in paramList)
             {
                 if (p is Identifier id)
                 {
@@ -1931,6 +1939,19 @@ namespace Js2IL.SymbolTables
                     if (!scope.Parameters.Contains(apId.Name))
                     {
                         scope.Parameters.Add(apId.Name);
+                    }
+                }
+                else if (p is RestElement rest)
+                {
+                    // Rest parameter: bind the identifier inside the RestElement
+                    if (rest.Argument is Identifier restId)
+                    {
+                        if (!scope.Bindings.ContainsKey(restId.Name))
+                        {
+                            scope.Bindings[restId.Name] = new BindingInfo(restId.Name, BindingKind.Var, scope, restId);
+                        }
+                        // Note: Rest parameters are NOT added to scope.Parameters because they don't become IL parameters
+                        // They are initialized from the ambient arguments array at runtime
                     }
                 }
                 else if (p is ObjectPattern op)

@@ -40,9 +40,9 @@ internal sealed partial class LIRToILCompiler
 
                     var methodHandle = (MethodDefinitionHandle)token;
 
-                    // If the callee needs an `arguments` object, preserve the full runtime args list.
+                    // If the callee needs an `arguments` object or has rest parameters, preserve the full runtime args list.
                     // We route through Closure.InvokeDirectWithArgs which sets the ambient arguments context.
-                    if (callableId.NeedsArgumentsObject)
+                    if (callableId.NeedsArgumentsObject || callableId.HasRestParameters)
                     {
                         // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
                         ilEncoder.OpCode(ILOpCode.Ldnull);
