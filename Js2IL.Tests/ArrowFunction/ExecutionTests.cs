@@ -52,5 +52,11 @@ namespace Js2IL.Tests.ArrowFunction
 
         [Fact]
         public Task ArrowFunction_MaxParameters_32() { var testName = nameof(ArrowFunction_MaxParameters_32); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_RestParameters_Basic() { var testName = nameof(ArrowFunction_RestParameters_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_RestParameters_WithNamedParams() { var testName = nameof(ArrowFunction_RestParameters_WithNamedParams); return ExecutionTest(testName); }
     }
 }

@@ -361,8 +361,7 @@ internal sealed class JsMethodCompiler
             bodyNode = classMethDef; // HIRBuilder handles MethodDefinition
         }
 
-        // IR pipeline supports identifier params, simple defaults, and destructuring patterns.
-        // Rest parameters (top-level RestElement) are not supported.
+        // IR pipeline supports identifier params, simple defaults, destructuring patterns, and rest parameters.
         if (functionParams.HasValue && !ParamsSupportedForIR(functionParams.Value))
         {
             return null;
@@ -457,8 +456,7 @@ internal sealed class JsMethodCompiler
             bodyNode = classMethDef; // HIRBuilder handles MethodDefinition
         }
 
-        // IR pipeline supports identifier params, simple defaults, and destructuring patterns.
-        // Rest parameters (top-level RestElement) are not supported.
+        // IR pipeline supports identifier params, simple defaults, destructuring patterns, and rest parameters.
         if (functionParams.HasValue && !ParamsSupportedForIR(functionParams.Value))
         {
             return default;
@@ -677,9 +675,7 @@ internal sealed class JsMethodCompiler
 
     /// <summary>
     /// Returns true if parameters are supported by the IR pipeline for function declarations/methods.
-    /// Supports: Identifier, AssignmentPattern with Identifier left-hand side, ObjectPattern, ArrayPattern.
-    /// Does not support: top-level RestElement parameters.
-    /// Note: deeper validation is performed during lowering; this gate is intentionally permissive.
+    /// Supports: Identifier, AssignmentPattern with Identifier left-hand side, ObjectPattern, ArrayPattern, RestElement.
     /// </summary>
     private static bool ParamsSupportedForIR(in NodeList<Node> parameters)
     {
@@ -689,8 +685,8 @@ internal sealed class JsMethodCompiler
             AssignmentPattern ap => ap.Left is Identifier,
             ObjectPattern => true,
             ArrayPattern => true,
-            // RestElement at the parameter list level is a rest parameter (...args), which we don't support.
-            RestElement => false,
+            // RestElement at the parameter list level is a rest parameter (...args).
+            RestElement => true,
             _ => false
         });
     }

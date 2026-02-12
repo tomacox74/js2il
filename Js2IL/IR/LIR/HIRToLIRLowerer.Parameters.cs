@@ -47,8 +47,18 @@ public sealed partial class HIRToLIRLowerer
 
     private void InitializeParameters(IReadOnlyList<HIRPattern> parameters)
     {
-        // Build ordered parameter names from HIR. (No AST peeking in lowering.)
-        for (int i = 0; i < parameters.Count; i++)
+        // Separate rest parameter from regular parameters
+        HIRRestPattern? restParameter = null;
+        int regularParameterCount = parameters.Count;
+        
+        if (parameters.Count > 0 && parameters[^1] is HIRRestPattern rest)
+        {
+            restParameter = rest;
+            regularParameterCount = parameters.Count - 1;
+        }
+
+        // Build ordered parameter names from HIR for regular parameters. (No AST peeking in lowering.)
+        for (int i = 0; i < regularParameterCount; i++)
         {
             var p = parameters[i];
 
@@ -67,7 +77,7 @@ public sealed partial class HIRToLIRLowerer
 
         // Map identifier parameters to their 0-based JS parameter index.
         // Destructuring parameters bind their properties, not the parameter object itself.
-        for (int i = 0; i < parameters.Count; i++)
+        for (int i = 0; i < regularParameterCount; i++)
         {
             var p = parameters[i];
             BindingInfo? binding = p switch
@@ -92,14 +102,14 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Emit default parameter initializers for identifier parameters with defaults.
-        _parameterInitSucceeded = EmitDefaultParameterInitializers(parameters);
+        _parameterInitSucceeded = EmitDefaultParameterInitializers(parameters.Take(regularParameterCount).ToList());
         if (!_parameterInitSucceeded)
         {
             return;
         }
 
         // Emit parameter destructuring initializers (object/array patterns).
-        if (!EmitDestructuredParameterInitializers(parameters))
+        if (!EmitDestructuredParameterInitializers(parameters.Take(regularParameterCount).ToList()))
         {
             _parameterInitSucceeded = false;
             return;
@@ -109,6 +119,16 @@ public sealed partial class HIRToLIRLowerer
         // This must happen after default parameter initialization so the final value is stored.
         // Without this, nested functions reading captured parameters will observe null.
         EmitCapturedParameterFieldInitializers();
+
+        // Handle rest parameter initialization (must be after regular parameters)
+        if (restParameter != null)
+        {
+            if (!EmitRestParameterInitializer(restParameter, regularParameterCount))
+            {
+                _parameterInitSucceeded = false;
+                return;
+            }
+        }
     }
 
     private bool EmitGeneratorParameterInitializationOnce(IReadOnlyList<HIRPattern> parameters)
@@ -129,6 +149,16 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        // Separate rest parameter from regular parameters
+        HIRRestPattern? restParameter = null;
+        int regularParameterCount = parameters.Count;
+        
+        if (parameters.Count > 0 && parameters[^1] is HIRRestPattern rest)
+        {
+            restParameter = rest;
+            regularParameterCount = parameters.Count - 1;
+        }
+
         var scopeName = _methodBodyIR.LeafScopeId.Name;
 
         var afterInitLabel = CreateLabel();
@@ -141,20 +171,29 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(startedTemp, afterInitLabel));
 
         // Default parameter initialization
-        _parameterInitSucceeded = EmitDefaultParameterInitializers(parameters);
+        _parameterInitSucceeded = EmitDefaultParameterInitializers(parameters.Take(regularParameterCount).ToList());
         if (!_parameterInitSucceeded)
         {
             return false;
         }
 
         // Destructuring parameter initialization
-        if (!EmitDestructuredParameterInitializers(parameters))
+        if (!EmitDestructuredParameterInitializers(parameters.Take(regularParameterCount).ToList()))
         {
             return false;
         }
 
         // Store captured parameter fields (so parameter bindings live on the leaf scope)
         EmitCapturedParameterFieldInitializers();
+
+        // Handle rest parameter initialization
+        if (restParameter != null)
+        {
+            if (!EmitRestParameterInitializer(restParameter, regularParameterCount))
+            {
+                return false;
+            }
+        }
 
         // _started = true
         var trueTemp = CreateTempVariable();
@@ -286,5 +325,30 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return true; // All default parameters successfully lowered
+    }
+
+    /// <summary>
+    /// Emits LIR instructions to initialize a rest parameter.
+    /// Collects all arguments starting from the specified index into an array.
+    /// </summary>
+    private bool EmitRestParameterInitializer(HIRRestPattern restParameter, int startIndex)
+    {
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        // Build the rest array by collecting arguments from startIndex onwards
+        var startIndexTemp = EmitConstNumber(startIndex);
+        var restArrayTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            IntrinsicName: "RuntimeServices",
+            MethodName: nameof(JavaScriptRuntime.RuntimeServices.CollectRestArguments),
+            Arguments: new[] { startIndexTemp },
+            Result: restArrayTemp));
+        DefineTempStorage(restArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        // Now assign the rest array to the binding
+        return TryLowerDestructuringPattern(restParameter.Target, restArrayTemp, DestructuringWriteMode.Declaration, "rest");
     }
 }

@@ -1620,19 +1620,8 @@ public class JavaScriptAstValidator : IAstValidator
             result.IsValid = false;
         }
 
-        // Rest parameters (...args) are not supported.
-        if (parameters != null)
-        {
-            foreach (var param in parameters)
-            {
-                if (param is RestElement)
-                {
-                    result.Errors.Add($"Rest parameters are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
-                    break;
-                }
-            }
-        }
+        // Rest parameters (...args) are now supported.
+        // No validation needed here - rest parameter support is handled in the IR pipeline.
     }
 
     private class ValidationContext
