@@ -30,7 +30,9 @@ internal sealed partial class LIRToILCompiler
         var chosen = methods.FirstOrDefault(mi =>
         {
             var ps = mi.GetParameters();
-            return ps.Length == argCount && ps.All(p => p.ParameterType == typeof(object));
+            // Match on exact parameter count where all parameters are object-assignable
+            // (nullability is compile-time only, so object? appears as object at runtime)
+            return ps.Length == argCount && ps.All(p => typeof(object).IsAssignableFrom(p.ParameterType) || p.ParameterType == typeof(object));
         });
 
         // Fall back to params array if no exact match

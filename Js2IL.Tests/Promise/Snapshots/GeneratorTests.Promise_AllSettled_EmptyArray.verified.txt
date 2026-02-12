@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20db
+				// Method begins at RVA 0x20cf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -48,26 +48,18 @@
 		{
 			// Method begins at RVA 0x20a8
 			// Header size: 1
-			// Code size: 41 (0x29)
+			// Code size: 29 (0x1d)
 			.maxstack 8
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldc.i4.2
-			IL_0006: newarr [System.Runtime]System.Object
-			IL_000b: dup
-			IL_000c: ldc.i4.0
-			IL_000d: ldstr "Empty array resolved with length:"
-			IL_0012: stelem.ref
-			IL_0013: dup
-			IL_0014: ldc.i4.1
-			IL_0015: ldarg.1
-			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_001b: box [System.Runtime]System.Double
-			IL_0020: stelem.ref
-			IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0026: pop
-			IL_0027: ldnull
-			IL_0028: ret
+			IL_0005: ldstr "Empty array resolved with length:"
+			IL_000a: ldarg.1
+			IL_000b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0010: box [System.Runtime]System.Double
+			IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_001a: pop
+			IL_001b: ldnull
+			IL_001c: ret
 		} // end of method ArrowFunction_L3C29::__js_call__
 
 	} // end of class ArrowFunction_L3C29
@@ -79,7 +71,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d2
+			// Method begins at RVA 0x20c6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -141,8 +133,8 @@
 		IL_003d: stloc.3
 		IL_003e: ldloc.1
 		IL_003f: ldstr "then"
-		IL_0044: ldloc.3
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0044: ldloc.2
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_004a: pop
 		IL_004b: ret
 	} // end of method Promise_AllSettled_EmptyArray::__js_module_init__
@@ -156,7 +148,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e4
+		// Method begins at RVA 0x20d8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

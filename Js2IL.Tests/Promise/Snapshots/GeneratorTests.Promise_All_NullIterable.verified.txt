@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2130
+				// Method begins at RVA 0x2124
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -84,7 +84,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2139
+				// Method begins at RVA 0x212d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -107,26 +107,18 @@
 		{
 			// Method begins at RVA 0x20fd
 			// Header size: 1
-			// Code size: 41 (0x29)
+			// Code size: 29 (0x1d)
 			.maxstack 8
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldc.i4.2
-			IL_0006: newarr [System.Runtime]System.Object
-			IL_000b: dup
-			IL_000c: ldc.i4.0
-			IL_000d: ldstr "Caught error type:"
-			IL_0012: stelem.ref
-			IL_0013: dup
-			IL_0014: ldc.i4.1
-			IL_0015: ldarg.1
-			IL_0016: ldstr "name"
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0020: stelem.ref
-			IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0026: pop
-			IL_0027: ldnull
-			IL_0028: ret
+			IL_0005: ldstr "Caught error type:"
+			IL_000a: ldarg.1
+			IL_000b: ldstr "name"
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_001a: pop
+			IL_001b: ldnull
+			IL_001c: ret
 		} // end of method ArrowFunction_L7C12::__js_call__
 
 	} // end of class ArrowFunction_L7C12
@@ -138,7 +130,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2127
+			// Method begins at RVA 0x211b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -200,8 +192,8 @@
 		IL_003d: stloc.3
 		IL_003e: ldloc.1
 		IL_003f: ldstr "then"
-		IL_0044: ldloc.3
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0044: ldloc.2
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_004a: stloc.1
 		IL_004b: ldnull
 		IL_004c: ldftn object Modules.Promise_All_NullIterable/ArrowFunction_L7C12::__js_call__(object[], object)
@@ -224,8 +216,8 @@
 		IL_0076: stloc.3
 		IL_0077: ldloc.1
 		IL_0078: ldstr "catch"
-		IL_007d: ldloc.3
-		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_007d: ldloc.2
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0083: pop
 		IL_0084: ret
 	} // end of method Promise_All_NullIterable::__js_module_init__
@@ -239,7 +231,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2142
+		// Method begins at RVA 0x2136
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

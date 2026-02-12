@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d3
+				// Method begins at RVA 0x2197
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21dc
+				// Method begins at RVA 0x21a0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ca
+			// Method begins at RVA 0x218e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 366 (0x16e)
+		// Code size: 306 (0x132)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Paths/Scope,
@@ -95,129 +95,89 @@
 		IL_0000: newobj instance void Modules.CommonJS_Module_Paths/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000b: ldc.i4.2
-		IL_000c: newarr [System.Runtime]System.Object
-		IL_0011: dup
-		IL_0012: ldc.i4.0
-		IL_0013: ldstr "module.paths type:"
-		IL_0018: stelem.ref
-		IL_0019: dup
-		IL_001a: ldc.i4.1
-		IL_001b: ldarg.2
-		IL_001c: ldstr "paths"
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0026: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_002b: stelem.ref
-		IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0031: pop
-		IL_0032: ldarg.2
-		IL_0033: ldstr "paths"
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-		IL_0042: stloc.1
-		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0048: ldc.i4.2
-		IL_0049: newarr [System.Runtime]System.Object
-		IL_004e: dup
-		IL_004f: ldc.i4.0
-		IL_0050: ldstr "module.paths is array:"
-		IL_0055: stelem.ref
-		IL_0056: dup
-		IL_0057: ldc.i4.1
-		IL_0058: ldloc.1
-		IL_0059: stelem.ref
-		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005f: pop
-		IL_0060: ldarg.2
-		IL_0061: ldstr "paths"
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-		IL_0070: stloc.1
-		IL_0071: ldloc.1
-		IL_0072: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0077: stloc.2
-		IL_0078: ldloc.2
-		IL_0079: brfalse IL_00a5
+		IL_000b: ldstr "module.paths type:"
+		IL_0010: ldarg.2
+		IL_0011: ldstr "paths"
+		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_001b: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0025: pop
+		IL_0026: ldarg.2
+		IL_0027: ldstr "paths"
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_0036: stloc.1
+		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003c: ldstr "module.paths is array:"
+		IL_0041: ldloc.1
+		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0047: pop
+		IL_0048: ldarg.2
+		IL_0049: ldstr "paths"
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_0058: stloc.1
+		IL_0059: ldloc.1
+		IL_005a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_005f: stloc.2
+		IL_0060: ldloc.2
+		IL_0061: brfalse IL_008d
 
-		IL_007e: ldarg.2
-		IL_007f: ldstr "paths"
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0089: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_008e: ldc.r8 0.0
-		IL_0097: cgt
-		IL_0099: box [System.Runtime]System.Boolean
-		IL_009e: stloc.s 4
-		IL_00a0: br IL_00a8
+		IL_0066: ldarg.2
+		IL_0067: ldstr "paths"
+		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0071: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0076: ldc.r8 0.0
+		IL_007f: cgt
+		IL_0081: box [System.Runtime]System.Boolean
+		IL_0086: stloc.s 4
+		IL_0088: br IL_0090
 
-		IL_00a5: ldloc.1
-		IL_00a6: stloc.s 4
+		IL_008d: ldloc.1
+		IL_008e: stloc.s 4
 
-		IL_00a8: ldloc.s 4
-		IL_00aa: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_00af: stloc.2
-		IL_00b0: ldloc.2
-		IL_00b1: brfalse IL_0131
+		IL_0090: ldloc.s 4
+		IL_0092: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0097: stloc.2
+		IL_0098: ldloc.2
+		IL_0099: brfalse IL_0101
 
-		IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00bb: ldc.i4.2
-		IL_00bc: newarr [System.Runtime]System.Object
-		IL_00c1: dup
-		IL_00c2: ldc.i4.0
-		IL_00c3: ldstr "first path type:"
-		IL_00c8: stelem.ref
-		IL_00c9: dup
-		IL_00ca: ldc.i4.1
-		IL_00cb: ldarg.2
-		IL_00cc: ldstr "paths"
-		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00d6: ldc.r8 0.0
-		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_00e4: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00e9: stelem.ref
-		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ef: pop
-		IL_00f0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f5: ldc.i4.2
-		IL_00f6: newarr [System.Runtime]System.Object
-		IL_00fb: dup
-		IL_00fc: ldc.i4.0
-		IL_00fd: ldstr "paths length > 0:"
-		IL_0102: stelem.ref
-		IL_0103: dup
-		IL_0104: ldc.i4.1
-		IL_0105: ldarg.2
-		IL_0106: ldstr "paths"
-		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0110: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0115: ldc.r8 0.0
-		IL_011e: cgt
-		IL_0120: box [System.Runtime]System.Boolean
-		IL_0125: stelem.ref
-		IL_0126: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_012b: pop
-		IL_012c: br IL_016d
+		IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a3: ldstr "first path type:"
+		IL_00a8: ldarg.2
+		IL_00a9: ldstr "paths"
+		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00b3: ldc.r8 0.0
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_00c1: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00cb: pop
+		IL_00cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d1: ldstr "paths length > 0:"
+		IL_00d6: ldarg.2
+		IL_00d7: ldstr "paths"
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00e1: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_00e6: ldc.r8 0.0
+		IL_00ef: cgt
+		IL_00f1: box [System.Runtime]System.Boolean
+		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00fb: pop
+		IL_00fc: br IL_0131
 
-		IL_0131: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0136: ldc.i4.2
-		IL_0137: newarr [System.Runtime]System.Object
-		IL_013c: dup
-		IL_013d: ldc.i4.0
-		IL_013e: ldstr "module.paths is empty array:"
-		IL_0143: stelem.ref
-		IL_0144: dup
-		IL_0145: ldc.i4.1
-		IL_0146: ldarg.2
-		IL_0147: ldstr "paths"
-		IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0151: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0156: ldc.r8 0.0
-		IL_015f: ceq
-		IL_0161: box [System.Runtime]System.Boolean
-		IL_0166: stelem.ref
-		IL_0167: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_016c: pop
+		IL_0101: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0106: ldstr "module.paths is empty array:"
+		IL_010b: ldarg.2
+		IL_010c: ldstr "paths"
+		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0116: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_011b: ldc.r8 0.0
+		IL_0124: ceq
+		IL_0126: box [System.Runtime]System.Boolean
+		IL_012b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0130: pop
 
-		IL_016d: ret
+		IL_0131: ret
 	} // end of method CommonJS_Module_Paths::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Paths
@@ -229,7 +189,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e5
+		// Method begins at RVA 0x21a9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
