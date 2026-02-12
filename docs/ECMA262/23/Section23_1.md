@@ -99,6 +99,12 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | Array.prototype.join | Supported | [`Array_Join_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Join_Basic.js) | Elements are stringified via DotNet2JSConversions.ToString and joined with a separator (default ','). Codegen dispatches to JavaScriptRuntime.Array.join(object[]). |
 
+### 23.1.3.17 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.indexof))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Array.prototype.indexOf | Supported with Limitations | [`Array_SearchOps_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js)<br>[`Array_PrototypeMethods_ArrayLike_Call.js`](../../../Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js) | Implemented for JavaScriptRuntime.Array and also supports array-like receivers when invoked via Array.prototype.indexOf.call(arrayLike, ...). Uses strict equality for comparison and supports negative fromIndex. Sparse array hole semantics are not exhaustively modeled. |
+
 ### 23.1.3.20 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.lastindexof))
 
 | Feature name | Status | Test scripts | Notes |
@@ -111,11 +117,18 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | Array.prototype.push | Supported | [`Array_Push_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Push_Basic.js) | Appends items to the end of the array and returns the new length (as a JS number). |
 
+### 23.1.3.24 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.reduce))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Array.prototype.reduce | Supported with Limitations | [`Array_PrototypeMethods_ArrayLike_Call.js`](../../../Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js) | Supports common library usage patterns including Array.prototype.reduce.call(arrayLike, callback, initialValue) on array-like receivers (e.g., NodeList). Callback is invoked as Function.Call with (acc, value, index, receiver). Hole-skipping and some exotic behaviors are not exhaustively modeled. |
+
 ### 23.1.3.25 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.reduceright))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Array.prototype.map | Supported | [`Array_Map_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Map_Basic.js)<br>[`Array_Map_NestedParam.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Map_NestedParam.js) | Supports callback mapping including nested callback closures. Callback receives (value, index, array) depending on the compiled delegate signature. thisArg is currently ignored. Returns a new array. |
+| Array.prototype.reduceRight | Supported with Limitations | [`Array_PrototypeMethods_ArrayLike_Call.js`](../../../Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js) | Supports Array.prototype.reduceRight.call(arrayLike, callback, initialValue) on array-like receivers. Hole-skipping and some exotic behaviors are not exhaustively modeled. |
 
 ### 23.1.3.27 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.shift))
 

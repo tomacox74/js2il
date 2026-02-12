@@ -97,6 +97,12 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | String.prototype.includes | Supported |  | Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.) |
 
+### 22.1.3.9 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.indexof))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.indexOf | Supported |  | Implemented in JavaScriptRuntime.String.IndexOf and routed via Object.CallMember for definite string receivers. Supports optional position argument. |
+
 ### 22.1.3.12 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.localecompare))
 
 | Feature name | Status | Test scripts | Notes |
@@ -109,11 +115,23 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | String.prototype.match | Supported with Limitations | [`String_Match_NonGlobal.js`](../../../Js2IL.Tests/String/JavaScript/String_Match_NonGlobal.js)<br>[`String_Match_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_Match_Global.js) | Implemented via JavaScriptRuntime.String.Match with limited RegExp integration. For /g, returns an Array of full-match substrings (or null). For non-global, returns an exec-like Array with groups and sets .index/.input. Symbol.match and advanced RegExp behaviors are not implemented. |
 
+### 22.1.3.18 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.repeat))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.repeat | Supported with Limitations |  | Implemented in JavaScriptRuntime.String.Repeat with RangeError for negative / non-finite counts and a guard against extremely large outputs. |
+
 ### 22.1.3.19 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replace))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | String.prototype.replace (regex literal, string replacement) | Supported with Limitations | [`String_Replace_Regex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js) | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. |
+
+### 22.1.3.22 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.slice | Supported with Limitations |  | Implemented in JavaScriptRuntime.String.Slice with best-effort ToIntegerOrInfinity-style coercion and negative index handling. Edge-case observable behaviors are not exhaustively validated. |
 
 ### 22.1.3.23 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.split))
 
@@ -144,4 +162,22 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | String.prototype.toUpperCase | Supported with Limitations | [`String_ToLowerCase_ToUpperCase_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_ToLowerCase_ToUpperCase_Basic.js) | Implemented in JavaScriptRuntime.String.ToUpperCase for definite string receivers. Uses CLR casing semantics; full ECMAScript Unicode case mapping nuances are not guaranteed. |
+
+### 22.1.3.32 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trim))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.trim | Supported with Limitations |  | Implemented in JavaScriptRuntime.String.Trim using CLR whitespace trimming. Full ECMAScript whitespace set matching is not exhaustively validated. |
+
+### 22.1.3.33 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimend))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.trimEnd | Supported with Limitations |  | Implemented in JavaScriptRuntime.String.TrimEnd (and TrimRight alias) using CLR whitespace trimming. |
+
+### 22.1.3.34 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimstart))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.trimStart | Supported with Limitations |  | Implemented in JavaScriptRuntime.String.TrimStart (and TrimLeft alias) using CLR whitespace trimming. |
 
