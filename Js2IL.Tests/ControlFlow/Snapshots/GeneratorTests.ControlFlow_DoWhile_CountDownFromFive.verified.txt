@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20bf
+				// Method begins at RVA 0x20c1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20b6
+			// Method begins at RVA 0x20b8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,12 +62,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 90 (0x5a)
+		// Code size: 92 (0x5c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_DoWhile_CountDownFromFive/Scope,
 			[1] float64,
-			[2] object
+			[2] object,
+			[3] float64
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_DoWhile_CountDownFromFive/Scope::.ctor()
@@ -76,7 +77,7 @@
 		IL_000f: stloc.1
 		// loop start (head: IL_0010)
 			IL_0010: ldc.i4.1
-			IL_0011: brfalse IL_0059
+			IL_0011: brfalse IL_005b
 
 			IL_0016: ldloc.1
 			IL_0017: box [System.Runtime]System.Double
@@ -93,18 +94,20 @@
 			IL_0032: ldloc.1
 			IL_0033: ldc.r8 1
 			IL_003c: sub
-			IL_003d: stloc.1
-			IL_003e: ldloc.1
-			IL_003f: ldc.r8 0.0
-			IL_0048: ceq
-			IL_004a: brfalse IL_0054
+			IL_003d: stloc.3
+			IL_003e: ldloc.3
+			IL_003f: stloc.1
+			IL_0040: ldloc.1
+			IL_0041: ldc.r8 0.0
+			IL_004a: ceq
+			IL_004c: brfalse IL_0056
 
-			IL_004f: br IL_0059
+			IL_0051: br IL_005b
 
-			IL_0054: br IL_0010
+			IL_0056: br IL_0010
 		// end loop
 
-		IL_0059: ret
+		IL_005b: ret
 	} // end of method ControlFlow_DoWhile_CountDownFromFive::__js_module_init__
 
 } // end of class Modules.ControlFlow_DoWhile_CountDownFromFive
@@ -116,7 +119,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c8
+		// Method begins at RVA 0x20ca
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

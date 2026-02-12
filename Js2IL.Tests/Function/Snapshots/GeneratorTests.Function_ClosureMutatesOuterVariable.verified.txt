@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21ea
+					// Method begins at RVA 0x21ee
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x2194
+				// Method begins at RVA 0x2198
 				// Header size: 12
 				// Code size: 56 (0x38)
 				.maxstack 8
@@ -90,7 +90,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e1
+				// Method begins at RVA 0x21e5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -111,13 +111,14 @@
 				object start
 			) cil managed 
 		{
-			// Method begins at RVA 0x2154
+			// Method begins at RVA 0x2158
 			// Header size: 12
-			// Code size: 49 (0x31)
+			// Code size: 51 (0x33)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_ClosureMutatesOuterVariable/createCounter/Scope,
-				[1] object
+				[1] object,
+				[2] object
 			)
 
 			IL_0000: newobj instance void Modules.Function_ClosureMutatesOuterVariable/createCounter/Scope::.ctor()
@@ -138,12 +139,14 @@
 			IL_0020: ldloc.0
 			IL_0021: stelem.ref
 			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_0027: stloc.1
-			IL_0028: ldloc.0
-			IL_0029: ldarg.1
-			IL_002a: stfld object Modules.Function_ClosureMutatesOuterVariable/createCounter/Scope::count
-			IL_002f: ldloc.1
-			IL_0030: ret
+			IL_0027: stloc.2
+			IL_0028: ldloc.2
+			IL_0029: stloc.1
+			IL_002a: ldloc.0
+			IL_002b: ldarg.1
+			IL_002c: stfld object Modules.Function_ClosureMutatesOuterVariable/createCounter/Scope::count
+			IL_0031: ldloc.1
+			IL_0032: ret
 		} // end of method createCounter::__js_call__
 
 	} // end of class createCounter
@@ -163,7 +166,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d8
+			// Method begins at RVA 0x21dc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -189,14 +192,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 245 (0xf5)
+		// Code size: 249 (0xf9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ClosureMutatesOuterVariable/Scope,
 			[1] object,
 			[2] object,
-			[3] object[],
-			[4] object
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Function_ClosureMutatesOuterVariable/Scope::.ctor()
@@ -211,99 +214,103 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldnull
-		IL_0023: ldftn object Modules.Function_ClosureMutatesOuterVariable/createCounter::__js_call__(object[], object)
-		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.0
-		IL_0037: stelem.ref
-		IL_0038: ldc.r8 10
-		IL_0041: box [System.Runtime]System.Double
-		IL_0046: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_004b: stloc.2
-		IL_004c: ldc.i4.0
-		IL_004d: newarr [System.Runtime]System.Object
-		IL_0052: stloc.3
-		IL_0053: ldloc.2
-		IL_0054: ldc.i4.1
-		IL_0055: newarr [System.Runtime]System.Object
-		IL_005a: dup
-		IL_005b: ldc.i4.0
-		IL_005c: ldnull
-		IL_005d: stelem.ref
-		IL_005e: ldloc.3
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0064: stloc.s 4
-		IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006b: ldc.i4.2
-		IL_006c: newarr [System.Runtime]System.Object
-		IL_0071: dup
-		IL_0072: ldc.i4.0
-		IL_0073: ldstr "First increment:"
-		IL_0078: stelem.ref
-		IL_0079: dup
-		IL_007a: ldc.i4.1
-		IL_007b: ldloc.s 4
+		IL_0021: stloc.3
+		IL_0022: ldloc.3
+		IL_0023: stloc.1
+		IL_0024: ldnull
+		IL_0025: ldftn object Modules.Function_ClosureMutatesOuterVariable/createCounter::__js_call__(object[], object)
+		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldloc.0
+		IL_0039: stelem.ref
+		IL_003a: ldc.r8 10
+		IL_0043: box [System.Runtime]System.Double
+		IL_0048: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_004d: stloc.3
+		IL_004e: ldloc.3
+		IL_004f: stloc.2
+		IL_0050: ldc.i4.0
+		IL_0051: newarr [System.Runtime]System.Object
+		IL_0056: stloc.s 4
+		IL_0058: ldloc.2
+		IL_0059: ldc.i4.1
+		IL_005a: newarr [System.Runtime]System.Object
+		IL_005f: dup
+		IL_0060: ldc.i4.0
+		IL_0061: ldnull
+		IL_0062: stelem.ref
+		IL_0063: ldloc.s 4
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_006a: stloc.3
+		IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0070: ldc.i4.2
+		IL_0071: newarr [System.Runtime]System.Object
+		IL_0076: dup
+		IL_0077: ldc.i4.0
+		IL_0078: ldstr "First increment:"
 		IL_007d: stelem.ref
-		IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0083: pop
-		IL_0084: ldc.i4.0
-		IL_0085: newarr [System.Runtime]System.Object
-		IL_008a: stloc.3
-		IL_008b: ldloc.2
-		IL_008c: ldc.i4.1
-		IL_008d: newarr [System.Runtime]System.Object
-		IL_0092: dup
-		IL_0093: ldc.i4.0
-		IL_0094: ldnull
-		IL_0095: stelem.ref
-		IL_0096: ldloc.3
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_009c: stloc.s 4
-		IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a3: ldc.i4.2
-		IL_00a4: newarr [System.Runtime]System.Object
-		IL_00a9: dup
-		IL_00aa: ldc.i4.0
-		IL_00ab: ldstr "Second increment:"
-		IL_00b0: stelem.ref
-		IL_00b1: dup
-		IL_00b2: ldc.i4.1
-		IL_00b3: ldloc.s 4
+		IL_007e: dup
+		IL_007f: ldc.i4.1
+		IL_0080: ldloc.3
+		IL_0081: stelem.ref
+		IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0087: pop
+		IL_0088: ldc.i4.0
+		IL_0089: newarr [System.Runtime]System.Object
+		IL_008e: stloc.s 4
+		IL_0090: ldloc.2
+		IL_0091: ldc.i4.1
+		IL_0092: newarr [System.Runtime]System.Object
+		IL_0097: dup
+		IL_0098: ldc.i4.0
+		IL_0099: ldnull
+		IL_009a: stelem.ref
+		IL_009b: ldloc.s 4
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_00a2: stloc.3
+		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a8: ldc.i4.2
+		IL_00a9: newarr [System.Runtime]System.Object
+		IL_00ae: dup
+		IL_00af: ldc.i4.0
+		IL_00b0: ldstr "Second increment:"
 		IL_00b5: stelem.ref
-		IL_00b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00bb: pop
-		IL_00bc: ldc.i4.0
-		IL_00bd: newarr [System.Runtime]System.Object
-		IL_00c2: stloc.3
-		IL_00c3: ldloc.2
-		IL_00c4: ldc.i4.1
-		IL_00c5: newarr [System.Runtime]System.Object
-		IL_00ca: dup
-		IL_00cb: ldc.i4.0
-		IL_00cc: ldnull
-		IL_00cd: stelem.ref
-		IL_00ce: ldloc.3
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_00d4: stloc.s 4
-		IL_00d6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00db: ldc.i4.2
-		IL_00dc: newarr [System.Runtime]System.Object
-		IL_00e1: dup
-		IL_00e2: ldc.i4.0
-		IL_00e3: ldstr "Third increment:"
-		IL_00e8: stelem.ref
-		IL_00e9: dup
-		IL_00ea: ldc.i4.1
-		IL_00eb: ldloc.s 4
+		IL_00b6: dup
+		IL_00b7: ldc.i4.1
+		IL_00b8: ldloc.3
+		IL_00b9: stelem.ref
+		IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00bf: pop
+		IL_00c0: ldc.i4.0
+		IL_00c1: newarr [System.Runtime]System.Object
+		IL_00c6: stloc.s 4
+		IL_00c8: ldloc.2
+		IL_00c9: ldc.i4.1
+		IL_00ca: newarr [System.Runtime]System.Object
+		IL_00cf: dup
+		IL_00d0: ldc.i4.0
+		IL_00d1: ldnull
+		IL_00d2: stelem.ref
+		IL_00d3: ldloc.s 4
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_00da: stloc.3
+		IL_00db: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e0: ldc.i4.2
+		IL_00e1: newarr [System.Runtime]System.Object
+		IL_00e6: dup
+		IL_00e7: ldc.i4.0
+		IL_00e8: ldstr "Third increment:"
 		IL_00ed: stelem.ref
-		IL_00ee: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00f3: pop
-		IL_00f4: ret
+		IL_00ee: dup
+		IL_00ef: ldc.i4.1
+		IL_00f0: ldloc.3
+		IL_00f1: stelem.ref
+		IL_00f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00f7: pop
+		IL_00f8: ret
 	} // end of method Function_ClosureMutatesOuterVariable::__js_module_init__
 
 } // end of class Modules.Function_ClosureMutatesOuterVariable
@@ -315,7 +322,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f3
+		// Method begins at RVA 0x21f7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

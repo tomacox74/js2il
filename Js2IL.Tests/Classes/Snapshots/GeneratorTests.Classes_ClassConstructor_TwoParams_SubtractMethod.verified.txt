@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211e
+				// Method begins at RVA 0x2132
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2127
+				// Method begins at RVA 0x213b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2130
+				// Method begins at RVA 0x2144
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -83,7 +83,7 @@
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x20cd
+			// Method begins at RVA 0x20df
 			// Header size: 1
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -102,7 +102,7 @@
 		.method public hidebysig 
 			instance object 'sub' () cil managed 
 		{
-			// Method begins at RVA 0x20e4
+			// Method begins at RVA 0x20f8
 			// Header size: 12
 			// Code size: 37 (0x25)
 			.maxstack 8
@@ -140,7 +140,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2115
+			// Method begins at RVA 0x2129
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -166,13 +166,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 113 (0x71)
+		// Code size: 131 (0x83)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Scope,
-			[1] class Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber,
-			[2] class Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber,
-			[3] object
+			[1] object,
+			[2] object,
+			[3] class Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Scope::.ctor()
@@ -180,38 +181,44 @@
 		IL_0006: ldstr "Hello"
 		IL_000b: ldstr "World"
 		IL_0010: newobj instance void Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber::.ctor(object, object)
-		IL_0015: stloc.1
-		IL_0016: ldc.r8 10
-		IL_001f: box [System.Runtime]System.Double
-		IL_0024: ldc.r8 3
-		IL_002d: box [System.Runtime]System.Double
-		IL_0032: newobj instance void Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber::.ctor(object, object)
-		IL_0037: stloc.2
-		IL_0038: ldloc.1
-		IL_0039: callvirt instance object Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber::'sub'()
-		IL_003e: stloc.3
-		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0044: ldc.i4.1
-		IL_0045: newarr [System.Runtime]System.Object
-		IL_004a: dup
-		IL_004b: ldc.i4.0
-		IL_004c: ldloc.3
-		IL_004d: stelem.ref
-		IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0053: pop
-		IL_0054: ldloc.2
-		IL_0055: callvirt instance object Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber::'sub'()
-		IL_005a: stloc.3
-		IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0060: ldc.i4.1
-		IL_0061: newarr [System.Runtime]System.Object
-		IL_0066: dup
-		IL_0067: ldc.i4.0
-		IL_0068: ldloc.3
-		IL_0069: stelem.ref
-		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006f: pop
-		IL_0070: ret
+		IL_0015: stloc.3
+		IL_0016: ldloc.3
+		IL_0017: stloc.1
+		IL_0018: ldc.r8 10
+		IL_0021: box [System.Runtime]System.Double
+		IL_0026: ldc.r8 3
+		IL_002f: box [System.Runtime]System.Double
+		IL_0034: newobj instance void Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber::.ctor(object, object)
+		IL_0039: stloc.3
+		IL_003a: ldloc.3
+		IL_003b: stloc.2
+		IL_003c: ldloc.1
+		IL_003d: castclass Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber
+		IL_0042: callvirt instance object Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber::'sub'()
+		IL_0047: stloc.s 4
+		IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004e: ldc.i4.1
+		IL_004f: newarr [System.Runtime]System.Object
+		IL_0054: dup
+		IL_0055: ldc.i4.0
+		IL_0056: ldloc.s 4
+		IL_0058: stelem.ref
+		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_005e: pop
+		IL_005f: ldloc.2
+		IL_0060: castclass Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber
+		IL_0065: callvirt instance object Modules.Classes_ClassConstructor_TwoParams_SubtractMethod/Subber::'sub'()
+		IL_006a: stloc.s 4
+		IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0071: ldc.i4.1
+		IL_0072: newarr [System.Runtime]System.Object
+		IL_0077: dup
+		IL_0078: ldc.i4.0
+		IL_0079: ldloc.s 4
+		IL_007b: stelem.ref
+		IL_007c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0081: pop
+		IL_0082: ret
 	} // end of method Classes_ClassConstructor_TwoParams_SubtractMethod::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_TwoParams_SubtractMethod
@@ -223,7 +230,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2139
+		// Method begins at RVA 0x214d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

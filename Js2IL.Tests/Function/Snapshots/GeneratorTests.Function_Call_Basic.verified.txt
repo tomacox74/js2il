@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2121
+				// Method begins at RVA 0x2125
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -40,7 +40,7 @@
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20d8
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -85,7 +85,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2118
+			// Method begins at RVA 0x211c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -111,13 +111,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 117 (0x75)
-		.maxstack 9
+		// Code size: 123 (0x7b)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Call_Basic/Scope,
 			[1] object,
 			[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
-			[3] object
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Function_Call_Basic/Scope::.ctor()
@@ -132,42 +133,46 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0027: dup
-		IL_0028: ldstr "x"
-		IL_002d: ldstr "T"
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0037: pop
-		IL_0038: stloc.2
-		IL_0039: ldloc.1
-		IL_003a: ldstr "call"
-		IL_003f: ldc.i4.3
-		IL_0040: newarr [System.Runtime]System.Object
+		IL_0021: stloc.3
+		IL_0022: ldloc.3
+		IL_0023: stloc.1
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0029: dup
+		IL_002a: ldstr "x"
+		IL_002f: ldstr "T"
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0039: pop
+		IL_003a: stloc.2
+		IL_003b: ldc.i4.3
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldloc.2
+		IL_0044: stelem.ref
 		IL_0045: dup
-		IL_0046: ldc.i4.0
-		IL_0047: ldloc.2
-		IL_0048: stelem.ref
-		IL_0049: dup
-		IL_004a: ldc.i4.1
-		IL_004b: ldstr "A"
-		IL_0050: stelem.ref
-		IL_0051: dup
-		IL_0052: ldc.i4.2
-		IL_0053: ldstr "B"
-		IL_0058: stelem.ref
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_005e: stloc.3
-		IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0064: ldc.i4.1
-		IL_0065: newarr [System.Runtime]System.Object
-		IL_006a: dup
-		IL_006b: ldc.i4.0
-		IL_006c: ldloc.3
-		IL_006d: stelem.ref
-		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0073: pop
-		IL_0074: ret
+		IL_0046: ldc.i4.1
+		IL_0047: ldstr "A"
+		IL_004c: stelem.ref
+		IL_004d: dup
+		IL_004e: ldc.i4.2
+		IL_004f: ldstr "B"
+		IL_0054: stelem.ref
+		IL_0055: stloc.s 4
+		IL_0057: ldloc.1
+		IL_0058: ldstr "call"
+		IL_005d: ldloc.s 4
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0064: stloc.3
+		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006a: ldc.i4.1
+		IL_006b: newarr [System.Runtime]System.Object
+		IL_0070: dup
+		IL_0071: ldc.i4.0
+		IL_0072: ldloc.3
+		IL_0073: stelem.ref
+		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0079: pop
+		IL_007a: ret
 	} // end of method Function_Call_Basic::__js_module_init__
 
 } // end of class Modules.Function_Call_Basic
@@ -179,7 +184,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212a
+		// Method begins at RVA 0x212e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

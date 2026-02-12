@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2228
+			// Method begins at RVA 0x2234
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 321 (0x141)
+		// Code size: 333 (0x14d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_ClassWithConstructor/Scope,
@@ -55,126 +55,132 @@
 		IL_0006: ldarg.1
 		IL_0007: ldstr "./CommonJS_Export_ClassWithConstructor_Lib"
 		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0011: stloc.1
-		IL_0012: ldloc.1
-		IL_0013: ldc.i4.2
-		IL_0014: newarr [System.Runtime]System.Object
-		IL_0019: dup
-		IL_001a: ldc.i4.0
-		IL_001b: ldstr "Default"
-		IL_0020: stelem.ref
-		IL_0021: dup
-		IL_0022: ldc.i4.1
-		IL_0023: ldc.r8 25
-		IL_002c: box [System.Runtime]System.Double
-		IL_0031: stelem.ref
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_0037: stloc.2
-		IL_0038: ldloc.2
-		IL_0039: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
-		IL_003e: dup
-		IL_003f: brfalse IL_0050
+		IL_0011: stloc.s 4
+		IL_0013: ldloc.s 4
+		IL_0015: stloc.1
+		IL_0016: ldloc.1
+		IL_0017: ldc.i4.2
+		IL_0018: newarr [System.Runtime]System.Object
+		IL_001d: dup
+		IL_001e: ldc.i4.0
+		IL_001f: ldstr "Default"
+		IL_0024: stelem.ref
+		IL_0025: dup
+		IL_0026: ldc.i4.1
+		IL_0027: ldc.r8 25
+		IL_0030: box [System.Runtime]System.Double
+		IL_0035: stelem.ref
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_003b: stloc.s 4
+		IL_003d: ldloc.s 4
+		IL_003f: stloc.2
+		IL_0040: ldloc.2
+		IL_0041: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
+		IL_0046: dup
+		IL_0047: brfalse IL_0058
 
-		IL_0044: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
-		IL_0049: stloc.s 4
-		IL_004b: br IL_0064
+		IL_004c: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
+		IL_0051: stloc.s 4
+		IL_0053: br IL_006c
 
-		IL_0050: pop
-		IL_0051: ldloc.2
-		IL_0052: ldstr "greet"
-		IL_0057: ldc.i4.0
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0062: stloc.s 4
+		IL_0058: pop
+		IL_0059: ldloc.2
+		IL_005a: ldstr "greet"
+		IL_005f: ldc.i4.0
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_006a: stloc.s 4
 
-		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0069: ldc.i4.2
-		IL_006a: newarr [System.Runtime]System.Object
-		IL_006f: dup
-		IL_0070: ldc.i4.0
-		IL_0071: ldstr "default greeting:"
-		IL_0076: stelem.ref
+		IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0071: ldc.i4.2
+		IL_0072: newarr [System.Runtime]System.Object
 		IL_0077: dup
-		IL_0078: ldc.i4.1
-		IL_0079: ldloc.s 4
-		IL_007b: stelem.ref
-		IL_007c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0081: pop
-		IL_0082: ldloc.1
-		IL_0083: ldc.i4.2
-		IL_0084: newarr [System.Runtime]System.Object
-		IL_0089: dup
-		IL_008a: ldc.i4.0
-		IL_008b: ldstr "Alice"
-		IL_0090: stelem.ref
+		IL_0078: ldc.i4.0
+		IL_0079: ldstr "default greeting:"
+		IL_007e: stelem.ref
+		IL_007f: dup
+		IL_0080: ldc.i4.1
+		IL_0081: ldloc.s 4
+		IL_0083: stelem.ref
+		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0089: pop
+		IL_008a: ldloc.1
+		IL_008b: ldc.i4.2
+		IL_008c: newarr [System.Runtime]System.Object
 		IL_0091: dup
-		IL_0092: ldc.i4.1
-		IL_0093: ldc.r8 30
-		IL_009c: box [System.Runtime]System.Double
-		IL_00a1: stelem.ref
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_00a7: stloc.3
-		IL_00a8: ldloc.3
-		IL_00a9: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
-		IL_00ae: dup
-		IL_00af: brfalse IL_00c0
+		IL_0092: ldc.i4.0
+		IL_0093: ldstr "Alice"
+		IL_0098: stelem.ref
+		IL_0099: dup
+		IL_009a: ldc.i4.1
+		IL_009b: ldc.r8 30
+		IL_00a4: box [System.Runtime]System.Double
+		IL_00a9: stelem.ref
+		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_00af: stloc.s 4
+		IL_00b1: ldloc.s 4
+		IL_00b3: stloc.3
+		IL_00b4: ldloc.3
+		IL_00b5: isinst Modules.CommonJS_Export_ClassWithConstructor_Lib/Person
+		IL_00ba: dup
+		IL_00bb: brfalse IL_00cc
 
-		IL_00b4: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
-		IL_00b9: stloc.s 4
-		IL_00bb: br IL_00d4
+		IL_00c0: callvirt instance object Modules.CommonJS_Export_ClassWithConstructor_Lib/Person::greet()
+		IL_00c5: stloc.s 4
+		IL_00c7: br IL_00e0
 
-		IL_00c0: pop
-		IL_00c1: ldloc.3
-		IL_00c2: ldstr "greet"
-		IL_00c7: ldc.i4.0
-		IL_00c8: newarr [System.Runtime]System.Object
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00d2: stloc.s 4
+		IL_00cc: pop
+		IL_00cd: ldloc.3
+		IL_00ce: ldstr "greet"
+		IL_00d3: ldc.i4.0
+		IL_00d4: newarr [System.Runtime]System.Object
+		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00de: stloc.s 4
 
-		IL_00d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d9: ldc.i4.2
-		IL_00da: newarr [System.Runtime]System.Object
-		IL_00df: dup
-		IL_00e0: ldc.i4.0
-		IL_00e1: ldstr "alice greeting:"
-		IL_00e6: stelem.ref
-		IL_00e7: dup
-		IL_00e8: ldc.i4.1
-		IL_00e9: ldloc.s 4
-		IL_00eb: stelem.ref
-		IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00f1: pop
-		IL_00f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f7: ldc.i4.2
-		IL_00f8: newarr [System.Runtime]System.Object
-		IL_00fd: dup
-		IL_00fe: ldc.i4.0
-		IL_00ff: ldstr "alice name:"
-		IL_0104: stelem.ref
-		IL_0105: dup
-		IL_0106: ldc.i4.1
-		IL_0107: ldloc.3
-		IL_0108: ldstr "name"
-		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0112: stelem.ref
-		IL_0113: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0118: pop
-		IL_0119: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_011e: ldc.i4.2
-		IL_011f: newarr [System.Runtime]System.Object
-		IL_0124: dup
-		IL_0125: ldc.i4.0
-		IL_0126: ldstr "alice age:"
-		IL_012b: stelem.ref
-		IL_012c: dup
-		IL_012d: ldc.i4.1
-		IL_012e: ldloc.3
-		IL_012f: ldstr "age"
-		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0139: stelem.ref
-		IL_013a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_013f: pop
-		IL_0140: ret
+		IL_00e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e5: ldc.i4.2
+		IL_00e6: newarr [System.Runtime]System.Object
+		IL_00eb: dup
+		IL_00ec: ldc.i4.0
+		IL_00ed: ldstr "alice greeting:"
+		IL_00f2: stelem.ref
+		IL_00f3: dup
+		IL_00f4: ldc.i4.1
+		IL_00f5: ldloc.s 4
+		IL_00f7: stelem.ref
+		IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00fd: pop
+		IL_00fe: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0103: ldc.i4.2
+		IL_0104: newarr [System.Runtime]System.Object
+		IL_0109: dup
+		IL_010a: ldc.i4.0
+		IL_010b: ldstr "alice name:"
+		IL_0110: stelem.ref
+		IL_0111: dup
+		IL_0112: ldc.i4.1
+		IL_0113: ldloc.3
+		IL_0114: ldstr "name"
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_011e: stelem.ref
+		IL_011f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0124: pop
+		IL_0125: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_012a: ldc.i4.2
+		IL_012b: newarr [System.Runtime]System.Object
+		IL_0130: dup
+		IL_0131: ldc.i4.0
+		IL_0132: ldstr "alice age:"
+		IL_0137: stelem.ref
+		IL_0138: dup
+		IL_0139: ldc.i4.1
+		IL_013a: ldloc.3
+		IL_013b: ldstr "age"
+		IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0145: stelem.ref
+		IL_0146: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_014b: pop
+		IL_014c: ret
 	} // end of method CommonJS_Export_ClassWithConstructor::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ClassWithConstructor
@@ -194,7 +200,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223a
+				// Method begins at RVA 0x2246
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -214,7 +220,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2243
+				// Method begins at RVA 0x224f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -234,7 +240,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x224c
+				// Method begins at RVA 0x2258
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -259,7 +265,7 @@
 				object age
 			) cil managed 
 		{
-			// Method begins at RVA 0x21cb
+			// Method begins at RVA 0x21d7
 			// Header size: 1
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -278,7 +284,7 @@
 		.method public hidebysig 
 			instance object greet () cil managed 
 		{
-			// Method begins at RVA 0x21e4
+			// Method begins at RVA 0x21f0
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -317,7 +323,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2231
+			// Method begins at RVA 0x223d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -341,7 +347,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21a0
+		// Method begins at RVA 0x21ac
 		// Header size: 12
 		// Code size: 31 (0x1f)
 		.maxstack 8
@@ -372,7 +378,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2255
+		// Method begins at RVA 0x2261
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

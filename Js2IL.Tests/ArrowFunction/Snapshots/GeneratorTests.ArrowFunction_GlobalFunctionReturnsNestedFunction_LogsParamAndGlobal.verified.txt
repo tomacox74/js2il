@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x218a
+					// Method begins at RVA 0x2192
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x2118
+				// Method begins at RVA 0x2120
 				// Header size: 12
 				// Code size: 84 (0x54)
 				.maxstack 8
@@ -100,7 +100,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2181
+				// Method begins at RVA 0x2189
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -121,13 +121,14 @@
 				object p
 			) cil managed 
 		{
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20dc
 			// Header size: 12
-			// Code size: 54 (0x36)
+			// Code size: 56 (0x38)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_L5C15/Scope,
-				[1] object
+				[1] object,
+				[2] object
 			)
 
 			IL_0000: newobj instance void Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_L5C15/Scope::.ctor()
@@ -152,9 +153,11 @@
 			IL_0028: stelem.ref
 			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0033: stloc.1
-			IL_0034: ldloc.1
-			IL_0035: ret
+			IL_0033: stloc.2
+			IL_0034: ldloc.2
+			IL_0035: stloc.1
+			IL_0036: ldloc.1
+			IL_0037: ret
 		} // end of method ArrowFunction_L5C15::__js_call__
 
 	} // end of class ArrowFunction_L5C15
@@ -172,7 +175,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2178
+			// Method begins at RVA 0x2180
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -198,13 +201,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 118 (0x76)
+		// Code size: 126 (0x7e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope,
 			[1] object,
 			[2] object,
-			[3] object[]
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope::.ctor()
@@ -223,39 +227,43 @@
 		IL_0026: stelem.ref
 		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0031: stloc.1
-		IL_0032: ldc.i4.1
-		IL_0033: newarr [System.Runtime]System.Object
-		IL_0038: dup
-		IL_0039: ldc.i4.0
-		IL_003a: ldc.r8 123
-		IL_0043: box [System.Runtime]System.Double
-		IL_0048: stelem.ref
-		IL_0049: stloc.3
-		IL_004a: ldloc.1
-		IL_004b: ldc.i4.1
-		IL_004c: newarr [System.Runtime]System.Object
-		IL_0051: dup
-		IL_0052: ldc.i4.0
-		IL_0053: ldnull
-		IL_0054: stelem.ref
-		IL_0055: ldloc.3
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_005b: stloc.2
-		IL_005c: ldc.i4.0
-		IL_005d: newarr [System.Runtime]System.Object
-		IL_0062: stloc.3
-		IL_0063: ldloc.2
-		IL_0064: ldc.i4.1
-		IL_0065: newarr [System.Runtime]System.Object
-		IL_006a: dup
-		IL_006b: ldc.i4.0
-		IL_006c: ldnull
-		IL_006d: stelem.ref
-		IL_006e: ldloc.3
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0074: pop
-		IL_0075: ret
+		IL_0031: stloc.3
+		IL_0032: ldloc.3
+		IL_0033: stloc.1
+		IL_0034: ldc.i4.1
+		IL_0035: newarr [System.Runtime]System.Object
+		IL_003a: dup
+		IL_003b: ldc.i4.0
+		IL_003c: ldc.r8 123
+		IL_0045: box [System.Runtime]System.Double
+		IL_004a: stelem.ref
+		IL_004b: stloc.s 4
+		IL_004d: ldloc.1
+		IL_004e: ldc.i4.1
+		IL_004f: newarr [System.Runtime]System.Object
+		IL_0054: dup
+		IL_0055: ldc.i4.0
+		IL_0056: ldnull
+		IL_0057: stelem.ref
+		IL_0058: ldloc.s 4
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_005f: stloc.3
+		IL_0060: ldloc.3
+		IL_0061: stloc.2
+		IL_0062: ldc.i4.0
+		IL_0063: newarr [System.Runtime]System.Object
+		IL_0068: stloc.s 4
+		IL_006a: ldloc.2
+		IL_006b: ldc.i4.1
+		IL_006c: newarr [System.Runtime]System.Object
+		IL_0071: dup
+		IL_0072: ldc.i4.0
+		IL_0073: ldnull
+		IL_0074: stelem.ref
+		IL_0075: ldloc.s 4
+		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_007c: pop
+		IL_007d: ret
 	} // end of method ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::__js_module_init__
 
 } // end of class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
@@ -267,7 +275,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2193
+		// Method begins at RVA 0x219b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

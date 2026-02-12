@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e9
+				// Method begins at RVA 0x20eb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f2
+				// Method begins at RVA 0x20f4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -60,7 +60,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ab
+			// Method begins at RVA 0x20ad
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -89,7 +89,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20fb
+				// Method begins at RVA 0x20fd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -109,7 +109,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2104
+				// Method begins at RVA 0x2106
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -130,7 +130,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c9
+			// Method begins at RVA 0x20cb
 			// Header size: 1
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -152,7 +152,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e0
+			// Method begins at RVA 0x20e2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -178,18 +178,19 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 79 (0x4f)
+		// Code size: 81 (0x51)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Constructor_ExplicitReturnThis/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_Constructor_ExplicitReturnThis/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Modules.Classes_Constructor_ExplicitReturnThis/WithExplicitReturn::.ctor()
-		IL_000b: stloc.1
-		IL_000c: ldloc.1
+		IL_000b: stloc.2
+		IL_000c: ldloc.2
 		IL_000d: castclass Modules.Classes_Constructor_ExplicitReturnThis/WithExplicitReturn
 		IL_0012: ldfld object Modules.Classes_Constructor_ExplicitReturnThis/WithExplicitReturn::__js2il_ctorReturn
 		IL_0017: dup
@@ -199,23 +200,25 @@
 		IL_001e: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::IsConstructorReturnOverride(object)
 		IL_0023: brfalse IL_002e
 
-		IL_0028: stloc.1
+		IL_0028: stloc.2
 		IL_0029: br IL_002f
 
 		IL_002e: pop
 
-		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0034: ldc.i4.1
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldloc.1
-		IL_003d: ldstr "value"
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0047: stelem.ref
-		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_004d: pop
-		IL_004e: ret
+		IL_002f: ldloc.2
+		IL_0030: stloc.1
+		IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0036: ldc.i4.1
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: dup
+		IL_003d: ldc.i4.0
+		IL_003e: ldloc.1
+		IL_003f: ldstr "value"
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0049: stelem.ref
+		IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004f: pop
+		IL_0050: ret
 	} // end of method Classes_Constructor_ExplicitReturnThis::__js_module_init__
 
 } // end of class Modules.Classes_Constructor_ExplicitReturnThis
@@ -227,7 +230,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210d
+		// Method begins at RVA 0x210f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

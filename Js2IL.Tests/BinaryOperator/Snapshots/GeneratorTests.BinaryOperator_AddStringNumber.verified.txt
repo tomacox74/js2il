@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2094
+			// Method begins at RVA 0x2096
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 56 (0x38)
+		// Code size: 58 (0x3a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_AddStringNumber/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_AddStringNumber/Scope::.ctor()
@@ -52,21 +53,23 @@
 		IL_0006: ldstr "7"
 		IL_000b: ldc.r8 5
 		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_0019: stloc.1
-		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_001f: ldc.i4.2
-		IL_0020: newarr [System.Runtime]System.Object
-		IL_0025: dup
-		IL_0026: ldc.i4.0
-		IL_0027: ldstr "x is"
-		IL_002c: stelem.ref
-		IL_002d: dup
-		IL_002e: ldc.i4.1
-		IL_002f: ldloc.1
-		IL_0030: stelem.ref
-		IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0036: pop
-		IL_0037: ret
+		IL_0019: stloc.2
+		IL_001a: ldloc.2
+		IL_001b: stloc.1
+		IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0021: ldc.i4.2
+		IL_0022: newarr [System.Runtime]System.Object
+		IL_0027: dup
+		IL_0028: ldc.i4.0
+		IL_0029: ldstr "x is"
+		IL_002e: stelem.ref
+		IL_002f: dup
+		IL_0030: ldc.i4.1
+		IL_0031: ldloc.1
+		IL_0032: stelem.ref
+		IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0038: pop
+		IL_0039: ret
 	} // end of method BinaryOperator_AddStringNumber::__js_module_init__
 
 } // end of class Modules.BinaryOperator_AddStringNumber
@@ -78,7 +81,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x209d
+		// Method begins at RVA 0x209f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

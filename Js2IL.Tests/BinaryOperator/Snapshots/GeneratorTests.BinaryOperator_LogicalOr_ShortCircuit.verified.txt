@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2132
+				// Method begins at RVA 0x213a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20ec
+			// Method begins at RVA 0x20f4
 			// Header size: 12
 			// Code size: 49 (0x31)
 			.maxstack 8
@@ -82,7 +82,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2129
+			// Method begins at RVA 0x2131
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -108,14 +108,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 143 (0x8f)
+		// Code size: 150 (0x96)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope,
 			[1] object,
 			[2] object,
-			[3] bool,
-			[4] object
+			[3] object,
+			[4] bool,
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::.ctor()
@@ -130,48 +132,52 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldloc.0
-		IL_0023: ldc.r8 0.0
-		IL_002c: box [System.Runtime]System.Double
-		IL_0031: stfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
-		IL_0036: ldc.i4.1
-		IL_0037: box [System.Runtime]System.Boolean
-		IL_003c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0041: stloc.3
-		IL_0042: ldloc.3
-		IL_0043: brtrue IL_006d
+		IL_0021: stloc.3
+		IL_0022: ldloc.3
+		IL_0023: stloc.1
+		IL_0024: ldloc.0
+		IL_0025: ldc.r8 0.0
+		IL_002e: box [System.Runtime]System.Double
+		IL_0033: stfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
+		IL_0038: ldc.i4.1
+		IL_0039: box [System.Runtime]System.Boolean
+		IL_003e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0043: stloc.s 4
+		IL_0045: ldloc.s 4
+		IL_0047: brtrue IL_0070
 
-		IL_0048: ldnull
-		IL_0049: ldftn object Modules.BinaryOperator_LogicalOr_ShortCircuit/inc::__js_call__(object[])
-		IL_004f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0054: ldc.i4.1
-		IL_0055: newarr [System.Runtime]System.Object
-		IL_005a: dup
-		IL_005b: ldc.i4.0
-		IL_005c: ldloc.0
-		IL_005d: stelem.ref
-		IL_005e: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0063: stloc.s 4
-		IL_0065: ldloc.s 4
-		IL_0067: stloc.2
-		IL_0068: br IL_0074
+		IL_004c: ldnull
+		IL_004d: ldftn object Modules.BinaryOperator_LogicalOr_ShortCircuit/inc::__js_call__(object[])
+		IL_0053: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0058: ldc.i4.1
+		IL_0059: newarr [System.Runtime]System.Object
+		IL_005e: dup
+		IL_005f: ldc.i4.0
+		IL_0060: ldloc.0
+		IL_0061: stelem.ref
+		IL_0062: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0067: stloc.3
+		IL_0068: ldloc.3
+		IL_0069: stloc.s 6
+		IL_006b: br IL_0078
 
-		IL_006d: ldc.i4.1
-		IL_006e: box [System.Runtime]System.Boolean
-		IL_0073: stloc.2
+		IL_0070: ldc.i4.1
+		IL_0071: box [System.Runtime]System.Boolean
+		IL_0076: stloc.s 6
 
-		IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0079: ldc.i4.1
-		IL_007a: newarr [System.Runtime]System.Object
-		IL_007f: dup
-		IL_0080: ldc.i4.0
-		IL_0081: ldloc.0
-		IL_0082: ldfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
-		IL_0087: stelem.ref
-		IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_008d: pop
-		IL_008e: ret
+		IL_0078: ldloc.s 6
+		IL_007a: stloc.2
+		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0080: ldc.i4.1
+		IL_0081: newarr [System.Runtime]System.Object
+		IL_0086: dup
+		IL_0087: ldc.i4.0
+		IL_0088: ldloc.0
+		IL_0089: ldfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
+		IL_008e: stelem.ref
+		IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0094: pop
+		IL_0095: ret
 	} // end of method BinaryOperator_LogicalOr_ShortCircuit::__js_module_init__
 
 } // end of class Modules.BinaryOperator_LogicalOr_ShortCircuit
@@ -183,7 +189,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213b
+		// Method begins at RVA 0x2143
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

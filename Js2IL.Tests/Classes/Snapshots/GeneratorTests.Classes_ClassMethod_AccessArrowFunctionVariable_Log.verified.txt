@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2133
+					// Method begins at RVA 0x213b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x213c
+					// Method begins at RVA 0x2144
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -65,7 +65,7 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x20dc
+				// Method begins at RVA 0x20e4
 				// Header size: 12
 				// Code size: 16 (0x10)
 				.maxstack 8
@@ -86,7 +86,7 @@
 			.method public hidebysig 
 				instance object logValue () cil managed 
 			{
-				// Method begins at RVA 0x20f8
+				// Method begins at RVA 0x2100
 				// Header size: 1
 				// Code size: 40 (0x28)
 				.maxstack 8
@@ -126,7 +126,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212a
+				// Method begins at RVA 0x2132
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -148,11 +148,12 @@
 		{
 			// Method begins at RVA 0x20a0
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 55 (0x37)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/Scope,
-				[1] class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass
+				[1] object,
+				[2] class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass
 			)
 
 			IL_0000: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/Scope::.ctor()
@@ -173,12 +174,15 @@
 			IL_001f: ldloc.0
 			IL_0020: stelem.ref
 			IL_0021: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass::.ctor(object[])
-			IL_0026: stloc.1
-			IL_0027: ldloc.1
-			IL_0028: callvirt instance object Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass::logValue()
-			IL_002d: pop
-			IL_002e: ldnull
-			IL_002f: ret
+			IL_0026: stloc.2
+			IL_0027: ldloc.2
+			IL_0028: stloc.1
+			IL_0029: ldloc.1
+			IL_002a: castclass Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass
+			IL_002f: callvirt instance object Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/ArrowFunction_L3C27/MyClass::logValue()
+			IL_0034: pop
+			IL_0035: ldnull
+			IL_0036: ret
 		} // end of method ArrowFunction_L3C27::__js_call__
 
 	} // end of class ArrowFunction_L3C27
@@ -190,7 +194,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2121
+			// Method begins at RVA 0x2129
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -216,12 +220,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 65 (0x41)
+		// Code size: 67 (0x43)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope,
 			[1] object,
-			[2] object[]
+			[2] object,
+			[3] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log/Scope::.ctor()
@@ -237,21 +242,23 @@
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0026: stloc.1
-		IL_0027: ldc.i4.0
-		IL_0028: newarr [System.Runtime]System.Object
-		IL_002d: stloc.2
-		IL_002e: ldloc.1
-		IL_002f: ldc.i4.1
-		IL_0030: newarr [System.Runtime]System.Object
-		IL_0035: dup
-		IL_0036: ldc.i4.0
-		IL_0037: ldnull
-		IL_0038: stelem.ref
-		IL_0039: ldloc.2
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_003f: pop
-		IL_0040: ret
+		IL_0026: stloc.2
+		IL_0027: ldloc.2
+		IL_0028: stloc.1
+		IL_0029: ldc.i4.0
+		IL_002a: newarr [System.Runtime]System.Object
+		IL_002f: stloc.3
+		IL_0030: ldloc.1
+		IL_0031: ldc.i4.1
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldnull
+		IL_003a: stelem.ref
+		IL_003b: ldloc.3
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0041: pop
+		IL_0042: ret
 	} // end of method Classes_ClassMethod_AccessArrowFunctionVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_AccessArrowFunctionVariable_Log
@@ -263,7 +270,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2145
+		// Method begins at RVA 0x214d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

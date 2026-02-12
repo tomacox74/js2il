@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2158
+				// Method begins at RVA 0x2164
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2161
+				// Method begins at RVA 0x216d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216a
+				// Method begins at RVA 0x2176
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2173
+				// Method begins at RVA 0x217f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -102,7 +102,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2185
+					// Method begins at RVA 0x2191
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -120,7 +120,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x217c
+				// Method begins at RVA 0x2188
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -140,7 +140,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218e
+				// Method begins at RVA 0x219a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -165,7 +165,7 @@
 				object start
 			) cil managed 
 		{
-			// Method begins at RVA 0x20a0
+			// Method begins at RVA 0x20ac
 			// Header size: 12
 			// Code size: 23 (0x17)
 			.maxstack 8
@@ -191,7 +191,7 @@
 				object n
 			) cil managed 
 		{
-			// Method begins at RVA 0x2110
+			// Method begins at RVA 0x211c
 			// Header size: 12
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -216,13 +216,14 @@
 				object count
 			) cil managed 
 		{
-			// Method begins at RVA 0x20c4
+			// Method begins at RVA 0x20d0
 			// Header size: 12
-			// Code size: 61 (0x3d)
+			// Code size: 63 (0x3f)
 			.maxstack 8
 			.locals init (
 				[0] float64,
-				[1] object
+				[1] object,
+				[2] float64
 			)
 
 			IL_0000: ldc.r8 1
@@ -234,7 +235,7 @@
 				IL_0011: cgt
 				IL_0013: ldc.i4.0
 				IL_0014: ceq
-				IL_0016: brfalse IL_003b
+				IL_0016: brfalse IL_003d
 
 				IL_001b: ldloc.0
 				IL_001c: box [System.Runtime]System.Double
@@ -246,18 +247,20 @@
 				IL_002a: ldloc.0
 				IL_002b: ldc.r8 1
 				IL_0034: add
-				IL_0035: stloc.0
-				IL_0036: br IL_000a
+				IL_0035: stloc.2
+				IL_0036: ldloc.2
+				IL_0037: stloc.0
+				IL_0038: br IL_000a
 			// end loop
 
-			IL_003b: ldnull
-			IL_003c: ret
+			IL_003d: ldnull
+			IL_003e: ret
 		} // end of method Accumulator::addRange
 
 		.method public hidebysig 
 			instance object log () cil managed 
 		{
-			// Method begins at RVA 0x2132
+			// Method begins at RVA 0x213e
 			// Header size: 1
 			// Code size: 28 (0x1c)
 			.maxstack 8
@@ -285,7 +288,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x214f
+			// Method begins at RVA 0x215b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -311,12 +314,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 67 (0x43)
+		// Code size: 79 (0x4f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Scope,
-			[1] class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator,
-			[2] object[]
+			[1] object,
+			[2] object[],
+			[3] class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Scope::.ctor()
@@ -332,16 +336,20 @@
 		IL_0012: ldc.r8 0.0
 		IL_001b: box [System.Runtime]System.Double
 		IL_0020: newobj instance void Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::.ctor(object[], object)
-		IL_0025: stloc.1
-		IL_0026: ldloc.1
-		IL_0027: ldc.r8 5
-		IL_0030: box [System.Runtime]System.Double
-		IL_0035: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::addRange(object)
-		IL_003a: pop
-		IL_003b: ldloc.1
-		IL_003c: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::log()
+		IL_0025: stloc.3
+		IL_0026: ldloc.3
+		IL_0027: stloc.1
+		IL_0028: ldloc.1
+		IL_0029: castclass Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator
+		IL_002e: ldc.r8 5
+		IL_0037: box [System.Runtime]System.Double
+		IL_003c: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::addRange(object)
 		IL_0041: pop
-		IL_0042: ret
+		IL_0042: ldloc.1
+		IL_0043: castclass Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator
+		IL_0048: callvirt instance object Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod/Accumulator::log()
+		IL_004d: pop
+		IL_004e: ret
 	} // end of method Classes_ClassMethod_ForLoop_CallsAnotherMethod::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_ForLoop_CallsAnotherMethod
@@ -353,7 +361,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2197
+		// Method begins at RVA 0x21a3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

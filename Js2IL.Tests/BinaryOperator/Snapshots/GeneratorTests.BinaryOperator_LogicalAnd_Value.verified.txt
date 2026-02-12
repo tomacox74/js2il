@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20aa
+			// Method begins at RVA 0x20af
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 78 (0x4e)
+		// Code size: 83 (0x53)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_LogicalAnd_Value/Scope,
@@ -48,7 +48,9 @@
 			[2] string,
 			[3] object,
 			[4] object,
-			[5] bool
+			[5] bool,
+			[6] object,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_LogicalAnd_Value/Scope::.ctor()
@@ -64,25 +66,27 @@
 		IL_0020: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 		IL_0025: stloc.s 5
 		IL_0027: ldloc.s 5
-		IL_0029: brfalse IL_0035
+		IL_0029: brfalse IL_0036
 
 		IL_002e: ldloc.2
-		IL_002f: stloc.3
-		IL_0030: br IL_0038
+		IL_002f: stloc.s 7
+		IL_0031: br IL_003a
 
-		IL_0035: ldloc.s 4
-		IL_0037: stloc.3
+		IL_0036: ldloc.s 4
+		IL_0038: stloc.s 7
 
-		IL_0038: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003d: ldc.i4.1
-		IL_003e: newarr [System.Runtime]System.Object
-		IL_0043: dup
-		IL_0044: ldc.i4.0
-		IL_0045: ldloc.3
-		IL_0046: stelem.ref
-		IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_004c: pop
-		IL_004d: ret
+		IL_003a: ldloc.s 7
+		IL_003c: stloc.3
+		IL_003d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0042: ldc.i4.1
+		IL_0043: newarr [System.Runtime]System.Object
+		IL_0048: dup
+		IL_0049: ldc.i4.0
+		IL_004a: ldloc.3
+		IL_004b: stelem.ref
+		IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0051: pop
+		IL_0052: ret
 	} // end of method BinaryOperator_LogicalAnd_Value::__js_module_init__
 
 } // end of class Modules.BinaryOperator_LogicalAnd_Value
@@ -94,7 +98,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b3
+		// Method begins at RVA 0x20b8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

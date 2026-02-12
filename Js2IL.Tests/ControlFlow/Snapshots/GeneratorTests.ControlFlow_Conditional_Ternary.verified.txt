@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d8
+			// Method begins at RVA 0x20e0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,14 +40,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 124 (0x7c)
+		// Code size: 132 (0x84)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Conditional_Ternary/Scope,
 			[1] float64,
 			[2] float64,
 			[3] object,
-			[4] object
+			[4] object,
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_Conditional_Ternary/Scope::.ctor()
@@ -68,37 +70,41 @@
 		IL_002e: ldstr "gt"
 		IL_0033: stloc.3
 
-		IL_0034: ldloc.1
-		IL_0035: ldloc.2
-		IL_0036: cgt
-		IL_0038: brfalse IL_0049
+		IL_0034: ldloc.3
+		IL_0035: stloc.s 4
+		IL_0037: ldloc.1
+		IL_0038: ldloc.2
+		IL_0039: cgt
+		IL_003b: brfalse IL_004c
 
-		IL_003d: ldstr "gt"
-		IL_0042: stloc.s 4
-		IL_0044: br IL_0050
+		IL_0040: ldstr "gt"
+		IL_0045: stloc.s 5
+		IL_0047: br IL_0053
 
-		IL_0049: ldstr "lte"
-		IL_004e: stloc.s 4
+		IL_004c: ldstr "lte"
+		IL_0051: stloc.s 5
 
-		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0055: ldc.i4.1
-		IL_0056: newarr [System.Runtime]System.Object
-		IL_005b: dup
-		IL_005c: ldc.i4.0
-		IL_005d: ldloc.3
-		IL_005e: stelem.ref
-		IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0064: pop
-		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006a: ldc.i4.1
-		IL_006b: newarr [System.Runtime]System.Object
-		IL_0070: dup
-		IL_0071: ldc.i4.0
-		IL_0072: ldloc.s 4
-		IL_0074: stelem.ref
-		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007a: pop
-		IL_007b: ret
+		IL_0053: ldloc.s 5
+		IL_0055: stloc.s 6
+		IL_0057: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005c: ldc.i4.1
+		IL_005d: newarr [System.Runtime]System.Object
+		IL_0062: dup
+		IL_0063: ldc.i4.0
+		IL_0064: ldloc.s 4
+		IL_0066: stelem.ref
+		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006c: pop
+		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0072: ldc.i4.1
+		IL_0073: newarr [System.Runtime]System.Object
+		IL_0078: dup
+		IL_0079: ldc.i4.0
+		IL_007a: ldloc.s 6
+		IL_007c: stelem.ref
+		IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0082: pop
+		IL_0083: ret
 	} // end of method ControlFlow_Conditional_Ternary::__js_module_init__
 
 } // end of class Modules.ControlFlow_Conditional_Ternary
@@ -110,7 +116,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e1
+		// Method begins at RVA 0x20e9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

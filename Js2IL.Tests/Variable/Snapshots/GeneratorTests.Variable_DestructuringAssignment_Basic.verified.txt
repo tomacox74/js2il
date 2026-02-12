@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2140
+			// Method begins at RVA 0x2148
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,14 +40,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 228 (0xe4)
+		// Code size: 236 (0xec)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_DestructuringAssignment_Basic/Scope,
 			[1] float64,
 			[2] float64,
 			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
-			[4] object
+			[4] float64,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_DestructuringAssignment_Basic/Scope::.ctor()
@@ -86,45 +87,49 @@
 		IL_0076: ldstr "x"
 		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 		IL_0080: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0085: stloc.1
-		IL_0086: ldloc.3
-		IL_0087: ldstr "y"
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0091: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0096: stloc.2
-		IL_0097: ldloc.1
-		IL_0098: box [System.Runtime]System.Double
-		IL_009d: stloc.s 4
-		IL_009f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a4: ldc.i4.2
-		IL_00a5: newarr [System.Runtime]System.Object
-		IL_00aa: dup
-		IL_00ab: ldc.i4.0
-		IL_00ac: ldstr "x="
-		IL_00b1: stelem.ref
+		IL_0085: stloc.s 4
+		IL_0087: ldloc.s 4
+		IL_0089: stloc.1
+		IL_008a: ldloc.3
+		IL_008b: ldstr "y"
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0095: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_009a: stloc.s 4
+		IL_009c: ldloc.s 4
+		IL_009e: stloc.2
+		IL_009f: ldloc.1
+		IL_00a0: box [System.Runtime]System.Double
+		IL_00a5: stloc.s 5
+		IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ac: ldc.i4.2
+		IL_00ad: newarr [System.Runtime]System.Object
 		IL_00b2: dup
-		IL_00b3: ldc.i4.1
-		IL_00b4: ldloc.s 4
-		IL_00b6: stelem.ref
-		IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00bc: pop
-		IL_00bd: ldloc.2
-		IL_00be: box [System.Runtime]System.Double
-		IL_00c3: stloc.s 4
-		IL_00c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ca: ldc.i4.2
-		IL_00cb: newarr [System.Runtime]System.Object
-		IL_00d0: dup
-		IL_00d1: ldc.i4.0
-		IL_00d2: ldstr "y="
-		IL_00d7: stelem.ref
+		IL_00b3: ldc.i4.0
+		IL_00b4: ldstr "x="
+		IL_00b9: stelem.ref
+		IL_00ba: dup
+		IL_00bb: ldc.i4.1
+		IL_00bc: ldloc.s 5
+		IL_00be: stelem.ref
+		IL_00bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00c4: pop
+		IL_00c5: ldloc.2
+		IL_00c6: box [System.Runtime]System.Double
+		IL_00cb: stloc.s 5
+		IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d2: ldc.i4.2
+		IL_00d3: newarr [System.Runtime]System.Object
 		IL_00d8: dup
-		IL_00d9: ldc.i4.1
-		IL_00da: ldloc.s 4
-		IL_00dc: stelem.ref
-		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e2: pop
-		IL_00e3: ret
+		IL_00d9: ldc.i4.0
+		IL_00da: ldstr "y="
+		IL_00df: stelem.ref
+		IL_00e0: dup
+		IL_00e1: ldc.i4.1
+		IL_00e2: ldloc.s 5
+		IL_00e4: stelem.ref
+		IL_00e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ea: pop
+		IL_00eb: ret
 	} // end of method Variable_DestructuringAssignment_Basic::__js_module_init__
 
 } // end of class Modules.Variable_DestructuringAssignment_Basic
@@ -136,7 +141,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2149
+		// Method begins at RVA 0x2151
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

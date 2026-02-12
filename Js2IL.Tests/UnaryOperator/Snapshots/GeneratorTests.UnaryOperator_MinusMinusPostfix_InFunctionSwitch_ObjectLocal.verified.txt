@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e4
+				// Method begins at RVA 0x2213
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,14 +41,19 @@
 		{
 			// Method begins at RVA 0x20e4
 			// Header size: 12
-			// Code size: 235 (0xeb)
+			// Code size: 282 (0x11a)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] object,
-				[2] object,
-				[3] bool,
-				[4] float64
+				[0] string,
+				[1] string,
+				[2] string,
+				[3] string,
+				[4] string,
+				[5] string,
+				[6] bool,
+				[7] float64,
+				[8] object,
+				[9] string
 			)
 
 			IL_0000: ldstr "3"
@@ -57,94 +62,112 @@
 			IL_000b: stloc.1
 			IL_000c: ldstr "1"
 			IL_0011: stloc.2
-			IL_0012: ldarg.1
-			IL_0013: ldstr "major"
-			IL_0018: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_001d: stloc.3
-			IL_001e: ldloc.3
-			IL_001f: brtrue IL_004d
+			IL_0012: ldloc.0
+			IL_0013: stloc.3
+			IL_0014: ldloc.1
+			IL_0015: stloc.s 4
+			IL_0017: ldloc.2
+			IL_0018: stloc.s 5
+			IL_001a: ldarg.1
+			IL_001b: ldstr "major"
+			IL_0020: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0025: stloc.s 6
+			IL_0027: ldloc.s 6
+			IL_0029: brtrue IL_005b
 
-			IL_0024: ldarg.1
-			IL_0025: ldstr "minor"
-			IL_002a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_002f: stloc.3
-			IL_0030: ldloc.3
-			IL_0031: brtrue IL_007c
+			IL_002e: ldarg.1
+			IL_002f: ldstr "minor"
+			IL_0034: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0039: stloc.s 6
+			IL_003b: ldloc.s 6
+			IL_003d: brtrue IL_0098
 
-			IL_0036: ldarg.1
-			IL_0037: ldstr "patch"
-			IL_003c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0041: stloc.3
-			IL_0042: ldloc.3
-			IL_0043: brtrue IL_00a5
+			IL_0042: ldarg.1
+			IL_0043: ldstr "patch"
+			IL_0048: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_004d: stloc.s 6
+			IL_004f: ldloc.s 6
+			IL_0051: brtrue IL_00cc
 
-			IL_0048: br IL_00c8
+			IL_0056: br IL_00f5
 
-			IL_004d: ldloc.0
-			IL_004e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0053: stloc.s 4
-			IL_0055: ldloc.s 4
-			IL_0057: ldc.r8 1
-			IL_0060: sub
-			IL_0061: stloc.s 4
-			IL_0063: ldloc.s 4
-			IL_0065: box [System.Runtime]System.Double
-			IL_006a: stloc.0
-			IL_006b: ldstr "0"
-			IL_0070: stloc.1
-			IL_0071: ldstr "0"
-			IL_0076: stloc.2
-			IL_0077: br IL_00c8
+			IL_005b: ldloc.3
+			IL_005c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0061: stloc.s 7
+			IL_0063: ldloc.s 7
+			IL_0065: ldc.r8 1
+			IL_006e: sub
+			IL_006f: stloc.s 7
+			IL_0071: ldloc.s 7
+			IL_0073: box [System.Runtime]System.Double
+			IL_0078: stloc.s 8
+			IL_007a: ldloc.s 8
+			IL_007c: stloc.3
+			IL_007d: ldstr "0"
+			IL_0082: stloc.s 9
+			IL_0084: ldloc.s 9
+			IL_0086: stloc.s 4
+			IL_0088: ldstr "0"
+			IL_008d: stloc.s 9
+			IL_008f: ldloc.s 9
+			IL_0091: stloc.s 5
+			IL_0093: br IL_00f5
 
-			IL_007c: ldloc.1
-			IL_007d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0082: stloc.s 4
-			IL_0084: ldloc.s 4
-			IL_0086: ldc.r8 1
-			IL_008f: sub
-			IL_0090: stloc.s 4
-			IL_0092: ldloc.s 4
-			IL_0094: box [System.Runtime]System.Double
-			IL_0099: stloc.1
-			IL_009a: ldstr "0"
-			IL_009f: stloc.2
-			IL_00a0: br IL_00c8
+			IL_0098: ldloc.s 4
+			IL_009a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_009f: stloc.s 7
+			IL_00a1: ldloc.s 7
+			IL_00a3: ldc.r8 1
+			IL_00ac: sub
+			IL_00ad: stloc.s 7
+			IL_00af: ldloc.s 7
+			IL_00b1: box [System.Runtime]System.Double
+			IL_00b6: stloc.s 8
+			IL_00b8: ldloc.s 8
+			IL_00ba: stloc.s 4
+			IL_00bc: ldstr "0"
+			IL_00c1: stloc.s 9
+			IL_00c3: ldloc.s 9
+			IL_00c5: stloc.s 5
+			IL_00c7: br IL_00f5
 
-			IL_00a5: ldloc.2
-			IL_00a6: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00ab: stloc.s 4
-			IL_00ad: ldloc.s 4
-			IL_00af: ldc.r8 1
-			IL_00b8: sub
-			IL_00b9: stloc.s 4
-			IL_00bb: ldloc.s 4
-			IL_00bd: box [System.Runtime]System.Double
-			IL_00c2: stloc.2
-			IL_00c3: br IL_00c8
+			IL_00cc: ldloc.s 5
+			IL_00ce: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00d3: stloc.s 7
+			IL_00d5: ldloc.s 7
+			IL_00d7: ldc.r8 1
+			IL_00e0: sub
+			IL_00e1: stloc.s 7
+			IL_00e3: ldloc.s 7
+			IL_00e5: box [System.Runtime]System.Double
+			IL_00ea: stloc.s 8
+			IL_00ec: ldloc.s 8
+			IL_00ee: stloc.s 5
+			IL_00f0: br IL_00f5
 
-			IL_00c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00cd: ldc.i4.4
-			IL_00ce: newarr [System.Runtime]System.Object
-			IL_00d3: dup
-			IL_00d4: ldc.i4.0
-			IL_00d5: ldarg.1
-			IL_00d6: stelem.ref
-			IL_00d7: dup
-			IL_00d8: ldc.i4.1
-			IL_00d9: ldloc.0
-			IL_00da: stelem.ref
-			IL_00db: dup
-			IL_00dc: ldc.i4.2
-			IL_00dd: ldloc.1
-			IL_00de: stelem.ref
-			IL_00df: dup
-			IL_00e0: ldc.i4.3
-			IL_00e1: ldloc.2
-			IL_00e2: stelem.ref
-			IL_00e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00e8: pop
-			IL_00e9: ldnull
-			IL_00ea: ret
+			IL_00f5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00fa: ldc.i4.4
+			IL_00fb: newarr [System.Runtime]System.Object
+			IL_0100: dup
+			IL_0101: ldc.i4.0
+			IL_0102: ldarg.1
+			IL_0103: stelem.ref
+			IL_0104: dup
+			IL_0105: ldc.i4.1
+			IL_0106: ldloc.3
+			IL_0107: stelem.ref
+			IL_0108: dup
+			IL_0109: ldc.i4.2
+			IL_010a: ldloc.s 4
+			IL_010c: stelem.ref
+			IL_010d: dup
+			IL_010e: ldc.i4.3
+			IL_010f: ldloc.s 5
+			IL_0111: stelem.ref
+			IL_0112: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0117: pop
+			IL_0118: ldnull
+			IL_0119: ret
 		} // end of method bump::__js_call__
 
 	} // end of class bump
@@ -163,7 +186,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21db
+			// Method begins at RVA 0x220a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -189,11 +212,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 134 (0x86)
+		// Code size: 136 (0x88)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal/Scope::.ctor()
@@ -208,44 +232,46 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldnull
-		IL_0023: ldftn object Modules.UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal/bump::__js_call__(object[], object)
-		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.0
-		IL_0037: stelem.ref
-		IL_0038: ldstr "major"
-		IL_003d: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0042: pop
-		IL_0043: ldnull
-		IL_0044: ldftn object Modules.UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal/bump::__js_call__(object[], object)
-		IL_004a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_004f: ldc.i4.1
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: ldloc.0
-		IL_0058: stelem.ref
-		IL_0059: ldstr "minor"
-		IL_005e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0063: pop
-		IL_0064: ldnull
-		IL_0065: ldftn object Modules.UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal/bump::__js_call__(object[], object)
-		IL_006b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0070: ldc.i4.1
-		IL_0071: newarr [System.Runtime]System.Object
-		IL_0076: dup
-		IL_0077: ldc.i4.0
-		IL_0078: ldloc.0
-		IL_0079: stelem.ref
-		IL_007a: ldstr "patch"
-		IL_007f: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0084: pop
-		IL_0085: ret
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: stloc.1
+		IL_0024: ldnull
+		IL_0025: ldftn object Modules.UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal/bump::__js_call__(object[], object)
+		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldloc.0
+		IL_0039: stelem.ref
+		IL_003a: ldstr "major"
+		IL_003f: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0044: pop
+		IL_0045: ldnull
+		IL_0046: ldftn object Modules.UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal/bump::__js_call__(object[], object)
+		IL_004c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldloc.0
+		IL_005a: stelem.ref
+		IL_005b: ldstr "minor"
+		IL_0060: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0065: pop
+		IL_0066: ldnull
+		IL_0067: ldftn object Modules.UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal/bump::__js_call__(object[], object)
+		IL_006d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0072: ldc.i4.1
+		IL_0073: newarr [System.Runtime]System.Object
+		IL_0078: dup
+		IL_0079: ldc.i4.0
+		IL_007a: ldloc.0
+		IL_007b: stelem.ref
+		IL_007c: ldstr "patch"
+		IL_0081: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0086: pop
+		IL_0087: ret
 	} // end of method UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal::__js_module_init__
 
 } // end of class Modules.UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal
@@ -257,7 +283,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ed
+		// Method begins at RVA 0x221c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

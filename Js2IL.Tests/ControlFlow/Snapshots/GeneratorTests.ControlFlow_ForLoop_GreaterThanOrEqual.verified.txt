@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ae
+			// Method begins at RVA 0x20c1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20c0
+				// Method begins at RVA 0x20d3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20b7
+			// Method begins at RVA 0x20ca
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,46 +82,54 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 82 (0x52)
+		// Code size: 101 (0x65)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_GreaterThanOrEqual/Scope,
-			[1] float64,
-			[2] object
+			[1] object,
+			[2] float64,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_GreaterThanOrEqual/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 0.0
-		IL_000f: stloc.1
-		// loop start (head: IL_0010)
-			IL_0010: ldloc.1
-			IL_0011: ldc.r8 5
-			IL_001a: cgt
-			IL_001c: ldc.i4.0
-			IL_001d: ceq
-			IL_001f: brfalse IL_0051
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		// loop start (head: IL_0015)
+			IL_0015: ldloc.1
+			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001b: ldc.r8 5
+			IL_0024: cgt
+			IL_0026: ldc.i4.0
+			IL_0027: ceq
+			IL_0029: brfalse IL_0064
 
-			IL_0024: ldloc.1
-			IL_0025: box [System.Runtime]System.Double
-			IL_002a: stloc.2
-			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0030: ldc.i4.1
-			IL_0031: newarr [System.Runtime]System.Object
-			IL_0036: dup
-			IL_0037: ldc.i4.0
-			IL_0038: ldloc.2
-			IL_0039: stelem.ref
-			IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_003f: pop
-			IL_0040: ldloc.1
-			IL_0041: ldc.r8 1
-			IL_004a: add
-			IL_004b: stloc.1
-			IL_004c: br IL_0010
+			IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0033: ldc.i4.1
+			IL_0034: newarr [System.Runtime]System.Object
+			IL_0039: dup
+			IL_003a: ldc.i4.0
+			IL_003b: ldloc.1
+			IL_003c: stelem.ref
+			IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0042: pop
+			IL_0043: ldloc.1
+			IL_0044: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0049: stloc.2
+			IL_004a: ldloc.2
+			IL_004b: ldc.r8 1
+			IL_0054: add
+			IL_0055: stloc.2
+			IL_0056: ldloc.2
+			IL_0057: box [System.Runtime]System.Double
+			IL_005c: stloc.3
+			IL_005d: ldloc.3
+			IL_005e: stloc.1
+			IL_005f: br IL_0015
 		// end loop
 
-		IL_0051: ret
+		IL_0064: ret
 	} // end of method ControlFlow_ForLoop_GreaterThanOrEqual::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_GreaterThanOrEqual
@@ -133,7 +141,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c9
+		// Method begins at RVA 0x20dc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

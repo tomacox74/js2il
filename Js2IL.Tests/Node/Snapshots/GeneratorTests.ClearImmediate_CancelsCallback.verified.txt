@@ -94,7 +94,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 110 (0x6e)
+		// Code size: 112 (0x70)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ClearImmediate_CancelsCallback/Scope,
@@ -120,29 +120,31 @@
 		IL_0028: ldc.i4.0
 		IL_0029: newarr [System.Runtime]System.Object
 		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0033: stloc.1
-		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0039: ldc.i4.1
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: dup
-		IL_0040: ldc.i4.0
-		IL_0041: ldstr "setImmediate scheduled."
-		IL_0046: stelem.ref
-		IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_004c: pop
-		IL_004d: ldloc.1
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearImmediate(object)
-		IL_0053: pop
-		IL_0054: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0059: ldc.i4.1
-		IL_005a: newarr [System.Runtime]System.Object
-		IL_005f: dup
-		IL_0060: ldc.i4.0
-		IL_0061: ldstr "clearImmediate called."
-		IL_0066: stelem.ref
-		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006c: pop
-		IL_006d: ret
+		IL_0033: stloc.2
+		IL_0034: ldloc.2
+		IL_0035: stloc.1
+		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003b: ldc.i4.1
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldstr "setImmediate scheduled."
+		IL_0048: stelem.ref
+		IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004e: pop
+		IL_004f: ldloc.1
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearImmediate(object)
+		IL_0055: pop
+		IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005b: ldc.i4.1
+		IL_005c: newarr [System.Runtime]System.Object
+		IL_0061: dup
+		IL_0062: ldc.i4.0
+		IL_0063: ldstr "clearImmediate called."
+		IL_0068: stelem.ref
+		IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006e: pop
+		IL_006f: ret
 	} // end of method ClearImmediate_CancelsCallback::__js_module_init__
 
 } // end of class Modules.ClearImmediate_CancelsCallback

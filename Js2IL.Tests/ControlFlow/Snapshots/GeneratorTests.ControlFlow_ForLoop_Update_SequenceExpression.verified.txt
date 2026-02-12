@@ -1,4 +1,4 @@
-// IL code: ControlFlow_ForLoop_Update_SequenceExpression
+﻿// IL code: ControlFlow_ForLoop_Update_SequenceExpression
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2161
+				// Method begins at RVA 0x2175
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2158
+			// Method begins at RVA 0x216c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,7 +62,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 252 (0xfc)
+		// Code size: 272 (0x110)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_Update_SequenceExpression/Scope,
@@ -70,8 +70,9 @@
 			[2] float64,
 			[3] float64,
 			[4] float64,
-			[5] float64,
-			[6] object
+			[5] object,
+			[6] float64,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_Update_SequenceExpression/Scope::.ctor()
@@ -86,80 +87,90 @@
 			IL_0024: ldloc.3
 			IL_0025: ldc.r8 3
 			IL_002e: clt
-			IL_0030: brfalse IL_005e
+			IL_0030: brfalse IL_006a
 
 			IL_0035: ldloc.3
 			IL_0036: ldc.r8 1
 			IL_003f: add
-			IL_0040: stloc.3
-			IL_0041: ldloc.1
-			IL_0042: ldc.r8 1
-			IL_004b: add
-			IL_004c: stloc.1
-			IL_004d: ldloc.2
-			IL_004e: ldc.r8 2
-			IL_0057: add
-			IL_0058: stloc.2
-			IL_0059: br IL_0024
+			IL_0040: stloc.s 6
+			IL_0042: ldloc.s 6
+			IL_0044: stloc.3
+			IL_0045: ldloc.1
+			IL_0046: ldc.r8 1
+			IL_004f: add
+			IL_0050: stloc.s 6
+			IL_0052: ldloc.s 6
+			IL_0054: stloc.1
+			IL_0055: ldloc.2
+			IL_0056: ldc.r8 2
+			IL_005f: add
+			IL_0060: stloc.s 6
+			IL_0062: ldloc.s 6
+			IL_0064: stloc.2
+			IL_0065: br IL_0024
 		// end loop
 
-		IL_005e: ldloc.3
-		IL_005f: box [System.Runtime]System.Double
-		IL_0064: stloc.s 6
-		IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006b: ldc.i4.1
-		IL_006c: newarr [System.Runtime]System.Object
-		IL_0071: dup
-		IL_0072: ldc.i4.0
-		IL_0073: ldloc.s 6
-		IL_0075: stelem.ref
-		IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007b: pop
-		IL_007c: ldloc.1
-		IL_007d: box [System.Runtime]System.Double
-		IL_0082: stloc.s 6
-		IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0089: ldc.i4.1
-		IL_008a: newarr [System.Runtime]System.Object
-		IL_008f: dup
-		IL_0090: ldc.i4.0
-		IL_0091: ldloc.s 6
-		IL_0093: stelem.ref
-		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0099: pop
-		IL_009a: ldloc.2
-		IL_009b: box [System.Runtime]System.Double
-		IL_00a0: stloc.s 6
-		IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a7: ldc.i4.1
-		IL_00a8: newarr [System.Runtime]System.Object
-		IL_00ad: dup
-		IL_00ae: ldc.i4.0
-		IL_00af: ldloc.s 6
-		IL_00b1: stelem.ref
-		IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b7: pop
-		IL_00b8: ldc.r8 0.0
-		IL_00c1: stloc.s 4
-		IL_00c3: ldc.r8 1
-		IL_00cc: stloc.s 4
-		IL_00ce: ldloc.s 4
-		IL_00d0: ldc.r8 1
-		IL_00d9: add
-		IL_00da: stloc.s 5
-		IL_00dc: ldloc.s 5
-		IL_00de: box [System.Runtime]System.Double
-		IL_00e3: stloc.s 6
-		IL_00e5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ea: ldc.i4.1
-		IL_00eb: newarr [System.Runtime]System.Object
-		IL_00f0: dup
-		IL_00f1: ldc.i4.0
-		IL_00f2: ldloc.s 6
-		IL_00f4: stelem.ref
-		IL_00f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00fa: pop
-		IL_00fb: ret
+		IL_006a: ldloc.3
+		IL_006b: box [System.Runtime]System.Double
+		IL_0070: stloc.s 7
+		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0077: ldc.i4.1
+		IL_0078: newarr [System.Runtime]System.Object
+		IL_007d: dup
+		IL_007e: ldc.i4.0
+		IL_007f: ldloc.s 7
+		IL_0081: stelem.ref
+		IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0087: pop
+		IL_0088: ldloc.1
+		IL_0089: box [System.Runtime]System.Double
+		IL_008e: stloc.s 7
+		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0095: ldc.i4.1
+		IL_0096: newarr [System.Runtime]System.Object
+		IL_009b: dup
+		IL_009c: ldc.i4.0
+		IL_009d: ldloc.s 7
+		IL_009f: stelem.ref
+		IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00a5: pop
+		IL_00a6: ldloc.2
+		IL_00a7: box [System.Runtime]System.Double
+		IL_00ac: stloc.s 7
+		IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b3: ldc.i4.1
+		IL_00b4: newarr [System.Runtime]System.Object
+		IL_00b9: dup
+		IL_00ba: ldc.i4.0
+		IL_00bb: ldloc.s 7
+		IL_00bd: stelem.ref
+		IL_00be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00c3: pop
+		IL_00c4: ldc.r8 0.0
+		IL_00cd: stloc.s 4
+		IL_00cf: ldc.r8 1
+		IL_00d8: stloc.s 6
+		IL_00da: ldloc.s 6
+		IL_00dc: stloc.s 4
+		IL_00de: ldloc.s 4
+		IL_00e0: ldc.r8 1
+		IL_00e9: add
+		IL_00ea: stloc.s 6
+		IL_00ec: ldloc.s 6
+		IL_00ee: box [System.Runtime]System.Double
+		IL_00f3: stloc.s 7
+		IL_00f5: ldloc.s 7
+		IL_00f7: stloc.s 5
+		IL_00f9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00fe: ldc.i4.1
+		IL_00ff: newarr [System.Runtime]System.Object
+		IL_0104: dup
+		IL_0105: ldc.i4.0
+		IL_0106: ldloc.s 5
+		IL_0108: stelem.ref
+		IL_0109: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_010e: pop
+		IL_010f: ret
 	} // end of method ControlFlow_ForLoop_Update_SequenceExpression::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_Update_SequenceExpression
@@ -171,7 +182,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x216a
+		// Method begins at RVA 0x217e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

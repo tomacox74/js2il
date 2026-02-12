@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2178
+					// Method begins at RVA 0x218a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,28 +42,31 @@
 					object[] scopes
 				) cil managed 
 			{
-				// Method begins at RVA 0x2134
+				// Method begins at RVA 0x2144
 				// Header size: 12
-				// Code size: 38 (0x26)
+				// Code size: 40 (0x28)
 				.maxstack 8
 				.locals init (
-					[0] float64
+					[0] float64,
+					[1] object
 				)
 
 				IL_0000: ldc.r8 2
 				IL_0009: stloc.0
-				IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_000f: ldc.i4.1
-				IL_0010: newarr [System.Runtime]System.Object
-				IL_0015: dup
-				IL_0016: ldc.i4.0
-				IL_0017: ldloc.0
-				IL_0018: box [System.Runtime]System.Double
-				IL_001d: stelem.ref
-				IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_0023: pop
-				IL_0024: ldnull
-				IL_0025: ret
+				IL_000a: ldloc.0
+				IL_000b: box [System.Runtime]System.Double
+				IL_0010: stloc.1
+				IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0016: ldc.i4.1
+				IL_0017: newarr [System.Runtime]System.Object
+				IL_001c: dup
+				IL_001d: ldc.i4.0
+				IL_001e: ldloc.1
+				IL_001f: stelem.ref
+				IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0025: pop
+				IL_0026: ldnull
+				IL_0027: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner
@@ -82,7 +85,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216f
+				// Method begins at RVA 0x2181
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -102,14 +105,16 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20c0
+			// Method begins at RVA 0x20c8
 			// Header size: 12
-			// Code size: 104 (0x68)
+			// Code size: 110 (0x6e)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Variable_LetFunctionNestedShadowing/outer/Scope,
 				[1] object,
-				[2] float64
+				[2] float64,
+				[3] object,
+				[4] object
 			)
 
 			IL_0000: newobj instance void Modules.Variable_LetFunctionNestedShadowing/outer/Scope::.ctor()
@@ -126,34 +131,38 @@
 			IL_001c: ldelem.ref
 			IL_001d: stelem.ref
 			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_0023: stloc.1
-			IL_0024: ldc.r8 1
-			IL_002d: stloc.2
-			IL_002e: ldnull
-			IL_002f: ldftn object Modules.Variable_LetFunctionNestedShadowing/outer/inner::__js_call__(object[])
-			IL_0035: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-			IL_003a: ldc.i4.1
-			IL_003b: newarr [System.Runtime]System.Object
-			IL_0040: dup
-			IL_0041: ldc.i4.0
-			IL_0042: ldarg.0
+			IL_0023: stloc.3
+			IL_0024: ldloc.3
+			IL_0025: stloc.1
+			IL_0026: ldc.r8 1
+			IL_002f: stloc.2
+			IL_0030: ldnull
+			IL_0031: ldftn object Modules.Variable_LetFunctionNestedShadowing/outer/inner::__js_call__(object[])
+			IL_0037: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_003c: ldc.i4.1
+			IL_003d: newarr [System.Runtime]System.Object
+			IL_0042: dup
 			IL_0043: ldc.i4.0
-			IL_0044: ldelem.ref
-			IL_0045: stelem.ref
-			IL_0046: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-			IL_004b: pop
-			IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0051: ldc.i4.1
-			IL_0052: newarr [System.Runtime]System.Object
-			IL_0057: dup
-			IL_0058: ldc.i4.0
-			IL_0059: ldloc.2
-			IL_005a: box [System.Runtime]System.Double
-			IL_005f: stelem.ref
-			IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0065: pop
-			IL_0066: ldnull
-			IL_0067: ret
+			IL_0044: ldarg.0
+			IL_0045: ldc.i4.0
+			IL_0046: ldelem.ref
+			IL_0047: stelem.ref
+			IL_0048: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+			IL_004d: pop
+			IL_004e: ldloc.2
+			IL_004f: box [System.Runtime]System.Double
+			IL_0054: stloc.s 4
+			IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_005b: ldc.i4.1
+			IL_005c: newarr [System.Runtime]System.Object
+			IL_0061: dup
+			IL_0062: ldc.i4.0
+			IL_0063: ldloc.s 4
+			IL_0065: stelem.ref
+			IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_006b: pop
+			IL_006c: ldnull
+			IL_006d: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -172,7 +181,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2166
+			// Method begins at RVA 0x2178
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -198,12 +207,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 99 (0x63)
+		// Code size: 105 (0x69)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_LetFunctionNestedShadowing/Scope,
 			[1] object,
-			[2] float64
+			[2] float64,
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_LetFunctionNestedShadowing/Scope::.ctor()
@@ -218,31 +229,35 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldc.r8 0.0
-		IL_002b: stloc.2
-		IL_002c: ldnull
-		IL_002d: ldftn object Modules.Variable_LetFunctionNestedShadowing/outer::__js_call__(object[])
-		IL_0033: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0038: ldc.i4.1
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldloc.0
-		IL_0041: stelem.ref
-		IL_0042: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0047: pop
-		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004d: ldc.i4.1
-		IL_004e: newarr [System.Runtime]System.Object
-		IL_0053: dup
-		IL_0054: ldc.i4.0
-		IL_0055: ldloc.2
-		IL_0056: box [System.Runtime]System.Double
-		IL_005b: stelem.ref
-		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0061: pop
-		IL_0062: ret
+		IL_0021: stloc.3
+		IL_0022: ldloc.3
+		IL_0023: stloc.1
+		IL_0024: ldc.r8 0.0
+		IL_002d: stloc.2
+		IL_002e: ldnull
+		IL_002f: ldftn object Modules.Variable_LetFunctionNestedShadowing/outer::__js_call__(object[])
+		IL_0035: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldloc.0
+		IL_0043: stelem.ref
+		IL_0044: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0049: pop
+		IL_004a: ldloc.2
+		IL_004b: box [System.Runtime]System.Double
+		IL_0050: stloc.s 4
+		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0057: ldc.i4.1
+		IL_0058: newarr [System.Runtime]System.Object
+		IL_005d: dup
+		IL_005e: ldc.i4.0
+		IL_005f: ldloc.s 4
+		IL_0061: stelem.ref
+		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0067: pop
+		IL_0068: ret
 	} // end of method Variable_LetFunctionNestedShadowing::__js_module_init__
 
 } // end of class Modules.Variable_LetFunctionNestedShadowing
@@ -254,7 +269,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2181
+		// Method begins at RVA 0x2193
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

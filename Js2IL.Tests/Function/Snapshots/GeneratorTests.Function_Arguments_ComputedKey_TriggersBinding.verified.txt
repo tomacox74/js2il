@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x214c
+				// Method begins at RVA 0x2152
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,14 +45,15 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20d8
 			// Header size: 12
-			// Code size: 99 (0x63)
+			// Code size: 101 (0x65)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Arguments_ComputedKey_TriggersBinding/f/Scope,
 				[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
-				[2] object
+				[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+				[3] object
 			)
 
 			IL_0000: newobj instance void Modules.Function_Arguments_ComputedKey_TriggersBinding/f/Scope::.ctor()
@@ -61,31 +62,33 @@
 			IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject()
 			IL_000c: stfld object Modules.Function_Arguments_ComputedKey_TriggersBinding/f/Scope::arguments
 			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0016: stloc.1
+			IL_0016: stloc.2
 			IL_0017: ldloc.0
 			IL_0018: ldfld object Modules.Function_Arguments_ComputedKey_TriggersBinding/f/Scope::arguments
 			IL_001d: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_0022: box [System.Runtime]System.Double
-			IL_0027: stloc.2
-			IL_0028: ldloc.1
-			IL_0029: ldloc.2
+			IL_0027: stloc.3
+			IL_0028: ldloc.2
+			IL_0029: ldloc.3
 			IL_002a: ldc.r8 123
 			IL_0033: box [System.Runtime]System.Double
 			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
 			IL_003d: pop
-			IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0043: ldc.i4.1
-			IL_0044: newarr [System.Runtime]System.Object
-			IL_0049: dup
-			IL_004a: ldc.i4.0
-			IL_004b: ldloc.1
-			IL_004c: ldc.r8 3
-			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_005a: stelem.ref
-			IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0060: pop
-			IL_0061: ldnull
-			IL_0062: ret
+			IL_003e: ldloc.2
+			IL_003f: stloc.1
+			IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0045: ldc.i4.1
+			IL_0046: newarr [System.Runtime]System.Object
+			IL_004b: dup
+			IL_004c: ldc.i4.0
+			IL_004d: ldloc.1
+			IL_004e: ldc.r8 3
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_005c: stelem.ref
+			IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0062: pop
+			IL_0063: ldnull
+			IL_0064: ret
 		} // end of method f::__js_call__
 
 	} // end of class f
@@ -103,7 +106,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2143
+			// Method begins at RVA 0x2149
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -129,11 +132,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 120 (0x78)
+		// Code size: 122 (0x7a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Arguments_ComputedKey_TriggersBinding/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Arguments_ComputedKey_TriggersBinding/Scope::.ctor()
@@ -148,36 +152,38 @@
 		IL_001a: ldloc.0
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldnull
-		IL_0023: ldftn object Modules.Function_Arguments_ComputedKey_TriggersBinding/f::__js_call__(object[])
-		IL_0029: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.0
-		IL_0037: stelem.ref
-		IL_0038: ldc.i4.3
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldc.r8 1
-		IL_0049: box [System.Runtime]System.Double
-		IL_004e: stelem.ref
-		IL_004f: dup
-		IL_0050: ldc.i4.1
-		IL_0051: ldc.r8 2
-		IL_005a: box [System.Runtime]System.Double
-		IL_005f: stelem.ref
-		IL_0060: dup
-		IL_0061: ldc.i4.2
-		IL_0062: ldc.r8 3
-		IL_006b: box [System.Runtime]System.Double
-		IL_0070: stelem.ref
-		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [System.Runtime]System.Func`2<object[], object>, object[], object[])
-		IL_0076: pop
-		IL_0077: ret
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: stloc.1
+		IL_0024: ldnull
+		IL_0025: ldftn object Modules.Function_Arguments_ComputedKey_TriggersBinding/f::__js_call__(object[])
+		IL_002b: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldloc.0
+		IL_0039: stelem.ref
+		IL_003a: ldc.i4.3
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldc.r8 1
+		IL_004b: box [System.Runtime]System.Double
+		IL_0050: stelem.ref
+		IL_0051: dup
+		IL_0052: ldc.i4.1
+		IL_0053: ldc.r8 2
+		IL_005c: box [System.Runtime]System.Double
+		IL_0061: stelem.ref
+		IL_0062: dup
+		IL_0063: ldc.i4.2
+		IL_0064: ldc.r8 3
+		IL_006d: box [System.Runtime]System.Double
+		IL_0072: stelem.ref
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [System.Runtime]System.Func`2<object[], object>, object[], object[])
+		IL_0078: pop
+		IL_0079: ret
 	} // end of method Function_Arguments_ComputedKey_TriggersBinding::__js_module_init__
 
 } // end of class Modules.Function_Arguments_ComputedKey_TriggersBinding
@@ -189,7 +195,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2155
+		// Method begins at RVA 0x215b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

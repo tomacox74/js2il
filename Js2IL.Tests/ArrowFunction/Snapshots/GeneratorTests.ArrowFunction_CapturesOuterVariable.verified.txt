@@ -113,13 +113,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 126 (0x7e)
+		// Code size: 128 (0x80)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_CapturesOuterVariable/Scope,
 			[1] object,
-			[2] object[],
-			[3] object
+			[2] object,
+			[3] object[]
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_CapturesOuterVariable/Scope::.ctor()
@@ -138,39 +138,41 @@
 		IL_002a: stelem.ref
 		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0035: stloc.1
-		IL_0036: ldc.i4.1
-		IL_0037: newarr [System.Runtime]System.Object
-		IL_003c: dup
-		IL_003d: ldc.i4.0
-		IL_003e: ldc.r8 3
-		IL_0047: box [System.Runtime]System.Double
-		IL_004c: stelem.ref
-		IL_004d: stloc.2
-		IL_004e: ldloc.1
-		IL_004f: ldc.i4.1
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: ldnull
-		IL_0058: stelem.ref
-		IL_0059: ldloc.2
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_005f: stloc.3
-		IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0065: ldc.i4.2
-		IL_0066: newarr [System.Runtime]System.Object
-		IL_006b: dup
-		IL_006c: ldc.i4.0
-		IL_006d: ldstr "product is "
-		IL_0072: stelem.ref
-		IL_0073: dup
-		IL_0074: ldc.i4.1
-		IL_0075: ldloc.3
-		IL_0076: stelem.ref
-		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007c: pop
-		IL_007d: ret
+		IL_0035: stloc.2
+		IL_0036: ldloc.2
+		IL_0037: stloc.1
+		IL_0038: ldc.i4.1
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: dup
+		IL_003f: ldc.i4.0
+		IL_0040: ldc.r8 3
+		IL_0049: box [System.Runtime]System.Double
+		IL_004e: stelem.ref
+		IL_004f: stloc.3
+		IL_0050: ldloc.1
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldnull
+		IL_005a: stelem.ref
+		IL_005b: ldloc.3
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0061: stloc.2
+		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0067: ldc.i4.2
+		IL_0068: newarr [System.Runtime]System.Object
+		IL_006d: dup
+		IL_006e: ldc.i4.0
+		IL_006f: ldstr "product is "
+		IL_0074: stelem.ref
+		IL_0075: dup
+		IL_0076: ldc.i4.1
+		IL_0077: ldloc.2
+		IL_0078: stelem.ref
+		IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007e: pop
+		IL_007f: ret
 	} // end of method ArrowFunction_CapturesOuterVariable::__js_module_init__
 
 } // end of class Modules.ArrowFunction_CapturesOuterVariable

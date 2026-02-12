@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20bd
+			// Method begins at RVA 0x20c9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 97 (0x61)
+		// Code size: 109 (0x6d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Ceil_Sqrt_Basic/Scope,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Math_Ceil_Sqrt_Basic/Scope::.ctor()
@@ -54,34 +55,40 @@
 		IL_0006: ldc.r8 9
 		IL_000f: box [System.Runtime]System.Double
 		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Math::sqrt(object)
-		IL_0019: stloc.1
-		IL_001a: ldc.r8 1.2
-		IL_0023: box [System.Runtime]System.Double
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Math::ceil(object)
-		IL_002d: stloc.2
-		IL_002e: ldc.r8 1.2
-		IL_0037: neg
-		IL_0038: box [System.Runtime]System.Double
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Math::ceil(object)
-		IL_0042: stloc.3
-		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0048: ldc.i4.3
-		IL_0049: newarr [System.Runtime]System.Object
-		IL_004e: dup
-		IL_004f: ldc.i4.0
-		IL_0050: ldloc.1
-		IL_0051: stelem.ref
-		IL_0052: dup
-		IL_0053: ldc.i4.1
-		IL_0054: ldloc.2
-		IL_0055: stelem.ref
-		IL_0056: dup
-		IL_0057: ldc.i4.2
-		IL_0058: ldloc.3
-		IL_0059: stelem.ref
-		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005f: pop
-		IL_0060: ret
+		IL_0019: stloc.s 4
+		IL_001b: ldloc.s 4
+		IL_001d: stloc.1
+		IL_001e: ldc.r8 1.2
+		IL_0027: box [System.Runtime]System.Double
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Math::ceil(object)
+		IL_0031: stloc.s 4
+		IL_0033: ldloc.s 4
+		IL_0035: stloc.2
+		IL_0036: ldc.r8 1.2
+		IL_003f: neg
+		IL_0040: box [System.Runtime]System.Double
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Math::ceil(object)
+		IL_004a: stloc.s 4
+		IL_004c: ldloc.s 4
+		IL_004e: stloc.3
+		IL_004f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0054: ldc.i4.3
+		IL_0055: newarr [System.Runtime]System.Object
+		IL_005a: dup
+		IL_005b: ldc.i4.0
+		IL_005c: ldloc.1
+		IL_005d: stelem.ref
+		IL_005e: dup
+		IL_005f: ldc.i4.1
+		IL_0060: ldloc.2
+		IL_0061: stelem.ref
+		IL_0062: dup
+		IL_0063: ldc.i4.2
+		IL_0064: ldloc.3
+		IL_0065: stelem.ref
+		IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006b: pop
+		IL_006c: ret
 	} // end of method Math_Ceil_Sqrt_Basic::__js_module_init__
 
 } // end of class Modules.Math_Ceil_Sqrt_Basic
@@ -93,7 +100,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c6
+		// Method begins at RVA 0x20d2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
