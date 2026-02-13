@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2346
+				// Method begins at RVA 0x233e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x234f
+				// Method begins at RVA 0x2347
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2358
+				// Method begins at RVA 0x2350
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2361
+				// Method begins at RVA 0x2359
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +98,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x236a
+				// Method begins at RVA 0x2362
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -171,13 +171,12 @@
 				object z
 			) cil managed 
 		{
-			// Method begins at RVA 0x22b8
+			// Method begins at RVA 0x22b4
 			// Header size: 12
-			// Code size: 121 (0x79)
+			// Code size: 117 (0x75)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] float64
 			)
 
 			IL_0000: ldarg.1
@@ -209,25 +208,21 @@
 			IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0050: mul
 			IL_0051: stloc.0
-			IL_0052: ldloc.0
-			IL_0053: ldarg.3
-			IL_0054: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0059: mul
-			IL_005a: stloc.0
-			IL_005b: ldloc.0
-			IL_005c: box [System.Runtime]System.Double
-			IL_0061: stloc.1
-			IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0067: ldc.i4.1
-			IL_0068: newarr [System.Runtime]System.Object
-			IL_006d: dup
-			IL_006e: ldc.i4.0
-			IL_006f: ldloc.1
-			IL_0070: stelem.ref
-			IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0076: pop
-			IL_0077: ldnull
-			IL_0078: ret
+			IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0057: ldc.i4.1
+			IL_0058: newarr [System.Runtime]System.Object
+			IL_005d: dup
+			IL_005e: ldc.i4.0
+			IL_005f: ldloc.0
+			IL_0060: ldarg.3
+			IL_0061: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0066: mul
+			IL_0067: box [System.Runtime]System.Double
+			IL_006c: stelem.ref
+			IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0072: pop
+			IL_0073: ldnull
+			IL_0074: ret
 		} // end of method Calculator::multiply
 
 		.method public hidebysig 
@@ -235,7 +230,7 @@
 				object name
 			) cil managed 
 		{
-			// Method begins at RVA 0x227c
+			// Method begins at RVA 0x2278
 			// Header size: 12
 			// Code size: 48 (0x30)
 			.maxstack 8
@@ -275,47 +270,42 @@
 		{
 			// Method begins at RVA 0x2220
 			// Header size: 12
-			// Code size: 77 (0x4d)
+			// Code size: 75 (0x4b)
 			.maxstack 8
-			.locals init (
-				[0] float64
-			)
 
 			IL_0000: ldarg.2
-			IL_0001: brtrue IL_001f
+			IL_0001: brtrue IL_001d
 
 			IL_0006: ldarg.1
 			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_000c: ldc.r8 2
 			IL_0015: mul
-			IL_0016: stloc.0
-			IL_0017: ldloc.0
-			IL_0018: box [System.Runtime]System.Double
-			IL_001d: starg.s b
+			IL_0016: box [System.Runtime]System.Double
+			IL_001b: starg.s b
 
-			IL_001f: ldarg.3
-			IL_0020: brtrue IL_0036
+			IL_001d: ldarg.3
+			IL_001e: brtrue IL_0034
 
-			IL_0025: ldarg.1
-			IL_0026: ldarg.2
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_002c: pop
-			IL_002d: ldarg.1
-			IL_002e: ldarg.2
-			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0034: starg.s c
+			IL_0023: ldarg.1
+			IL_0024: ldarg.2
+			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_002a: pop
+			IL_002b: ldarg.1
+			IL_002c: ldarg.2
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0032: starg.s c
 
-			IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_003b: ldc.i4.1
-			IL_003c: newarr [System.Runtime]System.Object
-			IL_0041: dup
-			IL_0042: ldc.i4.0
-			IL_0043: ldarg.3
-			IL_0044: stelem.ref
-			IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_004a: pop
-			IL_004b: ldnull
-			IL_004c: ret
+			IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0039: ldc.i4.1
+			IL_003a: newarr [System.Runtime]System.Object
+			IL_003f: dup
+			IL_0040: ldc.i4.0
+			IL_0041: ldarg.3
+			IL_0042: stelem.ref
+			IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0048: pop
+			IL_0049: ldnull
+			IL_004a: ret
 		} // end of method Calculator::calculate
 
 	} // end of class Calculator
@@ -327,7 +317,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x233d
+			// Method begins at RVA 0x2335
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -465,7 +455,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2373
+		// Method begins at RVA 0x236b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
