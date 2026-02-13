@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21be
+				// Method begins at RVA 0x219a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b5
+			// Method begins at RVA 0x2191
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,7 +62,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 345 (0x159)
+		// Code size: 309 (0x135)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CompoundAssignment_RightShiftAssignment/Scope,
@@ -92,124 +92,100 @@
 		IL_0024: box [System.Runtime]System.Double
 		IL_0029: stloc.s 6
 		IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0030: ldc.i4.2
-		IL_0031: newarr [System.Runtime]System.Object
-		IL_0036: dup
-		IL_0037: ldc.i4.0
-		IL_0038: ldstr "x after 16 >>= 2:"
-		IL_003d: stelem.ref
-		IL_003e: dup
-		IL_003f: ldc.i4.1
-		IL_0040: ldloc.s 6
-		IL_0042: stelem.ref
-		IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0048: pop
-		IL_0049: ldc.r8 16
-		IL_0052: neg
-		IL_0053: box [System.Runtime]System.Double
-		IL_0058: stloc.2
-		IL_0059: ldloc.2
-		IL_005a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_005f: conv.i4
-		IL_0060: ldc.r8 2
-		IL_0069: conv.i4
-		IL_006a: shr
-		IL_006b: conv.r8
-		IL_006c: stloc.s 5
-		IL_006e: ldloc.s 5
-		IL_0070: box [System.Runtime]System.Double
-		IL_0075: stloc.s 6
-		IL_0077: ldloc.s 6
-		IL_0079: stloc.2
-		IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007f: ldc.i4.2
-		IL_0080: newarr [System.Runtime]System.Object
-		IL_0085: dup
-		IL_0086: ldc.i4.0
-		IL_0087: ldstr "neg after -16 >>= 2:"
-		IL_008c: stelem.ref
-		IL_008d: dup
-		IL_008e: ldc.i4.1
-		IL_008f: ldloc.2
-		IL_0090: stelem.ref
-		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0096: pop
-		IL_0097: ldc.r8 64
-		IL_00a0: stloc.3
-		IL_00a1: ldc.r8 0.0
-		IL_00aa: stloc.s 4
-		// loop start (head: IL_00ac)
-			IL_00ac: ldloc.s 4
-			IL_00ae: ldc.r8 3
-			IL_00b7: clt
-			IL_00b9: brfalse IL_0132
+		IL_0030: ldstr "x after 16 >>= 2:"
+		IL_0035: ldloc.s 6
+		IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_003c: pop
+		IL_003d: ldc.r8 16
+		IL_0046: neg
+		IL_0047: box [System.Runtime]System.Double
+		IL_004c: stloc.2
+		IL_004d: ldloc.2
+		IL_004e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0053: conv.i4
+		IL_0054: ldc.r8 2
+		IL_005d: conv.i4
+		IL_005e: shr
+		IL_005f: conv.r8
+		IL_0060: stloc.s 5
+		IL_0062: ldloc.s 5
+		IL_0064: box [System.Runtime]System.Double
+		IL_0069: stloc.s 6
+		IL_006b: ldloc.s 6
+		IL_006d: stloc.2
+		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0073: ldstr "neg after -16 >>= 2:"
+		IL_0078: ldloc.2
+		IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_007e: pop
+		IL_007f: ldc.r8 64
+		IL_0088: stloc.3
+		IL_0089: ldc.r8 0.0
+		IL_0092: stloc.s 4
+		// loop start (head: IL_0094)
+			IL_0094: ldloc.s 4
+			IL_0096: ldc.r8 3
+			IL_009f: clt
+			IL_00a1: brfalse IL_011a
 
-			IL_00be: ldloc.3
-			IL_00bf: conv.i4
-			IL_00c0: ldc.r8 1
-			IL_00c9: conv.i4
-			IL_00ca: shr
-			IL_00cb: conv.r8
-			IL_00cc: stloc.s 5
-			IL_00ce: ldloc.s 5
-			IL_00d0: stloc.3
-			IL_00d1: ldloc.s 4
-			IL_00d3: ldc.r8 1
-			IL_00dc: add
-			IL_00dd: stloc.s 5
-			IL_00df: ldloc.s 5
-			IL_00e1: box [System.Runtime]System.Double
-			IL_00e6: stloc.s 6
-			IL_00e8: ldloc.3
-			IL_00e9: box [System.Runtime]System.Double
-			IL_00ee: stloc.s 7
-			IL_00f0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00f5: ldc.i4.4
-			IL_00f6: newarr [System.Runtime]System.Object
-			IL_00fb: dup
-			IL_00fc: ldc.i4.0
-			IL_00fd: ldstr "value after shift"
-			IL_0102: stelem.ref
-			IL_0103: dup
-			IL_0104: ldc.i4.1
-			IL_0105: ldloc.s 6
-			IL_0107: stelem.ref
-			IL_0108: dup
-			IL_0109: ldc.i4.2
-			IL_010a: ldstr ":"
-			IL_010f: stelem.ref
-			IL_0110: dup
-			IL_0111: ldc.i4.3
-			IL_0112: ldloc.s 7
-			IL_0114: stelem.ref
-			IL_0115: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_011a: pop
-			IL_011b: ldloc.s 4
-			IL_011d: ldc.r8 1
-			IL_0126: add
-			IL_0127: stloc.s 5
-			IL_0129: ldloc.s 5
-			IL_012b: stloc.s 4
-			IL_012d: br IL_00ac
+			IL_00a6: ldloc.3
+			IL_00a7: conv.i4
+			IL_00a8: ldc.r8 1
+			IL_00b1: conv.i4
+			IL_00b2: shr
+			IL_00b3: conv.r8
+			IL_00b4: stloc.s 5
+			IL_00b6: ldloc.s 5
+			IL_00b8: stloc.3
+			IL_00b9: ldloc.s 4
+			IL_00bb: ldc.r8 1
+			IL_00c4: add
+			IL_00c5: stloc.s 5
+			IL_00c7: ldloc.s 5
+			IL_00c9: box [System.Runtime]System.Double
+			IL_00ce: stloc.s 6
+			IL_00d0: ldloc.3
+			IL_00d1: box [System.Runtime]System.Double
+			IL_00d6: stloc.s 7
+			IL_00d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00dd: ldc.i4.4
+			IL_00de: newarr [System.Runtime]System.Object
+			IL_00e3: dup
+			IL_00e4: ldc.i4.0
+			IL_00e5: ldstr "value after shift"
+			IL_00ea: stelem.ref
+			IL_00eb: dup
+			IL_00ec: ldc.i4.1
+			IL_00ed: ldloc.s 6
+			IL_00ef: stelem.ref
+			IL_00f0: dup
+			IL_00f1: ldc.i4.2
+			IL_00f2: ldstr ":"
+			IL_00f7: stelem.ref
+			IL_00f8: dup
+			IL_00f9: ldc.i4.3
+			IL_00fa: ldloc.s 7
+			IL_00fc: stelem.ref
+			IL_00fd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0102: pop
+			IL_0103: ldloc.s 4
+			IL_0105: ldc.r8 1
+			IL_010e: add
+			IL_010f: stloc.s 5
+			IL_0111: ldloc.s 5
+			IL_0113: stloc.s 4
+			IL_0115: br IL_0094
 		// end loop
 
-		IL_0132: ldloc.3
-		IL_0133: box [System.Runtime]System.Double
-		IL_0138: stloc.s 7
-		IL_013a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_013f: ldc.i4.2
-		IL_0140: newarr [System.Runtime]System.Object
-		IL_0145: dup
-		IL_0146: ldc.i4.0
-		IL_0147: ldstr "final value:"
-		IL_014c: stelem.ref
-		IL_014d: dup
-		IL_014e: ldc.i4.1
-		IL_014f: ldloc.s 7
-		IL_0151: stelem.ref
-		IL_0152: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0157: pop
-		IL_0158: ret
+		IL_011a: ldloc.3
+		IL_011b: box [System.Runtime]System.Double
+		IL_0120: stloc.s 7
+		IL_0122: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0127: ldstr "final value:"
+		IL_012c: ldloc.s 7
+		IL_012e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0133: pop
+		IL_0134: ret
 	} // end of method CompoundAssignment_RightShiftAssignment::__js_module_init__
 
 } // end of class Modules.CompoundAssignment_RightShiftAssignment
@@ -221,7 +197,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c7
+		// Method begins at RVA 0x21a3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

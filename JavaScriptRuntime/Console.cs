@@ -31,6 +31,241 @@ namespace JavaScriptRuntime
 
         public object? warn(params object?[] args) => Warn(args);
 
+        // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
+        // These inline the formatting logic to avoid creating arrays.
+
+        public object? log()
+        {
+            _output.WriteLine(string.Empty);
+            return null;
+        }
+
+        public object? log(object? a0)
+        {
+            var sb = new StringBuilder();
+            if (a0 is Array arr)
+            {
+                sb.Append('[');
+                sb.Append(' ');
+                for (int j = 0; j < arr.Count; j++)
+                {
+                    if (j > 0)
+                    {
+                        sb.Append(',');
+                        sb.Append(' ');
+                    }
+                    AppendConsoleArrayValue(sb, arr[j]);
+                }
+                sb.Append(' ');
+                sb.Append(']');
+            }
+            else
+            {
+                sb.Append(DotNet2JSConversions.ToString(a0));
+            }
+            _output.WriteLine(sb.ToString());
+            return null;
+        }
+
+        public object? log(object? a0, object? a1)
+        {
+            var sb = new StringBuilder();
+            
+            if (a0 is Array arr0)
+            {
+                sb.Append('[');
+                sb.Append(' ');
+                for (int j = 0; j < arr0.Count; j++)
+                {
+                    if (j > 0)
+                    {
+                        sb.Append(',');
+                        sb.Append(' ');
+                    }
+                    AppendConsoleArrayValue(sb, arr0[j]);
+                }
+                sb.Append(' ');
+                sb.Append(']');
+            }
+            else
+            {
+                sb.Append(DotNet2JSConversions.ToString(a0));
+            }
+            
+            sb.Append(' ');
+            
+            if (a1 is Array arr1)
+            {
+                sb.Append('[');
+                sb.Append(' ');
+                for (int j = 0; j < arr1.Count; j++)
+                {
+                    if (j > 0)
+                    {
+                        sb.Append(',');
+                        sb.Append(' ');
+                    }
+                    AppendConsoleArrayValue(sb, arr1[j]);
+                }
+                sb.Append(' ');
+                sb.Append(']');
+            }
+            else
+            {
+                sb.Append(DotNet2JSConversions.ToString(a1));
+            }
+            
+            _output.WriteLine(sb.ToString());
+            return null;
+        }
+
+        public object? log(object? a0, object? a1, object? a2)
+        {
+            var sb = new StringBuilder();
+            
+            if (a0 is Array arr0)
+            {
+                sb.Append('[');
+                sb.Append(' ');
+                for (int j = 0; j < arr0.Count; j++)
+                {
+                    if (j > 0)
+                    {
+                        sb.Append(',');
+                        sb.Append(' ');
+                    }
+                    AppendConsoleArrayValue(sb, arr0[j]);
+                }
+                sb.Append(' ');
+                sb.Append(']');
+            }
+            else
+            {
+                sb.Append(DotNet2JSConversions.ToString(a0));
+            }
+            
+            sb.Append(' ');
+            
+            if (a1 is Array arr1)
+            {
+                sb.Append('[');
+                sb.Append(' ');
+                for (int j = 0; j < arr1.Count; j++)
+                {
+                    if (j > 0)
+                    {
+                        sb.Append(',');
+                        sb.Append(' ');
+                    }
+                    AppendConsoleArrayValue(sb, arr1[j]);
+                }
+                sb.Append(' ');
+                sb.Append(']');
+            }
+            else
+            {
+                sb.Append(DotNet2JSConversions.ToString(a1));
+            }
+            
+            sb.Append(' ');
+            
+            if (a2 is Array arr2)
+            {
+                sb.Append('[');
+                sb.Append(' ');
+                for (int j = 0; j < arr2.Count; j++)
+                {
+                    if (j > 0)
+                    {
+                        sb.Append(',');
+                        sb.Append(' ');
+                    }
+                    AppendConsoleArrayValue(sb, arr2[j]);
+                }
+                sb.Append(' ');
+                sb.Append(']');
+            }
+            else
+            {
+                sb.Append(DotNet2JSConversions.ToString(a2));
+            }
+            
+            _output.WriteLine(sb.ToString());
+            return null;
+        }
+
+        public object? error()
+        {
+            _errorOutput.WriteLine(string.Empty);
+            return null;
+        }
+
+        public object? error(object? a0)
+        {
+            var sb = new StringBuilder();
+            sb.Append(DotNet2JSConversions.ToString(a0));
+            _errorOutput.WriteLine(sb.ToString());
+            return null;
+        }
+
+        public object? error(object? a0, object? a1)
+        {
+            var sb = new StringBuilder();
+            sb.Append(DotNet2JSConversions.ToString(a0));
+            sb.Append(' ');
+            sb.Append(DotNet2JSConversions.ToString(a1));
+            _errorOutput.WriteLine(sb.ToString());
+            return null;
+        }
+
+        public object? error(object? a0, object? a1, object? a2)
+        {
+            var sb = new StringBuilder();
+            sb.Append(DotNet2JSConversions.ToString(a0));
+            sb.Append(' ');
+            sb.Append(DotNet2JSConversions.ToString(a1));
+            sb.Append(' ');
+            sb.Append(DotNet2JSConversions.ToString(a2));
+            _errorOutput.WriteLine(sb.ToString());
+            return null;
+        }
+
+        public object? warn()
+        {
+            _errorOutput.WriteLine(string.Empty);
+            return null;
+        }
+
+        public object? warn(object? a0)
+        {
+            var sb = new StringBuilder();
+            sb.Append(DotNet2JSConversions.ToString(a0));
+            _errorOutput.WriteLine(sb.ToString());
+            return null;
+        }
+
+        public object? warn(object? a0, object? a1)
+        {
+            var sb = new StringBuilder();
+            sb.Append(DotNet2JSConversions.ToString(a0));
+            sb.Append(' ');
+            sb.Append(DotNet2JSConversions.ToString(a1));
+            _errorOutput.WriteLine(sb.ToString());
+            return null;
+        }
+
+        public object? warn(object? a0, object? a1, object? a2)
+        {
+            var sb = new StringBuilder();
+            sb.Append(DotNet2JSConversions.ToString(a0));
+            sb.Append(' ');
+            sb.Append(DotNet2JSConversions.ToString(a1));
+            sb.Append(' ');
+            sb.Append(DotNet2JSConversions.ToString(a2));
+            _errorOutput.WriteLine(sb.ToString());
+            return null;
+        }
+
         public object? Log(params object?[] args)
         {
             // Empty prints empty line

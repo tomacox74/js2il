@@ -83,7 +83,7 @@
 		{
 			// Method begins at RVA 0x21a0
 			// Header size: 12
-			// Code size: 155 (0x9b)
+			// Code size: 154 (0x9a)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Exception,
@@ -108,68 +108,67 @@
 				IL_0011: ldc.i4.0
 				IL_0012: ldelem.ref
 				IL_0013: stelem.ref
-				IL_0014: ldloc.3
-				IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-				IL_001a: pop
-				IL_001b: leave IL_0099
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+				IL_0019: pop
+				IL_001a: leave IL_0098
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0020: stloc.0
-				IL_0021: ldloc.0
-				IL_0022: dup
-				IL_0023: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0028: dup
-				IL_0029: brtrue IL_003f
+				IL_001f: stloc.0
+				IL_0020: ldloc.0
+				IL_0021: dup
+				IL_0022: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0027: dup
+				IL_0028: brtrue IL_003e
 
-				IL_002e: pop
-				IL_002f: dup
-				IL_0030: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0035: dup
-				IL_0036: brtrue IL_004b
+				IL_002d: pop
+				IL_002e: dup
+				IL_002f: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0034: dup
+				IL_0035: brtrue IL_004a
 
+				IL_003a: pop
 				IL_003b: pop
-				IL_003c: pop
-				IL_003d: rethrow
+				IL_003c: rethrow
 
-				IL_003f: pop
-				IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0045: stloc.1
-				IL_0046: br IL_004d
+				IL_003e: pop
+				IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0044: stloc.1
+				IL_0045: br IL_004c
 
-				IL_004b: pop
-				IL_004c: stloc.1
+				IL_004a: pop
+				IL_004b: stloc.1
 
-				IL_004d: ldloc.1
-				IL_004e: stloc.s 4
-				IL_0050: ldloc.s 4
-				IL_0052: stloc.2
-				IL_0053: ldloc.2
-				IL_0054: ldstr "name"
-				IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_005e: ldstr ": "
-				IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0068: stloc.s 5
-				IL_006a: ldloc.s 5
-				IL_006c: ldloc.2
-				IL_006d: ldstr "message"
-				IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_007c: stloc.s 5
-				IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0083: ldc.i4.1
-				IL_0084: newarr [System.Runtime]System.Object
-				IL_0089: dup
-				IL_008a: ldc.i4.0
-				IL_008b: ldloc.s 5
-				IL_008d: stelem.ref
-				IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_0093: pop
-				IL_0094: leave IL_0099
+				IL_004c: ldloc.1
+				IL_004d: stloc.s 4
+				IL_004f: ldloc.s 4
+				IL_0051: stloc.2
+				IL_0052: ldloc.2
+				IL_0053: ldstr "name"
+				IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_005d: ldstr ": "
+				IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0067: stloc.s 5
+				IL_0069: ldloc.s 5
+				IL_006b: ldloc.2
+				IL_006c: ldstr "message"
+				IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_007b: stloc.s 5
+				IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0082: ldc.i4.1
+				IL_0083: newarr [System.Runtime]System.Object
+				IL_0088: dup
+				IL_0089: ldc.i4.0
+				IL_008a: ldloc.s 5
+				IL_008c: stelem.ref
+				IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0092: pop
+				IL_0093: leave IL_0098
 			} // end handler
 
-			IL_0099: ldnull
-			IL_009a: ret
+			IL_0098: ldnull
+			IL_0099: ret
 		} // end of method logError::__js_call__
 
 	} // end of class logError

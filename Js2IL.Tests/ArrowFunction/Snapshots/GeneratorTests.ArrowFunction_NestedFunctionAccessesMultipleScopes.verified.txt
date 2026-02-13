@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21a5
+					// Method begins at RVA 0x2181
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -44,7 +44,7 @@
 			{
 				// Method begins at RVA 0x2110
 				// Header size: 12
-				// Code size: 119 (0x77)
+				// Code size: 83 (0x53)
 				.maxstack 8
 				.locals init (
 					[0] string
@@ -53,54 +53,30 @@
 				IL_0000: ldstr "inner"
 				IL_0005: stloc.0
 				IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_000b: ldc.i4.2
-				IL_000c: newarr [System.Runtime]System.Object
-				IL_0011: dup
-				IL_0012: ldc.i4.0
-				IL_0013: ldstr "Global:"
-				IL_0018: stelem.ref
-				IL_0019: dup
-				IL_001a: ldc.i4.1
-				IL_001b: ldarg.0
-				IL_001c: ldc.i4.0
-				IL_001d: ldelem.ref
-				IL_001e: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
-				IL_0023: ldfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope::globalVar
-				IL_0028: stelem.ref
-				IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_002e: pop
-				IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0034: ldc.i4.2
-				IL_0035: newarr [System.Runtime]System.Object
-				IL_003a: dup
-				IL_003b: ldc.i4.0
-				IL_003c: ldstr "Outer:"
-				IL_0041: stelem.ref
-				IL_0042: dup
-				IL_0043: ldc.i4.1
-				IL_0044: ldarg.0
-				IL_0045: ldc.i4.1
-				IL_0046: ldelem.ref
-				IL_0047: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope
-				IL_004c: ldfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope::outerVar
-				IL_0051: stelem.ref
-				IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_0057: pop
-				IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_005d: ldc.i4.2
-				IL_005e: newarr [System.Runtime]System.Object
-				IL_0063: dup
-				IL_0064: ldc.i4.0
-				IL_0065: ldstr "Inner:"
-				IL_006a: stelem.ref
-				IL_006b: dup
-				IL_006c: ldc.i4.1
-				IL_006d: ldloc.0
-				IL_006e: stelem.ref
-				IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_0074: pop
-				IL_0075: ldnull
-				IL_0076: ret
+				IL_000b: ldstr "Global:"
+				IL_0010: ldarg.0
+				IL_0011: ldc.i4.0
+				IL_0012: ldelem.ref
+				IL_0013: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
+				IL_0018: ldfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope::globalVar
+				IL_001d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0022: pop
+				IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0028: ldstr "Outer:"
+				IL_002d: ldarg.0
+				IL_002e: ldc.i4.1
+				IL_002f: ldelem.ref
+				IL_0030: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope
+				IL_0035: ldfld string Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope::outerVar
+				IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_003f: pop
+				IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0045: ldstr "Inner:"
+				IL_004a: ldloc.0
+				IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0050: pop
+				IL_0051: ldnull
+				IL_0052: ret
 			} // end of method ArrowFunction_L8C28::__js_call__
 
 		} // end of class ArrowFunction_L8C28
@@ -119,7 +95,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219c
+				// Method begins at RVA 0x2178
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -141,7 +117,7 @@
 		{
 			// Method begins at RVA 0x20ac
 			// Header size: 12
-			// Code size: 87 (0x57)
+			// Code size: 86 (0x56)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope,
@@ -187,11 +163,10 @@
 			IL_004b: ldc.i4.0
 			IL_004c: ldelem.ref
 			IL_004d: stelem.ref
-			IL_004e: ldloc.3
-			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_0054: pop
-			IL_0055: ldnull
-			IL_0056: ret
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+			IL_0053: pop
+			IL_0054: ldnull
+			IL_0055: ret
 		} // end of method ArrowFunction_L5C22::__js_call__
 
 	} // end of class ArrowFunction_L5C22
@@ -210,7 +185,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2193
+			// Method begins at RVA 0x216f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -236,7 +211,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 78 (0x4e)
+		// Code size: 77 (0x4d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope,
@@ -274,10 +249,9 @@
 		IL_0043: ldc.i4.0
 		IL_0044: ldnull
 		IL_0045: stelem.ref
-		IL_0046: ldloc.3
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_004c: pop
-		IL_004d: ret
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+		IL_004b: pop
+		IL_004c: ret
 	} // end of method ArrowFunction_NestedFunctionAccessesMultipleScopes::__js_module_init__
 
 } // end of class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes
@@ -289,7 +263,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ae
+		// Method begins at RVA 0x218a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
