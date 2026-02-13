@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e2
+				// Method begins at RVA 0x20e3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x20f4
+					// Method begins at RVA 0x20f5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20eb
+				// Method begins at RVA 0x20ec
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x208c
+			// Method begins at RVA 0x2091
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -89,17 +89,16 @@
 		} // end of method C::.ctor
 
 		.method public hidebysig 
-			instance object run () cil managed 
+			instance float64 run () cil managed 
 		{
-			// Method begins at RVA 0x2094
+			// Method begins at RVA 0x209c
 			// Header size: 12
-			// Code size: 57 (0x39)
+			// Code size: 50 (0x32)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
-				[2] float64,
-				[3] object
+				[2] float64
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -122,10 +121,7 @@
 			// end loop
 
 			IL_0030: ldloc.0
-			IL_0031: box [System.Runtime]System.Double
-			IL_0036: stloc.3
-			IL_0037: ldloc.3
-			IL_0038: ret
+			IL_0031: ret
 		} // end of method C::run
 
 	} // end of class C
@@ -137,7 +133,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d9
+			// Method begins at RVA 0x20da
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -163,7 +159,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 48 (0x30)
+		// Code size: 53 (0x35)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ForLoopMin/Scope,
@@ -180,18 +176,19 @@
 		IL_000d: stloc.1
 		IL_000e: ldloc.1
 		IL_000f: castclass Modules.Classes_ForLoopMin/C
-		IL_0014: callvirt instance object Modules.Classes_ForLoopMin/C::run()
-		IL_0019: stloc.3
-		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_001f: ldc.i4.1
-		IL_0020: newarr [System.Runtime]System.Object
-		IL_0025: dup
-		IL_0026: ldc.i4.0
-		IL_0027: ldloc.3
-		IL_0028: stelem.ref
-		IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_002e: pop
-		IL_002f: ret
+		IL_0014: callvirt instance float64 Modules.Classes_ForLoopMin/C::run()
+		IL_0019: box [System.Runtime]System.Double
+		IL_001e: stloc.3
+		IL_001f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0024: ldc.i4.1
+		IL_0025: newarr [System.Runtime]System.Object
+		IL_002a: dup
+		IL_002b: ldc.i4.0
+		IL_002c: ldloc.3
+		IL_002d: stelem.ref
+		IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0033: pop
+		IL_0034: ret
 	} // end of method Classes_ForLoopMin::__js_module_init__
 
 } // end of class Modules.Classes_ForLoopMin
@@ -203,7 +200,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fd
+		// Method begins at RVA 0x20fe
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
