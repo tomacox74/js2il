@@ -179,7 +179,10 @@ public sealed class CallableDiscovery
             
         if (ctor != null)
         {
-            var ctorParamCount = (ctor.Value as FunctionExpression)?.Params.Count ?? 0;
+            var ctorFunc = ctor.Value as FunctionExpression;
+            var ctorParamCount = ctorFunc != null ? CountJsParameters(ctorFunc.Params) : 0;
+            var ctorScope = FindMethodScope(classScope, ctor);
+            var hasRestParams = ctorScope?.HasRestParameters ?? false;
             
             var ctorId = new CallableId
             {
@@ -187,6 +190,7 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = ctorParamCount,
+                HasRestParameters = hasRestParams,
                 AstNode = ctor
             };
             
@@ -194,13 +198,14 @@ public sealed class CallableDiscovery
         }
         else
         {
-            // Default constructor
+            // Default constructor (no parameters, no rest)
             var ctorId = new CallableId
             {
                 Kind = CallableKind.ClassConstructor,
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = 0,
+                HasRestParameters = false,
                 // For synthetic callables we still want a stable AST node for indexing,
                 // but it must be unique per callable (CallableRegistry indexes Node -> CallableId).
                 // Use ClassBody for the default ctor; use ClassDeclaration for .cctor.
@@ -221,6 +226,7 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = 0,
+                HasRestParameters = false,
                 AstNode = classNodeForCctor!
             };
             _discovered.Add(cctorId);
@@ -267,6 +273,9 @@ public sealed class CallableDiscovery
                 _ => JavaScriptCallableNaming.MakeClassMethodCallableName(className, methodName)
             };
             
+            var methodScope = FindMethodScope(classScope, member);
+            var methodHasRestParams = methodScope?.HasRestParameters ?? false;
+            
             var methodId = new CallableId
             {
                 Kind = kind,
@@ -274,6 +283,7 @@ public sealed class CallableDiscovery
                 Name = callableName,
                 Location = location,
                 JsParamCount = methodParamCount,
+                HasRestParameters = methodHasRestParams,
                 AstNode = member
             };
             
@@ -312,6 +322,23 @@ public sealed class CallableDiscovery
             ClassStaticMethods = _discovered.Count(c => c.Kind == CallableKind.ClassStaticMethod),
             ClassStaticInitializers = _discovered.Count(c => c.Kind == CallableKind.ClassStaticInitializer)
         };
+    }
+    
+    /// <summary>
+    /// Finds the scope for a class method definition.
+    /// </summary>
+    private Scope? FindMethodScope(Scope classScope, MethodDefinition methodDef)
+    {
+        foreach (var child in classScope.Children)
+        {
+            if (child.Kind == ScopeKind.Function && 
+                child.AstNode != null && 
+                ReferenceEquals(child.AstNode, methodDef.Value))
+            {
+                return child;
+            }
+        }
+        return null;
     }
     
     /// <summary>
