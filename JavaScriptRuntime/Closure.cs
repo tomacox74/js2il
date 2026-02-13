@@ -376,27 +376,130 @@ namespace JavaScriptRuntime
         }
 
         // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
-        // These forward to the main InvokeWithArgs method, but the compiler can emit direct calls
-        // to avoid allocating the args array when the arity is known at compile time.
+        // These directly invoke the delegate without allocating an args array.
 
         public static object InvokeWithArgs0(object target, object[] scopes)
         {
-            return InvokeWithArgs(target, scopes, System.Array.Empty<object>());
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+
+            var previousArgs = RuntimeServices.SetCurrentArguments(System.Array.Empty<object>());
+            try
+            {
+                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+                {
+                    return require(null)!;
+                }
+
+                if (target is Delegate del)
+                {
+                    // Try fast-path typed invocation first
+                    if (del is Func<object[], object?> f0) return f0(scopes)!;
+                    if (del is Action<object[]> a0) { a0(scopes); return null!; }
+                    
+                    // Fall back to reflection-based invocation
+                    return InvokeDelegateWithArgs(del, scopes, System.Array.Empty<object>());
+                }
+
+                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
         }
 
         public static object InvokeWithArgs1(object target, object[] scopes, object? a0)
         {
-            return InvokeWithArgs(target, scopes, new object?[] { a0 });
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+
+            var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0 });
+            try
+            {
+                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+                {
+                    return require(a0)!;
+                }
+
+                if (target is Delegate del)
+                {
+                    // Try fast-path typed invocation first
+                    if (del is Func<object[], object, object?> f1) return f1(scopes, a0!)!;
+                    if (del is Action<object[], object> a1) { a1(scopes, a0!); return null!; }
+                    
+                    // Fall back to reflection-based invocation
+                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0 });
+                }
+
+                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
         }
 
         public static object InvokeWithArgs2(object target, object[] scopes, object? a0, object? a1)
         {
-            return InvokeWithArgs(target, scopes, new object?[] { a0, a1 });
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+
+            var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1 });
+            try
+            {
+                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+                {
+                    return require(a0)!;
+                }
+
+                if (target is Delegate del)
+                {
+                    // Try fast-path typed invocation first
+                    if (del is Func<object[], object, object, object?> f2) return f2(scopes, a0!, a1!)!;
+                    if (del is Action<object[], object, object> a2) { a2(scopes, a0!, a1!); return null!; }
+                    
+                    // Fall back to reflection-based invocation
+                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1 });
+                }
+
+                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
         }
 
         public static object InvokeWithArgs3(object target, object[] scopes, object? a0, object? a1, object? a2)
         {
-            return InvokeWithArgs(target, scopes, new object?[] { a0, a1, a2 });
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+
+            var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1, a2 });
+            try
+            {
+                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+                {
+                    return require(a0)!;
+                }
+
+                if (target is Delegate del)
+                {
+                    // Try fast-path typed invocation first
+                    if (del is Func<object[], object, object, object, object?> f3) return f3(scopes, a0!, a1!, a2!)!;
+                    if (del is Action<object[], object, object, object> a3) { a3(scopes, a0!, a1!, a2!); return null!; }
+                    
+                    // Fall back to reflection-based invocation
+                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1, a2 });
+                }
+
+                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+            }
         }
 
         private static object? GetArg(object?[] args, int index)
