@@ -33,7 +33,13 @@ public partial class SymbolTableBuilder
         {
             // Reset per-run inferred markers.
             scope.StableReturnIsThis = false;
-            scope.StableReturnClrType = InferStableReturnClrTypeForCallableScope(scope);
+
+            // Async/generator callables never return the direct expression value in JS;
+            // they return a Promise/Iterator wrapper object.
+            // Inferring a primitive return CLR type here would corrupt the emitted method signature.
+            scope.StableReturnClrType = (scope.IsAsync || scope.IsGenerator)
+                ? null
+                : InferStableReturnClrTypeForCallableScope(scope);
         }
 
         foreach (var child in scope.Children)
@@ -719,6 +725,23 @@ public partial class SymbolTableBuilder
 
     Type? InferExpressionClrType(Node expr, Scope? scope = null, Dictionary<string, Type>? proposedTypes = null)
     {
+        static bool IsSupportedNumberLike(Type? t) =>
+            t == typeof(double) || t == typeof(bool) || t == typeof(JavaScriptRuntime.JsNull);
+
+        Scope? FindEnclosingClassScope(Scope? s)
+        {
+            var current = s;
+            while (current != null)
+            {
+                if (current.Kind == ScopeKind.Class)
+                {
+                    return current;
+                }
+                current = current.Parent;
+            }
+            return null;
+        }
+
         switch (expr)
         {
             case Identifier id:
@@ -762,6 +785,63 @@ public partial class SymbolTableBuilder
                 if (ne.Callee is Identifier ctorId && string.Equals(ctorId.Name, "Array", StringComparison.Ordinal))
                 {
                     return typeof(JavaScriptRuntime.Array);
+                }
+
+                // new <Intrinsic>(...) (e.g., Int32Array)
+                if (ne.Callee is Identifier intrinsicCtorId)
+                {
+                    return JavaScriptRuntime.IntrinsicObjectRegistry.Get(intrinsicCtorId.Name);
+                }
+
+                return null;
+            }
+            case MemberExpression me:
+            {
+                // this.<field>
+                if (me.Object is ThisExpression && !me.Computed)
+                {
+                    var fieldName = me.Property switch
+                    {
+                        Identifier fid => fid.Name,
+                        PrivateIdentifier pid => pid.Name,
+                        _ => null
+                    };
+
+                    if (!string.IsNullOrEmpty(fieldName))
+                    {
+                        var classScope = FindEnclosingClassScope(scope);
+                        if (classScope != null && classScope.StableInstanceFieldClrTypes.TryGetValue(fieldName, out var fieldClrType))
+                        {
+                            return fieldClrType;
+                        }
+                    }
+
+                    return null;
+                }
+
+                // <expr>.length
+                if (!me.Computed && me.Property is Identifier propId && string.Equals(propId.Name, "length", StringComparison.Ordinal))
+                {
+                    var receiverType = InferExpressionClrType(me.Object, scope, proposedTypes);
+                    if (receiverType == typeof(JavaScriptRuntime.Array) || receiverType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        return typeof(double);
+                    }
+                }
+
+                // <typedArray>[index]
+                if (me.Computed)
+                {
+                    var receiverType = InferExpressionClrType(me.Object, scope, proposedTypes);
+                    if (receiverType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        var indexType = InferExpressionClrType(me.Property, scope, proposedTypes);
+                        // Numeric index required (JS will ToNumber, but we only infer when it's already clearly number-like).
+                        if (IsSupportedNumberLike(indexType))
+                        {
+                            return typeof(double);
+                        }
+                    }
                 }
 
                 return null;
