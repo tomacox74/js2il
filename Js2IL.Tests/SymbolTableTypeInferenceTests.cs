@@ -417,6 +417,23 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_PrimeJavaScript_RunSieve_InfersQIsNumber()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var binding = symbolTable.GetBindingInfo("PrimeSieve/runSieve/q");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(double), binding.ClrType);
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_PrimeStyle_TypedArrayElementRead_InfersWordValueIsNumber()
     {
         // This reproduces the PrimeJavaScript pattern:

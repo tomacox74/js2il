@@ -728,6 +728,29 @@ public partial class SymbolTableBuilder
         static bool IsSupportedNumberLike(Type? t) =>
             t == typeof(double) || t == typeof(bool) || t == typeof(JavaScriptRuntime.JsNull);
 
+        static bool IsIdentifierShadowed(Scope? s, string name)
+        {
+            var current = s;
+            while (current != null)
+            {
+                if (current.Bindings.ContainsKey(name))
+                {
+                    return true;
+                }
+                current = current.Parent;
+            }
+            return false;
+        }
+
+        static bool IsSupportedMathNumberMethod(string? name) =>
+            name != null && (name == "abs" || name == "acos" || name == "acosh" || name == "asin" || name == "asinh" ||
+                             name == "atan" || name == "atan2" || name == "atanh" || name == "cbrt" || name == "ceil" ||
+                             name == "clz32" || name == "cos" || name == "cosh" || name == "exp" || name == "expm1" ||
+                             name == "floor" || name == "fround" || name == "hypot" || name == "imul" || name == "log" ||
+                             name == "log10" || name == "log1p" || name == "log2" || name == "max" || name == "min" ||
+                             name == "pow" || name == "random" || name == "round" || name == "sign" || name == "sin" ||
+                             name == "sinh" || name == "sqrt" || name == "tan" || name == "tanh" || name == "trunc");
+
         Scope? FindEnclosingClassScope(Scope? s)
         {
             var current = s;
@@ -848,6 +871,19 @@ public partial class SymbolTableBuilder
             }
             case CallExpression ce:
             {
+                // Math.*(...) numeric helpers
+                // (e.g., const q = Math.ceil(Math.sqrt(this.sieveSizeInBits));)
+                if (ce.Callee is MemberExpression mathMe &&
+                    !mathMe.Computed &&
+                    mathMe.Object is Identifier mathId &&
+                    string.Equals(mathId.Name, "Math", StringComparison.Ordinal) &&
+                    mathMe.Property is Identifier mathMethodId &&
+                    !IsIdentifierShadowed(scope, "Math") &&
+                    IsSupportedMathNumberMethod(mathMethodId.Name))
+                {
+                    return typeof(double);
+                }
+
                 // Array.of(...) / Array.from(...)
                 if (ce.Callee is MemberExpression me && me.Object is Identifier objId && string.Equals(objId.Name, "Array", StringComparison.Ordinal))
                 {
