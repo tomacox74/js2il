@@ -187,8 +187,8 @@ internal static class LIRIntrinsicNormalization
 
                 // Int32Array element set (numeric index + numeric value).
                 if (receiverType == typeof(JavaScriptRuntime.Int32Array)
-                    && IsUnboxedDouble(methodBody, setItem.Index)
-                    && IsUnboxedDouble(methodBody, setItem.Value))
+                    && IsNumericDouble(methodBody, setItem.Index)
+                    && IsNumericDouble(methodBody, setItem.Value))
                 {
                     // Rewrite: SetItem(receiver, indexDouble, valueDouble, result) -> SetInt32ArrayElement(receiver, indexDouble, valueDouble, result)
                     methodBody.Instructions[i] = new LIRSetInt32ArrayElement(setItem.Object, setItem.Index, setItem.Value, setItem.Result);
@@ -196,11 +196,30 @@ internal static class LIRIntrinsicNormalization
                     // Ensure result storage is unboxed double when materialized.
                     if (setItem.Result.Index >= 0)
                     {
-                        methodBody.TempStorages[setItem.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                        if (IsUnboxedDouble(methodBody, setItem.Value))
+                        {
+                            methodBody.TempStorages[setItem.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                        }
                     }
                 }
             }
         }
+    }
+
+    private static bool IsNumericDouble(MethodBodyIR methodBody, TempVariable temp)
+    {
+        return IsUnboxedDouble(methodBody, temp) || IsBoxedDouble(methodBody, temp);
+    }
+
+    private static bool IsBoxedDouble(MethodBodyIR methodBody, TempVariable temp)
+    {
+        if (temp.Index < 0 || temp.Index >= methodBody.TempStorages.Count)
+        {
+            return false;
+        }
+
+        var storage = methodBody.TempStorages[temp.Index];
+        return storage.Kind == ValueStorageKind.BoxedValue && storage.ClrType == typeof(double);
     }
 
     private static void NormalizeCommonJsRequireCalls(MethodBodyIR methodBody)

@@ -365,6 +365,15 @@ internal sealed partial class LIRToILCompiler
             return;
         }
 
+        // Fast-path: boxed double -> unbox.any double (avoid ToNumber runtime call)
+        if (storage.Kind == ValueStorageKind.BoxedValue && storage.ClrType == typeof(double))
+        {
+            EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Unbox_any);
+            ilEncoder.Token(_bclReferences.DoubleType);
+            return;
+        }
+
         // Peephole: avoid boxing a known double just to immediately coerce it back to double.
         // This happens when lowering inserts ConvertToObject around numeric literals/constants.
         if (!IsMaterialized(value, allocation) && TryFindDefInstruction(value) is LIRConvertToObject convertToObject && convertToObject.SourceType == typeof(double))

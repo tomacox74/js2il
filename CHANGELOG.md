@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- Performance: restore Int32Array element-set fast-path when index/value are boxed doubles (avoids `Object.SetItem` in hot loops; improves prime sieve performance).
 
 ## v0.8.8 - 2026-02-13
 
