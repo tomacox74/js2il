@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 - IL/Performance: stackify typed numeric arithmetic ops (`LIR*Number`) when operands are inlineable, reducing temp-local materialization and emitted IL noise in arithmetic-heavy code.
 - Compiler/type-inference: improve Prime sieve numeric inference (typed-array reads + numeric locals like `q`/`step`/`start`) to keep hot-loop values unboxed and reduce `ToNumber(object)` overhead.
+- Credits: @tomacox74.
 
 ## v0.8.9 - 2026-02-13
 
