@@ -20,6 +20,11 @@ internal sealed partial class LIRToILCompiler
         switch (instruction)
         {
             case LIRAddNumber addNumber:
+                if (!IsMaterialized(addNumber.Result, allocation))
+                {
+                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    break;
+                }
                 TryEmitStackValueInstruction(addNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(addNumber.Result, ilEncoder, allocation);
                 break;
@@ -51,10 +56,20 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(addDynamicObjectDouble.Result, ilEncoder, allocation);
                 break;
             case LIRSubNumber subNumber:
+                if (!IsMaterialized(subNumber.Result, allocation))
+                {
+                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    break;
+                }
                 TryEmitStackValueInstruction(subNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(subNumber.Result, ilEncoder, allocation);
                 break;
             case LIRMulNumber mulNumber:
+                if (!IsMaterialized(mulNumber.Result, allocation))
+                {
+                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    break;
+                }
                 TryEmitStackValueInstruction(mulNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(mulNumber.Result, ilEncoder, allocation);
                 break;
@@ -297,18 +312,33 @@ internal sealed partial class LIRToILCompiler
             
             // Division
             case LIRDivNumber divNumber:
+                if (!IsMaterialized(divNumber.Result, allocation))
+                {
+                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    break;
+                }
                 TryEmitStackValueInstruction(divNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(divNumber.Result, ilEncoder, allocation);
                 break;
 
             // Remainder (modulo)
             case LIRModNumber modNumber:
+                if (!IsMaterialized(modNumber.Result, allocation))
+                {
+                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    break;
+                }
                 TryEmitStackValueInstruction(modNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(modNumber.Result, ilEncoder, allocation);
                 break;
 
             // Exponentiation (Math.Pow)
             case LIRExpNumber expNumber:
+                if (!IsMaterialized(expNumber.Result, allocation))
+                {
+                    // Stackify will re-emit this pure numeric operation inline at the single use site.
+                    break;
+                }
                 TryEmitStackValueInstruction(expNumber, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(expNumber.Result, ilEncoder, allocation);
                 break;

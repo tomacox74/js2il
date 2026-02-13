@@ -416,6 +416,101 @@ public class SymbolTableTypeInferenceTests
         Assert.True(methodScope!.StableReturnIsThis);
     }
 
+    [Fact]
+    public void SymbolTable_InferTypes_PrimeJavaScript_RunSieve_InfersQIsNumber()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var binding = symbolTable.GetBindingInfo("PrimeSieve/runSieve/q");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(double), binding.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_PrimeJavaScript_RunSieve_InfersStepAndStartAreNumbers()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var classScope = FindClassScope(symbolTable.Root, "PrimeSieve");
+        Assert.NotNull(classScope);
+
+        var methodScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Class
+            && string.Equals(s.Name, "runSieve", StringComparison.Ordinal));
+        Assert.NotNull(methodScope);
+
+        // step/start are declared inside the `while` body block scope.
+        var step = FindBindingByName(methodScope!, "step");
+        Assert.NotNull(step);
+        Assert.True(step!.IsStableType);
+        Assert.Equal(typeof(double), step.ClrType);
+
+        var start = FindBindingByName(methodScope!, "start");
+        Assert.NotNull(start);
+        Assert.True(start!.IsStableType);
+        Assert.Equal(typeof(double), start.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_PrimeStyle_TypedArrayElementRead_InfersWordValueIsNumber()
+    {
+        // This reproduces the PrimeJavaScript pattern:
+        // let wordValue = this.wordArray[wordOffset];
+        var source = @"
+                'use strict';
+
+                const WORD_SIZE = 32;
+
+                class BitArray {
+                    constructor(size) {
+                        this.wordArray = new Int32Array(1 + (size >>> 5));
+                    }
+
+                    setBitsTrue(range_start, step, range_stop) {
+                        let index = range_start;
+                        let wordOffset = index >>> 5;
+                        let wordValue = this.wordArray[wordOffset];
+
+                        while (index < range_stop) {
+                            const bitOffset = index & 31;
+                            wordValue |= (1 << bitOffset);
+                            index += step;
+                            const newwordOffset = index >>> 5;
+                            if (newwordOffset != wordOffset) {
+                                this.wordArray[wordOffset] = wordValue;
+                                wordOffset = newwordOffset;
+                                wordValue = this.wordArray[wordOffset];
+                            }
+                        }
+
+                        this.wordArray[wordOffset] = wordValue;
+                    }
+                }
+
+                new BitArray(64).setBitsTrue(4, 3, 64);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var binding = symbolTable.GetBindingInfo("BitArray/setBitsTrue/wordValue");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(double), binding.ClrType);
+    }
+
     private static Js2IL.SymbolTables.Scope? FindFirstScope(Js2IL.SymbolTables.Scope scope, Func<Js2IL.SymbolTables.Scope, bool> predicate)
     {
         if (predicate(scope))

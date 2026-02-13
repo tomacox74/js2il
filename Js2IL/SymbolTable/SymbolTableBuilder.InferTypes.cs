@@ -33,7 +33,13 @@ public partial class SymbolTableBuilder
         {
             // Reset per-run inferred markers.
             scope.StableReturnIsThis = false;
-            scope.StableReturnClrType = InferStableReturnClrTypeForCallableScope(scope);
+
+            // Async/generator callables never return the direct expression value in JS;
+            // they return a Promise/Iterator wrapper object.
+            // Inferring a primitive return CLR type here would corrupt the emitted method signature.
+            scope.StableReturnClrType = (scope.IsAsync || scope.IsGenerator)
+                ? null
+                : InferStableReturnClrTypeForCallableScope(scope);
         }
 
         foreach (var child in scope.Children)
@@ -189,6 +195,80 @@ public partial class SymbolTableBuilder
         }
 
         var inferred = InferExpressionClrType(onlyReturn.Argument, callableScope);
+
+        bool IsIdentifierForcedNumericBeforeReturn(string name)
+        {
+            bool forcedNumeric = false;
+
+            void Walk(Node? node)
+            {
+                if (node == null)
+                {
+                    return;
+                }
+
+                // Do not traverse into nested function boundaries.
+                if (node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression)
+                {
+                    if (!ReferenceEquals(node, functionBoundaryNode))
+                    {
+                        return;
+                    }
+                }
+
+                if (node is UpdateExpression ue && ue.Argument is Identifier uid && string.Equals(uid.Name, name, StringComparison.Ordinal))
+                {
+                    // ++/-- forces ToNumber and the variable becomes a number afterwards.
+                    forcedNumeric = true;
+                    return;
+                }
+
+                if (node is AssignmentExpression ae && ae.Left is Identifier aid && string.Equals(aid.Name, name, StringComparison.Ordinal))
+                {
+                    var rhs = InferExpressionClrType(ae.Right, callableScope);
+                    if (rhs == typeof(double))
+                    {
+                        forcedNumeric = true;
+                        return;
+                    }
+
+                    // Any clearly non-numeric assignment makes it unsafe to infer.
+                    if (rhs != null && rhs != typeof(double))
+                    {
+                        forcedNumeric = false;
+                        return;
+                    }
+                }
+
+                foreach (var child in node.ChildNodes)
+                {
+                    Walk(child);
+                }
+            }
+
+            // Walk everything except the return itself.
+            foreach (var stmt in body.Body)
+            {
+                if (ReferenceEquals(stmt, onlyReturn))
+                {
+                    break;
+                }
+                Walk(stmt);
+            }
+
+            return forcedNumeric;
+        }
+
+        if (inferred == null && onlyReturn.Argument is Identifier rid)
+        {
+            // Common Prime-style pattern in class methods:
+            // searchBitFalse(index) { while (...) { index++; } return index; }
+            // Parameters are object-typed, but update expressions force them numeric.
+            if (IsIdentifierForcedNumericBeforeReturn(rid.Name))
+            {
+                inferred = typeof(double);
+            }
+        }
 
         // Only allow a small, well-understood value-like primitive set.
         // (String return typing needs additional lowering guarantees; keep it disabled for now.)
@@ -719,6 +799,75 @@ public partial class SymbolTableBuilder
 
     Type? InferExpressionClrType(Node expr, Scope? scope = null, Dictionary<string, Type>? proposedTypes = null)
     {
+        static bool IsSupportedNumberLike(Type? t) =>
+            t == typeof(double) || t == typeof(bool) || t == typeof(JavaScriptRuntime.JsNull);
+
+        static bool IsIdentifierShadowed(Scope? s, string name)
+        {
+            var current = s;
+            while (current != null)
+            {
+                if (current.Bindings.ContainsKey(name))
+                {
+                    return true;
+                }
+                current = current.Parent;
+            }
+            return false;
+        }
+
+        static bool IsSupportedMathNumberMethod(string? name) =>
+            name != null && (name == "abs" || name == "acos" || name == "acosh" || name == "asin" || name == "asinh" ||
+                             name == "atan" || name == "atan2" || name == "atanh" || name == "cbrt" || name == "ceil" ||
+                             name == "clz32" || name == "cos" || name == "cosh" || name == "exp" || name == "expm1" ||
+                             name == "floor" || name == "fround" || name == "hypot" || name == "imul" || name == "log" ||
+                             name == "log10" || name == "log1p" || name == "log2" || name == "max" || name == "min" ||
+                             name == "pow" || name == "random" || name == "round" || name == "sign" || name == "sin" ||
+                             name == "sinh" || name == "sqrt" || name == "tan" || name == "tanh" || name == "trunc");
+
+        Scope? FindEnclosingClassScope(Scope? s)
+        {
+            var current = s;
+            while (current != null)
+            {
+                if (current.Kind == ScopeKind.Class)
+                {
+                    return current;
+                }
+                current = current.Parent;
+            }
+            return null;
+        }
+
+        static Scope? FindRootScope(Scope? s)
+        {
+            var current = s;
+            while (current?.Parent != null)
+            {
+                current = current.Parent;
+            }
+            return current;
+        }
+
+        static Scope? FindClassScopeRecursive(Scope scope, string className)
+        {
+            if (scope.Kind == ScopeKind.Class && string.Equals(scope.Name, className, StringComparison.Ordinal))
+            {
+                return scope;
+            }
+
+            foreach (var child in scope.Children)
+            {
+                var found = FindClassScopeRecursive(child, className);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
         switch (expr)
         {
             case Identifier id:
@@ -764,10 +913,115 @@ public partial class SymbolTableBuilder
                     return typeof(JavaScriptRuntime.Array);
                 }
 
+                // new <Intrinsic>(...) (e.g., Int32Array)
+                if (ne.Callee is Identifier intrinsicCtorId)
+                {
+                    return JavaScriptRuntime.IntrinsicObjectRegistry.Get(intrinsicCtorId.Name);
+                }
+
+                return null;
+            }
+            case MemberExpression me:
+            {
+                // this.<field>
+                if (me.Object is ThisExpression && !me.Computed)
+                {
+                    var fieldName = me.Property switch
+                    {
+                        Identifier fid => fid.Name,
+                        PrivateIdentifier pid => pid.Name,
+                        _ => null
+                    };
+
+                    if (!string.IsNullOrEmpty(fieldName))
+                    {
+                        var classScope = FindEnclosingClassScope(scope);
+                        if (classScope != null && classScope.StableInstanceFieldClrTypes.TryGetValue(fieldName, out var fieldClrType))
+                        {
+                            return fieldClrType;
+                        }
+                    }
+
+                    return null;
+                }
+
+                // <expr>.length
+                if (!me.Computed && me.Property is Identifier propId && string.Equals(propId.Name, "length", StringComparison.Ordinal))
+                {
+                    var receiverType = InferExpressionClrType(me.Object, scope, proposedTypes);
+                    if (receiverType == typeof(JavaScriptRuntime.Array) || receiverType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        return typeof(double);
+                    }
+                }
+
+                // <typedArray>[index]
+                if (me.Computed)
+                {
+                    var receiverType = InferExpressionClrType(me.Object, scope, proposedTypes);
+                    if (receiverType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        var indexType = InferExpressionClrType(me.Property, scope, proposedTypes);
+                        // Numeric index required (JS will ToNumber, but we only infer when it's already clearly number-like).
+                        if (IsSupportedNumberLike(indexType))
+                        {
+                            return typeof(double);
+                        }
+                    }
+                }
+
                 return null;
             }
             case CallExpression ce:
             {
+                // Math.*(...) numeric helpers
+                // (e.g., const q = Math.ceil(Math.sqrt(this.sieveSizeInBits));)
+                if (ce.Callee is MemberExpression mathMe &&
+                    !mathMe.Computed &&
+                    mathMe.Object is Identifier mathId &&
+                    string.Equals(mathId.Name, "Math", StringComparison.Ordinal) &&
+                    mathMe.Property is Identifier mathMethodId &&
+                    !IsIdentifierShadowed(scope, "Math") &&
+                    IsSupportedMathNumberMethod(mathMethodId.Name))
+                {
+                    return typeof(double);
+                }
+
+                // this.<field>.<method>(...) where <field> is a user-class instance
+                // and the method has a stable inferred primitive return type.
+                if (ce.Callee is MemberExpression userMethodMe
+                    && !userMethodMe.Computed
+                    && userMethodMe.Property is Identifier userMethodId
+                    && userMethodMe.Object is MemberExpression receiverFieldMe
+                    && receiverFieldMe.Object is ThisExpression
+                    && !receiverFieldMe.Computed
+                    && receiverFieldMe.Property is Identifier receiverFieldId)
+                {
+                    var classScope = FindEnclosingClassScope(scope);
+                    if (classScope != null
+                        && classScope.StableInstanceFieldUserClassNames.TryGetValue(receiverFieldId.Name, out var receiverUserClassName)
+                        && !string.IsNullOrEmpty(receiverUserClassName))
+                    {
+                        var root = FindRootScope(classScope);
+                        if (root != null)
+                        {
+                            var receiverClassScope = FindClassScopeRecursive(root, receiverUserClassName);
+                            if (receiverClassScope != null)
+                            {
+                                var methodScope = receiverClassScope.Children.FirstOrDefault(s =>
+                                    s.Kind == ScopeKind.Function &&
+                                    s.Parent?.Kind == ScopeKind.Class &&
+                                    string.Equals(s.Name, userMethodId.Name, StringComparison.Ordinal));
+
+                                if (methodScope?.StableReturnClrType == typeof(double) || methodScope?.StableReturnClrType == typeof(bool))
+                                {
+                                    return methodScope.StableReturnClrType;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 // Array.of(...) / Array.from(...)
                 if (ce.Callee is MemberExpression me && me.Object is Identifier objId && string.Equals(objId.Name, "Array", StringComparison.Ordinal))
                 {
@@ -830,11 +1084,11 @@ public partial class SymbolTableBuilder
                 switch (binExpr.Operator)
                 {
                     case Operator.Addition:
-                        return InferAddOperatorType(binExpr);
+                        return InferAddOperatorType(binExpr, scope, proposedTypes);
                     case Operator.Subtraction:
                     case Operator.Multiplication:
                     case Operator.Division:
-                        return InferNumericBinaryOperatorType(binExpr);
+                        return InferNumericBinaryOperatorType(binExpr, scope, proposedTypes);
                     case Operator.BitwiseAnd:
                     case Operator.BitwiseOr:
                     case Operator.BitwiseXor:
@@ -860,10 +1114,10 @@ public partial class SymbolTableBuilder
         return null;
     }
 
-    Type? InferAddOperatorType(NonLogicalBinaryExpression binaryExpression)
+    Type? InferAddOperatorType(NonLogicalBinaryExpression binaryExpression, Scope? scope, Dictionary<string, Type>? proposedTypes)
     {
-        var leftType = InferExpressionClrType(binaryExpression.Left);
-        var rightType = InferExpressionClrType(binaryExpression.Right);
+        var leftType = InferExpressionClrType(binaryExpression.Left, scope, proposedTypes);
+        var rightType = InferExpressionClrType(binaryExpression.Right, scope, proposedTypes);
 
         // If either side is a string, + performs string concatenation
         if (leftType == typeof(string) || rightType == typeof(string))
@@ -886,10 +1140,10 @@ public partial class SymbolTableBuilder
         return null;
     }
 
-    Type? InferNumericBinaryOperatorType(NonLogicalBinaryExpression binaryExpression)
+    Type? InferNumericBinaryOperatorType(NonLogicalBinaryExpression binaryExpression, Scope? scope, Dictionary<string, Type>? proposedTypes)
     {
-        var leftType = InferExpressionClrType(binaryExpression.Left);
-        var rightType = InferExpressionClrType(binaryExpression.Right);
+        var leftType = InferExpressionClrType(binaryExpression.Left, scope, proposedTypes);
+        var rightType = InferExpressionClrType(binaryExpression.Right, scope, proposedTypes);
 
         // Only infer numeric operators when we can prove both sides are number-like.
         // IMPORTANT: `null` here means "unknown/uninferred", not JavaScript null/undefined.
