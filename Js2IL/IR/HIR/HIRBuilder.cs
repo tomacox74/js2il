@@ -543,8 +543,9 @@ class HIRMethodBuilder
                     Kind = CallableKind.FunctionDeclaration,
                     DeclaringScopeName = declaringScopeName,
                     Name = id.Name,
-                    JsParamCount = fd.Params.Count,
+                    JsParamCount = fd.Params.Count(p => p is not Acornima.Ast.RestElement),
                     NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+                    HasRestParameters = functionScope.HasRestParameters,
                     AstNode = null
                 };
 
@@ -1944,7 +1945,9 @@ class HIRMethodBuilder
                     DeclaringScopeName = declaringScopeName,
                     Name = assignmentTarget,
                     Location = SourceLocation.FromNode(arrowExpr),
-                    JsParamCount = arrowExpr.Params.Count,
+                    JsParamCount = arrowExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
+                    NeedsArgumentsObject = arrowScope.NeedsArgumentsObject,
+                    HasRestParameters = arrowScope.HasRestParameters,
                     AstNode = null
                 };
 
@@ -1984,7 +1987,9 @@ class HIRMethodBuilder
                     DeclaringScopeName = declaringScopeName2,
                     Name = functionName,
                     Location = SourceLocation.FromNode(funcExpr),
-                    JsParamCount = funcExpr.Params.Count,
+                    JsParamCount = funcExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
+                    NeedsArgumentsObject = funcScope.NeedsArgumentsObject,
+                    HasRestParameters = funcScope.HasRestParameters,
                     AstNode = null
                 };
 
