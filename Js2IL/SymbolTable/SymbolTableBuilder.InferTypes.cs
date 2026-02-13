@@ -1084,11 +1084,11 @@ public partial class SymbolTableBuilder
                 switch (binExpr.Operator)
                 {
                     case Operator.Addition:
-                        return InferAddOperatorType(binExpr);
+                        return InferAddOperatorType(binExpr, scope, proposedTypes);
                     case Operator.Subtraction:
                     case Operator.Multiplication:
                     case Operator.Division:
-                        return InferNumericBinaryOperatorType(binExpr);
+                        return InferNumericBinaryOperatorType(binExpr, scope, proposedTypes);
                     case Operator.BitwiseAnd:
                     case Operator.BitwiseOr:
                     case Operator.BitwiseXor:
@@ -1114,10 +1114,10 @@ public partial class SymbolTableBuilder
         return null;
     }
 
-    Type? InferAddOperatorType(NonLogicalBinaryExpression binaryExpression)
+    Type? InferAddOperatorType(NonLogicalBinaryExpression binaryExpression, Scope? scope, Dictionary<string, Type>? proposedTypes)
     {
-        var leftType = InferExpressionClrType(binaryExpression.Left);
-        var rightType = InferExpressionClrType(binaryExpression.Right);
+        var leftType = InferExpressionClrType(binaryExpression.Left, scope, proposedTypes);
+        var rightType = InferExpressionClrType(binaryExpression.Right, scope, proposedTypes);
 
         // If either side is a string, + performs string concatenation
         if (leftType == typeof(string) || rightType == typeof(string))
@@ -1140,10 +1140,10 @@ public partial class SymbolTableBuilder
         return null;
     }
 
-    Type? InferNumericBinaryOperatorType(NonLogicalBinaryExpression binaryExpression)
+    Type? InferNumericBinaryOperatorType(NonLogicalBinaryExpression binaryExpression, Scope? scope, Dictionary<string, Type>? proposedTypes)
     {
-        var leftType = InferExpressionClrType(binaryExpression.Left);
-        var rightType = InferExpressionClrType(binaryExpression.Right);
+        var leftType = InferExpressionClrType(binaryExpression.Left, scope, proposedTypes);
+        var rightType = InferExpressionClrType(binaryExpression.Right, scope, proposedTypes);
 
         // Only infer numeric operators when we can prove both sides are number-like.
         // IMPORTANT: `null` here means "unknown/uninferred", not JavaScript null/undefined.

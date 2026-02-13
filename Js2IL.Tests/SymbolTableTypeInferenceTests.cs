@@ -444,12 +444,22 @@ public class SymbolTableTypeInferenceTests
         var source = reader.ReadToEnd();
         var symbolTable = BuildSymbolTable(source);
 
-        var step = symbolTable.GetBindingInfo("PrimeSieve/runSieve/step");
+        var classScope = FindClassScope(symbolTable.Root, "PrimeSieve");
+        Assert.NotNull(classScope);
+
+        var methodScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Class
+            && string.Equals(s.Name, "runSieve", StringComparison.Ordinal));
+        Assert.NotNull(methodScope);
+
+        // step/start are declared inside the `while` body block scope.
+        var step = FindBindingByName(methodScope!, "step");
         Assert.NotNull(step);
         Assert.True(step!.IsStableType);
         Assert.Equal(typeof(double), step.ClrType);
 
-        var start = symbolTable.GetBindingInfo("PrimeSieve/runSieve/start");
+        var start = FindBindingByName(methodScope!, "start");
         Assert.NotNull(start);
         Assert.True(start!.IsStableType);
         Assert.Equal(typeof(double), start.ClrType);
