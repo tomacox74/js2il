@@ -791,20 +791,42 @@ public sealed partial class HIRToLIRLowerer
                     arrayArgTemps,
                     resultTempVar));
 
-                // Methods with stable unboxed primitive returns.
-                if (string.Equals(calleePropAccess.PropertyName, "some", StringComparison.OrdinalIgnoreCase))
+                // Determine the CLR return type of the chosen intrinsic method so we can allocate
+                // an appropriately-typed temp (and box later only when JS semantics require object).
+                // This is critical for value-type returns (bool/double), which must not be stored into
+                // object temps without boxing.
+                var returnClrType = ResolveTypedInstanceCallReturnClrType(
+                    typeof(JavaScriptRuntime.Array),
+                    calleePropAccess.PropertyName,
+                    arrayArgTemps.Count);
+
+                if (returnClrType == typeof(bool))
                 {
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
 
+                if (returnClrType == typeof(double))
+                {
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+
+                if (returnClrType == typeof(string))
+                {
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                    return true;
+                }
+
                 // Track a more precise runtime type when we know it, so chained calls can lower.
                 // Example: arr.slice(...).join(',') requires the result of slice() to be treated as an Array receiver.
-                var returnClrType = (string.Equals(calleePropAccess.PropertyName, "slice", StringComparison.OrdinalIgnoreCase)
-                                     || string.Equals(calleePropAccess.PropertyName, "map", StringComparison.OrdinalIgnoreCase))
-                    ? typeof(JavaScriptRuntime.Array)
-                    : typeof(object);
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, returnClrType));
+                if (returnClrType == typeof(JavaScriptRuntime.Array))
+                {
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+                    return true;
+                }
+
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
             }
 
@@ -911,6 +933,30 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRCallMember(receiverTempVar, calleePropAccess.PropertyName, argsArrayTempVar, resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
+    }
+
+    private static Type ResolveTypedInstanceCallReturnClrType(Type receiverType, string methodName, int argCount)
+    {
+        var allMethods = receiverType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var methods = allMethods
+            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        // Prefer JS-style variadic methods taking object[] args.
+        var chosen = methods.FirstOrDefault(mi =>
+        {
+            var ps = mi.GetParameters();
+            return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+        });
+
+        // Else: exact arity match with object parameters.
+        chosen ??= methods.FirstOrDefault(mi =>
+        {
+            var ps = mi.GetParameters();
+            return ps.Length == argCount && ps.All(p => p.ParameterType == typeof(object));
+        });
+
+        return chosen?.ReturnType ?? typeof(object);
     }
 
 }
