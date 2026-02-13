@@ -76,6 +76,24 @@ internal sealed partial class LIRToILCompiler
 
         if (IsMaterialized(instruction.Result, allocation))
         {
+            // If the CLR method returns void but JS expects a value, treat it as `undefined`.
+            if (chosen.ReturnType == typeof(void))
+            {
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+            }
+
+            // If the result temp is object-typed but the CLR call returns a value type,
+            // box it before storing to avoid invalid IL (e.g., bool -> object).
+            var resultStorage = GetTempStorage(instruction.Result);
+            if (chosen.ReturnType != typeof(void)
+                && chosen.ReturnType.IsValueType
+                && resultStorage.Kind == ValueStorageKind.Reference
+                && resultStorage.ClrType == typeof(object))
+            {
+                ilEncoder.OpCode(ILOpCode.Box);
+                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(chosen.ReturnType));
+            }
+
             EmitStoreTemp(instruction.Result, ilEncoder, allocation);
         }
         else

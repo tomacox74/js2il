@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2171
+			// Method begins at RVA 0x2169
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,14 +40,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 277 (0x115)
+		// Code size: 269 (0x10d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Stringification_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[3] object,
-			[4] object
+			[3] string
 		)
 
 		IL_0000: newobj instance void Modules.Array_Stringification_Basic/Scope::.ctor()
@@ -68,7 +67,7 @@
 		IL_0043: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_0048: stloc.1
 		IL_0049: ldloc.1
-		IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join()
+		IL_004a: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join()
 		IL_004f: stloc.3
 		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0055: ldc.i4.1
@@ -80,7 +79,7 @@
 		IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0064: pop
 		IL_0065: ldloc.1
-		IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::toString()
+		IL_0066: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::toString()
 		IL_006b: stloc.3
 		IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0071: ldc.i4.1
@@ -92,7 +91,7 @@
 		IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0080: pop
 		IL_0081: ldloc.1
-		IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::toLocaleString()
+		IL_0082: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::toLocaleString()
 		IL_0087: stloc.3
 		IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_008d: ldc.i4.1
@@ -107,46 +106,46 @@
 		IL_009e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_00a3: stloc.2
 		IL_00a4: ldloc.2
-		IL_00a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::toString()
+		IL_00a5: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::toString()
 		IL_00aa: stloc.3
 		IL_00ab: ldstr "["
 		IL_00b0: ldloc.3
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00b6: stloc.s 4
-		IL_00b8: ldloc.s 4
-		IL_00ba: ldstr "]"
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00c4: stloc.s 4
-		IL_00c6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cb: ldc.i4.1
-		IL_00cc: newarr [System.Runtime]System.Object
-		IL_00d1: dup
-		IL_00d2: ldc.i4.0
-		IL_00d3: ldloc.s 4
-		IL_00d5: stelem.ref
-		IL_00d6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00db: pop
-		IL_00dc: ldloc.2
-		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::toLocaleString()
-		IL_00e2: stloc.3
-		IL_00e3: ldstr "["
-		IL_00e8: ldloc.3
-		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00ee: stloc.s 4
-		IL_00f0: ldloc.s 4
-		IL_00f2: ldstr "]"
-		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00fc: stloc.s 4
-		IL_00fe: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0103: ldc.i4.1
-		IL_0104: newarr [System.Runtime]System.Object
-		IL_0109: dup
-		IL_010a: ldc.i4.0
-		IL_010b: ldloc.s 4
-		IL_010d: stelem.ref
-		IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0113: pop
-		IL_0114: ret
+		IL_00b1: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00b6: stloc.3
+		IL_00b7: ldloc.3
+		IL_00b8: ldstr "]"
+		IL_00bd: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00c2: stloc.3
+		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c8: ldc.i4.1
+		IL_00c9: newarr [System.Runtime]System.Object
+		IL_00ce: dup
+		IL_00cf: ldc.i4.0
+		IL_00d0: ldloc.3
+		IL_00d1: stelem.ref
+		IL_00d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00d7: pop
+		IL_00d8: ldloc.2
+		IL_00d9: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::toLocaleString()
+		IL_00de: stloc.3
+		IL_00df: ldstr "["
+		IL_00e4: ldloc.3
+		IL_00e5: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00ea: stloc.3
+		IL_00eb: ldloc.3
+		IL_00ec: ldstr "]"
+		IL_00f1: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00f6: stloc.3
+		IL_00f7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00fc: ldc.i4.1
+		IL_00fd: newarr [System.Runtime]System.Object
+		IL_0102: dup
+		IL_0103: ldc.i4.0
+		IL_0104: ldloc.3
+		IL_0105: stelem.ref
+		IL_0106: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_010b: pop
+		IL_010c: ret
 	} // end of method Array_Stringification_Basic::__js_module_init__
 
 } // end of class Modules.Array_Stringification_Basic
@@ -158,7 +157,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217a
+		// Method begins at RVA 0x2172
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

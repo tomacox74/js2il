@@ -113,7 +113,8 @@
 		.locals init (
 			[0] class Modules.String_LocaleCompare_Numeric/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[2] object
+			[2] object,
+			[3] string
 		)
 
 		IL_0000: newobj instance void Modules.String_LocaleCompare_Numeric/Scope::.ctor()
@@ -149,7 +150,7 @@
 		IL_0057: ldc.i4.0
 		IL_0058: ldloc.2
 		IL_0059: stelem.ref
-		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
+		IL_005a: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
 		IL_005f: pop
 		IL_0060: ldloc.1
 		IL_0061: ldc.i4.1
@@ -158,14 +159,14 @@
 		IL_0068: ldc.i4.0
 		IL_0069: ldstr ","
 		IL_006e: stelem.ref
-		IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0074: stloc.2
+		IL_006f: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0074: stloc.3
 		IL_0075: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_007a: ldc.i4.1
 		IL_007b: newarr [System.Runtime]System.Object
 		IL_0080: dup
 		IL_0081: ldc.i4.0
-		IL_0082: ldloc.2
+		IL_0082: ldloc.3
 		IL_0083: stelem.ref
 		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0089: pop

@@ -94,7 +94,8 @@
 			[6] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[7] object,
 			[8] bool,
-			[9] object
+			[9] string,
+			[10] object
 		)
 
 		IL_0000: newobj instance void Modules.ObjectCreate_WithPropertyDescriptors/Scope::.ctor()
@@ -199,7 +200,7 @@
 			IL_012f: ldc.i4.0
 			IL_0130: ldloc.s 5
 			IL_0132: stelem.ref
-			IL_0133: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0133: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_0138: pop
 			IL_0139: br IL_0101
 		// end loop
@@ -211,14 +212,14 @@
 		IL_0146: ldc.i4.0
 		IL_0147: ldstr ","
 		IL_014c: stelem.ref
-		IL_014d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0152: stloc.s 7
+		IL_014d: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0152: stloc.s 9
 		IL_0154: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0159: ldc.i4.1
 		IL_015a: newarr [System.Runtime]System.Object
 		IL_015f: dup
 		IL_0160: ldc.i4.0
-		IL_0161: ldloc.s 7
+		IL_0161: ldloc.s 9
 		IL_0163: stelem.ref
 		IL_0164: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0169: pop
@@ -237,13 +238,13 @@
 		IL_0192: stloc.s 8
 		IL_0194: ldloc.s 8
 		IL_0196: box [System.Runtime]System.Boolean
-		IL_019b: stloc.s 9
+		IL_019b: stloc.s 10
 		IL_019d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_01a2: ldc.i4.1
 		IL_01a3: newarr [System.Runtime]System.Object
 		IL_01a8: dup
 		IL_01a9: ldc.i4.0
-		IL_01aa: ldloc.s 9
+		IL_01aa: ldloc.s 10
 		IL_01ac: stelem.ref
 		IL_01ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_01b2: pop

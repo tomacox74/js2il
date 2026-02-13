@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a7
+				// Method begins at RVA 0x21bb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -39,7 +39,7 @@
 				object n
 			) cil managed 
 		{
-			// Method begins at RVA 0x210c
+			// Method begins at RVA 0x2120
 			// Header size: 12
 			// Code size: 134 (0x86)
 			.maxstack 8
@@ -123,7 +123,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219e
+			// Method begins at RVA 0x21b2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -149,7 +149,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 175 (0xaf)
+		// Code size: 193 (0xc1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Fround_SignedZero/Scope,
@@ -157,7 +157,9 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object
+			[5] float64,
+			[6] object,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Math_Fround_SignedZero/Scope::.ctor()
@@ -177,52 +179,58 @@
 		IL_0025: stloc.1
 		IL_0026: ldc.r8 1.337
 		IL_002f: box [System.Runtime]System.Double
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Math::fround(object)
-		IL_0039: stloc.s 4
-		IL_003b: ldloc.s 4
-		IL_003d: stloc.2
-		IL_003e: ldc.r8 0.0
-		IL_0047: neg
-		IL_0048: box [System.Runtime]System.Double
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Math::fround(object)
-		IL_0052: stloc.s 4
-		IL_0054: ldloc.s 4
-		IL_0056: stloc.3
-		IL_0057: ldstr ""
-		IL_005c: ldloc.2
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0062: stloc.s 5
-		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0069: ldc.i4.1
-		IL_006a: newarr [System.Runtime]System.Object
-		IL_006f: dup
-		IL_0070: ldc.i4.0
-		IL_0071: ldloc.s 5
-		IL_0073: stelem.ref
-		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0079: pop
-		IL_007a: ldnull
-		IL_007b: ldftn object Modules.Math_Fround_SignedZero/toStr::__js_call__(object[], object)
-		IL_0081: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0086: ldc.i4.1
-		IL_0087: newarr [System.Runtime]System.Object
-		IL_008c: dup
-		IL_008d: ldc.i4.0
-		IL_008e: ldloc.0
-		IL_008f: stelem.ref
-		IL_0090: ldloc.3
-		IL_0091: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0096: stloc.s 4
-		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009d: ldc.i4.1
-		IL_009e: newarr [System.Runtime]System.Object
-		IL_00a3: dup
-		IL_00a4: ldc.i4.0
-		IL_00a5: ldloc.s 4
-		IL_00a7: stelem.ref
-		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ad: pop
-		IL_00ae: ret
+		IL_0034: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::fround(object)
+		IL_0039: stloc.s 5
+		IL_003b: ldloc.s 5
+		IL_003d: box [System.Runtime]System.Double
+		IL_0042: stloc.s 6
+		IL_0044: ldloc.s 6
+		IL_0046: stloc.2
+		IL_0047: ldc.r8 0.0
+		IL_0050: neg
+		IL_0051: box [System.Runtime]System.Double
+		IL_0056: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::fround(object)
+		IL_005b: stloc.s 5
+		IL_005d: ldloc.s 5
+		IL_005f: box [System.Runtime]System.Double
+		IL_0064: stloc.s 6
+		IL_0066: ldloc.s 6
+		IL_0068: stloc.3
+		IL_0069: ldstr ""
+		IL_006e: ldloc.2
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0074: stloc.s 7
+		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007b: ldc.i4.1
+		IL_007c: newarr [System.Runtime]System.Object
+		IL_0081: dup
+		IL_0082: ldc.i4.0
+		IL_0083: ldloc.s 7
+		IL_0085: stelem.ref
+		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008b: pop
+		IL_008c: ldnull
+		IL_008d: ldftn object Modules.Math_Fround_SignedZero/toStr::__js_call__(object[], object)
+		IL_0093: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0098: ldc.i4.1
+		IL_0099: newarr [System.Runtime]System.Object
+		IL_009e: dup
+		IL_009f: ldc.i4.0
+		IL_00a0: ldloc.0
+		IL_00a1: stelem.ref
+		IL_00a2: ldloc.3
+		IL_00a3: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_00a8: stloc.s 4
+		IL_00aa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00af: ldc.i4.1
+		IL_00b0: newarr [System.Runtime]System.Object
+		IL_00b5: dup
+		IL_00b6: ldc.i4.0
+		IL_00b7: ldloc.s 4
+		IL_00b9: stelem.ref
+		IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00bf: pop
+		IL_00c0: ret
 	} // end of method Math_Fround_SignedZero::__js_module_init__
 
 } // end of class Modules.Math_Fround_SignedZero
@@ -234,7 +242,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b0
+		// Method begins at RVA 0x21c4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

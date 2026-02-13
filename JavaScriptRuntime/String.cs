@@ -289,12 +289,12 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Implements String.prototype.indexOf(searchString[, position]).
         /// </summary>
-        public static object IndexOf(string input, string searchString)
+        public static double IndexOf(string input, string searchString)
         {
             return IndexOf(input, searchString, null);
         }
 
-        public static object IndexOf(string input, string searchString, object? position)
+        public static double IndexOf(string input, string searchString, object? position)
         {
             input ??= string.Empty;
             searchString ??= string.Empty;
@@ -455,7 +455,7 @@ namespace JavaScriptRuntime
         /// Implements String.prototype.charCodeAt([index]).
         /// Returns a UTF-16 code unit as a number, or NaN when out of range.
         /// </summary>
-        public static object CharCodeAt(string input)
+        public static double CharCodeAt(string input)
         {
             return CharCodeAt(input, null);
         }
@@ -463,7 +463,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Implements String.prototype.charCodeAt(index).
         /// </summary>
-        public static object CharCodeAt(string input, object? index)
+        public static double CharCodeAt(string input, object? index)
         {
             input ??= string.Empty;
 
@@ -502,7 +502,7 @@ namespace JavaScriptRuntime
         /// Implements a subset of String.prototype.startsWith(searchString[, position]).
         /// Uses ordinal comparison and basic ToIntegerOrInfinity coercion for position.
         /// </summary>
-    public static object StartsWith(string input, string searchString)
+        public static bool StartsWith(string input, string searchString)
         {
             return StartsWith(input, searchString, null);
         }
@@ -510,7 +510,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Implements a subset of String.prototype.startsWith with optional position argument.
         /// </summary>
-    public static object StartsWith(string input, string searchString, object? position)
+        public static bool StartsWith(string input, string searchString, object? position)
         {
             input ??= string.Empty;
             searchString ??= string.Empty;
@@ -616,12 +616,12 @@ namespace JavaScriptRuntime
         /// If length is provided, the string is treated as if it were truncated to that length.
         /// Uses ordinal comparison.
         /// </summary>
-        public static object EndsWith(string input, string searchString)
+        public static bool EndsWith(string input, string searchString)
         {
             return EndsWith(input, searchString, null);
         }
 
-        public static object EndsWith(string input, string searchString, object? length)
+        public static bool EndsWith(string input, string searchString, object? length)
         {
             input ??= string.Empty;
             searchString ??= string.Empty;
@@ -660,12 +660,12 @@ namespace JavaScriptRuntime
         /// Implements a subset of String.prototype.includes(searchString[, position]).
         /// Uses ordinal comparison.
         /// </summary>
-        public static object Includes(string input, string searchString)
+        public static bool Includes(string input, string searchString)
         {
             return Includes(input, searchString, null);
         }
 
-        public static object Includes(string input, string searchString, object? position)
+        public static bool Includes(string input, string searchString, object? position)
         {
             input ??= string.Empty;
             searchString ??= string.Empty;
@@ -782,7 +782,7 @@ namespace JavaScriptRuntime
         /// Supports locales (ignored) and options; recognizes options.numeric === true to enable numeric-aware comparison.
         /// Returns -1, 0, or 1 as a JavaScript number (double).
         /// </summary>
-        public static object LocaleCompare(string input, string other, object? locales, object? options)
+        public static double LocaleCompare(string input, string other, object? locales, object? options)
         {
             input ??= string.Empty;
             other ??= string.Empty;
@@ -872,7 +872,7 @@ namespace JavaScriptRuntime
         /// Supports string or regular expression separators and optional limit.
         /// Returns a JavaScriptRuntime.Array of strings.
         /// </summary>
-        public static object Split(string input, object? separatorOrPattern)
+        public static JavaScriptRuntime.Array Split(string input, object? separatorOrPattern)
         {
             return Split(input, separatorOrPattern, null);
         }
@@ -880,7 +880,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Split with optional limit. Separator can be string, Regex, or null/undefined.
         /// </summary>
-        public static object Split(string input, object? separatorOrPattern, object? limit)
+        public static JavaScriptRuntime.Array Split(string input, object? separatorOrPattern, object? limit)
         {
             input ??= string.Empty;
             int maxCount = ToSplitLimit(limit);
@@ -944,7 +944,7 @@ namespace JavaScriptRuntime
         /// Split using a regex pattern with flags provided by the generator.
         /// Currently only ignoreCase is observed for split behavior.
         /// </summary>
-        public static object Split(string input, string pattern, bool ignoreCase)
+        public static JavaScriptRuntime.Array Split(string input, string pattern, bool ignoreCase)
         {
             return Split(input, pattern, ignoreCase, null);
         }
@@ -954,7 +954,7 @@ namespace JavaScriptRuntime
         /// Note: When called with a plain string (not a regex literal), the pattern
         /// should be treated as a literal string, not a regex pattern.
         /// </summary>
-        public static object Split(string input, string pattern, bool ignoreCase, object? limit)
+        public static JavaScriptRuntime.Array Split(string input, string pattern, bool ignoreCase, object? limit)
         {
             input ??= string.Empty;
             int maxCount = ToSplitLimit(limit);
@@ -968,7 +968,7 @@ namespace JavaScriptRuntime
             return SplitWithRegex(input, rx, maxCount);
         }
 
-        private static object SplitWithRegex(string input, Regex rx, int maxCount)
+        private static JavaScriptRuntime.Array SplitWithRegex(string input, Regex rx, int maxCount)
         {
             var parts = rx.Split(input);
             var arr = new JavaScriptRuntime.Array(parts.Length);
