@@ -50,10 +50,39 @@ JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to nat
 - Commit the changes with a descriptive message.
 - Update changelog.md if necessary.
 - Update the relevant `docs\ECMA262\**\Section*_*.json` subsection doc(s) (use `support.entries` for feature-level support details). Run `node scripts/ECMA262/generateEcma262SectionMarkdown.js --section <section.subsection>` to regenerate the markdown.
-- Update docs\nodejs\NodeSupport.json if it is a new node feature supported. Run `node scripts/generateNodeSupportMd.js` to regenerate the markdown file with the same name as the JSON file.
+- Update Node.js documentation if it is a new node feature:
+  - For new modules: Create `docs/nodejs/<module_name>.json` (following `ModuleDoc.schema.json`)
+  - For new globals: Create `docs/nodejs/<global_name>.json` (following `ModuleDoc.schema.json`)
+  - For updates to existing modules/globals: Edit the corresponding JSON file
+  - Run `npm run generate:node-index` to update the Index.md
+  - Run `npm run generate:node-module-docs` to regenerate individual markdown files
+  - Alternatively, run `npm run generate:node-modules` to do both steps
+  - Legacy: You can also update `docs/nodejs/NodeSupport.json` and run `npm run generate:node-support` for the monolithic doc
 - Create and a coomit with the documentation updates.
 - Create a PR with all the changes back to master.
 - After the PR has been merged, confirm the changes are in master and delete the local and remote feature branches.
+
+### Documentation Structure
+
+#### Node.js Documentation (`/docs/nodejs`)
+- **Index.md**: Auto-generated index of all modules and globals with status
+- **Individual module/global files**: One JSON + MD pair per module/global (e.g., `path.json` + `path.md`)
+- **ModuleDoc.schema.json**: JSON schema for individual module/global documentation
+- **NodeLimitations.json**: Shared limitations across all Node.js features
+- **Scripts**:
+  - `npm run generate:node-modules`: Full regeneration (split → index → docs)
+  - `npm run generate:node-index`: Regenerate Index.md only
+  - `npm run generate:node-module-docs`: Regenerate individual markdown files only
+- **Legacy files** (maintained for compatibility):
+  - NodeSupport.json: Monolithic source (can be updated via `scripts/splitNodeSupportIntoModules.js`)
+  - NodeSupport.md: Generated monolithic documentation
+
+#### ECMA-262 Documentation (`/docs/ECMA262`)
+- **Index.md**: Coverage index for all ECMA-262 sections
+- **Section directories**: One per major section (e.g., `19/` for Global Object)
+- **Section files**: JSON + MD pairs for each section/subsection (e.g., `Section19_1.json` + `Section19_1.md`)
+- **SectionDoc.schema.json**: JSON schema for section documentation
+- **Scripts**: `npm run ecma262:generate-section-md -- <section>`
 
 
 
