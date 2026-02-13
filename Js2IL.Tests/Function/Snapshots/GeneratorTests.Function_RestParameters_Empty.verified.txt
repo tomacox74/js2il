@@ -1,0 +1,263 @@
+﻿// IL code: Function_RestParameters_Empty
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Function_RestParameters_Empty
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit logArgs
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested private auto ansi beforefieldinit Block_L5C25
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x21a4
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L5C25::.ctor
+
+			} // end of class Block_L5C25
+
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x219b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x2108
+			// Header size: 12
+			// Code size: 126 (0x7e)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldc.r8 0.0
+			IL_0009: box [System.Runtime]System.Double
+			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(object)
+			IL_0013: stloc.0
+			IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0019: ldc.i4.2
+			IL_001a: newarr [System.Runtime]System.Object
+			IL_001f: dup
+			IL_0020: ldc.i4.0
+			IL_0021: ldstr "length:"
+			IL_0026: stelem.ref
+			IL_0027: dup
+			IL_0028: ldc.i4.1
+			IL_0029: ldloc.0
+			IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_002f: box [System.Runtime]System.Double
+			IL_0034: stelem.ref
+			IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_003a: pop
+			IL_003b: ldloc.0
+			IL_003c: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0041: ldc.r8 0.0
+			IL_004a: cgt
+			IL_004c: brfalse IL_007c
+
+			IL_0051: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0056: ldc.i4.2
+			IL_0057: newarr [System.Runtime]System.Object
+			IL_005c: dup
+			IL_005d: ldc.i4.0
+			IL_005e: ldstr "first:"
+			IL_0063: stelem.ref
+			IL_0064: dup
+			IL_0065: ldc.i4.1
+			IL_0066: ldloc.0
+			IL_0067: ldc.r8 0.0
+			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0075: stelem.ref
+			IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_007b: pop
+
+			IL_007c: ldnull
+			IL_007d: ret
+		} // end of method logArgs::__js_call__
+
+	} // end of class logArgs
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 17 53 63 6f 70 65 20 6c 6f 67 41 72 67 73
+			3d 7b 6c 6f 67 41 72 67 73 7d 00 00
+		)
+		// Fields
+		.field public object logArgs
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2192
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 171 (0xab)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Function_RestParameters_Empty/Scope,
+			[1] object,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Modules.Function_RestParameters_Empty/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Function_RestParameters_Empty/logArgs::__js_call__(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: stloc.1
+		IL_0024: ldnull
+		IL_0025: ldftn object Modules.Function_RestParameters_Empty/logArgs::__js_call__(object[])
+		IL_002b: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldloc.0
+		IL_0039: stelem.ref
+		IL_003a: ldc.i4.0
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [System.Runtime]System.Func`2<object[], object>, object[], object[])
+		IL_0045: pop
+		IL_0046: ldnull
+		IL_0047: ldftn object Modules.Function_RestParameters_Empty/logArgs::__js_call__(object[])
+		IL_004d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0052: ldc.i4.1
+		IL_0053: newarr [System.Runtime]System.Object
+		IL_0058: dup
+		IL_0059: ldc.i4.0
+		IL_005a: ldloc.0
+		IL_005b: stelem.ref
+		IL_005c: ldc.i4.1
+		IL_005d: newarr [System.Runtime]System.Object
+		IL_0062: dup
+		IL_0063: ldc.i4.0
+		IL_0064: ldstr "hello"
+		IL_0069: stelem.ref
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [System.Runtime]System.Func`2<object[], object>, object[], object[])
+		IL_006f: pop
+		IL_0070: ldnull
+		IL_0071: ldftn object Modules.Function_RestParameters_Empty/logArgs::__js_call__(object[])
+		IL_0077: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_007c: ldc.i4.1
+		IL_007d: newarr [System.Runtime]System.Object
+		IL_0082: dup
+		IL_0083: ldc.i4.0
+		IL_0084: ldloc.0
+		IL_0085: stelem.ref
+		IL_0086: ldc.i4.3
+		IL_0087: newarr [System.Runtime]System.Object
+		IL_008c: dup
+		IL_008d: ldc.i4.0
+		IL_008e: ldstr "a"
+		IL_0093: stelem.ref
+		IL_0094: dup
+		IL_0095: ldc.i4.1
+		IL_0096: ldstr "b"
+		IL_009b: stelem.ref
+		IL_009c: dup
+		IL_009d: ldc.i4.2
+		IL_009e: ldstr "c"
+		IL_00a3: stelem.ref
+		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [System.Runtime]System.Func`2<object[], object>, object[], object[])
+		IL_00a9: pop
+		IL_00aa: ret
+	} // end of method Function_RestParameters_Empty::__js_module_init__
+
+} // end of class Modules.Function_RestParameters_Empty
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21ad
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Function_RestParameters_Empty::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

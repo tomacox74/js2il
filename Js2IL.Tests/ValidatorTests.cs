@@ -409,13 +409,12 @@ public class ValidatorTests
     #region Unsupported Feature Validation Tests
 
     [Fact]
-    public void Validate_RestParameters_ReportsError()
+    public void Validate_RestParameters_IsValid()
     {
         var js = "function foo(...args) { console.log(args); }";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Rest parameters"));
+        Assert.True(result.IsValid);
     }
 
     [Fact]
