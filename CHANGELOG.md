@@ -10,6 +10,7 @@ All notable changes to this project are documented here.
 - Runtime/spec: implement `String.prototype.repeat`, `trim`, `trimStart`, `trimEnd`, `slice`, and `indexOf` (unblocks turndown/domino).
 - IR/codegen: fix boxed-number arithmetic lowering/materialization (notably `-`, `*`, `/`, `%`) to prevent numeric corruption in real-world parsers.
 - CommonJS/runtime: set `require.main` to the entry module for Node-compatible `require.main === module` checks.
+- Compiler/type-inference: add type inference for `Array.prototype.some()` return values, enabling proper unboxed boolean comparisons (completes fix for #358).
 
 ## v0.8.7 - 2026-02-11
 

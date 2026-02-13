@@ -50,6 +50,12 @@ public class SymbolTableTypeInferenceTests
     [InlineData(typeof(double), "5 >> 2")]      // Signed right shift
     [InlineData(typeof(double), "5 >>> 2")]     // Unsigned right shift
     [InlineData(typeof(double), "~5")]          // NOT (unary)
+    // Array static methods
+    [InlineData(typeof(bool), "Array.isArray([])")]
+    [InlineData(typeof(bool), "Array.isArray(null)")]
+    // Array instance methods that return boolean
+    [InlineData(typeof(bool), "[1, 2, 3].some(x => x === 2)")]
+    [InlineData(typeof(bool), "['a', 'b'].some(x => x === 'c')")]
     public void SymbolTable_InferType_Init(Type? expectedType, string initializer)
     {
         var variableName = "testVar";
@@ -312,6 +318,18 @@ public class SymbolTableTypeInferenceTests
 
         Assert.True(classScope!.StableInstanceFieldUserClassNames.TryGetValue("child", out var inferred));
         Assert.Equal("Child", inferred);
+    }
+
+    [Theory]
+    [InlineData("const arr = [1, 2, 3]; const result = arr.some(x => x === 2);", "result", typeof(bool))]
+    [InlineData("const arr = ['a', 'b']; const result = arr.some(x => x === 'c');", "result", typeof(bool))]
+    [InlineData("let arr = [1, 2, 3]; let result = arr.some(x => x > 1);", "result", typeof(bool))]
+    public void SymbolTable_InferType_ArraySomeWithVariableReference(string source, string variableName, Type expectedType)
+    {
+        var symbolTable = BuildSymbolTable(source);
+        var binding = symbolTable.GetBindingInfo(variableName);
+        Assert.NotNull(binding);
+        Assert.Equal(expectedType, binding.ClrType);
     }
 
     [Theory]
