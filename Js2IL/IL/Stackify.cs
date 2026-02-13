@@ -91,6 +91,22 @@ internal static class Stackify
                 continue;
             }
 
+            // Typed numeric binary ops (LIR*Number) are safe to stackify only when the use is
+            // immediately after the definition.
+            //
+            // Rationale: these ops can be re-emitted at the use site by Stackify, but the main
+            // emitter must *not* also emit them at the def site (otherwise we'd compute + pop,
+            // then compute again at the load site). The current emitter supports this pattern
+            // for immediate chaining; we keep the analysis conservative to reduce churn.
+            var use = uses[0];
+            if (instr is LIRAddNumber or LIRSubNumber or LIRMulNumber or LIRDivNumber or LIRModNumber or LIRExpNumber)
+            {
+                if (use != def + 1)
+                {
+                    continue;
+                }
+            }
+
             // Only instructions that can be emitted inline are candidates.
             // Exception: certain side-effectful instructions (currently: LIRCallTypedMember)
             // can be stackified when the single use is *immediately* after the definition,
@@ -99,8 +115,6 @@ internal static class Stackify
             {
                 continue;
             }
-
-            var use = uses[0];
 
             // Use must come after definition
             if (use <= def)
@@ -296,6 +310,10 @@ internal static class Stackify
     /// 
     /// Binary operations (LIRAddDynamic, LIRMulDynamic, etc.) must NOT be included here
     /// because re-emitting them would cause duplicate computation of the entire operation.
+    ///
+    /// Typed numeric binary operations (LIR*Number) *may* be included when their operands are
+    /// inlineable, because they lower to pure IL ops (add/mul/etc) and stackification only
+    /// applies when a temp has a single use.
     /// </summary>
     private static bool CanEmitInline(LIRInstruction instruction, MethodBodyIR methodBody, LIRInstruction?[] defInstruction)
     {
@@ -401,6 +419,21 @@ internal static class Stackify
                 return IsInlineableOperand(cmpBoolEq.Left) && IsInlineableOperand(cmpBoolEq.Right);
             case LIRCompareBooleanNotEqual cmpBoolNe:
                 return IsInlineableOperand(cmpBoolNe.Left) && IsInlineableOperand(cmpBoolNe.Right);
+
+            // Typed numeric binary ops compile to pure IL.
+            // Safe to inline when both operands are inlineable.
+            case LIRAddNumber addNumber:
+                return IsInlineableOperand(addNumber.Left) && IsInlineableOperand(addNumber.Right);
+            case LIRSubNumber subNumber:
+                return IsInlineableOperand(subNumber.Left) && IsInlineableOperand(subNumber.Right);
+            case LIRMulNumber mulNumber:
+                return IsInlineableOperand(mulNumber.Left) && IsInlineableOperand(mulNumber.Right);
+            case LIRDivNumber divNumber:
+                return IsInlineableOperand(divNumber.Left) && IsInlineableOperand(divNumber.Right);
+            case LIRModNumber modNumber:
+                return IsInlineableOperand(modNumber.Left) && IsInlineableOperand(modNumber.Right);
+            case LIRExpNumber expNumber:
+                return IsInlineableOperand(expNumber.Left) && IsInlineableOperand(expNumber.Right);
 
             // LIRBuildArray creates an array and initializes elements inline.
             // Safe to inline if all element temps can be emitted inline.
