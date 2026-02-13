@@ -24,7 +24,7 @@ namespace JavaScriptRuntime
         /// Math.ceil(x): returns the smallest integer greater than or equal to x.
         /// For NaN returns NaN; for +/-Infinity returns the same infinity.
         /// </summary>
-        public static object ceil(object? x)
+        public static double ceil(object? x)
         {
             double d = ToNumber(x);
             if (double.IsNaN(d)) return double.NaN;
@@ -36,7 +36,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Math.sqrt(x): returns the square root of x. If x is negative or NaN, returns NaN. Infinity maps to Infinity.
         /// </summary>
-        public static object sqrt(object? x)
+        public static double sqrt(object? x)
         {
             double d = ToNumber(x);
             if (double.IsNaN(d)) return double.NaN;
@@ -45,13 +45,13 @@ namespace JavaScriptRuntime
             return System.Math.Sqrt(d);
         }
 
-        public static object abs(object? x)
+        public static double abs(object? x)
         {
             double d = ToNumber(x);
             return double.IsNaN(d) ? double.NaN : System.Math.Abs(d);
         }
 
-        public static object floor(object? x)
+        public static double floor(object? x)
         {
             double d = ToNumber(x);
             if (double.IsNaN(d)) return double.NaN;
@@ -60,7 +60,7 @@ namespace JavaScriptRuntime
             return System.Math.Floor(d);
         }
 
-        public static object round(object? x)
+        public static double round(object? x)
         {
             double d = ToNumber(x);
             if (double.IsNaN(d) || double.IsPositiveInfinity(d) || double.IsNegativeInfinity(d)) return d;
@@ -77,7 +77,7 @@ namespace JavaScriptRuntime
             return r;
         }
 
-        public static object trunc(object? x)
+        public static double trunc(object? x)
         {
             double d = ToNumber(x);
             if (double.IsNaN(d) || double.IsPositiveInfinity(d) || double.IsNegativeInfinity(d)) return d;
@@ -88,7 +88,7 @@ namespace JavaScriptRuntime
             return res;
         }
 
-        public static object sign(object? x)
+        public static double sign(object? x)
         {
             double d = ToNumber(x);
             if (double.IsNaN(d)) return double.NaN;
@@ -100,54 +100,54 @@ namespace JavaScriptRuntime
             return d > 0 ? 1.0 : -1.0;
         }
 
-        public static object sin(object? x) => System.Math.Sin(ToNumber(x));
-        public static object cos(object? x) => System.Math.Cos(ToNumber(x));
-        public static object tan(object? x) => System.Math.Tan(ToNumber(x));
-        public static object asin(object? x) => System.Math.Asin(ToNumber(x));
-        public static object acos(object? x) => System.Math.Acos(ToNumber(x));
-        public static object atan(object? x) => System.Math.Atan(ToNumber(x));
-        public static object atan2(object? y, object? x)
+        public static double sin(object? x) => System.Math.Sin(ToNumber(x));
+        public static double cos(object? x) => System.Math.Cos(ToNumber(x));
+        public static double tan(object? x) => System.Math.Tan(ToNumber(x));
+        public static double asin(object? x) => System.Math.Asin(ToNumber(x));
+        public static double acos(object? x) => System.Math.Acos(ToNumber(x));
+        public static double atan(object? x) => System.Math.Atan(ToNumber(x));
+        public static double atan2(object? y, object? x)
         {
             double dy = ToNumber(y);
             double dx = ToNumber(x);
             return System.Math.Atan2(dy, dx);
         }
 
-        public static object sinh(object? x) => System.Math.Sinh(ToNumber(x));
-        public static object cosh(object? x) => System.Math.Cosh(ToNumber(x));
-        public static object tanh(object? x) => System.Math.Tanh(ToNumber(x));
-        public static object asinh(object? x) => System.Math.Asinh(ToNumber(x));
-        public static object acosh(object? x) => System.Math.Acosh(ToNumber(x));
-        public static object atanh(object? x) => System.Math.Atanh(ToNumber(x));
+        public static double sinh(object? x) => System.Math.Sinh(ToNumber(x));
+        public static double cosh(object? x) => System.Math.Cosh(ToNumber(x));
+        public static double tanh(object? x) => System.Math.Tanh(ToNumber(x));
+        public static double asinh(object? x) => System.Math.Asinh(ToNumber(x));
+        public static double acosh(object? x) => System.Math.Acosh(ToNumber(x));
+        public static double atanh(object? x) => System.Math.Atanh(ToNumber(x));
 
-        public static object exp(object? x) => System.Math.Exp(ToNumber(x));
-        public static object expm1(object? x)
+        public static double exp(object? x) => System.Math.Exp(ToNumber(x));
+        public static double expm1(object? x)
         {
             double d = ToNumber(x);
             // Use Math.Exp - 1; for small values, .NET also has Math.Exp(d) - 1
             return System.Math.Exp(d) - 1.0;
         }
-        public static object log(object? x) => System.Math.Log(ToNumber(x));
-        public static object log10(object? x) => System.Math.Log10(ToNumber(x));
-        public static object log1p(object? x)
+        public static double log(object? x) => System.Math.Log(ToNumber(x));
+        public static double log10(object? x) => System.Math.Log10(ToNumber(x));
+        public static double log1p(object? x)
         {
             double d = ToNumber(x);
             return System.Math.Log(1.0 + d);
         }
-        public static object log2(object? x)
+        public static double log2(object? x)
         {
             double d = ToNumber(x);
             return System.Math.Log(d, 2.0);
         }
 
-        public static object pow(object? x, object? y)
+        public static double pow(object? x, object? y)
         {
             double dx = ToNumber(x);
             double dy = ToNumber(y);
             return System.Math.Pow(dx, dy);
         }
 
-        public static object min(params object?[] args)
+        public static double min(params object?[] args)
         {
             if (args == null || args.Length == 0) return double.PositiveInfinity;
             double min = double.PositiveInfinity;
@@ -160,7 +160,7 @@ namespace JavaScriptRuntime
             return min;
         }
 
-        public static object max(params object?[] args)
+        public static double max(params object?[] args)
         {
             if (args == null || args.Length == 0) return double.NegativeInfinity;
             double max = double.NegativeInfinity;
@@ -173,13 +173,13 @@ namespace JavaScriptRuntime
             return max;
         }
 
-        public static object random()
+        public static double random()
         {
             // 0 <= x < 1
             return _random.NextDouble();
         }
 
-        public static object cbrt(object? x)
+        public static double cbrt(object? x)
         {
             double d = ToNumber(x);
             double r = global::System.Math.Cbrt(d);
@@ -195,7 +195,7 @@ namespace JavaScriptRuntime
             return r;
         }
 
-        public static object hypot(params object?[] args)
+        public static double hypot(params object?[] args)
         {
             if (args == null || args.Length == 0) return 0.0;
             bool anyNaN = false;
@@ -215,7 +215,7 @@ namespace JavaScriptRuntime
             return System.Math.Sqrt(sum);
         }
 
-        public static object fround(object? x)
+        public static double fround(object? x)
         {
             float f = (float)ToNumber(x);
             double d = f;
@@ -224,7 +224,7 @@ namespace JavaScriptRuntime
             return d;
         }
 
-        public static object imul(object? a, object? b)
+        public static double imul(object? a, object? b)
         {
             int x = ToInt32(a);
             int y = ToInt32(b);
@@ -232,7 +232,7 @@ namespace JavaScriptRuntime
             return (double)prod;
         }
 
-        public static object clz32(object? x)
+        public static double clz32(object? x)
         {
             uint u = ToUint32(x);
             if (u == 0) return 32.0;
