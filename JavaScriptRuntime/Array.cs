@@ -494,7 +494,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.from(source) minimal implementation.
         /// Supports JavaScriptRuntime.Array, IEnumerable, and Set.
         /// </summary>
-        public static object from(object? source)
+        public static Array from(object? source)
         {
             if (source == null) return new Array();
 
@@ -523,7 +523,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.isArray(value) static method.
         /// Returns true if the provided value is a JavaScriptRuntime.Array instance; false otherwise.
         /// </summary>
-        public static object isArray(object? value)
+        public static bool isArray(object? value)
         {
             return value is Array;
         }
@@ -531,7 +531,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.of(...items)
         /// </summary>
-        public static object of(object[]? args)
+        public static Array of(object[]? args)
         {
             return args == null ? new Array() : new Array(args);
         }
@@ -608,7 +608,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.sort() default behavior: sorts elements as strings in ascending order and returns the array.
         /// Note: This is a minimal implementation to support tests; comparator overload is ignored if provided.
         /// </summary>
-        public object sort()
+        public Array sort()
         {
             this.Sort((a, b) => string.Compare(DotNet2JSConversions.ToString(a), DotNet2JSConversions.ToString(b), StringComparison.Ordinal));
             return this;
@@ -617,7 +617,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Overload matching intrinsic dispatch that may pass arguments; supports optional comparator callback.
         /// </summary>
-        public object sort(object[] args)
+        public Array sort(object[] args)
         {
             // If a comparator function is provided, use it; otherwise fallback to default string sort
             if (args != null && args.Length > 0 && args[0] != null)
@@ -699,7 +699,7 @@ namespace JavaScriptRuntime
         /// Minimal implementation: invokes the callback with (value, index, array) when supported and returns a new Array.
         /// Supports delegates produced by Closure.Bind: Func<object[], object, ...> signatures.
         /// </summary>
-        public object map(object[] args)
+        public Array map(object[] args)
         {
             var result = new Array(this.Count);
             var cb = (args != null && args.Length > 0) ? args[0] : null;
@@ -807,7 +807,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.filter(callback[, thisArg])
         /// </summary>
-        public object filter(object[] args)
+        public Array filter(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             var result = new Array();
@@ -825,7 +825,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.every(callback[, thisArg])
         /// </summary>
-        public object every(object[] args)
+        public bool every(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             for (int i = 0; i < this.Count; i++)
@@ -940,7 +940,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.findIndex(callback[, thisArg])
         /// Returns the index of the first element matching the predicate, or -1.
         /// </summary>
-        public object findIndex(object[] args)
+        public double findIndex(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             for (int i = 0; i < this.Count; i++)
@@ -976,7 +976,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.findLastIndex(callback[, thisArg])
         /// Returns the last index matching the predicate, or -1.
         /// </summary>
-        public object findLastIndex(object[] args)
+        public double findLastIndex(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             for (int i = this.Count - 1; i >= 0; i--)
@@ -1041,7 +1041,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.indexOf(searchElement[, fromIndex])
         /// Uses strict equality semantics.
         /// </summary>
-        public object indexOf(object[]? args)
+        public double indexOf(object[]? args)
         {
             int len = this.Count;
             if (len == 0) return -1d;
@@ -1066,7 +1066,7 @@ namespace JavaScriptRuntime
             return -1d;
         }
 
-        public object indexOf()
+        public double indexOf()
         {
             return -1d;
         }
@@ -1075,7 +1075,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.lastIndexOf(searchElement[, fromIndex])
         /// Uses strict equality semantics.
         /// </summary>
-        public object lastIndexOf(object[]? args)
+        public double lastIndexOf(object[]? args)
         {
             int len = this.Count;
             if (len == 0) return -1d;
@@ -1101,7 +1101,7 @@ namespace JavaScriptRuntime
             return -1d;
         }
 
-        public object lastIndexOf()
+        public double lastIndexOf()
         {
             return -1d;
         }
@@ -1128,7 +1128,7 @@ namespace JavaScriptRuntime
         /// Joins elements by the given separator (default ',') and returns a string.
         /// Each element is converted using DotNet2JSConversions.ToString to approximate JS semantics.
         /// </summary>
-        public object join(object[]? args)
+        public string join(object[]? args)
         {
             string separator = ",";
             if (args != null && args.Length > 0)
@@ -1148,7 +1148,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Overload without parameters to match potential direct dispatch.
         /// </summary>
-        public object join()
+        public string join()
         {
             return join(System.Array.Empty<object>());
         }
@@ -1157,12 +1157,12 @@ namespace JavaScriptRuntime
         /// JavaScript Array.toString()
         /// Minimal: delegates to join(',').
         /// </summary>
-        public object toString(object[]? args)
+        public string toString(object[]? args)
         {
             return join(System.Array.Empty<object>());
         }
 
-        public object toString()
+        public string toString()
         {
             return join(System.Array.Empty<object>());
         }
@@ -1171,12 +1171,12 @@ namespace JavaScriptRuntime
         /// JavaScript Array.toLocaleString()
         /// Minimal: same as toString for now.
         /// </summary>
-        public object toLocaleString(object[]? args)
+        public string toLocaleString(object[]? args)
         {
             return toString();
         }
 
-        public object toLocaleString()
+        public string toLocaleString()
         {
             return toString();
         }
@@ -1185,7 +1185,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.includes(searchElement[, fromIndex]) implementation.
         /// Uses SameValueZero comparison (NaN equals NaN; +0 and -0 are equal).
         /// </summary>
-        public object includes(object[]? args)
+        public bool includes(object[]? args)
         {
             int len = this.Count;
             if (len == 0) return false;
@@ -1221,7 +1221,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Overload without parameters; returns false if no search element provided.
         /// </summary>
-        public object includes()
+        public bool includes()
         {
             return false;
         }
@@ -1308,7 +1308,7 @@ namespace JavaScriptRuntime
         /// Returns a shallow copy of a portion of the array into a new Array object.
         /// Handles negative indices and defaults per JS spec.
         /// </summary>
-        public object slice(object[]? args)
+        public Array slice(object[]? args)
         {
             int len = this.Count;
 
@@ -1381,7 +1381,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Overload without parameters to match potential direct dispatch.
         /// </summary>
-        public object slice()
+        public Array slice()
         {
             return slice(null);
         }
@@ -1389,7 +1389,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Overload for one argument to align with dispatcher arity matching.
         /// </summary>
-        public object slice(object start)
+        public Array slice(object start)
         {
             return slice(new object[] { start });
         }
@@ -1397,7 +1397,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Overload for two arguments to align with dispatcher arity matching.
         /// </summary>
-        public object slice(object start, object end)
+        public Array slice(object start, object end)
         {
             return slice(new object[] { start, end });
         }
@@ -1406,7 +1406,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.splice(start[, deleteCount[, item1[, item2[, ...]]]])
         /// Mutates the array by removing and/or inserting elements. Returns a new Array of removed elements.
         /// </summary>
-        public object splice(object[]? args)
+        public Array splice(object[]? args)
         {
             int len = this.Count;
 
@@ -1468,7 +1468,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Overload without parameters
         /// </summary>
-        public object splice()
+        public Array splice()
         {
             return splice(null);
         }
@@ -1476,7 +1476,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Overload with start only
         /// </summary>
-        public object splice(object start)
+        public Array splice(object start)
         {
             return splice(new object[] { start });
         }
@@ -1484,7 +1484,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Overload with start and deleteCount
         /// </summary>
-        public object splice(object start, object deleteCount)
+        public Array splice(object start, object deleteCount)
         {
             return splice(new object[] { start, deleteCount });
         }
@@ -1563,7 +1563,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.push(...items): appends items to the end and returns the new length.
         /// </summary>
-        public object push(object[]? args)
+        public double push(object[]? args)
         {
             if (args != null)
             {
@@ -1579,7 +1579,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Overload without parameters to match potential direct dispatch; returns current length.
         /// </summary>
-        public object push()
+        public double push()
         {
             return (double)this.Count;
         }
@@ -1652,7 +1652,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.unshift(...items): prepends items and returns new length.
         /// </summary>
-        public object unshift(object[]? args)
+        public double unshift(object[]? args)
         {
             if (args != null && args.Length > 0)
             {
@@ -1665,7 +1665,7 @@ namespace JavaScriptRuntime
             return (double)this.Count;
         }
 
-        public object unshift()
+        public double unshift()
         {
             return (double)this.Count;
         }
@@ -1673,13 +1673,13 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.reverse(): in-place reverse.
         /// </summary>
-        public object reverse(object[]? args)
+        public Array reverse(object[]? args)
         {
             this.Reverse();
             return this;
         }
 
-        public object reverse()
+        public Array reverse()
         {
             return reverse(null);
         }
@@ -1687,7 +1687,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.concat(...items): returns a new array.
         /// </summary>
-        public object concat(object[]? args)
+        public Array concat(object[]? args)
         {
             var result = new Array(this);
             if (args == null || args.Length == 0) return result;
@@ -1708,7 +1708,7 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        public object concat()
+        public Array concat()
         {
             return new Array(this);
         }
@@ -1716,7 +1716,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.fill(value[, start[, end]])
         /// </summary>
-        public object fill(object[]? args)
+        public Array fill(object[]? args)
         {
             var value = (args != null && args.Length > 0) ? args[0] : null;
             int len = this.Count;
@@ -1749,7 +1749,7 @@ namespace JavaScriptRuntime
             return this;
         }
 
-        public object fill()
+        public Array fill()
         {
             return this;
         }
@@ -1757,7 +1757,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.copyWithin(target[, start[, end]])
         /// </summary>
-        public object copyWithin(object[]? args)
+        public Array copyWithin(object[]? args)
         {
             int len = this.Count;
             if (len == 0) return this;
@@ -1801,7 +1801,7 @@ namespace JavaScriptRuntime
             return this;
         }
 
-        public object copyWithin()
+        public Array copyWithin()
         {
             return this;
         }
@@ -1809,7 +1809,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.flat([depth])
         /// </summary>
-        public object flat(object[]? args)
+        public Array flat(object[]? args)
         {
             int depth = 1;
             if (args != null && args.Length > 0 && args[0] != null)
@@ -1823,7 +1823,7 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        public object flat()
+        public Array flat()
         {
             return flat(null);
         }
@@ -1848,7 +1848,7 @@ namespace JavaScriptRuntime
         /// JavaScript Array.flatMap(callback[, thisArg])
         /// Maps then flattens one level.
         /// </summary>
-        public object flatMap(object[] args)
+        public Array flatMap(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             var mapped = new Array();
@@ -1865,14 +1865,14 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.toReversed(): returns a reversed copy.
         /// </summary>
-        public object toReversed(object[]? args)
+        public Array toReversed(object[]? args)
         {
             var copy = new Array(this);
             copy.Reverse();
             return copy;
         }
 
-        public object toReversed()
+        public Array toReversed()
         {
             return toReversed(null);
         }
@@ -1880,7 +1880,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.toSorted([compareFn]): returns a sorted copy.
         /// </summary>
-        public object toSorted(object[]? args)
+        public Array toSorted(object[]? args)
         {
             var copy = new Array(this);
             if (args != null && args.Length > 0)
@@ -1894,7 +1894,7 @@ namespace JavaScriptRuntime
             return copy;
         }
 
-        public object toSorted()
+        public Array toSorted()
         {
             return toSorted(null);
         }
@@ -1902,7 +1902,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.toSpliced(start, deleteCount, ...items): returns a copy with splice applied.
         /// </summary>
-        public object toSpliced(object[]? args)
+        public Array toSpliced(object[]? args)
         {
             var copy = new Array(this);
             copy.splice(args);
@@ -1912,7 +1912,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.with(index, value): returns a copy with element at index replaced.
         /// </summary>
-        public object with(object[] args)
+        public Array with(object[] args)
         {
             if (args == null || args.Length < 2)
             {
