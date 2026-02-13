@@ -434,6 +434,28 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_PrimeJavaScript_RunSieve_InfersStepAndStartAreNumbers()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var step = symbolTable.GetBindingInfo("PrimeSieve/runSieve/step");
+        Assert.NotNull(step);
+        Assert.True(step!.IsStableType);
+        Assert.Equal(typeof(double), step.ClrType);
+
+        var start = symbolTable.GetBindingInfo("PrimeSieve/runSieve/start");
+        Assert.NotNull(start);
+        Assert.True(start!.IsStableType);
+        Assert.Equal(typeof(double), start.ClrType);
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_PrimeStyle_TypedArrayElementRead_InfersWordValueIsNumber()
     {
         // This reproduces the PrimeJavaScript pattern:

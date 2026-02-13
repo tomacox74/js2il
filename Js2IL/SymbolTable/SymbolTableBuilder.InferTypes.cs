@@ -196,6 +196,80 @@ public partial class SymbolTableBuilder
 
         var inferred = InferExpressionClrType(onlyReturn.Argument, callableScope);
 
+        bool IsIdentifierForcedNumericBeforeReturn(string name)
+        {
+            bool forcedNumeric = false;
+
+            void Walk(Node? node)
+            {
+                if (node == null)
+                {
+                    return;
+                }
+
+                // Do not traverse into nested function boundaries.
+                if (node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression)
+                {
+                    if (!ReferenceEquals(node, functionBoundaryNode))
+                    {
+                        return;
+                    }
+                }
+
+                if (node is UpdateExpression ue && ue.Argument is Identifier uid && string.Equals(uid.Name, name, StringComparison.Ordinal))
+                {
+                    // ++/-- forces ToNumber and the variable becomes a number afterwards.
+                    forcedNumeric = true;
+                    return;
+                }
+
+                if (node is AssignmentExpression ae && ae.Left is Identifier aid && string.Equals(aid.Name, name, StringComparison.Ordinal))
+                {
+                    var rhs = InferExpressionClrType(ae.Right, callableScope);
+                    if (rhs == typeof(double))
+                    {
+                        forcedNumeric = true;
+                        return;
+                    }
+
+                    // Any clearly non-numeric assignment makes it unsafe to infer.
+                    if (rhs != null && rhs != typeof(double))
+                    {
+                        forcedNumeric = false;
+                        return;
+                    }
+                }
+
+                foreach (var child in node.ChildNodes)
+                {
+                    Walk(child);
+                }
+            }
+
+            // Walk everything except the return itself.
+            foreach (var stmt in body.Body)
+            {
+                if (ReferenceEquals(stmt, onlyReturn))
+                {
+                    break;
+                }
+                Walk(stmt);
+            }
+
+            return forcedNumeric;
+        }
+
+        if (inferred == null && onlyReturn.Argument is Identifier rid)
+        {
+            // Common Prime-style pattern in class methods:
+            // searchBitFalse(index) { while (...) { index++; } return index; }
+            // Parameters are object-typed, but update expressions force them numeric.
+            if (IsIdentifierForcedNumericBeforeReturn(rid.Name))
+            {
+                inferred = typeof(double);
+            }
+        }
+
         // Only allow a small, well-understood value-like primitive set.
         // (String return typing needs additional lowering guarantees; keep it disabled for now.)
         if (inferred == typeof(double) || inferred == typeof(bool))
@@ -765,6 +839,35 @@ public partial class SymbolTableBuilder
             return null;
         }
 
+        static Scope? FindRootScope(Scope? s)
+        {
+            var current = s;
+            while (current?.Parent != null)
+            {
+                current = current.Parent;
+            }
+            return current;
+        }
+
+        static Scope? FindClassScopeRecursive(Scope scope, string className)
+        {
+            if (scope.Kind == ScopeKind.Class && string.Equals(scope.Name, className, StringComparison.Ordinal))
+            {
+                return scope;
+            }
+
+            foreach (var child in scope.Children)
+            {
+                var found = FindClassScopeRecursive(child, className);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
         switch (expr)
         {
             case Identifier id:
@@ -882,6 +985,41 @@ public partial class SymbolTableBuilder
                     IsSupportedMathNumberMethod(mathMethodId.Name))
                 {
                     return typeof(double);
+                }
+
+                // this.<field>.<method>(...) where <field> is a user-class instance
+                // and the method has a stable inferred primitive return type.
+                if (ce.Callee is MemberExpression userMethodMe
+                    && !userMethodMe.Computed
+                    && userMethodMe.Property is Identifier userMethodId
+                    && userMethodMe.Object is MemberExpression receiverFieldMe
+                    && receiverFieldMe.Object is ThisExpression
+                    && !receiverFieldMe.Computed
+                    && receiverFieldMe.Property is Identifier receiverFieldId)
+                {
+                    var classScope = FindEnclosingClassScope(scope);
+                    if (classScope != null
+                        && classScope.StableInstanceFieldUserClassNames.TryGetValue(receiverFieldId.Name, out var receiverUserClassName)
+                        && !string.IsNullOrEmpty(receiverUserClassName))
+                    {
+                        var root = FindRootScope(classScope);
+                        if (root != null)
+                        {
+                            var receiverClassScope = FindClassScopeRecursive(root, receiverUserClassName);
+                            if (receiverClassScope != null)
+                            {
+                                var methodScope = receiverClassScope.Children.FirstOrDefault(s =>
+                                    s.Kind == ScopeKind.Function &&
+                                    s.Parent?.Kind == ScopeKind.Class &&
+                                    string.Equals(s.Name, userMethodId.Name, StringComparison.Ordinal));
+
+                                if (methodScope?.StableReturnClrType == typeof(double) || methodScope?.StableReturnClrType == typeof(bool))
+                                {
+                                    return methodScope.StableReturnClrType;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 // Array.of(...) / Array.from(...)

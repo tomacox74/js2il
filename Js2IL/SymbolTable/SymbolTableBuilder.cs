@@ -62,6 +62,10 @@ namespace Js2IL.SymbolTables
             InferClassInstanceFieldClrTypes(globalScope);
             InferVariableClrTypes(globalScope);
             InferCallableReturnClrTypes(globalScope);
+
+            // Finally, re-run variable inference so locals can benefit from stable callable return types
+            // (e.g., factor = this.bitArray.searchBitFalse(...) stays numeric).
+            InferVariableClrTypes(globalScope);
             module.SymbolTable = new SymbolTable(globalScope);
         }
 
