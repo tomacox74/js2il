@@ -268,8 +268,8 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
                     }
 
-                    EmitLoadTemp(setI32.Index, ilEncoder, allocation, methodDescriptor);
-                    EmitLoadTemp(setI32.Value, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsDouble(setI32.Index, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsDouble(setI32.Value, ilEncoder, allocation, methodDescriptor);
 
                     var int32ArraySetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Int32Array),
@@ -281,12 +281,20 @@ internal sealed partial class LIRToILCompiler
                     // If the assignment expression result is used, return the assigned value.
                     if (IsMaterialized(setI32.Result, allocation))
                     {
-                        EmitLoadTemp(setI32.Value, ilEncoder, allocation, methodDescriptor);
                         var resultStorage = GetTempStorage(setI32.Result);
-                        if (!(resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double)))
+                        if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
                         {
-                            ilEncoder.OpCode(ILOpCode.Box);
-                            ilEncoder.Token(_bclReferences.DoubleType);
+                            EmitLoadTempAsDouble(setI32.Value, ilEncoder, allocation, methodDescriptor);
+                        }
+                        else
+                        {
+                            EmitLoadTemp(setI32.Value, ilEncoder, allocation, methodDescriptor);
+                            var valueStorage = GetTempStorage(setI32.Value);
+                            if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
+                            {
+                                ilEncoder.OpCode(ILOpCode.Box);
+                                ilEncoder.Token(_bclReferences.DoubleType);
+                            }
                         }
                         EmitStoreTemp(setI32.Result, ilEncoder, allocation);
                     }
