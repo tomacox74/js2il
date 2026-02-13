@@ -63,9 +63,42 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(getIntrinsicGlobalFunction.Result, ilEncoder, allocation);
                 break;
             case LIRCallIntrinsic callIntrinsic:
-                EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(callIntrinsic.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
-                EmitInvokeIntrinsicMethod(typeof(JavaScriptRuntime.Console), callIntrinsic.Name, ilEncoder);
+                // Optimize console.log/error/warn with arity-specific overloads (0-3 args)
+                if (TryGetBuildArraySource(callIntrinsic.ArgumentsArray, out var argElements) && argElements.Count <= 3)
+                {
+                    // Emit the intrinsic object (e.g., console instance)
+                    EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodDescriptor);
+                    
+                    // Emit individual arguments
+                    foreach (var arg in argElements)
+                    {
+                        EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+                    }
+                    
+                    // Select arity-specific overload
+                    Type[] paramTypes = argElements.Count switch
+                    {
+                        0 => System.Array.Empty<Type>(),
+                        1 => new[] { typeof(object) },
+                        2 => new[] { typeof(object), typeof(object) },
+                        3 => new[] { typeof(object), typeof(object), typeof(object) },
+                        _ => throw new InvalidOperationException("Unexpected arity")
+                    };
+                    
+                    var methodRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Console),
+                        callIntrinsic.Name,
+                        paramTypes);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(methodRef);
+                }
+                else
+                {
+                    // Fall back to array-based call
+                    EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(callIntrinsic.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+                    EmitInvokeIntrinsicMethod(typeof(JavaScriptRuntime.Console), callIntrinsic.Name, ilEncoder);
+                }
 
                 if (IsMaterialized(callIntrinsic.Result, allocation))
                 {

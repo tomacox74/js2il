@@ -16,7 +16,7 @@ internal sealed partial class LIRToILCompiler
         MethodDescriptor methodDescriptor)
     {
         // Resolve the instance method using heuristics aligned with intrinsic static calls.
-        // Prefer object[] signature (variadic JS-style), else exact arity match with object parameters.
+        // Prefer exact arity match with object parameters, else object[] signature (variadic JS-style).
         var receiverType = instruction.ReceiverClrType;
 
         var allMethods = receiverType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
@@ -26,18 +26,22 @@ internal sealed partial class LIRToILCompiler
 
         var argCount = instruction.Arguments.Count;
 
+        // Prefer exact-arity overload first (supports arity-specific optimizations)
         var chosen = methods.FirstOrDefault(mi =>
         {
             var ps = mi.GetParameters();
-            return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            // Match on exact parameter count where all parameters are object-assignable
+            // (nullability is compile-time only, so object? appears as object at runtime)
+            return ps.Length == argCount && ps.All(p => typeof(object).IsAssignableFrom(p.ParameterType) || p.ParameterType == typeof(object));
         });
 
+        // Fall back to params array if no exact match
         if (chosen == null)
         {
             chosen = methods.FirstOrDefault(mi =>
             {
                 var ps = mi.GetParameters();
-                return ps.Length == argCount && ps.All(p => p.ParameterType == typeof(object));
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
             });
         }
 

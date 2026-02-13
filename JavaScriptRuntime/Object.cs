@@ -836,6 +836,109 @@ namespace JavaScriptRuntime
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
 
+        // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
+        // These inline the logic to avoid creating arrays when possible.
+
+        public static object? CallMember0(object receiver, string methodName)
+        {
+            if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+
+            // Function.prototype methods with 0 args
+            if (receiver is Delegate del)
+            {
+                if (string.Equals(methodName, "apply", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Apply(del, null, null);
+                }
+                if (string.Equals(methodName, "call", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Call(del, null, System.Array.Empty<object?>());
+                }
+                if (string.Equals(methodName, "bind", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Bind(del, null, System.Array.Empty<object?>());
+                }
+            }
+
+            // For other cases, fall back to the general method with empty array
+            return CallMember(receiver, methodName, System.Array.Empty<object>());
+        }
+
+        public static object? CallMember1(object receiver, string methodName, object? a0)
+        {
+            if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+
+            // Function.prototype methods with 1 arg
+            if (receiver is Delegate del)
+            {
+                if (string.Equals(methodName, "apply", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Apply(del, a0, null);
+                }
+                if (string.Equals(methodName, "call", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Call(del, a0, System.Array.Empty<object?>());
+                }
+                if (string.Equals(methodName, "bind", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Bind(del, a0, System.Array.Empty<object?>());
+                }
+            }
+
+            // For other cases, fall back to the general method
+            return CallMember(receiver, methodName, new object[] { a0! });
+        }
+
+        public static object? CallMember2(object receiver, string methodName, object? a0, object? a1)
+        {
+            if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+
+            // Function.prototype methods with 2 args
+            if (receiver is Delegate del)
+            {
+                if (string.Equals(methodName, "apply", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Apply(del, a0, a1);
+                }
+                if (string.Equals(methodName, "call", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Call(del, a0, new object?[] { a1 });
+                }
+                if (string.Equals(methodName, "bind", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Bind(del, a0, new object?[] { a1 });
+                }
+            }
+
+            // For other cases, fall back to the general method
+            return CallMember(receiver, methodName, new object[] { a0!, a1! });
+        }
+
+        public static object? CallMember3(object receiver, string methodName, object? a0, object? a1, object? a2)
+        {
+            if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+
+            // Function.prototype methods with 3 args
+            if (receiver is Delegate del)
+            {
+                if (string.Equals(methodName, "apply", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Apply(del, a0, a1);
+                }
+                if (string.Equals(methodName, "call", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Call(del, a0, new object?[] { a1, a2 });
+                }
+                if (string.Equals(methodName, "bind", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.Bind(del, a0, new object?[] { a1, a2 });
+                }
+            }
+
+            // For other cases, fall back to the general method
+            return CallMember(receiver, methodName, new object[] { a0!, a1!, a2! });
+        }
+
         private static string ToPropertyKeyString(object? key)
         {
             if (key is Symbol sym)

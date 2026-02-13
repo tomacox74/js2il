@@ -151,14 +151,47 @@ internal sealed partial class LIRToILCompiler
 
         EmitLoadTempAsObject(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
         ilEncoder.Ldstr(_metadataBuilder, instruction.MethodName);
-        EmitObjectArrayFromTemps(instruction.Arguments, ilEncoder, allocation, methodDescriptor);
+        
+        // Use arity-specific overload if possible (0-3 args)
+        int argCount = instruction.Arguments.Count;
+        if (argCount <= 3)
+        {
+            // Emit individual arguments
+            foreach (var arg in instruction.Arguments)
+            {
+                EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+            }
+            
+            // Select arity-specific overload
+            Type[] paramTypes = argCount switch
+            {
+                0 => new[] { typeof(object), typeof(string) },
+                1 => new[] { typeof(object), typeof(string), typeof(object) },
+                2 => new[] { typeof(object), typeof(string), typeof(object), typeof(object) },
+                3 => new[] { typeof(object), typeof(string), typeof(object), typeof(object), typeof(object) },
+                _ => throw new InvalidOperationException("Unexpected arity")
+            };
+            
+            string methodName = argCount == 0 ? "CallMember0" : $"CallMember{argCount}";
+            var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.Object),
+                methodName,
+                paramTypes);
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(callMemberRef);
+        }
+        else
+        {
+            // Fall back to array-based call for > 3 args
+            EmitObjectArrayFromTemps(instruction.Arguments, ilEncoder, allocation, methodDescriptor);
 
-        var callMemberRef = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.Object),
-            nameof(JavaScriptRuntime.Object.CallMember),
-            new[] { typeof(object), typeof(string), typeof(object[]) });
-        ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(callMemberRef);
+            var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.Object),
+                nameof(JavaScriptRuntime.Object.CallMember),
+                new[] { typeof(object), typeof(string), typeof(object[]) });
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(callMemberRef);
+        }
 
         if (IsMaterialized(instruction.Result, allocation))
         {
