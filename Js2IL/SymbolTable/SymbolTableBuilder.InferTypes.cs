@@ -788,17 +788,36 @@ public partial class SymbolTableBuilder
                     }
                 }
 
-                // Array instance methods that return boolean
-                // Currently only Array.prototype.some() returns unboxed bool
+                // Array instance methods - use reflection to get return type
                 if (ce.Callee is MemberExpression instanceMe && instanceMe.Property is Identifier methodId)
                 {
                     var receiverType = InferExpressionClrType(instanceMe.Object, scope, proposedTypes);
                     if (receiverType == typeof(JavaScriptRuntime.Array))
                     {
-                        // Array.prototype.some returns unboxed boolean
-                        if (string.Equals(methodId.Name, "some", StringComparison.Ordinal))
+                        // Use reflection to determine return type of Array methods
+                        // GetMethods to handle overloads - we just need to check if any overload returns a specific type
+                        var methods = receiverType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+                            .Where(m => string.Equals(m.Name, methodId.Name, StringComparison.Ordinal))
+                            .ToList();
+                        
+                        if (methods.Count > 0)
                         {
-                            return typeof(bool);
+                            // Check if all overloads have the same return type
+                            var returnType = methods[0].ReturnType;
+                            if (methods.All(m => m.ReturnType == returnType) && returnType != typeof(void))
+                            {
+                                // Only return primitive types that we can safely infer
+                                if (returnType == typeof(bool) || returnType == typeof(double))
+                                {
+                                    return returnType;
+                                }
+                                // For object return types, check if it's Array
+                                else if (returnType == typeof(object) || returnType == receiverType)
+                                {
+                                    // Some methods like slice, map return Array but are typed as object
+                                    // We already handle these cases elsewhere, so skip here
+                                }
+                            }
                         }
                     }
                 }
