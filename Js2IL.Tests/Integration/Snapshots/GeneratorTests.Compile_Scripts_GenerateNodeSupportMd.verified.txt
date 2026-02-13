@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3899
+				// Method begins at RVA 0x3895
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -87,7 +87,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x38a2
+				// Method begins at RVA 0x389e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -110,53 +110,49 @@
 		{
 			// Method begins at RVA 0x2290
 			// Header size: 12
-			// Code size: 76 (0x4c)
+			// Code size: 69 (0x45)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
-				[2] object,
-				[3] bool
+				[2] bool
 			)
 
 			IL_0000: ldarg.1
-			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+			IL_0001: call bool [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
 			IL_0006: stloc.2
 			IL_0007: ldloc.2
-			IL_0008: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_000d: stloc.3
-			IL_000e: ldloc.3
-			IL_000f: brfalse IL_001b
+			IL_0008: brfalse IL_0014
+
+			IL_000d: ldarg.1
+			IL_000e: stloc.0
+			IL_000f: br IL_0043
 
 			IL_0014: ldarg.1
-			IL_0015: stloc.0
-			IL_0016: br IL_004a
+			IL_0015: ldc.i4.0
+			IL_0016: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_001b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+			IL_0020: stloc.2
+			IL_0021: ldloc.2
+			IL_0022: brfalse IL_0033
 
-			IL_001b: ldarg.1
-			IL_001c: ldc.i4.0
-			IL_001d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0022: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-			IL_0027: stloc.3
-			IL_0028: ldloc.3
-			IL_0029: brfalse IL_003a
+			IL_0027: ldc.i4.0
+			IL_0028: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_002d: stloc.1
+			IL_002e: br IL_0041
 
-			IL_002e: ldc.i4.0
-			IL_002f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_0034: stloc.1
-			IL_0035: br IL_0048
+			IL_0033: ldc.i4.1
+			IL_0034: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0039: dup
+			IL_003a: ldarg.1
+			IL_003b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+			IL_0040: stloc.1
 
-			IL_003a: ldc.i4.1
-			IL_003b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_0040: dup
-			IL_0041: ldarg.1
-			IL_0042: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-			IL_0047: stloc.1
+			IL_0041: ldloc.1
+			IL_0042: stloc.0
 
-			IL_0048: ldloc.1
-			IL_0049: stloc.0
-
-			IL_004a: ldloc.0
-			IL_004b: ret
+			IL_0043: ldloc.0
+			IL_0044: ret
 		} // end of method asArray::__js_call__
 
 	} // end of class asArray
@@ -172,7 +168,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x38ab
+				// Method begins at RVA 0x38a7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -193,7 +189,7 @@
 				object s
 			) cil managed 
 		{
-			// Method begins at RVA 0x22e8
+			// Method begins at RVA 0x22e4
 			// Header size: 12
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -241,7 +237,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x38b4
+				// Method begins at RVA 0x38b0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -263,7 +259,7 @@
 				object text
 			) cil managed 
 		{
-			// Method begins at RVA 0x2328
+			// Method begins at RVA 0x2324
 			// Header size: 12
 			// Code size: 145 (0x91)
 			.maxstack 8
@@ -355,7 +351,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x38bd
+				// Method begins at RVA 0x38b9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -376,7 +372,7 @@
 				object ns
 			) cil managed 
 		{
-			// Method begins at RVA 0x23c8
+			// Method begins at RVA 0x23c4
 			// Header size: 12
 			// Code size: 348 (0x15c)
 			.maxstack 8
@@ -430,7 +426,7 @@
 			IL_005b: ldc.i4.0
 			IL_005c: ldstr "# Node Support Coverage"
 			IL_0061: stelem.ref
-			IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0062: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_0067: pop
 			IL_0068: ldloc.1
 			IL_0069: ldc.i4.1
@@ -439,7 +435,7 @@
 			IL_0070: ldc.i4.0
 			IL_0071: ldstr ""
 			IL_0076: stelem.ref
-			IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0077: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_007c: pop
 			IL_007d: ldarg.1
 			IL_007e: ldstr "nodeVersionTarget"
@@ -481,7 +477,7 @@
 			IL_00df: ldc.i4.0
 			IL_00e0: ldloc.s 6
 			IL_00e2: stelem.ref
-			IL_00e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_00e3: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_00e8: pop
 
 			IL_00e9: ldnull
@@ -512,7 +508,7 @@
 			IL_0126: ldc.i4.0
 			IL_0127: ldloc.s 6
 			IL_0129: stelem.ref
-			IL_012a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_012a: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_012f: pop
 			IL_0130: ldloc.1
 			IL_0131: ldc.i4.1
@@ -521,7 +517,7 @@
 			IL_0138: ldc.i4.0
 			IL_0139: ldstr ""
 			IL_013e: stelem.ref
-			IL_013f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_013f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_0144: pop
 			IL_0145: ldloc.1
 			IL_0146: ldc.i4.1
@@ -530,7 +526,7 @@
 			IL_014d: ldc.i4.0
 			IL_014e: ldstr "\n"
 			IL_0153: stelem.ref
-			IL_0154: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0154: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
 			IL_0159: stloc.2
 			IL_015a: ldloc.2
 			IL_015b: ret
@@ -559,7 +555,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x38cf
+					// Method begins at RVA 0x38cb
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -580,7 +576,7 @@
 					object p
 				) cil managed 
 			{
-				// Method begins at RVA 0x3850
+				// Method begins at RVA 0x384c
 				// Header size: 12
 				// Code size: 52 (0x34)
 				.maxstack 8
@@ -623,7 +619,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x38c6
+				// Method begins at RVA 0x38c2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -644,7 +640,7 @@
 				object impl
 			) cil managed 
 		{
-			// Method begins at RVA 0x2530
+			// Method begins at RVA 0x252c
 			// Header size: 12
 			// Code size: 159 (0x9f)
 			.maxstack 8
@@ -743,7 +739,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x38d8
+				// Method begins at RVA 0x38d4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -767,7 +763,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x38ea
+					// Method begins at RVA 0x38e6
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -785,7 +781,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x38e1
+				// Method begins at RVA 0x38dd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -806,7 +802,7 @@
 				object apis
 			) cil managed 
 		{
-			// Method begins at RVA 0x25dc
+			// Method begins at RVA 0x25d8
 			// Header size: 12
 			// Code size: 651 (0x28b)
 			.maxstack 8
@@ -879,7 +875,7 @@
 			IL_006f: ldc.i4.0
 			IL_0070: ldstr "| API | Kind | Status | Docs |"
 			IL_0075: stelem.ref
-			IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0076: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_007b: pop
 			IL_007c: ldloc.0
 			IL_007d: ldc.i4.1
@@ -888,7 +884,7 @@
 			IL_0084: ldc.i4.0
 			IL_0085: ldstr "| --- | ---- | ------ | ---- |"
 			IL_008a: stelem.ref
-			IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_008b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_0090: pop
 			IL_0091: ldarg.1
 			IL_0092: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
@@ -1050,7 +1046,7 @@
 					IL_023c: ldc.i4.0
 					IL_023d: ldloc.s 15
 					IL_023f: stelem.ref
-					IL_0240: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_0240: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_0245: pop
 					IL_0246: br IL_009c
 				// end loop
@@ -1085,7 +1081,7 @@
 			IL_027a: ldc.i4.0
 			IL_027b: ldstr "\n"
 			IL_0280: stelem.ref
-			IL_0281: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0281: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
 			IL_0286: stloc.s 11
 			IL_0288: ldloc.s 11
 			IL_028a: ret
@@ -1104,7 +1100,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x38f3
+				// Method begins at RVA 0x38ef
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1128,7 +1124,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3905
+					// Method begins at RVA 0x3901
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1152,7 +1148,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x3917
+						// Method begins at RVA 0x3913
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -1170,7 +1166,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x390e
+					// Method begins at RVA 0x390a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1188,7 +1184,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x38fc
+				// Method begins at RVA 0x38f8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1209,7 +1205,7 @@
 				object apis
 			) cil managed 
 		{
-			// Method begins at RVA 0x2890
+			// Method begins at RVA 0x288c
 			// Header size: 12
 			// Code size: 790 (0x316)
 			.maxstack 8
@@ -1367,7 +1363,7 @@
 					IL_013a: ldc.i4.0
 					IL_013b: ldloc.s 21
 					IL_013d: stelem.ref
-					IL_013e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_013e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_0143: pop
 					IL_0144: ldloc.s 4
 					IL_0146: ldstr "tests"
@@ -1497,7 +1493,7 @@
 							IL_0295: ldc.i4.0
 							IL_0296: ldloc.s 22
 							IL_0298: stelem.ref
-							IL_0299: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+							IL_0299: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 							IL_029e: pop
 							IL_029f: br IL_015d
 						// end loop
@@ -1558,7 +1554,7 @@
 			IL_0305: ldc.i4.0
 			IL_0306: ldstr "\n"
 			IL_030b: stelem.ref
-			IL_030c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_030c: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
 			IL_0311: stloc.s 16
 			IL_0313: ldloc.s 16
 			IL_0315: ret
@@ -1577,7 +1573,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3920
+				// Method begins at RVA 0x391c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1605,7 +1601,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x393b
+						// Method begins at RVA 0x3937
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -1625,7 +1621,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x3944
+						// Method begins at RVA 0x3940
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -1645,7 +1641,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x394d
+						// Method begins at RVA 0x3949
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -1663,7 +1659,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3932
+					// Method begins at RVA 0x392e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1681,7 +1677,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3929
+				// Method begins at RVA 0x3925
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1702,7 +1698,7 @@
 				object ns
 			) cil managed 
 		{
-			// Method begins at RVA 0x2be8
+			// Method begins at RVA 0x2be4
 			// Header size: 12
 			// Code size: 869 (0x365)
 			.maxstack 8
@@ -1734,7 +1730,7 @@
 			IL_000f: ldc.i4.0
 			IL_0010: ldstr "## Modules"
 			IL_0015: stelem.ref
-			IL_0016: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0016: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_001b: pop
 			IL_001c: ldloc.0
 			IL_001d: ldc.i4.1
@@ -1743,7 +1739,7 @@
 			IL_0024: ldc.i4.0
 			IL_0025: ldstr ""
 			IL_002a: stelem.ref
-			IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_002b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_0030: pop
 			IL_0031: ldarg.1
 			IL_0032: ldstr "modules"
@@ -1820,7 +1816,7 @@
 					IL_00f3: ldc.i4.0
 					IL_00f4: ldloc.s 12
 					IL_00f6: stelem.ref
-					IL_00f7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_00f7: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_00fc: pop
 					IL_00fd: ldloc.s 4
 					IL_00ff: ldstr "docs"
@@ -1863,7 +1859,7 @@
 					IL_0166: ldc.i4.0
 					IL_0167: ldloc.s 12
 					IL_0169: stelem.ref
-					IL_016a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_016a: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_016f: pop
 
 					IL_0170: ldloc.s 4
@@ -1881,7 +1877,7 @@
 					IL_0192: ldc.i4.0
 					IL_0193: ldstr "Implementation:"
 					IL_0198: stelem.ref
-					IL_0199: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_0199: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_019e: pop
 					IL_019f: ldloc.s 4
 					IL_01a1: ldstr "implementation"
@@ -1908,7 +1904,7 @@
 					IL_01d6: ldc.i4.0
 					IL_01d7: ldloc.s 7
 					IL_01d9: stelem.ref
-					IL_01da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_01da: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_01df: pop
 
 					IL_01e0: ldloc.0
@@ -1918,7 +1914,7 @@
 					IL_01e8: ldc.i4.0
 					IL_01e9: ldstr ""
 					IL_01ee: stelem.ref
-					IL_01ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_01ef: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_01f4: pop
 					IL_01f5: ldloc.s 4
 					IL_01f7: ldstr "apis"
@@ -1967,7 +1963,7 @@
 					IL_0261: ldc.i4.0
 					IL_0262: ldloc.s 5
 					IL_0264: stelem.ref
-					IL_0265: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_0265: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_026a: pop
 					IL_026b: ldloc.0
 					IL_026c: ldc.i4.1
@@ -1976,7 +1972,7 @@
 					IL_0273: ldc.i4.0
 					IL_0274: ldstr ""
 					IL_0279: stelem.ref
-					IL_027a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_027a: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_027f: pop
 
 					IL_0280: ldloc.s 4
@@ -2026,7 +2022,7 @@
 					IL_02ec: ldc.i4.0
 					IL_02ed: ldstr "Tests:"
 					IL_02f2: stelem.ref
-					IL_02f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_02f3: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_02f8: pop
 					IL_02f9: ldloc.0
 					IL_02fa: ldc.i4.1
@@ -2035,7 +2031,7 @@
 					IL_0301: ldc.i4.0
 					IL_0302: ldloc.s 6
 					IL_0304: stelem.ref
-					IL_0305: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_0305: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_030a: pop
 					IL_030b: ldloc.0
 					IL_030c: ldc.i4.1
@@ -2044,7 +2040,7 @@
 					IL_0313: ldc.i4.0
 					IL_0314: ldstr ""
 					IL_0319: stelem.ref
-					IL_031a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_031a: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_031f: pop
 
 					IL_0320: br IL_006b
@@ -2080,7 +2076,7 @@
 			IL_0354: ldc.i4.0
 			IL_0355: ldstr "\n"
 			IL_035a: stelem.ref
-			IL_035b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_035b: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
 			IL_0360: stloc.s 7
 			IL_0362: ldloc.s 7
 			IL_0364: ret
@@ -2099,7 +2095,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3956
+				// Method begins at RVA 0x3952
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2127,7 +2123,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x3971
+						// Method begins at RVA 0x396d
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2147,7 +2143,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x397a
+						// Method begins at RVA 0x3976
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2167,7 +2163,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x3983
+						// Method begins at RVA 0x397f
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2191,7 +2187,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x3995
+							// Method begins at RVA 0x3991
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -2209,7 +2205,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x398c
+						// Method begins at RVA 0x3988
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2227,7 +2223,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3968
+					// Method begins at RVA 0x3964
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2245,7 +2241,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x395f
+				// Method begins at RVA 0x395b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2266,7 +2262,7 @@
 				object ns
 			) cil managed 
 		{
-			// Method begins at RVA 0x2f78
+			// Method begins at RVA 0x2f74
 			// Header size: 12
 			// Code size: 1142 (0x476)
 			.maxstack 8
@@ -2303,7 +2299,7 @@
 			IL_000f: ldc.i4.0
 			IL_0010: ldstr "## Globals"
 			IL_0015: stelem.ref
-			IL_0016: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0016: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_001b: pop
 			IL_001c: ldloc.0
 			IL_001d: ldc.i4.1
@@ -2312,7 +2308,7 @@
 			IL_0024: ldc.i4.0
 			IL_0025: ldstr ""
 			IL_002a: stelem.ref
-			IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_002b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_0030: pop
 			IL_0031: ldarg.1
 			IL_0032: ldstr "globals"
@@ -2389,7 +2385,7 @@
 					IL_00f3: ldc.i4.0
 					IL_00f4: ldloc.s 18
 					IL_00f6: stelem.ref
-					IL_00f7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_00f7: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_00fc: pop
 					IL_00fd: ldloc.s 4
 					IL_00ff: ldstr "docs"
@@ -2432,7 +2428,7 @@
 					IL_0166: ldc.i4.0
 					IL_0167: ldloc.s 18
 					IL_0169: stelem.ref
-					IL_016a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_016a: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_016f: pop
 
 					IL_0170: ldloc.s 4
@@ -2450,7 +2446,7 @@
 					IL_0192: ldc.i4.0
 					IL_0193: ldstr "Implementation:"
 					IL_0198: stelem.ref
-					IL_0199: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_0199: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_019e: pop
 					IL_019f: ldloc.s 4
 					IL_01a1: ldstr "implementation"
@@ -2477,7 +2473,7 @@
 					IL_01d6: ldc.i4.0
 					IL_01d7: ldloc.s 13
 					IL_01d9: stelem.ref
-					IL_01da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_01da: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_01df: pop
 
 					IL_01e0: ldloc.s 4
@@ -2495,7 +2491,7 @@
 					IL_0202: ldc.i4.0
 					IL_0203: ldstr "Notes:"
 					IL_0208: stelem.ref
-					IL_0209: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_0209: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_020e: pop
 					IL_020f: ldloc.0
 					IL_0210: ldc.i4.1
@@ -2506,7 +2502,7 @@
 					IL_021a: ldstr "notes"
 					IL_021f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 					IL_0224: stelem.ref
-					IL_0225: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_0225: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_022a: pop
 
 					IL_022b: ldloc.s 4
@@ -2543,7 +2539,7 @@
 					IL_0282: ldc.i4.0
 					IL_0283: ldstr "Tests:"
 					IL_0288: stelem.ref
-					IL_0289: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_0289: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_028e: pop
 					IL_028f: ldloc.s 4
 					IL_0291: ldstr "tests"
@@ -2673,7 +2669,7 @@
 							IL_03e0: ldc.i4.0
 							IL_03e1: ldloc.s 17
 							IL_03e3: stelem.ref
-							IL_03e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+							IL_03e4: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 							IL_03e9: pop
 							IL_03ea: br IL_02a8
 						// end loop
@@ -2708,7 +2704,7 @@
 					IL_0424: ldc.i4.0
 					IL_0425: ldstr ""
 					IL_042a: stelem.ref
-					IL_042b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_042b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_0430: pop
 					IL_0431: br IL_006b
 				// end loop
@@ -2743,7 +2739,7 @@
 			IL_0465: ldc.i4.0
 			IL_0466: ldstr "\n"
 			IL_046b: stelem.ref
-			IL_046c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_046c: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
 			IL_0471: stloc.s 13
 			IL_0473: ldloc.s 13
 			IL_0475: ret
@@ -2762,7 +2758,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x399e
+				// Method begins at RVA 0x399a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2782,7 +2778,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x39a7
+				// Method begins at RVA 0x39a3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2803,7 +2799,7 @@
 				object ns
 			) cil managed 
 		{
-			// Method begins at RVA 0x3430
+			// Method begins at RVA 0x342c
 			// Header size: 12
 			// Code size: 315 (0x13b)
 			.maxstack 8
@@ -2865,7 +2861,7 @@
 			IL_0063: ldc.i4.0
 			IL_0064: ldstr "## Limitations"
 			IL_0069: stelem.ref
-			IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_006a: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_006f: pop
 			IL_0070: ldloc.1
 			IL_0071: ldc.i4.1
@@ -2874,7 +2870,7 @@
 			IL_0078: ldc.i4.0
 			IL_0079: ldstr ""
 			IL_007e: stelem.ref
-			IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_007f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_0084: pop
 			IL_0085: ldloc.0
 			IL_0086: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
@@ -2914,7 +2910,7 @@
 					IL_00d5: ldc.i4.0
 					IL_00d6: ldloc.s 10
 					IL_00d8: stelem.ref
-					IL_00d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+					IL_00d9: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 					IL_00de: pop
 					IL_00df: br IL_0091
 				// end loop
@@ -2949,7 +2945,7 @@
 			IL_0115: ldc.i4.0
 			IL_0116: ldstr ""
 			IL_011b: stelem.ref
-			IL_011c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_011c: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_0121: pop
 			IL_0122: ldloc.1
 			IL_0123: ldc.i4.1
@@ -2958,7 +2954,7 @@
 			IL_012a: ldc.i4.0
 			IL_012b: ldstr "\n"
 			IL_0130: stelem.ref
-			IL_0131: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0131: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
 			IL_0136: stloc.s 6
 			IL_0138: ldloc.s 6
 			IL_013a: ret
@@ -2977,7 +2973,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x39b0
+				// Method begins at RVA 0x39ac
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2997,7 +2993,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x3588
+			// Method begins at RVA 0x3584
 			// Header size: 12
 			// Code size: 699 (0x2bb)
 			.maxstack 8
@@ -3146,7 +3142,7 @@
 			IL_011e: ldc.i4.0
 			IL_011f: ldloc.s 7
 			IL_0121: stelem.ref
-			IL_0122: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0122: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_0127: pop
 			IL_0128: ldnull
 			IL_0129: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd/renderModules::__js_call__(object[], object)
@@ -3169,7 +3165,7 @@
 			IL_0151: ldc.i4.0
 			IL_0152: ldloc.s 7
 			IL_0154: stelem.ref
-			IL_0155: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0155: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_015a: pop
 			IL_015b: ldnull
 			IL_015c: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd/renderGlobals::__js_call__(object[], object)
@@ -3192,7 +3188,7 @@
 			IL_0184: ldc.i4.0
 			IL_0185: ldloc.s 7
 			IL_0187: stelem.ref
-			IL_0188: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0188: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_018d: pop
 			IL_018e: ldnull
 			IL_018f: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd/renderLimitations::__js_call__(object[], object)
@@ -3223,7 +3219,7 @@
 			IL_01cb: ldc.i4.0
 			IL_01cc: ldloc.s 5
 			IL_01ce: stelem.ref
-			IL_01cf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_01cf: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 			IL_01d4: pop
 
 			IL_01d5: ldloc.s 4
@@ -3233,7 +3229,7 @@
 			IL_01de: ldc.i4.0
 			IL_01df: ldstr "\n\n"
 			IL_01e4: stelem.ref
-			IL_01e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_01e5: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
 			IL_01ea: stloc.s 7
 			IL_01ec: ldstr "\\r?\\n"
 			IL_01f1: ldstr "g"
@@ -3365,7 +3361,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x3890
+			// Method begins at RVA 0x388c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -3608,7 +3604,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x39b9
+		// Method begins at RVA 0x39b5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
