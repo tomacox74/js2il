@@ -127,6 +127,24 @@ namespace Js2IL.Tests.Function
         public Task Function_Call_Basic() { var testName = nameof(Function_Call_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_Call_Spread_Basic() { var testName = nameof(Function_Call_Spread_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_Middle() { var testName = nameof(Function_Call_Spread_Middle); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_Multiple() { var testName = nameof(Function_Call_Spread_Multiple); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_EvaluationOrder() { var testName = nameof(Function_Call_Spread_EvaluationOrder); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_StringIterable() { var testName = nameof(Function_Call_Spread_StringIterable); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_MemberCall_ConsoleLog() { var testName = nameof(Function_Call_Spread_MemberCall_ConsoleLog); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_Bind_Basic_PartialApplication() { var testName = nameof(Function_Bind_Basic_PartialApplication); return ExecutionTest(testName); }
 
         [Fact]

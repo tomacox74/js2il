@@ -523,12 +523,21 @@ internal static class Stackify
             case LIRCallIntrinsicStatic:
                 return false;
 
+            case LIRCallIntrinsicStaticWithArgsArray:
+                return false;
+
             // Statement-level intrinsic static calls must never be inlined/re-emitted.
             case LIRCallIntrinsicStaticVoid:
                 return false;
 
+            case LIRCallIntrinsicStaticVoidWithArgsArray:
+                return false;
+
             // LIRCallFunction calls a user-defined function.
             case LIRCallFunction:
+                return false;
+
+            case LIRCallFunctionWithArgsArray:
                 return false;
 
             // LIRCallFunctionValue calls a function value via runtime dispatch.
@@ -781,9 +790,17 @@ internal static class Stackify
             case LIRCallIntrinsicStatic callStatic:
                 return (callStatic.Arguments.Count, 1);
 
+            // Intrinsic static call (args array): consumes argsArray, produces 1 result
+            case LIRCallIntrinsicStaticWithArgsArray:
+                return (1, 1);
+
             // Statement-level intrinsic static call: consumes N args, produces 0
             case LIRCallIntrinsicStaticVoid callStaticVoid:
                 return (callStaticVoid.Arguments.Count, 0);
+
+            // Statement-level intrinsic static call (args array): consumes argsArray, produces 0
+            case LIRCallIntrinsicStaticVoidWithArgsArray:
+                return (1, 0);
 
             // Declared callable direct call: consumes N args, produces 1 result
             case LIRCallDeclaredCallable callDeclared:
@@ -791,6 +808,10 @@ internal static class Stackify
 
             case LIRCallFunction call:
                 return (1 + call.Arguments.Count, 1);
+
+            case LIRCallFunctionWithArgsArray:
+                // scopesArray + argsArray -> result
+                return (2, 1);
 
             case LIRCallFunctionValue:
                 // target + scopesArray + argsArray -> result

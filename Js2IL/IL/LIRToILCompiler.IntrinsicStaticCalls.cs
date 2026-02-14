@@ -9,6 +9,99 @@ internal sealed partial class LIRToILCompiler
 {
     #region Intrinsic Static Calls
 
+    private void EmitIntrinsicStaticCallWithArgsArray(
+        LIRCallIntrinsicStaticWithArgsArray instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
+        if (intrinsicType == null)
+        {
+            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
+        }
+
+        var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        var chosen = allMethods
+            .Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase))
+            .FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            });
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching static params-array method found: {intrinsicType.FullName}.{instruction.MethodName}(object[])");
+        }
+
+        // Load the pre-built args array directly
+        EmitLoadTemp(instruction.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+        // Emit the static call
+        var paramTypes = chosen.GetParameters().Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            if (chosen.ReturnType == typeof(void))
+            {
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+            }
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            if (chosen.ReturnType != typeof(void))
+            {
+                ilEncoder.OpCode(ILOpCode.Pop);
+            }
+        }
+    }
+
+    private void EmitIntrinsicStaticVoidCallWithArgsArray(
+        LIRCallIntrinsicStaticVoidWithArgsArray instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
+        if (intrinsicType == null)
+        {
+            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
+        }
+
+        var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        var chosen = allMethods
+            .Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase))
+            .FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            });
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching static params-array method found: {intrinsicType.FullName}.{instruction.MethodName}(object[])");
+        }
+
+        EmitLoadTemp(instruction.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+        var paramTypes = chosen.GetParameters().Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+
+        if (chosen.ReturnType != typeof(void))
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+    }
+
     /// <summary>
     /// Emits a static method call on an intrinsic type (e.g., Array.isArray, Math.abs).
     /// Uses the same method resolution strategy as the legacy pipeline.

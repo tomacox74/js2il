@@ -1551,16 +1551,6 @@ public class JavaScriptAstValidator : IAstValidator
     {
         if (node is CallExpression call)
         {
-            // Check for spread in function call arguments
-            foreach (var arg in call.Arguments)
-            {
-                if (arg is SpreadElement)
-                {
-                    result.Errors.Add($"Spread in function calls is not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
-                }
-            }
-
             // Check for require() patterns
             if (call.Callee is Identifier id && id.Name == "require")
             {

@@ -124,6 +124,59 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallFunctionWithArgsArray callFuncArray:
+                {
+                    if (callFuncArray.CallableId is not { } callableId)
+                    {
+                        return false; // Fall back to legacy emitter
+                    }
+
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null)
+                    {
+                        return false; // Fall back to legacy emitter
+                    }
+
+                    if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        return false; // Fall back to legacy emitter
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
+                    int jsParamCount = callableId.JsParamCount;
+
+                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    ilEncoder.OpCode(ILOpCode.Ldftn);
+                    ilEncoder.Token(methodHandle);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+
+                    // Load scopes array
+                    EmitLoadTemp(callFuncArray.ScopesArray, ilEncoder, allocation, methodDescriptor);
+
+                    // Load runtime argument array (already expanded for spread)
+                    EmitLoadTemp(callFuncArray.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+                    // Dispatch through Closure.InvokeWithArgs(target, scopes, argsArray)
+                    var invokeWithArgsRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Closure),
+                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
+                        new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(invokeWithArgsRef);
+
+                    if (IsMaterialized(callFuncArray.Result, allocation))
+                    {
+                        EmitStoreTemp(callFuncArray.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
             case LIRCallFunctionValue callValue:
                 {
                     // Emit: ldarg/ldloc target, ldarg/ldloc scopesArray, [args], call Closure.InvokeWithArgs

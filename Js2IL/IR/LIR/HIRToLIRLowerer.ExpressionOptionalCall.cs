@@ -33,19 +33,10 @@ public sealed partial class HIRToLIRLowerer
         DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, nullishLabel));
 
-        var callArgTemps = new List<TempVariable>();
-        foreach (var arg in optionalCallExpr.Arguments)
+        if (!TryLowerCallArgumentsToArgsArray(optionalCallExpr.Arguments, out var argsArrayTemp))
         {
-            if (!TryLowerExpression(arg, out var argTemp))
-            {
-                return false;
-            }
-            callArgTemps.Add(EnsureObject(argTemp));
+            return false;
         }
-
-        var argsArrayTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgTemps, argsArrayTemp));
-        DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
         var scopesTemp = CreateTempVariable();
         if (!TryBuildCurrentScopesArray(scopesTemp))
