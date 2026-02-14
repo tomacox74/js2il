@@ -117,5 +117,33 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_ToLowerCase_ToUpperCase_Basic);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_TaggedTemplate_Basic()
+        {
+            var testName = nameof(String_TaggedTemplate_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_RawStrings()
+        {
+            var testName = nameof(String_TaggedTemplate_RawStrings);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_EvaluationOrder()
+        {
+            var testName = nameof(String_TaggedTemplate_EvaluationOrder);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_NoSubstitutions()
+        {
+            var testName = nameof(String_TaggedTemplate_NoSubstitutions);
+            return GenerateTest(testName);
+        }
     }
 }

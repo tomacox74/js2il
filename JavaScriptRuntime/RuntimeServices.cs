@@ -94,6 +94,37 @@ public class RuntimeServices
         return new System.Dynamic.ExpandoObject();
     }
 
+    /// <summary>
+    /// Cache for template objects indexed by call site ID.
+    /// Per ECMA-262 spec, each unique call site should return the same template object identity.
+    /// </summary>
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Array> _templateObjectCache = new();
+
+    /// <summary>
+    /// Creates a template object for tagged template expressions.
+    /// Returns a cached instance for the same call site to preserve object identity.
+    /// The template object is an array with the cooked strings and a .raw property with raw strings.
+    /// </summary>
+    /// <param name="callSiteId">Unique identifier for the call site (e.g., "Module:Line:Column")</param>
+    /// <param name="cooked">Cooked string array (with escape sequences processed)</param>
+    /// <param name="raw">Raw string array (escape sequences not processed)</param>
+    public static Array CreateTemplateObject(string callSiteId, object[] cooked, object[] raw)
+    {
+        return _templateObjectCache.GetOrAdd(callSiteId, _ =>
+        {
+            // Create array with cooked strings
+            var templateObject = new Array(cooked);
+            
+            // Add .raw property with raw strings
+            var rawArray = new Array(raw);
+            Object.SetProperty(templateObject, "raw", rawArray);
+            
+            // Template objects should be frozen (immutable)
+            // For now we just return the object - freezing can be added later if needed
+            return templateObject;
+        });
+    }
+
     public static ServiceContainer BuildServiceProvider()
     {
         var container = new ServiceContainer();
