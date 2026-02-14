@@ -7,6 +7,7 @@ public class RuntimeServices
 {
     private static readonly System.Threading.AsyncLocal<object?> _currentThis = new();
     private static readonly System.Threading.AsyncLocal<object?[]?> _currentArguments = new();
+    private static readonly System.Threading.AsyncLocal<JavaScriptRuntime.CommonJS.RequireDelegate?> _currentRequire = new();
 
     public static object? GetCurrentThis()
     {
@@ -83,6 +84,26 @@ public class RuntimeServices
         var restArgs = new object?[args.Length - startIndex];
         System.Array.Copy(args, startIndex, restArgs, 0, restArgs.Length);
         return new Array(restArgs);
+    }
+
+    /// <summary>
+    /// Gets the current require delegate for the executing module.
+    /// Used by dynamic import() to access the module loading context.
+    /// </summary>
+    public static CommonJS.RequireDelegate? GetCurrentRequire()
+    {
+        return _currentRequire.Value;
+    }
+
+    /// <summary>
+    /// Sets the current require delegate for the executing module.
+    /// Returns the previous value to support nesting.
+    /// </summary>
+    public static CommonJS.RequireDelegate? SetCurrentRequire(CommonJS.RequireDelegate? value)
+    {
+        var previous = _currentRequire.Value;
+        _currentRequire.Value = value;
+        return previous;
     }
 
     /// <summary>

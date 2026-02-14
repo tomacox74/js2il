@@ -277,6 +277,30 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallImport callImport:
+                {
+                    // Emit: JavaScriptRuntime.CommonJS.DynamicImport(specifier, currentModuleId)
+                    EmitLoadTemp(callImport.ModuleSpecifier, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(callImport.CurrentModuleId, ilEncoder, allocation, methodDescriptor);
+                    
+                    var importRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.CommonJS.DynamicImport),
+                        nameof(JavaScriptRuntime.CommonJS.DynamicImport.Import),
+                        new[] { typeof(object), typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(importRef);
+
+                    if (IsMaterialized(callImport.Result, allocation))
+                    {
+                        EmitStoreTemp(callImport.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
             case LIRConstructValue constructValue:
                 {
                     EmitLoadTempAsObject(constructValue.ConstructorValue, ilEncoder, allocation, methodDescriptor);
