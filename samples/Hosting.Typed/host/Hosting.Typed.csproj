@@ -9,11 +9,12 @@
 
     <JavaScriptRuntimePackageVersion Condition="'$(JavaScriptRuntimePackageVersion)' == ''">0.7.3</JavaScriptRuntimePackageVersion>
     <ModuleName>HostedCounterModule</ModuleName>
-    <ModuleProj>$(MSBuildProjectDirectory)\..\compiler\HostedCounterModule.proj</ModuleProj>
-    <ModuleDll>$(MSBuildProjectDirectory)\..\compiler\out\$(ModuleName).dll</ModuleDll>
+    <CompilerDir>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','..','compiler'))))</CompilerDir>
+    <ModuleProj>$([System.IO.Path]::Combine('$(CompilerDir)','HostedCounterModule.proj'))</ModuleProj>
+    <ModuleDll>$([System.IO.Path]::Combine('$(CompilerDir)','out','$(ModuleName).dll'))</ModuleDll>
 
-    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\..'))</RepoRoot>
-    <LocalJavaScriptRuntimeProject>$(RepoRoot)JavaScriptRuntime\JavaScriptRuntime.csproj</LocalJavaScriptRuntimeProject>
+    <RepoRoot>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','..','..','..'))))</RepoRoot>
+    <LocalJavaScriptRuntimeProject>$([System.IO.Path]::Combine('$(RepoRoot)','JavaScriptRuntime','JavaScriptRuntime.csproj'))</LocalJavaScriptRuntimeProject>
 
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJavaScriptRuntimeProject)')">true</UseLocalJs2ILProject>
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And !Exists('$(LocalJavaScriptRuntimeProject)')">false</UseLocalJs2ILProject>
