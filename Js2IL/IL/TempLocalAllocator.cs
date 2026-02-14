@@ -270,6 +270,14 @@ internal static class TempLocalAllocator
             case LIRCallIntrinsicStaticVoidWithArgsArray callStaticVoidWithArgsArray:
                 yield return callStaticVoidWithArgsArray.ArgumentsArray;
                 break;
+            
+            case LIRCallRuntimeServicesStatic callRuntimeServices:
+                foreach (var arg in callRuntimeServices.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
+            
             case LIRConvertToObject conv:
                 yield return conv.Source;
                 break;
@@ -723,6 +731,10 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCallIntrinsicStatic callStatic:
                 defined = callStatic.Result;
+                return true;
+            
+            case LIRCallRuntimeServicesStatic callRuntimeServices:
+                defined = callRuntimeServices.Result;
                 return true;
 
             case LIRConstructValue constructValue:

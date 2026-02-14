@@ -108,16 +108,20 @@ public class RuntimeServices
     /// <param name="callSiteId">Unique identifier for the call site (e.g., "Module:Line:Column")</param>
     /// <param name="cooked">Cooked string array (with escape sequences processed)</param>
     /// <param name="raw">Raw string array (escape sequences not processed)</param>
-    public static Array CreateTemplateObject(string callSiteId, string[] cooked, string[] raw)
+    public static object CreateTemplateObject(object callSiteId, object cooked, object raw)
     {
-        return _templateObjectCache.GetOrAdd(callSiteId, _ =>
+        var callSiteIdStr = (string)callSiteId;
+        var cookedArray = (object[])cooked;
+        var rawArray = (object[])raw;
+        
+        return _templateObjectCache.GetOrAdd(callSiteIdStr, _ =>
         {
             // Create array with cooked strings
-            var templateObject = new Array(cooked);
+            var templateObject = new Array(cookedArray);
             
             // Add .raw property with raw strings
-            var rawArray = new Array(raw);
-            Object.SetProperty(templateObject, "raw", rawArray);
+            var rawJsArray = new Array(rawArray);
+            Object.SetProperty(templateObject, "raw", rawJsArray);
             
             // Template objects should be frozen (immutable)
             // For now we just return the object - freezing can be added later if needed
