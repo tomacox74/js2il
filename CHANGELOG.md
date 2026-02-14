@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- **Dynamic import() expressions (ECMA-262 §13.3.10)**: Implement `import(specifier)` for dynamic module loading (closes #610).
+  - Returns a Promise that resolves to CommonJS module.exports
+  - Only string literal specifiers are supported (compile-time dependency discovery)
+  - Rejects non-literal specifiers and options parameter during validation
+  - Uses existing CommonJS module loader for synchronous resolution
+  - New runtime: `JavaScriptRuntime.CommonJS.DynamicImport.Import()`
+  - New compiler infrastructure: `HIRImportExpression`, `LIRCallImport`
 - Runtime/spec: complete object literal spread semantics by copying enumerable own properties (including symbol-keyed properties) and add execution + generator coverage for multiple spreads, cloning, empty objects, nested spreads, and non-enumerable filtering (fixes #593).
 - IR/runtime: complete spread in array literals (mixed elements + multiple spreads) using iterator-protocol semantics and add execution + generator coverage (fixes #592).
 - IR/runtime: support spread elements in CallExpression argument lists (e.g., `f(...arr)`, `f(1, ...arr, 2)`) with iterator-protocol semantics and add execution + generator coverage (fixes #591).

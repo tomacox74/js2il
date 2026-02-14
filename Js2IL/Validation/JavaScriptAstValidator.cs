@@ -254,6 +254,11 @@ public class JavaScriptAstValidator : IAstValidator
                     ValidateCallExpression(node, result);
                     break;
 
+                case NodeType.ImportExpression:
+                    // Dynamic import() calls
+                    ValidateImportExpression(node, result);
+                    break;
+
                 case NodeType.FunctionDeclaration:
                 case NodeType.FunctionExpression:
                 case NodeType.ArrowFunctionExpression:
@@ -1587,6 +1592,27 @@ public class JavaScriptAstValidator : IAstValidator
                     result.Errors.Add($"Dynamic require() with non-literal argument is not supported (line {node.Location.Start.Line})");
                     result.IsValid = false;
                 }
+            }
+        }
+    }
+
+    private void ValidateImportExpression(Node node, ValidationResult result)
+    {
+        if (node is ImportExpression importExpr)
+        {
+            // Only string literals are supported as specifiers initially
+            if (importExpr.Source is not Literal lit || lit.Value is not string)
+            {
+                result.Errors.Add($"Dynamic import() with non-literal specifier is not supported (line {node.Location.Start.Line})");
+                result.IsValid = false;
+                return;
+            }
+
+            // Reject import options (second parameter)
+            if (importExpr.Options != null)
+            {
+                result.Errors.Add($"Import options (second parameter to import()) are not yet supported (line {node.Location.Start.Line})");
+                result.IsValid = false;
             }
         }
     }
