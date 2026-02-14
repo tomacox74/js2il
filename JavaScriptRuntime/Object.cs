@@ -2271,6 +2271,33 @@ namespace JavaScriptRuntime
                 throw new ArgumentNullException(nameof(target));
             }
 
+            // Fast-path: object literals are ExpandoObject targets. For object spread, we want
+            // CreateDataProperty semantics (define/overwrite an own data property) and must not
+            // route through prototype setters.
+            IDictionary<string, object?>? targetExpandoDict = null;
+            if (target is System.Dynamic.ExpandoObject targetExpando)
+            {
+                targetExpandoDict = (IDictionary<string, object?>)targetExpando;
+            }
+
+            static void SetOwn(IDictionary<string, object?>? expandoDict, object targetObj, string key, object? value)
+            {
+                if (expandoDict is not null)
+                {
+                    expandoDict[key] = value;
+                    return;
+                }
+
+                if (targetObj is IDictionary<string, object?> dict)
+                {
+                    dict[key] = value;
+                    return;
+                }
+
+                // Fallback: best-effort for non-dynamic targets.
+                SetProperty(targetObj, key, value);
+            }
+
             // Per object spread semantics: null/undefined are skipped.
             if (source is null || source is JsNull)
             {
@@ -2288,7 +2315,7 @@ namespace JavaScriptRuntime
                         continue;
                     }
 
-                    SetProperty(target, kvp.Key, kvp.Value);
+                    SetOwn(targetExpandoDict, target, kvp.Key, kvp.Value);
                 }
                 return target;
             }
@@ -2303,7 +2330,7 @@ namespace JavaScriptRuntime
                         continue;
                     }
 
-                    SetProperty(target, kvp.Key, kvp.Value);
+                    SetOwn(targetExpandoDict, target, kvp.Key, kvp.Value);
                 }
                 return target;
             }
@@ -2313,7 +2340,7 @@ namespace JavaScriptRuntime
             {
                 for (int i = 0; i < s.Length; i++)
                 {
-                    SetProperty(target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), s[i].ToString());
+                    SetOwn(targetExpandoDict, target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), s[i].ToString());
                 }
                 return target;
             }
@@ -2323,7 +2350,7 @@ namespace JavaScriptRuntime
             {
                 for (int i = 0; i < arr.Count; i++)
                 {
-                    SetProperty(target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), arr[i]);
+                    SetOwn(targetExpandoDict, target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), arr[i]);
                 }
                 return target;
             }
@@ -2334,7 +2361,7 @@ namespace JavaScriptRuntime
                 var len = (int)i32.length;
                 for (int i = 0; i < len; i++)
                 {
-                    SetProperty(target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), i32[(double)i]);
+                    SetOwn(targetExpandoDict, target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), i32[(double)i]);
                 }
                 return target;
             }
@@ -2345,11 +2372,11 @@ namespace JavaScriptRuntime
                 var type = source.GetType();
                 foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => p.CanRead))
                 {
-                    SetProperty(target, p.Name, p.GetValue(source));
+                    SetOwn(targetExpandoDict, target, p.Name, p.GetValue(source));
                 }
                 foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
                 {
-                    SetProperty(target, f.Name, f.GetValue(source));
+                    SetOwn(targetExpandoDict, target, f.Name, f.GetValue(source));
                 }
             }
             catch (AmbiguousMatchException)
