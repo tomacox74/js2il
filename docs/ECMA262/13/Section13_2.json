@@ -398,9 +398,15 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js"
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Multiple.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Clone.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Empty.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_SymbolProperties.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_NestedObjects.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_SkipsNonEnumerable.js"
         ],
-        "notes": "Lowered as: create empty ExpandoObject, then apply members in order. Spread members call JavaScriptRuntime.Object.SpreadInto(target, source). Null/undefined sources are ignored."
+        "notes": "Lowered as: create empty ExpandoObject, then apply members in order. Spread members call JavaScriptRuntime.Object.SpreadInto(target, source). Null/undefined sources are ignored. Copies enumerable own properties (including symbol-keyed properties, modeled via a stable internal key string)."
       }
     ]
   }
