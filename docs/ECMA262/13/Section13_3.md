@@ -37,10 +37,10 @@ Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, 
 | 13.3.9 | Optional Chains | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-optional-chains) |
 | 13.3.9.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-evaluation) |
 | 13.3.9.2 | Runtime Semantics: ChainEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-optional-chaining-chain-evaluation) |
-| 13.3.10 | Import Calls | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-import-calls) |
-| 13.3.10.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-import-call-runtime-semantics-evaluation) |
-| 13.3.10.2 | EvaluateImportCall ( specifierExpression [ , optionsExpression ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-import-call) |
-| 13.3.10.3 | ContinueDynamicImport ( promiseCapability , moduleCompletion ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ContinueDynamicImport) |
+| 13.3.10 | Import Calls | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-import-calls) |
+| 13.3.10.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-import-call-runtime-semantics-evaluation) |
+| 13.3.10.2 | EvaluateImportCall ( specifierExpression [ , optionsExpression ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-import-call) |
+| 13.3.10.3 | ContinueDynamicImport ( promiseCapability , moduleCompletion ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ContinueDynamicImport) |
 | 13.3.11 | Tagged Templates | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates) |
 | 13.3.11.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates-runtime-semantics-evaluation) |
 | 13.3.12 | Meta Properties | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties) |
