@@ -341,9 +341,14 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-array-initializer",
         "testScripts": [
-          "Js2IL.Tests/Literals/JavaScript/Array_Spread_Copy.js"
+          "Js2IL.Tests/Literals/JavaScript/Array_Spread_Copy.js",
+          "Js2IL.Tests/Array/JavaScript/Array_LiteralSpread_Basic.js",
+          "Js2IL.Tests/Array/JavaScript/Array_LiteralSpread_Multiple.js",
+          "Js2IL.Tests/Array/JavaScript/Array_LiteralSpread_Mixed.js",
+          "Js2IL.Tests/Array/JavaScript/Array_LiteralSpread_Empty.js",
+          "Js2IL.Tests/Array/JavaScript/Array_LiteralSpread_Nested.js"
         ],
-        "notes": "Spread elements in array literals are emitted via JavaScriptRuntime.Array.PushRange; supports copying from another array."
+        "notes": "Spread elements in array literals are lowered by seeding any leading non-spread elements, then appending subsequent elements via Add or JavaScriptRuntime.Array.PushRange. PushRange consumes the iterator protocol (arrays, strings, typed arrays, user-defined iterables via Symbol.iterator; .NET IEnumerable fallback), enabling multiple spreads and mixed literal/spread patterns."
       },
       {
         "clause": "13.2.5",

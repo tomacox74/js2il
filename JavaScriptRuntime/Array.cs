@@ -1614,23 +1614,27 @@ namespace JavaScriptRuntime
         /// </summary>
         public void PushRange(object source)
         {
-            if (source == null) return;
+            // Fast-path: spreading a JS Array copies elements directly.
             if (source is Array jsArray)
             {
                 // Copy elements directly
                 for (int i = 0; i < jsArray.Count; i++) this.Add(jsArray[i]);
                 return;
             }
-            if (source is System.Collections.IEnumerable en)
+
+            // Spec-aligned behavior: array spread consumes the iterator protocol.
+            // This supports strings, typed arrays, user-defined iterables via Symbol.iterator,
+            // and falls back to .NET IEnumerable when available.
+            var iterator = JavaScriptRuntime.Object.GetIterator(source);
+            while (true)
             {
-                foreach (var item in en)
+                var step = iterator.Next();
+                if (step.done)
                 {
-                    this.Add(item!);
+                    break;
                 }
-                return;
+                this.Add(step.value);
             }
-            // Fallback: single item
-            this.Add(source);
         }
 
         /// <summary>
