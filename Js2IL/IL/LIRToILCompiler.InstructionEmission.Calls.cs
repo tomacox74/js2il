@@ -503,6 +503,65 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallRuntimeServicesStatic callRuntimeServices:
+                {
+                    if (!IsMaterialized(callRuntimeServices.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    // Emit call to JavaScriptRuntime.RuntimeServices static method
+                    var runtimeServicesType = typeof(JavaScriptRuntime.RuntimeServices);
+                    
+                    // Load arguments and box if necessary
+                    foreach (var arg in callRuntimeServices.Arguments)
+                    {
+                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                        
+                        // Check if we need to box the value
+                        if (GetTempStorage(arg) is { } storage && 
+                            storage.Kind == ValueStorageKind.UnboxedValue &&
+                            storage.ClrType != null)
+                        {
+                            // Box the unboxed value to object
+                            ilEncoder.OpCode(ILOpCode.Box);
+                            if (storage.ClrType == typeof(double))
+                            {
+                                ilEncoder.Token(_bclReferences.DoubleType);
+                            }
+                            else if (storage.ClrType == typeof(bool))
+                            {
+                                ilEncoder.Token(_bclReferences.BooleanType);
+                            }
+                            else if (storage.ClrType == typeof(int))
+                            {
+                                ilEncoder.Token(_bclReferences.Int32Type);
+                            }
+                            else
+                            {
+                                throw new NotSupportedException($"Unsupported unboxed type for RuntimeServices call: {storage.ClrType}");
+                            }
+                        }
+                    }
+
+                    // Emit call - use explicit parameter types to ensure correct method resolution
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    var paramTypes = new Type[callRuntimeServices.Arguments.Count];
+                    for (int i = 0; i < paramTypes.Length; i++)
+                    {
+                        paramTypes[i] = typeof(object); // RuntimeServices methods take object parameters
+                    }
+                    var methodRef = _memberRefRegistry.GetOrAddMethod(
+                        runtimeServicesType, 
+                        callRuntimeServices.MethodName,
+                        paramTypes);
+                    ilEncoder.Token(methodRef);
+
+                    // Store result
+                    EmitStoreTemp(callRuntimeServices.Result, ilEncoder, allocation);
+                    break;
+                }
+
             default:
                 return null;
         }

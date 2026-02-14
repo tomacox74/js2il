@@ -341,8 +341,9 @@ public sealed partial class HIRToLIRLowerer
         // Build the rest array by collecting arguments from startIndex onwards
         var startIndexTemp = EmitConstNumber(startIndex);
         var restArrayTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            IntrinsicName: "RuntimeServices",
+        
+        // Emit direct call to RuntimeServices.CollectRestArguments (not an intrinsic, just a runtime helper)
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
             MethodName: nameof(JavaScriptRuntime.RuntimeServices.CollectRestArguments),
             Arguments: new[] { startIndexTemp },
             Result: restArrayTemp));

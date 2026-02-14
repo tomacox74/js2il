@@ -456,3 +456,9 @@ public record LIRStoreParentScopeField(BindingInfo Binding, FieldId Field, Scope
 /// Emits: newobj instance void ScopeType::.ctor(), stloc.0
 /// </summary>
 public record LIRCreateLeafScopeInstance(ScopeId Scope) : LIRInstruction;
+
+/// <summary>
+/// Calls a static method on JavaScriptRuntime.RuntimeServices (runtime helper methods, not ECMA-262 intrinsics).
+/// Used for runtime services like CollectRestArguments that support JavaScript features.
+/// </summary>
+public record LIRCallRuntimeServicesStatic(string MethodName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;

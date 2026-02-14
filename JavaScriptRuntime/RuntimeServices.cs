@@ -3,7 +3,6 @@ using System;
 
 namespace JavaScriptRuntime;
 
-[IntrinsicObject("RuntimeServices")]
 public class RuntimeServices
 {
     private static readonly System.Threading.AsyncLocal<object?> _currentThis = new();
