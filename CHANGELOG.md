@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- Runtime/spec: complete object literal spread semantics by copying enumerable own properties (including symbol-keyed properties) and add execution + generator coverage for multiple spreads, cloning, empty objects, nested spreads, and non-enumerable filtering (fixes #593).
 
 ## v0.8.10 - 2026-02-13
 

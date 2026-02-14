@@ -2283,6 +2283,11 @@ namespace JavaScriptRuntime
                 var src = (IDictionary<string, object?>)exp;
                 foreach (var kvp in src)
                 {
+                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, kvp.Key))
+                    {
+                        continue;
+                    }
+
                     SetProperty(target, kvp.Key, kvp.Value);
                 }
                 return target;
@@ -2293,6 +2298,11 @@ namespace JavaScriptRuntime
             {
                 foreach (var kvp in dict)
                 {
+                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(source, kvp.Key))
+                    {
+                        continue;
+                    }
+
                     SetProperty(target, kvp.Key, kvp.Value);
                 }
                 return target;

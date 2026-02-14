@@ -13,6 +13,24 @@ namespace Js2IL.Tests.Object
         public Task ObjectLiteral_Spread_Basic() { var testName = nameof(ObjectLiteral_Spread_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ObjectLiteral_Spread_Multiple() { var testName = nameof(ObjectLiteral_Spread_Multiple); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ObjectLiteral_Spread_Clone() { var testName = nameof(ObjectLiteral_Spread_Clone); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ObjectLiteral_Spread_Empty() { var testName = nameof(ObjectLiteral_Spread_Empty); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ObjectLiteral_Spread_SymbolProperties() { var testName = nameof(ObjectLiteral_Spread_SymbolProperties); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ObjectLiteral_Spread_NestedObjects() { var testName = nameof(ObjectLiteral_Spread_NestedObjects); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ObjectLiteral_Spread_SkipsNonEnumerable() { var testName = nameof(ObjectLiteral_Spread_SkipsNonEnumerable); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ObjectLiteral_ComputedKey_Basic() { var testName = nameof(ObjectLiteral_ComputedKey_Basic); return ExecutionTest(testName); }
 
         [Fact]
