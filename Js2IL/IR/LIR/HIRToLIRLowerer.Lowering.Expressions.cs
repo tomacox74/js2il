@@ -116,6 +116,13 @@ public sealed partial class HIRToLIRLowerer
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
 
+            case HIRNewTargetExpression:
+                // Load the new.target value from the function/constructor parameter
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadNewTarget(resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+
             case HIRSuperExpression:
                 // `super` is only meaningful as the callee of a call expression (super(...))
                 // or as the receiver in property access (super.m).

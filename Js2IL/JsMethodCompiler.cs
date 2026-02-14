@@ -71,6 +71,14 @@ sealed record MethodDescriptor
     public bool HasScopesParameter { get; set; } = true;
 
     /// <summary>
+    /// Whether the method has a new.target parameter.
+    /// User-defined functions have this (follows scopes parameter).
+    /// For static functions: newTarget is arg1 (after scopes at arg0).
+    /// For instance methods: newTarget is arg2 (after this at arg0, scopes at arg1).
+    /// </summary>
+    public bool HasNewTargetParameter { get; set; } = true;
+
+    /// <summary>
     /// For instance methods that access parent scopes, this is the field handle to the _scopes field.
     /// When set, IL emission loads scopes via: ldarg.0 (this), ldfld ScopesFieldHandle
     /// </summary>
@@ -386,6 +394,13 @@ internal sealed class JsMethodCompiler
             parameters.Add(new MethodParameterDescriptor("scopes", typeof(object[])));
         }
 
+        // Add new.target parameter for functions
+        // (always present for user-defined functions, follows scopes)
+        if (hasScopesParameter)
+        {
+            parameters.Add(new MethodParameterDescriptor("newTarget", typeof(object)));
+        }
+
         foreach (var paramName in lirMethod!.Parameters)
         {
             parameters.Add(new MethodParameterDescriptor(paramName, typeof(object)));
@@ -479,10 +494,11 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
-        // Build parameter descriptors: scopes array + JS parameters
+        // Build parameter descriptors: scopes array + newTarget + JS parameters
         var parameters = new List<MethodParameterDescriptor>
         {
-            new MethodParameterDescriptor("scopes", typeof(object[]))
+            new MethodParameterDescriptor("scopes", typeof(object[])),
+            new MethodParameterDescriptor("newTarget", typeof(object))
         };
         
         // Add JS function parameters (all typed as object)
@@ -499,9 +515,10 @@ internal sealed class JsMethodCompiler
         if (node is Acornima.Ast.MethodDefinition methodDef)
         {
             methodDescriptor.IsStatic = methodDef.Static;
-            // Instance methods don't have the scopes parameter
-            methodDescriptor.Parameters = parameters.Skip(1).ToList();
+            // Instance methods don't have the scopes or newTarget parameters
+            methodDescriptor.Parameters = parameters.Skip(2).ToList();
             methodDescriptor.HasScopesParameter = false;
+            methodDescriptor.HasNewTargetParameter = false;
             // Instance methods access scopes via this._scopes field
             if (!methodDef.Static && scopesFieldHandle.HasValue)
             {
@@ -529,10 +546,11 @@ internal sealed class JsMethodCompiler
         // Create the type builder for the arrow function
         var arrowTypeBuilder = new TypeBuilder(_metadataBuilder, "Functions", typeName);
 
-        // Build parameter descriptors: scopes array + JS parameters
+        // Build parameter descriptors: scopes array + newTarget + JS parameters
         var parameters = new List<MethodParameterDescriptor>
         {
-            new MethodParameterDescriptor("scopes", typeof(object[]))
+            new MethodParameterDescriptor("scopes", typeof(object[])),
+            new MethodParameterDescriptor("newTarget", typeof(object))
         };
         
         // Add JS function parameters (all typed as object)

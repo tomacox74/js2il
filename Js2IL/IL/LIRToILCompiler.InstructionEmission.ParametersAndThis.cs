@@ -77,6 +77,27 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRLoadNewTarget loadNewTarget:
+                {
+                    if (!IsMaterialized(loadNewTarget.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    if (!methodDescriptor.HasNewTargetParameter)
+                    {
+                        return false;
+                    }
+
+                    // new.target follows scopes in the method signature
+                    // Static functions: newTarget is arg1 (after scopes at arg0)
+                    // Instance constructors: newTarget is arg2 (after this at arg0, scopes at arg1)
+                    int newTargetArgIndex = methodDescriptor.IsStatic ? 1 : 2;
+                    ilEncoder.LoadArgument(newTargetArgIndex);
+                    EmitStoreTemp(loadNewTarget.Result, ilEncoder, allocation);
+                    break;
+                }
+
             case LIRLoadParameter loadParam:
                 {
                     if (!IsMaterialized(loadParam.Result, allocation))
