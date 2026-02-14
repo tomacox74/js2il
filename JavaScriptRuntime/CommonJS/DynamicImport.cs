@@ -18,6 +18,7 @@ namespace JavaScriptRuntime.CommonJS
         {
             if (specifier is not string specifierStr)
             {
+                // Promise.reject() returns object? but always returns a Promise instance (never null)
                 return Promise.reject(new TypeError("import() requires a string specifier"))!;
             }
 
@@ -28,6 +29,7 @@ namespace JavaScriptRuntime.CommonJS
                 
                 if (requireDelegate == null)
                 {
+                    // Promise.reject() returns object? but always returns a Promise instance (never null)
                     return Promise.reject(new ReferenceError("import() requires a CommonJS module context"))!;
                 }
 
@@ -36,11 +38,13 @@ namespace JavaScriptRuntime.CommonJS
                 // maintain compatibility with the existing synchronous module loader
                 var exports = requireDelegate(specifierStr);
                 
+                // Promise.resolve() returns object? but always returns a Promise instance (never null)
                 // Wrap the exports in a resolved Promise
                 return Promise.resolve(exports)!;
             }
             catch (Exception ex)
             {
+                // Promise.reject() returns object? but always returns a Promise instance (never null)
                 // Convert any exception to a rejected Promise
                 return Promise.reject(ex)!;
             }
