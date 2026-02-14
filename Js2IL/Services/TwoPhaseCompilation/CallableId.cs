@@ -111,6 +111,12 @@ public sealed record CallableId
     /// This is used to select call-site emission that preserves the full runtime arguments list.
     /// </summary>
     public bool NeedsArgumentsObject { get; init; }
+
+    /// <summary>
+    /// True when this callable has rest parameters (...args).
+    /// Rest parameters require the ambient arguments array to be set at runtime.
+    /// </summary>
+    public bool HasRestParameters { get; init; }
     
     /// <summary>
     /// Optional reference to the original AST node for diagnostics.

@@ -87,6 +87,12 @@ public class Scope
     public bool NeedsArgumentsObject { get; set; }
 
     /// <summary>
+    /// True when this function scope has rest parameters (...args).
+    /// Rest parameters need the ambient arguments array to be set at runtime.
+    /// </summary>
+    public bool HasRestParameters { get; set; }
+
+    /// <summary>
     /// Indicates whether this is an async function scope.
     /// Set during symbol table construction for function scopes.
     /// Used by TypeGenerator to add async state fields (_asyncState, _deferred).

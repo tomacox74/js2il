@@ -299,15 +299,14 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
         
-        // Allow identifier params, simple defaults, and destructuring patterns.
-        // Disallow top-level RestElement (...args) for now.
+        // Allow identifier params, simple defaults, destructuring patterns, and rest parameters.
         return parameters.Value.All(param => param switch
         {
             Acornima.Ast.Identifier => true,
             Acornima.Ast.AssignmentPattern ap => ap.Left is Acornima.Ast.Identifier,
             Acornima.Ast.ObjectPattern => true,
             Acornima.Ast.ArrayPattern => true,
-            Acornima.Ast.RestElement => false,
+            Acornima.Ast.RestElement => true,
             _ => false
         });
     }

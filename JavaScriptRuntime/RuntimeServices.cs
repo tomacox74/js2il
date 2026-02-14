@@ -49,6 +49,43 @@ public class RuntimeServices
     }
 
     /// <summary>
+    /// Gets the count of arguments passed to the current function.
+    /// Used for rest parameter initialization.
+    /// </summary>
+    public static int GetArgumentCount()
+    {
+        var args = _currentArguments.Value;
+        return args?.Length ?? 0;
+    }
+
+    /// <summary>
+    /// Collects rest arguments starting from the specified index into an array.
+    /// Used for rest parameter (...args) initialization.
+    /// </summary>
+    public static object CollectRestArguments(object startIndexObj)
+    {
+        // Convert to int using JavaScript number conversion
+        int startIndex = startIndexObj switch
+        {
+            int i => i,
+            double d => (int)d,
+            _ => 0
+        };
+        
+        var args = _currentArguments.Value;
+        
+        if (args == null || startIndex >= args.Length)
+        {
+            return new Array();
+        }
+
+        // Collect arguments from startIndex to end
+        var restArgs = new object?[args.Length - startIndex];
+        System.Array.Copy(args, startIndex, restArgs, 0, restArgs.Length);
+        return new Array(restArgs);
+    }
+
+    /// <summary>
     /// Creates the backing object for a JavaScript object literal.
     /// Kept in the runtime so generated IL can avoid directly referencing BCL dynamic types.
     /// </summary>

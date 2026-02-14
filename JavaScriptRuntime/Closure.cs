@@ -16,6 +16,22 @@ namespace JavaScriptRuntime
             modifiers: null)
             ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeWithArgs(object, object[], object[]).");
 
+        private static readonly MethodInfo InvokeDelegatePreservingArgsMethod = typeof(Closure).GetMethod(
+            nameof(InvokeDelegatePreservingArgs),
+            BindingFlags.NonPublic | BindingFlags.Static,
+            binder: null,
+            types: new[] { typeof(Delegate), typeof(object[]), typeof(object[]) },
+            modifiers: null)
+            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgs(Delegate, object[], object[]).");
+
+        private static readonly MethodInfo InvokeDelegatePreservingArgsWithThisMethod = typeof(Closure).GetMethod(
+            nameof(InvokeDelegatePreservingArgsWithThis),
+            BindingFlags.NonPublic | BindingFlags.Static,
+            binder: null,
+            types: new[] { typeof(object), typeof(Delegate), typeof(object[]), typeof(object[]) },
+            modifiers: null)
+            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgsWithThis(object, Delegate, object[], object[]).");
+
         private static readonly MethodInfo InvokeWithArgsWithThisMethod = typeof(Closure).GetMethod(
             nameof(InvokeWithArgsWithThis),
             BindingFlags.NonPublic | BindingFlags.Static)
@@ -37,6 +53,16 @@ namespace JavaScriptRuntime
         private static object InvokeWithArgsWithThis(object? boundThis, object target, object[] scopes, object?[] args)
         {
             return InvokeWithThis(boundThis, () => InvokeWithArgs(target, scopes, args));
+        }
+
+        private static object InvokeDelegatePreservingArgs(Delegate target, object[] scopes, object?[] args)
+        {
+            return InvokeDelegateWithArgs(target, scopes, args);
+        }
+
+        private static object InvokeDelegatePreservingArgsWithThis(object? boundThis, Delegate target, object[] scopes, object?[] args)
+        {
+            return InvokeWithThis(boundThis, () => InvokeDelegateWithArgs(target, scopes, args));
         }
 
         private static object InvokeDelegateWithArgs(Delegate target, object[] scopes, object?[] args)
@@ -263,20 +289,25 @@ namespace JavaScriptRuntime
             var argsArray = Expression.NewArrayInit(typeof(object), jsArgs);
 
             Expression invokeWithArgsCall;
+            // Important: this wrapper must NOT call InvokeWithArgs(...), because InvokeWithArgs sets RuntimeServices
+            // current arguments to ONLY the declared parameters passed into this wrapper.
+            // When the wrapper is invoked by the outer dispatcher, the *real* call arguments (including extras)
+            // have already been set as the current arguments. Rest parameters and `arguments` depend on preserving
+            // that full call-site argument list.
             if (boundThis == null)
             {
                 invokeWithArgsCall = Expression.Call(
-                    InvokeWithArgsMethod,
-                    Expression.Constant((object)target, typeof(object)),
+                    InvokeDelegatePreservingArgsMethod,
+                    Expression.Constant(target, typeof(Delegate)),
                     Expression.Constant(boundScopes, typeof(object[])),
                     argsArray);
             }
             else
             {
                 invokeWithArgsCall = Expression.Call(
-                    InvokeWithArgsWithThisMethod,
+                    InvokeDelegatePreservingArgsWithThisMethod,
                     Expression.Constant(boundThis, typeof(object)),
-                    Expression.Constant((object)target, typeof(object)),
+                    Expression.Constant(target, typeof(Delegate)),
                     Expression.Constant(boundScopes, typeof(object[])),
                     argsArray);
             }

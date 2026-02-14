@@ -263,8 +263,7 @@ public static class HIRBuilder
                 }
                 return methodBuilder.TryParseStatements(methodFuncExpr.Body.Body, methodParams, out method);
             case Acornima.Ast.ArrowFunctionExpression arrowFunc:
-                // IR pipeline supports identifier params, simple defaults, and destructuring patterns.
-                // Rest parameters (top-level RestElement) are not supported.
+                // IR pipeline supports identifier params, simple defaults, destructuring patterns, and rest parameters.
                 if (!ParamsSupportedForIR(arrowFunc.Params))
                 {
                     method = null!;
@@ -292,8 +291,7 @@ public static class HIRBuilder
                 return false;
             case Acornima.Ast.FunctionExpression funcExpr:
                 // FunctionExpression is used for class constructors and method values
-                // IR pipeline supports identifier params, simple defaults, and destructuring patterns.
-                // Rest parameters (top-level RestElement) are not supported.
+                // IR pipeline supports identifier params, simple defaults, destructuring patterns, and rest parameters.
                 if (!ParamsSupportedForIR(funcExpr.Params))
                 {
                     method = null!;
@@ -411,8 +409,7 @@ public static class HIRBuilder
                 return funcExprBuilder.TryParseStatements(funcBlock.Body, funcParams, out method);
 
             case Acornima.Ast.FunctionDeclaration funcDecl:
-                // IR pipeline supports identifier params, simple defaults, and destructuring patterns.
-                // Rest parameters (top-level RestElement) are not supported.
+                // IR pipeline supports identifier params, simple defaults, destructuring patterns, and rest parameters.
                 if (!ParamsSupportedForIR(funcDecl.Params))
                 {
                     method = null!;
@@ -454,8 +451,8 @@ public static class HIRBuilder
 
     /// <summary>
     /// Returns true if parameters are supported by the IR pipeline for function expressions/arrow functions.
-    /// Supports: Identifier, AssignmentPattern with Identifier left-hand side, ObjectPattern, ArrayPattern.
-    /// Does not support: top-level RestElement parameters.
+    /// Supports: Identifier, AssignmentPattern with Identifier left-hand side, ObjectPattern, ArrayPattern, RestElement.
+    /// RestElement must be the last parameter (enforced by JavaScript parser).
     /// </summary>
     internal static bool ParamsSupportedForIR(in NodeList<Node> parameters)
     {
@@ -465,7 +462,7 @@ public static class HIRBuilder
             Acornima.Ast.AssignmentPattern ap => ap.Left is Acornima.Ast.Identifier,
             Acornima.Ast.ObjectPattern => true,
             Acornima.Ast.ArrayPattern => true,
-            Acornima.Ast.RestElement => false,
+            Acornima.Ast.RestElement => true,
             _ => false
         });
     }
@@ -546,8 +543,9 @@ class HIRMethodBuilder
                     Kind = CallableKind.FunctionDeclaration,
                     DeclaringScopeName = declaringScopeName,
                     Name = id.Name,
-                    JsParamCount = fd.Params.Count,
+                    JsParamCount = fd.Params.Count(p => p is not Acornima.Ast.RestElement),
                     NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+                    HasRestParameters = functionScope.HasRestParameters,
                     AstNode = null
                 };
 
@@ -1947,7 +1945,9 @@ class HIRMethodBuilder
                     DeclaringScopeName = declaringScopeName,
                     Name = assignmentTarget,
                     Location = SourceLocation.FromNode(arrowExpr),
-                    JsParamCount = arrowExpr.Params.Count,
+                    JsParamCount = arrowExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
+                    NeedsArgumentsObject = arrowScope.NeedsArgumentsObject,
+                    HasRestParameters = arrowScope.HasRestParameters,
                     AstNode = null
                 };
 
@@ -1987,7 +1987,9 @@ class HIRMethodBuilder
                     DeclaringScopeName = declaringScopeName2,
                     Name = functionName,
                     Location = SourceLocation.FromNode(funcExpr),
-                    JsParamCount = funcExpr.Params.Count,
+                    JsParamCount = funcExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
+                    NeedsArgumentsObject = funcScope.NeedsArgumentsObject,
+                    HasRestParameters = funcScope.HasRestParameters,
                     AstNode = null
                 };
 

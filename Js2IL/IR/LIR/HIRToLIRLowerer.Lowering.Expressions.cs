@@ -772,6 +772,7 @@ public sealed partial class HIRToLIRLowerer
 
         var bodyScope = FindCallableBodyScope(declaringScope, declNode);
         var needsArgumentsObject = bodyScope?.NeedsArgumentsObject ?? false;
+        var hasRestParameters = bodyScope?.HasRestParameters ?? false;
 
         switch (declNode)
         {
@@ -781,8 +782,9 @@ public sealed partial class HIRToLIRLowerer
                     Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.FunctionDeclaration,
                     DeclaringScopeName = declaringScopeName,
                     Name = symbol.Name,
-                    JsParamCount = funcDecl.Params.Count,
+                    JsParamCount = CountNonRestParameters(funcDecl.Params),
                     NeedsArgumentsObject = needsArgumentsObject,
+                    HasRestParameters = hasRestParameters,
                     AstNode = funcDecl
                 };
 
@@ -793,8 +795,9 @@ public sealed partial class HIRToLIRLowerer
                     DeclaringScopeName = declaringScopeName,
                     Name = (funcExpr.Id as Identifier)?.Name,
                     Location = Js2IL.Services.TwoPhaseCompilation.SourceLocation.FromNode(funcExpr),
-                    JsParamCount = funcExpr.Params.Count,
+                    JsParamCount = CountNonRestParameters(funcExpr.Params),
                     NeedsArgumentsObject = needsArgumentsObject,
+                    HasRestParameters = hasRestParameters,
                     AstNode = funcExpr
                 };
 
@@ -817,4 +820,20 @@ public sealed partial class HIRToLIRLowerer
         return null;
     }
 
+    /// <summary>
+    /// Counts parameters excluding rest parameters.
+    /// Rest parameters don't become IL method parameters.
+    /// </summary>
+    private static int CountNonRestParameters(Acornima.Ast.NodeList<Acornima.Ast.Node> parameters)
+    {
+        int count = 0;
+        foreach (var param in parameters)
+        {
+            if (param is not Acornima.Ast.RestElement)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
 }

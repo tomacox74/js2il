@@ -149,5 +149,17 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_NewExpression_MemberCallee_Compiles() { var testName = nameof(Function_NewExpression_MemberCallee_Compiles); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_RestParameters_Basic() { var testName = nameof(Function_RestParameters_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_RestParameters_WithNamedParams() { var testName = nameof(Function_RestParameters_WithNamedParams); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_RestParameters_Empty() { var testName = nameof(Function_RestParameters_Empty); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_RestParameters_MultipleNamed() { var testName = nameof(Function_RestParameters_MultipleNamed); return ExecutionTest(testName); }
     }
 }
