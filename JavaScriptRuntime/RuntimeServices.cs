@@ -108,7 +108,7 @@ public class RuntimeServices
     /// <param name="callSiteId">Unique identifier for the call site (e.g., "Module:Line:Column")</param>
     /// <param name="cooked">Cooked string array (with escape sequences processed)</param>
     /// <param name="raw">Raw string array (escape sequences not processed)</param>
-    public static Array CreateTemplateObject(string callSiteId, object[] cooked, object[] raw)
+    public static Array CreateTemplateObject(string callSiteId, string[] cooked, string[] raw)
     {
         return _templateObjectCache.GetOrAdd(callSiteId, _ =>
         {

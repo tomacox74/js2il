@@ -743,7 +743,12 @@ public sealed partial class HIRToLIRLowerer
             var stringTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstString(quasis[i], stringTemp));
             DefineTempStorage(stringTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-            cookedStringTemps.Add(stringTemp);
+            
+            // Force materialization by converting to object (ensures temp is not inlined)
+            var objectTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConvertToObject(stringTemp, typeof(string), objectTemp));
+            DefineTempStorage(objectTemp, new ValueStorage(ValueStorageKind.BoxedValue, typeof(string)));
+            cookedStringTemps.Add(objectTemp);
         }
 
         var cookedArrayTemp = CreateTempVariable();
@@ -759,7 +764,12 @@ public sealed partial class HIRToLIRLowerer
             var stringTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstString(rawString, stringTemp));
             DefineTempStorage(stringTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-            rawStringTemps.Add(stringTemp);
+            
+            // Force materialization by converting to object (ensures temp is not inlined)
+            var objectTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConvertToObject(stringTemp, typeof(string), objectTemp));
+            DefineTempStorage(objectTemp, new ValueStorage(ValueStorageKind.BoxedValue, typeof(string)));
+            rawStringTemps.Add(objectTemp);
         }
 
         var rawArrayTemp = CreateTempVariable();
@@ -770,13 +780,23 @@ public sealed partial class HIRToLIRLowerer
         var callSiteIdTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConstString(callSiteId, callSiteIdTemp));
         DefineTempStorage(callSiteIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        
+        // Force materialization of callSiteIdTemp
+        var callSiteIdObjectTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConvertToObject(callSiteIdTemp, typeof(string), callSiteIdObjectTemp));
+        DefineTempStorage(callSiteIdObjectTemp, new ValueStorage(ValueStorageKind.BoxedValue, typeof(string)));
 
         var templateObjectTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
             nameof(JavaScriptRuntime.RuntimeServices.CreateTemplateObject),
-            new[] { callSiteIdTemp, cookedArrayTemp, rawArrayTemp },
+            new[] { callSiteIdObjectTemp, cookedArrayTemp, rawArrayTemp },
             templateObjectTemp));
         DefineTempStorage(templateObjectTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+        
+        // Force materialization of templateObjectTemp
+        var materializedTemplateTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConvertToObject(templateObjectTemp, typeof(JavaScriptRuntime.Array), materializedTemplateTemp));
+        DefineTempStorage(materializedTemplateTemp, new ValueStorage(ValueStorageKind.BoxedValue, typeof(JavaScriptRuntime.Array)));
 
         // 3. Evaluate substitution expressions left-to-right
         var substitutionTemps = new List<TempVariable>();
@@ -786,11 +806,11 @@ public sealed partial class HIRToLIRLowerer
             {
                 return false;
             }
-            substitutionTemps.Add(exprTemp);
+            substitutionTemps.Add(EnsureObject(exprTemp));
         }
 
         // 4. Build arguments array: [templateObject, ...substitutions]
-        var allArgTemps = new List<TempVariable> { templateObjectTemp };
+        var allArgTemps = new List<TempVariable> { materializedTemplateTemp };
         allArgTemps.AddRange(substitutionTemps);
 
         var argsArrayTemp = CreateTempVariable();
