@@ -608,6 +608,10 @@ internal sealed partial class LIRToILCompiler
                 // Peak stack before callvirt: delegate + scopes + jsParamCount
                 LIRCallFunction callFunction => 2 + (callFunction.CallableId?.JsParamCount ?? callFunction.Arguments.Count),
 
+                // Direct user-defined function call with args array (e.g. spread calls):
+                //   delegate + scopes + argsArray (argsArray may be inlined)
+                LIRCallFunctionWithArgsArray callWithArgsArray => 2 + EstimateTempLoadPeak(callWithArgsArray.ArgumentsArray),
+
                 // Function value call via runtime dispatch: target + scopesArray + argsArray (argsArray may be inlined)
                 LIRCallFunctionValue callValue => 2 + EstimateTempLoadPeak(callValue.ArgumentsArray),
 
@@ -616,6 +620,10 @@ internal sealed partial class LIRToILCompiler
 
                 // Known CLR instance method calls: receiver + args (no padding)
                 LIRCallInstanceMethod callInstance => 1 + callInstance.Arguments.Count,
+
+                // Intrinsic static calls with a pre-built args array (argsArray may be inlined)
+                LIRCallIntrinsicStaticWithArgsArray callStaticWithArgsArray => EstimateTempLoadPeak(callStaticWithArgsArray.ArgumentsArray),
+                LIRCallIntrinsicStaticVoidWithArgsArray callStaticVoidWithArgsArray => EstimateTempLoadPeak(callStaticVoidWithArgsArray.ArgumentsArray),
 
                 // Early-bound typed member calls: receiver + optional scopes + declared JS params (including padding)
                 LIRCallTypedMember callTypedMember => 1 + (callTypedMember.HasScopesParameter ? 1 : 0) + callTypedMember.MaxParamCount,

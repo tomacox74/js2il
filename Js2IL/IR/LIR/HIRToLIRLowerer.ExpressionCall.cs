@@ -17,6 +17,8 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        bool hasSpreadArgs = callExpr.Arguments.Any(a => a is HIRSpreadElement);
+
         // Case 0: super(...) call in a derived class constructor.
         if (callExpr.Callee is HIRSuperExpression)
         {
@@ -450,20 +452,11 @@ public sealed partial class HIRToLIRLowerer
                 }
                 calleeTemp = EnsureObject(calleeTemp);
 
-                // Lower arguments and pack into an object[]
-                var callArgTemps = new List<TempVariable>();
-                foreach (var arg in callExpr.Arguments)
+                // Lower arguments and pack into an object[] (supports spread)
+                if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTemp))
                 {
-                    if (!TryLowerExpression(arg, out var argTemp))
-                    {
-                        return false;
-                    }
-                    callArgTemps.Add(EnsureObject(argTemp));
+                    return false;
                 }
-
-                var argsArrayTemp = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgTemps, argsArrayTemp));
-                DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
                 // Build a scopes array for the current context. Bound closures ignore the passed scopes,
                 // but unbound function values still require a scopes array.
@@ -488,8 +481,29 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            // Lower all arguments first
-            var arguments = new List<TempVariable>();
+            // Spread in call arguments requires runtime args array construction.
+            if (hasSpreadArgs)
+            {
+                if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTemp))
+                {
+                    return false;
+                }
+
+                var scopesTempForSpread = CreateTempVariable();
+                if (!TryBuildScopesArrayForCallee(symbol, scopesTempForSpread))
+                {
+                    return false;
+                }
+                DefineTempStorage(scopesTempForSpread, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+                var callableIdForSpread = TryCreateCallableIdForFunctionDeclaration(symbol);
+                _methodBodyIR.Instructions.Add(new LIRCallFunctionWithArgsArray(symbol, scopesTempForSpread, argsArrayTemp, resultTempVar, callableIdForSpread));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+            }
+
+            // Lower all arguments first (no spread)
+            var arguments = new List<TempVariable>(callExpr.Arguments.Length);
             foreach (var arg in callExpr.Arguments)
             {
                 if (!TryLowerExpression(arg, out var argTemp))
@@ -528,19 +542,10 @@ public sealed partial class HIRToLIRLowerer
             }
             calleeTemp = EnsureObject(calleeTemp);
 
-            var callArgTemps = new List<TempVariable>();
-            foreach (var arg in callExpr.Arguments)
+            if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTemp))
             {
-                if (!TryLowerExpression(arg, out var argTemp))
-                {
-                    return false;
-                }
-                callArgTemps.Add(EnsureObject(argTemp));
+                return false;
             }
-
-            var argsArrayTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgTemps, argsArrayTemp));
-            DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
             var scopesTemp = CreateTempVariable();
             if (!TryBuildCurrentScopesArray(scopesTemp))
@@ -647,36 +652,71 @@ public sealed partial class HIRToLIRLowerer
                     // fall back to generic member-dispatch below.
                     if (chosen != null)
                     {
-                        // Lower all arguments
-                        var staticArgTemps = new List<TempVariable>();
-                        foreach (var argExpr in callExpr.Arguments)
+                        if (hasSpreadArgs)
                         {
-                            if (!TryLowerExpression(argExpr, out var argTempVar))
+                            // Spread call-sites must route through an args array.
+                            // Only support this optimization when the intrinsic exposes a params object[] overload.
+                            if (ParamsArrayMatch(chosen))
                             {
-                                return false;
+                                if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTemp))
+                                {
+                                    return false;
+                                }
+
+                                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticWithArgsArray(intrinsicName, methodName, argsArrayTemp, resultTempVar));
+
+                                // Track the correct CLR type to prevent invalid IL (e.g., storing bool into an object local).
+                                var retType = chosen.ReturnType;
+                                if (retType == typeof(void))
+                                {
+                                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                }
+                                else if (retType.IsValueType)
+                                {
+                                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, retType));
+                                }
+                                else
+                                {
+                                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, retType));
+                                }
+                                return true;
                             }
-                            argTempVar = EnsureObject(argTempVar);
-                            staticArgTemps.Add(argTempVar);
-                        }
 
-                        // Emit the intrinsic static call
-                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(intrinsicName, methodName, staticArgTemps, resultTempVar));
-
-                        // Track the correct CLR type to prevent invalid IL (e.g., storing bool into an object local).
-                        var retType = chosen.ReturnType;
-                        if (retType == typeof(void))
-                        {
-                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                        }
-                        else if (retType.IsValueType)
-                        {
-                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, retType));
+                            // No compatible params-array overload; fall back to generic member-dispatch below.
                         }
                         else
                         {
-                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, retType));
+                            // Lower all arguments
+                            var staticArgTemps = new List<TempVariable>();
+                            foreach (var argExpr in callExpr.Arguments)
+                            {
+                                if (!TryLowerExpression(argExpr, out var argTempVar))
+                                {
+                                    return false;
+                                }
+                                argTempVar = EnsureObject(argTempVar);
+                                staticArgTemps.Add(argTempVar);
+                            }
+
+                            // Emit the intrinsic static call
+                            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(intrinsicName, methodName, staticArgTemps, resultTempVar));
+
+                            // Track the correct CLR type to prevent invalid IL (e.g., storing bool into an object local).
+                            var retType = chosen.ReturnType;
+                            if (retType == typeof(void))
+                            {
+                                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                            }
+                            else if (retType.IsValueType)
+                            {
+                                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, retType));
+                            }
+                            else
+                            {
+                                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, retType));
+                            }
+                            return true;
                         }
-                        return true;
                     }
                 }
             }
@@ -774,6 +814,12 @@ public sealed partial class HIRToLIRLowerer
             var receiverStorage = GetTempStorage(receiverTempVar);
             if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
             {
+                if (hasSpreadArgs)
+                {
+                    // Spread argument count is not statically known; fall back to runtime member-dispatch.
+                }
+                else
+                {
                 var arrayArgTemps = new List<TempVariable>();
                 foreach (var argExpr in callExpr.Arguments)
                 {
@@ -828,6 +874,7 @@ public sealed partial class HIRToLIRLowerer
 
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
+                }
             }
 
             // Case 2a.2: Typed Console instance method calls (e.g., console.log(...)).
@@ -835,6 +882,12 @@ public sealed partial class HIRToLIRLowerer
             // avoids generic dispatch and keeps generator output stable.
             if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Console))
             {
+                if (hasSpreadArgs)
+                {
+                    // Spread argument count is not statically known; fall back to runtime member-dispatch.
+                }
+                else
+                {
                 var consoleArgTemps = new List<TempVariable>();
                 foreach (var argExpr in callExpr.Arguments)
                 {
@@ -854,6 +907,7 @@ public sealed partial class HIRToLIRLowerer
 
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
+                }
             }
 
             // Case 2a.3: Direct calls to known instance methods on the current user-defined class.
@@ -865,6 +919,12 @@ public sealed partial class HIRToLIRLowerer
                 && currentClass != null
                 && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out var methodReturnClrType, out var methodReturnTypeHandle, out var hasScopesParam, out _, out var maxParamCount))
             {
+                if (hasSpreadArgs)
+                {
+                    // Spread argument count is not statically known; fall back to runtime member-dispatch.
+                }
+                else
+                {
                 var argTemps = new List<TempVariable>();
                 foreach (var argExpr in callExpr.Arguments)
                 {
@@ -907,6 +967,7 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 }
                 return true;
+                }
             }
         }
 
@@ -915,20 +976,10 @@ public sealed partial class HIRToLIRLowerer
         // so typed receiver lowering can't prove the receiver type.
         receiverTempVar = EnsureObject(receiverTempVar);
 
-        var argTempsGeneric = new List<TempVariable>();
-        foreach (var argExpr in callExpr.Arguments)
+        if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTempVar))
         {
-            if (!TryLowerExpression(argExpr, out var argTempVar))
-            {
-                return false;
-            }
-
-            argTempsGeneric.Add(EnsureObject(argTempVar));
+            return false;
         }
-
-        var argsArrayTempVar = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRBuildArray(argTempsGeneric, argsArrayTempVar));
-        DefineTempStorage(argsArrayTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
         _methodBodyIR.Instructions.Add(new LIRCallMember(receiverTempVar, calleePropAccess.PropertyName, argsArrayTempVar, resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));

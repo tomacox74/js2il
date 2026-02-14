@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 - Runtime/spec: complete object literal spread semantics by copying enumerable own properties (including symbol-keyed properties) and add execution + generator coverage for multiple spreads, cloning, empty objects, nested spreads, and non-enumerable filtering (fixes #593).
 - IR/runtime: complete spread in array literals (mixed elements + multiple spreads) using iterator-protocol semantics and add execution + generator coverage (fixes #592).
+- IR/runtime: support spread elements in CallExpression argument lists (e.g., `f(...arr)`, `f(1, ...arr, 2)`) with iterator-protocol semantics and add execution + generator coverage (fixes #591).
 
 ## v0.8.10 - 2026-02-13
 

@@ -262,6 +262,14 @@ internal static class TempLocalAllocator
                     yield return arg;
                 }
                 break;
+
+            case LIRCallIntrinsicStaticWithArgsArray callStaticWithArgsArray:
+                yield return callStaticWithArgsArray.ArgumentsArray;
+                break;
+
+            case LIRCallIntrinsicStaticVoidWithArgsArray callStaticVoidWithArgsArray:
+                yield return callStaticVoidWithArgsArray.ArgumentsArray;
+                break;
             case LIRConvertToObject conv:
                 yield return conv.Source;
                 break;
@@ -403,6 +411,10 @@ internal static class TempLocalAllocator
                 {
                     yield return arg;
                 }
+                break;
+            case LIRCallFunctionWithArgsArray callWithArgsArray:
+                yield return callWithArgsArray.ScopesArray;
+                yield return callWithArgsArray.ArgumentsArray;
                 break;
             case LIRCallFunctionValue callValue:
                 yield return callValue.FunctionValue;
@@ -721,6 +733,10 @@ internal static class TempLocalAllocator
                 defined = default;
                 return false;
 
+            case LIRCallIntrinsicStaticVoidWithArgsArray:
+                defined = default;
+                return false;
+
             case LIRLoadScopeFieldByName loadScopeByName:
                 defined = loadScopeByName.Result;
                 return true;
@@ -868,6 +884,10 @@ internal static class TempLocalAllocator
                 defined = callFunc.Result;
                 return true;
 
+            case LIRCallFunctionWithArgsArray callWithArgsArray:
+                defined = callWithArgsArray.Result;
+                return true;
+
             case LIRCallFunctionValue callValue:
                 defined = callValue.Result;
                 return true;
@@ -878,6 +898,10 @@ internal static class TempLocalAllocator
 
             case LIRCallMember callMember:
                 defined = callMember.Result;
+                return true;
+
+            case LIRCallIntrinsicStaticWithArgsArray callStaticWithArgsArray:
+                defined = callStaticWithArgsArray.Result;
                 return true;
 
             case LIRCallTypedMember callTyped:

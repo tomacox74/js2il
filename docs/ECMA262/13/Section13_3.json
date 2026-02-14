@@ -287,9 +287,14 @@
         "specUrl": "https://tc39.es/ecma262/#sec-function-calls",
         "testScripts": [
           "Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionCallsGlobalFunction.js",
-          "Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js"
+          "Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Basic.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Middle.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Multiple.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_EvaluationOrder.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js"
         ],
-        "notes": "Covers direct function bindings and runtime dispatch for non-binding callee values (closures stored in variables). Spread in call arguments is rejected by validation (not supported)."
+        "notes": "Covers direct function bindings and runtime dispatch for non-binding callee values (closures stored in variables). Spread in call arguments is supported by evaluating arguments left-to-right, expanding spread values using iterator semantics, and invoking via an args-array dispatch path. Spread in `new` argument lists is not supported."
       },
       {
         "clause": "13.3.6",
@@ -298,16 +303,25 @@
         "specUrl": "https://tc39.es/ecma262/#sec-function-calls",
         "testScripts": [
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_CallsAnotherMethod.js",
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js"
+          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_MemberCall_ConsoleLog.js"
         ],
-        "notes": "Supports intrinsic static calls (e.g., Math.abs) and dynamic member calls via runtime dispatcher when receiver type is not statically known. Spread in call arguments is rejected by validation (not supported)."
+        "notes": "Supports intrinsic static calls (e.g., Math.abs) and dynamic member calls via runtime dispatcher when receiver type is not statically known. Spread in call arguments is supported; typed/early-bound member-call optimizations may fall back to the generic member-dispatch path when spread is present."
       },
       {
         "clause": "13.3.8",
-        "feature": "Argument lists without spread",
+        "feature": "Argument lists (including spread) for CallExpression",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-argument-lists",
-        "notes": "Normal argument lists are supported; spread in CallExpression arguments is not yet supported and is rejected during validation."
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Basic.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Middle.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Multiple.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_EvaluationOrder.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_MemberCall_ConsoleLog.js"
+        ],
+        "notes": "Argument list evaluation supports spread elements in CallExpression argument lists by expanding iterables via the iterator protocol. Spread in `new` argument lists is not supported."
       },
       {
         "clause": "13.3.6",

@@ -119,8 +119,14 @@ internal sealed partial class LIRToILCompiler
             case LIRCallIntrinsicStatic callIntrinsicStatic:
                 EmitIntrinsicStaticCall(callIntrinsicStatic, ilEncoder, allocation, methodDescriptor);
                 break;
+            case LIRCallIntrinsicStaticWithArgsArray callIntrinsicStaticArray:
+                EmitIntrinsicStaticCallWithArgsArray(callIntrinsicStaticArray, ilEncoder, allocation, methodDescriptor);
+                break;
             case LIRCallIntrinsicStaticVoid callIntrinsicStaticVoid:
                 EmitIntrinsicStaticVoidCall(callIntrinsicStaticVoid, ilEncoder, allocation, methodDescriptor);
+                break;
+            case LIRCallIntrinsicStaticVoidWithArgsArray callIntrinsicStaticVoidArray:
+                EmitIntrinsicStaticVoidCallWithArgsArray(callIntrinsicStaticVoidArray, ilEncoder, allocation, methodDescriptor);
                 break;
 
             default:

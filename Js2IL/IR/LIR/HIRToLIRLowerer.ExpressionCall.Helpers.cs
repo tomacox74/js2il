@@ -13,6 +13,92 @@ namespace Js2IL.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private static bool HasSpreadArguments(IReadOnlyList<HIRExpression> arguments)
+        => arguments.Any(a => a is HIRSpreadElement);
+
+    private bool TryLowerCallArgumentsToArgsArray(IReadOnlyList<HIRExpression> arguments, out TempVariable argsArrayTemp)
+    {
+        argsArrayTemp = default;
+
+        // Fast-path: no spread elements => build array directly from lowered temps.
+        if (!HasSpreadArguments(arguments))
+        {
+            var callArgTemps = new List<TempVariable>(arguments.Count);
+            foreach (var arg in arguments)
+            {
+                if (!TryLowerExpression(arg, out var argTemp))
+                {
+                    return false;
+                }
+                callArgTemps.Add(EnsureObject(argTemp));
+            }
+
+            argsArrayTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgTemps, argsArrayTemp));
+            DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+            return true;
+        }
+
+        // Spread-path: build a JavaScriptRuntime.Array, append elements in order (preserving iterator semantics),
+        // then convert to object[] via List<T>.ToArray().
+
+        // Seed with any leading non-spread args so the ctor capacity hint is non-zero.
+        int prefixCount = 0;
+        while (prefixCount < arguments.Count && arguments[prefixCount] is not HIRSpreadElement)
+        {
+            prefixCount++;
+        }
+
+        var prefixTemps = new List<TempVariable>(prefixCount);
+        for (int i = 0; i < prefixCount; i++)
+        {
+            if (!TryLowerExpression(arguments[i], out var argTemp))
+            {
+                return false;
+            }
+            prefixTemps.Add(EnsureObject(argTemp));
+        }
+
+        var jsArgsListTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRNewJsArray(prefixTemps, jsArgsListTemp));
+        DefineTempStorage(jsArgsListTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+
+        for (int i = prefixCount; i < arguments.Count; i++)
+        {
+            var arg = arguments[i];
+            if (arg is HIRSpreadElement spread)
+            {
+                if (!TryLowerExpression(spread.Argument, out var spreadTemp))
+                {
+                    return false;
+                }
+
+                spreadTemp = EnsureObject(spreadTemp);
+                _methodBodyIR.Instructions.Add(new LIRArrayPushRange(jsArgsListTemp, spreadTemp));
+                continue;
+            }
+
+            if (!TryLowerExpression(arg, out var argTempVar))
+            {
+                return false;
+            }
+
+            argTempVar = EnsureObject(argTempVar);
+            _methodBodyIR.Instructions.Add(new LIRArrayAdd(jsArgsListTemp, argTempVar));
+        }
+
+        argsArrayTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
+            jsArgsListTemp,
+            typeof(JavaScriptRuntime.Array),
+            "ToArray",
+            Array.Empty<TempVariable>(),
+            argsArrayTemp));
+        DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        return true;
+    }
+
     private bool TryEvaluateCallArguments(IReadOnlyList<HIRExpression> arguments, int usedCount, out List<TempVariable> usedTemps)
     {
         usedTemps = new List<TempVariable>(Math.Max(usedCount, 0));

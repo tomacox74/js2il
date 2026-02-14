@@ -83,6 +83,22 @@ public record LIRStoreParameter(int ParameterIndex, TempVariable Value) : LIRIns
 public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, TempVariable Result, CallableId? CallableId = null) : LIRInstruction;
 
 /// <summary>
+/// Calls a user-defined function using a runtime argument array (object[]).
+///
+/// This is used when the call-site argument count is not statically known (e.g., spread arguments:
+/// <c>f(...args)</c>, <c>f(1, ...xs, 2)</c>), so the compiler must build an args array at runtime.
+///
+/// IL emission routes through <see cref="JavaScriptRuntime.Closure.InvokeWithArgs"/> to apply JS
+/// missing/extra argument semantics.
+/// </summary>
+public record LIRCallFunctionWithArgsArray(
+    Symbol FunctionSymbol,
+    TempVariable ScopesArray,
+    TempVariable ArgumentsArray,
+    TempVariable Result,
+    CallableId? CallableId = null) : LIRInstruction;
+
+/// <summary>
 /// Calls a function stored in a JS value (delegate) via runtime dispatch.
 /// This is used for indirect calls like `const f = makeFn(); f(...)` where the callee is not a direct function binding.
 /// Emits: call JavaScriptRuntime.Closure.InvokeWithArgs(object target, object[] scopes, object[] args)

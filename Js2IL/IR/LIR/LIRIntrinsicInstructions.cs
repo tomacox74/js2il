@@ -36,11 +36,22 @@ public record LIRCallIntrinsicGlobalFunction(string FunctionName, IReadOnlyList<
 public record LIRCallIntrinsicStatic(string IntrinsicName, string MethodName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls an intrinsic static method using a pre-built <c>object[]</c> argument array.
+/// This is primarily used for spread arguments in calls like <c>Math.max(...xs)</c>.
+/// </summary>
+public record LIRCallIntrinsicStaticWithArgsArray(string IntrinsicName, string MethodName, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Calls a static method on an intrinsic object where the return value is intentionally ignored.
 /// This is used to represent statement-level calls (e.g., throw helpers) without creating an
 /// artificial/unused result temp.
 /// </summary>
 public record LIRCallIntrinsicStaticVoid(string IntrinsicName, string MethodName, IReadOnlyList<TempVariable> Arguments) : LIRInstruction;
+
+/// <summary>
+/// Statement-level intrinsic static call using a pre-built <c>object[]</c> argument array.
+/// </summary>
+public record LIRCallIntrinsicStaticVoidWithArgsArray(string IntrinsicName, string MethodName, TempVariable ArgumentsArray) : LIRInstruction;
 
 /// <summary>
 /// Calls an intrinsic base-class constructor from a derived class constructor (i.e., JavaScript <c>super(...)</c>

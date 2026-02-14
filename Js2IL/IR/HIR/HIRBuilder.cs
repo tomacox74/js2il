@@ -1601,11 +1601,22 @@ class HIRMethodBuilder
 
                 foreach (var arg in callExpr.Arguments)
                 {
-                    if (!TryParseExpression(arg, out var argHirExpr))
+                    // Support spread arguments: f(...iterable)
+                    if (arg is SpreadElement spread)
+                    {
+                        if (!TryParseExpression(spread.Argument, out var spreadArg) || spreadArg == null)
+                        {
+                            return false;
+                        }
+                        argExprs.Add(new HIRSpreadElement(spreadArg));
+                        continue;
+                    }
+
+                    if (!TryParseExpression(arg, out var argHirExpr) || argHirExpr == null)
                     {
                         return false;
                     }
-                    argExprs.Add(argHirExpr!);
+                    argExprs.Add(argHirExpr);
                 }
 
                 if (callExpr.Optional)

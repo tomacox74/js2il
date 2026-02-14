@@ -418,13 +418,12 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_SpreadInFunctionCall_ReportsError()
+    public void Validate_SpreadInFunctionCall_IsValid()
     {
         var js = "const arr = [1, 2, 3]; console.log(...arr);";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Spread in function calls"));
+        Assert.True(result.IsValid);
     }
 
     [Fact]
