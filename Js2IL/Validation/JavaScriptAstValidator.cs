@@ -66,7 +66,9 @@ public class JavaScriptAstValidator : IAstValidator
             AllowsSuper = false,
             ScopeOwner = null,
             MethodDefinitionFunctionValue = null,
-            InDerivedClass = false
+            InDerivedClass = false,
+            AllowsNewTarget = false,
+            AllowsImportMeta = true  // import.meta is allowed at module/global scope
         });
         
         // Visit all nodes in the AST
@@ -85,7 +87,9 @@ public class JavaScriptAstValidator : IAstValidator
                     ScopeOwner = cd,
                     MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
                     InObjectPattern = currentContext.InObjectPattern,
-                    InDerivedClass = cd.SuperClass != null
+                    InDerivedClass = cd.SuperClass != null,
+                    AllowsNewTarget = currentContext.AllowsNewTarget,
+                    AllowsImportMeta = currentContext.AllowsImportMeta
                 });
             }
             else if (node is ClassExpression ce)
@@ -97,7 +101,9 @@ public class JavaScriptAstValidator : IAstValidator
                     ScopeOwner = ce,
                     MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
                     InObjectPattern = currentContext.InObjectPattern,
-                    InDerivedClass = ce.SuperClass != null
+                    InDerivedClass = ce.SuperClass != null,
+                    AllowsNewTarget = currentContext.AllowsNewTarget,
+                    AllowsImportMeta = currentContext.AllowsImportMeta
                 });
             }
 
@@ -112,7 +118,9 @@ public class JavaScriptAstValidator : IAstValidator
                     ScopeOwner = node,
                     MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
                     InObjectPattern = true,
-                    InDerivedClass = currentContext.InDerivedClass
+                    InDerivedClass = currentContext.InDerivedClass,
+                    AllowsNewTarget = currentContext.AllowsNewTarget,
+                    AllowsImportMeta = currentContext.AllowsImportMeta
                 });
             }
             
@@ -127,7 +135,9 @@ public class JavaScriptAstValidator : IAstValidator
                     ScopeOwner = methodDef,
                     // Track the function expression that is the method body so we don't treat it as nested
                     MethodDefinitionFunctionValue = methodDef.Value,
-                    InDerivedClass = currentContext.InDerivedClass
+                    InDerivedClass = currentContext.InDerivedClass,
+                    AllowsNewTarget = true,  // new.target is allowed in methods/constructors
+                    AllowsImportMeta = currentContext.AllowsImportMeta
                 });
             }
             // Push new context for functions (exclude the method body itself).
@@ -142,7 +152,10 @@ public class JavaScriptAstValidator : IAstValidator
                     AllowsSuper = false,
                     ScopeOwner = node,
                     MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
-                    InDerivedClass = currentContext.InDerivedClass
+                    InDerivedClass = currentContext.InDerivedClass,
+                    // Arrow functions inherit new.target from parent; regular functions get their own
+                    AllowsNewTarget = node is ArrowFunctionExpression ? currentContext.AllowsNewTarget : true,
+                    AllowsImportMeta = currentContext.AllowsImportMeta
                 });
             }
             
@@ -195,8 +208,33 @@ public class JavaScriptAstValidator : IAstValidator
 
                 case NodeType.MetaProperty:
                     // new.target and import.meta
-                    result.Errors.Add($"new.target/import.meta are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // Detailed validation based on the specific meta property
+                    if (node is MetaProperty metaProp)
+                    {
+                        if (metaProp.Meta.Name == "new" && metaProp.Property.Name == "target")
+                        {
+                            // new.target is only valid in functions/constructors
+                            if (!currentContext.AllowsNewTarget)
+                            {
+                                result.Errors.Add($"new.target is only valid inside functions or constructors (line {node.Location.Start.Line})");
+                                result.IsValid = false;
+                            }
+                        }
+                        else if (metaProp.Meta.Name == "import" && metaProp.Property.Name == "meta")
+                        {
+                            // import.meta is valid at module scope (we allow it everywhere for now)
+                            if (!currentContext.AllowsImportMeta)
+                            {
+                                result.Errors.Add($"import.meta is not valid in this context (line {node.Location.Start.Line})");
+                                result.IsValid = false;
+                            }
+                        }
+                        else
+                        {
+                            result.Errors.Add($"Unknown meta property: {metaProp.Meta.Name}.{metaProp.Property.Name} (line {node.Location.Start.Line})");
+                            result.IsValid = false;
+                        }
+                    }
                     break;
 
                 case NodeType.Super:
@@ -1624,5 +1662,7 @@ public class JavaScriptAstValidator : IAstValidator
         public Node? MethodDefinitionFunctionValue { get; set; }
         public bool InObjectPattern { get; set; }
         public bool InDerivedClass { get; set; }
+        public bool AllowsNewTarget { get; set; }
+        public bool AllowsImportMeta { get; set; }
     }
 }
