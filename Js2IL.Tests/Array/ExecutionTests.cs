@@ -103,5 +103,20 @@ namespace Js2IL.Tests.Array
 
         [Fact]
         public Task Array_PrototypeMethods_ArrayLike_EdgeCases() { var testName = nameof(Array_PrototypeMethods_ArrayLike_EdgeCases); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Basic() { var testName = nameof(Array_LiteralSpread_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Multiple() { var testName = nameof(Array_LiteralSpread_Multiple); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Mixed() { var testName = nameof(Array_LiteralSpread_Mixed); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Empty() { var testName = nameof(Array_LiteralSpread_Empty); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Nested() { var testName = nameof(Array_LiteralSpread_Nested); return ExecutionTest(testName); }
     }
 }

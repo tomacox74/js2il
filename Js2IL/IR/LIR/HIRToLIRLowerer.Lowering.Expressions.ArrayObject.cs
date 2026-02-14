@@ -37,39 +37,52 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        // Complex case: has spread elements
-        // First, collect all non-spread elements for initial capacity hint
-        // Then emit array creation + individual Add/PushRange calls
+        // Complex case: has spread elements.
+        // Preserve strict left-to-right evaluation order while enabling a small optimization:
+        // seed the array with any leading non-spread elements so the ctor capacity hint is non-zero
+        // and we reduce the number of subsequent Add instructions.
 
-        // Create the array with capacity 1 (minimum - will grow as needed)
-        _methodBodyIR.Instructions.Add(new LIRNewJsArray(Array.Empty<TempVariable>(), resultTempVar));
+        int prefixCount = 0;
+        while (prefixCount < arrayExpr.Elements.Length && arrayExpr.Elements[prefixCount] is not HIRSpreadElement)
+        {
+            prefixCount++;
+        }
+
+        var prefixElementTemps = new List<TempVariable>(capacity: prefixCount);
+        for (int i = 0; i < prefixCount; i++)
+        {
+            if (!TryLowerExpression(arrayExpr.Elements[i], out var elementTemp))
+            {
+                return false;
+            }
+            prefixElementTemps.Add(EnsureObject(elementTemp));
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRNewJsArray(prefixElementTemps, resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
 
-        // Process each element
-        foreach (var element in arrayExpr.Elements)
+        // Process the remaining elements (including the first spread) in order.
+        for (int i = prefixCount; i < arrayExpr.Elements.Length; i++)
         {
+            var element = arrayExpr.Elements[i];
             if (element is HIRSpreadElement spreadElement)
             {
-                // Lower the spread argument
                 if (!TryLowerExpression(spreadElement.Argument, out var spreadArgTemp))
                 {
                     return false;
                 }
                 var boxedSpreadArg = EnsureObject(spreadArgTemp);
-                // Emit PushRange to spread the elements
                 _methodBodyIR.Instructions.Add(new LIRArrayPushRange(resultTempVar, boxedSpreadArg));
+                continue;
             }
-            else
+
+            if (!TryLowerExpression(element, out var remainingTemp))
             {
-                // Lower regular element
-                if (!TryLowerExpression(element, out var elementTemp))
-                {
-                    return false;
-                }
-                var boxedElement = EnsureObject(elementTemp);
-                // Emit Add for single element
-                _methodBodyIR.Instructions.Add(new LIRArrayAdd(resultTempVar, boxedElement));
+                return false;
             }
+
+            var boxedRemaining = EnsureObject(remainingTemp);
+            _methodBodyIR.Instructions.Add(new LIRArrayAdd(resultTempVar, boxedRemaining));
         }
 
         return true;
