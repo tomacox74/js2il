@@ -4,10 +4,11 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-- **Dynamic import() expressions (ECMA-262 §13.3.10)**: Implement `import(specifier)` for dynamic module loading (closes #610).
+- **Dynamic import() expressions (ECMA-262 §13.3.10)**: Add initial `import(specifier)` support for dynamic module loading.
   - Returns a Promise that resolves to CommonJS module.exports
   - Only string literal specifiers are supported (compile-time dependency discovery)
-  - Rejects non-literal specifiers and options parameter during validation
+  - Non-literal specifiers are allowed (may require explicit module inclusion at compile time)
+  - Rejects options parameter during validation
   - Uses existing CommonJS module loader for synchronous resolution
   - New runtime: `JavaScriptRuntime.CommonJS.DynamicImport.Import()`
   - New compiler infrastructure: `HIRImportExpression`, `LIRCallImport`

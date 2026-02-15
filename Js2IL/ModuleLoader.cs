@@ -538,11 +538,6 @@ public class ModuleLoader
                 {
                     dependencies.Add(specifier);
                 }
-                else
-                {
-                    // This should not happen due to prior validation
-                    throw new Exception("Invalid import() specifier type detected during dependency extraction.");
-                }
             }
         });
 
