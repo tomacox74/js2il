@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Linq.Expressions;
 using JavaScriptRuntime.DependencyInjection;
 
@@ -90,6 +91,29 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, object> _objectGetOwnPropertyNamesValue = static (_, value) =>
             JavaScriptRuntime.Object.getOwnPropertyNames(value!);
 
+        private static readonly Func<object[], object?, object> _objectKeysValue = static (_, value) =>
+            JavaScriptRuntime.Object.keys(value!);
+
+        private static readonly Func<object[], object?, object> _objectValuesValue = static (_, value) =>
+            JavaScriptRuntime.Object.values(value!);
+
+        private static readonly Func<object[], object?, object> _objectEntriesValue = static (_, value) =>
+            JavaScriptRuntime.Object.entries(value!);
+
+        private static readonly Func<object[], object?[], object> _objectAssignValue = static (_, args) =>
+        {
+            if (args == null || args.Length == 0)
+            {
+                throw new TypeError("Object.assign requires at least 1 argument");
+            }
+            var target = args[0];
+            var sources = args.Length > 1 ? args.Skip(1).ToArray() : System.Array.Empty<object?>();
+            return JavaScriptRuntime.Object.assign(target!, sources);
+        };
+
+        private static readonly Func<object[], object?, object> _objectFromEntriesValue = static (_, iterable) =>
+            JavaScriptRuntime.Object.fromEntries(iterable!);
+
         // Placeholder Error constructor value.
         // Exposed so libraries can reference `Error` and access `Error.prototype`.
         // Calling it as a constructor/function is not implemented yet.
@@ -144,6 +168,56 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = _objectGetOwnPropertyNamesValue
+            });
+
+            // Provide Object.keys
+            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "keys", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _objectKeysValue
+            });
+
+            // Provide Object.values
+            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "values", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _objectValuesValue
+            });
+
+            // Provide Object.entries
+            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "entries", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _objectEntriesValue
+            });
+
+            // Provide Object.assign
+            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "assign", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _objectAssignValue
+            });
+
+            // Provide Object.fromEntries
+            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "fromEntries", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _objectFromEntriesValue
             });
 
             // Provide Object.prototype.hasOwnProperty for descriptor-heavy libraries.
