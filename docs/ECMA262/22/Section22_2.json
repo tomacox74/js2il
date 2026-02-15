@@ -354,13 +354,13 @@
     {
       "clause": "22.2.6.3",
       "title": "get RegExp.prototype.dotAll",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll"
     },
     {
       "clause": "22.2.6.4",
       "title": "get RegExp.prototype.flags",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.flags"
     },
     {
@@ -378,7 +378,7 @@
     {
       "clause": "22.2.6.6",
       "title": "get RegExp.prototype.hasIndices",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.hasIndices"
     },
     {
@@ -438,31 +438,31 @@
     {
       "clause": "22.2.6.15",
       "title": "get RegExp.prototype.sticky",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.sticky"
     },
     {
       "clause": "22.2.6.16",
       "title": "RegExp.prototype.test ( S )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.test"
     },
     {
       "clause": "22.2.6.17",
       "title": "RegExp.prototype.toString ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.tostring"
     },
     {
       "clause": "22.2.6.18",
       "title": "get RegExp.prototype.unicode",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.unicode"
     },
     {
       "clause": "22.2.6.19",
       "title": "get RegExp.prototype.unicodeSets",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.unicodesets"
     },
     {
@@ -588,7 +588,7 @@
         "testScripts": [
           "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp as a numeric property. Currently participates in exec() only for /g (global) regexes; when no match is found lastIndex is reset to 0."
+        "notes": "Implemented in JavaScriptRuntime.RegExp as a numeric property. Participates in both exec() and test() for /g (global) regexes; when no match is found lastIndex is reset to 0."
       },
       {
         "clause": "22.2.6.5",
@@ -629,6 +629,86 @@
           "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp using the original pattern text. Does not attempt to normalize/escape patterns exactly per spec."
+      },
+      {
+        "clause": "22.2.6.16",
+        "feature": "RegExp.prototype.test",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.test",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp.test. Updates lastIndex for global regexes (/g flag). Sticky flag (/y) and unicode modes are not yet supported."
+      },
+      {
+        "clause": "22.2.6.17",
+        "feature": "RegExp.prototype.toString",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.tostring",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp.toString returning /source/flags format. Does not handle all exotic object semantics."
+      },
+      {
+        "clause": "22.2.6.4",
+        "feature": "get RegExp.prototype.flags",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.flags",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp.flags. Returns flags in canonical order (dgimsuyv). Only 'g', 'i', 'm' flags are currently functional."
+      },
+      {
+        "clause": "22.2.6.3",
+        "feature": "get RegExp.prototype.dotAll",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp.dotAll. Currently always returns false as 's' flag is not yet supported."
+      },
+      {
+        "clause": "22.2.6.6",
+        "feature": "get RegExp.prototype.hasIndices",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.hasIndices",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp.hasIndices. Currently always returns false as 'd' flag is not yet supported."
+      },
+      {
+        "clause": "22.2.6.15",
+        "feature": "get RegExp.prototype.sticky",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.sticky",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp.sticky. Currently always returns false as 'y' flag is not yet supported."
+      },
+      {
+        "clause": "22.2.6.18",
+        "feature": "get RegExp.prototype.unicode",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.unicode",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp.unicode. Currently always returns false as 'u' flag is not yet supported."
+      },
+      {
+        "clause": "22.2.6.19",
+        "feature": "get RegExp.prototype.unicodeSets",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.unicodesets",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.RegExp.unicodeSets. Currently always returns false as 'v' flag is not yet supported."
       }
     ]
   }

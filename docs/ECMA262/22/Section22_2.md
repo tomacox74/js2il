@@ -69,11 +69,11 @@
 | 22.2.6 | Properties of the RegExp Prototype Object | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-regexp-prototype-object) |
 | 22.2.6.1 | RegExp.prototype.constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.constructor) |
 | 22.2.6.2 | RegExp.prototype.exec ( string ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.exec) |
-| 22.2.6.3 | get RegExp.prototype.dotAll | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll) |
-| 22.2.6.4 | get RegExp.prototype.flags | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.flags) |
+| 22.2.6.3 | get RegExp.prototype.dotAll | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll) |
+| 22.2.6.4 | get RegExp.prototype.flags | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.flags) |
 | 22.2.6.4.1 | RegExpHasFlag ( R , codeUnit ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexphasflag) |
 | 22.2.6.5 | get RegExp.prototype.global | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.global) |
-| 22.2.6.6 | get RegExp.prototype.hasIndices | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.hasIndices) |
+| 22.2.6.6 | get RegExp.prototype.hasIndices | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.hasIndices) |
 | 22.2.6.7 | get RegExp.prototype.ignoreCase | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.ignorecase) |
 | 22.2.6.8 | RegExp.prototype [ %Symbol.match% ] ( string ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.match%) |
 | 22.2.6.9 | RegExp.prototype [ %Symbol.matchAll% ] ( string ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp-prototype-%symbol.matchall%) |
@@ -83,11 +83,11 @@
 | 22.2.6.13 | get RegExp.prototype.source | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.source) |
 | 22.2.6.13.1 | EscapeRegExpPattern ( P , F ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-escaperegexppattern) |
 | 22.2.6.14 | RegExp.prototype [ %Symbol.split% ] ( string , limit ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.split%) |
-| 22.2.6.15 | get RegExp.prototype.sticky | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.sticky) |
-| 22.2.6.16 | RegExp.prototype.test ( S ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.test) |
-| 22.2.6.17 | RegExp.prototype.toString ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.tostring) |
-| 22.2.6.18 | get RegExp.prototype.unicode | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.unicode) |
-| 22.2.6.19 | get RegExp.prototype.unicodeSets | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.unicodesets) |
+| 22.2.6.15 | get RegExp.prototype.sticky | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.sticky) |
+| 22.2.6.16 | RegExp.prototype.test ( S ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.test) |
+| 22.2.6.17 | RegExp.prototype.toString ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.tostring) |
+| 22.2.6.18 | get RegExp.prototype.unicode | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.unicode) |
+| 22.2.6.19 | get RegExp.prototype.unicodeSets | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.unicodesets) |
 | 22.2.7 | Abstract Operations for RegExp Matching | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations-for-regexp-matching) |
 | 22.2.7.1 | RegExpExec ( R , S ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexpexec) |
 | 22.2.7.2 | RegExpBuiltinExec ( R , S ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexpbuiltinexec) |
@@ -116,11 +116,29 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | RegExp.prototype.exec | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js) | Implemented in JavaScriptRuntime.RegExp.exec as a minimal subset. Supports returning an Array of captures and attaches .index and .input. Full RegExp exotic object semantics, sticky (/y), unicode modes, named groups, and @@exec overrides are not implemented. |
 
+### 22.2.6.3 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| get RegExp.prototype.dotAll | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js) | Implemented in JavaScriptRuntime.RegExp.dotAll. Currently always returns false as 's' flag is not yet supported. |
+
+### 22.2.6.4 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.flags))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| get RegExp.prototype.flags | Supported with Limitations | [`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js) | Implemented in JavaScriptRuntime.RegExp.flags. Returns flags in canonical order (dgimsuyv). Only 'g', 'i', 'm' flags are currently functional. |
+
 ### 22.2.6.5 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.global))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | get RegExp.prototype.global | Supported with Limitations | [`IntrinsicCallables_RegExp_Prototype_Getters_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js) | Implemented in JavaScriptRuntime.RegExp based on stored flags. Full RegExp exotic object semantics and cross-realm behaviors are not implemented. |
+
+### 22.2.6.6 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.hasIndices))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| get RegExp.prototype.hasIndices | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js) | Implemented in JavaScriptRuntime.RegExp.hasIndices. Currently always returns false as 'd' flag is not yet supported. |
 
 ### 22.2.6.7 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.ignorecase))
 
@@ -140,9 +158,39 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | get RegExp.prototype.source | Supported with Limitations | [`IntrinsicCallables_RegExp_Prototype_Getters_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js) | Implemented in JavaScriptRuntime.RegExp using the original pattern text. Does not attempt to normalize/escape patterns exactly per spec. |
 
+### 22.2.6.15 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.sticky))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| get RegExp.prototype.sticky | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js) | Implemented in JavaScriptRuntime.RegExp.sticky. Currently always returns false as 'y' flag is not yet supported. |
+
+### 22.2.6.16 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.test))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| RegExp.prototype.test | Supported with Limitations | [`IntrinsicCallables_RegExp_Test_LastIndex_Global.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js) | Implemented in JavaScriptRuntime.RegExp.test. Updates lastIndex for global regexes (/g flag). Sticky flag (/y) and unicode modes are not yet supported. |
+
+### 22.2.6.17 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.tostring))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| RegExp.prototype.toString | Supported with Limitations | [`IntrinsicCallables_RegExp_ToString_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js) | Implemented in JavaScriptRuntime.RegExp.toString returning /source/flags format. Does not handle all exotic object semantics. |
+
+### 22.2.6.18 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.unicode))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| get RegExp.prototype.unicode | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js) | Implemented in JavaScriptRuntime.RegExp.unicode. Currently always returns false as 'u' flag is not yet supported. |
+
+### 22.2.6.19 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.unicodesets))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| get RegExp.prototype.unicodeSets | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js) | Implemented in JavaScriptRuntime.RegExp.unicodeSets. Currently always returns false as 'v' flag is not yet supported. |
+
 ### 22.2.8.1 ([tc39.es](https://tc39.es/ecma262/#sec-lastindex))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| RegExp instance lastIndex | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js) | Implemented in JavaScriptRuntime.RegExp as a numeric property. Currently participates in exec() only for /g (global) regexes; when no match is found lastIndex is reset to 0. |
+| RegExp instance lastIndex | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js) | Implemented in JavaScriptRuntime.RegExp as a numeric property. Participates in both exec() and test() for /g (global) regexes; when no match is found lastIndex is reset to 0. |
 
