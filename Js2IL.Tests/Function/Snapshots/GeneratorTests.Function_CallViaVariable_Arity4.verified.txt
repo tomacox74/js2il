@@ -1,0 +1,207 @@
+﻿// IL code: Function_CallViaVariable_Arity4
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Function_CallViaVariable_Arity4
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit add4
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2128
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object a,
+				object b,
+				object c,
+				object d
+			) cil managed 
+		{
+			// Method begins at RVA 0x20f8
+			// Header size: 12
+			// Code size: 27 (0x1b)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
+			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0007: stloc.0
+			IL_0008: ldloc.0
+			IL_0009: ldarg.3
+			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: ldarg.s d
+			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0018: stloc.0
+			IL_0019: ldloc.0
+			IL_001a: ret
+		} // end of method add4::__js_call__
+
+	} // end of class add4
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 11 53 63 6f 70 65 20 61 64 64 34 3d 7b 61
+			64 64 34 7d 00 00
+		)
+		// Fields
+		.field public object add4
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x211f
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 155 (0x9b)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Function_CallViaVariable_Arity4/Scope,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object[]
+		)
+
+		IL_0000: newobj instance void Modules.Function_CallViaVariable_Arity4/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Function_CallViaVariable_Arity4/add4::__js_call__(object, object, object, object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes4::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.3
+		IL_0022: ldloc.3
+		IL_0023: stloc.1
+		IL_0024: ldloc.1
+		IL_0025: stloc.2
+		IL_0026: ldc.i4.1
+		IL_0027: newarr [System.Runtime]System.Object
+		IL_002c: dup
+		IL_002d: ldc.i4.0
+		IL_002e: ldnull
+		IL_002f: stelem.ref
+		IL_0030: stloc.s 4
+		IL_0032: ldloc.2
+		IL_0033: ldloc.s 4
+		IL_0035: ldc.i4.4
+		IL_0036: newarr [System.Runtime]System.Object
+		IL_003b: dup
+		IL_003c: ldc.i4.0
+		IL_003d: ldc.r8 10
+		IL_0046: box [System.Runtime]System.Double
+		IL_004b: stelem.ref
+		IL_004c: dup
+		IL_004d: ldc.i4.1
+		IL_004e: ldc.r8 20
+		IL_0057: box [System.Runtime]System.Double
+		IL_005c: stelem.ref
+		IL_005d: dup
+		IL_005e: ldc.i4.2
+		IL_005f: ldc.r8 30
+		IL_0068: box [System.Runtime]System.Double
+		IL_006d: stelem.ref
+		IL_006e: dup
+		IL_006f: ldc.i4.3
+		IL_0070: ldc.r8 40
+		IL_0079: box [System.Runtime]System.Double
+		IL_007e: stelem.ref
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0084: stloc.3
+		IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008a: ldc.i4.1
+		IL_008b: newarr [System.Runtime]System.Object
+		IL_0090: dup
+		IL_0091: ldc.i4.0
+		IL_0092: ldloc.3
+		IL_0093: stelem.ref
+		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0099: pop
+		IL_009a: ret
+	} // end of method Function_CallViaVariable_Arity4::__js_module_init__
+
+} // end of class Modules.Function_CallViaVariable_Arity4
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2131
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Function_CallViaVariable_Arity4::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

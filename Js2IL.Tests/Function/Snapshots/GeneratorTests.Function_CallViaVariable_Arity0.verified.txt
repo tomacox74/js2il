@@ -1,0 +1,164 @@
+﻿// IL code: Function_CallViaVariable_Arity0
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Function_CallViaVariable_Arity0
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit getMessage
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20b9
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget
+			) cil managed 
+		{
+			// Method begins at RVA 0x20a9
+			// Header size: 1
+			// Code size: 6 (0x6)
+			.maxstack 8
+
+			IL_0000: ldstr "Hello"
+			IL_0005: ret
+		} // end of method getMessage::__js_call__
+
+	} // end of class getMessage
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 1d 53 63 6f 70 65 20 67 65 74 4d 65 73 73
+			61 67 65 3d 7b 67 65 74 4d 65 73 73 61 67 65 7d
+			00 00
+		)
+		// Fields
+		.field public object getMessage
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20b0
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 77 (0x4d)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Function_CallViaVariable_Arity0/Scope,
+			[1] object,
+			[2] object,
+			[3] object
+		)
+
+		IL_0000: newobj instance void Modules.Function_CallViaVariable_Arity0/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Function_CallViaVariable_Arity0/getMessage::__js_call__(object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.3
+		IL_0022: ldloc.3
+		IL_0023: stloc.1
+		IL_0024: ldloc.1
+		IL_0025: stloc.2
+		IL_0026: ldloc.2
+		IL_0027: ldc.i4.1
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: dup
+		IL_002e: ldc.i4.0
+		IL_002f: ldnull
+		IL_0030: stelem.ref
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+		IL_0036: stloc.3
+		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003c: ldc.i4.1
+		IL_003d: newarr [System.Runtime]System.Object
+		IL_0042: dup
+		IL_0043: ldc.i4.0
+		IL_0044: ldloc.3
+		IL_0045: stelem.ref
+		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004b: pop
+		IL_004c: ret
+	} // end of method Function_CallViaVariable_Arity0::__js_module_init__
+
+} // end of class Modules.Function_CallViaVariable_Arity0
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20c2
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Function_CallViaVariable_Arity0::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -118,5 +118,14 @@ namespace Js2IL.Tests.Array
 
         [Fact]
         public Task Array_LiteralSpread_Nested() { var testName = nameof(Array_LiteralSpread_Nested); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_MemberCall_Arity1_Join() { var testName = nameof(Array_MemberCall_Arity1_Join); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_MemberCall_Arity0_Reverse() { var testName = nameof(Array_MemberCall_Arity0_Reverse); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_MemberCall_Arity2_Slice() { var testName = nameof(Array_MemberCall_Arity2_Slice); return ExecutionTest(testName); }
     }
 }
