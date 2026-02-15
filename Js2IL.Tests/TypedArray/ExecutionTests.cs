@@ -35,5 +35,17 @@ namespace Js2IL.Tests.TypedArray
 
         [Fact]
         public Task Prime_SetBitsTrue_LargeStep_OptimizedVsNaive() { var testName = nameof(Prime_SetBitsTrue_LargeStep_OptimizedVsNaive); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Int32Array_NaN_Index_NoOp() { var testName = nameof(Int32Array_NaN_Index_NoOp); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Int32Array_Infinity_Index_NoOp() { var testName = nameof(Int32Array_Infinity_Index_NoOp); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Int32Array_Fractional_Index_NoOp() { var testName = nameof(Int32Array_Fractional_Index_NoOp); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Int32Array_Wrapping_Semantics() { var testName = nameof(Int32Array_Wrapping_Semantics); return ExecutionTest(testName); }
     }
 }
