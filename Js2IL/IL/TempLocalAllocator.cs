@@ -429,6 +429,28 @@ internal static class TempLocalAllocator
                 yield return callValue.ScopesArray;
                 yield return callValue.ArgumentsArray;
                 break;
+            case LIRCallFunctionValue0 callValue0:
+                yield return callValue0.FunctionValue;
+                yield return callValue0.ScopesArray;
+                break;
+            case LIRCallFunctionValue1 callValue1:
+                yield return callValue1.FunctionValue;
+                yield return callValue1.ScopesArray;
+                yield return callValue1.A0;
+                break;
+            case LIRCallFunctionValue2 callValue2:
+                yield return callValue2.FunctionValue;
+                yield return callValue2.ScopesArray;
+                yield return callValue2.A0;
+                yield return callValue2.A1;
+                break;
+            case LIRCallFunctionValue3 callValue3:
+                yield return callValue3.FunctionValue;
+                yield return callValue3.ScopesArray;
+                yield return callValue3.A0;
+                yield return callValue3.A1;
+                yield return callValue3.A2;
+                break;
 
             case LIRCallRequire callRequire:
                 yield return callRequire.RequireValue;
@@ -447,6 +469,24 @@ internal static class TempLocalAllocator
             case LIRCallMember callMember:
                 yield return callMember.Receiver;
                 yield return callMember.ArgumentsArray;
+                break;
+            case LIRCallMember0 callMember0:
+                yield return callMember0.Receiver;
+                break;
+            case LIRCallMember1 callMember1:
+                yield return callMember1.Receiver;
+                yield return callMember1.A0;
+                break;
+            case LIRCallMember2 callMember2:
+                yield return callMember2.Receiver;
+                yield return callMember2.A0;
+                yield return callMember2.A1;
+                break;
+            case LIRCallMember3 callMember3:
+                yield return callMember3.Receiver;
+                yield return callMember3.A0;
+                yield return callMember3.A1;
+                yield return callMember3.A2;
                 break;
 
             case LIRCallTypedMember callTyped:
@@ -908,6 +948,18 @@ internal static class TempLocalAllocator
             case LIRCallFunctionValue callValue:
                 defined = callValue.Result;
                 return true;
+            case LIRCallFunctionValue0 callValue0:
+                defined = callValue0.Result;
+                return true;
+            case LIRCallFunctionValue1 callValue1:
+                defined = callValue1.Result;
+                return true;
+            case LIRCallFunctionValue2 callValue2:
+                defined = callValue2.Result;
+                return true;
+            case LIRCallFunctionValue3 callValue3:
+                defined = callValue3.Result;
+                return true;
 
             case LIRCallRequire callRequire:
                 defined = callRequire.Result;
@@ -919,6 +971,18 @@ internal static class TempLocalAllocator
 
             case LIRCallMember callMember:
                 defined = callMember.Result;
+                return true;
+            case LIRCallMember0 callMember0:
+                defined = callMember0.Result;
+                return true;
+            case LIRCallMember1 callMember1:
+                defined = callMember1.Result;
+                return true;
+            case LIRCallMember2 callMember2:
+                defined = callMember2.Result;
+                return true;
+            case LIRCallMember3 callMember3:
+                defined = callMember3.Result;
                 return true;
 
             case LIRCallIntrinsicStaticWithArgsArray callStaticWithArgsArray:

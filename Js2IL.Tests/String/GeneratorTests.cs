@@ -145,5 +145,11 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_TaggedTemplate_NoSubstitutions);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_MemberCall_Arity2_Substring() { var testName = nameof(String_MemberCall_Arity2_Substring); return GenerateTest(testName); }
+
+        [Fact]
+        public Task String_MemberCall_Arity3_Replace() { var testName = nameof(String_MemberCall_Arity3_Replace); return GenerateTest(testName); }
     }
 }

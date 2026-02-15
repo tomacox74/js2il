@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x215f
+			// Method begins at RVA 0x2142
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -34,7 +34,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2168
+			// Method begins at RVA 0x214b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -60,7 +60,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 259 (0x103)
+		// Code size: 230 (0xe6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Set_FromArray_WithOffset/Scope,
@@ -69,8 +69,7 @@
 			[3] object,
 			[4] object,
 			[5] object,
-			[6] object[],
-			[7] float64
+			[6] float64
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_Set_FromArray_WithOffset/Scope::.ctor()
@@ -99,63 +98,51 @@
 		IL_005b: box [System.Runtime]System.Double
 		IL_0060: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_0065: stloc.2
-		IL_0066: ldc.i4.2
-		IL_0067: newarr [System.Runtime]System.Object
-		IL_006c: dup
-		IL_006d: ldc.i4.0
-		IL_006e: ldloc.2
-		IL_006f: stelem.ref
-		IL_0070: dup
-		IL_0071: ldc.i4.1
-		IL_0072: ldc.r8 1
-		IL_007b: box [System.Runtime]System.Double
-		IL_0080: stelem.ref
-		IL_0081: stloc.s 6
-		IL_0083: ldloc.1
-		IL_0084: ldstr "set"
-		IL_0089: ldloc.2
-		IL_008a: ldc.r8 1
-		IL_0093: box [System.Runtime]System.Double
-		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_009d: pop
-		IL_009e: ldc.r8 0.0
-		IL_00a7: box [System.Runtime]System.Double
-		IL_00ac: stloc.3
-		// loop start (head: IL_00ad)
-			IL_00ad: ldloc.3
-			IL_00ae: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00b3: ldloc.1
-			IL_00b4: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_00b9: clt
-			IL_00bb: brfalse IL_0102
+		IL_0066: ldloc.1
+		IL_0067: ldstr "set"
+		IL_006c: ldloc.2
+		IL_006d: ldc.r8 1
+		IL_0076: box [System.Runtime]System.Double
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0080: pop
+		IL_0081: ldc.r8 0.0
+		IL_008a: box [System.Runtime]System.Double
+		IL_008f: stloc.3
+		// loop start (head: IL_0090)
+			IL_0090: ldloc.3
+			IL_0091: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0096: ldloc.1
+			IL_0097: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_009c: clt
+			IL_009e: brfalse IL_00e5
 
-			IL_00c0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00c5: ldc.i4.1
-			IL_00c6: newarr [System.Runtime]System.Object
-			IL_00cb: dup
-			IL_00cc: ldc.i4.0
-			IL_00cd: ldloc.1
-			IL_00ce: ldloc.3
-			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00d4: stelem.ref
-			IL_00d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00da: pop
-			IL_00db: ldloc.3
-			IL_00dc: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00e1: stloc.s 7
-			IL_00e3: ldloc.s 7
-			IL_00e5: ldc.r8 1
-			IL_00ee: add
-			IL_00ef: stloc.s 7
-			IL_00f1: ldloc.s 7
-			IL_00f3: box [System.Runtime]System.Double
-			IL_00f8: stloc.s 5
-			IL_00fa: ldloc.s 5
-			IL_00fc: stloc.3
-			IL_00fd: br IL_00ad
+			IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a8: ldc.i4.1
+			IL_00a9: newarr [System.Runtime]System.Object
+			IL_00ae: dup
+			IL_00af: ldc.i4.0
+			IL_00b0: ldloc.1
+			IL_00b1: ldloc.3
+			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00b7: stelem.ref
+			IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00bd: pop
+			IL_00be: ldloc.3
+			IL_00bf: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00c4: stloc.s 6
+			IL_00c6: ldloc.s 6
+			IL_00c8: ldc.r8 1
+			IL_00d1: add
+			IL_00d2: stloc.s 6
+			IL_00d4: ldloc.s 6
+			IL_00d6: box [System.Runtime]System.Double
+			IL_00db: stloc.s 5
+			IL_00dd: ldloc.s 5
+			IL_00df: stloc.3
+			IL_00e0: br IL_0090
 		// end loop
 
-		IL_0102: ret
+		IL_00e5: ret
 	} // end of method Int32Array_Set_FromArray_WithOffset::__js_module_init__
 
 } // end of class Modules.Int32Array_Set_FromArray_WithOffset
@@ -167,7 +154,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2171
+		// Method begins at RVA 0x2154
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -452,12 +452,6 @@ public sealed partial class HIRToLIRLowerer
                 }
                 calleeTemp = EnsureObject(calleeTemp);
 
-                // Lower arguments and pack into an object[] (supports spread)
-                if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTemp))
-                {
-                    return false;
-                }
-
                 // Build a scopes array for the current context. Bound closures ignore the passed scopes,
                 // but unbound function values still require a scopes array.
                 var scopesTemp = CreateTempVariable();
@@ -467,7 +461,42 @@ public sealed partial class HIRToLIRLowerer
                 }
                 DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(calleeTemp, scopesTemp, argsArrayTemp, resultTempVar));
+                // Check if we can use arity-specific instruction (no spread, 0-3 args)
+                if (!HasSpreadArguments(callExpr.Arguments) && callExpr.Arguments.Length <= 3)
+                {
+                    // Lower arguments individually
+                    var argTemps = new List<TempVariable>(callExpr.Arguments.Length);
+                    foreach (var arg in callExpr.Arguments)
+                    {
+                        if (!TryLowerExpression(arg, out var argTemp))
+                        {
+                            return false;
+                        }
+                        argTemps.Add(EnsureObject(argTemp));
+                    }
+
+                    // Emit arity-specific instruction
+                    LIRInstruction callInstr = callExpr.Arguments.Length switch
+                    {
+                        0 => new LIRCallFunctionValue0(calleeTemp, scopesTemp, resultTempVar),
+                        1 => new LIRCallFunctionValue1(calleeTemp, scopesTemp, argTemps[0], resultTempVar),
+                        2 => new LIRCallFunctionValue2(calleeTemp, scopesTemp, argTemps[0], argTemps[1], resultTempVar),
+                        3 => new LIRCallFunctionValue3(calleeTemp, scopesTemp, argTemps[0], argTemps[1], argTemps[2], resultTempVar),
+                        _ => throw new InvalidOperationException("Unexpected arity")
+                    };
+                    _methodBodyIR.Instructions.Add(callInstr);
+                }
+                else
+                {
+                    // Fall back to array-based call for >3 args or spread
+                    if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTemp))
+                    {
+                        return false;
+                    }
+
+                    _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(calleeTemp, scopesTemp, argsArrayTemp, resultTempVar));
+                }
+
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
             }
@@ -981,12 +1010,42 @@ public sealed partial class HIRToLIRLowerer
         // so typed receiver lowering can't prove the receiver type.
         receiverTempVar = EnsureObject(receiverTempVar);
 
-        if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTempVar))
+        // Check if we can use arity-specific instruction (no spread, 0-3 args)
+        if (!HasSpreadArguments(callExpr.Arguments) && callExpr.Arguments.Length <= 3)
         {
-            return false;
+            // Lower arguments individually
+            var argTemps = new List<TempVariable>(callExpr.Arguments.Length);
+            foreach (var arg in callExpr.Arguments)
+            {
+                if (!TryLowerExpression(arg, out var argTemp))
+                {
+                    return false;
+                }
+                argTemps.Add(EnsureObject(argTemp));
+            }
+
+            // Emit arity-specific instruction
+            LIRInstruction callInstr = callExpr.Arguments.Length switch
+            {
+                0 => new LIRCallMember0(receiverTempVar, calleePropAccess.PropertyName, resultTempVar),
+                1 => new LIRCallMember1(receiverTempVar, calleePropAccess.PropertyName, argTemps[0], resultTempVar),
+                2 => new LIRCallMember2(receiverTempVar, calleePropAccess.PropertyName, argTemps[0], argTemps[1], resultTempVar),
+                3 => new LIRCallMember3(receiverTempVar, calleePropAccess.PropertyName, argTemps[0], argTemps[1], argTemps[2], resultTempVar),
+                _ => throw new InvalidOperationException("Unexpected arity")
+            };
+            _methodBodyIR.Instructions.Add(callInstr);
+        }
+        else
+        {
+            // Fall back to array-based call for >3 args or spread
+            if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var argsArrayTempVar))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCallMember(receiverTempVar, calleePropAccess.PropertyName, argsArrayTempVar, resultTempVar));
         }
 
-        _methodBodyIR.Instructions.Add(new LIRCallMember(receiverTempVar, calleePropAccess.PropertyName, argsArrayTempVar, resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
     }

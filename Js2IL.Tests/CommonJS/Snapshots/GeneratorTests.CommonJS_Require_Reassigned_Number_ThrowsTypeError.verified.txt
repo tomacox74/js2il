@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212d
+				// Method begins at RVA 0x2121
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2136
+				// Method begins at RVA 0x212a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2124
+			// Method begins at RVA 0x2118
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 184 (0xb8)
+		// Code size: 172 (0xac)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope,
@@ -104,78 +104,73 @@
 			IL_0017: newarr [System.Runtime]System.Object
 			IL_001c: dup
 			IL_001d: ldc.i4.0
-			IL_001e: ldstr "fs"
-			IL_0023: stelem.ref
-			IL_0024: stloc.s 4
-			IL_0026: ldarg.1
-			IL_0027: ldc.i4.1
-			IL_0028: newarr [System.Runtime]System.Object
-			IL_002d: dup
-			IL_002e: ldc.i4.0
-			IL_002f: ldnull
-			IL_0030: stelem.ref
-			IL_0031: ldstr "fs"
-			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-			IL_003b: pop
-			IL_003c: leave IL_00b7
+			IL_001e: ldnull
+			IL_001f: stelem.ref
+			IL_0020: stloc.s 4
+			IL_0022: ldarg.1
+			IL_0023: ldloc.s 4
+			IL_0025: ldstr "fs"
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+			IL_002f: pop
+			IL_0030: leave IL_00ab
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0041: stloc.1
-			IL_0042: ldloc.1
-			IL_0043: dup
-			IL_0044: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0049: dup
-			IL_004a: brtrue IL_0060
+			IL_0035: stloc.1
+			IL_0036: ldloc.1
+			IL_0037: dup
+			IL_0038: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_003d: dup
+			IL_003e: brtrue IL_0054
 
-			IL_004f: pop
-			IL_0050: dup
-			IL_0051: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0056: dup
-			IL_0057: brtrue IL_006c
+			IL_0043: pop
+			IL_0044: dup
+			IL_0045: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_004a: dup
+			IL_004b: brtrue IL_0060
 
-			IL_005c: pop
-			IL_005d: pop
-			IL_005e: rethrow
+			IL_0050: pop
+			IL_0051: pop
+			IL_0052: rethrow
+
+			IL_0054: pop
+			IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_005a: stloc.2
+			IL_005b: br IL_0062
 
 			IL_0060: pop
-			IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0066: stloc.2
-			IL_0067: br IL_006e
+			IL_0061: stloc.2
 
-			IL_006c: pop
-			IL_006d: stloc.2
-
-			IL_006e: ldloc.2
-			IL_006f: stloc.s 5
-			IL_0071: ldloc.s 5
-			IL_0073: stloc.3
-			IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0079: ldc.i4.1
-			IL_007a: newarr [System.Runtime]System.Object
-			IL_007f: dup
-			IL_0080: ldc.i4.0
-			IL_0081: ldloc.3
-			IL_0082: ldstr "name"
-			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_008c: stelem.ref
-			IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0092: pop
-			IL_0093: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0098: ldc.i4.1
-			IL_0099: newarr [System.Runtime]System.Object
-			IL_009e: dup
-			IL_009f: ldc.i4.0
-			IL_00a0: ldloc.3
-			IL_00a1: ldstr "message"
-			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00ab: stelem.ref
-			IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00b1: pop
-			IL_00b2: leave IL_00b7
+			IL_0062: ldloc.2
+			IL_0063: stloc.s 5
+			IL_0065: ldloc.s 5
+			IL_0067: stloc.3
+			IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_006d: ldc.i4.1
+			IL_006e: newarr [System.Runtime]System.Object
+			IL_0073: dup
+			IL_0074: ldc.i4.0
+			IL_0075: ldloc.3
+			IL_0076: ldstr "name"
+			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0080: stelem.ref
+			IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0086: pop
+			IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008c: ldc.i4.1
+			IL_008d: newarr [System.Runtime]System.Object
+			IL_0092: dup
+			IL_0093: ldc.i4.0
+			IL_0094: ldloc.3
+			IL_0095: ldstr "message"
+			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_009f: stelem.ref
+			IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00a5: pop
+			IL_00a6: leave IL_00ab
 		} // end handler
 
-		IL_00b7: ret
+		IL_00ab: ret
 	} // end of method CommonJS_Require_Reassigned_Number_ThrowsTypeError::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError
@@ -187,7 +182,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213f
+		// Method begins at RVA 0x2133
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

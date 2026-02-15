@@ -542,6 +542,10 @@ internal static class Stackify
 
             // LIRCallFunctionValue calls a function value via runtime dispatch.
             case LIRCallFunctionValue:
+            case LIRCallFunctionValue0:
+            case LIRCallFunctionValue1:
+            case LIRCallFunctionValue2:
+            case LIRCallFunctionValue3:
                 return false;
 
             // LIRCallRequire is a direct callvirt to RequireDelegate and must never be inlined/re-emitted.
@@ -552,6 +556,10 @@ internal static class Stackify
 
             // LIRCallMember calls a member via runtime dispatcher.
             case LIRCallMember:
+            case LIRCallMember0:
+            case LIRCallMember1:
+            case LIRCallMember2:
+            case LIRCallMember3:
                 return false;
 
             // LIRCallTypedMember is side-effectful and must never be considered inlineable/re-emittable.
@@ -818,6 +826,18 @@ internal static class Stackify
             case LIRCallFunctionValue:
                 // target + scopesArray + argsArray -> result
                 return (3, 1);
+            case LIRCallFunctionValue0:
+                // target + scopesArray -> result
+                return (2, 1);
+            case LIRCallFunctionValue1:
+                // target + scopesArray + a0 -> result
+                return (3, 1);
+            case LIRCallFunctionValue2:
+                // target + scopesArray + a0 + a1 -> result
+                return (4, 1);
+            case LIRCallFunctionValue3:
+                // target + scopesArray + a0 + a1 + a2 -> result
+                return (5, 1);
 
             case LIRCallRequire:
                 // requireValue + moduleId -> result
@@ -830,6 +850,18 @@ internal static class Stackify
             case LIRCallMember:
                 // receiver + methodName + argsArray -> result
                 return (3, 1);
+            case LIRCallMember0:
+                // receiver + methodName -> result
+                return (2, 1);
+            case LIRCallMember1:
+                // receiver + methodName + a0 -> result
+                return (3, 1);
+            case LIRCallMember2:
+                // receiver + methodName + a0 + a1 -> result
+                return (4, 1);
+            case LIRCallMember3:
+                // receiver + methodName + a0 + a1 + a2 -> result
+                return (5, 1);
 
             // Typed member call without fallback: receiver + N args -> result
             case LIRCallTypedMember callTyped:
