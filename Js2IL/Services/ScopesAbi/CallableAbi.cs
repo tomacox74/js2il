@@ -61,14 +61,14 @@ public sealed record CallableAbi(
 
     /// <summary>
     /// Creates a CallableAbi for a user-defined function or arrow function.
-    /// Static method with scopes as first parameter.
+    /// Static method with scopes as first parameter (only when needed).
     /// </summary>
     public static CallableAbi ForFunction(int jsParameterCount, bool needsParentScopes)
     {
         return new CallableAbi(
             IsInstanceMethod: false,
-            HasScopesParam: true,
-            ScopesSource: ScopesSource.Argument,
+            HasScopesParam: needsParentScopes,
+            ScopesSource: needsParentScopes ? ScopesSource.Argument : ScopesSource.None,
             JsParameterCount: jsParameterCount
         );
     }

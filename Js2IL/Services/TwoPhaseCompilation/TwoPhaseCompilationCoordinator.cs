@@ -403,6 +403,12 @@ public sealed class TwoPhaseCompilationCoordinator
 
         const string ilMethodName = "__js_call__";
 
+        // Get the signature to determine if scopes parameter is required
+        if (!_registry.TryGetSignature(callable, out var signature))
+        {
+            throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration signature not found: {callable.DisplayName}");
+        }
+
         var methodCompiler = serviceProvider.GetRequiredService<JsMethodCompiler>();
         var body = methodCompiler.TryCompileCallableBody(
             callable: callable,
@@ -412,7 +418,7 @@ public sealed class TwoPhaseCompilationCoordinator
             scope: funcScope,
             methodBodyStreamEncoder: methodBodyStreamEncoder,
             isInstanceMethod: false,
-            hasScopesParameter: true,
+            hasScopesParameter: signature.RequiresScopesParameter,
             scopesFieldHandle: null,
             returnsVoid: false);
 
@@ -1460,6 +1466,12 @@ public sealed class TwoPhaseCompilationCoordinator
 
         var funcTypeName = funcScope.Name;
 
+        // Get the signature to determine if scopes parameter is required
+        if (!_registry.TryGetSignature(callable, out var signature))
+        {
+            throw new InvalidOperationException($"[TwoPhase] FunctionExpression signature not found: {callable.DisplayName}");
+        }
+
         var methodCompiler = serviceProvider.GetRequiredService<JsMethodCompiler>();
         var compiledBody = methodCompiler.TryCompileCallableBody(
             callable: callable,
@@ -1469,7 +1481,7 @@ public sealed class TwoPhaseCompilationCoordinator
             scope: funcScope,
             methodBodyStreamEncoder: methodBodyStreamEncoder,
             isInstanceMethod: false,
-            hasScopesParameter: true,
+            hasScopesParameter: signature.RequiresScopesParameter,
             scopesFieldHandle: null,
             returnsVoid: false);
 
@@ -1551,12 +1563,26 @@ public sealed class TwoPhaseCompilationCoordinator
         
         foreach (var callable in _discoveredCallables)
         {
+            // Compute whether this callable requires a scopes parameter.
+            // For class methods, this is handled differently (they use this._scopes field).
+            // For functions and arrows, we check if the scope references parent variables.
+            bool requiresScopesParameter = callable.Kind switch
+            {
+                CallableKind.ClassMethod or 
+                CallableKind.ClassGetter or 
+                CallableKind.ClassSetter or
+                CallableKind.ClassStaticMethod or
+                CallableKind.ClassStaticGetter or
+                CallableKind.ClassStaticSetter => false, // Class methods don't use scopes parameter
+                _ => ComputeRequiresScopesParameter(callable, symbolTable)
+            };
+
             // Build CallableSignature from CallableId
             // Placeholder owner type handle (is set during token allocation)
             var signature = new CallableSignature
             {
                 OwnerTypeHandle = default, // Will be set during token allocation
-                RequiresScopesParameter = true, // All JS callables take scopes parameter
+                RequiresScopesParameter = requiresScopesParameter,
                 JsParamCount = callable.JsParamCount,
                 InvokeShape = CallableSignature.GetInvokeShape(callable.JsParamCount),
                 IsInstanceMethod = callable.Kind == CallableKind.ClassMethod,
@@ -1636,6 +1662,32 @@ public sealed class TwoPhaseCompilationCoordinator
         if (!string.Equals(kind, accessorKind, StringComparison.Ordinal)) return null;
         if (string.IsNullOrWhiteSpace(prop)) return null;
         return $"{accessorKind}_{prop}";
+    }
+
+    /// <summary>
+    /// Computes whether a callable requires a scopes parameter based on scope analysis.
+    /// This is the core optimization logic: callables that don't reference parent scope
+    /// variables don't need a scopes parameter.
+    /// </summary>
+    private static bool ComputeRequiresScopesParameter(CallableId callable, SymbolTable symbolTable)
+    {
+        // Try to find the scope for this callable
+        if (callable.AstNode == null)
+        {
+            // No AST node - conservatively assume scopes are required
+            return true;
+        }
+
+        var scope = symbolTable.FindScopeByAstNode(callable.AstNode);
+        if (scope == null)
+        {
+            // Scope not found - conservatively assume scopes are required
+            return true;
+        }
+
+        // Check if this scope references parent scope variables
+        // ReferencesParentScopeVariables is computed during symbol table construction
+        return scope.ReferencesParentScopeVariables;
     }
     
     /// <summary>
