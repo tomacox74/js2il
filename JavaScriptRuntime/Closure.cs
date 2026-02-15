@@ -72,11 +72,15 @@ namespace JavaScriptRuntime
             var parameters = invoke.GetParameters();
 
             bool hasScopes = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
-            bool hasNewTarget = hasScopes
-                && JsFuncDelegates.IsJsFuncDelegateType(target.GetType())
-                && parameters.Length > 1
-                && parameters[1].ParameterType == typeof(object);
-            int jsParamStart = hasScopes ? (hasNewTarget ? 2 : 1) : 0;
+            bool isJsFuncDelegate = JsFuncDelegates.IsJsFuncDelegateType(target.GetType());
+            bool hasNewTarget = isJsFuncDelegate
+                && (
+                    (hasScopes && parameters.Length > 1 && parameters[1].ParameterType == typeof(object))
+                    || (!hasScopes && parameters.Length > 0 && parameters[0].ParameterType == typeof(object))
+                );
+            int jsParamStart = hasScopes
+                ? (hasNewTarget ? 2 : 1)
+                : (hasNewTarget ? 1 : 0);
             int expectedJsParamCount = parameters.Length - jsParamStart;
 
             // ParamArrayAttribute is not preserved on delegate Invoke() parameters when a delegate is created
@@ -172,6 +176,10 @@ namespace JavaScriptRuntime
                 {
                     finalArgs[finalIndex++] = newTarget;
                 }
+            }
+            else if (hasNewTarget)
+            {
+                finalArgs[finalIndex++] = newTarget;
             }
 
             // Fixed parameters
@@ -293,11 +301,15 @@ namespace JavaScriptRuntime
                 .ToArray();
 
             bool hasScopes = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
-            bool hasNewTarget = hasScopes
-                && JsFuncDelegates.IsJsFuncDelegateType(target.GetType())
-                && parameters.Length > 1
-                && parameters[1].ParameterType == typeof(object);
-            int jsParamStart = hasScopes ? (hasNewTarget ? 2 : 1) : 0;
+            bool isJsFuncDelegate = JsFuncDelegates.IsJsFuncDelegateType(target.GetType());
+            bool hasNewTarget = isJsFuncDelegate
+                && (
+                    (hasScopes && parameters.Length > 1 && parameters[1].ParameterType == typeof(object))
+                    || (!hasScopes && parameters.Length > 0 && parameters[0].ParameterType == typeof(object))
+                );
+            int jsParamStart = hasScopes
+                ? (hasNewTarget ? 2 : 1)
+                : (hasNewTarget ? 1 : 0);
 
             var jsArgs = lambdaParameters
                 .Skip(jsParamStart)
@@ -307,9 +319,10 @@ namespace JavaScriptRuntime
             Expression forwardedNewTarget = Expression.Constant(null, typeof(object));
             if (hasNewTarget)
             {
+                int newTargetIndex = hasScopes ? 1 : 0;
                 forwardedNewTarget = captureLexicalNewTarget
                     ? Expression.Constant(lexicalNewTarget, typeof(object))
-                    : Expression.Convert(lambdaParameters[1], typeof(object));
+                    : Expression.Convert(lambdaParameters[newTargetIndex], typeof(object));
             }
 
             Expression invokeWithArgsCall;

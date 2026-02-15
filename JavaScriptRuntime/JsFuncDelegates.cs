@@ -14,6 +14,12 @@ internal static class JsFuncDelegates
             {
                 _registeredDelegateTypes.Add(delegateType);
             }
+
+            var noScopesDelegateType = Type.GetType($"JavaScriptRuntime.JsFuncNoScopes{i}");
+            if (noScopesDelegateType != null)
+            {
+                _registeredDelegateTypes.Add(noScopesDelegateType);
+            }
         }
     }
 
