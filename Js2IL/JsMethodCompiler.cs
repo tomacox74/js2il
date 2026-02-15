@@ -658,6 +658,7 @@ internal sealed class JsMethodCompiler
 
         methodDescriptor.ReturnsVoid = true;
         methodDescriptor.HasScopesParameter = false;
+        methodDescriptor.HasNewTargetParameter = false;
 
         var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
