@@ -1585,13 +1585,8 @@ class HIRMethodBuilder
                     }
 
                     var template = new HIRTemplateLiteralExpression(quasis, expressions, rawQuasis);
-                    
-                    // Extract source location for unique call site identification
-                    var location = taggedTemplate.Location;
-                    var sourceLine = location.Start.Line;
-                    var sourceColumn = location.Start.Column;
-                    
-                    hirExpr = new HIRTaggedTemplateExpression(tagExpr!, template, sourceLine, sourceColumn);
+                    var location = SourceLocation.FromNode(taggedTemplate);
+                    hirExpr = new HIRTaggedTemplateExpression(tagExpr!, template, location);
                     return true;
                 }
 

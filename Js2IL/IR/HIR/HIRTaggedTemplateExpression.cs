@@ -1,4 +1,5 @@
 using System;
+using Js2IL.Services.TwoPhaseCompilation;
 
 namespace Js2IL.HIR;
 
@@ -11,13 +12,11 @@ public sealed class HIRTaggedTemplateExpression : HIRExpression
     public HIRTaggedTemplateExpression(
         HIRExpression tag, 
         HIRTemplateLiteralExpression template,
-        int sourceLine = 0,
-        int sourceColumn = 0)
+        SourceLocation? location = null)
     {
         Tag = tag ?? throw new ArgumentNullException(nameof(tag));
         Template = template ?? throw new ArgumentNullException(nameof(template));
-        SourceLine = sourceLine;
-        SourceColumn = sourceColumn;
+        Location = location;
     }
 
     /// <summary>
@@ -31,12 +30,7 @@ public sealed class HIRTaggedTemplateExpression : HIRExpression
     public HIRTemplateLiteralExpression Template { get; }
 
     /// <summary>
-    /// Source line number for unique call site identification (0 if unavailable).
+    /// Source location of the tagged template expression for deterministic call-site identity.
     /// </summary>
-    public int SourceLine { get; }
-
-    /// <summary>
-    /// Source column number for unique call site identification (0 if unavailable).
-    /// </summary>
-    public int SourceColumn { get; }
+    public SourceLocation? Location { get; }
 }

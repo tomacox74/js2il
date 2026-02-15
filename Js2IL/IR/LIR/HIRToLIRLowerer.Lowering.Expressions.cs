@@ -740,18 +740,10 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // 2. Create the template object (cooked + raw strings)
-        // Generate a unique call site ID for template object caching.
-        // Include source location to ensure each syntactic occurrence gets its own template object.
         var scopeName = _scope?.GetQualifiedName() ?? "UnknownScope";
-        string callSiteId;
-        if (taggedTemplate.SourceLine > 0)
-        {
-            callSiteId = $"{scopeName}:TaggedTemplate_L{taggedTemplate.SourceLine}C{taggedTemplate.SourceColumn}";
-        }
-        else
-        {
-            callSiteId = $"{scopeName}:TaggedTemplate";
-        }
+        var callSiteId = taggedTemplate.Location is { } location
+            ? $"{scopeName}:TaggedTemplate_{location}"
+            : $"{scopeName}:TaggedTemplate";
         
         // Create cooked strings array
         var cookedStringTemps = new List<TempVariable>();
@@ -769,7 +761,8 @@ public sealed partial class HIRToLIRLowerer
 
         // Create raw strings array (rawQuasis has same length as quasis when present)
         var rawStringTemps = new List<TempVariable>();
-        for (int i = 0; i < quasis.Count; i++)
+        var rawArrayCount = quasis.Count;
+        for (int i = 0; i < rawArrayCount; i++)
         {
             var rawString = rawQuasis?[i] ?? quasis[i];
             var stringTemp = CreateTempVariable();

@@ -128,6 +128,7 @@ public class RuntimeServices
     /// Per ECMA-262 spec, each unique call site should return the same template object identity.
     /// </summary>
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Array> _templateObjectCache = new();
+    private const int MaxTemplateObjectCacheEntries = 4096;
 
     /// <summary>
     /// Creates a template object for tagged template expressions.
@@ -137,26 +138,39 @@ public class RuntimeServices
     /// <param name="callSiteId">Unique identifier for the call site (e.g., "Module:Line:Column")</param>
     /// <param name="cooked">Cooked string array (with escape sequences processed)</param>
     /// <param name="raw">Raw string array (escape sequences not processed)</param>
-    public static object CreateTemplateObject(object callSiteIdObj, object cookedObj, object rawObj)
+    public static object CreateTemplateObject(string callSiteId, object[] cooked, object[] raw)
     {
-        // Unbox parameters - IL compiler passes all RuntimeServices parameters as object
-        var callSiteId = (string)callSiteIdObj;
-        var cooked = (object[])cookedObj;
-        var raw = (object[])rawObj;
-        
-        return _templateObjectCache.GetOrAdd(callSiteId, _ =>
+        if (_templateObjectCache.TryGetValue(callSiteId, out var existing))
         {
-            // Create array with cooked strings
-            var templateObject = new Array(cooked);
-            
-            // Add .raw property with raw strings
-            var rawJsArray = new Array(raw);
-            Object.SetProperty(templateObject, "raw", rawJsArray);
-            
-            // Template objects should be frozen (immutable)
-            // For now we just return the object - freezing can be added later if needed
-            return templateObject;
-        });
+            return existing;
+        }
+
+        if (_templateObjectCache.Count >= MaxTemplateObjectCacheEntries)
+        {
+            // Keep cache growth bounded to avoid unbounded memory retention in long-lived hosts.
+            return CreateTemplateObjectCore(cooked, raw);
+        }
+
+        return _templateObjectCache.GetOrAdd(callSiteId, _ => CreateTemplateObjectCore(cooked, raw));
+    }
+
+    public static object CreateTemplateObject(object callSiteId, object cooked, object raw)
+    {
+        return CreateTemplateObject((string)callSiteId, (object[])cooked, (object[])raw);
+    }
+
+    private static Array CreateTemplateObjectCore(object[] cooked, object[] raw)
+    {
+        // Create array with cooked strings
+        var templateObject = new Array(cooked);
+
+        // Add .raw property with raw strings
+        var rawJsArray = new Array(raw);
+        Object.SetProperty(templateObject, "raw", rawJsArray);
+
+        // Template objects should be frozen (immutable)
+        // For now we just return the object - freezing can be added later if needed
+        return templateObject;
     }
 
     public static ServiceContainer BuildServiceProvider()
