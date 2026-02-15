@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "15.6",
   "title": "Async Generator Function Definitions",
-  "status": "Not Yet Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-async-generator-function-definitions",
   "parent": {
     "clause": "15"
@@ -12,42 +12,77 @@
     {
       "clause": "15.6.1",
       "title": "Static Semantics: Early Errors",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-async-generator-function-definitions-static-semantics-early-errors"
     },
     {
       "clause": "15.6.2",
       "title": "Runtime Semantics: EvaluateAsyncGeneratorBody",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluateasyncgeneratorbody"
     },
     {
       "clause": "15.6.3",
       "title": "Runtime Semantics: InstantiateAsyncGeneratorFunctionObject",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiateasyncgeneratorfunctionobject"
     },
     {
       "clause": "15.6.4",
       "title": "Runtime Semantics: InstantiateAsyncGeneratorFunctionExpression",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiateasyncgeneratorfunctionexpression"
     },
     {
       "clause": "15.6.5",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asyncgenerator-definitions-evaluation"
     }
   ],
   "support": {
     "entries": [
       {
-        "clause": "15.6.1",
+        "clause": "15.6",
         "feature": "async generator functions (async function*)",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-async-generator-function-definitions",
-        "notes": "Explicitly rejected in validator (not implemented)."
+        "testScripts": [
+          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js",
+          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js",
+          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js"
+        ],
+        "notes": "Async generators are compiled via dual-dispatch state machine combining async (Promise-based suspension) with generator (user-controlled iteration) semantics. AsyncGeneratorScope inherits from AsyncScope and includes generator state. AsyncGeneratorObject implements IJavaScriptAsyncIterator with next() returning Promises. Known limitations: throw() and return() protocol methods have known issues; try/catch/finally with async generators may generate invalid IL in some cases."
+      },
+      {
+        "clause": "15.6",
+        "feature": "yield expression in async generators",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-async-generator-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js"
+        ],
+        "notes": "Yield expressions work within async generator functions, suspending execution and returning Promise-wrapped iterator results."
+      },
+      {
+        "clause": "15.6",
+        "feature": "await expression in async generators",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-async-generator-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js"
+        ],
+        "notes": "Await expressions work within async generator functions, allowing promises to be awaited before yielding values."
+      },
+      {
+        "clause": "15.6",
+        "feature": "for await...of with async generators",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-async-generator-function-definitions",
+        "testScripts": [
+          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js"
+        ],
+        "notes": "for await...of loops correctly consume async generators, awaiting each yielded value."
       }
     ]
   }
