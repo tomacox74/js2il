@@ -42,7 +42,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object 'value'
 			) cil managed 
@@ -57,7 +56,7 @@
 			)
 
 			IL_0000: ldstr "then:"
-			IL_0005: ldarg.2
+			IL_0005: ldarg.1
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_000b: stloc.0
 			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -110,7 +109,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object reason
 			) cil managed 
@@ -125,7 +123,7 @@
 			)
 
 			IL_0000: ldstr "catch:"
-			IL_0005: ldarg.2
+			IL_0005: ldarg.1
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_000b: stloc.0
 			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -198,8 +196,8 @@
 		IL_000f: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
 		IL_0014: stloc.3
 		IL_0015: ldnull
-		IL_0016: ldftn object Modules.Promise_WithResolvers_Idempotent/ArrowFunction_L6C11::__js_call__(object[], object, object)
-		IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0016: ldftn object Modules.Promise_WithResolvers_Idempotent/ArrowFunction_L6C11::__js_call__(object, object)
+		IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0021: ldc.i4.1
 		IL_0022: newarr [System.Runtime]System.Object
 		IL_0027: dup
@@ -222,8 +220,8 @@
 		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0051: stloc.s 4
 		IL_0053: ldnull
-		IL_0054: ldftn object Modules.Promise_WithResolvers_Idempotent/ArrowFunction_L7C12::__js_call__(object[], object, object)
-		IL_005a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0054: ldftn object Modules.Promise_WithResolvers_Idempotent/ArrowFunction_L7C12::__js_call__(object, object)
+		IL_005a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_005f: ldc.i4.1
 		IL_0060: newarr [System.Runtime]System.Object
 		IL_0065: dup

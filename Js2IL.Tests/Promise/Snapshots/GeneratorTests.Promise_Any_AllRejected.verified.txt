@@ -42,7 +42,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object result
 			) cil managed 
@@ -102,7 +101,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object 'error'
 			) cil managed 
@@ -114,14 +112,14 @@
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: ldstr "All rejected, error name:"
-			IL_000a: ldarg.2
+			IL_000a: ldarg.1
 			IL_000b: ldstr "name"
 			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_001a: pop
 			IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0020: ldstr "Errors count:"
-			IL_0025: ldarg.2
+			IL_0025: ldarg.1
 			IL_0026: ldstr "errors"
 			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0030: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
@@ -213,8 +211,8 @@
 		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::'any'(object)
 		IL_0057: stloc.s 4
 		IL_0059: ldnull
-		IL_005a: ldftn object Modules.Promise_Any_AllRejected/ArrowFunction_L8C11::__js_call__(object[], object, object)
-		IL_0060: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_005a: ldftn object Modules.Promise_Any_AllRejected/ArrowFunction_L8C11::__js_call__(object, object)
+		IL_0060: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0065: ldc.i4.1
 		IL_0066: newarr [System.Runtime]System.Object
 		IL_006b: dup
@@ -237,8 +235,8 @@
 		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0096: stloc.s 4
 		IL_0098: ldnull
-		IL_0099: ldftn object Modules.Promise_Any_AllRejected/ArrowFunction_L11C12::__js_call__(object[], object, object)
-		IL_009f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0099: ldftn object Modules.Promise_Any_AllRejected/ArrowFunction_L11C12::__js_call__(object, object)
+		IL_009f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_00a4: ldc.i4.1
 		IL_00a5: newarr [System.Runtime]System.Object
 		IL_00aa: dup

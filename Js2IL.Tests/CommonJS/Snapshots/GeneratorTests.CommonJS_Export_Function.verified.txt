@@ -119,7 +119,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object name
 			) cil managed 
@@ -133,7 +132,7 @@
 			)
 
 			IL_0000: ldstr "Hello, "
-			IL_0005: ldarg.2
+			IL_0005: ldarg.1
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_000b: stloc.0
 			IL_000c: ldloc.0
@@ -197,8 +196,8 @@
 		IL_0000: newobj instance void Modules.CommonJS_Export_Function_Lib/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.CommonJS_Export_Function_Lib/greet::__js_call__(object[], object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0007: ldftn object Modules.CommonJS_Export_Function_Lib/greet::__js_call__(object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup

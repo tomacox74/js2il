@@ -818,6 +818,13 @@ internal sealed partial class LIRToILCompiler
 
                     var methodHandle = (MethodDefinitionHandle)token;
 
+                    bool requiresScopes = true;
+                    var signature = reader.GetSignature(callableId);
+                    if (signature != null)
+                    {
+                        requiresScopes = signature.RequiresScopesParameter;
+                    }
+
                     // IMPORTANT: use the callee's declared parameter count, not the call-site argument count.
                     // The call-site may omit args (default parameters), but the delegate signature must match
                     // the target method signature, otherwise the JIT can crash the process.
@@ -829,10 +836,13 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
 
-                    // Load scopes array
-                    EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    if (requiresScopes)
+                    {
+                        // Load scopes array only when required by callee ABI.
+                        EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    }
 
                     // Normal function call path: new.target is undefined.
                     ilEncoder.OpCode(ILOpCode.Ldnull);
@@ -851,7 +861,7 @@ internal sealed partial class LIRToILCompiler
 
                     // Invoke: callvirt Func<object[], [object, ...], object>::Invoke
                     ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount));
+                    ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount, requiresScopes));
                     // Result stays on stack
                     break;
                 }
@@ -1043,12 +1053,20 @@ internal sealed partial class LIRToILCompiler
                     var methodHandle = (MethodDefinitionHandle)token;
                     int jsParamCount = createArrow.CallableId.JsParamCount;
 
+                    // Look up the callable's signature to determine if scopes parameter is required
+                    bool requiresScopes = true; // Default to true for safety
+                    var signature = reader.GetSignature(callableId);
+                    if (signature != null)
+                    {
+                        requiresScopes = signature.RequiresScopesParameter;
+                    }
+
                     // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
                     ilEncoder.OpCode(ILOpCode.Ldnull);
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
 
                     // Bind delegate to scopes array: Closure.Bind(object, object[])
                     EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
@@ -1071,12 +1089,20 @@ internal sealed partial class LIRToILCompiler
                     var methodHandle = (MethodDefinitionHandle)token;
                     int jsParamCount = createFunc.CallableId.JsParamCount;
 
+                    // Look up the callable's signature to determine if scopes parameter is required
+                    bool requiresScopes = true; // Default to true for safety
+                    var signature = reader.GetSignature(callableId);
+                    if (signature != null)
+                    {
+                        requiresScopes = signature.RequiresScopesParameter;
+                    }
+
                     // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
                     ilEncoder.OpCode(ILOpCode.Ldnull);
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
 
                     // Bind delegate to scopes array: Closure.Bind(object, object[])
                     EmitLoadTemp(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);

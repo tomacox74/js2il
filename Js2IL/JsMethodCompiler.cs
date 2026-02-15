@@ -394,10 +394,11 @@ internal sealed class JsMethodCompiler
             parameters.Add(new MethodParameterDescriptor("scopes", typeof(object[])));
         }
 
-        // Add hidden new.target parameter for scoped callables that are represented by JsFunc delegates.
+        // Add hidden new.target parameter for functions (always present for function ABI).
         // This includes regular functions and resumable class methods (async/generator).
-        var hasNewTargetParameter = hasScopesParameter
-            && (callableKind == ScopesCallableKind.Function || callableKind == ScopesCallableKind.ClassMethod);
+        // For no-scopes optimization: still include newTarget for proper `new` vs call semantics.
+        var hasNewTargetParameter = callableKind == ScopesCallableKind.Function 
+            || (hasScopesParameter && callableKind == ScopesCallableKind.ClassMethod);
         if (hasNewTargetParameter)
         {
             parameters.Add(new MethodParameterDescriptor("newTarget", typeof(object)));

@@ -42,7 +42,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object result
 			) cil managed 
@@ -54,7 +53,7 @@
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: ldstr "Result:"
-			IL_000a: ldarg.2
+			IL_000a: ldarg.1
 			IL_000b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0010: pop
 			IL_0011: ldnull
@@ -308,8 +307,8 @@
 		IL_003b: callvirt instance object Modules.Async_ClassMethod_SimpleAwait/Calculator::'add'(object[], object, object, object)
 		IL_0040: stloc.3
 		IL_0041: ldnull
-		IL_0042: ldftn object Modules.Async_ClassMethod_SimpleAwait/ArrowFunction_L10C21::__js_call__(object[], object, object)
-		IL_0048: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0042: ldftn object Modules.Async_ClassMethod_SimpleAwait/ArrowFunction_L10C21::__js_call__(object, object)
+		IL_0048: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_004d: ldc.i4.1
 		IL_004e: newarr [System.Runtime]System.Object
 		IL_0053: dup

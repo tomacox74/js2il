@@ -35,7 +35,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object name,
 				object age
@@ -49,12 +48,12 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: ldstr " "
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_000b: stloc.0
 			IL_000c: ldloc.0
-			IL_000d: ldarg.3
+			IL_000d: ldarg.2
 			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0013: stloc.0
 			IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -124,8 +123,8 @@
 		IL_0000: newobj instance void Modules.SetImmediate_WithArgs_PassesCorrectly/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.SetImmediate_WithArgs_PassesCorrectly/logNameAge::__js_call__(object[], object, object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_0007: ldftn object Modules.SetImmediate_WithArgs_PassesCorrectly/logNameAge::__js_call__(object, object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup

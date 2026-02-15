@@ -175,10 +175,12 @@ internal static class ExportMemberResolver
 
         var argIndex = 0;
         var hasScopes = parameters[0].ParameterType == typeof(object[]);
-        var hasNewTarget = hasScopes
-            && parameters.Length > 1
-            && parameters[1].ParameterType == typeof(object)
-            && string.Equals(parameters[1].Name, "newTarget", StringComparison.Ordinal);
+        var isJsFuncDelegate = JavaScriptRuntime.JsFuncDelegates.IsJsFuncDelegateType(d.GetType());
+        var hasNewTarget = isJsFuncDelegate
+            && (
+                (hasScopes && parameters.Length > 1 && parameters[1].ParameterType == typeof(object))
+                || (!hasScopes && parameters.Length > 0 && parameters[0].ParameterType == typeof(object))
+            );
 
         if (hasScopes)
         {

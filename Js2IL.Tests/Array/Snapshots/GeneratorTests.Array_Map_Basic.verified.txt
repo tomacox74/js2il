@@ -35,7 +35,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object x
 			) cil managed 
@@ -45,7 +44,7 @@
 			// Code size: 12 (0xc)
 			.maxstack 8
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_0006: box [System.Runtime]System.Double
 			IL_000b: ret
@@ -134,8 +133,8 @@
 		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_002d: stloc.1
 		IL_002e: ldnull
-		IL_002f: ldftn object Modules.Array_Map_Basic/FunctionExpression_lengths::__js_call__(object[], object, object)
-		IL_0035: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_002f: ldftn object Modules.Array_Map_Basic/FunctionExpression_lengths::__js_call__(object, object)
+		IL_0035: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_003a: ldc.i4.1
 		IL_003b: newarr [System.Runtime]System.Object
 		IL_0040: dup

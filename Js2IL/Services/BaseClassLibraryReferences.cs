@@ -9,11 +9,56 @@ namespace Js2IL.Services
         private readonly TypeReferenceRegistry _typeRefRegistry;
         private readonly MemberReferenceRegistry _memberRefRegistry;
 
-        // JS function delegates follow the js2il ABI:
-        //   (object[] scopes, object? newTarget, object? a1..aN) -> object?
+        // JS function delegates follow one of two ABIs:
+        // With scopes: (object[] scopes, object? newTarget, object? a1..aN) -> object?
+        // Without scopes: (object? newTarget, object? a1..aN) -> object?
         // Always use custom JsFunc delegates so the ABI is explicit and stable.
-        internal static Type GetFunctionDelegateType(int jsParamCount)
+        internal static Type GetFunctionDelegateType(int jsParamCount, bool requiresScopes = true)
         {
+            if (!requiresScopes)
+            {
+                // No-scopes optimized delegates
+                return jsParamCount switch
+                {
+                    0 => typeof(JavaScriptRuntime.JsFuncNoScopes0),
+                    1 => typeof(JavaScriptRuntime.JsFuncNoScopes1),
+                    2 => typeof(JavaScriptRuntime.JsFuncNoScopes2),
+                    3 => typeof(JavaScriptRuntime.JsFuncNoScopes3),
+                    4 => typeof(JavaScriptRuntime.JsFuncNoScopes4),
+                    5 => typeof(JavaScriptRuntime.JsFuncNoScopes5),
+                    6 => typeof(JavaScriptRuntime.JsFuncNoScopes6),
+                    7 => typeof(JavaScriptRuntime.JsFuncNoScopes7),
+                    8 => typeof(JavaScriptRuntime.JsFuncNoScopes8),
+                    9 => typeof(JavaScriptRuntime.JsFuncNoScopes9),
+                    10 => typeof(JavaScriptRuntime.JsFuncNoScopes10),
+                    11 => typeof(JavaScriptRuntime.JsFuncNoScopes11),
+                    12 => typeof(JavaScriptRuntime.JsFuncNoScopes12),
+                    13 => typeof(JavaScriptRuntime.JsFuncNoScopes13),
+                    14 => typeof(JavaScriptRuntime.JsFuncNoScopes14),
+                    15 => typeof(JavaScriptRuntime.JsFuncNoScopes15),
+                    16 => typeof(JavaScriptRuntime.JsFuncNoScopes16),
+                    17 => typeof(JavaScriptRuntime.JsFuncNoScopes17),
+                    18 => typeof(JavaScriptRuntime.JsFuncNoScopes18),
+                    19 => typeof(JavaScriptRuntime.JsFuncNoScopes19),
+                    20 => typeof(JavaScriptRuntime.JsFuncNoScopes20),
+                    21 => typeof(JavaScriptRuntime.JsFuncNoScopes21),
+                    22 => typeof(JavaScriptRuntime.JsFuncNoScopes22),
+                    23 => typeof(JavaScriptRuntime.JsFuncNoScopes23),
+                    24 => typeof(JavaScriptRuntime.JsFuncNoScopes24),
+                    25 => typeof(JavaScriptRuntime.JsFuncNoScopes25),
+                    26 => typeof(JavaScriptRuntime.JsFuncNoScopes26),
+                    27 => typeof(JavaScriptRuntime.JsFuncNoScopes27),
+                    28 => typeof(JavaScriptRuntime.JsFuncNoScopes28),
+                    29 => typeof(JavaScriptRuntime.JsFuncNoScopes29),
+                    30 => typeof(JavaScriptRuntime.JsFuncNoScopes30),
+                    31 => typeof(JavaScriptRuntime.JsFuncNoScopes31),
+                    32 => typeof(JavaScriptRuntime.JsFuncNoScopes32),
+                    _ => throw new NotSupportedException(
+                        $"Delegate for {jsParamCount} parameters not supported (max supported is 32)")
+                };
+            }
+            
+            // Standard delegates with scopes
             return jsParamCount switch
             {
             0 => typeof(JavaScriptRuntime.JsFunc0),
@@ -101,15 +146,15 @@ namespace Js2IL.Services
         public MemberReferenceHandle DebuggerDisplayAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(System.Diagnostics.DebuggerDisplayAttribute), new[] { typeof(string) });
 
-        public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
+        public MemberReferenceHandle GetFuncCtorRef(int jsParamCount, bool requiresScopes = true)
         {
-            var delegateType = GetFunctionDelegateType(jsParamCount);
+            var delegateType = GetFunctionDelegateType(jsParamCount, requiresScopes);
             return _memberRefRegistry.GetOrAddConstructor(delegateType);
         }
 
-        public MemberReferenceHandle GetFuncInvokeRef(int jsParamCount)
+        public MemberReferenceHandle GetFuncInvokeRef(int jsParamCount, bool requiresScopes = true)
         {
-            var delegateType = GetFunctionDelegateType(jsParamCount);
+            var delegateType = GetFunctionDelegateType(jsParamCount, requiresScopes);
             return _memberRefRegistry.GetOrAddMethod(delegateType, "Invoke");
         }
 

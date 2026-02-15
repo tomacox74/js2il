@@ -314,6 +314,17 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
         return _callables.TryGetValue(id, out var info) ? info.Signature : null;
     }
 
+    public bool TryGetSignature(CallableId id, out CallableSignature signature)
+    {
+        signature = null!;
+        if (_callables.TryGetValue(id, out var info) && info.Signature != null)
+        {
+            signature = info.Signature;
+            return true;
+        }
+        return false;
+    }
+
     #endregion
 
     #region Phase 2 Support

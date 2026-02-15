@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ad
+				// Method begins at RVA 0x21a1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,12 +35,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object n
 			) cil managed 
 		{
-			// Method begins at RVA 0x2118
+			// Method begins at RVA 0x210c
 			// Header size: 12
 			// Code size: 128 (0x80)
 			.maxstack 8
@@ -53,7 +52,7 @@
 				[5] object
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: ldc.r8 0.0
 			IL_000a: box [System.Runtime]System.Double
 			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
@@ -68,7 +67,7 @@
 			IL_0024: brfalse IL_0052
 
 			IL_0029: ldc.r8 1
-			IL_0032: ldarg.2
+			IL_0032: ldarg.1
 			IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0038: div
 			IL_0039: stloc.3
@@ -93,7 +92,7 @@
 			IL_0069: br IL_007e
 
 			IL_006e: ldstr ""
-			IL_0073: ldarg.2
+			IL_0073: ldarg.1
 			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0079: stloc.s 5
 			IL_007b: ldloc.s 5
@@ -119,7 +118,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21a4
+			// Method begins at RVA 0x2198
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -145,7 +144,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 185 (0xb9)
+		// Code size: 175 (0xaf)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Fround_SignedZero/Scope,
@@ -161,8 +160,8 @@
 		IL_0000: newobj instance void Modules.Math_Fround_SignedZero/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Math_Fround_SignedZero/toStr::__js_call__(object[], object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Math_Fround_SignedZero/toStr::__js_call__(object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -203,28 +202,22 @@
 		IL_007b: box [System.Runtime]System.Double
 		IL_0080: stloc.s 7
 		IL_0082: ldnull
-		IL_0083: ldftn object Modules.Math_Fround_SignedZero/toStr::__js_call__(object[], object, object)
-		IL_0089: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-		IL_008e: ldc.i4.1
-		IL_008f: newarr [System.Runtime]System.Object
-		IL_0094: dup
-		IL_0095: ldc.i4.0
-		IL_0096: ldloc.0
-		IL_0097: stelem.ref
-		IL_0098: ldnull
-		IL_0099: ldloc.s 7
-		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
-		IL_00a0: stloc.s 4
-		IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a7: ldc.i4.1
-		IL_00a8: newarr [System.Runtime]System.Object
-		IL_00ad: dup
-		IL_00ae: ldc.i4.0
-		IL_00af: ldloc.s 4
-		IL_00b1: stelem.ref
-		IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b7: pop
-		IL_00b8: ret
+		IL_0083: ldftn object Modules.Math_Fround_SignedZero/toStr::__js_call__(object, object)
+		IL_0089: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_008e: ldnull
+		IL_008f: ldloc.s 7
+		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_0096: stloc.s 4
+		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009d: ldc.i4.1
+		IL_009e: newarr [System.Runtime]System.Object
+		IL_00a3: dup
+		IL_00a4: ldc.i4.0
+		IL_00a5: ldloc.s 4
+		IL_00a7: stelem.ref
+		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ad: pop
+		IL_00ae: ret
 	} // end of method Math_Fround_SignedZero::__js_module_init__
 
 } // end of class Modules.Math_Fround_SignedZero
@@ -236,7 +229,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b6
+		// Method begins at RVA 0x21aa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

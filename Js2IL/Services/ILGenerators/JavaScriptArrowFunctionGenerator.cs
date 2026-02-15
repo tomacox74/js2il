@@ -77,6 +77,12 @@ namespace Js2IL.Services.ILGenerators
                     throw new InvalidOperationException("[TwoPhase] Expected callable id for preallocated arrow function, but none was registered.");
                 }
 
+                // Get the signature to determine if scopes parameter is required
+                if (!_callableRegistry.TryGetSignature(callableId, out var signature))
+                {
+                    throw new InvalidOperationException($"[TwoPhase] Arrow function signature not found: {callableId.DisplayName}");
+                }
+
                 var compiledBody = methodCompiler.TryCompileCallableBody(
                     callable: callableId,
                     expectedMethodDef: expectedPreallocatedHandle.Value,
@@ -85,7 +91,7 @@ namespace Js2IL.Services.ILGenerators
                     scope: arrowScope,
                     methodBodyStreamEncoder: _methodBodyStreamEncoder,
                     isInstanceMethod: false,
-                    hasScopesParameter: true,
+                    hasScopesParameter: signature.RequiresScopesParameter,
                     scopesFieldHandle: null,
                     returnsVoid: false);
 

@@ -35,7 +35,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object strings
 			) cil managed 
@@ -47,14 +46,14 @@
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: ldstr "strings.length:"
-			IL_000a: ldarg.2
+			IL_000a: ldarg.1
 			IL_000b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_0010: box [System.Runtime]System.Double
 			IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_001a: pop
 			IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0020: ldstr "strings[0]:"
-			IL_0025: ldarg.2
+			IL_0025: ldarg.1
 			IL_0026: ldc.r8 0.0
 			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
@@ -120,8 +119,8 @@
 		IL_0000: newobj instance void Modules.String_TaggedTemplate_NoSubstitutions/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.String_TaggedTemplate_NoSubstitutions/tag::__js_call__(object[], object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0007: ldftn object Modules.String_TaggedTemplate_NoSubstitutions/tag::__js_call__(object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
