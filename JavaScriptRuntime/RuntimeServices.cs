@@ -1,5 +1,6 @@
 using JavaScriptRuntime.DependencyInjection;
 using System;
+using System.Collections.Concurrent;
 
 namespace JavaScriptRuntime;
 
@@ -7,7 +8,7 @@ public class RuntimeServices
 {
     private static readonly System.Threading.AsyncLocal<object?> _currentThis = new();
     private static readonly System.Threading.AsyncLocal<object?[]?> _currentArguments = new();
-    private static readonly System.Threading.AsyncLocal<JavaScriptRuntime.CommonJS.RequireDelegate?> _currentRequire = new();
+    private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
 
     public static object? GetCurrentThis()
     {
@@ -87,23 +88,30 @@ public class RuntimeServices
     }
 
     /// <summary>
-    /// Gets the current require delegate for the executing module.
-    /// Used by dynamic import() to access the module loading context.
+    /// Registers a module-scoped require delegate by module id/filename.
+    /// Used by dynamic import() to resolve the module loading context.
     /// </summary>
-    public static CommonJS.RequireDelegate? GetCurrentRequire()
+    public static void RegisterModuleRequire(string moduleId, CommonJS.RequireDelegate require)
     {
-        return _currentRequire.Value;
+        if (string.IsNullOrWhiteSpace(moduleId) || require == null)
+        {
+            return;
+        }
+
+        _requireByModuleId[moduleId] = require;
     }
 
     /// <summary>
-    /// Sets the current require delegate for the executing module.
-    /// Returns the previous value to support nesting.
+    /// Resolves a previously-registered module-scoped require delegate.
     /// </summary>
-    public static CommonJS.RequireDelegate? SetCurrentRequire(CommonJS.RequireDelegate? value)
+    public static CommonJS.RequireDelegate? GetRequireForModule(string? moduleId)
     {
-        var previous = _currentRequire.Value;
-        _currentRequire.Value = value;
-        return previous;
+        if (string.IsNullOrWhiteSpace(moduleId))
+        {
+            return null;
+        }
+
+        return _requireByModuleId.TryGetValue(moduleId, out var require) ? require : null;
     }
 
     /// <summary>

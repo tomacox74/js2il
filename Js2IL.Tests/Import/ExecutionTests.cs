@@ -12,7 +12,7 @@ namespace Js2IL.Tests.Import
         public Task Import_BasicImport()
         {
             var testName = nameof(Import_BasicImport);
-            return ExecutionTest(testName, additionalScripts: new[] { "Import_BasicImport_Dep" });
+            return ExecutionTest(testName);
         }
     }
 }
