@@ -113,6 +113,30 @@ public record LIRCallFunctionWithArgsArray(
 public record LIRCallFunctionValue(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls a function value with 0 arguments (arity-specific optimization).
+/// Emits: call JavaScriptRuntime.Closure.InvokeWithArgs0(object target, object[] scopes)
+/// </summary>
+public record LIRCallFunctionValue0(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a function value with 1 argument (arity-specific optimization).
+/// Emits: call JavaScriptRuntime.Closure.InvokeWithArgs1(object target, object[] scopes, object a0)
+/// </summary>
+public record LIRCallFunctionValue1(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable A0, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a function value with 2 arguments (arity-specific optimization).
+/// Emits: call JavaScriptRuntime.Closure.InvokeWithArgs2(object target, object[] scopes, object a0, object a1)
+/// </summary>
+public record LIRCallFunctionValue2(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable A0, TempVariable A1, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a function value with 3 arguments (arity-specific optimization).
+/// Emits: call JavaScriptRuntime.Closure.InvokeWithArgs3(object target, object[] scopes, object a0, object a1, object a2)
+/// </summary>
+public record LIRCallFunctionValue3(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable A0, TempVariable A1, TempVariable A2, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Calls the CommonJS module-scoped <c>require</c> function.
 ///
 /// In js2il-hosted CommonJS modules, <c>require</c> is provided as a <see cref="JavaScriptRuntime.CommonJS.RequireDelegate"/>
@@ -137,6 +161,30 @@ public record LIRCallImport(TempVariable ModuleSpecifier, TempVariable CurrentMo
 /// Emits: call JavaScriptRuntime.Object.CallMember(object receiver, string methodName, object[]? args)
 /// </summary>
 public record LIRCallMember(TempVariable Receiver, string MethodName, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a member method with 0 arguments (arity-specific optimization).
+/// Emits: call JavaScriptRuntime.Object.CallMember0(object receiver, string methodName)
+/// </summary>
+public record LIRCallMember0(TempVariable Receiver, string MethodName, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a member method with 1 argument (arity-specific optimization).
+/// Emits: call JavaScriptRuntime.Object.CallMember1(object receiver, string methodName, object a0)
+/// </summary>
+public record LIRCallMember1(TempVariable Receiver, string MethodName, TempVariable A0, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a member method with 2 arguments (arity-specific optimization).
+/// Emits: call JavaScriptRuntime.Object.CallMember2(object receiver, string methodName, object a0, object a1)
+/// </summary>
+public record LIRCallMember2(TempVariable Receiver, string MethodName, TempVariable A0, TempVariable A1, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a member method with 3 arguments (arity-specific optimization).
+/// Emits: call JavaScriptRuntime.Object.CallMember3(object receiver, string methodName, object a0, object a1, object a2)
+/// </summary>
+public record LIRCallMember3(TempVariable Receiver, string MethodName, TempVariable A0, TempVariable A1, TempVariable A2, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a uniquely-resolved user-defined class instance method on a receiver value.
