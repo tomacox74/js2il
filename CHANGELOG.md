@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.11 - 2026-02-15
+
 - **Dynamic import() expressions (ECMA-262 §13.3.10)**: Add initial `import(specifier)` support for dynamic module loading.
   - Returns a Promise that resolves to CommonJS module.exports
   - Only string literal specifiers are supported (compile-time dependency discovery)
