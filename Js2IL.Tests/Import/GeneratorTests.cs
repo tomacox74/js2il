@@ -8,13 +8,11 @@ namespace Js2IL.Tests.Import
         {
         }
 
-        // TODO: Generator test disabled until module loading in tests is fixed
-        // The import() functionality works but additional module loading needs investigation
-        // [Fact]
-        // public Task Import_BasicImport()
-        // {
-        //     var testName = nameof(Import_BasicImport);
-        //     return GenerateTest(testName, configureSettings: null, additionalScripts: new[] { "Import_BasicImport_Dep" });
-        // }
+        [Fact(Skip = "Temporarily skipped while import() generator snapshots are stabilized")]
+        public Task Import_BasicImport()
+        {
+            var testName = nameof(Import_BasicImport);
+            return GenerateTest(testName, configureSettings: null, additionalScripts: new[] { "Import_BasicImport_Dep" });
+        }
     }
 }

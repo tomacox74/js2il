@@ -1600,16 +1600,11 @@ public class JavaScriptAstValidator : IAstValidator
     {
         if (node is ImportExpression importExpr)
         {
-            // Only string literals are supported as specifiers initially
-            if (importExpr.Source is not Literal lit || lit.Value is not string)
-            {
-                result.Errors.Add($"Dynamic import() with non-literal specifier is not supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-                return;
-            }
-
             // Reject import options (second parameter)
-            if (importExpr.Options != null)
+            var hasNonNullOptions = importExpr.Options != null
+                && (importExpr.Options is not Literal optionsLiteral || optionsLiteral.Value != null);
+
+            if (hasNonNullOptions)
             {
                 result.Errors.Add($"Import options (second parameter to import()) are not yet supported (line {node.Location.Start.Line})");
                 result.IsValid = false;

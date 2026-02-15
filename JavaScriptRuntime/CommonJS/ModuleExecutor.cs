@@ -47,26 +47,17 @@ internal sealed class ModuleExecutor
         // Node semantics: require.main is the entry module.
         requireService.SetMainModule(mainModule);
         JavaScriptRuntime.Object.SetProperty(mainRequire, "main", mainModule);
+        RuntimeServices.RegisterModuleRequire(mainModule.id, mainRequire);
 
         // Set the main module as the current parent for require() calls
         requireService.SetCurrentParent(mainModule);
 
-        // Set the current require delegate so import() can access it
-        var previousRequire = RuntimeServices.SetCurrentRequire(mainRequire);
-        try
-        {
-            // Invoke script with module parameters
-            // exports is initially the same object as module.exports
-            // Parameters: exports, require, module, __filename, __dirname
-            scriptEntryPoint(mainModule.exports, mainRequire, mainModule, moduleContext.__filename, moduleContext.__dirname);
+        // Invoke script with module parameters
+        // exports is initially the same object as module.exports
+        // Parameters: exports, require, module, __filename, __dirname
+        scriptEntryPoint(mainModule.exports, mainRequire, mainModule, moduleContext.__filename, moduleContext.__dirname);
 
-            // Mark main module as loaded
-            mainModule.MarkLoaded();
-        }
-        finally
-        {
-            // Restore the previous require delegate
-            RuntimeServices.SetCurrentRequire(previousRequire);
-        }
+        // Mark main module as loaded
+        mainModule.MarkLoaded();
     }
 }

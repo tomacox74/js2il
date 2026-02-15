@@ -19,17 +19,29 @@ public sealed partial class HIRToLIRLowerer
         // In CommonJS wrapper, __filename is available as a parameter
         var currentModuleIdTemp = CreateTempVariable();
         
-        // Try to load __filename from the CommonJS wrapper environment
-        // The __filename binding should be in the global scope for CommonJS modules
-        if (_scope != null && _scope.Bindings.TryGetValue("__filename", out var filenameBinding))
+        // Try to load __filename from the CommonJS wrapper environment.
+        // Resolve through the scope chain (it may be declared on a parent scope).
+        if (_scope != null)
         {
-            // Create a Symbol from the binding and lower it as a variable read
-            var filenameSymbol = new Symbol(filenameBinding);
-            var filenameExpr = new HIRVariableExpression(filenameSymbol);
-            
-            if (!TryLowerExpression(filenameExpr, out currentModuleIdTemp))
+            var filenameSymbol = _scope.FindSymbol("__filename");
+            if (filenameSymbol != null)
             {
-                // Fallback: use empty string if __filename loading fails
+                var filenameExpr = new HIRVariableExpression(filenameSymbol);
+
+                if (!TryLowerExpression(filenameExpr, out var loweredModuleIdTemp))
+                {
+                    // Fallback: use empty string if __filename loading fails
+                    _methodBodyIR.Instructions.Add(new LIRConstString(string.Empty, currentModuleIdTemp));
+                    DefineTempStorage(currentModuleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                }
+                else
+                {
+                    currentModuleIdTemp = loweredModuleIdTemp;
+                }
+            }
+            else
+            {
+                // Fallback: use empty string for module ID
                 _methodBodyIR.Instructions.Add(new LIRConstString(string.Empty, currentModuleIdTemp));
                 DefineTempStorage(currentModuleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
             }
