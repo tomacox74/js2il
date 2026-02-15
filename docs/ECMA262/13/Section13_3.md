@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-JS2IL supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, and `super` in derived class constructors/methods). However, several spec features in this section are still not implemented (notably dynamic `import()`, tagged templates, and meta properties like `new.target` / `import.meta`).
+JS2IL supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, tagged templates, and `super` in derived class constructors/methods). However, several spec features in this section are still not implemented (notably dynamic `import()` and meta properties like `new.target` / `import.meta`).
 
 Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, not a full mechanistic implementation of every spec abstract operation.
 
@@ -41,8 +41,8 @@ Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, 
 | 13.3.10.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-import-call-runtime-semantics-evaluation) |
 | 13.3.10.2 | EvaluateImportCall ( specifierExpression [ , optionsExpression ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-evaluate-import-call) |
 | 13.3.10.3 | ContinueDynamicImport ( promiseCapability , moduleCompletion ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ContinueDynamicImport) |
-| 13.3.11 | Tagged Templates | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates) |
-| 13.3.11.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates-runtime-semantics-evaluation) |
+| 13.3.11 | Tagged Templates | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates) |
+| 13.3.11.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates-runtime-semantics-evaluation) |
 | 13.3.12 | Meta Properties | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties) |
 | 13.3.12.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties-runtime-semantics-evaluation) |
 | 13.3.12.1.1 | HostGetImportMetaProperties ( moduleRecord ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-hostgetimportmetaproperties) |

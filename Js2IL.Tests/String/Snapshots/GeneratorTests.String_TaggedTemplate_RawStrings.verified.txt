@@ -1,0 +1,232 @@
+﻿// IL code: String_TaggedTemplate_RawStrings
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.String_TaggedTemplate_RawStrings
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit tag
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21b7
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object strings
+			) cil managed 
+		{
+			// Method begins at RVA 0x20fc
+			// Header size: 12
+			// Code size: 166 (0xa6)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldc.r8 1
+			IL_0009: box [System.Runtime]System.Double
+			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(object)
+			IL_0013: stloc.0
+			IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0019: ldstr "cooked[0]:"
+			IL_001e: ldarg.1
+			IL_001f: ldc.r8 0.0
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0032: pop
+			IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0038: ldstr "raw[0]:"
+			IL_003d: ldarg.1
+			IL_003e: ldstr "raw"
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0048: ldc.r8 0.0
+			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_005b: pop
+			IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0061: ldstr "cooked[1]:"
+			IL_0066: ldarg.1
+			IL_0067: ldc.r8 1
+			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_007a: pop
+			IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0080: ldstr "raw[1]:"
+			IL_0085: ldarg.1
+			IL_0086: ldstr "raw"
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0090: ldc.r8 1
+			IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00a3: pop
+			IL_00a4: ldnull
+			IL_00a5: ret
+		} // end of method tag::__js_call__
+
+	} // end of class tag
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 0f 53 63 6f 70 65 20 74 61 67 3d 7b 74 61
+			67 7d 00 00
+		)
+		// Fields
+		.field public object tag
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x21ae
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 158 (0x9e)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.String_TaggedTemplate_RawStrings/Scope,
+			[1] object,
+			[2] object,
+			[3] object[],
+			[4] object[],
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array
+		)
+
+		IL_0000: newobj instance void Modules.String_TaggedTemplate_RawStrings/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.String_TaggedTemplate_RawStrings/tag::__js_call__(object[], object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: stloc.1
+		IL_0024: ldc.i4.2
+		IL_0025: newarr [System.Runtime]System.Object
+		IL_002a: dup
+		IL_002b: ldc.i4.0
+		IL_002c: ldstr "line1\nline2"
+		IL_0031: stelem.ref
+		IL_0032: dup
+		IL_0033: ldc.i4.1
+		IL_0034: ldstr "test\ttab"
+		IL_0039: stelem.ref
+		IL_003a: stloc.3
+		IL_003b: ldc.i4.2
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldstr "line1\\nline2"
+		IL_0048: stelem.ref
+		IL_0049: dup
+		IL_004a: ldc.i4.1
+		IL_004b: ldstr "test\\ttab"
+		IL_0050: stelem.ref
+		IL_0051: stloc.s 4
+		IL_0053: ldstr "String_TaggedTemplate_RawStrings:TaggedTemplate_L10C1"
+		IL_0058: ldloc.3
+		IL_0059: ldloc.s 4
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateTemplateObject(object, object, object)
+		IL_0060: stloc.s 5
+		IL_0062: ldc.i4.2
+		IL_0063: newarr [System.Runtime]System.Object
+		IL_0068: dup
+		IL_0069: ldc.i4.0
+		IL_006a: ldloc.s 5
+		IL_006c: stelem.ref
+		IL_006d: dup
+		IL_006e: ldc.i4.1
+		IL_006f: ldc.r8 42
+		IL_0078: box [System.Runtime]System.Double
+		IL_007d: stelem.ref
+		IL_007e: stloc.s 4
+		IL_0080: ldloc.1
+		IL_0081: ldc.i4.0
+		IL_0082: newarr [System.Runtime]System.Object
+		IL_0087: ldloc.s 5
+		IL_0089: ldc.r8 42
+		IL_0092: box [System.Runtime]System.Double
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs2(object, object[], object, object)
+		IL_009c: pop
+		IL_009d: ret
+	} // end of method String_TaggedTemplate_RawStrings::__js_module_init__
+
+} // end of class Modules.String_TaggedTemplate_RawStrings
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21c0
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.String_TaggedTemplate_RawStrings::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
