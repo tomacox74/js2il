@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ed
+				// Method begins at RVA 0x21c4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x21e1
+			// Method begins at RVA 0x21b8
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21e4
+			// Method begins at RVA 0x21bb
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,14 +82,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 389 (0x185)
+		// Code size: 348 (0x15c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.GlobalTimers_AsValues_WindowLikeAssignment/Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[2] object,
-			[3] object,
-			[4] object[]
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.GlobalTimers_AsValues_WindowLikeAssignment/Scope::.ctor()
@@ -183,49 +182,30 @@
 		IL_0111: stelem.ref
 		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0117: stloc.3
-		IL_0118: ldc.i4.2
-		IL_0119: newarr [System.Runtime]System.Object
-		IL_011e: dup
-		IL_011f: ldc.i4.0
-		IL_0120: ldloc.3
-		IL_0121: stelem.ref
-		IL_0122: dup
-		IL_0123: ldc.i4.1
-		IL_0124: ldc.r8 100000
-		IL_012d: box [System.Runtime]System.Double
-		IL_0132: stelem.ref
-		IL_0133: stloc.s 4
+		IL_0118: ldloc.1
+		IL_0119: ldstr "setTimeout"
+		IL_011e: ldloc.3
+		IL_011f: ldc.r8 100000
+		IL_0128: box [System.Runtime]System.Double
+		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0132: stloc.3
+		IL_0133: ldloc.3
+		IL_0134: stloc.2
 		IL_0135: ldloc.1
-		IL_0136: ldstr "setTimeout"
-		IL_013b: ldloc.3
-		IL_013c: ldc.r8 100000
-		IL_0145: box [System.Runtime]System.Double
-		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_014f: stloc.3
-		IL_0150: ldloc.3
-		IL_0151: stloc.2
-		IL_0152: ldc.i4.1
-		IL_0153: newarr [System.Runtime]System.Object
-		IL_0158: dup
-		IL_0159: ldc.i4.0
-		IL_015a: ldloc.2
-		IL_015b: stelem.ref
-		IL_015c: stloc.s 4
-		IL_015e: ldloc.1
-		IL_015f: ldstr "clearTimeout"
-		IL_0164: ldloc.2
-		IL_0165: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_016a: pop
-		IL_016b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0170: ldc.i4.1
-		IL_0171: newarr [System.Runtime]System.Object
-		IL_0176: dup
-		IL_0177: ldc.i4.0
-		IL_0178: ldstr "ok"
-		IL_017d: stelem.ref
-		IL_017e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0183: pop
-		IL_0184: ret
+		IL_0136: ldstr "clearTimeout"
+		IL_013b: ldloc.2
+		IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0141: pop
+		IL_0142: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0147: ldc.i4.1
+		IL_0148: newarr [System.Runtime]System.Object
+		IL_014d: dup
+		IL_014e: ldc.i4.0
+		IL_014f: ldstr "ok"
+		IL_0154: stelem.ref
+		IL_0155: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_015a: pop
+		IL_015b: ret
 	} // end of method GlobalTimers_AsValues_WindowLikeAssignment::__js_module_init__
 
 } // end of class Modules.GlobalTimers_AsValues_WindowLikeAssignment
@@ -237,7 +217,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f6
+		// Method begins at RVA 0x21cd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

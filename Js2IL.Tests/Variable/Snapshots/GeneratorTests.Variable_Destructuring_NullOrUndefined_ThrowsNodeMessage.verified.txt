@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2377
+					// Method begins at RVA 0x236f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2380
+					// Method begins at RVA 0x2378
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x236e
+				// Method begins at RVA 0x2366
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -83,90 +83,86 @@
 		{
 			// Method begins at RVA 0x217c
 			// Header size: 12
-			// Code size: 152 (0x98)
+			// Code size: 143 (0x8f)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Exception,
 				[1] object,
 				[2] object,
-				[3] object[],
-				[4] object,
-				[5] object
+				[3] object,
+				[4] object
 			)
 
 			.try
 			{
-				IL_0000: ldc.i4.0
-				IL_0001: newarr [System.Runtime]System.Object
-				IL_0006: stloc.3
-				IL_0007: ldarg.1
-				IL_0008: ldc.i4.1
-				IL_0009: newarr [System.Runtime]System.Object
-				IL_000e: dup
-				IL_000f: ldc.i4.0
-				IL_0010: ldnull
-				IL_0011: stelem.ref
-				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
-				IL_0017: pop
-				IL_0018: leave IL_0096
+				IL_0000: ldarg.1
+				IL_0001: ldc.i4.1
+				IL_0002: newarr [System.Runtime]System.Object
+				IL_0007: dup
+				IL_0008: ldc.i4.0
+				IL_0009: ldnull
+				IL_000a: stelem.ref
+				IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+				IL_0010: pop
+				IL_0011: leave IL_008d
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_001d: stloc.0
-				IL_001e: ldloc.0
-				IL_001f: dup
-				IL_0020: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0016: stloc.0
+				IL_0017: ldloc.0
+				IL_0018: dup
+				IL_0019: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_001e: dup
+				IL_001f: brtrue IL_0035
+
+				IL_0024: pop
 				IL_0025: dup
-				IL_0026: brtrue IL_003c
+				IL_0026: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_002b: dup
+				IL_002c: brtrue IL_0041
 
-				IL_002b: pop
-				IL_002c: dup
-				IL_002d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0032: dup
-				IL_0033: brtrue IL_0048
+				IL_0031: pop
+				IL_0032: pop
+				IL_0033: rethrow
 
-				IL_0038: pop
-				IL_0039: pop
-				IL_003a: rethrow
+				IL_0035: pop
+				IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_003b: stloc.1
+				IL_003c: br IL_0043
 
-				IL_003c: pop
-				IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0041: pop
 				IL_0042: stloc.1
-				IL_0043: br IL_004a
 
-				IL_0048: pop
-				IL_0049: stloc.1
-
-				IL_004a: ldloc.1
-				IL_004b: stloc.s 4
-				IL_004d: ldloc.s 4
-				IL_004f: stloc.2
-				IL_0050: ldloc.2
-				IL_0051: ldstr "name"
-				IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_005b: ldstr ": "
-				IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0065: stloc.s 5
-				IL_0067: ldloc.s 5
-				IL_0069: ldloc.2
-				IL_006a: ldstr "message"
-				IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0079: stloc.s 5
-				IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0080: ldc.i4.1
-				IL_0081: newarr [System.Runtime]System.Object
-				IL_0086: dup
-				IL_0087: ldc.i4.0
-				IL_0088: ldloc.s 5
-				IL_008a: stelem.ref
-				IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_0090: pop
-				IL_0091: leave IL_0096
+				IL_0043: ldloc.1
+				IL_0044: stloc.3
+				IL_0045: ldloc.3
+				IL_0046: stloc.2
+				IL_0047: ldloc.2
+				IL_0048: ldstr "name"
+				IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_0052: ldstr ": "
+				IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_005c: stloc.s 4
+				IL_005e: ldloc.s 4
+				IL_0060: ldloc.2
+				IL_0061: ldstr "message"
+				IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0070: stloc.s 4
+				IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0077: ldc.i4.1
+				IL_0078: newarr [System.Runtime]System.Object
+				IL_007d: dup
+				IL_007e: ldc.i4.0
+				IL_007f: ldloc.s 4
+				IL_0081: stelem.ref
+				IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0087: pop
+				IL_0088: leave IL_008d
 			} // end handler
 
-			IL_0096: ldnull
-			IL_0097: ret
+			IL_008d: ldnull
+			IL_008e: ret
 		} // end of method logError::__js_call__
 
 	} // end of class logError
@@ -182,7 +178,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2389
+				// Method begins at RVA 0x2381
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -203,7 +199,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2230
+			// Method begins at RVA 0x2228
 			// Header size: 12
 			// Code size: 61 (0x3d)
 			.maxstack 8
@@ -251,7 +247,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2392
+				// Method begins at RVA 0x238a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -272,7 +268,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x227c
+			// Method begins at RVA 0x2274
 			// Header size: 12
 			// Code size: 61 (0x3d)
 			.maxstack 8
@@ -320,7 +316,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x239b
+				// Method begins at RVA 0x2393
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -341,7 +337,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x22c8
+			// Method begins at RVA 0x22c0
 			// Header size: 12
 			// Code size: 65 (0x41)
 			.maxstack 8
@@ -389,7 +385,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23a4
+				// Method begins at RVA 0x239c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -410,7 +406,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2318
+			// Method begins at RVA 0x2310
 			// Header size: 12
 			// Code size: 65 (0x41)
 			.maxstack 8
@@ -464,7 +460,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2365
+			// Method begins at RVA 0x235d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -615,7 +611,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23ad
+		// Method begins at RVA 0x23a5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
