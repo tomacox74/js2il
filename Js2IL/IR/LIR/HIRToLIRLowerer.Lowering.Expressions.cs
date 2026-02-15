@@ -740,10 +740,18 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // 2. Create the template object (cooked + raw strings)
-        // Generate a unique call site ID for template object caching
+        // Generate a unique call site ID for template object caching.
+        // Include source location to ensure each syntactic occurrence gets its own template object.
         var scopeName = _scope?.GetQualifiedName() ?? "UnknownScope";
-        // Use a simple counter instead of GUID for deterministic IDs
-        var callSiteId = $"{scopeName}:TaggedTemplate";
+        string callSiteId;
+        if (taggedTemplate.SourceLine > 0)
+        {
+            callSiteId = $"{scopeName}:TaggedTemplate_L{taggedTemplate.SourceLine}C{taggedTemplate.SourceColumn}";
+        }
+        else
+        {
+            callSiteId = $"{scopeName}:TaggedTemplate";
+        }
         
         // Create cooked strings array
         var cookedStringTemps = new List<TempVariable>();
@@ -759,12 +767,11 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRBuildArray(cookedStringTemps, cookedArrayTemp));
         DefineTempStorage(cookedArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-        // Create raw strings array
+        // Create raw strings array (rawQuasis has same length as quasis when present)
         var rawStringTemps = new List<TempVariable>();
-        var rawArrayCount = rawQuasis?.Count ?? quasis.Count;
-        for (int i = 0; i < rawArrayCount; i++)
+        for (int i = 0; i < quasis.Count; i++)
         {
-            var rawString = (rawQuasis != null && i < rawQuasis.Count) ? rawQuasis[i] : (i < quasis.Count ? quasis[i] : string.Empty);
+            var rawString = rawQuasis?[i] ?? quasis[i];
             var stringTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstString(rawString, stringTemp));
             DefineTempStorage(stringTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
