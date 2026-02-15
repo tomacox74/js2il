@@ -1,11 +1,56 @@
 # JavaScript Runtime Performance Comparison
 
-This directory contains a comprehensive performance comparison between three JavaScript execution environments:
-- **Node.js** - Google V8 engine (industry standard)
-- **Jint** - JavaScript interpreter for .NET
-- **JS2IL** - JavaScript-to-IL compiler
+This directory contains performance testing infrastructure for comparing JavaScript execution across multiple runtimes.
 
-All three execute the same PrimeJavaScript benchmark to compare performance.
+## Two Benchmark Harnesses
+
+This directory provides two complementary performance testing approaches:
+
+### 1. Quick Comparison Harness (Legacy)
+
+**Location:** `RunComparison.js`, `JintComparison/`, `YantraJSComparison/`
+
+**Purpose:** Fast, simple throughput comparisons for smoke testing
+
+**Best For:**
+- Quick performance checks during development
+- CI smoke tests
+- Simple pass-counting benchmarks
+- Rapid iteration on optimization attempts
+
+**Run:**
+```bash
+node RunComparison.js
+```
+
+See the results section below for typical output.
+
+### 2. BenchmarkDotNet Suite (New)
+
+**Location:** `Benchmarks/`
+
+**Purpose:** Rigorous statistical benchmarking with detailed phase reporting
+
+**Best For:**
+- Detailed performance analysis
+- Statistical significance testing
+- Compile vs execution phase separation
+- Historical trend analysis
+- Publication-quality benchmark reports
+
+**Run:**
+```powershell
+cd Benchmarks
+dotnet run -c Release
+```
+
+See [Benchmarks/README.md](Benchmarks/README.md) for comprehensive documentation.
+
+---
+
+## Quick Comparison Harness Details
+
+This section documents the legacy quick comparison harness.
 
 ## What's Being Tested
 
@@ -84,3 +129,25 @@ While Node.js/V8 remains significantly faster on compute-intensive workloads, JS
 - JS2IL compilation time (~470ms) is excluded from execution benchmark
 - Results may vary based on CPU, OS, .NET version, and Node.js version
 - Test measures computational throughput (passes per second) over a 5-second window
+
+## Choosing Between Harnesses
+
+| Use Case | Recommended Harness |
+|----------|---------------------|
+| Quick smoke test | Quick Comparison (`RunComparison.js`) |
+| Development iteration | Quick Comparison (`RunComparison.js`) |
+| Statistical analysis | BenchmarkDotNet (`Benchmarks/`) |
+| Compile vs execute timing | BenchmarkDotNet (`Benchmarks/`) |
+| CI performance tracking | BenchmarkDotNet (`Benchmarks/`) |
+| Publication/reports | BenchmarkDotNet (`Benchmarks/`) |
+
+## CI Integration
+
+- **Quick Comparison**: Used in `.github/workflows/performance-comparison.yml` for informational PR comments
+- **BenchmarkDotNet**: To be integrated in Phase 5 for detailed statistical reporting
+
+## Adding New Benchmarks
+
+For the BenchmarkDotNet suite, see [Benchmarks/README.md](Benchmarks/README.md#contributing).
+
+For the quick comparison harness, modify `PrimeJavaScript.js` or add new scripts in this directory.
