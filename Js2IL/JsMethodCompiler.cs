@@ -517,14 +517,18 @@ internal sealed class JsMethodCompiler
         if (node is Acornima.Ast.MethodDefinition methodDef)
         {
             methodDescriptor.IsStatic = methodDef.Static;
-            // Instance methods don't have the scopes or newTarget parameters
-            methodDescriptor.Parameters = parameters.Skip(2).ToList();
-            methodDescriptor.HasScopesParameter = false;
-            methodDescriptor.HasNewTargetParameter = false;
-            // Instance methods access scopes via this._scopes field
-            if (!methodDef.Static && scopesFieldHandle.HasValue)
+            if (!methodDef.Static)
             {
-                methodDescriptor.ScopesFieldHandle = scopesFieldHandle;
+                // Instance methods don't have the scopes or newTarget parameters.
+                methodDescriptor.Parameters = parameters.Skip(2).ToList();
+                methodDescriptor.HasScopesParameter = false;
+                methodDescriptor.HasNewTargetParameter = false;
+
+                // Instance methods access scopes via this._scopes field.
+                if (scopesFieldHandle.HasValue)
+                {
+                    methodDescriptor.ScopesFieldHandle = scopesFieldHandle;
+                }
             }
         }
 

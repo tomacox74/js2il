@@ -456,6 +456,7 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var previousArgs = RuntimeServices.SetCurrentArguments(System.Array.Empty<object>());
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
                 if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
@@ -478,6 +479,7 @@ namespace JavaScriptRuntime
             finally
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             }
         }
 
@@ -487,6 +489,7 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0 });
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
                 if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
@@ -509,6 +512,7 @@ namespace JavaScriptRuntime
             finally
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             }
         }
 
@@ -518,6 +522,7 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1 });
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
                 if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
@@ -540,6 +545,7 @@ namespace JavaScriptRuntime
             finally
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             }
         }
 
@@ -549,6 +555,7 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1, a2 });
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
                 if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
@@ -571,6 +578,7 @@ namespace JavaScriptRuntime
             finally
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             }
         }
 

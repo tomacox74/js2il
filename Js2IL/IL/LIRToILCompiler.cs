@@ -428,9 +428,13 @@ internal sealed partial class LIRToILCompiler
         // Base IL-argument index for JS parameter 0:
         // - static without scopes: base=0
         // - static with scopes: base=1 (arg0=scopes)
+        // - static with scopes+newTarget: base=2 (arg0=scopes, arg1=newTarget)
         // - instance without scopes: base=1 (arg0=this)
         // - instance with scopes: base=2 (arg0=this, arg1=scopes)
-        int baseIndex = (methodDescriptor.IsStatic ? 0 : 1) + (methodDescriptor.HasScopesParameter ? 1 : 0);
+        // - instance with scopes+newTarget: base=3 (arg0=this, arg1=scopes, arg2=newTarget)
+        int baseIndex = (methodDescriptor.IsStatic ? 0 : 1)
+            + (methodDescriptor.HasScopesParameter ? 1 : 0)
+            + (methodDescriptor.HasNewTargetParameter ? 1 : 0);
         return baseIndex + jsParameterIndex;
     }
 
