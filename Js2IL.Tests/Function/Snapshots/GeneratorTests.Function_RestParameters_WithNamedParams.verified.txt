@@ -100,6 +100,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object separator
 			) cil managed 
 		{
@@ -135,7 +136,7 @@
 				IL_003e: brfalse IL_004d
 
 				IL_0043: ldloc.1
-				IL_0044: ldarg.1
+				IL_0044: ldarg.2
 				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 				IL_004a: stloc.3
 				IL_004b: ldloc.3
@@ -213,8 +214,8 @@
 		IL_0000: newobj instance void Modules.Function_RestParameters_WithNamedParams/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -226,8 +227,8 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(object[], object)
-		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(object[], object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup
@@ -252,7 +253,7 @@
 		IL_0059: ldc.i4.3
 		IL_005a: ldstr "c"
 		IL_005f: stelem.ref
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [System.Runtime]System.Func`3<object[], object, object>, object[], object[])
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1, object[], object[])
 		IL_0065: stloc.2
 		IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_006b: ldc.i4.1
@@ -264,8 +265,8 @@
 		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_007a: pop
 		IL_007b: ldnull
-		IL_007c: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(object[], object)
-		IL_0082: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_007c: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(object[], object, object)
+		IL_0082: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0087: ldc.i4.1
 		IL_0088: newarr [System.Runtime]System.Object
 		IL_008d: dup
@@ -286,7 +287,7 @@
 		IL_00a8: ldc.i4.2
 		IL_00a9: ldstr "world"
 		IL_00ae: stelem.ref
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [System.Runtime]System.Func`3<object[], object, object>, object[], object[])
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1, object[], object[])
 		IL_00b4: stloc.2
 		IL_00b5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_00ba: ldc.i4.1
@@ -298,8 +299,8 @@
 		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00c9: pop
 		IL_00ca: ldnull
-		IL_00cb: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(object[], object)
-		IL_00d1: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00cb: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(object[], object, object)
+		IL_00d1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_00d6: ldc.i4.1
 		IL_00d7: newarr [System.Runtime]System.Object
 		IL_00dc: dup
@@ -312,7 +313,7 @@
 		IL_00e7: ldc.i4.0
 		IL_00e8: ldstr ","
 		IL_00ed: stelem.ref
-		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [System.Runtime]System.Func`3<object[], object, object>, object[], object[])
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFunc1, object[], object[])
 		IL_00f3: stloc.2
 		IL_00f4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_00f9: ldc.i4.1

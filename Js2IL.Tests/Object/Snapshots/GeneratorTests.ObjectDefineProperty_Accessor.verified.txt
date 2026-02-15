@@ -35,7 +35,8 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x2160
@@ -91,6 +92,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object v
 			) cil managed 
 		{
@@ -103,7 +105,7 @@
 			)
 
 			IL_0000: ldstr "set:"
-			IL_0005: ldarg.1
+			IL_0005: ldarg.2
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_000b: stloc.0
 			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -119,7 +121,7 @@
 			IL_0022: ldc.i4.0
 			IL_0023: ldelem.ref
 			IL_0024: castclass Modules.ObjectDefineProperty_Accessor/Scope
-			IL_0029: ldarg.1
+			IL_0029: ldarg.2
 			IL_002a: stfld object Modules.ObjectDefineProperty_Accessor/Scope::backing
 			IL_002f: ldnull
 			IL_0030: ret
@@ -186,8 +188,8 @@
 		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_001f: stloc.1
 		IL_0020: ldnull
-		IL_0021: ldftn object Modules.ObjectDefineProperty_Accessor/FunctionExpression_L7C7::__js_call__(object[])
-		IL_0027: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0021: ldftn object Modules.ObjectDefineProperty_Accessor/FunctionExpression_L7C7::__js_call__(object[], object)
+		IL_0027: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_002c: ldc.i4.1
 		IL_002d: newarr [System.Runtime]System.Object
 		IL_0032: dup
@@ -197,8 +199,8 @@
 		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_003b: stloc.2
 		IL_003c: ldnull
-		IL_003d: ldftn object Modules.ObjectDefineProperty_Accessor/FunctionExpression_L8C7::__js_call__(object[], object)
-		IL_0043: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_003d: ldftn object Modules.ObjectDefineProperty_Accessor/FunctionExpression_L8C7::__js_call__(object[], object, object)
+		IL_0043: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0048: ldc.i4.1
 		IL_0049: newarr [System.Runtime]System.Object
 		IL_004e: dup

@@ -143,7 +143,8 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x20a0
@@ -228,7 +229,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 65 (0x41)
+		// Code size: 66 (0x42)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_AccessFunctionVariable_Log/Scope,
@@ -239,8 +240,8 @@
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_AccessFunctionVariable_Log/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -252,17 +253,18 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction::__js_call__(object[])
-		IL_002b: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction::__js_call__(object[], object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup
 		IL_0037: ldc.i4.0
 		IL_0038: ldloc.0
 		IL_0039: stelem.ref
-		IL_003a: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_003f: pop
-		IL_0040: ret
+		IL_003a: ldnull
+		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_0040: pop
+		IL_0041: ret
 	} // end of method Classes_ClassMethod_AccessFunctionVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_AccessFunctionVariable_Log

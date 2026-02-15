@@ -44,6 +44,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object a,
 				object b
 			) cil managed 
@@ -56,9 +57,9 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: ldstr "localeCompare"
-			IL_0006: ldarg.2
+			IL_0006: ldarg.3
 			IL_0007: ldstr "en"
 			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_0011: dup
@@ -132,8 +133,8 @@
 		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_002d: stloc.1
 		IL_002e: ldnull
-		IL_002f: ldftn object Modules.String_LocaleCompare_Numeric/ArrowFunction_L4C13::__js_call__(object[], object, object)
-		IL_0035: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_002f: ldftn object Modules.String_LocaleCompare_Numeric/ArrowFunction_L4C13::__js_call__(object[], object, object, object)
+		IL_0035: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
 		IL_003a: ldc.i4.1
 		IL_003b: newarr [System.Runtime]System.Object
 		IL_0040: dup

@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23ca
+				// Method begins at RVA 0x23cc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -43,6 +43,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object name
 			) cil managed 
 		{
@@ -54,14 +55,14 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: brtrue IL_000d
 
 			IL_0006: ldstr "World"
 			IL_000b: starg.s name
 
 			IL_000d: ldstr "Hello, "
-			IL_0012: ldarg.1
+			IL_0012: ldarg.2
 			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0018: stloc.0
 			IL_0019: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -98,7 +99,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23d3
+				// Method begins at RVA 0x23d5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -116,6 +117,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object a,
 				object b
 			) cil managed 
@@ -128,15 +130,15 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.3
 			IL_0001: brtrue IL_0016
 
 			IL_0006: ldc.r8 10
 			IL_000f: box [System.Runtime]System.Double
 			IL_0014: starg.s b
 
-			IL_0016: ldarg.1
-			IL_0017: ldarg.2
+			IL_0016: ldarg.2
+			IL_0017: ldarg.3
 			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_001d: stloc.0
 			IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -174,7 +176,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23dc
+				// Method begins at RVA 0x23de
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -192,6 +194,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object x,
 				object y,
 				object z
@@ -199,56 +202,56 @@
 		{
 			// Method begins at RVA 0x2340
 			// Header size: 12
-			// Code size: 117 (0x75)
+			// Code size: 119 (0x77)
 			.maxstack 8
 			.locals init (
 				[0] float64
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: brtrue IL_0016
 
 			IL_0006: ldc.r8 5
 			IL_000f: box [System.Runtime]System.Double
 			IL_0014: starg.s x
 
-			IL_0016: ldarg.2
+			IL_0016: ldarg.3
 			IL_0017: brtrue IL_002c
 
 			IL_001c: ldc.r8 3
 			IL_0025: box [System.Runtime]System.Double
 			IL_002a: starg.s y
 
-			IL_002c: ldarg.3
-			IL_002d: brtrue IL_0042
+			IL_002c: ldarg.s z
+			IL_002e: brtrue IL_0043
 
-			IL_0032: ldc.r8 2
-			IL_003b: box [System.Runtime]System.Double
-			IL_0040: starg.s z
+			IL_0033: ldc.r8 2
+			IL_003c: box [System.Runtime]System.Double
+			IL_0041: starg.s z
 
-			IL_0042: ldarg.1
-			IL_0043: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0048: stloc.0
-			IL_0049: ldloc.0
-			IL_004a: ldarg.2
-			IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0050: mul
-			IL_0051: stloc.0
-			IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0057: ldc.i4.1
-			IL_0058: newarr [System.Runtime]System.Object
-			IL_005d: dup
-			IL_005e: ldc.i4.0
-			IL_005f: ldloc.0
-			IL_0060: ldarg.3
-			IL_0061: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0066: mul
-			IL_0067: box [System.Runtime]System.Double
-			IL_006c: stelem.ref
-			IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0072: pop
-			IL_0073: ldnull
-			IL_0074: ret
+			IL_0043: ldarg.2
+			IL_0044: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0049: stloc.0
+			IL_004a: ldloc.0
+			IL_004b: ldarg.3
+			IL_004c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0051: mul
+			IL_0052: stloc.0
+			IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0058: ldc.i4.1
+			IL_0059: newarr [System.Runtime]System.Object
+			IL_005e: dup
+			IL_005f: ldc.i4.0
+			IL_0060: ldloc.0
+			IL_0061: ldarg.s z
+			IL_0063: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0068: mul
+			IL_0069: box [System.Runtime]System.Double
+			IL_006e: stelem.ref
+			IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0074: pop
+			IL_0075: ldnull
+			IL_0076: ret
 		} // end of method ArrowFunction_L12C15::__js_call__
 
 	} // end of class ArrowFunction_L12C15
@@ -260,7 +263,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23c1
+			// Method begins at RVA 0x23c3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -300,8 +303,8 @@
 		IL_0000: newobj instance void Modules.ArrowFunction_DefaultParameterValue/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L4C15::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L4C15::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -314,8 +317,8 @@
 		IL_0028: ldloc.s 4
 		IL_002a: stloc.1
 		IL_002b: ldnull
-		IL_002c: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L8C13::__js_call__(object[], object, object)
-		IL_0032: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_002c: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L8C13::__js_call__(object[], object, object, object)
+		IL_0032: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
 		IL_0037: ldc.i4.1
 		IL_0038: newarr [System.Runtime]System.Object
 		IL_003d: dup
@@ -328,8 +331,8 @@
 		IL_004d: ldloc.s 4
 		IL_004f: stloc.2
 		IL_0050: ldnull
-		IL_0051: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object[], object, object, object)
-		IL_0057: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0051: ldftn object Modules.ArrowFunction_DefaultParameterValue/ArrowFunction_L12C15::__js_call__(object[], object, object, object, object)
+		IL_0057: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::.ctor(object, native int)
 		IL_005c: ldc.i4.1
 		IL_005d: newarr [System.Runtime]System.Object
 		IL_0062: dup
@@ -517,7 +520,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23e5
+		// Method begins at RVA 0x23e7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

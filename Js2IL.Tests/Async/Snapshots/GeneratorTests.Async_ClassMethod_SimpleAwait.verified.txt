@@ -43,6 +43,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object result
 			) cil managed 
 		{
@@ -53,7 +54,7 @@
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: ldstr "Result:"
-			IL_000a: ldarg.1
+			IL_000a: ldarg.2
 			IL_000b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0010: pop
 			IL_0011: ldnull
@@ -165,7 +166,7 @@
 			IL_001e: ldloc.0
 			IL_001f: ldarg.0
 			IL_0020: ldftn instance object Modules.Async_ClassMethod_SimpleAwait/Calculator::'add'(object[], object, object)
-			IL_0026: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
 			IL_002b: ldarg.1
 			IL_002c: ldc.i4.2
 			IL_002d: newarr [System.Runtime]System.Object
@@ -305,8 +306,8 @@
 		IL_003a: callvirt instance object Modules.Async_ClassMethod_SimpleAwait/Calculator::'add'(object[], object, object)
 		IL_003f: stloc.3
 		IL_0040: ldnull
-		IL_0041: ldftn object Modules.Async_ClassMethod_SimpleAwait/ArrowFunction_L10C21::__js_call__(object[], object)
-		IL_0047: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0041: ldftn object Modules.Async_ClassMethod_SimpleAwait/ArrowFunction_L10C21::__js_call__(object[], object, object)
+		IL_0047: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_004c: ldc.i4.1
 		IL_004d: newarr [System.Runtime]System.Object
 		IL_0052: dup

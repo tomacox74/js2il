@@ -157,7 +157,8 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x20ac
@@ -257,8 +258,8 @@
 		IL_0007: ldstr "Hello from global"
 		IL_000c: stfld string Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/Scope::GLOBAL_VALUE
 		IL_0011: ldnull
-		IL_0012: ldftn object Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27::__js_call__(object[])
-		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldftn object Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27::__js_call__(object[], object)
+		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_001d: ldc.i4.1
 		IL_001e: newarr [System.Runtime]System.Object
 		IL_0023: dup

@@ -35,7 +35,8 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x220c
@@ -65,8 +66,8 @@
 			IL_0017: call object[] [JavaScriptRuntime]JavaScriptRuntime.Promise::PrependScopeToArray(object, object[])
 			IL_001c: starg.s scopes
 			IL_001e: ldnull
-			IL_001f: ldftn object Modules.Generator_BasicNext/g::__js_call__(object[])
-			IL_0025: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_001f: ldftn object Modules.Generator_BasicNext/g::__js_call__(object[], object)
+			IL_0025: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 			IL_002a: ldarg.0
 			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 			IL_0030: ldarg.0
@@ -236,7 +237,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 431 (0x1af)
+		// Code size: 432 (0x1b0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Generator_BasicNext/Scope,
@@ -252,8 +253,8 @@
 		IL_0000: newobj instance void Modules.Generator_BasicNext/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Generator_BasicNext/g::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Generator_BasicNext/g::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -265,142 +266,143 @@
 		IL_0023: ldloc.s 7
 		IL_0025: stloc.1
 		IL_0026: ldnull
-		IL_0027: ldftn object Modules.Generator_BasicNext/g::__js_call__(object[])
-		IL_002d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0027: ldftn object Modules.Generator_BasicNext/g::__js_call__(object[], object)
+		IL_002d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0032: ldc.i4.1
 		IL_0033: newarr [System.Runtime]System.Object
 		IL_0038: dup
 		IL_0039: ldc.i4.0
 		IL_003a: ldloc.0
 		IL_003b: stelem.ref
-		IL_003c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0041: stloc.s 7
-		IL_0043: ldloc.s 7
-		IL_0045: stloc.2
-		IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004b: ldc.i4.1
-		IL_004c: newarr [System.Runtime]System.Object
-		IL_0051: dup
-		IL_0052: ldc.i4.0
-		IL_0053: ldstr "aftercall"
-		IL_0058: stelem.ref
-		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005e: pop
-		IL_005f: ldloc.2
-		IL_0060: ldstr "next"
-		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_006a: stloc.s 7
-		IL_006c: ldloc.s 7
-		IL_006e: stloc.3
-		IL_006f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0074: ldc.i4.1
-		IL_0075: newarr [System.Runtime]System.Object
-		IL_007a: dup
-		IL_007b: ldc.i4.0
-		IL_007c: ldloc.3
-		IL_007d: ldstr "value"
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0087: stelem.ref
-		IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_008d: pop
-		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0093: ldc.i4.1
-		IL_0094: newarr [System.Runtime]System.Object
-		IL_0099: dup
-		IL_009a: ldc.i4.0
-		IL_009b: ldloc.3
-		IL_009c: ldstr "done"
-		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00a6: stelem.ref
-		IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ac: pop
-		IL_00ad: ldloc.2
-		IL_00ae: ldstr "next"
-		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00b8: stloc.s 7
-		IL_00ba: ldloc.s 7
-		IL_00bc: stloc.s 4
-		IL_00be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c3: ldc.i4.1
-		IL_00c4: newarr [System.Runtime]System.Object
-		IL_00c9: dup
-		IL_00ca: ldc.i4.0
-		IL_00cb: ldloc.s 4
-		IL_00cd: ldstr "value"
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00d7: stelem.ref
-		IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00dd: pop
-		IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e3: ldc.i4.1
-		IL_00e4: newarr [System.Runtime]System.Object
-		IL_00e9: dup
-		IL_00ea: ldc.i4.0
-		IL_00eb: ldloc.s 4
-		IL_00ed: ldstr "done"
-		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00f7: stelem.ref
-		IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00fd: pop
-		IL_00fe: ldloc.2
-		IL_00ff: ldstr "next"
-		IL_0104: ldc.r8 42
-		IL_010d: box [System.Runtime]System.Double
-		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0117: stloc.s 7
-		IL_0119: ldloc.s 7
-		IL_011b: stloc.s 5
-		IL_011d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0122: ldc.i4.1
-		IL_0123: newarr [System.Runtime]System.Object
-		IL_0128: dup
-		IL_0129: ldc.i4.0
-		IL_012a: ldloc.s 5
-		IL_012c: ldstr "value"
-		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0136: stelem.ref
-		IL_0137: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_013c: pop
-		IL_013d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0142: ldc.i4.1
-		IL_0143: newarr [System.Runtime]System.Object
-		IL_0148: dup
-		IL_0149: ldc.i4.0
-		IL_014a: ldloc.s 5
-		IL_014c: ldstr "done"
-		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0156: stelem.ref
-		IL_0157: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_015c: pop
-		IL_015d: ldloc.2
-		IL_015e: ldstr "next"
-		IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0168: stloc.s 7
-		IL_016a: ldloc.s 7
-		IL_016c: stloc.s 6
-		IL_016e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0173: ldc.i4.1
-		IL_0174: newarr [System.Runtime]System.Object
-		IL_0179: dup
-		IL_017a: ldc.i4.0
-		IL_017b: ldloc.s 6
-		IL_017d: ldstr "value"
-		IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0187: stelem.ref
-		IL_0188: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_018d: pop
-		IL_018e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0193: ldc.i4.1
-		IL_0194: newarr [System.Runtime]System.Object
-		IL_0199: dup
-		IL_019a: ldc.i4.0
-		IL_019b: ldloc.s 6
-		IL_019d: ldstr "done"
-		IL_01a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_01a7: stelem.ref
-		IL_01a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_01ad: pop
-		IL_01ae: ret
+		IL_003c: ldnull
+		IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_0042: stloc.s 7
+		IL_0044: ldloc.s 7
+		IL_0046: stloc.2
+		IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004c: ldc.i4.1
+		IL_004d: newarr [System.Runtime]System.Object
+		IL_0052: dup
+		IL_0053: ldc.i4.0
+		IL_0054: ldstr "aftercall"
+		IL_0059: stelem.ref
+		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_005f: pop
+		IL_0060: ldloc.2
+		IL_0061: ldstr "next"
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_006b: stloc.s 7
+		IL_006d: ldloc.s 7
+		IL_006f: stloc.3
+		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0075: ldc.i4.1
+		IL_0076: newarr [System.Runtime]System.Object
+		IL_007b: dup
+		IL_007c: ldc.i4.0
+		IL_007d: ldloc.3
+		IL_007e: ldstr "value"
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0088: stelem.ref
+		IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008e: pop
+		IL_008f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0094: ldc.i4.1
+		IL_0095: newarr [System.Runtime]System.Object
+		IL_009a: dup
+		IL_009b: ldc.i4.0
+		IL_009c: ldloc.3
+		IL_009d: ldstr "done"
+		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00a7: stelem.ref
+		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ad: pop
+		IL_00ae: ldloc.2
+		IL_00af: ldstr "next"
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00b9: stloc.s 7
+		IL_00bb: ldloc.s 7
+		IL_00bd: stloc.s 4
+		IL_00bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c4: ldc.i4.1
+		IL_00c5: newarr [System.Runtime]System.Object
+		IL_00ca: dup
+		IL_00cb: ldc.i4.0
+		IL_00cc: ldloc.s 4
+		IL_00ce: ldstr "value"
+		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00d8: stelem.ref
+		IL_00d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00de: pop
+		IL_00df: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e4: ldc.i4.1
+		IL_00e5: newarr [System.Runtime]System.Object
+		IL_00ea: dup
+		IL_00eb: ldc.i4.0
+		IL_00ec: ldloc.s 4
+		IL_00ee: ldstr "done"
+		IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00f8: stelem.ref
+		IL_00f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00fe: pop
+		IL_00ff: ldloc.2
+		IL_0100: ldstr "next"
+		IL_0105: ldc.r8 42
+		IL_010e: box [System.Runtime]System.Double
+		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0118: stloc.s 7
+		IL_011a: ldloc.s 7
+		IL_011c: stloc.s 5
+		IL_011e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0123: ldc.i4.1
+		IL_0124: newarr [System.Runtime]System.Object
+		IL_0129: dup
+		IL_012a: ldc.i4.0
+		IL_012b: ldloc.s 5
+		IL_012d: ldstr "value"
+		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0137: stelem.ref
+		IL_0138: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_013d: pop
+		IL_013e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0143: ldc.i4.1
+		IL_0144: newarr [System.Runtime]System.Object
+		IL_0149: dup
+		IL_014a: ldc.i4.0
+		IL_014b: ldloc.s 5
+		IL_014d: ldstr "done"
+		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0157: stelem.ref
+		IL_0158: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_015d: pop
+		IL_015e: ldloc.2
+		IL_015f: ldstr "next"
+		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0169: stloc.s 7
+		IL_016b: ldloc.s 7
+		IL_016d: stloc.s 6
+		IL_016f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0174: ldc.i4.1
+		IL_0175: newarr [System.Runtime]System.Object
+		IL_017a: dup
+		IL_017b: ldc.i4.0
+		IL_017c: ldloc.s 6
+		IL_017e: ldstr "value"
+		IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0188: stelem.ref
+		IL_0189: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_018e: pop
+		IL_018f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0194: ldc.i4.1
+		IL_0195: newarr [System.Runtime]System.Object
+		IL_019a: dup
+		IL_019b: ldc.i4.0
+		IL_019c: ldloc.s 6
+		IL_019e: ldstr "done"
+		IL_01a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_01a8: stelem.ref
+		IL_01a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_01ae: pop
+		IL_01af: ret
 	} // end of method Generator_BasicNext::__js_module_init__
 
 } // end of class Modules.Generator_BasicNext

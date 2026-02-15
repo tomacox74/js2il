@@ -35,7 +35,8 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x21e1
@@ -173,8 +174,8 @@
 		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00fb: pop
 		IL_00fc: ldnull
-		IL_00fd: ldftn object Modules.GlobalTimers_AsValues_WindowLikeAssignment/FunctionExpression_id::__js_call__(object[])
-		IL_0103: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_00fd: ldftn object Modules.GlobalTimers_AsValues_WindowLikeAssignment/FunctionExpression_id::__js_call__(object[], object)
+		IL_0103: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0108: ldc.i4.1
 		IL_0109: newarr [System.Runtime]System.Object
 		IL_010e: dup

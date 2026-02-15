@@ -36,6 +36,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object x
 			) cil managed 
 		{
@@ -50,7 +51,7 @@
 			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_0005: ldstr "base"
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_000f: ldarg.1
+			IL_000f: ldarg.2
 			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0015: stloc.0
 			IL_0016: ldloc.0
@@ -115,8 +116,8 @@
 		IL_0000: newobj instance void Modules.Function_Bind_ThisBinding_IgnoresCallReceiver/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_Bind_ThisBinding_IgnoresCallReceiver/addBase::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_Bind_ThisBinding_IgnoresCallReceiver/addBase::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup

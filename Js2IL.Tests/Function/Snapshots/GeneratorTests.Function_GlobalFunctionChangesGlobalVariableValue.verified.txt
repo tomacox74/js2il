@@ -35,7 +35,8 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x2128
@@ -181,7 +182,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 202 (0xca)
+		// Code size: 203 (0xcb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope,
@@ -192,8 +193,8 @@
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_GlobalFunctionChangesGlobalVariableValue/changeGlobalValues::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_GlobalFunctionChangesGlobalVariableValue/changeGlobalValues::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -237,42 +238,43 @@
 		IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0077: pop
 		IL_0078: ldnull
-		IL_0079: ldftn object Modules.Function_GlobalFunctionChangesGlobalVariableValue/changeGlobalValues::__js_call__(object[])
-		IL_007f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0079: ldftn object Modules.Function_GlobalFunctionChangesGlobalVariableValue/changeGlobalValues::__js_call__(object[], object)
+		IL_007f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0084: ldc.i4.1
 		IL_0085: newarr [System.Runtime]System.Object
 		IL_008a: dup
 		IL_008b: ldc.i4.0
 		IL_008c: ldloc.0
 		IL_008d: stelem.ref
-		IL_008e: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0093: pop
-		IL_0094: ldloc.0
-		IL_0095: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::counter
-		IL_009a: stloc.2
-		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a0: ldc.i4.4
-		IL_00a1: newarr [System.Runtime]System.Object
-		IL_00a6: dup
-		IL_00a7: ldc.i4.0
-		IL_00a8: ldstr "End - counter:"
-		IL_00ad: stelem.ref
-		IL_00ae: dup
-		IL_00af: ldc.i4.1
-		IL_00b0: ldloc.2
-		IL_00b1: stelem.ref
-		IL_00b2: dup
-		IL_00b3: ldc.i4.2
-		IL_00b4: ldstr "message:"
-		IL_00b9: stelem.ref
-		IL_00ba: dup
-		IL_00bb: ldc.i4.3
-		IL_00bc: ldloc.0
-		IL_00bd: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::message
-		IL_00c2: stelem.ref
-		IL_00c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c8: pop
-		IL_00c9: ret
+		IL_008e: ldnull
+		IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_0094: pop
+		IL_0095: ldloc.0
+		IL_0096: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::counter
+		IL_009b: stloc.2
+		IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a1: ldc.i4.4
+		IL_00a2: newarr [System.Runtime]System.Object
+		IL_00a7: dup
+		IL_00a8: ldc.i4.0
+		IL_00a9: ldstr "End - counter:"
+		IL_00ae: stelem.ref
+		IL_00af: dup
+		IL_00b0: ldc.i4.1
+		IL_00b1: ldloc.2
+		IL_00b2: stelem.ref
+		IL_00b3: dup
+		IL_00b4: ldc.i4.2
+		IL_00b5: ldstr "message:"
+		IL_00ba: stelem.ref
+		IL_00bb: dup
+		IL_00bc: ldc.i4.3
+		IL_00bd: ldloc.0
+		IL_00be: ldfld object Modules.Function_GlobalFunctionChangesGlobalVariableValue/Scope::message
+		IL_00c3: stelem.ref
+		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00c9: pop
+		IL_00ca: ret
 	} // end of method Function_GlobalFunctionChangesGlobalVariableValue::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionChangesGlobalVariableValue

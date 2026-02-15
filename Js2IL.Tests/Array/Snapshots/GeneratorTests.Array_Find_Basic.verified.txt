@@ -36,6 +36,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object x
 			) cil managed 
 		{
@@ -44,7 +45,7 @@
 			// Code size: 23 (0x17)
 			.maxstack 8
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0006: ldc.r8 5
 			IL_000f: cgt
@@ -83,6 +84,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object x
 			) cil managed 
 		{
@@ -91,7 +93,7 @@
 			// Code size: 23 (0x17)
 			.maxstack 8
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0006: ldc.r8 100
 			IL_000f: cgt
@@ -166,8 +168,8 @@
 		IL_0057: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_005c: stloc.1
 		IL_005d: ldnull
-		IL_005e: ldftn object Modules.Array_Find_Basic/FunctionExpression_found::__js_call__(object[], object)
-		IL_0064: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_005e: ldftn object Modules.Array_Find_Basic/FunctionExpression_found::__js_call__(object[], object, object)
+		IL_0064: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0069: ldc.i4.1
 		IL_006a: newarr [System.Runtime]System.Object
 		IL_006f: dup
@@ -197,8 +199,8 @@
 		IL_009f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00a4: pop
 		IL_00a5: ldnull
-		IL_00a6: ldftn object Modules.Array_Find_Basic/FunctionExpression_notFound::__js_call__(object[], object)
-		IL_00ac: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00a6: ldftn object Modules.Array_Find_Basic/FunctionExpression_notFound::__js_call__(object[], object, object)
+		IL_00ac: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_00b1: ldc.i4.1
 		IL_00b2: newarr [System.Runtime]System.Object
 		IL_00b7: dup

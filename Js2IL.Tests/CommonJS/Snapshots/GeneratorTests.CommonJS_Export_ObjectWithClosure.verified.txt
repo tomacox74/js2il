@@ -132,6 +132,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object x
 			) cil managed 
 		{
@@ -149,7 +150,7 @@
 			IL_0003: castclass Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope
 			IL_0008: ldfld float64 Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::moduleFactor
 			IL_000d: stloc.0
-			IL_000e: ldarg.1
+			IL_000e: ldarg.2
 			IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0014: ldloc.0
 			IL_0015: mul
@@ -192,6 +193,7 @@
 			.method public hidebysig static 
 				object __js_call__ (
 					object[] scopes,
+					object newTarget,
 					object x
 				) cil managed 
 			{
@@ -210,7 +212,7 @@
 				IL_0003: castclass Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/Scope
 				IL_0008: ldfld object Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/Scope::factor
 				IL_000d: stloc.0
-				IL_000e: ldarg.1
+				IL_000e: ldarg.2
 				IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 				IL_0014: stloc.1
 				IL_0015: ldloc.1
@@ -257,6 +259,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object factor
 			) cil managed 
 		{
@@ -274,11 +277,11 @@
 			IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldloc.0
-			IL_0007: ldarg.1
+			IL_0007: ldarg.2
 			IL_0008: stfld object Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/Scope::factor
 			IL_000d: ldnull
-			IL_000e: ldftn object Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/multiply::__js_call__(object[], object)
-			IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+			IL_000e: ldftn object Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/multiply::__js_call__(object[], object, object)
+			IL_0014: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 			IL_0019: ldc.i4.2
 			IL_001a: newarr [System.Runtime]System.Object
 			IL_001f: dup
@@ -375,8 +378,8 @@
 		IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.CommonJS_Export_ObjectWithClosure_Lib/multiplyModuleFactor::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.CommonJS_Export_ObjectWithClosure_Lib/multiplyModuleFactor::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -388,8 +391,8 @@
 		IL_0022: ldloc.3
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator::__js_call__(object[], object)
-		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator::__js_call__(object[], object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup

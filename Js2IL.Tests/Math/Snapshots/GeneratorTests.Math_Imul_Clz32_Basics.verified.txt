@@ -36,6 +36,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object n
 			) cil managed 
 		{
@@ -52,7 +53,7 @@
 				[5] object
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: ldc.r8 0.0
 			IL_000a: box [System.Runtime]System.Double
 			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
@@ -67,7 +68,7 @@
 			IL_0024: brfalse IL_0052
 
 			IL_0029: ldc.r8 1
-			IL_0032: ldarg.1
+			IL_0032: ldarg.2
 			IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0038: div
 			IL_0039: stloc.3
@@ -92,7 +93,7 @@
 			IL_0069: br IL_007e
 
 			IL_006e: ldstr ""
-			IL_0073: ldarg.1
+			IL_0073: ldarg.2
 			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0079: stloc.s 5
 			IL_007b: ldloc.s 5
@@ -144,7 +145,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 411 (0x19b)
+		// Code size: 412 (0x19c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Imul_Clz32_Basics/Scope,
@@ -166,8 +167,8 @@
 		IL_0000: newobj instance void Modules.Math_Imul_Clz32_Basics/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Math_Imul_Clz32_Basics/toStr::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Math_Imul_Clz32_Basics/toStr::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -244,46 +245,47 @@
 		IL_0127: box [System.Runtime]System.Double
 		IL_012c: stloc.s 10
 		IL_012e: ldnull
-		IL_012f: ldftn object Modules.Math_Imul_Clz32_Basics/toStr::__js_call__(object[], object)
-		IL_0135: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_012f: ldftn object Modules.Math_Imul_Clz32_Basics/toStr::__js_call__(object[], object, object)
+		IL_0135: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_013a: ldc.i4.1
 		IL_013b: newarr [System.Runtime]System.Object
 		IL_0140: dup
 		IL_0141: ldc.i4.0
 		IL_0142: ldloc.0
 		IL_0143: stelem.ref
-		IL_0144: ldloc.s 10
-		IL_0146: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_014b: stloc.s 8
-		IL_014d: ldloc.s 11
-		IL_014f: ldloc.s 8
-		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0156: stloc.s 11
-		IL_0158: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_015d: ldc.i4.1
-		IL_015e: newarr [System.Runtime]System.Object
-		IL_0163: dup
-		IL_0164: ldc.i4.0
-		IL_0165: ldloc.s 11
-		IL_0167: stelem.ref
-		IL_0168: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_016d: pop
-		IL_016e: ldloc.s 5
-		IL_0170: box [System.Runtime]System.Double
-		IL_0175: stloc.s 10
-		IL_0177: ldloc.s 6
-		IL_0179: box [System.Runtime]System.Double
-		IL_017e: stloc.s 12
-		IL_0180: ldloc.s 7
-		IL_0182: box [System.Runtime]System.Double
-		IL_0187: stloc.s 13
-		IL_0189: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_018e: ldloc.s 10
-		IL_0190: ldloc.s 12
-		IL_0192: ldloc.s 13
-		IL_0194: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_0199: pop
-		IL_019a: ret
+		IL_0144: ldnull
+		IL_0145: ldloc.s 10
+		IL_0147: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
+		IL_014c: stloc.s 8
+		IL_014e: ldloc.s 11
+		IL_0150: ldloc.s 8
+		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0157: stloc.s 11
+		IL_0159: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_015e: ldc.i4.1
+		IL_015f: newarr [System.Runtime]System.Object
+		IL_0164: dup
+		IL_0165: ldc.i4.0
+		IL_0166: ldloc.s 11
+		IL_0168: stelem.ref
+		IL_0169: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_016e: pop
+		IL_016f: ldloc.s 5
+		IL_0171: box [System.Runtime]System.Double
+		IL_0176: stloc.s 10
+		IL_0178: ldloc.s 6
+		IL_017a: box [System.Runtime]System.Double
+		IL_017f: stloc.s 12
+		IL_0181: ldloc.s 7
+		IL_0183: box [System.Runtime]System.Double
+		IL_0188: stloc.s 13
+		IL_018a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_018f: ldloc.s 10
+		IL_0191: ldloc.s 12
+		IL_0193: ldloc.s 13
+		IL_0195: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
+		IL_019a: pop
+		IL_019b: ret
 	} // end of method Math_Imul_Clz32_Basics::__js_module_init__
 
 } // end of class Modules.Math_Imul_Clz32_Basics

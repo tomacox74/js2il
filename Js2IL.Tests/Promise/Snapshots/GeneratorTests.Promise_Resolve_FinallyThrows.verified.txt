@@ -35,7 +35,8 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x2119
@@ -100,6 +101,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object message
 			) cil managed 
 		{
@@ -113,7 +115,7 @@
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: ldstr "[then]"
-			IL_000a: ldarg.1
+			IL_000a: ldarg.2
 			IL_000b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0010: stloc.0
 			IL_0011: ldloc.0
@@ -158,6 +160,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object 'error'
 			) cil managed 
 		{
@@ -171,7 +174,7 @@
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: ldstr "[catch]"
-			IL_000a: ldarg.1
+			IL_000a: ldarg.2
 			IL_000b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0010: stloc.0
 			IL_0011: ldloc.0
@@ -228,8 +231,8 @@
 		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
 		IL_0010: stloc.1
 		IL_0011: ldnull
-		IL_0012: ldftn object Modules.Promise_Resolve_FinallyThrows/ArrowFunction_L3C55::__js_call__(object[])
-		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldftn object Modules.Promise_Resolve_FinallyThrows/ArrowFunction_L3C55::__js_call__(object[], object)
+		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_001d: ldc.i4.1
 		IL_001e: newarr [System.Runtime]System.Object
 		IL_0023: dup
@@ -252,8 +255,8 @@
 		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0049: stloc.1
 		IL_004a: ldnull
-		IL_004b: ldftn object Modules.Promise_Resolve_FinallyThrows/ArrowFunction_L3C96::__js_call__(object[], object)
-		IL_0051: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_004b: ldftn object Modules.Promise_Resolve_FinallyThrows/ArrowFunction_L3C96::__js_call__(object[], object, object)
+		IL_0051: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0056: ldc.i4.1
 		IL_0057: newarr [System.Runtime]System.Object
 		IL_005c: dup
@@ -276,8 +279,8 @@
 		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0082: stloc.1
 		IL_0083: ldnull
-		IL_0084: ldftn object Modules.Promise_Resolve_FinallyThrows/ArrowFunction_L3C147::__js_call__(object[], object)
-		IL_008a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0084: ldftn object Modules.Promise_Resolve_FinallyThrows/ArrowFunction_L3C147::__js_call__(object[], object, object)
+		IL_008a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_008f: ldc.i4.1
 		IL_0090: newarr [System.Runtime]System.Object
 		IL_0095: dup

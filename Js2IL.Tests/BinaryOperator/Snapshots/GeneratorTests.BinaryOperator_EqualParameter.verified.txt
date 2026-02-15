@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21bb
+				// Method begins at RVA 0x21bf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,10 +36,11 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object 'value'
 			) cil managed 
 		{
-			// Method begins at RVA 0x2100
+			// Method begins at RVA 0x2104
 			// Header size: 12
 			// Code size: 166 (0xa6)
 			.maxstack 8
@@ -51,7 +52,7 @@
 				[4] object
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: ldc.r8 3
 			IL_000a: box [System.Runtime]System.Double
 			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
@@ -61,7 +62,7 @@
 			IL_001b: stloc.s 4
 			IL_001d: ldloc.s 4
 			IL_001f: stloc.0
-			IL_0020: ldarg.1
+			IL_0020: ldarg.2
 			IL_0021: ldc.r8 5
 			IL_002a: box [System.Runtime]System.Double
 			IL_002f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
@@ -71,7 +72,7 @@
 			IL_003b: stloc.s 4
 			IL_003d: ldloc.s 4
 			IL_003f: stloc.1
-			IL_0040: ldarg.1
+			IL_0040: ldarg.2
 			IL_0041: ldc.r8 7
 			IL_004a: box [System.Runtime]System.Double
 			IL_004f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
@@ -83,7 +84,7 @@
 			IL_005f: stloc.2
 			IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0065: ldstr "value:"
-			IL_006a: ldarg.1
+			IL_006a: ldarg.2
 			IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0070: pop
 			IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -121,7 +122,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b2
+			// Method begins at RVA 0x21b6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -147,7 +148,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 163 (0xa3)
+		// Code size: 166 (0xa6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_EqualParameter/Scope,
@@ -158,8 +159,8 @@
 		IL_0000: newobj instance void Modules.BinaryOperator_EqualParameter/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -171,45 +172,48 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object)
-		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup
 		IL_0037: ldc.i4.0
 		IL_0038: ldloc.0
 		IL_0039: stelem.ref
-		IL_003a: ldc.r8 3
-		IL_0043: box [System.Runtime]System.Double
-		IL_0048: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_004d: pop
-		IL_004e: ldnull
-		IL_004f: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object)
-		IL_0055: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_005a: ldc.i4.1
-		IL_005b: newarr [System.Runtime]System.Object
-		IL_0060: dup
-		IL_0061: ldc.i4.0
-		IL_0062: ldloc.0
-		IL_0063: stelem.ref
-		IL_0064: ldc.r8 5
-		IL_006d: box [System.Runtime]System.Double
-		IL_0072: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0077: pop
-		IL_0078: ldnull
-		IL_0079: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object)
-		IL_007f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0084: ldc.i4.1
-		IL_0085: newarr [System.Runtime]System.Object
-		IL_008a: dup
-		IL_008b: ldc.i4.0
-		IL_008c: ldloc.0
-		IL_008d: stelem.ref
-		IL_008e: ldc.r8 7
-		IL_0097: box [System.Runtime]System.Double
-		IL_009c: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_00a1: pop
-		IL_00a2: ret
+		IL_003a: ldnull
+		IL_003b: ldc.r8 3
+		IL_0044: box [System.Runtime]System.Double
+		IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
+		IL_004e: pop
+		IL_004f: ldnull
+		IL_0050: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object, object)
+		IL_0056: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_005b: ldc.i4.1
+		IL_005c: newarr [System.Runtime]System.Object
+		IL_0061: dup
+		IL_0062: ldc.i4.0
+		IL_0063: ldloc.0
+		IL_0064: stelem.ref
+		IL_0065: ldnull
+		IL_0066: ldc.r8 5
+		IL_006f: box [System.Runtime]System.Double
+		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
+		IL_0079: pop
+		IL_007a: ldnull
+		IL_007b: ldftn object Modules.BinaryOperator_EqualParameter/testParam::__js_call__(object[], object, object)
+		IL_0081: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0086: ldc.i4.1
+		IL_0087: newarr [System.Runtime]System.Object
+		IL_008c: dup
+		IL_008d: ldc.i4.0
+		IL_008e: ldloc.0
+		IL_008f: stelem.ref
+		IL_0090: ldnull
+		IL_0091: ldc.r8 7
+		IL_009a: box [System.Runtime]System.Double
+		IL_009f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
+		IL_00a4: pop
+		IL_00a5: ret
 	} // end of method BinaryOperator_EqualParameter::__js_module_init__
 
 } // end of class Modules.BinaryOperator_EqualParameter
@@ -221,7 +225,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c4
+		// Method begins at RVA 0x21c8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

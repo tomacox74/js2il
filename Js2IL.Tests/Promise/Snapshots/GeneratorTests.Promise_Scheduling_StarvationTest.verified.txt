@@ -39,7 +39,8 @@
 			// Methods
 			.method public hidebysig static 
 				object __js_call__ (
-					object[] scopes
+					object[] scopes,
+					object newTarget
 				) cil managed 
 			{
 				// Method begins at RVA 0x21f3
@@ -136,6 +137,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object id
 			) cil managed 
 		{
@@ -152,7 +154,7 @@
 				[5] object
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: ldc.r8 512
 			IL_000a: box [System.Runtime]System.Double
 			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
@@ -162,12 +164,12 @@
 
 			IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0020: ldstr "[then] scheduling a timer at promise number:"
-			IL_0025: ldarg.1
+			IL_0025: ldarg.2
 			IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_002b: pop
 			IL_002c: ldnull
-			IL_002d: ldftn object Modules.Promise_Scheduling_StarvationTest/ArrowFunction_L7C29/ArrowFunction_L11C24::__js_call__(object[])
-			IL_0033: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_002d: ldftn object Modules.Promise_Scheduling_StarvationTest/ArrowFunction_L7C29/ArrowFunction_L11C24::__js_call__(object[], object)
+			IL_0033: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 			IL_0038: ldc.i4.1
 			IL_0039: newarr [System.Runtime]System.Object
 			IL_003e: dup
@@ -187,7 +189,7 @@
 			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
 			IL_0069: pop
 
-			IL_006a: ldarg.1
+			IL_006a: ldarg.2
 			IL_006b: ldc.r8 1023
 			IL_0074: box [System.Runtime]System.Double
 			IL_0079: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
@@ -201,7 +203,7 @@
 			IL_008d: ldloc.0
 			IL_008e: brtrue IL_00b7
 
-			IL_0093: ldarg.1
+			IL_0093: ldarg.2
 			IL_0094: ldc.r8 2047
 			IL_009d: box [System.Runtime]System.Double
 			IL_00a2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
@@ -224,7 +226,7 @@
 
 			IL_00c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_00cd: ldstr "executed promise number:"
-			IL_00d2: ldarg.1
+			IL_00d2: ldarg.2
 			IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_00d8: pop
 
@@ -346,8 +348,8 @@
 			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
 			IL_004a: stloc.2
 			IL_004b: ldnull
-			IL_004c: ldftn object Modules.Promise_Scheduling_StarvationTest/ArrowFunction_L7C29::__js_call__(object[], object)
-			IL_0052: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+			IL_004c: ldftn object Modules.Promise_Scheduling_StarvationTest/ArrowFunction_L7C29::__js_call__(object[], object, object)
+			IL_0052: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 			IL_0057: ldc.i4.1
 			IL_0058: newarr [System.Runtime]System.Object
 			IL_005d: dup

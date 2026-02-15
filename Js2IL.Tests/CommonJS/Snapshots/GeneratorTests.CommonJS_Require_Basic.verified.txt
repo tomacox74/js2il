@@ -24,7 +24,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2384
+				// Method begins at RVA 0x2388
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,15 +42,16 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object x
 			) cil managed 
 		{
-			// Method begins at RVA 0x21f3
+			// Method begins at RVA 0x21f8
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: ret
 		} // end of method ArrowFunction_L3C9::__js_call__
 
@@ -67,7 +68,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x239f
+				// Method begins at RVA 0x23a3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -84,10 +85,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x21f8
+			// Method begins at RVA 0x21fc
 			// Header size: 12
 			// Code size: 66 (0x42)
 			.maxstack 8
@@ -136,7 +138,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x238d
+				// Method begins at RVA 0x2391
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -156,7 +158,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2396
+				// Method begins at RVA 0x239a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -179,7 +181,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2248
+			// Method begins at RVA 0x224c
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -200,7 +202,7 @@
 		.method public hidebysig 
 			instance object Log () cil managed 
 		{
-			// Method begins at RVA 0x2264
+			// Method begins at RVA 0x2268
 			// Header size: 12
 			// Code size: 71 (0x47)
 			.maxstack 8
@@ -257,7 +259,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x237b
+			// Method begins at RVA 0x237f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -283,7 +285,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 216 (0xd8)
+		// Code size: 217 (0xd9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Basic/Scope,
@@ -295,8 +297,8 @@
 		IL_0000: newobj instance void Modules.CommonJS_Require_Basic/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.CommonJS_Require_Basic/commonFunctionName::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.CommonJS_Require_Basic/commonFunctionName::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -308,8 +310,8 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.CommonJS_Require_Basic/ArrowFunction_L3C9::__js_call__(object[], object)
-		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.CommonJS_Require_Basic/ArrowFunction_L3C9::__js_call__(object[], object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup
@@ -362,17 +364,18 @@
 		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 		IL_00ba: pop
 		IL_00bb: ldnull
-		IL_00bc: ldftn object Modules.CommonJS_Require_Basic/commonFunctionName::__js_call__(object[])
-		IL_00c2: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_00bc: ldftn object Modules.CommonJS_Require_Basic/commonFunctionName::__js_call__(object[], object)
+		IL_00c2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_00c7: ldc.i4.1
 		IL_00c8: newarr [System.Runtime]System.Object
 		IL_00cd: dup
 		IL_00ce: ldc.i4.0
 		IL_00cf: ldloc.0
 		IL_00d0: stelem.ref
-		IL_00d1: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_00d6: pop
-		IL_00d7: ret
+		IL_00d1: ldnull
+		IL_00d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_00d7: pop
+		IL_00d8: ret
 	} // end of method CommonJS_Require_Basic::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Basic
@@ -398,7 +401,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b1
+				// Method begins at RVA 0x23b5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -416,15 +419,16 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object x
 			) cil managed 
 		{
-			// Method begins at RVA 0x22b7
+			// Method begins at RVA 0x22bb
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: ret
 		} // end of method ArrowFunction_L3C9::__js_call__
 
@@ -441,7 +445,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23cc
+				// Method begins at RVA 0x23d0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -458,10 +462,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x22bc
+			// Method begins at RVA 0x22c0
 			// Header size: 12
 			// Code size: 66 (0x42)
 			.maxstack 8
@@ -510,7 +515,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23ba
+				// Method begins at RVA 0x23be
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -530,7 +535,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23c3
+				// Method begins at RVA 0x23c7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -553,7 +558,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x230c
+			// Method begins at RVA 0x2310
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -574,7 +579,7 @@
 		.method public hidebysig 
 			instance object Log () cil managed 
 		{
-			// Method begins at RVA 0x2328
+			// Method begins at RVA 0x232c
 			// Header size: 12
 			// Code size: 71 (0x47)
 			.maxstack 8
@@ -631,7 +636,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23a8
+			// Method begins at RVA 0x23ac
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -655,9 +660,9 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2134
+		// Method begins at RVA 0x2138
 		// Header size: 12
-		// Code size: 179 (0xb3)
+		// Code size: 180 (0xb4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Dependency/Scope,
@@ -669,8 +674,8 @@
 		IL_0000: newobj instance void Modules.CommonJS_Require_Dependency/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.CommonJS_Require_Dependency/commonFunctionName::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.CommonJS_Require_Dependency/commonFunctionName::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -682,8 +687,8 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.CommonJS_Require_Dependency/ArrowFunction_L3C9::__js_call__(object[], object)
-		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.CommonJS_Require_Dependency/ArrowFunction_L3C9::__js_call__(object[], object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup
@@ -723,17 +728,18 @@
 		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 		IL_0095: pop
 		IL_0096: ldnull
-		IL_0097: ldftn object Modules.CommonJS_Require_Dependency/commonFunctionName::__js_call__(object[])
-		IL_009d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0097: ldftn object Modules.CommonJS_Require_Dependency/commonFunctionName::__js_call__(object[], object)
+		IL_009d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_00a2: ldc.i4.1
 		IL_00a3: newarr [System.Runtime]System.Object
 		IL_00a8: dup
 		IL_00a9: ldc.i4.0
 		IL_00aa: ldloc.0
 		IL_00ab: stelem.ref
-		IL_00ac: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_00b1: pop
-		IL_00b2: ret
+		IL_00ac: ldnull
+		IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_00b2: pop
+		IL_00b3: ret
 	} // end of method CommonJS_Require_Dependency::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Dependency
@@ -745,7 +751,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23d5
+		// Method begins at RVA 0x23d9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -36,6 +36,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object resolve2,
 				object reject2
 			) cil managed 
@@ -56,7 +57,7 @@
 			IL_0011: box [System.Runtime]System.Double
 			IL_0016: stelem.ref
 			IL_0017: stloc.0
-			IL_0018: ldarg.1
+			IL_0018: ldarg.2
 			IL_0019: ldc.i4.1
 			IL_001a: newarr [System.Runtime]System.Object
 			IL_001f: dup
@@ -104,6 +105,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object resolve,
 				object reject
 			) cil managed 
@@ -127,7 +129,7 @@
 			IL_0010: ldfld object Modules.Promise_Thenable_Nested/Scope::innerThenable
 			IL_0015: stelem.ref
 			IL_0016: stloc.0
-			IL_0017: ldarg.1
+			IL_0017: ldarg.2
 			IL_0018: ldc.i4.1
 			IL_0019: newarr [System.Runtime]System.Object
 			IL_001e: dup
@@ -185,6 +187,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object 'value'
 			) cil managed 
 		{
@@ -201,7 +204,7 @@
 			IL_0006: newarr [System.Runtime]System.Object
 			IL_000b: dup
 			IL_000c: ldc.i4.0
-			IL_000d: ldarg.1
+			IL_000d: ldarg.2
 			IL_000e: stelem.ref
 			IL_000f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 			IL_0014: stloc.0
@@ -273,8 +276,8 @@
 		IL_0000: newobj instance void Modules.Promise_Thenable_Nested/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Promise_Thenable_Nested/innerThen::__js_call__(object[], object, object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Promise_Thenable_Nested/innerThen::__js_call__(object[], object, object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -286,8 +289,8 @@
 		IL_0023: ldloc.s 4
 		IL_0025: stloc.1
 		IL_0026: ldnull
-		IL_0027: ldftn object Modules.Promise_Thenable_Nested/outerThen::__js_call__(object[], object, object)
-		IL_002d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0027: ldftn object Modules.Promise_Thenable_Nested/outerThen::__js_call__(object[], object, object, object)
+		IL_002d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
 		IL_0032: ldc.i4.1
 		IL_0033: newarr [System.Runtime]System.Object
 		IL_0038: dup
@@ -321,8 +324,8 @@
 		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
 		IL_007f: stloc.s 4
 		IL_0081: ldnull
-		IL_0082: ldftn object Modules.Promise_Thenable_Nested/ArrowFunction_L15C32::__js_call__(object[], object)
-		IL_0088: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0082: ldftn object Modules.Promise_Thenable_Nested/ArrowFunction_L15C32::__js_call__(object[], object, object)
+		IL_0088: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_008d: ldc.i4.1
 		IL_008e: newarr [System.Runtime]System.Object
 		IL_0093: dup

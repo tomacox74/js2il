@@ -42,6 +42,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object x
 			) cil managed 
 		{
@@ -59,7 +60,7 @@
 			IL_0003: castclass Modules.ArrowFunction_CapturesOuterVariable/Scope
 			IL_0008: ldfld float64 Modules.ArrowFunction_CapturesOuterVariable/Scope::n
 			IL_000d: stloc.0
-			IL_000e: ldarg.1
+			IL_000e: ldarg.2
 			IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0014: ldloc.0
 			IL_0015: mul
@@ -125,8 +126,8 @@
 		IL_0015: unbox.any [System.Runtime]System.Double
 		IL_001a: stfld float64 Modules.ArrowFunction_CapturesOuterVariable/Scope::n
 		IL_001f: ldnull
-		IL_0020: ldftn object Modules.ArrowFunction_CapturesOuterVariable/ArrowFunction_L4C13::__js_call__(object[], object)
-		IL_0026: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0020: ldftn object Modules.ArrowFunction_CapturesOuterVariable/ArrowFunction_L4C13::__js_call__(object[], object, object)
+		IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_002b: ldc.i4.1
 		IL_002c: newarr [System.Runtime]System.Object
 		IL_0031: dup

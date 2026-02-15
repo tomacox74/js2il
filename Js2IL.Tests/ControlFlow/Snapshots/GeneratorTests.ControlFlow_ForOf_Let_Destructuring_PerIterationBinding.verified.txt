@@ -35,7 +35,8 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x2294
@@ -281,8 +282,8 @@
 				IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 				IL_00f7: stfld object Modules.ControlFlow_ForOf_Let_Destructuring_PerIterationBinding/Scope_ForOf_L5C5::x
 				IL_00fc: ldnull
-				IL_00fd: ldftn object Modules.ControlFlow_ForOf_Let_Destructuring_PerIterationBinding/FunctionExpression_L6C13::__js_call__(object[])
-				IL_0103: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+				IL_00fd: ldftn object Modules.ControlFlow_ForOf_Let_Destructuring_PerIterationBinding/FunctionExpression_L6C13::__js_call__(object[], object)
+				IL_0103: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 				IL_0108: ldc.i4.2
 				IL_0109: newarr [System.Runtime]System.Object
 				IL_010e: dup

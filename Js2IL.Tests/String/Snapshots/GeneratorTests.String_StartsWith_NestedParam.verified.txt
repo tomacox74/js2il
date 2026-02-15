@@ -40,6 +40,7 @@
 			.method public hidebysig static 
 				object __js_call__ (
 					object[] scopes,
+					object newTarget,
 					object p
 				) cil managed 
 			{
@@ -59,7 +60,7 @@
 				IL_000d: stloc.0
 				IL_000e: ldloc.0
 				IL_000f: ldstr "startsWith"
-				IL_0014: ldarg.1
+				IL_0014: ldarg.2
 				IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 				IL_001a: stloc.0
 				IL_001b: ldloc.0
@@ -101,12 +102,13 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object s
 			) cil managed 
 		{
 			// Method begins at RVA 0x20b8
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 91 (0x5b)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.String_StartsWith_NestedParam/outer/Scope,
@@ -117,11 +119,11 @@
 			IL_0000: newobj instance void Modules.String_StartsWith_NestedParam/outer/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldloc.0
-			IL_0007: ldarg.1
+			IL_0007: ldarg.2
 			IL_0008: stfld object Modules.String_StartsWith_NestedParam/outer/Scope::s
 			IL_000d: ldnull
-			IL_000e: ldftn object Modules.String_StartsWith_NestedParam/outer/inner::__js_call__(object[], object)
-			IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+			IL_000e: ldftn object Modules.String_StartsWith_NestedParam/outer/inner::__js_call__(object[], object, object)
+			IL_0014: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 			IL_0019: ldc.i4.2
 			IL_001a: newarr [System.Runtime]System.Object
 			IL_001f: dup
@@ -139,8 +141,8 @@
 			IL_002f: ldloc.2
 			IL_0030: stloc.1
 			IL_0031: ldnull
-			IL_0032: ldftn object Modules.String_StartsWith_NestedParam/outer/inner::__js_call__(object[], object)
-			IL_0038: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+			IL_0032: ldftn object Modules.String_StartsWith_NestedParam/outer/inner::__js_call__(object[], object, object)
+			IL_0038: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 			IL_003d: ldc.i4.2
 			IL_003e: newarr [System.Runtime]System.Object
 			IL_0043: dup
@@ -153,11 +155,12 @@
 			IL_004a: ldc.i4.1
 			IL_004b: ldloc.0
 			IL_004c: stelem.ref
-			IL_004d: ldstr "a"
-			IL_0052: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-			IL_0057: stloc.2
-			IL_0058: ldloc.2
-			IL_0059: ret
+			IL_004d: ldnull
+			IL_004e: ldstr "a"
+			IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
+			IL_0058: stloc.2
+			IL_0059: ldloc.2
+			IL_005a: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -202,7 +205,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 91 (0x5b)
+		// Code size: 92 (0x5c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_StartsWith_NestedParam/Scope,
@@ -213,8 +216,8 @@
 		IL_0000: newobj instance void Modules.String_StartsWith_NestedParam/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.String_StartsWith_NestedParam/outer::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.String_StartsWith_NestedParam/outer::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -226,27 +229,28 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.String_StartsWith_NestedParam/outer::__js_call__(object[], object)
-		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.String_StartsWith_NestedParam/outer::__js_call__(object[], object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup
 		IL_0037: ldc.i4.0
 		IL_0038: ldloc.0
 		IL_0039: stelem.ref
-		IL_003a: ldstr "abc"
-		IL_003f: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0044: stloc.2
-		IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004a: ldc.i4.1
-		IL_004b: newarr [System.Runtime]System.Object
-		IL_0050: dup
-		IL_0051: ldc.i4.0
-		IL_0052: ldloc.2
-		IL_0053: stelem.ref
-		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0059: pop
-		IL_005a: ret
+		IL_003a: ldnull
+		IL_003b: ldstr "abc"
+		IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
+		IL_0045: stloc.2
+		IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004b: ldc.i4.1
+		IL_004c: newarr [System.Runtime]System.Object
+		IL_0051: dup
+		IL_0052: ldc.i4.0
+		IL_0053: ldloc.2
+		IL_0054: stelem.ref
+		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_005a: pop
+		IL_005b: ret
 	} // end of method String_StartsWith_NestedParam::__js_module_init__
 
 } // end of class Modules.String_StartsWith_NestedParam

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b9
+				// Method begins at RVA 0x21bd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,10 +35,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2160
+			// Method begins at RVA 0x2164
 			// Header size: 12
 			// Code size: 68 (0x44)
 			.maxstack 8
@@ -77,7 +78,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b0
+			// Method begins at RVA 0x21b4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -103,7 +104,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 260 (0x104)
+		// Code size: 261 (0x105)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_InlinePropertyInit/Scope,
@@ -114,8 +115,8 @@
 		IL_0000: newobj instance void Modules.ObjectLiteral_InlinePropertyInit/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.ObjectLiteral_InlinePropertyInit/getX::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.ObjectLiteral_InlinePropertyInit/getX::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -173,26 +174,27 @@
 		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00d1: pop
 		IL_00d2: ldnull
-		IL_00d3: ldftn object Modules.ObjectLiteral_InlinePropertyInit/getX::__js_call__(object[])
-		IL_00d9: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_00d3: ldftn object Modules.ObjectLiteral_InlinePropertyInit/getX::__js_call__(object[], object)
+		IL_00d9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_00de: ldc.i4.1
 		IL_00df: newarr [System.Runtime]System.Object
 		IL_00e4: dup
 		IL_00e5: ldc.i4.0
 		IL_00e6: ldloc.0
 		IL_00e7: stelem.ref
-		IL_00e8: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_00ed: stloc.2
-		IL_00ee: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f3: ldc.i4.1
-		IL_00f4: newarr [System.Runtime]System.Object
-		IL_00f9: dup
-		IL_00fa: ldc.i4.0
-		IL_00fb: ldloc.2
-		IL_00fc: stelem.ref
-		IL_00fd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0102: pop
-		IL_0103: ret
+		IL_00e8: ldnull
+		IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_00ee: stloc.2
+		IL_00ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f4: ldc.i4.1
+		IL_00f5: newarr [System.Runtime]System.Object
+		IL_00fa: dup
+		IL_00fb: ldc.i4.0
+		IL_00fc: ldloc.2
+		IL_00fd: stelem.ref
+		IL_00fe: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0103: pop
+		IL_0104: ret
 	} // end of method ObjectLiteral_InlinePropertyInit::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_InlinePropertyInit
@@ -204,7 +206,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c2
+		// Method begins at RVA 0x21c6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

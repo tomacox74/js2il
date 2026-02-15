@@ -35,7 +35,8 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x2158
@@ -113,7 +114,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 251 (0xfb)
+		// Code size: 252 (0xfc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ObjectDestructuring_Captured/Scope,
@@ -125,8 +126,8 @@
 		IL_0000: newobj instance void Modules.Variable_ObjectDestructuring_Captured/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -186,22 +187,23 @@
 		IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 		IL_00cc: pop
 		IL_00cd: ldnull
-		IL_00ce: ldftn object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(object[])
-		IL_00d4: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_00ce: ldftn object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(object[], object)
+		IL_00d4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_00d9: ldc.i4.1
 		IL_00da: newarr [System.Runtime]System.Object
 		IL_00df: dup
 		IL_00e0: ldc.i4.0
 		IL_00e1: ldloc.0
 		IL_00e2: stelem.ref
-		IL_00e3: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_00e8: stloc.3
-		IL_00e9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ee: ldstr "compute()="
-		IL_00f3: ldloc.3
-		IL_00f4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00f9: pop
-		IL_00fa: ret
+		IL_00e3: ldnull
+		IL_00e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_00e9: stloc.3
+		IL_00ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ef: ldstr "compute()="
+		IL_00f4: ldloc.3
+		IL_00f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00fa: pop
+		IL_00fb: ret
 	} // end of method Variable_ObjectDestructuring_Captured::__js_module_init__
 
 } // end of class Modules.Variable_ObjectDestructuring_Captured
