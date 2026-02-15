@@ -50,6 +50,7 @@ for (var x = 0; x < 1021; x++) {
             sw.Reset();
         else if (z % 7 == 0)
             sw.Restart();
+        // Test property access overhead
         var ms = sw.ElapsedMilliseconds;
         var rn = sw.IsRunning;
     }

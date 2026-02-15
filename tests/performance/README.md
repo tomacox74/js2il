@@ -143,8 +143,10 @@ While Node.js/V8 remains significantly faster on compute-intensive workloads, JS
 
 ## CI Integration
 
+The BenchmarkDotNet suite is integrated into CI via `.github/workflows/benchmarkdotnet-suite.yml`:
+
 - **Quick Comparison**: Used in `.github/workflows/performance-comparison.yml` for informational PR comments
-- **BenchmarkDotNet**: To be integrated in Phase 5 for detailed statistical reporting
+- **BenchmarkDotNet**: Available as workflow_dispatch for detailed statistical reporting (informational-only, no PR gating)
 
 ## Adding New Benchmarks
 
