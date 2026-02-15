@@ -16,7 +16,7 @@ namespace Js2IL.Tests.ScopesAbi;
 /// These tests verify:
 /// 1. Method signatures match the ABI contract
 /// 2. Scope-chain ordering is deterministic
-/// 3. Functions always have a scopes parameter; instance methods use this._scopes
+/// 3. Functions only have a scopes parameter when parent scopes are needed; instance methods use this._scopes
 /// </summary>
 public class EnvironmentLayoutBuilderTests
 {
@@ -49,16 +49,16 @@ public class EnvironmentLayoutBuilderTests
     #region CallableAbi Tests
 
     [Fact]
-    public void CallableAbi_ForFunction_NoParentScopes_StillHasScopesParam()
+    public void CallableAbi_ForFunction_NoParentScopes_HasNoScopesParam()
     {
         // Arrange & Act
         var abi = CallableAbi.ForFunction(jsParameterCount: 2, needsParentScopes: false);
 
         // Assert
-        Assert.Equal(ScopesSource.Argument, abi.ScopesSource);
+        Assert.Equal(ScopesSource.None, abi.ScopesSource);
         Assert.Equal(2, abi.JsParameterCount);
         Assert.False(abi.IsInstanceMethod);
-        Assert.True(abi.HasScopesParam);
+        Assert.False(abi.HasScopesParam);
     }
 
     [Fact]
@@ -122,9 +122,9 @@ public class EnvironmentLayoutBuilderTests
     }
 
     [Theory]
-    [InlineData(0, false, 1)] // Static func: scopes is arg0, so param0 -> IL arg 1
-    [InlineData(0, true, 1)]  // needsParentScopes is ignored for functions; scopes is always present
-    [InlineData(1, false, 2)] // param1 -> IL arg 2
+    [InlineData(0, false, 0)] // Static func with no scopes: param0 -> IL arg 0
+    [InlineData(0, true, 1)]  // Static func with scopes: scopes is arg0, so param0 -> IL arg 1
+    [InlineData(1, false, 1)] // Static func with no scopes: param1 -> IL arg 1
     [InlineData(1, true, 2)]
     public void CallableAbi_JsParamToIlArgIndex_StaticFunction(int jsIndex, bool hasScopes, int expectedIlArg)
     {
@@ -295,9 +295,8 @@ public class EnvironmentLayoutBuilderTests
         var layout = builder.Build(funcScope, CallableKind.Function);
 
         // Assert - no parent scopes needed
-        Assert.Equal(ScopesSource.Argument, layout.Abi.ScopesSource);
-        // Functions always get a scopes array so they can forward it; global/module scope is slot 0.
-        Assert.Equal(1, layout.ScopeChain.Length);
+        Assert.Equal(ScopesSource.None, layout.Abi.ScopesSource);
+        Assert.Equal(0, layout.ScopeChain.Length);
         Assert.Equal(2, layout.Abi.JsParameterCount);
     }
 
