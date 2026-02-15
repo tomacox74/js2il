@@ -73,8 +73,7 @@ namespace JavaScriptRuntime
 
             bool hasScopes = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
             bool hasNewTarget = hasScopes
-                && target.GetType().Namespace == typeof(Closure).Namespace
-                && target.GetType().Name.StartsWith("JsFunc", StringComparison.Ordinal)
+                && JsFuncDelegates.IsJsFuncDelegateType(target.GetType())
                 && parameters.Length > 1
                 && parameters[1].ParameterType == typeof(object);
             int jsParamStart = hasScopes ? (hasNewTarget ? 2 : 1) : 0;
@@ -295,8 +294,7 @@ namespace JavaScriptRuntime
 
             bool hasScopes = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
             bool hasNewTarget = hasScopes
-                && target.GetType().Namespace == typeof(Closure).Namespace
-                && target.GetType().Name.StartsWith("JsFunc", StringComparison.Ordinal)
+                && JsFuncDelegates.IsJsFuncDelegateType(target.GetType())
                 && parameters.Length > 1
                 && parameters[1].ParameterType == typeof(object);
             int jsParamStart = hasScopes ? (hasNewTarget ? 2 : 1) : 0;

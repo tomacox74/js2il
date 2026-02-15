@@ -1,5 +1,28 @@
 namespace JavaScriptRuntime;
 
+internal static class JsFuncDelegates
+{
+    private static HashSet<Type> _registeredDelegateTypes = new();
+
+    static JsFuncDelegates()
+    {
+        // Register all JsFuncN delegate types
+        for (int i = 0; i <= 32; i++)
+        {
+            var delegateType = Type.GetType($"JavaScriptRuntime.JsFunc{i}");
+            if (delegateType != null)
+            {
+                _registeredDelegateTypes.Add(delegateType);
+            }
+        }
+    }
+
+    internal static bool IsJsFuncDelegateType(Type type)
+    {
+        return _registeredDelegateTypes.Contains(type);
+    }
+}
+
 // Custom delegate types used by js2il to bypass System.Func<> arity limits.
 // Signature convention: (object[] scopes, object? newTarget, object? a1..aN) -> object?
 public delegate object? JsFunc0(object[] scopes, object? newTarget);
