@@ -628,8 +628,13 @@ namespace JavaScriptRuntime
                 {
                     object? result;
 
+                    if (cb is Delegate del)
+                    {
+                        result = Closure.InvokeWithArgs2(del, System.Array.Empty<object>(), a, b);
+                    }
+
                     // Support common delegate shapes produced by our compiler/Closure binder
-                    if (cb is Func<object[], object, object, object> f2)
+                    else if (cb is Func<object[], object, object, object> f2)
                     {
                         result = f2(System.Array.Empty<object>(), a, b);
                     }
@@ -709,7 +714,11 @@ namespace JavaScriptRuntime
                 var value = this[i];
                 object? mapped;
 
-                if (cb is Func<object?[], object?, object?, object?, object?> f3)
+                if (cb is Delegate del)
+                {
+                    mapped = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), new object[] { value!, (double)i, this });
+                }
+                else if (cb is Func<object?[], object?, object?, object?, object?> f3)
                 {
                     // (scopes, value, index, array)
                     mapped = f3(System.Array.Empty<object?>(), value, (double)i, this);
@@ -739,8 +748,18 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        private static object? InvokeCallback(object? cb, object? a0 = null, object? a1 = null, object? a2 = null, object? a3 = null)
+        private static object? InvokeCallback(object? cb, int argCount, object? a0 = null, object? a1 = null, object? a2 = null, object? a3 = null)
         {
+            if (cb is Delegate del)
+            {
+                var jsArgs = new object[argCount];
+                if (argCount > 0) jsArgs[0] = a0!;
+                if (argCount > 1) jsArgs[1] = a1!;
+                if (argCount > 2) jsArgs[2] = a2!;
+                if (argCount > 3) jsArgs[3] = a3!;
+                return Closure.InvokeWithArgs(del, System.Array.Empty<object>(), jsArgs);
+            }
+
             // Most array callbacks use up to 4 JS args (value, index, array) or (acc, value, index, array).
             // Our delegate shapes include an extra leading "scopes" parameter.
             var scopes = System.Array.Empty<object?>();
@@ -799,7 +818,7 @@ namespace JavaScriptRuntime
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             for (int i = 0; i < this.Count; i++)
             {
-                _ = InvokeCallback(cb, this[i], (double)i, this);
+                _ = InvokeCallback(cb, 3, this[i], (double)i, this);
             }
             return null; // undefined
         }
@@ -813,7 +832,7 @@ namespace JavaScriptRuntime
             var result = new Array();
             for (int i = 0; i < this.Count; i++)
             {
-                var keep = InvokeCallback(cb, this[i], (double)i, this);
+                var keep = InvokeCallback(cb, 3, this[i], (double)i, this);
                 if (Operators.IsTruthy(keep))
                 {
                     result.Add(this[i]);
@@ -830,7 +849,7 @@ namespace JavaScriptRuntime
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             for (int i = 0; i < this.Count; i++)
             {
-                var ok = InvokeCallback(cb, this[i], (double)i, this);
+                var ok = InvokeCallback(cb, 3, this[i], (double)i, this);
                 if (!Operators.IsTruthy(ok))
                 {
                     return false;
@@ -867,7 +886,7 @@ namespace JavaScriptRuntime
 
             for (int i = startIndex; i < this.Count; i++)
             {
-                acc = InvokeCallback(cb, acc, this[i], (double)i, this);
+                acc = InvokeCallback(cb, 4, acc, this[i], (double)i, this);
             }
 
             return acc;
@@ -901,7 +920,7 @@ namespace JavaScriptRuntime
 
             for (int i = startIndex; i >= 0; i--)
             {
-                acc = InvokeCallback(cb, acc, this[i], (double)i, this);
+                acc = InvokeCallback(cb, 4, acc, this[i], (double)i, this);
             }
 
             return acc;
@@ -926,7 +945,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < this.Count; i++)
             {
-                var result = InvokeCallback(callback, this[i], (double)i, this);
+                var result = InvokeCallback(callback, 3, this[i], (double)i, this);
                 if (Operators.IsTruthy(result))
                 {
                     return true;
@@ -945,7 +964,7 @@ namespace JavaScriptRuntime
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             for (int i = 0; i < this.Count; i++)
             {
-                var result = InvokeCallback(cb, this[i], (double)i, this);
+                var result = InvokeCallback(cb, 3, this[i], (double)i, this);
                 if (Operators.IsTruthy(result))
                 {
                     return (double)i;
@@ -963,7 +982,7 @@ namespace JavaScriptRuntime
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             for (int i = this.Count - 1; i >= 0; i--)
             {
-                var result = InvokeCallback(cb, this[i], (double)i, this);
+                var result = InvokeCallback(cb, 3, this[i], (double)i, this);
                 if (Operators.IsTruthy(result))
                 {
                     return this[i];
@@ -981,7 +1000,7 @@ namespace JavaScriptRuntime
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             for (int i = this.Count - 1; i >= 0; i--)
             {
-                var result = InvokeCallback(cb, this[i], (double)i, this);
+                var result = InvokeCallback(cb, 3, this[i], (double)i, this);
                 if (Operators.IsTruthy(result))
                 {
                     return (double)i;
@@ -1004,7 +1023,11 @@ namespace JavaScriptRuntime
                 var value = this[i];
                 object? result;
 
-                if (cb is Func<object?[], object?, object?, object?, object?> f3)
+                if (cb is Delegate del)
+                {
+                    result = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), new object[] { value!, (double)i, this });
+                }
+                else if (cb is Func<object?[], object?, object?, object?, object?> f3)
                 {
                     // (scopes, value, index, array)
                     result = f3(System.Array.Empty<object?>(), value, (double)i, this);
@@ -1859,7 +1882,7 @@ namespace JavaScriptRuntime
 
             for (int i = 0; i < this.Count; i++)
             {
-                var m = InvokeCallback(cb, this[i], (double)i, this);
+                var m = InvokeCallback(cb, 3, this[i], (double)i, this);
                 mapped.Add(m);
             }
 

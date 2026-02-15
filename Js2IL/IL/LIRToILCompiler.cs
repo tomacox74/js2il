@@ -425,6 +425,14 @@ internal sealed partial class LIRToILCompiler
 
     private static int GetIlArgIndexForJsParameter(MethodDescriptor methodDescriptor, int jsParameterIndex)
     {
+        bool inferredHasScopes = methodDescriptor.HasScopesParameter
+            || (methodDescriptor.Parameters.Count > 0
+                && string.Equals(methodDescriptor.Parameters[0].Name, "scopes", StringComparison.Ordinal));
+
+        bool inferredHasNewTarget = methodDescriptor.HasNewTargetParameter
+            || (methodDescriptor.Parameters.Count > 1
+                && string.Equals(methodDescriptor.Parameters[1].Name, "newTarget", StringComparison.Ordinal));
+
         // Base IL-argument index for JS parameter 0:
         // - static without scopes: base=0
         // - static with scopes: base=1 (arg0=scopes)
@@ -433,8 +441,8 @@ internal sealed partial class LIRToILCompiler
         // - instance with scopes: base=2 (arg0=this, arg1=scopes)
         // - instance with scopes+newTarget: base=3 (arg0=this, arg1=scopes, arg2=newTarget)
         int baseIndex = (methodDescriptor.IsStatic ? 0 : 1)
-            + (methodDescriptor.HasScopesParameter ? 1 : 0)
-            + (methodDescriptor.HasNewTargetParameter ? 1 : 0);
+            + (inferredHasScopes ? 1 : 0)
+            + (inferredHasNewTarget ? 1 : 0);
         return baseIndex + jsParameterIndex;
     }
 

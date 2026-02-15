@@ -604,9 +604,9 @@ internal sealed partial class LIRToILCompiler
             {
                 // Direct user-defined function call:
                 //   ldnull, ldftn, newobj (delegate) -> +1
-                //   scopes + declared JS params (including ldnull padding)
-                // Peak stack before callvirt: delegate + scopes + jsParamCount
-                LIRCallFunction callFunction => 2 + (callFunction.CallableId?.JsParamCount ?? callFunction.Arguments.Count),
+                //   scopes + newTarget + declared JS params (including ldnull padding)
+                // Peak stack before callvirt: delegate + scopes + newTarget + jsParamCount
+                LIRCallFunction callFunction => 3 + (callFunction.CallableId?.JsParamCount ?? callFunction.Arguments.Count),
 
                 // Direct user-defined function call with args array (e.g. spread calls):
                 //   delegate + scopes + argsArray (argsArray may be inlined)
@@ -625,20 +625,20 @@ internal sealed partial class LIRToILCompiler
                 LIRCallIntrinsicStaticWithArgsArray callStaticWithArgsArray => EstimateTempLoadPeak(callStaticWithArgsArray.ArgumentsArray),
                 LIRCallIntrinsicStaticVoidWithArgsArray callStaticVoidWithArgsArray => EstimateTempLoadPeak(callStaticVoidWithArgsArray.ArgumentsArray),
 
-                // Early-bound typed member calls: receiver + optional scopes + declared JS params (including padding)
-                LIRCallTypedMember callTypedMember => 1 + (callTypedMember.HasScopesParameter ? 1 : 0) + callTypedMember.MaxParamCount,
+                // Early-bound typed member calls: receiver + optional scopes + optional newTarget + declared JS params (including padding)
+                LIRCallTypedMember callTypedMember => 1 + (callTypedMember.HasScopesParameter ? 2 : 0) + callTypedMember.MaxParamCount,
 
                 // Typed member calls with fallback have an additional 'dup' on the typed receiver during the type-test.
                 // Be conservative and account for 2 receivers on the stack at the peak.
-                LIRCallTypedMemberWithFallback callTypedFallback => 2 + (callTypedFallback.HasScopesParameter ? 1 : 0) + callTypedFallback.MaxParamCount,
+                LIRCallTypedMemberWithFallback callTypedFallback => 2 + (callTypedFallback.HasScopesParameter ? 2 : 0) + callTypedFallback.MaxParamCount,
 
-                // Direct user-class instance method calls: receiver + optional scopes + declared JS params (including padding)
-                LIRCallUserClassInstanceMethod callUserInstance => 1 + (callUserInstance.HasScopesParameter ? 1 : 0) + callUserInstance.MaxParamCount,
+                // Direct user-class instance method calls: receiver + optional scopes + optional newTarget + declared JS params (including padding)
+                LIRCallUserClassInstanceMethod callUserInstance => 1 + (callUserInstance.HasScopesParameter ? 2 : 0) + callUserInstance.MaxParamCount,
                 LIRCallUserClassBaseConstructor callBaseCtor => 1 + (callBaseCtor.HasScopesParameter ? 1 : 0) + callBaseCtor.MaxParamCount,
-                LIRCallUserClassBaseInstanceMethod callBaseInstance => 1 + (callBaseInstance.HasScopesParameter ? 1 : 0) + callBaseInstance.MaxParamCount,
+                LIRCallUserClassBaseInstanceMethod callBaseInstance => 1 + (callBaseInstance.HasScopesParameter ? 2 : 0) + callBaseInstance.MaxParamCount,
 
-                // Declared callable call: args list already matches signature at the call site.
-                LIRCallDeclaredCallable callDeclared => callDeclared.Arguments.Count,
+                // Declared callable call: delegate instance + args list (already signature-shaped at call site).
+                LIRCallDeclaredCallable callDeclared => 1 + callDeclared.Arguments.Count,
 
                 // New user class: optional scopes + declared ctor param count.
                 // Use the declared max arg count since emission pads missing args.

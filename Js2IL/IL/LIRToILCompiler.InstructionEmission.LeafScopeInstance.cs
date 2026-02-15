@@ -163,11 +163,14 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Newarr);
                         ilEncoder.Token(_bclReferences.ObjectType);
 
+                        int jsParamsStartInSignature = Math.Max(0, methodDescriptor.Parameters.Count - jsParamCount);
+                        int ilJsArgBase = (methodDescriptor.IsStatic ? 0 : 1) + jsParamsStartInSignature;
+
                         for (var i = 0; i < jsParamCount; i++)
                         {
                             ilEncoder.OpCode(ILOpCode.Dup);
                             ilEncoder.LoadConstantI4(i);
-                            ilEncoder.LoadArgument(GetIlArgIndexForJsParameter(methodDescriptor, i));
+                            ilEncoder.LoadArgument(ilJsArgBase + i);
                             ilEncoder.OpCode(ILOpCode.Stelem_ref);
                         }
 
@@ -358,7 +361,8 @@ internal sealed partial class LIRToILCompiler
                                 ilEncoder.OpCode(ILOpCode.Newarr);
                                 ilEncoder.Token(_bclReferences.ObjectType);
 
-                                var firstJsArgIndex = scopesArgIndex + 1;
+                                var jsParamsStartInSignature = Math.Max(0, methodDescriptor.Parameters.Count - jsParamCount);
+                                var firstJsArgIndex = (methodDescriptor.IsStatic ? 0 : 1) + jsParamsStartInSignature;
                                 for (var i = 0; i < jsParamCount; i++)
                                 {
                                     ilEncoder.OpCode(ILOpCode.Dup);

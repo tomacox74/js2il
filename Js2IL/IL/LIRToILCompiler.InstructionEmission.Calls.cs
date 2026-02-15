@@ -341,6 +341,7 @@ internal sealed partial class LIRToILCompiler
                     if (callUserClass.HasScopesParameter)
                     {
                         EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
                     }
 
                     // Match the declared signature (ignore extra args, pad missing args with null).
@@ -420,6 +421,7 @@ internal sealed partial class LIRToILCompiler
                     if (callBaseMethod.HasScopesParameter)
                     {
                         EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
                     }
 
                     int jsParamCount = callBaseMethod.MaxParamCount;

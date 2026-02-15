@@ -301,7 +301,7 @@ internal sealed class JsMethodCompiler
             scopesFieldHandle = scopesField;
         }
 
-        var callableKindOverride = methodDef.Static ? (ScopesCallableKind?)null : ScopesCallableKind.ClassMethod;
+        var callableKindOverride = ScopesCallableKind.ClassMethod;
         var irBody = TryCompileCallableBody(
             callable: callable,
             expectedMethodDef: expectedMethodDef,
@@ -394,9 +394,10 @@ internal sealed class JsMethodCompiler
             parameters.Add(new MethodParameterDescriptor("scopes", typeof(object[])));
         }
 
-        // Add new.target parameter for functions
-        // (always present for user-defined functions, follows scopes)
-        var hasNewTargetParameter = callableKind == ScopesCallableKind.Function && hasScopesParameter;
+        // Add hidden new.target parameter for scoped callables that are represented by JsFunc delegates.
+        // This includes regular functions and resumable class methods (async/generator).
+        var hasNewTargetParameter = hasScopesParameter
+            && (callableKind == ScopesCallableKind.Function || callableKind == ScopesCallableKind.ClassMethod);
         if (hasNewTargetParameter)
         {
             parameters.Add(new MethodParameterDescriptor("newTarget", typeof(object)));
