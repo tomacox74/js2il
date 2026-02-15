@@ -85,18 +85,15 @@ namespace JavaScriptRuntime
                 // Only use element path for finite integer indices
                 if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
                 {
-                    try
+                    // Validate index is within int32 range before casting
+                    if (index >= 0 && index <= int.MaxValue)
                     {
                         int i = (int)index;
                         if ((uint)i >= (uint)_buffer.Length) return 0.0; // out-of-bounds reads return 0 as a JS number
                         return (double)_buffer[i];
                     }
-                    catch
-                    {
-                        // Conversion failed
-                    }
                 }
-                // NaN/Infinity/fractional: return undefined (0.0 in our model)
+                // NaN/Infinity/fractional/out-of-range: return undefined (0.0 in our model)
                 return 0.0;
             }
             set
@@ -104,18 +101,15 @@ namespace JavaScriptRuntime
                 // Only use element path for finite integer indices
                 if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
                 {
-                    try
+                    // Validate index is within int32 range before casting
+                    if (index >= 0 && index <= int.MaxValue)
                     {
                         int i = (int)index;
                         if ((uint)i >= (uint)_buffer.Length) return; // ignore out-of-bounds sets
                         _buffer[i] = ToInt32(value);
                     }
-                    catch
-                    {
-                        // Conversion failed: no-op
-                    }
                 }
-                // NaN/Infinity/fractional: no-op
+                // NaN/Infinity/fractional/out-of-range: no-op
             }
         }
 
@@ -216,7 +210,7 @@ namespace JavaScriptRuntime
             // 3. If int32bit >= 2^31, return int32bit - 2^32; otherwise return int32bit
             
             // Truncate toward zero to get integer value
-            double posInt = d >= 0 ? System.Math.Floor(d) : System.Math.Ceiling(d);
+            double posInt = System.Math.Truncate(d);
             
             // Modulo 2^32
             double int32bit = posInt % 4294967296.0; // 2^32

@@ -2246,20 +2246,18 @@ namespace JavaScriptRuntime
                 // Check if index is a valid integer index
                 if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
                 {
-                    try
+                    // Validate index is within int32 range before casting
+                    if (index >= 0 && index <= int.MaxValue)
                     {
                         int i32Index = (int)index;
                         // Only write if in bounds [0, length)
-                        if (i32Index >= 0 && i32Index < (int)i32.length)
+                        if (i32Index < (int)i32.length)
                         {
                             i32.SetFromDouble(i32Index, value);
                         }
-                        // Out-of-bounds or negative: no-op (typed arrays don't expand)
+                        // Out-of-bounds: no-op (typed arrays don't expand)
                     }
-                    catch
-                    {
-                        // Conversion failed: no-op
-                    }
+                    // Negative or too large: no-op
                 }
                 // NaN/Infinity/fractional: no-op (do not treat as element 0 or property)
                 return value;
