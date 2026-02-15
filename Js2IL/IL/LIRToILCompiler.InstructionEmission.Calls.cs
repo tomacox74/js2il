@@ -40,6 +40,14 @@ internal sealed partial class LIRToILCompiler
 
                     var methodHandle = (MethodDefinitionHandle)token;
 
+                    // Look up the callable's signature to determine if scopes parameter is required
+                    bool requiresScopes = true; // Default to true for safety
+                    var callableSignature = reader.GetSignature(callableId);
+                    if (callableSignature != null)
+                    {
+                        requiresScopes = callableSignature.RequiresScopesParameter;
+                    }
+
                     // If the callee needs an `arguments` object or has rest parameters, preserve the full runtime args list.
                     // We route through Closure.InvokeDirectWithArgs which sets the ambient arguments context.
                     if (callableId.NeedsArgumentsObject || callableId.HasRestParameters)
@@ -49,7 +57,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Ldftn);
                         ilEncoder.Token(methodHandle);
                         ilEncoder.OpCode(ILOpCode.Newobj);
-                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(callableId.JsParamCount));
+                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(callableId.JsParamCount, requiresScopes));
 
                         // Load scopes array
                         EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
@@ -92,7 +100,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
 
                     // Load scopes array
                     EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
