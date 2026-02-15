@@ -1,3 +1,4 @@
+"use strict";
 function Stopwatch() {
     var sw = this;
     var start = null;

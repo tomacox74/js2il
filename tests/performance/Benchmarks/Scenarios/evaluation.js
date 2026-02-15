@@ -1,3 +1,4 @@
+"use strict";
 var o = {};
 o.Foo = 'bar';
 o.Baz = 42.0001;

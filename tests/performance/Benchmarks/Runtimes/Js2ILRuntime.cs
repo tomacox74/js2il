@@ -59,13 +59,19 @@ public class Js2ILRuntime : IJavaScriptRuntime
             // Measure execution time
             var executeStopwatch = Stopwatch.StartNew();
 
-            var dllPath = Path.Combine(tempDir, outputName, $"{outputName}.dll");
-            if (!File.Exists(dllPath))
+            // Find the generated DLL (it's named after the input file, not the outputName parameter)
+            var dllFiles = Directory.GetFiles(tempDir, "*.dll", SearchOption.TopDirectoryOnly)
+                .Where(f => !f.Contains("JavaScriptRuntime"))  // Exclude the runtime DLL
+                .ToArray();
+            
+            if (dllFiles.Length == 0)
             {
                 result.Success = false;
-                result.Error = $"js2il compiled output not found: {dllPath}";
+                result.Error = $"js2il compiled output not found in: {tempDir}";
                 return result;
             }
+
+            var dllPath = dllFiles[0];
 
             // Execute the compiled assembly
             var processInfo = new ProcessStartInfo

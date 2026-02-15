@@ -67,7 +67,9 @@ public class Js2ILPhasedBenchmarks
             var compiler = serviceProvider.GetRequiredService<Compiler>();
             compiler.Compile(tempScriptFile, scriptName);
 
-            _compiledPaths[scriptName] = Path.Combine(outputPath, scriptName, $"{scriptName}.dll");
+            // The DLL is placed directly in outputPath (not in a nested directory)
+            // It's named after the input file (scriptName.js -> scriptName.dll)
+            _compiledPaths[scriptName] = Path.Combine(outputPath, $"{scriptName}.dll");
         }
     }
 
