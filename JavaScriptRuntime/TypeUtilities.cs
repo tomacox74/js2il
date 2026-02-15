@@ -91,6 +91,28 @@ namespace JavaScriptRuntime
             return "object";
         }
 
+        /// <summary>
+        /// ECMA-262 §7.1.6 ToInt32 ( argument )
+        /// Converts argument to a signed 32-bit integer in the range [-2^31, 2^31-1].
+        /// https://tc39.es/ecma262/#sec-toint32
+        /// </summary>
+        public static int ToInt32(object? value)
+        {
+            // Step 1: Let number be ? ToNumber(argument).
+            var number = ToNumber(value);
+
+            // Step 2: If number is NaN, +0, -0, +∞, or -∞, return +0.
+            if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
+            {
+                return 0;
+            }
+
+            // Step 3: Let int be truncate(ℝ(number)).
+            // Step 4-5: Let int32bit be int modulo 2^32, then adjust to signed range.
+            // The truncate-then-modulo logic is exactly what unchecked conversion does.
+            return unchecked((int)(long)number);
+        }
+
         // JS ToBoolean coercion used in conditional tests and logical contexts
         public static bool ToBoolean(double value)
         {

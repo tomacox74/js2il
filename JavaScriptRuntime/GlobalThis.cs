@@ -511,14 +511,8 @@ namespace JavaScriptRuntime
             int radixValue = 0;
             if (radix != null)
             {
-                try
-                {
-                    radixValue = Convert.ToInt32(radix, System.Globalization.CultureInfo.InvariantCulture);
-                }
-                catch
-                {
-                    return double.NaN;
-                }
+                // ECMA-262: Let R be ℝ(? ToInt32(radix))
+                radixValue = TypeUtilities.ToInt32(radix);
             }
 
             if (radixValue == 0)
@@ -545,7 +539,8 @@ namespace JavaScriptRuntime
                 return double.NaN;
             }
 
-            long value = 0;
+            // Use double arithmetic for large numbers to match JavaScript behavior
+            double value = 0.0;
             int digits = 0;
             foreach (var ch in text)
             {
@@ -571,7 +566,7 @@ namespace JavaScriptRuntime
                 return double.NaN;
             }
 
-            return (double)(sign * value);
+            return sign * value;
         }
 
         /// <summary>

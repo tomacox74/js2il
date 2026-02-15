@@ -44,6 +44,12 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_ParseInt_Spec()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_ParseInt_Spec));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_ParseFloat_IsFinite_Basic()
         {
             return ExecutionTest(nameof(IntrinsicCallables_ParseFloat_IsFinite_Basic));
