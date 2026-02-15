@@ -154,6 +154,12 @@ namespace Js2IL.Tests.Function
         public Task Function_NewExpression_MemberCallee_Compiles() { var testName = nameof(Function_NewExpression_MemberCallee_Compiles); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_NewTarget_NewVsCall() { var testName = nameof(Function_NewTarget_NewVsCall); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_NewTarget_Arrow_Inherits() { var testName = nameof(Function_NewTarget_Arrow_Inherits); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_RestParameters_Basic() { var testName = nameof(Function_RestParameters_Basic); return GenerateTest(testName); }
 
         [Fact]

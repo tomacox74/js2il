@@ -5,6 +5,7 @@ using Js2IL.Services.ScopesAbi;
 using TwoPhase = Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Utilities;
 using Js2IL.SymbolTables;
+using System;
 
 namespace Js2IL.IR;
 
@@ -117,11 +118,57 @@ public sealed partial class HIRToLIRLowerer
                 return true;
 
             case HIRNewTargetExpression:
-                // Load the new.target value from the function/constructor parameter
+                // Function/arrow path: use hidden newTarget parameter.
+                // Constructor path (class ctor): approximate new.target as this.GetType().
+                if (_callableKind == CallableKind.Constructor)
+                {
+                    var thisTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRLoadThis(thisTemp));
+                    DefineTempStorage(thisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
+                        thisTemp,
+                        typeof(object),
+                        nameof(object.GetType),
+                        Array.Empty<TempVariable>(),
+                        resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                    return true;
+                }
+
                 resultTempVar = CreateTempVariable();
                 _methodBodyIR.Instructions.Add(new LIRLoadNewTarget(resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
+
+            case HIRImportMetaExpression:
+                {
+                    TempVariable moduleIdTemp;
+                    var filenameSymbol = _scope?.FindSymbol("__filename");
+                    if (filenameSymbol != null)
+                    {
+                        if (!TryLowerExpression(new HIRVariableExpression(filenameSymbol), out moduleIdTemp))
+                        {
+                            return false;
+                        }
+                        moduleIdTemp = EnsureObject(moduleIdTemp);
+                    }
+                    else
+                    {
+                        moduleIdTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstUndefined(moduleIdTemp));
+                        DefineTempStorage(moduleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
+
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        MethodName: nameof(JavaScriptRuntime.RuntimeServices.GetImportMeta),
+                        Arguments: new[] { moduleIdTemp },
+                        Result: resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
 
             case HIRSuperExpression:
                 // `super` is only meaningful as the callee of a call expression (super(...))

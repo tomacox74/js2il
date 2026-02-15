@@ -1,5 +1,8 @@
 using JavaScriptRuntime.DependencyInjection;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Dynamic;
 
 namespace JavaScriptRuntime;
 
@@ -7,6 +10,8 @@ public class RuntimeServices
 {
     private static readonly System.Threading.AsyncLocal<object?> _currentThis = new();
     private static readonly System.Threading.AsyncLocal<object?[]?> _currentArguments = new();
+    private static readonly System.Threading.AsyncLocal<object?> _currentNewTarget = new();
+    private static readonly ConcurrentDictionary<string, ExpandoObject> _importMetaByUrl = new(StringComparer.Ordinal);
 
     public static object? GetCurrentThis()
     {
@@ -30,6 +35,35 @@ public class RuntimeServices
         var previous = _currentArguments.Value;
         _currentArguments.Value = value;
         return previous;
+    }
+
+    public static object? GetCurrentNewTarget()
+    {
+        return _currentNewTarget.Value;
+    }
+
+    public static object? SetCurrentNewTarget(object? value)
+    {
+        var previous = _currentNewTarget.Value;
+        _currentNewTarget.Value = value;
+        return previous;
+    }
+
+    public static object GetImportMeta(object? moduleIdOrPath)
+    {
+        var url = moduleIdOrPath?.ToString() ?? string.Empty;
+        var meta = _importMetaByUrl.GetOrAdd(url, static key =>
+        {
+            var exp = new ExpandoObject();
+            var dict = (IDictionary<string, object?>)exp;
+            if (!string.IsNullOrEmpty(key))
+            {
+                dict["url"] = key;
+            }
+            return exp;
+        });
+
+        return meta;
     }
 
     /// <summary>

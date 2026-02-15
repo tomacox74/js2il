@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-JS2IL supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, and `super` in derived class constructors/methods). However, several spec features in this section are still not implemented (notably dynamic `import()`, tagged templates, and meta properties like `new.target` / `import.meta`).
+JS2IL supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, `super`, and core meta-property behavior for `new.target` / `import.meta` in CommonJS-hosted scripts).
 
 Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, not a full mechanistic implementation of every spec abstract operation.
 
@@ -43,10 +43,10 @@ Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, 
 | 13.3.10.3 | ContinueDynamicImport ( promiseCapability , moduleCompletion ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ContinueDynamicImport) |
 | 13.3.11 | Tagged Templates | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates) |
 | 13.3.11.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tagged-templates-runtime-semantics-evaluation) |
-| 13.3.12 | Meta Properties | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties) |
-| 13.3.12.1 | Runtime Semantics: Evaluation | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties-runtime-semantics-evaluation) |
-| 13.3.12.1.1 | HostGetImportMetaProperties ( moduleRecord ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-hostgetimportmetaproperties) |
-| 13.3.12.1.2 | HostFinalizeImportMeta ( importMeta , moduleRecord ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-hostfinalizeimportmeta) |
+| 13.3.12 | Meta Properties | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties) |
+| 13.3.12.1 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-meta-properties-runtime-semantics-evaluation) |
+| 13.3.12.1.1 | HostGetImportMetaProperties ( moduleRecord ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-hostgetimportmetaproperties) |
+| 13.3.12.1.2 | HostFinalizeImportMeta ( importMeta , moduleRecord ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-hostfinalizeimportmeta) |
 
 ## Support
 
@@ -67,7 +67,7 @@ Feature-level support tracking with test script references.
 | NewExpression for built-in Error types (Error/TypeError/RangeError/ReferenceError/SyntaxError/URIError/EvalError/AggregateError) | Supported | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js) | Supported in the new IR pipeline for global (non-shadowed) built-in Error identifiers with 0 or 1 argument. When provided, the message is coerced to string. Spread arguments in `new` are not supported. |
 | NewExpression for built-in String constructor as primitive sugar (new String()/new String(x)) | Supported | [`String_New_Sugar.js`](../../../Js2IL.Tests/String/JavaScript/String_New_Sugar.js) | Supported in the new IR pipeline for global (non-shadowed) String. Lowered to primitive string conversion (DotNet2JSConversions.ToString). |
 | NewExpression for constructible runtime intrinsics (e.g., Date, Int32Array) | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js)<br>[`Int32Array_Construct_Length.js`](../../../Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js) | Supported in the new IR pipeline for global (non-shadowed) intrinsic identifiers registered in JavaScriptRuntime.IntrinsicObjectRegistry that are constructible classes. Currently limited to 0–2 constructor arguments. |
-| NewExpression for user-defined classes (new Ctor(...)) | Supported | [`Classes_DeclareEmptyClass.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`Classes_ClassConstructor_WithMultipleParameters.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js) | User-defined classes are lowered to direct CLR construction of the generated type, including scope-array wiring for closures in constructors/methods. Spread arguments in `new` are not supported. `new.target` semantics are not implemented. |
+| NewExpression for user-defined classes (new Ctor(...)) | Supported | [`Classes_DeclareEmptyClass.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`Classes_ClassConstructor_WithMultipleParameters.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js) | User-defined classes are lowered to direct CLR construction of the generated type, including scope-array wiring for closures in constructors/methods. Spread arguments in `new` are not supported. |
 | NewExpression where the constructor is a runtime value (new valueCtor(...)) | Supported |  | When the constructor is not statically known, JS2IL lowers to a runtime dispatch (`JavaScriptRuntime.Object.ConstructValue`) by packing arguments into an object[]. Spread arguments in `new` are not supported. |
 
 ### 13.3.6 ([tc39.es](https://tc39.es/ecma262/#sec-function-calls))
@@ -83,7 +83,7 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | super.m(...) base method calls | Supported | [`Classes_Inheritance_SuperMethodCall.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js)<br>[`Async_Inheritance_SuperAsyncMethod.js`](../../../Js2IL.Tests/Async/JavaScript/Async_Inheritance_SuperAsyncMethod.js)<br>[`Generator_Inheritance_SuperIteratorMethod.js`](../../../Js2IL.Tests/Generator/JavaScript/Generator_Inheritance_SuperIteratorMethod.js) | Supported only for the base-method call form. Property reads/writes like `super.x` / `super[x]` are not yet supported. |
-| super(...) calls base constructor in derived constructors | Supported | [`Classes_Inheritance_SuperConstructor_Args.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js) | Supported for derived class constructors. `new.target` and other meta-property semantics are not implemented. |
+| super(...) calls base constructor in derived constructors | Supported | [`Classes_Inheritance_SuperConstructor_Args.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js) | Supported for derived class constructors. |
 | Using this before super throws ReferenceError in derived constructors | Supported | [`Classes_Inheritance_ThisBeforeSuper_Throws.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js) |  |
 
 ### 13.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-argument-lists))
@@ -97,4 +97,11 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Optional chaining (?.) for property/index access and calls | Supported with Limitations | [`BinaryOperator_OptionalChaining_PropertyAccess.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_PropertyAccess.js)<br>[`BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit.js) | Implements nullish short-circuiting for optional member access (identifier + computed) and optional calls, including skipping evaluation of computed keys / call arguments when the base/callee is nullish. Optional chaining on private fields and other less common forms may be incomplete. |
+
+### 13.3.12 ([tc39.es](https://tc39.es/ecma262/#sec-meta-properties))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| import.meta host object (CommonJS limitation) | Supported with Limitations | [`CommonJS_ImportMeta_Basic.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_ImportMeta_Basic.js) | CommonJS-hosted scripts expose a host-defined import.meta object with stable identity per module URL/path key and a `url` property when available. This is not full ESM module-record semantics. |
+| new.target in function/constructor call paths | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js) | `new.target` is propagated through function call/new invocation ABI. Normal calls observe undefined; constructor calls observe a defined newTarget value. Arrow functions capture lexical newTarget. |
 

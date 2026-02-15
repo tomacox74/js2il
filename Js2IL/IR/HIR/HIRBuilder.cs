@@ -1518,13 +1518,18 @@ class HIRMethodBuilder
                 return true;
 
             case MetaProperty metaProp:
-                // Handle new.target (import.meta not yet supported due to CommonJS limitation)
+                // Handle MetaProperty forms used by js2il.
                 if (metaProp.Meta.Name == "new" && metaProp.Property.Name == "target")
                 {
                     hirExpr = new HIRNewTargetExpression();
                     return true;
                 }
-                // Validation should have caught unsupported meta properties
+                if (metaProp.Meta.Name == "import" && metaProp.Property.Name == "meta")
+                {
+                    hirExpr = new HIRImportMetaExpression();
+                    return true;
+                }
+                // Validation should have caught unsupported meta properties.
                 return false;
 
             case TemplateLiteral templateLiteral:

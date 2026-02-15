@@ -834,6 +834,9 @@ internal sealed partial class LIRToILCompiler
                     // Load scopes array
                     EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
 
+                    // Normal function call path: new.target is undefined.
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+
                     // Load all arguments
                     for (int i = 0; i < argsToPass; i++)
                     {
@@ -1273,10 +1276,67 @@ internal sealed partial class LIRToILCompiler
                 // Static functions: scopes is arg0. Instance constructors: scopes is arg1.
                 ilEncoder.LoadArgument(methodDescriptor.IsStatic ? 0 : 1);
                 return true;
+            case LIRLoadNewTarget:
+                if (!methodDescriptor.HasNewTargetParameter)
+                {
+                    throw new InvalidOperationException("Cannot emit new.target when method has no newTarget parameter");
+                }
+                // newTarget follows scopes for static functions and instance callables that carry scopes.
+                // Static functions: arg1. Instance: arg2 when scopes exists; otherwise arg1.
+                if (methodDescriptor.IsStatic)
+                {
+                    ilEncoder.LoadArgument(1);
+                }
+                else
+                {
+                    ilEncoder.LoadArgument(methodDescriptor.HasScopesParameter ? 2 : 1);
+                }
+                return true;
             case LIRLoadParameter loadParam:
                 // Emit ldarg.X inline - no local slot needed
                 int ilArgIndex = GetIlArgIndexForJsParameter(methodDescriptor, loadParam.ParameterIndex);
                 ilEncoder.LoadArgument(ilArgIndex);
+                return true;
+            case LIRCallRuntimeServicesStatic callRuntimeServices:
+                foreach (var arg in callRuntimeServices.Arguments)
+                {
+                    EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+
+                    if (GetTempStorage(arg) is { } storage
+                        && storage.Kind == ValueStorageKind.UnboxedValue
+                        && storage.ClrType != null)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Box);
+                        if (storage.ClrType == typeof(double))
+                        {
+                            ilEncoder.Token(_bclReferences.DoubleType);
+                        }
+                        else if (storage.ClrType == typeof(bool))
+                        {
+                            ilEncoder.Token(_bclReferences.BooleanType);
+                        }
+                        else if (storage.ClrType == typeof(int))
+                        {
+                            ilEncoder.Token(_bclReferences.Int32Type);
+                        }
+                        else
+                        {
+                            throw new NotSupportedException($"Unsupported unboxed type for RuntimeServices call: {storage.ClrType}");
+                        }
+                    }
+                }
+
+                ilEncoder.OpCode(ILOpCode.Call);
+                var paramTypes = new Type[callRuntimeServices.Arguments.Count];
+                for (int i = 0; i < paramTypes.Length; i++)
+                {
+                    paramTypes[i] = typeof(object);
+                }
+                var methodRef = _memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.RuntimeServices),
+                    callRuntimeServices.MethodName,
+                    paramTypes);
+                ilEncoder.Token(methodRef);
                 return true;
             case LIRConvertToObject convertToObject:
                 // ConvertToObject is only meaningful for unboxed value types.

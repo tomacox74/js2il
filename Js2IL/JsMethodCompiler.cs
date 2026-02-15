@@ -396,7 +396,8 @@ internal sealed class JsMethodCompiler
 
         // Add new.target parameter for functions
         // (always present for user-defined functions, follows scopes)
-        if (hasScopesParameter)
+        var hasNewTargetParameter = callableKind == ScopesCallableKind.Function && hasScopesParameter;
+        if (hasNewTargetParameter)
         {
             parameters.Add(new MethodParameterDescriptor("newTarget", typeof(object)));
         }
@@ -415,6 +416,7 @@ internal sealed class JsMethodCompiler
         {
             IsStatic = !isInstanceMethod,
             HasScopesParameter = hasScopesParameter,
+            HasNewTargetParameter = hasNewTargetParameter,
             ReturnsVoid = returnsVoid,
             ReturnClrType = returnsVoid
                 ? typeof(void)

@@ -163,7 +163,7 @@ namespace JavaScriptRuntime
             var previousThis = RuntimeServices.SetCurrentThis(instance);
             try
             {
-                var result = Closure.InvokeWithArgs(constructor, System.Array.Empty<object>(), callArgs);
+                var result = Closure.InvokeWithArgsWithNewTarget(constructor, System.Array.Empty<object>(), constructor, callArgs);
                 return TypeUtilities.IsConstructorReturnOverride(result) ? result : instance;
             }
             finally

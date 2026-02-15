@@ -207,6 +207,7 @@ public sealed partial class HIRToLIRLowerer
             case HIRVariableExpression:
             case HIRThisExpression:
             case HIRNewTargetExpression:
+            case HIRImportMetaExpression:
             case HIRSuperExpression:
             case HIRScopesArrayExpression:
             case HIRUserClassTypeExpression:
