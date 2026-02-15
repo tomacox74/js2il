@@ -10,7 +10,7 @@ Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, 
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 13.3 | Left-Hand-Side Expressions | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions) |
+| 13.3 | Left-Hand-Side Expressions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions) |
 
 ## Subclauses
 
