@@ -1566,6 +1566,45 @@ class HIRMethodBuilder
                     return true;
                 }
 
+            case TaggedTemplateExpression taggedTemplate:
+                {
+                    // Parse the tag expression (function to call)
+                    if (!TryParseExpression(taggedTemplate.Tag, out var tagExpr))
+                    {
+                        return false;
+                    }
+
+                    // Parse the template literal with raw strings
+                    var templateLiteral = taggedTemplate.Quasi;
+                    
+                    var quasis = new List<string>(templateLiteral.Quasis.Count);
+                    var rawQuasis = new List<string>(templateLiteral.Quasis.Count);
+                    
+                    foreach (var quasi in templateLiteral.Quasis)
+                    {
+                        var val = quasi.Value;
+                        // Cooked strings (with escape sequences processed)
+                        quasis.Add(val.Cooked ?? val.Raw ?? string.Empty);
+                        // Raw strings (escape sequences not processed)
+                        rawQuasis.Add(val.Raw ?? string.Empty);
+                    }
+
+                    var expressions = new List<HIRExpression>(templateLiteral.Expressions.Count);
+                    foreach (var exprNode in templateLiteral.Expressions)
+                    {
+                        if (!TryParseExpression(exprNode, out var parsedExpr))
+                        {
+                            return false;
+                        }
+                        expressions.Add(parsedExpr!);
+                    }
+
+                    var template = new HIRTemplateLiteralExpression(quasis, expressions, rawQuasis);
+                    var location = SourceLocation.FromNode(taggedTemplate);
+                    hirExpr = new HIRTaggedTemplateExpression(tagExpr!, template, location);
+                    return true;
+                }
+
             case ConditionalExpression conditionalExpr:
                 // Handle conditional (ternary) expressions: test ? consequent : alternate
                 if (!TryParseExpression(conditionalExpr.Test, out var testExpr) ||
@@ -1641,6 +1680,16 @@ class HIRMethodBuilder
                 }
 
                 hirExpr = new HIRCallExpression(calleeExpr!, argExprs);
+                return true;
+
+            case ImportExpression importExpr:
+                // Dynamic import() - validated to have string literal specifier
+                if (!TryParseExpression(importExpr.Source, out var specifierExpr) || specifierExpr == null)
+                {
+                    return false;
+                }
+                
+                hirExpr = new HIRImportExpression(specifierExpr);
                 return true;
 
             case NewExpression newExpr:

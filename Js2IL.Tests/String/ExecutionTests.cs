@@ -106,5 +106,29 @@ namespace Js2IL.Tests.String
         {
             return ExecutionTest(nameof(String_ToLowerCase_ToUpperCase_Basic));
         }
+
+        [Fact]
+        public Task String_TaggedTemplate_Basic()
+        {
+            return ExecutionTest(nameof(String_TaggedTemplate_Basic));
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_RawStrings()
+        {
+            return ExecutionTest(nameof(String_TaggedTemplate_RawStrings));
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_EvaluationOrder()
+        {
+            return ExecutionTest(nameof(String_TaggedTemplate_EvaluationOrder));
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_NoSubstitutions()
+        {
+            return ExecutionTest(nameof(String_TaggedTemplate_NoSubstitutions));
+        }
     }
 }

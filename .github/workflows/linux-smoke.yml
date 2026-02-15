@@ -95,7 +95,7 @@ jobs:
       - name: Build and run Hosting.Domino sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:JavaScriptRuntimePackageVersion="$TOOL_VERSION")
+          output=$(dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:JavaScriptRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
           echo "$output" | grep -i "title=JS2IL Domino Sample"
@@ -104,7 +104,7 @@ jobs:
       - name: Build and run Hosting.Basic sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:JavaScriptRuntimePackageVersion="$TOOL_VERSION")
+          output=$(dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:JavaScriptRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
           echo "$output" | grep "version="
@@ -113,7 +113,7 @@ jobs:
       - name: Build and run Hosting.Typed sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:JavaScriptRuntimePackageVersion="$TOOL_VERSION")
+          output=$(dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:JavaScriptRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
           echo "$output" | grep "version="

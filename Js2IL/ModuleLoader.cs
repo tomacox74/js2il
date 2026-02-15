@@ -506,6 +506,7 @@ public class ModuleLoader
 
         _parser.VisitAst(module.Ast, node =>
         {
+            // Handle require() calls
             if (node is Acornima.Ast.CallExpression callExpr)
             {
                 if (callExpr.Callee is Acornima.Ast.Identifier identifier)
@@ -528,6 +529,16 @@ public class ModuleLoader
                     }
                 }
             }
+            
+            // Handle import() expressions
+            if (node is Acornima.Ast.ImportExpression importExpr)
+            {
+                // Validation ensures Source is a StringLiteral
+                if (importExpr.Source is Acornima.Ast.Literal lit && lit.Value is string specifier)
+                {
+                    dependencies.Add(specifier);
+                }
+            }
         });
 
         return dependencies;
@@ -541,6 +552,7 @@ public class ModuleLoader
         {
             _parser.VisitAst(module.Ast, node =>
             {
+                // Handle require() calls
                 if (node is Acornima.Ast.CallExpression callExpr)
                 {
                     if (callExpr.Callee is Acornima.Ast.Identifier identifier)
@@ -552,6 +564,15 @@ public class ModuleLoader
                                 dependencies.Add(strLiteral.Value);
                             }
                         }
+                    }
+                }
+                
+                // Handle import() expressions
+                if (node is Acornima.Ast.ImportExpression importExpr)
+                {
+                    if (importExpr.Source is Acornima.Ast.Literal lit && lit.Value is string specifier)
+                    {
+                        dependencies.Add(specifier);
                     }
                 }
             });

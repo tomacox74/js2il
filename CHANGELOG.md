@@ -5,9 +5,21 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - IR/runtime: implement ECMA-262 meta properties with CommonJS-hosted semantics — `new.target` (function call/new plumbing + lexical arrow inheritance) and `import.meta` (host object with stable identity and `url` when available), with execution/generator coverage (closes #612).
+- IR/Runtime/spec: implement tagged template expressions (ECMA-262 §13.3.11) with template object caching, cooked/raw string arrays, and correct evaluation order (fixes #611).
 - Runtime/spec: complete object literal spread semantics by copying enumerable own properties (including symbol-keyed properties) and add execution + generator coverage for multiple spreads, cloning, empty objects, nested spreads, and non-enumerable filtering (fixes #593).
 - IR/runtime: complete spread in array literals (mixed elements + multiple spreads) using iterator-protocol semantics and add execution + generator coverage (fixes #592).
 - IR/runtime: support spread elements in CallExpression argument lists (e.g., `f(...arr)`, `f(1, ...arr, 2)`) with iterator-protocol semantics and add execution + generator coverage (fixes #591).
+
+## v0.8.11 - 2026-02-15
+
+- **Dynamic import() expressions (ECMA-262 §13.3.10)**: Add initial `import(specifier)` support for dynamic module loading.
+  - Returns a Promise that resolves to CommonJS module.exports
+  - Only string literal specifiers are supported (compile-time dependency discovery)
+  - Non-literal specifiers are allowed (may require explicit module inclusion at compile time)
+  - Rejects options parameter during validation
+  - Uses existing CommonJS module loader for synchronous resolution
+  - New runtime: `JavaScriptRuntime.CommonJS.DynamicImport.Import()`
+  - New compiler infrastructure: `HIRImportExpression`, `LIRCallImport`
 
 ## v0.8.10 - 2026-02-13
 

@@ -124,6 +124,13 @@ public record LIRCallFunctionValue(TempVariable FunctionValue, TempVariable Scop
 public record LIRCallRequire(TempVariable RequireValue, TempVariable ModuleId, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls the runtime dynamic import function to load a module and return a Promise.
+/// The module specifier must be a string (validated during AST validation).
+/// Emits: call JavaScriptRuntime.CommonJS.DynamicImport(object moduleIdOrPath, object currentModuleId)
+/// </summary>
+public record LIRCallImport(TempVariable ModuleSpecifier, TempVariable CurrentModuleId, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Calls a member method on a receiver via runtime dispatch.
 /// This is used for method calls where the receiver type is not known at compile time,
 /// e.g., `x.join(',')` when `x` is boxed as object.

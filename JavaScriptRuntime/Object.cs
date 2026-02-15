@@ -2239,10 +2239,27 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            // Typed arrays: store when in-bounds (non-boxing).
+            // Typed arrays: only use element write path if index is finite, integer, and in-bounds.
+            // Otherwise treat as no-op (typed arrays do not store non-integer-index properties).
             if (obj is Int32Array i32)
             {
-                i32.SetFromDouble(intIndex, value);
+                // Check if index is a valid integer index
+                if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
+                {
+                    // Validate index is within int32 range before casting
+                    if (index >= 0 && index <= int.MaxValue)
+                    {
+                        int i32Index = (int)index;
+                        // Only write if in bounds [0, length)
+                        if (i32Index < (int)i32.length)
+                        {
+                            i32.SetFromDouble(i32Index, value);
+                        }
+                        // Out-of-bounds: no-op (typed arrays don't expand)
+                    }
+                    // Negative or too large: no-op
+                }
+                // NaN/Infinity/fractional: no-op (do not treat as element 0 or property)
                 return value;
             }
 

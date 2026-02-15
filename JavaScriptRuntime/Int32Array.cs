@@ -82,15 +82,34 @@ namespace JavaScriptRuntime
         {
             get
             {
-                int i = SafeToInt(index);
-                if ((uint)i >= (uint)_buffer.Length) return 0.0; // out-of-bounds reads return 0 as a JS number
-                return (double)_buffer[i];
+                // Only use element path for finite integer indices
+                if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
+                {
+                    // Validate index is within int32 range before casting
+                    if (index >= 0 && index <= int.MaxValue)
+                    {
+                        int i = (int)index;
+                        if ((uint)i >= (uint)_buffer.Length) return 0.0; // out-of-bounds reads return 0 as a JS number
+                        return (double)_buffer[i];
+                    }
+                }
+                // NaN/Infinity/fractional/out-of-range: return undefined (0.0 in our model)
+                return 0.0;
             }
             set
             {
-                int i = SafeToInt(index);
-                if ((uint)i >= (uint)_buffer.Length) return; // ignore out-of-bounds sets
-                _buffer[i] = ToInt32(value);
+                // Only use element path for finite integer indices
+                if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
+                {
+                    // Validate index is within int32 range before casting
+                    if (index >= 0 && index <= int.MaxValue)
+                    {
+                        int i = (int)index;
+                        if ((uint)i >= (uint)_buffer.Length) return; // ignore out-of-bounds sets
+                        _buffer[i] = ToInt32(value);
+                    }
+                }
+                // NaN/Infinity/fractional/out-of-range: no-op
             }
         }
 
@@ -174,7 +193,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        // Approximate JS ToInt32 semantics: NaN/±0/±∞ => 0; otherwise truncate toward zero and clamp to int range.
+        // JS ToInt32 semantics: wrapping semantics per ECMAScript spec (mod 2^32 then interpret as signed).
         private static int ToInt32(object o)
         {
             if (!TryToNumber(o, out var d)) return 0;
@@ -184,14 +203,25 @@ namespace JavaScriptRuntime
         private static int ToInt32(double d)
         {
             if (double.IsNaN(d) || double.IsInfinity(d) || d == 0.0) return 0;
-            // Truncate toward zero
-            try
+            
+            // ECMAScript ToInt32: 
+            // 1. Let int be the mathematical value that is the same sign as number and whose magnitude is floor(abs(number))
+            // 2. Let int32bit be int modulo 2^32
+            // 3. If int32bit >= 2^31, return int32bit - 2^32; otherwise return int32bit
+            
+            // Truncate toward zero to get integer value
+            double posInt = System.Math.Truncate(d);
+            
+            // Modulo 2^32
+            double int32bit = posInt % 4294967296.0; // 2^32
+            if (int32bit < 0) int32bit += 4294967296.0; // ensure positive
+            
+            // Convert to signed int32: if >= 2^31, subtract 2^32
+            if (int32bit >= 2147483648.0) // 2^31
             {
-                if (d > int.MaxValue) return int.MaxValue;
-                if (d < int.MinValue) return int.MinValue;
-                return (int)d;
+                return (int)(int32bit - 4294967296.0);
             }
-            catch { return 0; }
+            return (int)int32bit;
         }
 
         private static int SafeToInt(object o)

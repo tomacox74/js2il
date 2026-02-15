@@ -1,0 +1,125 @@
+name: windows-smoke
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full history to read tags for determining the latest release version
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Determine js2il tool version
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tag = (git tag --sort=-v:refname | Select-Object -First 1)
+          if (-not $tag) { throw 'No git tags found; cannot determine tool version.' }
+          $version = $tag.TrimStart('v')
+          "Using tool version: $version" | Write-Output
+          "TOOL_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Install js2il tool from NuGet (specific version with retry)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          "${env:USERPROFILE}\.dotnet\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+          $tries = 20
+          $delaySeconds = 30
+
+          for ($i = 1; $i -le $tries; $i++) {
+            dotnet tool install --global js2il --version $env:TOOL_VERSION
+            if ($LASTEXITCODE -eq 0) {
+              "Installed js2il $env:TOOL_VERSION" | Write-Output
+              exit 0
+            }
+
+            "Attempt $i/${tries}: js2il $env:TOOL_VERSION not available yet on NuGet; waiting ${delaySeconds}s..." | Write-Output
+            Start-Sleep -Seconds $delaySeconds
+          }
+
+          throw "Failed to install js2il $env:TOOL_VERSION from NuGet after $tries attempts"
+
+      - name: Show js2il version
+        shell: pwsh
+        run: |
+          # Older previews may not support --version; fall back to help
+          js2il --version
+          if ($LASTEXITCODE -ne 0) { js2il -h | Out-Null }
+
+      - name: Convert tests/simple.js to IL
+        shell: pwsh
+        run: js2il tests/simple.js -o out
+
+      - name: Run generated assembly and verify output
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $output = dotnet out/simple.dll 2>&1
+          if ($LASTEXITCODE -ne 0) { $output; exit 1 }
+          "Program output:" | Write-Output
+          $output | Write-Output
+          if ($output -notmatch 'x is') {
+            throw "Smoke test failed: expected output containing 'x is'"
+          }
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build and run Hosting.Domino sample
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $output = dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:JavaScriptRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          if ($LASTEXITCODE -ne 0) { $output; exit 1 }
+          "Program output:" | Write-Output
+          $output | Write-Output
+          if ($output -notmatch 'title=JS2IL Domino Sample') { throw 'Expected output containing title=JS2IL Domino Sample' }
+          if ($output -notmatch 'links=2') { throw 'Expected output containing links=2' }
+
+      - name: Build and run Hosting.Basic sample
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $output = dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:JavaScriptRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          if ($LASTEXITCODE -ne 0) { $output; exit 1 }
+          "Program output:" | Write-Output
+          $output | Write-Output
+          if ($output -notmatch 'version=') { throw 'Expected output containing version=' }
+          if ($output -notmatch '1\+2=') { throw 'Expected output containing 1+2=' }
+
+      - name: Build and run Hosting.Typed sample
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $output = dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:JavaScriptRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          if ($LASTEXITCODE -ne 0) { $output; exit 1 }
+          "Program output:" | Write-Output
+          $output | Write-Output
+          if ($output -notmatch 'version=') { throw 'Expected output containing version=' }
+          if ($output -notmatch 'add\(1,2\)=') { throw 'Expected output containing add(1,2)=' }
+          if ($output -notmatch 'counter\.add\(5\)=') { throw 'Expected output containing counter.add(5)=' }
+          if ($output -notmatch 'counter\.value=') { throw 'Expected output containing counter.value=' }
+          if ($output -notmatch 'addAsync\(1,2\)=') { throw 'Expected output containing addAsync(1,2)=' }
+          if ($output -notmatch 'created\.add\(1\)=') { throw 'Expected output containing created.add(1)=' }

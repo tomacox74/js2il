@@ -246,6 +246,14 @@ public sealed partial class HIRToLIRLowerer
                 }
                 return true;
 
+            case HIRImportExpression importExpr:
+                if (!TryLowerImportExpression(importExpr, out resultTempVar))
+                {
+                    IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering ImportExpression");
+                    return false;
+                }
+                return true;
+
             case HIRNewExpression newExpr:
                 if (!TryLowerNewExpression(newExpr, out resultTempVar))
                 {
@@ -259,6 +267,14 @@ public sealed partial class HIRToLIRLowerer
 
             case HIRUpdateExpression updateExpr:
                 return TryLowerUpdateExpression(updateExpr, out resultTempVar);
+
+            case HIRTaggedTemplateExpression taggedTemplateExpr:
+                if (!TryLowerTaggedTemplateExpression(taggedTemplateExpr, out resultTempVar))
+                {
+                    IRPipelineMetrics.RecordFailure("HIR->LIR: failed lowering TaggedTemplateExpression");
+                    return false;
+                }
+                return true;
 
             case HIRTemplateLiteralExpression templateLiteral:
                 if (!TryLowerTemplateLiteralExpression(templateLiteral, out resultTempVar))
@@ -759,6 +775,117 @@ public sealed partial class HIRToLIRLowerer
 
         resultTempVar = current;
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        return true;
+    }
+
+    private bool TryLowerTaggedTemplateExpression(HIRTaggedTemplateExpression taggedTemplate, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        var template = taggedTemplate.Template;
+        var quasis = template.Quasis;
+        var rawQuasis = template.RawQuasis;
+        var exprs = template.Expressions;
+
+        // 1. Evaluate the tag expression
+        if (!TryLowerExpression(taggedTemplate.Tag, out var tagTemp))
+        {
+            return false;
+        }
+
+        // 2. Create the template object (cooked + raw strings)
+        var scopeName = _scope?.GetQualifiedName() ?? "UnknownScope";
+        var callSiteId = taggedTemplate.Location is { } location
+            ? $"{scopeName}:TaggedTemplate_{location}"
+            : $"{scopeName}:TaggedTemplate";
+        
+        // Create cooked strings array
+        var cookedStringTemps = new List<TempVariable>();
+        for (int i = 0; i < quasis.Count; i++)
+        {
+            var stringTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(quasis[i], stringTemp));
+            DefineTempStorage(stringTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            cookedStringTemps.Add(stringTemp);
+        }
+
+        var cookedArrayTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBuildArray(cookedStringTemps, cookedArrayTemp));
+        DefineTempStorage(cookedArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        // Create raw strings array (rawQuasis has same length as quasis when present)
+        var rawStringTemps = new List<TempVariable>();
+        var rawArrayCount = quasis.Count;
+        for (int i = 0; i < rawArrayCount; i++)
+        {
+            var rawString = rawQuasis?[i] ?? quasis[i];
+            var stringTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(rawString, stringTemp));
+            DefineTempStorage(stringTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            rawStringTemps.Add(stringTemp);
+        }
+
+        var rawArrayTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBuildArray(rawStringTemps, rawArrayTemp));
+        DefineTempStorage(rawArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        // Call RuntimeServices.CreateTemplateObject
+        var callSiteIdTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(callSiteId, callSiteIdTemp));
+        DefineTempStorage(callSiteIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+        var templateObjectTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.CreateTemplateObject),
+            new[] { callSiteIdTemp, cookedArrayTemp, rawArrayTemp },
+            templateObjectTemp));
+        DefineTempStorage(templateObjectTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+
+        // 3. Evaluate substitution expressions left-to-right
+        var substitutionTemps = new List<TempVariable>();
+        foreach (var expr in exprs)
+        {
+            if (!TryLowerExpression(expr, out var exprTemp))
+            {
+                return false;
+            }
+            // Ensure substitution temps are object-compatible
+            var objectTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConvertToObject(exprTemp, typeof(object), objectTemp));
+            DefineTempStorage(objectTemp, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+            substitutionTemps.Add(objectTemp);
+        }
+
+        // 4. Build arguments array: [templateObject, ...substitutions]
+        var allArgTemps = new List<TempVariable> { templateObjectTemp };
+        allArgTemps.AddRange(substitutionTemps);
+
+        var argsArrayTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBuildArray(allArgTemps, argsArrayTemp));
+        DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        // 5. Call the tag function with the arguments
+        // Need to get the scopes array for the current context
+        var scopesArrayTemp = CreateTempVariable();
+        if (_callableKind is Services.ScopesAbi.CallableKind.Function)
+        {
+            // Load scopes from parameter
+            _methodBodyIR.Instructions.Add(new LIRLoadScopesArgument(scopesArrayTemp));
+            DefineTempStorage(scopesArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        }
+        else
+        {
+            // No scopes available (e.g., in ModuleMain or class methods) - create empty array
+            var emptyList = new List<TempVariable>();
+            _methodBodyIR.Instructions.Add(new LIRBuildArray(emptyList, scopesArrayTemp));
+            DefineTempStorage(scopesArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        }
+
+        var callResultTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(tagTemp, scopesArrayTemp, argsArrayTemp, callResultTemp));
+        DefineTempStorage(callResultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        resultTempVar = callResultTemp;
         return true;
     }
 

@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <ModuleName>HostedCounterModule</ModuleName>
-    <JavaScriptFile>$(MSBuildThisFileDirectory)JavaScript\HostedCounterModule.js</JavaScriptFile>
-    <OutputDir>$(MSBuildThisFileDirectory)out</OutputDir>
+    <JavaScriptFile>$([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)','JavaScript','HostedCounterModule.js'))</JavaScriptFile>
+    <OutputDir>$([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)','out'))</OutputDir>
 
-    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\'))</RepoRoot>
-    <LocalJs2ILProject>$(RepoRoot)Js2IL\Js2IL.csproj</LocalJs2ILProject>
+    <RepoRoot>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)','..','..','..'))))</RepoRoot>
+    <LocalJs2ILProject>$([System.IO.Path]::Combine('$(RepoRoot)','Js2IL','Js2IL.csproj'))</LocalJs2ILProject>
 
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJs2ILProject)')">true</UseLocalJs2ILProject>
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And !Exists('$(LocalJs2ILProject)')">false</UseLocalJs2ILProject>
