@@ -1,5 +1,6 @@
 using JavaScriptRuntime.DependencyInjection;
 using System;
+using System.Collections.Concurrent;
 
 namespace JavaScriptRuntime;
 
@@ -7,6 +8,7 @@ public class RuntimeServices
 {
     private static readonly System.Threading.AsyncLocal<object?> _currentThis = new();
     private static readonly System.Threading.AsyncLocal<object?[]?> _currentArguments = new();
+    private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
 
     public static object? GetCurrentThis()
     {
@@ -83,6 +85,33 @@ public class RuntimeServices
         var restArgs = new object?[args.Length - startIndex];
         System.Array.Copy(args, startIndex, restArgs, 0, restArgs.Length);
         return new Array(restArgs);
+    }
+
+    /// <summary>
+    /// Registers a module-scoped require delegate by module id/filename.
+    /// Used by dynamic import() to resolve the module loading context.
+    /// </summary>
+    public static void RegisterModuleRequire(string moduleId, CommonJS.RequireDelegate require)
+    {
+        if (string.IsNullOrWhiteSpace(moduleId) || require == null)
+        {
+            return;
+        }
+
+        _requireByModuleId[moduleId] = require;
+    }
+
+    /// <summary>
+    /// Resolves a previously-registered module-scoped require delegate.
+    /// </summary>
+    public static CommonJS.RequireDelegate? GetRequireForModule(string? moduleId)
+    {
+        if (string.IsNullOrWhiteSpace(moduleId))
+        {
+            return null;
+        }
+
+        return _requireByModuleId.TryGetValue(moduleId, out var require) ? require : null;
     }
 
     /// <summary>

@@ -546,6 +546,8 @@ internal static class Stackify
 
             // LIRCallRequire is a direct callvirt to RequireDelegate and must never be inlined/re-emitted.
             case LIRCallRequire:
+            // LIRCallImport is a direct call to DynamicImport.Import and must never be inlined/re-emitted.
+            case LIRCallImport:
                 return false;
 
             // LIRCallMember calls a member via runtime dispatcher.
@@ -819,6 +821,10 @@ internal static class Stackify
 
             case LIRCallRequire:
                 // requireValue + moduleId -> result
+                return (2, 1);
+
+            case LIRCallImport:
+                // specifier + currentModuleId -> result
                 return (2, 1);
 
             case LIRCallMember:

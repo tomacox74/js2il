@@ -435,6 +435,11 @@ internal static class TempLocalAllocator
                 yield return callRequire.ModuleId;
                 break;
 
+            case LIRCallImport callImport:
+                yield return callImport.ModuleSpecifier;
+                yield return callImport.CurrentModuleId;
+                break;
+
             case LIRConstructValue constructValue:
                 yield return constructValue.ConstructorValue;
                 yield return constructValue.ArgumentsArray;
@@ -906,6 +911,10 @@ internal static class TempLocalAllocator
 
             case LIRCallRequire callRequire:
                 defined = callRequire.Result;
+                return true;
+
+            case LIRCallImport callImport:
+                defined = callImport.Result;
                 return true;
 
             case LIRCallMember callMember:

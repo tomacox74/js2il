@@ -192,6 +192,14 @@ public sealed partial class HIRToLIRLowerer
                 }
                 return true;
 
+            case HIRImportExpression importExpr:
+                if (!TryLowerImportExpression(importExpr, out resultTempVar))
+                {
+                    IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering ImportExpression");
+                    return false;
+                }
+                return true;
+
             case HIRNewExpression newExpr:
                 if (!TryLowerNewExpression(newExpr, out resultTempVar))
                 {

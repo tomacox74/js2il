@@ -213,6 +213,8 @@ namespace JavaScriptRuntime.CommonJS
                 JavaScriptRuntime.Object.SetProperty(moduleRequire, "main", _mainModule);
             }
 
+            RuntimeServices.RegisterModuleRequire(canonicalId, moduleRequire);
+
             var dirName = GetDirectoryNameForwardSlash(canonicalId);
             var module = new Module(canonicalId, canonicalId, parentModule, moduleRequire);
             _modules[cacheKey] = module;

@@ -9,6 +9,17 @@ All notable changes to this project are documented here.
 - IR/runtime: complete spread in array literals (mixed elements + multiple spreads) using iterator-protocol semantics and add execution + generator coverage (fixes #592).
 - IR/runtime: support spread elements in CallExpression argument lists (e.g., `f(...arr)`, `f(1, ...arr, 2)`) with iterator-protocol semantics and add execution + generator coverage (fixes #591).
 
+## v0.8.11 - 2026-02-15
+
+- **Dynamic import() expressions (ECMA-262 §13.3.10)**: Add initial `import(specifier)` support for dynamic module loading.
+  - Returns a Promise that resolves to CommonJS module.exports
+  - Only string literal specifiers are supported (compile-time dependency discovery)
+  - Non-literal specifiers are allowed (may require explicit module inclusion at compile time)
+  - Rejects options parameter during validation
+  - Uses existing CommonJS module loader for synchronous resolution
+  - New runtime: `JavaScriptRuntime.CommonJS.DynamicImport.Import()`
+  - New compiler infrastructure: `HIRImportExpression`, `LIRCallImport`
+
 ## v0.8.10 - 2026-02-13
 
 - IL/Performance: stackify typed numeric arithmetic ops (`LIR*Number`) when operands are inlineable, reducing temp-local materialization and emitted IL noise in arithmetic-heavy code.

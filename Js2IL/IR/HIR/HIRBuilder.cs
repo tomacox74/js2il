@@ -1666,6 +1666,16 @@ class HIRMethodBuilder
                 hirExpr = new HIRCallExpression(calleeExpr!, argExprs);
                 return true;
 
+            case ImportExpression importExpr:
+                // Dynamic import() - validated to have string literal specifier
+                if (!TryParseExpression(importExpr.Source, out var specifierExpr) || specifierExpr == null)
+                {
+                    return false;
+                }
+                
+                hirExpr = new HIRImportExpression(specifierExpr);
+                return true;
+
             case NewExpression newExpr:
                 // PL3.3: NewExpression support in IR pipeline.
                 // - PL3.3a: built-in Error types

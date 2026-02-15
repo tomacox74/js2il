@@ -139,26 +139,48 @@
     {
       "clause": "13.3.10",
       "title": "Import Calls",
-      "status": "Not Yet Supported",
-      "specUrl": "https://tc39.es/ecma262/#sec-import-calls"
+      "status": "Supported with Limitations",
+      "specUrl": "https://tc39.es/ecma262/#sec-import-calls",
+      "support": {
+        "entries": [
+          {
+            "feature": "import(specifier) with string literal",
+            "status": "Supported",
+            "notes": "Dynamic import() returns a Promise that resolves to CommonJS module.exports. Only string literals are supported as specifiers (compile-time dependency discovery)."
+          },
+          {
+            "feature": "import(specifier) with non-literal expression",
+            "status": "Not Supported",
+            "notes": "Runtime-computed specifiers (e.g., import(variable)) are rejected during validation to ensure all dependencies can be resolved at compile time."
+          },
+          {
+            "feature": "import(specifier, options)",
+            "status": "Not Supported",
+            "notes": "The second options parameter is not yet supported. Using it will cause a validation error."
+          }
+        ]
+      }
     },
     {
       "clause": "13.3.10.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Not Yet Supported",
-      "specUrl": "https://tc39.es/ecma262/#sec-import-call-runtime-semantics-evaluation"
+      "status": "Supported with Limitations",
+      "specUrl": "https://tc39.es/ecma262/#sec-import-call-runtime-semantics-evaluation",
+      "notes": "Returns a Promise that uses the existing CommonJS module loader. Import semantics differ from ESM: imports return CommonJS exports object, not an ESM namespace object."
     },
     {
       "clause": "13.3.10.2",
       "title": "EvaluateImportCall ( specifierExpression [ , optionsExpression ] )",
-      "status": "Not Yet Supported",
-      "specUrl": "https://tc39.es/ecma262/#sec-evaluate-import-call"
+      "status": "Supported with Limitations",
+      "specUrl": "https://tc39.es/ecma262/#sec-evaluate-import-call",
+      "notes": "Implemented for literal string specifiers only. Options parameter is rejected during validation."
     },
     {
       "clause": "13.3.10.3",
       "title": "ContinueDynamicImport ( promiseCapability , moduleCompletion )",
-      "status": "Not Yet Supported",
-      "specUrl": "https://tc39.es/ecma262/#sec-ContinueDynamicImport"
+      "status": "Supported with Limitations",
+      "specUrl": "https://tc39.es/ecma262/#sec-ContinueDynamicImport",
+      "notes": "Promise resolution/rejection is handled synchronously using the existing CommonJS module loader. Module loading is not asynchronous."
     },
     {
       "clause": "13.3.11",
