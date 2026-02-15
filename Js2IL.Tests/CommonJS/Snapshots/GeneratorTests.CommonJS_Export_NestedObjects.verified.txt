@@ -165,7 +165,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object a,
 				object b
@@ -179,8 +178,8 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.2
-			IL_0001: ldarg.3
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
 			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0007: stloc.0
 			IL_0008: ldloc.0
@@ -217,7 +216,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object a,
 				object b
@@ -231,11 +229,11 @@
 				[0] float64
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0006: stloc.0
 			IL_0007: ldloc.0
-			IL_0008: ldarg.3
+			IL_0008: ldarg.2
 			IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_000e: mul
 			IL_000f: box [System.Runtime]System.Double
@@ -272,7 +270,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object 'value'
 			) cil managed 
@@ -286,7 +283,7 @@
 			)
 
 			IL_0000: ldstr "Num: "
-			IL_0005: ldarg.2
+			IL_0005: ldarg.1
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_000b: stloc.0
 			IL_000c: ldloc.0
@@ -341,8 +338,8 @@
 		IL_0000: newobj instance void Modules.CommonJS_Export_NestedObjects_Lib/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L9C13::__js_call__(object[], object, object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_0007: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L9C13::__js_call__(object, object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -352,8 +349,8 @@
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0021: stloc.1
 		IL_0022: ldnull
-		IL_0023: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L12C18::__js_call__(object[], object, object, object)
-		IL_0029: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_0023: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L12C18::__js_call__(object, object, object)
+		IL_0029: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
 		IL_002e: ldc.i4.1
 		IL_002f: newarr [System.Runtime]System.Object
 		IL_0034: dup
@@ -375,8 +372,8 @@
 		IL_005c: pop
 		IL_005d: stloc.3
 		IL_005e: ldnull
-		IL_005f: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19::__js_call__(object[], object, object)
-		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_005f: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19::__js_call__(object, object)
+		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_006a: ldc.i4.1
 		IL_006b: newarr [System.Runtime]System.Object
 		IL_0070: dup

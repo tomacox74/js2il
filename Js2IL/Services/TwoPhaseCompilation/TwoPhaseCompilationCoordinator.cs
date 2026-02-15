@@ -1671,6 +1671,23 @@ public sealed class TwoPhaseCompilationCoordinator
     /// </summary>
     private static bool ComputeRequiresScopesParameter(CallableId callable, SymbolTable symbolTable)
     {
+        // Resumable callables (async/generator) currently rely on scopes plumbing in leaf-scope
+        // creation and resume paths. Keep scopes parameter enabled for these callables.
+        if (callable.AstNode is FunctionDeclaration fd && (fd.Async || fd.Generator))
+        {
+            return true;
+        }
+
+        if (callable.AstNode is FunctionExpression fe && (fe.Async || fe.Generator))
+        {
+            return true;
+        }
+
+        if (callable.AstNode is ArrowFunctionExpression af && af.Async)
+        {
+            return true;
+        }
+
         // Try to find the scope for this callable
         if (callable.AstNode == null)
         {

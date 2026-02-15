@@ -35,7 +35,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object t,
 				object prop,
@@ -50,7 +49,7 @@
 				[0] bool
 			)
 
-			IL_0000: ldarg.3
+			IL_0000: ldarg.2
 			IL_0001: ldstr "a"
 			IL_0006: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_000b: stloc.0
@@ -61,8 +60,8 @@
 			IL_001b: box [System.Runtime]System.Double
 			IL_0020: ret
 
-			IL_0021: ldarg.2
-			IL_0022: ldarg.3
+			IL_0021: ldarg.1
+			IL_0022: ldarg.2
 			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0028: ret
 		} // end of method FunctionExpression_handler::__js_call__
@@ -130,8 +129,8 @@
 		IL_003e: pop
 		IL_003f: stloc.1
 		IL_0040: ldnull
-		IL_0041: ldftn object Modules.Proxy_GetTrap_OverridesProperty/FunctionExpression_handler::__js_call__(object[], object, object, object, object)
-		IL_0047: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::.ctor(object, native int)
+		IL_0041: ldftn object Modules.Proxy_GetTrap_OverridesProperty/FunctionExpression_handler::__js_call__(object, object, object, object)
+		IL_0047: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
 		IL_004c: ldc.i4.1
 		IL_004d: newarr [System.Runtime]System.Object
 		IL_0052: dup

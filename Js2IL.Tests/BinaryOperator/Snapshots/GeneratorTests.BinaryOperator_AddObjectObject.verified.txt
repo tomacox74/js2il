@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212b
+				// Method begins at RVA 0x2117
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,13 +35,12 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object a,
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x210c
+			// Method begins at RVA 0x20f8
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -49,8 +48,8 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.2
-			IL_0001: ldarg.3
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
 			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0007: stloc.0
 			IL_0008: ldloc.0
@@ -73,7 +72,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2122
+			// Method begins at RVA 0x210e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -99,7 +98,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 175 (0xaf)
+		// Code size: 155 (0x9b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_AddObjectObject/Scope,
@@ -110,8 +109,8 @@
 		IL_0000: newobj instance void Modules.BinaryOperator_AddObjectObject/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.BinaryOperator_AddObjectObject/'add'::__js_call__(object[], object, object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_0007: ldftn object Modules.BinaryOperator_AddObjectObject/'add'::__js_call__(object, object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -123,54 +122,42 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.BinaryOperator_AddObjectObject/'add'::__js_call__(object[], object, object, object)
-		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
-		IL_0030: ldc.i4.1
-		IL_0031: newarr [System.Runtime]System.Object
-		IL_0036: dup
-		IL_0037: ldc.i4.0
-		IL_0038: ldloc.0
-		IL_0039: stelem.ref
-		IL_003a: ldnull
-		IL_003b: ldc.r8 1
-		IL_0044: box [System.Runtime]System.Double
-		IL_0049: ldc.r8 2
-		IL_0052: box [System.Runtime]System.Double
-		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::Invoke(object[], object, object, object)
-		IL_005c: stloc.2
-		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0062: ldc.i4.1
-		IL_0063: newarr [System.Runtime]System.Object
-		IL_0068: dup
-		IL_0069: ldc.i4.0
-		IL_006a: ldloc.2
-		IL_006b: stelem.ref
-		IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0071: pop
-		IL_0072: ldnull
-		IL_0073: ldftn object Modules.BinaryOperator_AddObjectObject/'add'::__js_call__(object[], object, object, object)
-		IL_0079: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
-		IL_007e: ldc.i4.1
-		IL_007f: newarr [System.Runtime]System.Object
-		IL_0084: dup
-		IL_0085: ldc.i4.0
-		IL_0086: ldloc.0
-		IL_0087: stelem.ref
-		IL_0088: ldnull
-		IL_0089: ldstr "a:"
-		IL_008e: ldstr "b"
-		IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::Invoke(object[], object, object, object)
-		IL_0098: stloc.2
-		IL_0099: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009e: ldc.i4.1
-		IL_009f: newarr [System.Runtime]System.Object
-		IL_00a4: dup
-		IL_00a5: ldc.i4.0
-		IL_00a6: ldloc.2
-		IL_00a7: stelem.ref
-		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ad: pop
-		IL_00ae: ret
+		IL_0025: ldftn object Modules.BinaryOperator_AddObjectObject/'add'::__js_call__(object, object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0030: ldnull
+		IL_0031: ldc.r8 1
+		IL_003a: box [System.Runtime]System.Double
+		IL_003f: ldc.r8 2
+		IL_0048: box [System.Runtime]System.Double
+		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_0052: stloc.2
+		IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0058: ldc.i4.1
+		IL_0059: newarr [System.Runtime]System.Object
+		IL_005e: dup
+		IL_005f: ldc.i4.0
+		IL_0060: ldloc.2
+		IL_0061: stelem.ref
+		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0067: pop
+		IL_0068: ldnull
+		IL_0069: ldftn object Modules.BinaryOperator_AddObjectObject/'add'::__js_call__(object, object, object)
+		IL_006f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0074: ldnull
+		IL_0075: ldstr "a:"
+		IL_007a: ldstr "b"
+		IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_0084: stloc.2
+		IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008a: ldc.i4.1
+		IL_008b: newarr [System.Runtime]System.Object
+		IL_0090: dup
+		IL_0091: ldc.i4.0
+		IL_0092: ldloc.2
+		IL_0093: stelem.ref
+		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0099: pop
+		IL_009a: ret
 	} // end of method BinaryOperator_AddObjectObject::__js_module_init__
 
 } // end of class Modules.BinaryOperator_AddObjectObject
@@ -182,7 +169,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2134
+		// Method begins at RVA 0x2120
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

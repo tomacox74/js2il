@@ -35,7 +35,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object resolve,
 				object reject
@@ -43,7 +42,7 @@
 		{
 			// Method begins at RVA 0x20dc
 			// Header size: 12
-			// Code size: 59 (0x3b)
+			// Code size: 57 (0x39)
 			.maxstack 8
 			.locals init (
 				[0] object[]
@@ -57,21 +56,19 @@
 			IL_0011: box [System.Runtime]System.Double
 			IL_0016: stelem.ref
 			IL_0017: stloc.0
-			IL_0018: ldarg.2
+			IL_0018: ldarg.1
 			IL_0019: ldc.i4.1
 			IL_001a: newarr [System.Runtime]System.Object
 			IL_001f: dup
 			IL_0020: ldc.i4.0
-			IL_0021: ldarg.0
-			IL_0022: ldc.i4.0
-			IL_0023: ldelem.ref
-			IL_0024: stelem.ref
-			IL_0025: ldc.r8 42
-			IL_002e: box [System.Runtime]System.Double
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-			IL_0038: pop
-			IL_0039: ldnull
-			IL_003a: ret
+			IL_0021: ldnull
+			IL_0022: stelem.ref
+			IL_0023: ldc.r8 42
+			IL_002c: box [System.Runtime]System.Double
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+			IL_0036: pop
+			IL_0037: ldnull
+			IL_0038: ret
 		} // end of method thenImpl::__js_call__
 
 	} // end of class thenImpl
@@ -111,7 +108,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object 'value'
 			) cil managed 
@@ -129,7 +125,7 @@
 			IL_0006: newarr [System.Runtime]System.Object
 			IL_000b: dup
 			IL_000c: ldc.i4.0
-			IL_000d: ldarg.2
+			IL_000d: ldarg.1
 			IL_000e: stelem.ref
 			IL_000f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 			IL_0014: stloc.0
@@ -194,8 +190,8 @@
 		IL_0000: newobj instance void Modules.Promise_Thenable_Resolve_Immediate/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Promise_Thenable_Resolve_Immediate/thenImpl::__js_call__(object[], object, object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Promise_Thenable_Resolve_Immediate/thenImpl::__js_call__(object, object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -219,8 +215,8 @@
 		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
 		IL_0041: stloc.3
 		IL_0042: ldnull
-		IL_0043: ldftn object Modules.Promise_Thenable_Resolve_Immediate/ArrowFunction_L9C32::__js_call__(object[], object, object)
-		IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0043: ldftn object Modules.Promise_Thenable_Resolve_Immediate/ArrowFunction_L9C32::__js_call__(object, object)
+		IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_004e: ldc.i4.1
 		IL_004f: newarr [System.Runtime]System.Object
 		IL_0054: dup

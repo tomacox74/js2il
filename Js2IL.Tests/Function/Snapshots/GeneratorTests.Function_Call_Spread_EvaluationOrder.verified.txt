@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22a5
+				// Method begins at RVA 0x2285
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x22b7
+					// Method begins at RVA 0x2297
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -67,7 +67,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22ae
+				// Method begins at RVA 0x228e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -88,7 +88,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2184
+			// Method begins at RVA 0x2164
 			// Header size: 12
 			// Code size: 133 (0x85)
 			.maxstack 8
@@ -160,7 +160,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22c0
+				// Method begins at RVA 0x22a0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -177,12 +177,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object x
 			) cil managed 
 		{
-			// Method begins at RVA 0x2218
+			// Method begins at RVA 0x21f8
 			// Header size: 12
 			// Code size: 35 (0x23)
 			.maxstack 8
@@ -191,7 +190,7 @@
 			)
 
 			IL_0000: ldstr "eval"
-			IL_0005: ldarg.2
+			IL_0005: ldarg.1
 			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_000b: stloc.0
 			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -203,7 +202,7 @@
 			IL_001a: stelem.ref
 			IL_001b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 			IL_0020: pop
-			IL_0021: ldarg.2
+			IL_0021: ldarg.1
 			IL_0022: ret
 		} // end of method arg::__js_call__
 
@@ -220,7 +219,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22c9
+				// Method begins at RVA 0x22a9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -237,11 +236,10 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2248
+			// Method begins at RVA 0x2228
 			// Header size: 12
 			// Code size: 72 (0x48)
 			.maxstack 8
@@ -288,7 +286,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x229c
+			// Method begins at RVA 0x227c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -314,7 +312,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 294 (0x126)
+		// Code size: 264 (0x108)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Call_Spread_EvaluationOrder/Scope,
@@ -342,8 +340,8 @@
 		IL_0023: ldloc.s 4
 		IL_0025: stloc.1
 		IL_0026: ldnull
-		IL_0027: ldftn object Modules.Function_Call_Spread_EvaluationOrder/arg::__js_call__(object[], object, object)
-		IL_002d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0027: ldftn object Modules.Function_Call_Spread_EvaluationOrder/arg::__js_call__(object, object)
+		IL_002d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0032: ldc.i4.1
 		IL_0033: newarr [System.Runtime]System.Object
 		IL_0038: dup
@@ -355,8 +353,8 @@
 		IL_0043: ldloc.s 4
 		IL_0045: stloc.2
 		IL_0046: ldnull
-		IL_0047: ldftn object Modules.Function_Call_Spread_EvaluationOrder/spread::__js_call__(object[], object)
-		IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+		IL_0047: ldftn object Modules.Function_Call_Spread_EvaluationOrder/spread::__js_call__(object)
+		IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
 		IL_0052: ldc.i4.1
 		IL_0053: newarr [System.Runtime]System.Object
 		IL_0058: dup
@@ -368,73 +366,55 @@
 		IL_0063: ldloc.s 4
 		IL_0065: stloc.3
 		IL_0066: ldnull
-		IL_0067: ldftn object Modules.Function_Call_Spread_EvaluationOrder/arg::__js_call__(object[], object, object)
-		IL_006d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-		IL_0072: ldc.i4.1
-		IL_0073: newarr [System.Runtime]System.Object
-		IL_0078: dup
-		IL_0079: ldc.i4.0
-		IL_007a: ldloc.0
-		IL_007b: stelem.ref
-		IL_007c: ldnull
-		IL_007d: ldc.r8 1
-		IL_0086: box [System.Runtime]System.Double
-		IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
-		IL_0090: stloc.s 4
-		IL_0092: ldc.i4.1
-		IL_0093: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0098: dup
-		IL_0099: ldloc.s 4
-		IL_009b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_00a0: stloc.s 5
-		IL_00a2: ldnull
-		IL_00a3: ldftn object Modules.Function_Call_Spread_EvaluationOrder/spread::__js_call__(object[], object)
-		IL_00a9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-		IL_00ae: ldc.i4.1
-		IL_00af: newarr [System.Runtime]System.Object
-		IL_00b4: dup
-		IL_00b5: ldc.i4.0
-		IL_00b6: ldloc.0
-		IL_00b7: stelem.ref
-		IL_00b8: ldnull
-		IL_00b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
-		IL_00be: stloc.s 4
-		IL_00c0: ldloc.s 5
-		IL_00c2: ldloc.s 4
-		IL_00c4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_00c9: ldnull
-		IL_00ca: ldftn object Modules.Function_Call_Spread_EvaluationOrder/arg::__js_call__(object[], object, object)
-		IL_00d0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-		IL_00d5: ldc.i4.1
-		IL_00d6: newarr [System.Runtime]System.Object
-		IL_00db: dup
-		IL_00dc: ldc.i4.0
-		IL_00dd: ldloc.0
-		IL_00de: stelem.ref
-		IL_00df: ldnull
-		IL_00e0: ldc.r8 4
-		IL_00e9: box [System.Runtime]System.Double
-		IL_00ee: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
-		IL_00f3: stloc.s 4
-		IL_00f5: ldloc.s 5
-		IL_00f7: ldloc.s 4
-		IL_00f9: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_00fe: ldloc.s 5
-		IL_0100: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
-		IL_0105: stloc.s 6
-		IL_0107: ldnull
-		IL_0108: ldftn object Modules.Function_Call_Spread_EvaluationOrder/dump::__js_call__(object[], object)
-		IL_010e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-		IL_0113: ldc.i4.1
-		IL_0114: newarr [System.Runtime]System.Object
-		IL_0119: dup
-		IL_011a: ldc.i4.0
-		IL_011b: ldloc.0
-		IL_011c: stelem.ref
-		IL_011d: ldloc.s 6
-		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0124: pop
-		IL_0125: ret
+		IL_0067: ldftn object Modules.Function_Call_Spread_EvaluationOrder/arg::__js_call__(object, object)
+		IL_006d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0072: ldnull
+		IL_0073: ldc.r8 1
+		IL_007c: box [System.Runtime]System.Double
+		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_0086: stloc.s 4
+		IL_0088: ldc.i4.1
+		IL_0089: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_008e: dup
+		IL_008f: ldloc.s 4
+		IL_0091: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0096: stloc.s 5
+		IL_0098: ldnull
+		IL_0099: ldftn object Modules.Function_Call_Spread_EvaluationOrder/spread::__js_call__(object)
+		IL_009f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00a4: ldnull
+		IL_00a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+		IL_00aa: stloc.s 4
+		IL_00ac: ldloc.s 5
+		IL_00ae: ldloc.s 4
+		IL_00b0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_00b5: ldnull
+		IL_00b6: ldftn object Modules.Function_Call_Spread_EvaluationOrder/arg::__js_call__(object, object)
+		IL_00bc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00c1: ldnull
+		IL_00c2: ldc.r8 4
+		IL_00cb: box [System.Runtime]System.Double
+		IL_00d0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_00d5: stloc.s 4
+		IL_00d7: ldloc.s 5
+		IL_00d9: ldloc.s 4
+		IL_00db: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00e0: ldloc.s 5
+		IL_00e2: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
+		IL_00e7: stloc.s 6
+		IL_00e9: ldnull
+		IL_00ea: ldftn object Modules.Function_Call_Spread_EvaluationOrder/dump::__js_call__(object[], object)
+		IL_00f0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+		IL_00f5: ldc.i4.1
+		IL_00f6: newarr [System.Runtime]System.Object
+		IL_00fb: dup
+		IL_00fc: ldc.i4.0
+		IL_00fd: ldloc.0
+		IL_00fe: stelem.ref
+		IL_00ff: ldloc.s 6
+		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0106: pop
+		IL_0107: ret
 	} // end of method Function_Call_Spread_EvaluationOrder::__js_module_init__
 
 } // end of class Modules.Function_Call_Spread_EvaluationOrder
@@ -446,7 +426,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22d2
+		// Method begins at RVA 0x22b2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

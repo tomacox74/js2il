@@ -42,7 +42,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object 'value'
 			) cil managed 
@@ -54,7 +53,7 @@
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: ldstr "Count:"
-			IL_000a: ldarg.2
+			IL_000a: ldarg.1
 			IL_000b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0010: pop
 			IL_0011: ldnull
@@ -316,8 +315,8 @@
 		IL_001f: callvirt instance object Modules.Async_ClassMethod_WithThis/Counter::getCount(object[], object)
 		IL_0024: stloc.3
 		IL_0025: ldnull
-		IL_0026: ldftn object Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25::__js_call__(object[], object, object)
-		IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0026: ldftn object Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25::__js_call__(object, object)
+		IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0031: ldc.i4.1
 		IL_0032: newarr [System.Runtime]System.Object
 		IL_0037: dup

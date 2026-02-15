@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2110
+				// Method begins at RVA 0x2108
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,12 +35,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object n
 			) cil managed 
 		{
-			// Method begins at RVA 0x20d8
+			// Method begins at RVA 0x20d0
 			// Header size: 12
 			// Code size: 35 (0x23)
 			.maxstack 8
@@ -48,7 +47,7 @@
 				[0] float64
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0006: ldc.r8 2
 			IL_000f: rem
@@ -76,7 +75,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2107
+			// Method begins at RVA 0x20ff
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -102,7 +101,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 123 (0x7b)
+		// Code size: 113 (0x71)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_IsEven_CompareResultToTrue/Scope,
@@ -115,8 +114,8 @@
 		IL_0000: newobj instance void Modules.Function_IsEven_CompareResultToTrue/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_IsEven_CompareResultToTrue/isEven::__js_call__(object[], object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_IsEven_CompareResultToTrue/isEven::__js_call__(object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -128,37 +127,31 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.Function_IsEven_CompareResultToTrue/isEven::__js_call__(object[], object, object)
-		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-		IL_0030: ldc.i4.1
-		IL_0031: newarr [System.Runtime]System.Object
-		IL_0036: dup
-		IL_0037: ldc.i4.0
-		IL_0038: ldloc.0
-		IL_0039: stelem.ref
-		IL_003a: ldnull
-		IL_003b: ldc.r8 4
-		IL_0044: box [System.Runtime]System.Double
-		IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
-		IL_004e: stloc.2
-		IL_004f: ldloc.2
-		IL_0050: ldc.i4.1
-		IL_0051: box [System.Runtime]System.Boolean
-		IL_0056: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_005b: stloc.3
-		IL_005c: ldloc.3
-		IL_005d: box [System.Runtime]System.Boolean
-		IL_0062: stloc.s 4
-		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0069: ldc.i4.1
-		IL_006a: newarr [System.Runtime]System.Object
-		IL_006f: dup
-		IL_0070: ldc.i4.0
-		IL_0071: ldloc.s 4
-		IL_0073: stelem.ref
-		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0079: pop
-		IL_007a: ret
+		IL_0025: ldftn object Modules.Function_IsEven_CompareResultToTrue/isEven::__js_call__(object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0030: ldnull
+		IL_0031: ldc.r8 4
+		IL_003a: box [System.Runtime]System.Double
+		IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_0044: stloc.2
+		IL_0045: ldloc.2
+		IL_0046: ldc.i4.1
+		IL_0047: box [System.Runtime]System.Boolean
+		IL_004c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_0051: stloc.3
+		IL_0052: ldloc.3
+		IL_0053: box [System.Runtime]System.Boolean
+		IL_0058: stloc.s 4
+		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005f: ldc.i4.1
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldloc.s 4
+		IL_0069: stelem.ref
+		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006f: pop
+		IL_0070: ret
 	} // end of method Function_IsEven_CompareResultToTrue::__js_module_init__
 
 } // end of class Modules.Function_IsEven_CompareResultToTrue
@@ -170,7 +163,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2119
+		// Method begins at RVA 0x2111
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

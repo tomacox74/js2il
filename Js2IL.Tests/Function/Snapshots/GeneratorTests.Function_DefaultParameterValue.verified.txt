@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2344
+				// Method begins at RVA 0x22f2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,12 +35,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object name
 			) cil managed 
 		{
-			// Method begins at RVA 0x2238
+			// Method begins at RVA 0x21e8
 			// Header size: 12
 			// Code size: 48 (0x30)
 			.maxstack 8
@@ -48,14 +47,14 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: brtrue IL_000d
 
 			IL_0006: ldstr "World"
 			IL_000b: starg.s name
 
 			IL_000d: ldstr "Hello, "
-			IL_0012: ldarg.2
+			IL_0012: ldarg.1
 			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0018: stloc.0
 			IL_0019: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -84,7 +83,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x234d
+				// Method begins at RVA 0x22fb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -101,13 +100,12 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object a,
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x2274
+			// Method begins at RVA 0x2224
 			// Header size: 12
 			// Code size: 53 (0x35)
 			.maxstack 8
@@ -115,15 +113,15 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.3
+			IL_0000: ldarg.2
 			IL_0001: brtrue IL_0016
 
 			IL_0006: ldc.r8 10
 			IL_000f: box [System.Runtime]System.Double
 			IL_0014: starg.s b
 
-			IL_0016: ldarg.2
-			IL_0017: ldarg.3
+			IL_0016: ldarg.1
+			IL_0017: ldarg.2
 			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_001d: stloc.0
 			IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -152,7 +150,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2356
+				// Method begins at RVA 0x2304
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -169,65 +167,64 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object x,
 				object y,
 				object z
 			) cil managed 
 		{
-			// Method begins at RVA 0x22b8
+			// Method begins at RVA 0x2268
 			// Header size: 12
-			// Code size: 119 (0x77)
+			// Code size: 117 (0x75)
 			.maxstack 8
 			.locals init (
 				[0] float64
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: brtrue IL_0016
 
 			IL_0006: ldc.r8 5
 			IL_000f: box [System.Runtime]System.Double
 			IL_0014: starg.s x
 
-			IL_0016: ldarg.3
+			IL_0016: ldarg.2
 			IL_0017: brtrue IL_002c
 
 			IL_001c: ldc.r8 3
 			IL_0025: box [System.Runtime]System.Double
 			IL_002a: starg.s y
 
-			IL_002c: ldarg.s z
-			IL_002e: brtrue IL_0043
+			IL_002c: ldarg.3
+			IL_002d: brtrue IL_0042
 
-			IL_0033: ldc.r8 2
-			IL_003c: box [System.Runtime]System.Double
-			IL_0041: starg.s z
+			IL_0032: ldc.r8 2
+			IL_003b: box [System.Runtime]System.Double
+			IL_0040: starg.s z
 
-			IL_0043: ldarg.2
-			IL_0044: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0049: stloc.0
-			IL_004a: ldloc.0
-			IL_004b: ldarg.3
-			IL_004c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0051: mul
-			IL_0052: stloc.0
-			IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0058: ldc.i4.1
-			IL_0059: newarr [System.Runtime]System.Object
-			IL_005e: dup
-			IL_005f: ldc.i4.0
-			IL_0060: ldloc.0
-			IL_0061: ldarg.s z
-			IL_0063: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0068: mul
-			IL_0069: box [System.Runtime]System.Double
-			IL_006e: stelem.ref
-			IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0074: pop
-			IL_0075: ldnull
-			IL_0076: ret
+			IL_0042: ldarg.1
+			IL_0043: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0048: stloc.0
+			IL_0049: ldloc.0
+			IL_004a: ldarg.2
+			IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0050: mul
+			IL_0051: stloc.0
+			IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0057: ldc.i4.1
+			IL_0058: newarr [System.Runtime]System.Object
+			IL_005d: dup
+			IL_005e: ldc.i4.0
+			IL_005f: ldloc.0
+			IL_0060: ldarg.3
+			IL_0061: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0066: mul
+			IL_0067: box [System.Runtime]System.Double
+			IL_006c: stelem.ref
+			IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0072: pop
+			IL_0073: ldnull
+			IL_0074: ret
 		} // end of method multi::__js_call__
 
 	} // end of class multi
@@ -250,7 +247,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x233b
+			// Method begins at RVA 0x22e9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -276,7 +273,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 474 (0x1da)
+		// Code size: 394 (0x18a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_DefaultParameterValue/Scope,
@@ -289,8 +286,8 @@
 		IL_0000: newobj instance void Modules.Function_DefaultParameterValue/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_DefaultParameterValue/greet::__js_call__(object[], object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_DefaultParameterValue/greet::__js_call__(object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -302,8 +299,8 @@
 		IL_0023: ldloc.s 4
 		IL_0025: stloc.1
 		IL_0026: ldnull
-		IL_0027: ldftn object Modules.Function_DefaultParameterValue/'add'::__js_call__(object[], object, object, object)
-		IL_002d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_0027: ldftn object Modules.Function_DefaultParameterValue/'add'::__js_call__(object, object, object)
+		IL_002d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
 		IL_0032: ldc.i4.1
 		IL_0033: newarr [System.Runtime]System.Object
 		IL_0038: dup
@@ -315,8 +312,8 @@
 		IL_0043: ldloc.s 4
 		IL_0045: stloc.2
 		IL_0046: ldnull
-		IL_0047: ldftn object Modules.Function_DefaultParameterValue/multi::__js_call__(object[], object, object, object, object)
-		IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::.ctor(object, native int)
+		IL_0047: ldftn object Modules.Function_DefaultParameterValue/multi::__js_call__(object, object, object, object)
+		IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
 		IL_0052: ldc.i4.1
 		IL_0053: newarr [System.Runtime]System.Object
 		IL_0058: dup
@@ -328,129 +325,81 @@
 		IL_0063: ldloc.s 4
 		IL_0065: stloc.3
 		IL_0066: ldnull
-		IL_0067: ldftn object Modules.Function_DefaultParameterValue/greet::__js_call__(object[], object, object)
-		IL_006d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-		IL_0072: ldc.i4.1
-		IL_0073: newarr [System.Runtime]System.Object
-		IL_0078: dup
-		IL_0079: ldc.i4.0
-		IL_007a: ldloc.0
-		IL_007b: stelem.ref
-		IL_007c: ldnull
-		IL_007d: ldnull
-		IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
-		IL_0083: pop
-		IL_0084: ldnull
-		IL_0085: ldftn object Modules.Function_DefaultParameterValue/greet::__js_call__(object[], object, object)
-		IL_008b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-		IL_0090: ldc.i4.1
-		IL_0091: newarr [System.Runtime]System.Object
-		IL_0096: dup
-		IL_0097: ldc.i4.0
-		IL_0098: ldloc.0
-		IL_0099: stelem.ref
-		IL_009a: ldnull
-		IL_009b: ldstr "Alice"
-		IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
-		IL_00a5: pop
-		IL_00a6: ldnull
-		IL_00a7: ldftn object Modules.Function_DefaultParameterValue/'add'::__js_call__(object[], object, object, object)
-		IL_00ad: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
-		IL_00b2: ldc.i4.1
-		IL_00b3: newarr [System.Runtime]System.Object
-		IL_00b8: dup
-		IL_00b9: ldc.i4.0
-		IL_00ba: ldloc.0
-		IL_00bb: stelem.ref
-		IL_00bc: ldnull
-		IL_00bd: ldc.r8 5
-		IL_00c6: box [System.Runtime]System.Double
-		IL_00cb: ldnull
-		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::Invoke(object[], object, object, object)
-		IL_00d1: pop
-		IL_00d2: ldnull
-		IL_00d3: ldftn object Modules.Function_DefaultParameterValue/'add'::__js_call__(object[], object, object, object)
-		IL_00d9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
-		IL_00de: ldc.i4.1
-		IL_00df: newarr [System.Runtime]System.Object
-		IL_00e4: dup
-		IL_00e5: ldc.i4.0
-		IL_00e6: ldloc.0
-		IL_00e7: stelem.ref
-		IL_00e8: ldnull
-		IL_00e9: ldc.r8 5
-		IL_00f2: box [System.Runtime]System.Double
-		IL_00f7: ldc.r8 15
-		IL_0100: box [System.Runtime]System.Double
-		IL_0105: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::Invoke(object[], object, object, object)
-		IL_010a: pop
-		IL_010b: ldnull
-		IL_010c: ldftn object Modules.Function_DefaultParameterValue/multi::__js_call__(object[], object, object, object, object)
-		IL_0112: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::.ctor(object, native int)
-		IL_0117: ldc.i4.1
-		IL_0118: newarr [System.Runtime]System.Object
-		IL_011d: dup
-		IL_011e: ldc.i4.0
-		IL_011f: ldloc.0
-		IL_0120: stelem.ref
-		IL_0121: ldnull
-		IL_0122: ldnull
-		IL_0123: ldnull
-		IL_0124: ldnull
-		IL_0125: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::Invoke(object[], object, object, object, object)
-		IL_012a: pop
-		IL_012b: ldnull
-		IL_012c: ldftn object Modules.Function_DefaultParameterValue/multi::__js_call__(object[], object, object, object, object)
-		IL_0132: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::.ctor(object, native int)
-		IL_0137: ldc.i4.1
-		IL_0138: newarr [System.Runtime]System.Object
-		IL_013d: dup
-		IL_013e: ldc.i4.0
-		IL_013f: ldloc.0
-		IL_0140: stelem.ref
-		IL_0141: ldnull
-		IL_0142: ldc.r8 2
-		IL_014b: box [System.Runtime]System.Double
-		IL_0150: ldnull
-		IL_0151: ldnull
-		IL_0152: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::Invoke(object[], object, object, object, object)
-		IL_0157: pop
+		IL_0067: ldftn object Modules.Function_DefaultParameterValue/greet::__js_call__(object, object)
+		IL_006d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0072: ldnull
+		IL_0073: ldnull
+		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_0079: pop
+		IL_007a: ldnull
+		IL_007b: ldftn object Modules.Function_DefaultParameterValue/greet::__js_call__(object, object)
+		IL_0081: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0086: ldnull
+		IL_0087: ldstr "Alice"
+		IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_0091: pop
+		IL_0092: ldnull
+		IL_0093: ldftn object Modules.Function_DefaultParameterValue/'add'::__js_call__(object, object, object)
+		IL_0099: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_009e: ldnull
+		IL_009f: ldc.r8 5
+		IL_00a8: box [System.Runtime]System.Double
+		IL_00ad: ldnull
+		IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_00b3: pop
+		IL_00b4: ldnull
+		IL_00b5: ldftn object Modules.Function_DefaultParameterValue/'add'::__js_call__(object, object, object)
+		IL_00bb: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_00c0: ldnull
+		IL_00c1: ldc.r8 5
+		IL_00ca: box [System.Runtime]System.Double
+		IL_00cf: ldc.r8 15
+		IL_00d8: box [System.Runtime]System.Double
+		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_00e2: pop
+		IL_00e3: ldnull
+		IL_00e4: ldftn object Modules.Function_DefaultParameterValue/multi::__js_call__(object, object, object, object)
+		IL_00ea: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_00ef: ldnull
+		IL_00f0: ldnull
+		IL_00f1: ldnull
+		IL_00f2: ldnull
+		IL_00f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::Invoke(object, object, object, object)
+		IL_00f8: pop
+		IL_00f9: ldnull
+		IL_00fa: ldftn object Modules.Function_DefaultParameterValue/multi::__js_call__(object, object, object, object)
+		IL_0100: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_0105: ldnull
+		IL_0106: ldc.r8 2
+		IL_010f: box [System.Runtime]System.Double
+		IL_0114: ldnull
+		IL_0115: ldnull
+		IL_0116: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::Invoke(object, object, object, object)
+		IL_011b: pop
+		IL_011c: ldnull
+		IL_011d: ldftn object Modules.Function_DefaultParameterValue/multi::__js_call__(object, object, object, object)
+		IL_0123: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_0128: ldnull
+		IL_0129: ldc.r8 2
+		IL_0132: box [System.Runtime]System.Double
+		IL_0137: ldc.r8 4
+		IL_0140: box [System.Runtime]System.Double
+		IL_0145: ldnull
+		IL_0146: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::Invoke(object, object, object, object)
+		IL_014b: pop
+		IL_014c: ldnull
+		IL_014d: ldftn object Modules.Function_DefaultParameterValue/multi::__js_call__(object, object, object, object)
+		IL_0153: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
 		IL_0158: ldnull
-		IL_0159: ldftn object Modules.Function_DefaultParameterValue/multi::__js_call__(object[], object, object, object, object)
-		IL_015f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::.ctor(object, native int)
-		IL_0164: ldc.i4.1
-		IL_0165: newarr [System.Runtime]System.Object
-		IL_016a: dup
-		IL_016b: ldc.i4.0
-		IL_016c: ldloc.0
-		IL_016d: stelem.ref
-		IL_016e: ldnull
-		IL_016f: ldc.r8 2
-		IL_0178: box [System.Runtime]System.Double
-		IL_017d: ldc.r8 4
-		IL_0186: box [System.Runtime]System.Double
-		IL_018b: ldnull
-		IL_018c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::Invoke(object[], object, object, object, object)
-		IL_0191: pop
-		IL_0192: ldnull
-		IL_0193: ldftn object Modules.Function_DefaultParameterValue/multi::__js_call__(object[], object, object, object, object)
-		IL_0199: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::.ctor(object, native int)
-		IL_019e: ldc.i4.1
-		IL_019f: newarr [System.Runtime]System.Object
-		IL_01a4: dup
-		IL_01a5: ldc.i4.0
-		IL_01a6: ldloc.0
-		IL_01a7: stelem.ref
-		IL_01a8: ldnull
-		IL_01a9: ldc.r8 2
-		IL_01b2: box [System.Runtime]System.Double
-		IL_01b7: ldc.r8 4
-		IL_01c0: box [System.Runtime]System.Double
-		IL_01c5: ldc.r8 3
-		IL_01ce: box [System.Runtime]System.Double
-		IL_01d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::Invoke(object[], object, object, object, object)
-		IL_01d8: pop
-		IL_01d9: ret
+		IL_0159: ldc.r8 2
+		IL_0162: box [System.Runtime]System.Double
+		IL_0167: ldc.r8 4
+		IL_0170: box [System.Runtime]System.Double
+		IL_0175: ldc.r8 3
+		IL_017e: box [System.Runtime]System.Double
+		IL_0183: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::Invoke(object, object, object, object)
+		IL_0188: pop
+		IL_0189: ret
 	} // end of method Function_DefaultParameterValue::__js_module_init__
 
 } // end of class Modules.Function_DefaultParameterValue
@@ -462,7 +411,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x235f
+		// Method begins at RVA 0x230d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

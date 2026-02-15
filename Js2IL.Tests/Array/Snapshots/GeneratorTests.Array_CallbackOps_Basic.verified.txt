@@ -35,7 +35,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object x
 			) cil managed 
@@ -50,7 +49,7 @@
 			IL_0006: newarr [System.Runtime]System.Object
 			IL_000b: dup
 			IL_000c: ldc.i4.0
-			IL_000d: ldarg.2
+			IL_000d: ldarg.1
 			IL_000e: stelem.ref
 			IL_000f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 			IL_0014: pop
@@ -88,7 +87,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object x
 			) cil managed 
@@ -101,7 +99,7 @@
 				[0] float64
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0006: ldc.r8 2
 			IL_000f: rem
@@ -143,7 +141,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object x
 			) cil managed 
@@ -153,7 +150,7 @@
 			// Code size: 23 (0x17)
 			.maxstack 8
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0006: ldc.r8 0.0
 			IL_000f: cgt
@@ -191,7 +188,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object acc,
 				object x
@@ -205,8 +201,8 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.2
-			IL_0001: ldarg.3
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
 			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0007: stloc.0
 			IL_0008: ldloc.0
@@ -243,7 +239,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object acc,
 				object x
@@ -257,11 +252,11 @@
 				[0] float64
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0006: stloc.0
 			IL_0007: ldloc.0
-			IL_0008: ldarg.3
+			IL_0008: ldarg.2
 			IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_000e: sub
 			IL_000f: box [System.Runtime]System.Double
@@ -298,7 +293,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object x
 			) cil managed 
@@ -311,10 +305,10 @@
 			IL_0000: ldc.i4.2
 			IL_0001: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 			IL_0006: dup
-			IL_0007: ldarg.2
+			IL_0007: ldarg.1
 			IL_0008: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 			IL_000d: dup
-			IL_000e: ldarg.2
+			IL_000e: ldarg.1
 			IL_000f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 			IL_0014: ret
 		} // end of method FunctionExpression_L15C30::__js_call__
@@ -386,8 +380,8 @@
 		IL_0043: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_0048: stloc.1
 		IL_0049: ldnull
-		IL_004a: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_L6C10::__js_call__(object[], object, object)
-		IL_0050: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_004a: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_L6C10::__js_call__(object, object)
+		IL_0050: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0055: ldc.i4.1
 		IL_0056: newarr [System.Runtime]System.Object
 		IL_005b: dup
@@ -425,8 +419,8 @@
 		IL_00c9: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_00ce: stloc.2
 		IL_00cf: ldnull
-		IL_00d0: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_evens::__js_call__(object[], object, object)
-		IL_00d6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_00d0: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_evens::__js_call__(object, object)
+		IL_00d6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_00db: ldc.i4.1
 		IL_00dc: newarr [System.Runtime]System.Object
 		IL_00e1: dup
@@ -459,8 +453,8 @@
 		IL_011a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_011f: pop
 		IL_0120: ldnull
-		IL_0121: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_L11C20::__js_call__(object[], object, object)
-		IL_0127: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0121: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_L11C20::__js_call__(object, object)
+		IL_0127: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_012c: ldc.i4.1
 		IL_012d: newarr [System.Runtime]System.Object
 		IL_0132: dup
@@ -491,8 +485,8 @@
 		IL_0169: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_016e: pop
 		IL_016f: ldnull
-		IL_0170: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_L12C21::__js_call__(object[], object, object, object)
-		IL_0176: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_0170: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_L12C21::__js_call__(object, object, object)
+		IL_0176: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
 		IL_017b: ldc.i4.1
 		IL_017c: newarr [System.Runtime]System.Object
 		IL_0181: dup
@@ -525,8 +519,8 @@
 		IL_01c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_01c5: pop
 		IL_01c6: ldnull
-		IL_01c7: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_L13C26::__js_call__(object[], object, object, object)
-		IL_01cd: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_01c7: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_L13C26::__js_call__(object, object, object)
+		IL_01cd: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
 		IL_01d2: ldc.i4.1
 		IL_01d3: newarr [System.Runtime]System.Object
 		IL_01d8: dup
@@ -554,8 +548,8 @@
 		IL_0206: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_020b: pop
 		IL_020c: ldnull
-		IL_020d: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_L15C30::__js_call__(object[], object, object)
-		IL_0213: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_020d: ldftn object Modules.Array_CallbackOps_Basic/FunctionExpression_L15C30::__js_call__(object, object)
+		IL_0213: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0218: ldc.i4.1
 		IL_0219: newarr [System.Runtime]System.Object
 		IL_021e: dup

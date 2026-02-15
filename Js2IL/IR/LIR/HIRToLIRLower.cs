@@ -419,7 +419,11 @@ public sealed partial class HIRToLIRLowerer
             var globalSlot = new ScopeSlot(Index: 0, ScopeName: moduleName, ScopeId: new ScopeId(moduleName));
             if (!TryMapScopeSlotToSource(globalSlot, out var globalSlotSource))
             {
-                return false;
+                // No available global slot in caller context (common for no-scopes optimized functions).
+                // For non-capturing callees this is safe: runtime dispatch now honors RequiresScopesParameter
+                // and will ignore/omit scopes for no-scopes delegates.
+                _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+                return true;
             }
             _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
             return true;

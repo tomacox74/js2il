@@ -42,7 +42,6 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
 				object newTarget,
 				object results
 			) cil managed 
@@ -56,11 +55,11 @@
 				[1] object
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.1
 			IL_0001: ldc.r8 0.0
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_000f: stloc.0
-			IL_0010: ldarg.2
+			IL_0010: ldarg.1
 			IL_0011: ldc.r8 1
 			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_001f: stloc.1
@@ -81,7 +80,7 @@
 			IL_003a: stelem.ref
 			IL_003b: dup
 			IL_003c: ldc.i4.3
-			IL_003d: ldarg.2
+			IL_003d: ldarg.1
 			IL_003e: ldc.r8 2
 			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_004c: stelem.ref
@@ -175,8 +174,8 @@
 		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
 		IL_0072: stloc.s 4
 		IL_0074: ldnull
-		IL_0075: ldftn object Modules.Promise_All_AllResolved/ArrowFunction_L7C32::__js_call__(object[], object, object)
-		IL_007b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0075: ldftn object Modules.Promise_All_AllResolved/ArrowFunction_L7C32::__js_call__(object, object)
+		IL_007b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0080: ldc.i4.1
 		IL_0081: newarr [System.Runtime]System.Object
 		IL_0086: dup
