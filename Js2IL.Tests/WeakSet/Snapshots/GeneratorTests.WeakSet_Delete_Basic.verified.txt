@@ -1,0 +1,137 @@
+﻿// IL code: WeakSet_Delete_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.WeakSet_Delete_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20f2
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 150 (0x96)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.WeakSet_Delete_Basic/Scope,
+			[1] object,
+			[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[4] object
+		)
+
+		IL_0000: newobj instance void Modules.WeakSet_Delete_Basic/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.WeakSet::.ctor()
+		IL_000b: stloc.s 4
+		IL_000d: ldloc.s 4
+		IL_000f: stloc.1
+		IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0015: stloc.2
+		IL_0016: ldloc.1
+		IL_0017: ldstr "add"
+		IL_001c: ldloc.2
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0022: pop
+		IL_0023: ldloc.1
+		IL_0024: ldstr "delete"
+		IL_0029: ldloc.2
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_002f: stloc.s 4
+		IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0036: ldc.i4.1
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: dup
+		IL_003d: ldc.i4.0
+		IL_003e: ldloc.s 4
+		IL_0040: stelem.ref
+		IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0046: pop
+		IL_0047: ldloc.1
+		IL_0048: ldstr "has"
+		IL_004d: ldloc.2
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0053: stloc.s 4
+		IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005a: ldc.i4.1
+		IL_005b: newarr [System.Runtime]System.Object
+		IL_0060: dup
+		IL_0061: ldc.i4.0
+		IL_0062: ldloc.s 4
+		IL_0064: stelem.ref
+		IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006a: pop
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0070: stloc.3
+		IL_0071: ldloc.1
+		IL_0072: ldstr "delete"
+		IL_0077: ldloc.3
+		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_007d: stloc.s 4
+		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0084: ldc.i4.1
+		IL_0085: newarr [System.Runtime]System.Object
+		IL_008a: dup
+		IL_008b: ldc.i4.0
+		IL_008c: ldloc.s 4
+		IL_008e: stelem.ref
+		IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0094: pop
+		IL_0095: ret
+	} // end of method WeakSet_Delete_Basic::__js_module_init__
+
+} // end of class Modules.WeakSet_Delete_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20fb
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.WeakSet_Delete_Basic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

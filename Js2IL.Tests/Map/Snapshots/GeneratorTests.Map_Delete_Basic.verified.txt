@@ -1,0 +1,132 @@
+﻿// IL code: Map_Delete_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Map_Delete_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20f3
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 151 (0x97)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Map_Delete_Basic/Scope,
+			[1] object,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Modules.Map_Delete_Basic/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor()
+		IL_000b: stloc.2
+		IL_000c: ldloc.2
+		IL_000d: stloc.1
+		IL_000e: ldloc.1
+		IL_000f: ldstr "set"
+		IL_0014: ldstr "key1"
+		IL_0019: ldstr "value1"
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0023: pop
+		IL_0024: ldloc.1
+		IL_0025: ldstr "delete"
+		IL_002a: ldstr "key1"
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0034: stloc.2
+		IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldloc.2
+		IL_0043: stelem.ref
+		IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0049: pop
+		IL_004a: ldloc.1
+		IL_004b: ldstr "has"
+		IL_0050: ldstr "key1"
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_005a: stloc.2
+		IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0060: ldc.i4.1
+		IL_0061: newarr [System.Runtime]System.Object
+		IL_0066: dup
+		IL_0067: ldc.i4.0
+		IL_0068: ldloc.2
+		IL_0069: stelem.ref
+		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006f: pop
+		IL_0070: ldloc.1
+		IL_0071: ldstr "delete"
+		IL_0076: ldstr "key2"
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0080: stloc.2
+		IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0086: ldc.i4.1
+		IL_0087: newarr [System.Runtime]System.Object
+		IL_008c: dup
+		IL_008d: ldc.i4.0
+		IL_008e: ldloc.2
+		IL_008f: stelem.ref
+		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0095: pop
+		IL_0096: ret
+	} // end of method Map_Delete_Basic::__js_module_init__
+
+} // end of class Modules.Map_Delete_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20fc
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Map_Delete_Basic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

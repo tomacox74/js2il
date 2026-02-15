@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Runtime/spec: implement ECMA-262 core keyed collections: `Map`, `WeakMap`, and `WeakSet` constructors with essential prototype methods (`Map`: set/get/has/delete/clear/size/keys/values/entries; `WeakMap`: set/get/has/delete; `WeakSet`: add/has/delete). Uses ConditionalWeakTable for weak collections to enable garbage collection of unused keys/values. Includes comprehensive execution and generator tests (closes #629).
 - IR/runtime: implement ECMA-262 meta properties with CommonJS-hosted semantics — `new.target` (function call/new plumbing + lexical arrow inheritance) and `import.meta` (host object with stable identity and `url` when available), with execution/generator coverage (closes #612).
 - IR/Runtime/spec: implement tagged template expressions (ECMA-262 §13.3.11) with template object caching, cooked/raw string arrays, and correct evaluation order (fixes #611).
 - Runtime/spec: complete object literal spread semantics by copying enumerable own properties (including symbol-keyed properties) and add execution + generator coverage for multiple spreads, cloning, empty objects, nested spreads, and non-enumerable filtering (fixes #593).

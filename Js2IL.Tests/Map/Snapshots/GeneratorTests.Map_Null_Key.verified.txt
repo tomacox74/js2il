@@ -1,0 +1,121 @@
+﻿// IL code: Map_Null_Key
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Map_Null_Key
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20d0
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 116 (0x74)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Map_Null_Key/Scope,
+			[1] object,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Modules.Map_Null_Key/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor()
+		IL_000b: stloc.2
+		IL_000c: ldloc.2
+		IL_000d: stloc.1
+		IL_000e: ldloc.1
+		IL_000f: ldstr "set"
+		IL_0014: ldc.i4.0
+		IL_0015: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_001a: ldstr "nullValue"
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0024: pop
+		IL_0025: ldloc.1
+		IL_0026: ldstr "has"
+		IL_002b: ldc.i4.0
+		IL_002c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0036: stloc.2
+		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003c: ldc.i4.1
+		IL_003d: newarr [System.Runtime]System.Object
+		IL_0042: dup
+		IL_0043: ldc.i4.0
+		IL_0044: ldloc.2
+		IL_0045: stelem.ref
+		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004b: pop
+		IL_004c: ldloc.1
+		IL_004d: ldstr "get"
+		IL_0052: ldc.i4.0
+		IL_0053: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_005d: stloc.2
+		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0063: ldc.i4.1
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldloc.2
+		IL_006c: stelem.ref
+		IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0072: pop
+		IL_0073: ret
+	} // end of method Map_Null_Key::__js_module_init__
+
+} // end of class Modules.Map_Null_Key
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20d9
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Map_Null_Key::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
