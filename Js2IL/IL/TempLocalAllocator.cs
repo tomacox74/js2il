@@ -659,12 +659,6 @@ internal static class TempLocalAllocator
             case LIRCreateBoundFunctionExpression createFunc:
                 yield return createFunc.ScopesArray;
                 break;
-            case LIRCallRuntimeServicesStatic callRuntimeServices:
-                foreach (var arg in callRuntimeServices.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
             case LIRStoreUserClassInstanceField storeInstanceField:
                 yield return storeInstanceField.Value;
                 break;
@@ -973,9 +967,6 @@ internal static class TempLocalAllocator
                 return true;
             case LIRLoadNewTarget loadNewTarget:
                 defined = loadNewTarget.Result;
-                return true;
-            case LIRCallRuntimeServicesStatic callRuntimeServices:
-                defined = callRuntimeServices.Result;
                 return true;
 
             case LIRLoadParameter loadParam:
