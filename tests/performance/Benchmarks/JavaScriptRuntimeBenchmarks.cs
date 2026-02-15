@@ -59,7 +59,24 @@ public class JavaScriptRuntimeBenchmarks
     [ParamsSource(nameof(ScriptNames))]
     public string ScriptName { get; set; } = "";
 
-    public IEnumerable<string> ScriptNames() => _scripts.Keys;
+    public IEnumerable<string> ScriptNames()
+    {
+        if (_scripts.Count > 0)
+        {
+            return _scripts.Keys;
+        }
+
+        var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
+        if (!Directory.Exists(scriptsDir))
+        {
+            return Array.Empty<string>();
+        }
+
+        return Directory.GetFiles(scriptsDir, "*.js")
+            .Select(Path.GetFileNameWithoutExtension)
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .OrderBy(name => name)!;
+    }
 
     [Benchmark(Description = "Node.js")]
     public void NodeJs()
