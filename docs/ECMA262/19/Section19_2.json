@@ -54,7 +54,7 @@
     {
       "clause": "19.2.5",
       "title": "parseInt ( string , radix )",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-parseint-string-radix"
     },
     {
@@ -133,13 +133,14 @@
       {
         "clause": "19.2.5",
         "feature": "parseInt(string, radix)",
-        "status": "Supported with Limitations",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-parseint-string-radix",
         "testScripts": [
           "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Basic.js",
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Spec.js",
           "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalFunctions_AsValues_Basic.js"
         ],
-        "notes": "Implemented by JavaScriptRuntime.GlobalThis.parseInt and returns a JS Number (unboxed double). Also supported as a first-class function value (e.g., passed around or assigned). Coverage is partial (e.g., larger-than-Int64 inputs and full edge-case parity may differ)."
+        "notes": "Implemented by JavaScriptRuntime.GlobalThis.parseInt following ECMA-262 §19.2.5. Supports: leading/trailing whitespace, sign handling, radix coercion via ToInt32 (§7.1.6), hex prefix detection (0x/0X), digit scanning with stop-at-first-invalid, case-insensitive alphabetic digits (A-Z), ToString coercion including Array join and custom toString methods, and large numbers using double arithmetic. Also supported as a first-class function value (e.g., passed around or assigned). Comprehensive spec-driven test coverage added via IntrinsicCallables_ParseInt_Spec.js."
       }
     ]
   }

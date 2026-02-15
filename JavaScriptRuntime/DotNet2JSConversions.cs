@@ -30,8 +30,51 @@ namespace JavaScriptRuntime
                 return boolValue ? "true" : "false";
             }
 
+            // Handle Array (List<object?>) - should join elements with comma
+            if (value is Array jsArray)
+            {
+                // Arrays convert to string using join(',')
+                var items = new List<string>();
+                foreach (var item in jsArray)
+                {
+                    if (item == null)
+                    {
+                        items.Add("");  // undefined becomes empty string in join
+                    }
+                    else if (item is JsNull)
+                    {
+                        items.Add("");  // null becomes empty string in join
+                    }
+                    else
+                    {
+                        items.Add(ToString(item));
+                    }
+                }
+                return string.Join(",", items);
+            }
+
             if (value is ExpandoObject expandObject)
             {
+                // Check if the object has a custom toString method
+                var dict = (IDictionary<string, object?>)expandObject;
+                if (dict.TryGetValue("toString", out var toStringMethod) && toStringMethod is Delegate toStringDelegate)
+                {
+                    try
+                    {
+                        // Call the toString method
+                        var result = toStringDelegate.DynamicInvoke(new object[] { System.Array.Empty<object>() });
+                        if (result != null)
+                        {
+                            return ToString(result);
+                        }
+                    }
+                    catch
+                    {
+                        // Fall through to default behavior
+                    }
+                }
+
+                // Default object representation
                 string propertyValues = string.Join(", ", expandObject
                     .Select(kvp =>
                     {

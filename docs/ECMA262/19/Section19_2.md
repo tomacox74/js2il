@@ -19,7 +19,7 @@
 | 19.2.2 | isFinite ( number ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-isfinite-number) |
 | 19.2.3 | isNaN ( number ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-isnan-number) |
 | 19.2.4 | parseFloat ( string ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-parsefloat-string) |
-| 19.2.5 | parseInt ( string , radix ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-parseint-string-radix) |
+| 19.2.5 | parseInt ( string , radix ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-parseint-string-radix) |
 | 19.2.6 | URI Handling Functions | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uri-handling-functions) |
 | 19.2.6.1 | decodeURI ( encodedURI ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-decodeuri-encodeduri) |
 | 19.2.6.2 | decodeURIComponent ( encodedURIComponent ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-decodeuricomponent-encodeduricomponent) |
@@ -49,5 +49,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| parseInt(string, radix) | Supported with Limitations | [`IntrinsicCallables_ParseInt_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Basic.js)<br>[`IntrinsicCallables_GlobalFunctions_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalFunctions_AsValues_Basic.js) | Implemented by JavaScriptRuntime.GlobalThis.parseInt and returns a JS Number (unboxed double). Also supported as a first-class function value (e.g., passed around or assigned). Coverage is partial (e.g., larger-than-Int64 inputs and full edge-case parity may differ). |
+| parseInt(string, radix) | Supported | [`IntrinsicCallables_ParseInt_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Basic.js)<br>[`IntrinsicCallables_ParseInt_Spec.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Spec.js)<br>[`IntrinsicCallables_GlobalFunctions_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalFunctions_AsValues_Basic.js) | Implemented by JavaScriptRuntime.GlobalThis.parseInt following ECMA-262 §19.2.5. Supports: leading/trailing whitespace, sign handling, radix coercion via ToInt32 (§7.1.6), hex prefix detection (0x/0X), digit scanning with stop-at-first-invalid, case-insensitive alphabetic digits (A-Z), ToString coercion including Array join and custom toString methods, and large numbers using double arithmetic. Also supported as a first-class function value (e.g., passed around or assigned). Comprehensive spec-driven test coverage added via IntrinsicCallables_ParseInt_Spec.js. |
 
