@@ -322,8 +322,17 @@
       {
         "clause": "13.2.3.1",
         "feature": "Rest parameters",
-        "status": "Not Yet Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-function-definitions-runtime-semantics-evaluation"
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-function-definitions-runtime-semantics-evaluation",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_RestParameters_Basic.js",
+          "Js2IL.Tests/Function/JavaScript/Function_RestParameters_Empty.js",
+          "Js2IL.Tests/Function/JavaScript/Function_RestParameters_WithNamedParams.js",
+          "Js2IL.Tests/Function/JavaScript/Function_RestParameters_MultipleNamed.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_RestParameters_Basic.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_RestParameters_WithNamedParams.js"
+        ],
+        "notes": "Rest parameters (...args) are fully supported in function declarations, function expressions, and arrow functions. The rest parameter collects all remaining arguments into a JavaScript Array using RuntimeServices.CollectRestArguments(). Works correctly with default parameters (evaluated before rest collection) and can be destructured. Rest arrays support the full JavaScript Array API including iteration protocol. Handles edge cases like no remaining arguments (empty array) and works with generator functions (initialization is properly deferred until first .next() call)."
       },
       {
         "clause": "13.2.4.1",
@@ -352,9 +361,18 @@
       },
       {
         "clause": "13.2.5",
-        "feature": "Spread syntax",
-        "status": "Not Yet Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-argument-lists-runtime-semantics-argumentlistevaluation"
+        "feature": "Spread syntax (argument lists)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-argument-lists-runtime-semantics-argumentlistevaluation",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Basic.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Multiple.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Middle.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_EvaluationOrder.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_MemberCall_ConsoleLog.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js"
+        ],
+        "notes": "Spread syntax in function call arguments (...arr) is fully supported. Spread elements are expanded using JavaScriptRuntime.Array.PushRange() which properly implements the iterator protocol (Symbol.iterator for arrays, strings, typed arrays, and user-defined iterables; .NET IEnumerable as fallback). Multiple spread elements can be mixed with regular arguments in any order, and evaluation proceeds strictly left-to-right. Works with direct function calls, member method calls, and indirect calls via function variables. The final argument array is converted to object[] for the actual call."
       },
       {
         "clause": "13.2.5.1",
