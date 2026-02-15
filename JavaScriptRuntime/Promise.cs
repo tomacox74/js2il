@@ -423,44 +423,11 @@ public sealed class Promise
 
         try 
         {
-            // strongly typed fast path for the common cases
-            if (executor is Func<object[]?, object?> func2)
-            {
-                func2(unusedContext);
-            }
-            else if (executor is Func<object[]?, object?, object?> func3)
-            {
-                func3(unusedContext, Resolve);
-            }
-            else if (executor is Func<object[]?, object?, object?, object?> func4)
-            {
-                func4(unusedContext, Resolve, Reject);
-            }
-            else
-            {
-                if (jsFunction.Method.ReturnType != typeof(object))
-                {
-                    // this would be unexpected.. and is a internal error
-                    // all javascript functions return something of type object.. can be null
-                    // technically we don't care.. this is to help catch internal bugs
-                    throw new InvalidOperationException("Promise executor has an invalid signature. Unexpected return value.");
-                }
-
-                // get the number of parameters
-                var paramCount = jsFunction.Method.GetParameters().Length;
-
-                if (paramCount == 0)
-                {
-                    throw new InvalidOperationException("Promise executor has an invalid signature. Missing scopes parameter.");
-                }
-
-                var args = new object?[paramCount];
-                args[0] = unusedContext;
-                args[1] = Resolve;
-                args[2] = Reject;
-                jsFunction.DynamicInvoke(args);
-            }
-        } 
+            // Invoke as a JavaScript call with (resolve, reject).
+            // Closure.InvokeWithArgs handles callable ABI details (including hidden newTarget)
+            // and JavaScript argument semantics (missing => undefined, extra ignored).
+            Closure.InvokeWithArgs(jsFunction, unusedContext, Resolve, Reject);
+        }
         catch (Exception ex)
         {
             Settle(State.Rejected, ex.InnerException ?? ex);
@@ -573,41 +540,10 @@ public sealed class Promise
 
         // for then and catch 1 value is passed to the delegate
         // for finally no parameters are passed
-        object? handlerParameter = isFinally ? null : previousResult;
-        object? result;
-
-        // scopes are  always captured in closures (see Closure.Bind)
-        // so the first parameter is always null
-        if (jsFunction is Func<object[]?, object?> func1)
-        {
-            result = func1(null);
-        }
-        else if (jsFunction is Func<object[]?, object?, object?> func2)
-        {
-            result = func2(null, handlerParameter);
-        }
-        else
-        {
-            // Reflection fallback for non-standard delegate types.
-            // JS2IL delegates normally take a leading scopes array parameter.
-            var paramCount = jsFunction.Method.GetParameters().Length;
-            if (paramCount == 0)
-            {
-                result = jsFunction.DynamicInvoke(null);
-            }
-            else
-            {
-                var args = new object?[paramCount];
-                args[0] = null; // scopes
-                if (!isFinally && paramCount > 1)
-                {
-                    args[1] = handlerParameter;
-                }
-                result = jsFunction.DynamicInvoke(args);
-            }
-        }
-
-        return result;
+        var handlerScopes = new object[1];
+        return isFinally
+            ? Closure.InvokeWithArgs(jsFunction, handlerScopes)
+            : Closure.InvokeWithArgs(jsFunction, handlerScopes, previousResult);
     }
 
     private static System.Collections.IEnumerable? ToEnumerableOrThrow(object? obj, out TypeError? typeError)

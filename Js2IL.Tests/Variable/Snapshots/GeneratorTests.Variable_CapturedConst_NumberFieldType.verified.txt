@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f2
+				// Method begins at RVA 0x20f3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,10 +35,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x20cb
+			// Method begins at RVA 0x20cc
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -73,7 +74,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e9
+			// Method begins at RVA 0x20ea
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -99,7 +100,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 111 (0x6f)
+		// Code size: 112 (0x70)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_CapturedConst_NumberFieldType/Scope,
@@ -110,8 +111,8 @@
 		IL_0000: newobj instance void Modules.Variable_CapturedConst_NumberFieldType/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Variable_CapturedConst_NumberFieldType/run::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Variable_CapturedConst_NumberFieldType/run::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -128,26 +129,27 @@
 		IL_0033: unbox.any [System.Runtime]System.Double
 		IL_0038: stfld float64 Modules.Variable_CapturedConst_NumberFieldType/Scope::NOW_UNITS_PER_SECOND
 		IL_003d: ldnull
-		IL_003e: ldftn object Modules.Variable_CapturedConst_NumberFieldType/run::__js_call__(object[])
-		IL_0044: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_003e: ldftn object Modules.Variable_CapturedConst_NumberFieldType/run::__js_call__(object[], object)
+		IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0049: ldc.i4.1
 		IL_004a: newarr [System.Runtime]System.Object
 		IL_004f: dup
 		IL_0050: ldc.i4.0
 		IL_0051: ldloc.0
 		IL_0052: stelem.ref
-		IL_0053: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0058: stloc.2
-		IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005e: ldc.i4.1
-		IL_005f: newarr [System.Runtime]System.Object
-		IL_0064: dup
-		IL_0065: ldc.i4.0
-		IL_0066: ldloc.2
-		IL_0067: stelem.ref
-		IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006d: pop
-		IL_006e: ret
+		IL_0053: ldnull
+		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_0059: stloc.2
+		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005f: ldc.i4.1
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldloc.2
+		IL_0068: stelem.ref
+		IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006e: pop
+		IL_006f: ret
 	} // end of method Variable_CapturedConst_NumberFieldType::__js_module_init__
 
 } // end of class Modules.Variable_CapturedConst_NumberFieldType
@@ -159,7 +161,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fb
+		// Method begins at RVA 0x20fc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

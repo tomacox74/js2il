@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2102
+				// Method begins at RVA 0x2103
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,10 +35,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x20bc
+			// Method begins at RVA 0x20bd
 			// Header size: 1
 			// Code size: 60 (0x3c)
 			.maxstack 8
@@ -88,7 +89,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f9
+			// Method begins at RVA 0x20fa
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -114,7 +115,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 96 (0x60)
+		// Code size: 97 (0x61)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionLogsGlobalVariable/Scope,
@@ -125,8 +126,8 @@
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_GlobalFunctionLogsGlobalVariable/logGlobalValues::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_GlobalFunctionLogsGlobalVariable/logGlobalValues::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -145,17 +146,18 @@
 		IL_0039: box [System.Runtime]System.Double
 		IL_003e: stfld object Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalNumber
 		IL_0043: ldnull
-		IL_0044: ldftn object Modules.Function_GlobalFunctionLogsGlobalVariable/logGlobalValues::__js_call__(object[])
-		IL_004a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0044: ldftn object Modules.Function_GlobalFunctionLogsGlobalVariable/logGlobalValues::__js_call__(object[], object)
+		IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_004f: ldc.i4.1
 		IL_0050: newarr [System.Runtime]System.Object
 		IL_0055: dup
 		IL_0056: ldc.i4.0
 		IL_0057: ldloc.0
 		IL_0058: stelem.ref
-		IL_0059: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_005e: pop
-		IL_005f: ret
+		IL_0059: ldnull
+		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_005f: pop
+		IL_0060: ret
 	} // end of method Function_GlobalFunctionLogsGlobalVariable::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionLogsGlobalVariable
@@ -167,7 +169,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210b
+		// Method begins at RVA 0x210c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

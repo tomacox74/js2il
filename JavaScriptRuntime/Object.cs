@@ -3052,11 +3052,25 @@ namespace JavaScriptRuntime
 
             var srcArgs = args ?? System.Array.Empty<object>();
 
-            // Prefer js2il-style methods with a leading scopes array: (object[] scopes, [object x N])
+            // Prefer js2il-style methods with a leading scopes array:
+            // - legacy: (object[] scopes, [object x N])
+            // - current JsFunc ABI: (object[] scopes, object newTarget, [object x N])
             MethodInfo? chosen = methods.FirstOrDefault(mi =>
             {
                 var ps = mi.GetParameters();
-                return ps.Length == 1 + srcArgs.Length && ps.Length >= 1 && ps[0].ParameterType == typeof(object[]);
+                if (ps.Length < 1 || ps[0].ParameterType != typeof(object[]))
+                {
+                    return false;
+                }
+
+                if (ps.Length == 1 + srcArgs.Length)
+                {
+                    return true;
+                }
+
+                return ps.Length == 2 + srcArgs.Length
+                    && ps.Length >= 2
+                    && ps[1].ParameterType == typeof(object);
             });
 
             // Next: prefer a single-parameter params object[] method
@@ -3078,6 +3092,9 @@ namespace JavaScriptRuntime
             var psChosen = chosen.GetParameters();
             var expectsParamsArray = psChosen.Length == 1 && psChosen[0].ParameterType == typeof(object[]);
             var expectsLeadingScopes = psChosen.Length >= 2 && psChosen[0].ParameterType == typeof(object[]);
+            var expectsHiddenNewTarget = expectsLeadingScopes
+                && psChosen.Length >= 2
+                && psChosen[1].ParameterType == typeof(object);
             var empty = System.Array.Empty<object>();
 
             // Helper to coerce primitive numeric CLR types to JS number (double)
@@ -3162,10 +3179,17 @@ namespace JavaScriptRuntime
                 var coerced = new object[psChosen.Length];
                 coerced[0] = scopes;
 
-                var copyCount = System.Math.Min(src.Length, psChosen.Length - 1);
+                int firstJsArgIndex = 1;
+                if (expectsHiddenNewTarget)
+                {
+                    coerced[1] = null!;
+                    firstJsArgIndex = 2;
+                }
+
+                var copyCount = System.Math.Min(src.Length, psChosen.Length - firstJsArgIndex);
                 for (int i = 0; i < copyCount; i++)
                 {
-                    coerced[i + 1] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
+                    coerced[i + firstJsArgIndex] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
                 }
 
                 return InvokeChosen(coerced);

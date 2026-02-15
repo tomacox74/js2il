@@ -58,6 +58,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object arr
 			) cil managed 
 		{
@@ -78,12 +79,12 @@
 			IL_0010: stloc.1
 			// loop start (head: IL_0011)
 				IL_0011: ldloc.1
-				IL_0012: ldarg.1
+				IL_0012: ldarg.2
 				IL_0013: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 				IL_0018: clt
 				IL_001a: brfalse IL_005d
 
-				IL_001f: ldarg.1
+				IL_001f: ldarg.2
 				IL_0020: ldloc.1
 				IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 				IL_0026: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
@@ -154,7 +155,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 199 (0xc7)
+		// Code size: 200 (0xc8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionWithArrayIteration/Scope,
@@ -167,8 +168,8 @@
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionWithArrayIteration/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_GlobalFunctionWithArrayIteration/processArray::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_GlobalFunctionWithArrayIteration/processArray::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -199,34 +200,35 @@
 		IL_0077: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_007c: stloc.2
 		IL_007d: ldnull
-		IL_007e: ldftn object Modules.Function_GlobalFunctionWithArrayIteration/processArray::__js_call__(object[], object)
-		IL_0084: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_007e: ldftn object Modules.Function_GlobalFunctionWithArrayIteration/processArray::__js_call__(object[], object, object)
+		IL_0084: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0089: ldc.i4.1
 		IL_008a: newarr [System.Runtime]System.Object
 		IL_008f: dup
 		IL_0090: ldc.i4.0
 		IL_0091: ldloc.0
 		IL_0092: stelem.ref
-		IL_0093: ldloc.2
-		IL_0094: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0099: stloc.s 4
-		IL_009b: ldloc.s 4
-		IL_009d: stloc.3
-		IL_009e: ldloc.3
-		IL_009f: ldstr "join"
-		IL_00a4: ldstr ","
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ae: stloc.s 4
-		IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b5: ldc.i4.1
-		IL_00b6: newarr [System.Runtime]System.Object
-		IL_00bb: dup
-		IL_00bc: ldc.i4.0
-		IL_00bd: ldloc.s 4
-		IL_00bf: stelem.ref
-		IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c5: pop
-		IL_00c6: ret
+		IL_0093: ldnull
+		IL_0094: ldloc.2
+		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
+		IL_009a: stloc.s 4
+		IL_009c: ldloc.s 4
+		IL_009e: stloc.3
+		IL_009f: ldloc.3
+		IL_00a0: ldstr "join"
+		IL_00a5: ldstr ","
+		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00af: stloc.s 4
+		IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b6: ldc.i4.1
+		IL_00b7: newarr [System.Runtime]System.Object
+		IL_00bc: dup
+		IL_00bd: ldc.i4.0
+		IL_00be: ldloc.s 4
+		IL_00c0: stelem.ref
+		IL_00c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00c6: pop
+		IL_00c7: ret
 	} // end of method Function_GlobalFunctionWithArrayIteration::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionWithArrayIteration

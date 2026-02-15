@@ -221,5 +221,11 @@ namespace Js2IL.Tests.CommonJS
             // Issue #552 repro: IR pipeline crash compiling a CommonJS module that exports a class expression.
             return GenerateTest(nameof(CommonJS_Module_Exports_ClassExpression_ExtendsArray));
         }
+
+        [Fact]
+        public Task CommonJS_ImportMeta_Basic()
+        {
+            return GenerateTest(nameof(CommonJS_ImportMeta_Basic));
+        }
     }
 }

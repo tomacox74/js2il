@@ -38,9 +38,9 @@ Notes:
 | 8 | Syntax-Directed Operations | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations) | [Section8.md](8/Section8.md) |
 | 9 | Executable Code and Execution Contexts | Supported | [tc39.es](https://tc39.es/ecma262/#sec-executable-code-and-execution-contexts) | [Section9.md](9/Section9.md) |
 | 10 | Ordinary and Exotic Objects Behaviours | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-and-exotic-objects-behaviours) | [Section10.md](10/Section10.md) |
-| 11 | ECMAScript Language: Source Text | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-source-code) | [Section11.md](11/Section11.md) |
+| 11 | ECMAScript Language: Source Text | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-source-code) | [Section11.md](11/Section11.md) |
 | 12 | ECMAScript Language: Lexical Grammar | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar) | [Section12.md](12/Section12.md) |
-| 13 | ECMAScript Language: Expressions | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-expressions) | [Section13.md](13/Section13.md) |
+| 13 | ECMAScript Language: Expressions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-expressions) | [Section13.md](13/Section13.md) |
 | 14 | ECMAScript Language: Statements and Declarations | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations) | [Section14.md](14/Section14.md) |
 | 15 | ECMAScript Language: Functions and Classes | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) | [Section15.md](15/Section15.md) |
 | 16 | ECMAScript Language: Scripts and Modules | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-scripts-and-modules) | [Section16.md](16/Section16.md) |
@@ -55,6 +55,6 @@ Notes:
 | 25 | Structured Data | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-structured-data) | [Section25.md](25/Section25.md) |
 | 26 | Managing Memory | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-managing-memory) | [Section26.md](26/Section26.md) |
 | 27 | Control Abstraction Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-control-abstraction-objects) | [Section27.md](27/Section27.md) |
-| 28 | Reflection | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-reflection) | [Section28.md](28/Section28.md) |
+| 28 | Reflection | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-reflection) | [Section28.md](28/Section28.md) |
 | 29 | Memory Model | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-memory-model) | [Section29.md](29/Section29.md) |
 

@@ -44,6 +44,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object $p0
 			) cil managed 
 		{
@@ -56,23 +57,23 @@
 				[1] object
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: brfalse IL_0011
 
-			IL_0006: ldarg.1
+			IL_0006: ldarg.2
 			IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
 			IL_000c: brfalse IL_0021
 
-			IL_0011: ldarg.1
+			IL_0011: ldarg.2
 			IL_0012: ldstr ""
 			IL_0017: ldstr "a"
 			IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_0021: ldarg.1
+			IL_0021: ldarg.2
 			IL_0022: ldstr "a"
 			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_002c: stloc.0
-			IL_002d: ldarg.1
+			IL_002d: ldarg.2
 			IL_002e: ldstr "b"
 			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0038: stloc.1
@@ -127,6 +128,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object $p0
 			) cil managed 
 		{
@@ -145,19 +147,19 @@
 				[7] object
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: brfalse IL_0011
 
-			IL_0006: ldarg.1
+			IL_0006: ldarg.2
 			IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
 			IL_000c: brfalse IL_0021
 
-			IL_0011: ldarg.1
+			IL_0011: ldarg.2
 			IL_0012: ldstr ""
 			IL_0017: ldstr "host"
 			IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_0021: ldarg.1
+			IL_0021: ldarg.2
 			IL_0022: ldstr "host"
 			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_002c: stloc.s 4
@@ -171,7 +173,7 @@
 			IL_0040: ldloc.s 4
 			IL_0042: stloc.0
 
-			IL_0043: ldarg.1
+			IL_0043: ldarg.2
 			IL_0044: ldstr "port"
 			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_004e: stloc.s 4
@@ -186,7 +188,7 @@
 			IL_006b: ldloc.s 4
 			IL_006d: stloc.1
 
-			IL_006e: ldarg.1
+			IL_006e: ldarg.2
 			IL_006f: ldstr "secure"
 			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0079: stloc.s 4
@@ -289,8 +291,8 @@
 		IL_0000: newobj instance void Modules.ArrowFunction_ParameterDestructuring_Object/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_L3C14::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_L3C14::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -344,8 +346,8 @@
 		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
 		IL_00b6: pop
 		IL_00b7: ldnull
-		IL_00b8: ldftn object Modules.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_L10C16::__js_call__(object[], object)
-		IL_00be: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00b8: ldftn object Modules.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_L10C16::__js_call__(object[], object, object)
+		IL_00be: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_00c3: ldc.i4.1
 		IL_00c4: newarr [System.Runtime]System.Object
 		IL_00c9: dup

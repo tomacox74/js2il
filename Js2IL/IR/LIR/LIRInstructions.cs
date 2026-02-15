@@ -63,6 +63,13 @@ public record LIRLoadThis(TempVariable Result) : LIRInstruction;
 public record LIRLoadScopesArgument(TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Loads the new.target value for the current function/constructor.
+/// Returns the constructor that was invoked via 'new', or undefined for normal calls.
+/// The newTarget parameter follows scopes in the method signature.
+/// </summary>
+public record LIRLoadNewTarget(TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Loads a function parameter by its index (0-based, relative to JS parameters).
 /// The IL argument index is computed by the emitter based on method context
 /// (static methods start at arg0, instance/nested functions at arg1 due to scopes/this).

@@ -69,6 +69,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object sieveSize,
 				object timeLimitSeconds
 			) cil managed 
@@ -90,7 +91,7 @@
 				[9] object
 			)
 
-			IL_0000: ldarg.2
+			IL_0000: ldarg.3
 			IL_0001: brtrue IL_0016
 
 			IL_0006: ldc.r8 5
@@ -116,7 +117,7 @@
 			IL_0044: ldfld float64 Modules.Compile_Performance_PrimeJavaScript/Scope::NOW_UNITS_PER_SECOND
 			IL_0049: stloc.s 5
 			IL_004b: ldloc.1
-			IL_004c: ldarg.2
+			IL_004c: ldarg.3
 			IL_004d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0052: ldloc.s 5
 			IL_0054: mul
@@ -133,7 +134,7 @@
 				IL_0068: ldc.i4.0
 				IL_0069: ldelem.ref
 				IL_006a: stelem.ref
-				IL_006b: ldarg.1
+				IL_006b: ldarg.2
 				IL_006c: newobj instance void Modules.Compile_Performance_PrimeJavaScript/PrimeSieve::.ctor(object[], object)
 				IL_0071: stloc.s 7
 				IL_0073: ldloc.s 7
@@ -221,6 +222,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object $p0
 			) cil managed 
 		{
@@ -248,31 +250,31 @@
 				[16] string
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: brfalse IL_0011
 
-			IL_0006: ldarg.1
+			IL_0006: ldarg.2
 			IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
 			IL_000c: brfalse IL_0021
 
-			IL_0011: ldarg.1
+			IL_0011: ldarg.2
 			IL_0012: ldstr ""
 			IL_0017: ldstr "sieveSize"
 			IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_0021: ldarg.1
+			IL_0021: ldarg.2
 			IL_0022: ldstr "sieveSize"
 			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_002c: stloc.0
-			IL_002d: ldarg.1
+			IL_002d: ldarg.2
 			IL_002e: ldstr "timeLimitSeconds"
 			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0038: stloc.1
-			IL_0039: ldarg.1
+			IL_0039: ldarg.2
 			IL_003a: ldstr "verbose"
 			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0044: stloc.2
-			IL_0045: ldarg.1
+			IL_0045: ldarg.2
 			IL_0046: ldstr "runtime"
 			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0050: stloc.3
@@ -2289,8 +2291,8 @@
 		IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
 		IL_017f: pop
 		IL_0180: ldnull
-		IL_0181: ldftn object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23::__js_call__(object[], object, object)
-		IL_0187: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0181: ldftn object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L210C23::__js_call__(object[], object, object, object)
+		IL_0187: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
 		IL_018c: ldc.i4.1
 		IL_018d: newarr [System.Runtime]System.Object
 		IL_0192: dup
@@ -2304,8 +2306,8 @@
 		IL_01a3: ldloc.s 4
 		IL_01a5: stfld object Modules.Compile_Performance_PrimeJavaScript/Scope::runSieveBatch
 		IL_01aa: ldnull
-		IL_01ab: ldftn object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L229C14::__js_call__(object[], object)
-		IL_01b1: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_01ab: ldftn object Modules.Compile_Performance_PrimeJavaScript/ArrowFunction_L229C14::__js_call__(object[], object, object)
+		IL_01b1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_01b6: ldc.i4.1
 		IL_01b7: newarr [System.Runtime]System.Object
 		IL_01bc: dup

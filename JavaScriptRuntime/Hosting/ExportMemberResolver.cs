@@ -174,10 +174,21 @@ internal static class ExportMemberResolver
         var invokeArgs = new object?[parameters.Length];
 
         var argIndex = 0;
-        if (parameters[0].ParameterType == typeof(object[]))
+        var hasScopes = parameters[0].ParameterType == typeof(object[]);
+        var hasNewTarget = hasScopes
+            && parameters.Length > 1
+            && parameters[1].ParameterType == typeof(object)
+            && string.Equals(parameters[1].Name, "newTarget", StringComparison.Ordinal);
+
+        if (hasScopes)
         {
             invokeArgs[0] = CreateDefaultScopes(d.Target);
             argIndex = 1;
+        }
+
+        if (hasNewTarget)
+        {
+            invokeArgs[argIndex++] = null;
         }
 
         for (var i = 0; i < callArgs.Length && argIndex < invokeArgs.Length; i++, argIndex++)
@@ -266,15 +277,28 @@ internal static class ExportMemberResolver
             return true;
         }
 
-        // Resumable callables (async/generator) follow the js2il ABI and take a leading scopes array.
-        // Hosting calls do not carry scopes, so supply an ABI-compatible empty scopes array.
+        // js2il ABI callables may have hidden leading parameters:
+        // - scopes: object[]
+        // - newTarget: object (immediately after scopes)
+        // Hosting callers provide only JavaScript args; inject hidden ABI slots here.
         var scopesOffset = 0;
         if (parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]))
         {
             scopesOffset = 1;
         }
 
-        if (args.Length > (parameters.Length - scopesOffset))
+        var newTargetOffset = 0;
+        if (scopesOffset == 1
+            && parameters.Length > 1
+            && parameters[1].ParameterType == typeof(object)
+            && string.Equals(parameters[1].Name, "newTarget", StringComparison.Ordinal))
+        {
+            newTargetOffset = 1;
+        }
+
+        var jsArgStart = scopesOffset + newTargetOffset;
+
+        if (args.Length > (parameters.Length - jsArgStart))
         {
             invokeArgs = Array.Empty<object?>();
             return false;
@@ -287,12 +311,17 @@ internal static class ExportMemberResolver
             invokeArgs[0] = CreateDefaultScopes(target);
         }
 
-        for (var i = 0; i < args.Length; i++)
+        if (newTargetOffset == 1)
         {
-            invokeArgs[i + scopesOffset] = args[i];
+            invokeArgs[1] = null;
         }
 
-        for (var i = args.Length + scopesOffset; i < parameters.Length; i++)
+        for (var i = 0; i < args.Length; i++)
+        {
+            invokeArgs[i + jsArgStart] = args[i];
+        }
+
+        for (var i = args.Length + jsArgStart; i < parameters.Length; i++)
         {
             invokeArgs[i] = parameters[i].HasDefaultValue ? Type.Missing : null;
         }

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e2
+				// Method begins at RVA 0x20e3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,10 +35,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x20b0
+			// Method begins at RVA 0x20b1
 			// Header size: 1
 			// Code size: 40 (0x28)
 			.maxstack 8
@@ -74,7 +75,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d9
+			// Method begins at RVA 0x20da
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -100,7 +101,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 84 (0x54)
+		// Code size: 85 (0x55)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ReturnsStaticValueAndLogs/Scope,
@@ -112,8 +113,8 @@
 		IL_0000: newobj instance void Modules.Function_ReturnsStaticValueAndLogs/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -125,24 +126,25 @@
 		IL_0022: ldloc.3
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object[])
-		IL_002b: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.Function_ReturnsStaticValueAndLogs/returnsFive::__js_call__(object[], object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup
 		IL_0037: ldc.i4.0
 		IL_0038: ldloc.0
 		IL_0039: stelem.ref
-		IL_003a: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_003f: stloc.3
-		IL_0040: ldloc.3
-		IL_0041: stloc.2
-		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0047: ldstr "Output:"
-		IL_004c: ldloc.2
-		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0052: pop
-		IL_0053: ret
+		IL_003a: ldnull
+		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_0040: stloc.3
+		IL_0041: ldloc.3
+		IL_0042: stloc.2
+		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0048: ldstr "Output:"
+		IL_004d: ldloc.2
+		IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0053: pop
+		IL_0054: ret
 	} // end of method Function_ReturnsStaticValueAndLogs::__js_module_init__
 
 } // end of class Modules.Function_ReturnsStaticValueAndLogs
@@ -154,7 +156,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20eb
+		// Method begins at RVA 0x20ec
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

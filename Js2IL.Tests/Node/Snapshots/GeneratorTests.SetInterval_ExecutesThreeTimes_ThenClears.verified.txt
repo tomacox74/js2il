@@ -57,7 +57,8 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x20d4
@@ -193,8 +194,8 @@
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
 		IL_001a: ldnull
-		IL_001b: ldftn object Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24::__js_call__(object[])
-		IL_0021: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_001b: ldftn object Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24::__js_call__(object[], object)
+		IL_0021: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0026: ldc.i4.1
 		IL_0027: newarr [System.Runtime]System.Object
 		IL_002c: dup

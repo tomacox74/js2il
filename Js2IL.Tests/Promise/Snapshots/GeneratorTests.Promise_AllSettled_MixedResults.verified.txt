@@ -43,6 +43,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object results
 			) cil managed 
 		{
@@ -54,7 +55,7 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: ldc.r8 0.0
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_000f: ldstr "status"
@@ -77,7 +78,7 @@
 			IL_0038: stelem.ref
 			IL_0039: dup
 			IL_003a: ldc.i4.3
-			IL_003b: ldarg.1
+			IL_003b: ldarg.2
 			IL_003c: ldc.r8 0.0
 			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_004a: ldstr "value"
@@ -85,7 +86,7 @@
 			IL_0054: stelem.ref
 			IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 			IL_005a: pop
-			IL_005b: ldarg.1
+			IL_005b: ldarg.2
 			IL_005c: ldc.r8 1
 			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_006a: ldstr "status"
@@ -108,7 +109,7 @@
 			IL_0093: stelem.ref
 			IL_0094: dup
 			IL_0095: ldc.i4.3
-			IL_0096: ldarg.1
+			IL_0096: ldarg.2
 			IL_0097: ldc.r8 1
 			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_00a5: ldstr "reason"
@@ -116,7 +117,7 @@
 			IL_00af: stelem.ref
 			IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 			IL_00b5: pop
-			IL_00b6: ldarg.1
+			IL_00b6: ldarg.2
 			IL_00b7: ldc.r8 2
 			IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_00c5: ldstr "status"
@@ -139,7 +140,7 @@
 			IL_00ee: stelem.ref
 			IL_00ef: dup
 			IL_00f0: ldc.i4.3
-			IL_00f1: ldarg.1
+			IL_00f1: ldarg.2
 			IL_00f2: ldc.r8 2
 			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_0100: ldstr "value"
@@ -234,8 +235,8 @@
 		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::allSettled(object)
 		IL_0069: stloc.s 4
 		IL_006b: ldnull
-		IL_006c: ldftn object Modules.Promise_AllSettled_MixedResults/ArrowFunction_L7C39::__js_call__(object[], object)
-		IL_0072: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_006c: ldftn object Modules.Promise_AllSettled_MixedResults/ArrowFunction_L7C39::__js_call__(object[], object, object)
+		IL_0072: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0077: ldc.i4.1
 		IL_0078: newarr [System.Runtime]System.Object
 		IL_007d: dup

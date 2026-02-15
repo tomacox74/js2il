@@ -107,6 +107,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object separator
 			) cil managed 
 		{
@@ -142,7 +143,7 @@
 				IL_003e: brfalse IL_004d
 
 				IL_0043: ldloc.1
-				IL_0044: ldarg.1
+				IL_0044: ldarg.2
 				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 				IL_004a: stloc.3
 				IL_004b: ldloc.3
@@ -214,8 +215,8 @@
 		IL_0000: newobj instance void Modules.ArrowFunction_RestParameters_WithNamedParams/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup

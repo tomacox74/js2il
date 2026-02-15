@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f4
+				// Method begins at RVA 0x20f5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,10 +35,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x20cf
+			// Method begins at RVA 0x20d0
 			// Header size: 1
 			// Code size: 27 (0x1b)
 			.maxstack 8
@@ -73,7 +74,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20eb
+			// Method begins at RVA 0x20ec
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -99,7 +100,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 115 (0x73)
+		// Code size: 116 (0x74)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_HelloWorld/Scope,
@@ -110,8 +111,8 @@
 		IL_0000: newobj instance void Modules.Async_HelloWorld/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Async_HelloWorld/helloWorld::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Async_HelloWorld/helloWorld::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -132,26 +133,27 @@
 		IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_003c: pop
 		IL_003d: ldnull
-		IL_003e: ldftn object Modules.Async_HelloWorld/helloWorld::__js_call__(object[])
-		IL_0044: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_003e: ldftn object Modules.Async_HelloWorld/helloWorld::__js_call__(object[], object)
+		IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0049: ldc.i4.1
 		IL_004a: newarr [System.Runtime]System.Object
 		IL_004f: dup
 		IL_0050: ldc.i4.0
 		IL_0051: ldloc.0
 		IL_0052: stelem.ref
-		IL_0053: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0058: pop
-		IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005e: ldc.i4.1
-		IL_005f: newarr [System.Runtime]System.Object
-		IL_0064: dup
-		IL_0065: ldc.i4.0
-		IL_0066: ldstr "After calling async function"
-		IL_006b: stelem.ref
-		IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0071: pop
-		IL_0072: ret
+		IL_0053: ldnull
+		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_0059: pop
+		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005f: ldc.i4.1
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldstr "After calling async function"
+		IL_006c: stelem.ref
+		IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0072: pop
+		IL_0073: ret
 	} // end of method Async_HelloWorld::__js_module_init__
 
 } // end of class Modules.Async_HelloWorld
@@ -163,7 +165,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fd
+		// Method begins at RVA 0x20fe
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

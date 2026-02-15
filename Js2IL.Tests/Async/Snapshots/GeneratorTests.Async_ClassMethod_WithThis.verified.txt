@@ -43,17 +43,18 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object 'value'
 			) cil managed 
 		{
-			// Method begins at RVA 0x20be
+			// Method begins at RVA 0x20bf
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: ldstr "Count:"
-			IL_000a: ldarg.1
+			IL_000a: ldarg.2
 			IL_000b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0010: pop
 			IL_0011: ldnull
@@ -144,7 +145,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d2
+			// Method begins at RVA 0x20d3
 			// Header size: 1
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -159,7 +160,8 @@
 
 		.method public hidebysig 
 			instance object getCount (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
 			// Method begins at RVA 0x20ec
@@ -187,8 +189,8 @@
 			IL_001c: starg.s scopes
 			IL_001e: ldloc.0
 			IL_001f: ldarg.0
-			IL_0020: ldftn instance object Modules.Async_ClassMethod_WithThis/Counter::getCount(object[])
-			IL_0026: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_0020: ldftn instance object Modules.Async_ClassMethod_WithThis/Counter::getCount(object[], object)
+			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 			IL_002b: ldarg.1
 			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 			IL_0031: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
@@ -285,7 +287,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 98 (0x62)
+		// Code size: 99 (0x63)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_ClassMethod_WithThis/Scope,
@@ -310,33 +312,34 @@
 		IL_001b: ldc.i4.0
 		IL_001c: ldloc.0
 		IL_001d: stelem.ref
-		IL_001e: callvirt instance object Modules.Async_ClassMethod_WithThis/Counter::getCount(object[])
-		IL_0023: stloc.3
-		IL_0024: ldnull
-		IL_0025: ldftn object Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25::__js_call__(object[], object)
-		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0030: ldc.i4.1
-		IL_0031: newarr [System.Runtime]System.Object
-		IL_0036: dup
-		IL_0037: ldc.i4.0
-		IL_0038: ldloc.0
-		IL_0039: stelem.ref
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0044: stloc.s 4
-		IL_0046: ldc.i4.1
-		IL_0047: newarr [System.Runtime]System.Object
-		IL_004c: dup
-		IL_004d: ldc.i4.0
-		IL_004e: ldloc.s 4
-		IL_0050: stelem.ref
-		IL_0051: stloc.s 5
-		IL_0053: ldloc.3
-		IL_0054: ldstr "then"
-		IL_0059: ldloc.s 4
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0060: pop
-		IL_0061: ret
+		IL_001e: ldnull
+		IL_001f: callvirt instance object Modules.Async_ClassMethod_WithThis/Counter::getCount(object[], object)
+		IL_0024: stloc.3
+		IL_0025: ldnull
+		IL_0026: ldftn object Modules.Async_ClassMethod_WithThis/ArrowFunction_L16C25::__js_call__(object[], object, object)
+		IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+		IL_0031: ldc.i4.1
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldloc.0
+		IL_003a: stelem.ref
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0045: stloc.s 4
+		IL_0047: ldc.i4.1
+		IL_0048: newarr [System.Runtime]System.Object
+		IL_004d: dup
+		IL_004e: ldc.i4.0
+		IL_004f: ldloc.s 4
+		IL_0051: stelem.ref
+		IL_0052: stloc.s 5
+		IL_0054: ldloc.3
+		IL_0055: ldstr "then"
+		IL_005a: ldloc.s 4
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0061: pop
+		IL_0062: ret
 	} // end of method Async_ClassMethod_WithThis::__js_module_init__
 
 } // end of class Modules.Async_ClassMethod_WithThis

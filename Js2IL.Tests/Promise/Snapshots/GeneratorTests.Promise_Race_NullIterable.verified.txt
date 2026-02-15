@@ -43,6 +43,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object result
 			) cil managed 
 		{
@@ -102,6 +103,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object 'error'
 			) cil managed 
 		{
@@ -112,7 +114,7 @@
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: ldstr "Caught error type:"
-			IL_000a: ldarg.1
+			IL_000a: ldarg.2
 			IL_000b: ldstr "name"
 			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
@@ -172,8 +174,8 @@
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::race(object)
 		IL_0011: stloc.1
 		IL_0012: ldnull
-		IL_0013: ldftn object Modules.Promise_Race_NullIterable/ArrowFunction_L4C11::__js_call__(object[], object)
-		IL_0019: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0013: ldftn object Modules.Promise_Race_NullIterable/ArrowFunction_L4C11::__js_call__(object[], object, object)
+		IL_0019: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_001e: ldc.i4.1
 		IL_001f: newarr [System.Runtime]System.Object
 		IL_0024: dup
@@ -196,8 +198,8 @@
 		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_004a: stloc.1
 		IL_004b: ldnull
-		IL_004c: ldftn object Modules.Promise_Race_NullIterable/ArrowFunction_L7C12::__js_call__(object[], object)
-		IL_0052: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_004c: ldftn object Modules.Promise_Race_NullIterable/ArrowFunction_L7C12::__js_call__(object[], object, object)
+		IL_0052: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0057: ldc.i4.1
 		IL_0058: newarr [System.Runtime]System.Object
 		IL_005d: dup

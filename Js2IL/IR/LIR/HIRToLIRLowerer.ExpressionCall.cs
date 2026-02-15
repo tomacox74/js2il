@@ -762,11 +762,16 @@ public sealed partial class HIRToLIRLowerer
 
                 // Lower all arguments (evaluate extras for side effects, but only pass up to declared param count).
                 var declaredParamCount = memberFunc.Params.Count;
-                var callArgTemps = new List<TempVariable>(declaredParamCount + (scopesArgTemp.HasValue ? 1 : 0));
+                var callArgTemps = new List<TempVariable>(declaredParamCount + (scopesArgTemp.HasValue ? 2 : 0));
 
                 if (scopesArgTemp.HasValue)
                 {
                     callArgTemps.Add(scopesArgTemp.Value);
+
+                    var newTargetUndefTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(newTargetUndefTemp));
+                    DefineTempStorage(newTargetUndefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    callArgTemps.Add(newTargetUndefTemp);
                 }
 
                 for (int i = 0; i < callExpr.Arguments.Length; i++)
@@ -786,7 +791,7 @@ public sealed partial class HIRToLIRLowerer
                 }
 
                 // Pad missing args with undefined (null) to match the declared signature.
-                var expectedArgs = declaredParamCount + (scopesArgTemp.HasValue ? 1 : 0);
+                var expectedArgs = declaredParamCount + (scopesArgTemp.HasValue ? 2 : 0);
                 while (callArgTemps.Count < expectedArgs)
                 {
                     var undefTemp = CreateTempVariable();

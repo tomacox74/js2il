@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2146
+				// Method begins at RVA 0x214a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,11 +36,12 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object a,
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x211c
+			// Method begins at RVA 0x2120
 			// Header size: 12
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -48,11 +49,11 @@
 				[0] float64
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0006: stloc.0
 			IL_0007: ldloc.0
-			IL_0008: ldarg.2
+			IL_0008: ldarg.3
 			IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_000e: mul
 			IL_000f: box [System.Runtime]System.Double
@@ -75,7 +76,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x213d
+			// Method begins at RVA 0x2141
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -101,7 +102,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 191 (0xbf)
+		// Code size: 193 (0xc1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_MulObjectObject/Scope,
@@ -112,8 +113,8 @@
 		IL_0000: newobj instance void Modules.BinaryOperator_MulObjectObject/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.BinaryOperator_MulObjectObject/'mul'::__js_call__(object[], object, object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.BinaryOperator_MulObjectObject/'mul'::__js_call__(object[], object, object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -125,54 +126,56 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.BinaryOperator_MulObjectObject/'mul'::__js_call__(object[], object, object)
-		IL_002b: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.BinaryOperator_MulObjectObject/'mul'::__js_call__(object[], object, object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup
 		IL_0037: ldc.i4.0
 		IL_0038: ldloc.0
 		IL_0039: stelem.ref
-		IL_003a: ldc.r8 3
-		IL_0043: box [System.Runtime]System.Double
-		IL_0048: ldc.r8 4
-		IL_0051: box [System.Runtime]System.Double
-		IL_0056: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_005b: stloc.2
-		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0061: ldc.i4.1
-		IL_0062: newarr [System.Runtime]System.Object
-		IL_0067: dup
-		IL_0068: ldc.i4.0
-		IL_0069: ldloc.2
-		IL_006a: stelem.ref
-		IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0070: pop
-		IL_0071: ldnull
-		IL_0072: ldftn object Modules.BinaryOperator_MulObjectObject/'mul'::__js_call__(object[], object, object)
-		IL_0078: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_007d: ldc.i4.1
-		IL_007e: newarr [System.Runtime]System.Object
-		IL_0083: dup
-		IL_0084: ldc.i4.0
-		IL_0085: ldloc.0
-		IL_0086: stelem.ref
-		IL_0087: ldc.r8 2.5
-		IL_0090: box [System.Runtime]System.Double
-		IL_0095: ldc.r8 4
-		IL_009e: box [System.Runtime]System.Double
-		IL_00a3: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_00a8: stloc.2
-		IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ae: ldc.i4.1
-		IL_00af: newarr [System.Runtime]System.Object
-		IL_00b4: dup
-		IL_00b5: ldc.i4.0
-		IL_00b6: ldloc.2
-		IL_00b7: stelem.ref
-		IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00bd: pop
-		IL_00be: ret
+		IL_003a: ldnull
+		IL_003b: ldc.r8 3
+		IL_0044: box [System.Runtime]System.Double
+		IL_0049: ldc.r8 4
+		IL_0052: box [System.Runtime]System.Double
+		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::Invoke(object[], object, object, object)
+		IL_005c: stloc.2
+		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0062: ldc.i4.1
+		IL_0063: newarr [System.Runtime]System.Object
+		IL_0068: dup
+		IL_0069: ldc.i4.0
+		IL_006a: ldloc.2
+		IL_006b: stelem.ref
+		IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0071: pop
+		IL_0072: ldnull
+		IL_0073: ldftn object Modules.BinaryOperator_MulObjectObject/'mul'::__js_call__(object[], object, object, object)
+		IL_0079: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_007e: ldc.i4.1
+		IL_007f: newarr [System.Runtime]System.Object
+		IL_0084: dup
+		IL_0085: ldc.i4.0
+		IL_0086: ldloc.0
+		IL_0087: stelem.ref
+		IL_0088: ldnull
+		IL_0089: ldc.r8 2.5
+		IL_0092: box [System.Runtime]System.Double
+		IL_0097: ldc.r8 4
+		IL_00a0: box [System.Runtime]System.Double
+		IL_00a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::Invoke(object[], object, object, object)
+		IL_00aa: stloc.2
+		IL_00ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b0: ldc.i4.1
+		IL_00b1: newarr [System.Runtime]System.Object
+		IL_00b6: dup
+		IL_00b7: ldc.i4.0
+		IL_00b8: ldloc.2
+		IL_00b9: stelem.ref
+		IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00bf: pop
+		IL_00c0: ret
 	} // end of method BinaryOperator_MulObjectObject::__js_module_init__
 
 } // end of class Modules.BinaryOperator_MulObjectObject
@@ -184,7 +187,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214f
+		// Method begins at RVA 0x2153
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

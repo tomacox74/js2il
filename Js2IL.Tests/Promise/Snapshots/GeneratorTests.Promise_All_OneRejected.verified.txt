@@ -43,6 +43,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object results
 			) cil managed 
 		{
@@ -102,6 +103,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object 'error'
 			) cil managed 
 		{
@@ -112,7 +114,7 @@
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0005: ldstr "Caught rejection:"
-			IL_000a: ldarg.1
+			IL_000a: ldarg.2
 			IL_000b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0010: pop
 			IL_0011: ldnull
@@ -202,8 +204,8 @@
 		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
 		IL_0069: stloc.s 4
 		IL_006b: ldnull
-		IL_006c: ldftn object Modules.Promise_All_OneRejected/ArrowFunction_L8C11::__js_call__(object[], object)
-		IL_0072: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_006c: ldftn object Modules.Promise_All_OneRejected/ArrowFunction_L8C11::__js_call__(object[], object, object)
+		IL_0072: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0077: ldc.i4.1
 		IL_0078: newarr [System.Runtime]System.Object
 		IL_007d: dup
@@ -226,8 +228,8 @@
 		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_00a8: stloc.s 4
 		IL_00aa: ldnull
-		IL_00ab: ldftn object Modules.Promise_All_OneRejected/ArrowFunction_L11C12::__js_call__(object[], object)
-		IL_00b1: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00ab: ldftn object Modules.Promise_All_OneRejected/ArrowFunction_L11C12::__js_call__(object[], object, object)
+		IL_00b1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_00b6: ldc.i4.1
 		IL_00b7: newarr [System.Runtime]System.Object
 		IL_00bc: dup

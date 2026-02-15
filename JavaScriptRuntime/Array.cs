@@ -623,36 +623,17 @@ namespace JavaScriptRuntime
             if (args != null && args.Length > 0 && args[0] != null)
             {
                 var cb = args[0];
+                Func<object, object, object?>? compareCallback = null;
 
                 int CompareUsingCallback(object a, object b)
                 {
-                    object? result;
+                    compareCallback ??= CreateSortComparatorInvoker(cb, this);
+                    if (compareCallback == null)
+                    {
+                        return string.Compare(DotNet2JSConversions.ToString(a), DotNet2JSConversions.ToString(b), StringComparison.Ordinal);
+                    }
 
-                    // Support common delegate shapes produced by our compiler/Closure binder
-                    if (cb is Func<object[], object, object, object> f2)
-                    {
-                        result = f2(System.Array.Empty<object>(), a, b);
-                    }
-                    else if (cb is Func<object[], object, object, object, object> f3)
-                    {
-                        // Some callsites may pass (a, b, array)
-                        result = f3(System.Array.Empty<object>(), a, b, this);
-                    }
-                    else if (cb is Func<object[], object, object> f1)
-                    {
-                        // Degenerate: comparator with single arg — treat as default
-                        return string.Compare(DotNet2JSConversions.ToString(a), DotNet2JSConversions.ToString(b), StringComparison.Ordinal);
-                    }
-                    else if (cb is Func<object[], object> f0)
-                    {
-                        // No-arg function — ignore and use default
-                        return string.Compare(DotNet2JSConversions.ToString(a), DotNet2JSConversions.ToString(b), StringComparison.Ordinal);
-                    }
-                    else
-                    {
-                        // Unknown type — default
-                        return string.Compare(DotNet2JSConversions.ToString(a), DotNet2JSConversions.ToString(b), StringComparison.Ordinal);
-                    }
+                    object? result = compareCallback(a, b);
 
                     // Coerce result to a JS number (double) and map to -1/0/1
                     double d;
@@ -694,6 +675,226 @@ namespace JavaScriptRuntime
             return sort();
         }
 
+        private delegate object? ArrayCallbackInvoker(object? a0, object? a1, object? a2, object? a3);
+
+        private static Func<object, object, object?>? CreateSortComparatorInvoker(object? cb, Array array)
+        {
+            if (cb is Delegate del)
+            {
+                return (a, b) => Closure.InvokeWithArgs2(del, System.Array.Empty<object>(), a, b);
+            }
+
+            if (cb is Func<object[], object, object, object> f2)
+            {
+                return (a, b) => f2(System.Array.Empty<object>(), a, b);
+            }
+
+            if (cb is Func<object[], object, object, object, object> f3)
+            {
+                return (a, b) => f3(System.Array.Empty<object>(), a, b, array);
+            }
+
+            return null;
+        }
+
+        private static ArrayCallbackInvoker CreateArrayCallbackInvoker(object? cb, int argCount, string callbackKind)
+        {
+            if (cb is Delegate del)
+            {
+                var scopes = System.Array.Empty<object>();
+
+                if (del is JsFunc0 jsf0)
+                {
+                    return argCount switch
+                    {
+                        0 => (_, _, _, _) => InvokeJsFunc(jsf0, scopes, System.Array.Empty<object?>()),
+                        1 => (a0, _, _, _) => InvokeJsFunc(jsf0, scopes, new object?[] { a0 }),
+                        2 => (a0, a1, _, _) => InvokeJsFunc(jsf0, scopes, new object?[] { a0, a1 }),
+                        3 => (a0, a1, a2, _) => InvokeJsFunc(jsf0, scopes, new object?[] { a0, a1, a2 }),
+                        _ => (a0, a1, a2, a3) => InvokeJsFunc(jsf0, scopes, new object?[] { a0, a1, a2, a3 })
+                    };
+                }
+
+                if (del is JsFunc1 jsf1)
+                {
+                    return argCount switch
+                    {
+                        0 => (_, _, _, _) => InvokeJsFunc(jsf1, scopes, System.Array.Empty<object?>(), null),
+                        1 => (a0, _, _, _) => InvokeJsFunc(jsf1, scopes, new object?[] { a0 }, a0),
+                        2 => (a0, a1, _, _) => InvokeJsFunc(jsf1, scopes, new object?[] { a0, a1 }, a0),
+                        3 => (a0, a1, a2, _) => InvokeJsFunc(jsf1, scopes, new object?[] { a0, a1, a2 }, a0),
+                        _ => (a0, a1, a2, a3) => InvokeJsFunc(jsf1, scopes, new object?[] { a0, a1, a2, a3 }, a0)
+                    };
+                }
+
+                if (del is JsFunc2 jsf2)
+                {
+                    return argCount switch
+                    {
+                        0 => (_, _, _, _) => InvokeJsFunc(jsf2, scopes, System.Array.Empty<object?>(), null, null),
+                        1 => (a0, _, _, _) => InvokeJsFunc(jsf2, scopes, new object?[] { a0 }, a0, null),
+                        2 => (a0, a1, _, _) => InvokeJsFunc(jsf2, scopes, new object?[] { a0, a1 }, a0, a1),
+                        3 => (a0, a1, a2, _) => InvokeJsFunc(jsf2, scopes, new object?[] { a0, a1, a2 }, a0, a1),
+                        _ => (a0, a1, a2, a3) => InvokeJsFunc(jsf2, scopes, new object?[] { a0, a1, a2, a3 }, a0, a1)
+                    };
+                }
+
+                if (del is JsFunc3 jsf3)
+                {
+                    return argCount switch
+                    {
+                        0 => (_, _, _, _) => InvokeJsFunc(jsf3, scopes, System.Array.Empty<object?>(), null, null, null),
+                        1 => (a0, _, _, _) => InvokeJsFunc(jsf3, scopes, new object?[] { a0 }, a0, null, null),
+                        2 => (a0, a1, _, _) => InvokeJsFunc(jsf3, scopes, new object?[] { a0, a1 }, a0, a1, null),
+                        3 => (a0, a1, a2, _) => InvokeJsFunc(jsf3, scopes, new object?[] { a0, a1, a2 }, a0, a1, a2),
+                        _ => (a0, a1, a2, a3) => InvokeJsFunc(jsf3, scopes, new object?[] { a0, a1, a2, a3 }, a0, a1, a2)
+                    };
+                }
+
+                if (del is JsFunc4 jsf4)
+                {
+                    return argCount switch
+                    {
+                        0 => (_, _, _, _) => InvokeJsFunc(jsf4, scopes, System.Array.Empty<object?>(), null, null, null, null),
+                        1 => (a0, _, _, _) => InvokeJsFunc(jsf4, scopes, new object?[] { a0 }, a0, null, null, null),
+                        2 => (a0, a1, _, _) => InvokeJsFunc(jsf4, scopes, new object?[] { a0, a1 }, a0, a1, null, null),
+                        3 => (a0, a1, a2, _) => InvokeJsFunc(jsf4, scopes, new object?[] { a0, a1, a2 }, a0, a1, a2, null),
+                        _ => (a0, a1, a2, a3) => InvokeJsFunc(jsf4, scopes, new object?[] { a0, a1, a2, a3 }, a0, a1, a2, a3)
+                    };
+                }
+
+                return argCount switch
+                {
+                    0 => (_, _, _, _) => Closure.InvokeWithArgs0(del, System.Array.Empty<object>()),
+                    1 => (a0, _, _, _) => Closure.InvokeWithArgs1(del, System.Array.Empty<object>(), a0),
+                    2 => (a0, a1, _, _) => Closure.InvokeWithArgs2(del, System.Array.Empty<object>(), a0, a1),
+                    3 => (a0, a1, a2, _) => Closure.InvokeWithArgs3(del, System.Array.Empty<object>(), a0, a1, a2),
+                    _ => (a0, a1, a2, a3) => Closure.InvokeWithArgs(del, System.Array.Empty<object>(), new object?[] { a0, a1, a2, a3 })
+                };
+            }
+
+            var typedScopes = System.Array.Empty<object?>();
+
+            if (cb is Func<object?[], object?, object?, object?, object?, bool> b4)
+            {
+                return (a0, a1, a2, a3) => b4(typedScopes, a0, a1, a2, a3);
+            }
+            if (cb is Func<object?[], object?, object?, object?, bool> b3)
+            {
+                return (a0, a1, a2, _) => b3(typedScopes, a0, a1, a2);
+            }
+            if (cb is Func<object?[], object?, object?, bool> b2)
+            {
+                return (a0, a1, _, _) => b2(typedScopes, a0, a1);
+            }
+            if (cb is Func<object?[], object?, bool> b1)
+            {
+                return (a0, _, _, _) => b1(typedScopes, a0);
+            }
+            if (cb is Func<object?[], bool> b0)
+            {
+                return (_, _, _, _) => b0(typedScopes);
+            }
+
+            if (cb is Func<object?[], object?, object?, object?, object?, object?> f4)
+            {
+                return (a0, a1, a2, a3) => f4(typedScopes, a0, a1, a2, a3);
+            }
+            if (cb is Func<object?[], object?, object?, object?, object?> f3)
+            {
+                return (a0, a1, a2, _) => f3(typedScopes, a0, a1, a2);
+            }
+            if (cb is Func<object?[], object?, object?, object?> f2)
+            {
+                return (a0, a1, _, _) => f2(typedScopes, a0, a1);
+            }
+            if (cb is Func<object?[], object?, object?> f1)
+            {
+                return (a0, _, _, _) => f1(typedScopes, a0);
+            }
+            if (cb is Func<object?[], object?> f0)
+            {
+                return (_, _, _, _) => f0(typedScopes);
+            }
+
+            throw new InvalidOperationException($"{callbackKind} callback is not a supported function type");
+        }
+
+        private static object? InvokeJsFunc(JsFunc0 callback, object[] scopes, object?[] jsArgs)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(jsArgs);
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
+            try
+            {
+                return callback(scopes, null);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            }
+        }
+
+        private static object? InvokeJsFunc(JsFunc1 callback, object[] scopes, object?[] jsArgs, object? a0)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(jsArgs);
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
+            try
+            {
+                return callback(scopes, null, a0);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            }
+        }
+
+        private static object? InvokeJsFunc(JsFunc2 callback, object[] scopes, object?[] jsArgs, object? a0, object? a1)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(jsArgs);
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
+            try
+            {
+                return callback(scopes, null, a0, a1);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            }
+        }
+
+        private static object? InvokeJsFunc(JsFunc3 callback, object[] scopes, object?[] jsArgs, object? a0, object? a1, object? a2)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(jsArgs);
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
+            try
+            {
+                return callback(scopes, null, a0, a1, a2);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            }
+        }
+
+        private static object? InvokeJsFunc(JsFunc4 callback, object[] scopes, object?[] jsArgs, object? a0, object? a1, object? a2, object? a3)
+        {
+            var previousArgs = RuntimeServices.SetCurrentArguments(jsArgs);
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
+            try
+            {
+                return callback(scopes, null, a0, a1, a2, a3);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            }
+        }
+
         /// <summary>
         /// JavaScript Array.map(callback[, thisArg])
         /// Minimal implementation: invokes the callback with (value, index, array) when supported and returns a new Array.
@@ -703,92 +904,18 @@ namespace JavaScriptRuntime
         {
             var result = new Array(this.Count);
             var cb = (args != null && args.Length > 0) ? args[0] : null;
+            ArrayCallbackInvoker? invoke = null;
 
             for (int i = 0; i < this.Count; i++)
             {
                 var value = this[i];
-                object? mapped;
-
-                if (cb is Func<object?[], object?, object?, object?, object?> f3)
-                {
-                    // (scopes, value, index, array)
-                    mapped = f3(System.Array.Empty<object?>(), value, (double)i, this);
-                }
-                else if (cb is Func<object?[], object?, object?, object?> f2)
-                {
-                    // (scopes, value, index)
-                    mapped = f2(System.Array.Empty<object>(), value, (double)i);
-                }
-                else if (cb is Func<object?[], object?, object?> f1)
-                {
-                    // (scopes, value)
-                    mapped = f1(System.Array.Empty<object?>(), value);
-                }
-                else if (cb is Func<object?[], object?> f0)
-                {
-                    mapped = f0(System.Array.Empty<object?>());
-                }
-                else
-                {
-                    throw new InvalidOperationException("map callback is not a supported function type");
-                }
+                invoke ??= CreateArrayCallbackInvoker(cb, 3, "map");
+                object? mapped = invoke(value, (double)i, this, null);
 
                 result.Add(mapped);
             }
 
             return result;
-        }
-
-        private static object? InvokeCallback(object? cb, object? a0 = null, object? a1 = null, object? a2 = null, object? a3 = null)
-        {
-            // Most array callbacks use up to 4 JS args (value, index, array) or (acc, value, index, array).
-            // Our delegate shapes include an extra leading "scopes" parameter.
-            var scopes = System.Array.Empty<object?>();
-
-            // Predicates may return bool directly (e.g., filter(Boolean)). Support that shape and box the result.
-            if (cb is Func<object?[], object?, object?, object?, object?, bool> b4)
-            {
-                return b4(scopes, a0, a1, a2, a3);
-            }
-            if (cb is Func<object?[], object?, object?, object?, bool> b3)
-            {
-                return b3(scopes, a0, a1, a2);
-            }
-            if (cb is Func<object?[], object?, object?, bool> b2)
-            {
-                return b2(scopes, a0, a1);
-            }
-            if (cb is Func<object?[], object?, bool> b1)
-            {
-                return b1(scopes, a0);
-            }
-            if (cb is Func<object?[], bool> b0)
-            {
-                return b0(scopes);
-            }
-
-            if (cb is Func<object?[], object?, object?, object?, object?, object?> f4)
-            {
-                return f4(scopes, a0, a1, a2, a3);
-            }
-            if (cb is Func<object?[], object?, object?, object?, object?> f3)
-            {
-                return f3(scopes, a0, a1, a2);
-            }
-            if (cb is Func<object?[], object?, object?, object?> f2)
-            {
-                return f2(scopes, a0, a1);
-            }
-            if (cb is Func<object?[], object?, object?> f1)
-            {
-                return f1(scopes, a0);
-            }
-            if (cb is Func<object?[], object?> f0)
-            {
-                return f0(scopes);
-            }
-
-            throw new InvalidOperationException("array callback is not a supported function type");
         }
 
         /// <summary>
@@ -797,9 +924,11 @@ namespace JavaScriptRuntime
         public object? forEach(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
+            ArrayCallbackInvoker? invoke = null;
             for (int i = 0; i < this.Count; i++)
             {
-                _ = InvokeCallback(cb, this[i], (double)i, this);
+                invoke ??= CreateArrayCallbackInvoker(cb, 3, "forEach");
+                _ = invoke(this[i], (double)i, this, null);
             }
             return null; // undefined
         }
@@ -811,9 +940,11 @@ namespace JavaScriptRuntime
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             var result = new Array();
+            ArrayCallbackInvoker? invoke = null;
             for (int i = 0; i < this.Count; i++)
             {
-                var keep = InvokeCallback(cb, this[i], (double)i, this);
+                invoke ??= CreateArrayCallbackInvoker(cb, 3, "filter");
+                var keep = invoke(this[i], (double)i, this, null);
                 if (Operators.IsTruthy(keep))
                 {
                     result.Add(this[i]);
@@ -828,9 +959,11 @@ namespace JavaScriptRuntime
         public bool every(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
+            ArrayCallbackInvoker? invoke = null;
             for (int i = 0; i < this.Count; i++)
             {
-                var ok = InvokeCallback(cb, this[i], (double)i, this);
+                invoke ??= CreateArrayCallbackInvoker(cb, 3, "every");
+                var ok = invoke(this[i], (double)i, this, null);
                 if (!Operators.IsTruthy(ok))
                 {
                     return false;
@@ -865,9 +998,11 @@ namespace JavaScriptRuntime
                 startIndex = 1;
             }
 
+            ArrayCallbackInvoker? invoke = null;
             for (int i = startIndex; i < this.Count; i++)
             {
-                acc = InvokeCallback(cb, acc, this[i], (double)i, this);
+                invoke ??= CreateArrayCallbackInvoker(cb, 4, "reduce");
+                acc = invoke(acc, this[i], (double)i, this);
             }
 
             return acc;
@@ -899,9 +1034,11 @@ namespace JavaScriptRuntime
                 startIndex = this.Count - 2;
             }
 
+            ArrayCallbackInvoker? invoke = null;
             for (int i = startIndex; i >= 0; i--)
             {
-                acc = InvokeCallback(cb, acc, this[i], (double)i, this);
+                invoke ??= CreateArrayCallbackInvoker(cb, 4, "reduceRight");
+                acc = invoke(acc, this[i], (double)i, this);
             }
 
             return acc;
@@ -924,9 +1061,11 @@ namespace JavaScriptRuntime
                 throw new TypeError("Array.prototype.some requires a callback function");
             }
 
+            ArrayCallbackInvoker? invoke = null;
             for (int i = 0; i < this.Count; i++)
             {
-                var result = InvokeCallback(callback, this[i], (double)i, this);
+                invoke ??= CreateArrayCallbackInvoker(callback, 3, "some");
+                var result = invoke(this[i], (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return true;
@@ -943,9 +1082,11 @@ namespace JavaScriptRuntime
         public double findIndex(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
+            ArrayCallbackInvoker? invoke = null;
             for (int i = 0; i < this.Count; i++)
             {
-                var result = InvokeCallback(cb, this[i], (double)i, this);
+                invoke ??= CreateArrayCallbackInvoker(cb, 3, "findIndex");
+                var result = invoke(this[i], (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return (double)i;
@@ -961,9 +1102,11 @@ namespace JavaScriptRuntime
         public object? findLast(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
+            ArrayCallbackInvoker? invoke = null;
             for (int i = this.Count - 1; i >= 0; i--)
             {
-                var result = InvokeCallback(cb, this[i], (double)i, this);
+                invoke ??= CreateArrayCallbackInvoker(cb, 3, "findLast");
+                var result = invoke(this[i], (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return this[i];
@@ -979,9 +1122,11 @@ namespace JavaScriptRuntime
         public double findLastIndex(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
+            ArrayCallbackInvoker? invoke = null;
             for (int i = this.Count - 1; i >= 0; i--)
             {
-                var result = InvokeCallback(cb, this[i], (double)i, this);
+                invoke ??= CreateArrayCallbackInvoker(cb, 3, "findLastIndex");
+                var result = invoke(this[i], (double)i, this, null);
                 if (Operators.IsTruthy(result))
                 {
                     return (double)i;
@@ -998,35 +1143,13 @@ namespace JavaScriptRuntime
         public object? find(object[] args)
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
+            ArrayCallbackInvoker? invoke = null;
 
             for (int i = 0; i < this.Count; i++)
             {
                 var value = this[i];
-                object? result;
-
-                if (cb is Func<object?[], object?, object?, object?, object?> f3)
-                {
-                    // (scopes, value, index, array)
-                    result = f3(System.Array.Empty<object?>(), value, (double)i, this);
-                }
-                else if (cb is Func<object?[], object?, object?, object?> f2)
-                {
-                    // (scopes, value, index)
-                    result = f2(System.Array.Empty<object?>(), value, (double)i);
-                }
-                else if (cb is Func<object?[], object?, object?> f1)
-                {
-                    // (scopes, value)
-                    result = f1(System.Array.Empty<object?>(), value);
-                }
-                else if (cb is Func<object?[], object?> f0)
-                {
-                    result = f0(System.Array.Empty<object?>());
-                }
-                else
-                {
-                    throw new InvalidOperationException("find callback is not a supported function type");
-                }
+                invoke ??= CreateArrayCallbackInvoker(cb, 3, "find");
+                var result = invoke(value, (double)i, this, null);
 
                 if (Operators.IsTruthy(result))
                 {
@@ -1856,10 +1979,12 @@ namespace JavaScriptRuntime
         {
             var cb = (args != null && args.Length > 0) ? args[0] : null;
             var mapped = new Array();
+            ArrayCallbackInvoker? invoke = null;
 
             for (int i = 0; i < this.Count; i++)
             {
-                var m = InvokeCallback(cb, this[i], (double)i, this);
+                invoke ??= CreateArrayCallbackInvoker(cb, 3, "flatMap");
+                var m = invoke(this[i], (double)i, this, null);
                 mapped.Add(m);
             }
 

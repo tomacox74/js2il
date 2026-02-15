@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2147
+				// Method begins at RVA 0x2149
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,12 +35,13 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x20de
+			// Method begins at RVA 0x20df
 			// Header size: 1
-			// Code size: 62 (0x3e)
+			// Code size: 63 (0x3f)
 			.maxstack 8
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -50,8 +51,8 @@
 			IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_001d: pop
 			IL_001e: ldnull
-			IL_001f: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorld::__js_call__(object[])
-			IL_0025: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_001f: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorld::__js_call__(object[], object)
+			IL_0025: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 			IL_002a: ldc.i4.1
 			IL_002b: newarr [System.Runtime]System.Object
 			IL_0030: dup
@@ -60,10 +61,11 @@
 			IL_0033: ldc.i4.0
 			IL_0034: ldelem.ref
 			IL_0035: stelem.ref
-			IL_0036: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-			IL_003b: pop
-			IL_003c: ldnull
-			IL_003d: ret
+			IL_0036: ldnull
+			IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+			IL_003c: pop
+			IL_003d: ldnull
+			IL_003e: ret
 		} // end of method helloWorldProxy::__js_call__
 
 	} // end of class helloWorldProxy
@@ -79,7 +81,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2150
+				// Method begins at RVA 0x2152
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -96,10 +98,11 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object[] scopes,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x211d
+			// Method begins at RVA 0x211f
 			// Header size: 1
 			// Code size: 32 (0x20)
 			.maxstack 8
@@ -134,7 +137,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x213e
+			// Method begins at RVA 0x2140
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -160,7 +163,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 130 (0x82)
+		// Code size: 131 (0x83)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionCallsGlobalFunction/Scope,
@@ -171,8 +174,8 @@
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionCallsGlobalFunction/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorldProxy::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorldProxy::__js_call__(object[], object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -184,8 +187,8 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorld::__js_call__(object[])
-		IL_002b: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorld::__js_call__(object[], object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup
@@ -198,23 +201,24 @@
 		IL_0041: ldloc.2
 		IL_0042: stfld object Modules.Function_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
 		IL_0047: ldnull
-		IL_0048: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorldProxy::__js_call__(object[])
-		IL_004e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0048: ldftn object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorldProxy::__js_call__(object[], object)
+		IL_004e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 		IL_0053: ldc.i4.1
 		IL_0054: newarr [System.Runtime]System.Object
 		IL_0059: dup
 		IL_005a: ldc.i4.0
 		IL_005b: ldloc.0
 		IL_005c: stelem.ref
-		IL_005d: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0062: pop
-		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0068: ldstr "finally is now"
-		IL_006d: ldc.r8 3
-		IL_0076: box [System.Runtime]System.Double
-		IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0080: pop
-		IL_0081: ret
+		IL_005d: ldnull
+		IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_0063: pop
+		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0069: ldstr "finally is now"
+		IL_006e: ldc.r8 3
+		IL_0077: box [System.Runtime]System.Double
+		IL_007c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0081: pop
+		IL_0082: ret
 	} // end of method Function_GlobalFunctionCallsGlobalFunction::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionCallsGlobalFunction
@@ -226,7 +230,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2159
+		// Method begins at RVA 0x215b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

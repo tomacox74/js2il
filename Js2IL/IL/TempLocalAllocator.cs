@@ -965,6 +965,9 @@ internal static class TempLocalAllocator
             case LIRLoadScopesArgument loadScopesArg:
                 defined = loadScopesArg.Result;
                 return true;
+            case LIRLoadNewTarget loadNewTarget:
+                defined = loadNewTarget.Result;
+                return true;
 
             case LIRLoadParameter loadParam:
                 defined = loadParam.Result;

@@ -36,6 +36,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object d
 			) cil managed 
 		{
@@ -47,7 +48,7 @@
 			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_0005: dup
 			IL_0006: ldstr "d"
-			IL_000b: ldarg.1
+			IL_000b: ldarg.2
 			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
 			IL_0011: pop
 			IL_0012: ret
@@ -84,6 +85,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object x
 			) cil managed 
 		{
@@ -109,7 +111,7 @@
 			IL_001a: newarr [System.Runtime]System.Object
 			IL_001f: dup
 			IL_0020: ldc.i4.0
-			IL_0021: ldarg.1
+			IL_0021: ldarg.2
 			IL_0022: stelem.ref
 			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
 			IL_0028: stloc.1
@@ -176,8 +178,8 @@
 		IL_0000: newobj instance void Modules.Function_NewExpression_MemberCallee_Compiles/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_impl::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_impl::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -197,8 +199,8 @@
 		IL_0036: ldloc.3
 		IL_0037: stfld object Modules.Function_NewExpression_MemberCallee_Compiles/Scope::impl
 		IL_003c: ldnull
-		IL_003d: ldftn object Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_createWindow::__js_call__(object[], object)
-		IL_0043: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_003d: ldftn object Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_createWindow::__js_call__(object[], object, object)
+		IL_0043: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0048: ldc.i4.1
 		IL_0049: newarr [System.Runtime]System.Object
 		IL_004e: dup

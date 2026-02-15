@@ -20,17 +20,17 @@ namespace JavaScriptRuntime
             nameof(InvokeDelegatePreservingArgs),
             BindingFlags.NonPublic | BindingFlags.Static,
             binder: null,
-            types: new[] { typeof(Delegate), typeof(object[]), typeof(object[]) },
+            types: new[] { typeof(Delegate), typeof(object[]), typeof(object[]), typeof(object) },
             modifiers: null)
-            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgs(Delegate, object[], object[]).");
+            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgs(Delegate, object[], object[], object).");
 
         private static readonly MethodInfo InvokeDelegatePreservingArgsWithThisMethod = typeof(Closure).GetMethod(
             nameof(InvokeDelegatePreservingArgsWithThis),
             BindingFlags.NonPublic | BindingFlags.Static,
             binder: null,
-            types: new[] { typeof(object), typeof(Delegate), typeof(object[]), typeof(object[]) },
+            types: new[] { typeof(object), typeof(Delegate), typeof(object[]), typeof(object[]), typeof(object) },
             modifiers: null)
-            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgsWithThis(object, Delegate, object[], object[]).");
+            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgsWithThis(object, Delegate, object[], object[], object).");
 
         private static readonly MethodInfo InvokeWithArgsWithThisMethod = typeof(Closure).GetMethod(
             nameof(InvokeWithArgsWithThis),
@@ -55,24 +55,28 @@ namespace JavaScriptRuntime
             return InvokeWithThis(boundThis, () => InvokeWithArgs(target, scopes, args));
         }
 
-        private static object InvokeDelegatePreservingArgs(Delegate target, object[] scopes, object?[] args)
+        private static object InvokeDelegatePreservingArgs(Delegate target, object[] scopes, object?[] args, object? newTarget)
         {
-            return InvokeDelegateWithArgs(target, scopes, args);
+            return InvokeDelegateWithArgs(target, scopes, args, newTarget);
         }
 
-        private static object InvokeDelegatePreservingArgsWithThis(object? boundThis, Delegate target, object[] scopes, object?[] args)
+        private static object InvokeDelegatePreservingArgsWithThis(object? boundThis, Delegate target, object[] scopes, object?[] args, object? newTarget)
         {
-            return InvokeWithThis(boundThis, () => InvokeDelegateWithArgs(target, scopes, args));
+            return InvokeWithThis(boundThis, () => InvokeDelegateWithArgs(target, scopes, args, newTarget));
         }
 
-        private static object InvokeDelegateWithArgs(Delegate target, object[] scopes, object?[] args)
+        private static object InvokeDelegateWithArgs(Delegate target, object[] scopes, object?[] args, object? newTarget)
         {
             var invoke = target.GetType().GetMethod("Invoke")
                 ?? throw new ArgumentException($"Delegate type '{target.GetType()}' does not define Invoke().", nameof(target));
             var parameters = invoke.GetParameters();
 
             bool hasScopes = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
-            int jsParamStart = hasScopes ? 1 : 0;
+            bool hasNewTarget = hasScopes
+                && JsFuncDelegates.IsJsFuncDelegateType(target.GetType())
+                && parameters.Length > 1
+                && parameters[1].ParameterType == typeof(object);
+            int jsParamStart = hasScopes ? (hasNewTarget ? 2 : 1) : 0;
             int expectedJsParamCount = parameters.Length - jsParamStart;
 
             // ParamArrayAttribute is not preserved on delegate Invoke() parameters when a delegate is created
@@ -164,6 +168,10 @@ namespace JavaScriptRuntime
             if (hasScopes)
             {
                 finalArgs[finalIndex++] = scopes;
+                if (hasNewTarget)
+                {
+                    finalArgs[finalIndex++] = newTarget;
+                }
             }
 
             // Fixed parameters
@@ -268,7 +276,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static Delegate CreateBoundDelegate(Delegate target, object[] boundScopes, object? boundThis)
+        private static Delegate CreateBoundDelegate(
+            Delegate target,
+            object[] boundScopes,
+            object? boundThis,
+            bool captureLexicalNewTarget,
+            object? lexicalNewTarget)
         {
             var delegateType = target.GetType();
             var invoke = delegateType.GetMethod("Invoke")
@@ -280,13 +293,24 @@ namespace JavaScriptRuntime
                 .ToArray();
 
             bool hasScopes = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
-            int jsParamStart = hasScopes ? 1 : 0;
+            bool hasNewTarget = hasScopes
+                && JsFuncDelegates.IsJsFuncDelegateType(target.GetType())
+                && parameters.Length > 1
+                && parameters[1].ParameterType == typeof(object);
+            int jsParamStart = hasScopes ? (hasNewTarget ? 2 : 1) : 0;
 
             var jsArgs = lambdaParameters
                 .Skip(jsParamStart)
                 .Select(p => (Expression)Expression.Convert(p, typeof(object)))
                 .ToArray();
             var argsArray = Expression.NewArrayInit(typeof(object), jsArgs);
+            Expression forwardedNewTarget = Expression.Constant(null, typeof(object));
+            if (hasNewTarget)
+            {
+                forwardedNewTarget = captureLexicalNewTarget
+                    ? Expression.Constant(lexicalNewTarget, typeof(object))
+                    : Expression.Convert(lambdaParameters[1], typeof(object));
+            }
 
             Expression invokeWithArgsCall;
             // Important: this wrapper must NOT call InvokeWithArgs(...), because InvokeWithArgs sets RuntimeServices
@@ -300,7 +324,8 @@ namespace JavaScriptRuntime
                     InvokeDelegatePreservingArgsMethod,
                     Expression.Constant(target, typeof(Delegate)),
                     Expression.Constant(boundScopes, typeof(object[])),
-                    argsArray);
+                    argsArray,
+                    forwardedNewTarget);
             }
             else
             {
@@ -309,7 +334,8 @@ namespace JavaScriptRuntime
                     Expression.Constant(boundThis, typeof(object)),
                     Expression.Constant(target, typeof(Delegate)),
                     Expression.Constant(boundScopes, typeof(object[])),
-                    argsArray);
+                    argsArray,
+                    forwardedNewTarget);
             }
 
             Expression body;
@@ -352,7 +378,7 @@ namespace JavaScriptRuntime
                 throw new ArgumentException("Expected a delegate for closure binding", nameof(target));
             }
 
-            return CreateBoundDelegate(del, boundScopes, boundThis: null);
+            return CreateBoundDelegate(del, boundScopes, boundThis: null, captureLexicalNewTarget: false, lexicalNewTarget: null);
         }
 
         // Bind an arrow function delegate to a fixed scopes array AND a fixed lexical 'this'.
@@ -368,18 +394,17 @@ namespace JavaScriptRuntime
                 throw new ArgumentException("Expected a delegate for arrow closure binding", nameof(target));
             }
 
-            return CreateBoundDelegate(del, boundScopes, boundThis);
+            var lexicalNewTarget = RuntimeServices.GetCurrentNewTarget();
+            return CreateBoundDelegate(del, boundScopes, boundThis, captureLexicalNewTarget: true, lexicalNewTarget);
         }
 
-        // Invoke a function delegate with runtime type inspection to determine the correct arity.
-        // This is used when calling a function stored in a variable where the parameter count isn't known at compile time.
-        // args should NOT include the scopes array - this method will prepend it.
-        public static object InvokeWithArgs(object target, object[] scopes, params object?[] args)
+        private static object InvokeWithArgsCore(object target, object[] scopes, object? newTarget, object?[] args)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
             try
             {
 
@@ -393,7 +418,7 @@ namespace JavaScriptRuntime
             if (target is Delegate del)
             {
                 // JavaScript semantics: missing args are 'undefined' (modeled as CLR null); extra args are ignored.
-                return InvokeDelegateWithArgs(del, scopes, args);
+                return InvokeDelegateWithArgs(del, scopes, args, newTarget);
             }
 
             // JavaScript/Node semantics: calling a non-callable throws a TypeError.
@@ -403,7 +428,21 @@ namespace JavaScriptRuntime
             finally
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             }
+        }
+
+        // Invoke a function delegate with runtime type inspection to determine the correct arity.
+        // This is used when calling a function stored in a variable where the parameter count isn't known at compile time.
+        // args should NOT include the scopes array - this method will prepend it.
+        public static object InvokeWithArgs(object target, object[] scopes, params object?[] args)
+        {
+            return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+        }
+
+        public static object InvokeWithArgsWithNewTarget(object target, object[] scopes, object? newTarget, params object?[] args)
+        {
+            return InvokeWithArgsCore(target, scopes, newTarget, args);
         }
 
         // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
@@ -415,6 +454,7 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var previousArgs = RuntimeServices.SetCurrentArguments(System.Array.Empty<object>());
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
                 if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
@@ -425,11 +465,11 @@ namespace JavaScriptRuntime
                 if (target is Delegate del)
                 {
                     // Try fast-path typed invocation first
-                    if (del is Func<object[], object?> f0) return f0(scopes)!;
+                    if (del is JsFunc0 f0) return f0(scopes, null)!;
                     if (del is Action<object[]> a0) { a0(scopes); return null!; }
                     
                     // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, System.Array.Empty<object>());
+                    return InvokeDelegateWithArgs(del, scopes, System.Array.Empty<object>(), newTarget: null);
                 }
 
                 throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
@@ -437,6 +477,7 @@ namespace JavaScriptRuntime
             finally
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             }
         }
 
@@ -446,6 +487,7 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0 });
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
                 if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
@@ -456,11 +498,11 @@ namespace JavaScriptRuntime
                 if (target is Delegate del)
                 {
                     // Try fast-path typed invocation first
-                    if (del is Func<object[], object, object?> f1) return f1(scopes, a0!)!;
+                    if (del is JsFunc1 f1) return f1(scopes, null, a0!)!;
                     if (del is Action<object[], object> a1) { a1(scopes, a0!); return null!; }
                     
                     // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0 });
+                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0 }, newTarget: null);
                 }
 
                 throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
@@ -468,6 +510,7 @@ namespace JavaScriptRuntime
             finally
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             }
         }
 
@@ -477,6 +520,7 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1 });
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
                 if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
@@ -487,11 +531,11 @@ namespace JavaScriptRuntime
                 if (target is Delegate del)
                 {
                     // Try fast-path typed invocation first
-                    if (del is Func<object[], object, object, object?> f2) return f2(scopes, a0!, a1!)!;
+                    if (del is JsFunc2 f2) return f2(scopes, null, a0!, a1!)!;
                     if (del is Action<object[], object, object> a2) { a2(scopes, a0!, a1!); return null!; }
                     
                     // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1 });
+                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1 }, newTarget: null);
                 }
 
                 throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
@@ -499,6 +543,7 @@ namespace JavaScriptRuntime
             finally
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             }
         }
 
@@ -508,6 +553,7 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1, a2 });
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
                 if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
@@ -518,11 +564,11 @@ namespace JavaScriptRuntime
                 if (target is Delegate del)
                 {
                     // Try fast-path typed invocation first
-                    if (del is Func<object[], object, object, object, object?> f3) return f3(scopes, a0!, a1!, a2!)!;
+                    if (del is JsFunc3 f3) return f3(scopes, null, a0!, a1!, a2!)!;
                     if (del is Action<object[], object, object, object> a3) { a3(scopes, a0!, a1!, a2!); return null!; }
                     
                     // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1, a2 });
+                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1, a2 }, newTarget: null);
                 }
 
                 throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
@@ -530,6 +576,7 @@ namespace JavaScriptRuntime
             finally
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
             }
         }
 
@@ -540,12 +587,12 @@ namespace JavaScriptRuntime
 
         // Optimized direct-call path used by the compiler when the callee is known and needs
         // an implicit `arguments` object. This avoids the reflective dispatcher in InvokeWithArgs.
-        public static object? InvokeDirectWithArgs(Func<object[], object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc0 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes);
+                return target(scopes, null);
             }
             finally
             {
@@ -553,12 +600,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc1 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0));
+                return target(scopes, null, GetArg(args, 0));
             }
             finally
             {
@@ -566,12 +613,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc2 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1));
             }
             finally
             {
@@ -579,12 +626,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc3 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2));
             }
             finally
             {
@@ -592,12 +639,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc4 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3));
             }
             finally
             {
@@ -605,12 +652,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc5 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4));
             }
             finally
             {
@@ -618,12 +665,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc6 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5));
             }
             finally
             {
@@ -631,12 +678,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc7 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6));
             }
             finally
             {
@@ -644,12 +691,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc8 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7));
             }
             finally
             {
@@ -657,12 +704,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc9 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8));
             }
             finally
             {
@@ -670,12 +717,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc10 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9));
             }
             finally
             {
@@ -683,12 +730,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc11 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10));
             }
             finally
             {
@@ -696,12 +743,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc12 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11));
             }
             finally
             {
@@ -709,12 +756,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc13 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12));
             }
             finally
             {
@@ -722,25 +769,12 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
+        public static object? InvokeDirectWithArgs(JsFunc14 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13));
-            }
-            finally
-            {
-                RuntimeServices.SetCurrentArguments(previousArgs);
-            }
-        }
-
-        public static object? InvokeDirectWithArgs(Func<object[], object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?, object?> target, object[] scopes, object?[] args)
-        {
-            var previousArgs = RuntimeServices.SetCurrentArguments(args);
-            try
-            {
-                return target(scopes, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13));
             }
             finally
             {
@@ -753,10 +787,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
-                    GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
-                    GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
-                    GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14));
+                return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14));
             }
             finally
             {
@@ -769,7 +800,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -786,7 +817,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -803,7 +834,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -820,7 +851,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -837,7 +868,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -854,7 +885,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -872,7 +903,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -890,7 +921,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -908,7 +939,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -926,7 +957,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -944,7 +975,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -963,7 +994,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -982,7 +1013,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -1001,7 +1032,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -1020,7 +1051,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -1039,7 +1070,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),
@@ -1059,7 +1090,7 @@ namespace JavaScriptRuntime
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             try
             {
-                return target(scopes,
+                return target(scopes, null,
                     GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4),
                     GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9),
                     GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14),

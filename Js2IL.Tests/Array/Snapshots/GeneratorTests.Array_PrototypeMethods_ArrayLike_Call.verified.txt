@@ -36,6 +36,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object acc,
 				object x
 			) cil managed 
@@ -48,8 +49,8 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.1
-			IL_0001: ldarg.2
+			IL_0000: ldarg.2
+			IL_0001: ldarg.3
 			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0007: stloc.0
 			IL_0008: ldloc.0
@@ -87,6 +88,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object acc,
 				object x
 			) cil managed 
@@ -99,8 +101,8 @@
 				[0] object
 			)
 
-			IL_0000: ldarg.1
-			IL_0001: ldarg.2
+			IL_0000: ldarg.2
+			IL_0001: ldarg.3
 			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_0007: stloc.0
 			IL_0008: ldloc.0
@@ -186,8 +188,8 @@
 		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 		IL_0072: stloc.s 4
 		IL_0074: ldnull
-		IL_0075: ldftn object Modules.Array_PrototypeMethods_ArrayLike_Call/FunctionExpression_reduced::__js_call__(object[], object, object)
-		IL_007b: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0075: ldftn object Modules.Array_PrototypeMethods_ArrayLike_Call/FunctionExpression_reduced::__js_call__(object[], object, object, object)
+		IL_007b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
 		IL_0080: ldc.i4.1
 		IL_0081: newarr [System.Runtime]System.Object
 		IL_0086: dup
@@ -236,8 +238,8 @@
 		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 		IL_00f1: stloc.s 4
 		IL_00f3: ldnull
-		IL_00f4: ldftn object Modules.Array_PrototypeMethods_ArrayLike_Call/FunctionExpression_reducedRight::__js_call__(object[], object, object)
-		IL_00fa: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_00f4: ldftn object Modules.Array_PrototypeMethods_ArrayLike_Call/FunctionExpression_reducedRight::__js_call__(object[], object, object, object)
+		IL_00fa: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
 		IL_00ff: ldc.i4.1
 		IL_0100: newarr [System.Runtime]System.Object
 		IL_0105: dup

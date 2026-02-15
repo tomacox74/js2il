@@ -543,13 +543,51 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_NewTarget_ReportsError()
+    public void Validate_NewTarget_InFunction_IsValid()
     {
         var js = "function Foo() { console.log(new.target); }";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("new.target"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_NewTarget_InConstructor_IsValid()
+    {
+        var js = "class Foo { constructor() { console.log(new.target); } }";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_NewTarget_InArrowFunction_IsValid()
+    {
+        var js = "function outer() { const arrow = () => console.log(new.target); }";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_NewTarget_AtTopLevel_ReportsError()
+    {
+        var js = "console.log(new.target);";
+        var ex = Assert.Throws<Exception>(() => ParseStrict(js));
+        Assert.Contains("new.target", ex.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Validate_ImportMeta_IsValid()
+    {
+        var js = "console.log(typeof import.meta);";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]

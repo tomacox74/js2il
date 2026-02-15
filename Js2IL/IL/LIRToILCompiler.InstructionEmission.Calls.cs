@@ -97,6 +97,9 @@ internal sealed partial class LIRToILCompiler
                     // Load scopes array
                     EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
 
+                    // Normal function call path: new.target is undefined.
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+
                     // Load all arguments
                     for (int i = 0; i < argsToPass; i++)
                     {
@@ -338,6 +341,7 @@ internal sealed partial class LIRToILCompiler
                     if (callUserClass.HasScopesParameter)
                     {
                         EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
                     }
 
                     // Match the declared signature (ignore extra args, pad missing args with null).
@@ -417,6 +421,7 @@ internal sealed partial class LIRToILCompiler
                     if (callBaseMethod.HasScopesParameter)
                     {
                         EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
                     }
 
                     int jsParamCount = callBaseMethod.MaxParamCount;

@@ -88,7 +88,8 @@
 			// Methods
 			.method public hidebysig static 
 				object __js_call__ (
-					object[] scopes
+					object[] scopes,
+					object newTarget
 				) cil managed 
 			{
 				// Method begins at RVA 0x212c
@@ -237,6 +238,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object callback
 			) cil managed 
 		{
@@ -253,11 +255,11 @@
 			IL_0000: newobj instance void Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldloc.0
-			IL_0007: ldarg.1
+			IL_0007: ldarg.2
 			IL_0008: stfld object Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope::callback
 			IL_000d: ldnull
-			IL_000e: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer/inner::__js_call__(object[])
-			IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_000e: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer/inner::__js_call__(object[], object)
+			IL_0014: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
 			IL_0019: ldc.i4.2
 			IL_001a: newarr [System.Runtime]System.Object
 			IL_001f: dup
@@ -321,6 +323,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object v
 			) cil managed 
 		{
@@ -334,7 +337,7 @@
 			IL_0006: newarr [System.Runtime]System.Object
 			IL_000b: dup
 			IL_000c: ldc.i4.0
-			IL_000d: ldarg.1
+			IL_000d: ldarg.2
 			IL_000e: stelem.ref
 			IL_000f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 			IL_0014: pop
@@ -384,7 +387,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 94 (0x5e)
+		// Code size: 95 (0x5f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_ClosureCallback/Scope,
@@ -395,8 +398,8 @@
 		IL_0000: newobj instance void Modules.ControlFlow_ForOf_ClosureCallback/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -408,8 +411,8 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: ldnull
-		IL_0025: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/FunctionExpression_L11C6::__js_call__(object[], object)
-		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0025: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/FunctionExpression_L11C6::__js_call__(object[], object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0030: ldc.i4.1
 		IL_0031: newarr [System.Runtime]System.Object
 		IL_0036: dup
@@ -419,18 +422,19 @@
 		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_003f: stloc.2
 		IL_0040: ldnull
-		IL_0041: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer::__js_call__(object[], object)
-		IL_0047: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0041: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer::__js_call__(object[], object, object)
+		IL_0047: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_004c: ldc.i4.1
 		IL_004d: newarr [System.Runtime]System.Object
 		IL_0052: dup
 		IL_0053: ldc.i4.0
 		IL_0054: ldloc.0
 		IL_0055: stelem.ref
-		IL_0056: ldloc.2
-		IL_0057: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_005c: pop
-		IL_005d: ret
+		IL_0056: ldnull
+		IL_0057: ldloc.2
+		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::Invoke(object[], object, object)
+		IL_005d: pop
+		IL_005e: ret
 	} // end of method ControlFlow_ForOf_ClosureCallback::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_ClosureCallback

@@ -43,6 +43,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object resolve
 			) cil managed 
 		{
@@ -61,7 +62,7 @@
 			IL_0008: ldstr "first"
 			IL_000d: stelem.ref
 			IL_000e: stloc.0
-			IL_000f: ldarg.1
+			IL_000f: ldarg.2
 			IL_0010: ldc.i4.1
 			IL_0011: newarr [System.Runtime]System.Object
 			IL_0016: dup
@@ -115,6 +116,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object resolve
 			) cil managed 
 		{
@@ -133,7 +135,7 @@
 			IL_0008: ldstr "second"
 			IL_000d: stelem.ref
 			IL_000e: stloc.0
-			IL_000f: ldarg.1
+			IL_000f: ldarg.2
 			IL_0010: ldc.i4.1
 			IL_0011: newarr [System.Runtime]System.Object
 			IL_0016: dup
@@ -187,6 +189,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object resolve
 			) cil managed 
 		{
@@ -205,7 +208,7 @@
 			IL_0008: ldstr "third"
 			IL_000d: stelem.ref
 			IL_000e: stloc.0
-			IL_000f: ldarg.1
+			IL_000f: ldarg.2
 			IL_0010: ldc.i4.1
 			IL_0011: newarr [System.Runtime]System.Object
 			IL_0016: dup
@@ -259,6 +262,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object[] scopes,
+				object newTarget,
 				object results
 			) cil managed 
 		{
@@ -271,11 +275,11 @@
 				[1] object
 			)
 
-			IL_0000: ldarg.1
+			IL_0000: ldarg.2
 			IL_0001: ldc.r8 0.0
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_000f: stloc.0
-			IL_0010: ldarg.1
+			IL_0010: ldarg.2
 			IL_0011: ldc.r8 1
 			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_001f: stloc.1
@@ -296,7 +300,7 @@
 			IL_003a: stelem.ref
 			IL_003b: dup
 			IL_003c: ldc.i4.3
-			IL_003d: ldarg.1
+			IL_003d: ldarg.2
 			IL_003e: ldc.r8 2
 			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_004c: stelem.ref
@@ -357,8 +361,8 @@
 		IL_0000: newobj instance void Modules.Promise_All_OrderPreserved/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Promise_All_OrderPreserved/ArrowFunction_L4C24::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Promise_All_OrderPreserved/ArrowFunction_L4C24::__js_call__(object[], object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -374,8 +378,8 @@
 		IL_0031: ldloc.s 4
 		IL_0033: stloc.1
 		IL_0034: ldnull
-		IL_0035: ldftn object Modules.Promise_All_OrderPreserved/ArrowFunction_L8C24::__js_call__(object[], object)
-		IL_003b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0035: ldftn object Modules.Promise_All_OrderPreserved/ArrowFunction_L8C24::__js_call__(object[], object, object)
+		IL_003b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_0040: ldc.i4.1
 		IL_0041: newarr [System.Runtime]System.Object
 		IL_0046: dup
@@ -391,8 +395,8 @@
 		IL_005f: ldloc.s 4
 		IL_0061: stloc.2
 		IL_0062: ldnull
-		IL_0063: ldftn object Modules.Promise_All_OrderPreserved/ArrowFunction_L12C24::__js_call__(object[], object)
-		IL_0069: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0063: ldftn object Modules.Promise_All_OrderPreserved/ArrowFunction_L12C24::__js_call__(object[], object, object)
+		IL_0069: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_006e: ldc.i4.1
 		IL_006f: newarr [System.Runtime]System.Object
 		IL_0074: dup
@@ -423,8 +427,8 @@
 		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
 		IL_00b4: stloc.s 4
 		IL_00b6: ldnull
-		IL_00b7: ldftn object Modules.Promise_All_OrderPreserved/ArrowFunction_L16C32::__js_call__(object[], object)
-		IL_00bd: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00b7: ldftn object Modules.Promise_All_OrderPreserved/ArrowFunction_L16C32::__js_call__(object[], object, object)
+		IL_00bd: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 		IL_00c2: ldc.i4.1
 		IL_00c3: newarr [System.Runtime]System.Object
 		IL_00c8: dup
