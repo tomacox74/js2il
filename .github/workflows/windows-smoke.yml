@@ -78,7 +78,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
-          if ($output -notmatch 'x is') {
+          $outputText = ($output -join "`n")
+          if ($outputText -notmatch 'x is') {
             throw "Smoke test failed: expected output containing 'x is'"
           }
 
