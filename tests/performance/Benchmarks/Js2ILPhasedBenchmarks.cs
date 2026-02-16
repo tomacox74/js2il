@@ -29,6 +29,7 @@ public class Js2ILPhasedBenchmarks
     private readonly Dictionary<string, AssemblyLoadContext> _compiledLoadContexts = new();
     private readonly Dictionary<string, Assembly> _compiledAssemblies = new();
     private readonly Dictionary<string, string> _compiledModuleIds = new();
+    private readonly Dictionary<string, string> _js2IlCompileFailures = new();
     private string _tempDir = "";
 
     [GlobalSetup]
@@ -78,6 +79,7 @@ public class Js2ILPhasedBenchmarks
             var compiler = serviceProvider.GetRequiredService<Compiler>();
             if (!compiler.Compile(tempScriptFile, scriptName))
             {
+                _js2IlCompileFailures[scriptName] = "js2il compilation failed for this scenario";
                 continue;
             }
 
@@ -86,6 +88,7 @@ public class Js2ILPhasedBenchmarks
             var dllPath = Path.Combine(outputPath, $"{scriptName}.dll");
             if (!File.Exists(dllPath))
             {
+                _js2IlCompileFailures[scriptName] = $"compiled assembly not found: {dllPath}";
                 continue;
             }
 
@@ -111,6 +114,7 @@ public class Js2ILPhasedBenchmarks
         _compiledLoadContexts.Clear();
         _compiledAssemblies.Clear();
         _compiledModuleIds.Clear();
+        _js2IlCompileFailures.Clear();
         _jintPreparedScripts.Clear();
 
         GC.Collect();
@@ -135,14 +139,9 @@ public class Js2ILPhasedBenchmarks
 
     public IEnumerable<string> ScriptNames()
     {
-        if (_compiledAssemblies.Count > 0)
-        {
-            return _compiledAssemblies.Keys.OrderBy(name => name, StringComparer.Ordinal);
-        }
-
         if (_scripts.Count > 0)
         {
-            return _scripts.Keys;
+            return _scripts.Keys.OrderBy(name => name, StringComparer.Ordinal);
         }
 
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
@@ -160,6 +159,11 @@ public class Js2ILPhasedBenchmarks
     [Benchmark(Description = "js2il compile")]
     public void Js2IL_Compile()
     {
+        if (_js2IlCompileFailures.TryGetValue(ScriptName, out var reason))
+        {
+            throw new InvalidOperationException(reason);
+        }
+
         var script = _scripts[ScriptName];
         var tempScriptFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.js");
         var tempOutputDir = Path.Combine(Path.GetTempPath(), $"js2il-compile-{Guid.NewGuid()}");
@@ -193,6 +197,11 @@ public class Js2ILPhasedBenchmarks
     [Benchmark(Description = "js2il execute (pre-compiled)")]
     public void Js2IL_ExecuteOnly()
     {
+        if (_js2IlCompileFailures.TryGetValue(ScriptName, out var reason))
+        {
+            throw new InvalidOperationException(reason);
+        }
+
         var assembly = _compiledAssemblies[ScriptName];
         var moduleId = _compiledModuleIds[ScriptName];
         using var exports = JsEngine.LoadModule(assembly, moduleId);
