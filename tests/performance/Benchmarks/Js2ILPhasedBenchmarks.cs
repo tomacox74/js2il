@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using Js2IL;
 using Js2IL.Runtime;
+using Benchmarks.Runtimes;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Benchmarks;
@@ -21,6 +22,7 @@ namespace Benchmarks;
 public class Js2ILPhasedBenchmarks
 {
     private readonly Dictionary<string, string> _scripts = new();
+    private readonly JintRuntime _jintRuntime = new();
     private readonly Dictionary<string, string> _compiledPaths = new();
     private readonly Dictionary<string, AssemblyLoadContext> _compiledLoadContexts = new();
     private readonly Dictionary<string, Assembly> _compiledAssemblies = new();
@@ -189,6 +191,18 @@ public class Js2ILPhasedBenchmarks
         var assembly = _compiledAssemblies[ScriptName];
         var moduleId = _compiledModuleIds[ScriptName];
         using var exports = JsEngine.LoadModule(assembly, moduleId);
+    }
+
+    [Benchmark(Description = "Jint execute (in-proc)")]
+    public void Jint_Execute()
+    {
+        var script = _scripts[ScriptName];
+        var result = _jintRuntime.Execute(script, $"{ScriptName}.js");
+
+        if (!result.Success)
+        {
+            throw new Exception($"Jint execution failed: {result.Error}");
+        }
     }
 
     private static string ResolveModuleId(Assembly assembly, string fallback)
