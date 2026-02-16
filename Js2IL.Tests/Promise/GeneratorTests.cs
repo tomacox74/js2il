@@ -10,7 +10,7 @@ public class GeneratorTests : GeneratorTestsBase
     {
     }
 
-    protected new Task GenerateTest(
+    protected Task GenerateTest(
         string testName,
         Action<VerifySettings>? configureSettings = null,
         string[]? additionalScripts = null,
