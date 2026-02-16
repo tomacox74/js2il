@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageReference Include="Jint" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Scenarios\**\*.js" CopyToOutputDirectory="PreserveNewest" LinkBase="Scenarios" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Js2IL\Js2IL.csproj" />
+    <ProjectReference Include="..\..\..\JavaScriptRuntime\JavaScriptRuntime.csproj" />
+  </ItemGroup>
+
+</Project>
