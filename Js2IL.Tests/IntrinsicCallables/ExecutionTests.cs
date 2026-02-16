@@ -26,6 +26,30 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_RegExp_Test_LastIndex_Global()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_RegExp_Test_LastIndex_Global));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_RegExp_ToString_Basic()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_RegExp_ToString_Basic));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_RegExp_Flags_Getter()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_RegExp_Flags_Getter));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_RegExp_Getters_Extended()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_RegExp_Getters_Extended));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Error_Callable_CreatesInstances()
         {
             return ExecutionTest(nameof(IntrinsicCallables_Error_Callable_CreatesInstances));

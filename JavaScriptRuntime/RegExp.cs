@@ -38,7 +38,7 @@ namespace JavaScriptRuntime
             var opts = RegexOptions.None;
             if (f.IndexOf('i') >= 0) opts |= RegexOptions.IgnoreCase;
             if (f.IndexOf('m') >= 0) opts |= RegexOptions.Multiline;
-            // 'g' (global) does not affect test(); keep for completeness but unused here
+            // 'g' (global) enables lastIndex tracking (affects exec() and test()).
             _global = f.IndexOf('g') >= 0;
             _regex = new Regex(_source, opts);
             lastIndex = 0;
@@ -52,10 +52,72 @@ namespace JavaScriptRuntime
         public bool global => _global;
         public bool ignoreCase => (_regex.Options & RegexOptions.IgnoreCase) != 0;
         public bool multiline => (_regex.Options & RegexOptions.Multiline) != 0;
+        
+        // Additional flag properties (currently unsupported flags return false)
+        public bool dotAll => false;  // 's' flag - not supported yet
+        public bool sticky => false;  // 'y' flag - not supported yet
+        public bool unicode => false; // 'u' flag - not supported yet
+        public bool unicodeSets => false; // 'v' flag - not supported yet
+        public bool hasIndices => false; // 'd' flag - not supported yet
+        
+        // Return flags in canonical order: "dgimsuvy"
+        public string flags
+        {
+            get
+            {
+                var result = string.Empty;
+                // Alphabetical order as per spec
+                if (hasIndices) result += "d";
+                if (global) result += "g";
+                if (ignoreCase) result += "i";
+                if (multiline) result += "m";
+                if (dotAll) result += "s";
+                if (unicode) result += "u";
+                if (unicodeSets) result += "v";
+                if (sticky) result += "y";
+                return result;
+            }
+        }
 
         public object test(object? input)
         {
-            var s = DotNet2JSConversions.ToString(input);
+            var s = DotNet2JSConversions.ToString(input) ?? string.Empty;
+            
+            // For global regexes, test() should update lastIndex just like exec()
+            if (_global)
+            {
+                int startAt = 0;
+                if (double.IsNaN(lastIndex) || double.IsInfinity(lastIndex) || lastIndex < 0)
+                {
+                    startAt = 0;
+                }
+                else
+                {
+                    startAt = (int)lastIndex;
+                    if (startAt > s.Length)
+                    {
+                        lastIndex = 0;
+                        return false;
+                    }
+                }
+                
+                var match = _regex.Match(s, startAt);
+                if (!match.Success)
+                {
+                    lastIndex = 0;
+                    return false;
+                }
+                
+                // Advance lastIndex
+                int nextIndex = match.Index + match.Length;
+                if (match.Length == 0)
+                {
+                    nextIndex = match.Index + 1;
+                }
+                lastIndex = nextIndex;
+                return true;
+            }
+            
             return _regex.IsMatch(s);
         }
 
@@ -120,6 +182,12 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Object.SetProperty(result, "index", (double)match.Index);
             JavaScriptRuntime.Object.SetProperty(result, "input", s);
             return result;
+        }
+        
+        // RegExp.prototype.toString() returns "/source/flags" format
+        public string toString()
+        {
+            return "/" + _source + "/" + flags;
         }
     }
 }
