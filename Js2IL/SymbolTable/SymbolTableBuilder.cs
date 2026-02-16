@@ -524,15 +524,27 @@ namespace Js2IL.SymbolTables
             // in the scopes array to exist to avoid IndexOutOfRange at runtime.
             if (scope.Kind == ScopeKind.Function && !scope.ReferencesParentScopeVariables)
             {
-                foreach (var child in scope.Children.Where(c => c.Kind == ScopeKind.Function || c.Kind == ScopeKind.Class))
+                scope.ReferencesParentScopeVariables = HasDescendantCallableReferencingParentScopeVariables(scope);
+            }
+        }
+
+        private static bool HasDescendantCallableReferencingParentScopeVariables(Scope scope)
+        {
+            foreach (var child in scope.Children)
+            {
+                if ((child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class)
+                    && child.ReferencesParentScopeVariables)
                 {
-                    if (child.ReferencesParentScopeVariables)
-                    {
-                        scope.ReferencesParentScopeVariables = true;
-                        break;
-                    }
+                    return true;
+                }
+
+                if (HasDescendantCallableReferencingParentScopeVariables(child))
+                {
+                    return true;
                 }
             }
+
+            return false;
         }
 
         private void BuildScopeRecursive(Scope globalScope, Node node, Scope currentScope)
