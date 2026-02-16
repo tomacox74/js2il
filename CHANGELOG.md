@@ -4,7 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- Compiler/TwoPhase: fix Linux Domino regression introduced by scopes-ABI optimization where nested function-expression callbacks could fail scope-slot mapping (`callerScopesSource=None`) during HIR→LIR lowering.
+- Compiler/design: make symbol-table free-variable analysis the resilient source of truth for callable scopes requirements (recursive descendant callable/class propagation), and simplify TwoPhase `ComputeRequiresScopesParameter` to consume that semantic signal plus ABI policy.
 
 ## v0.8.12 - 2026-02-16
 
