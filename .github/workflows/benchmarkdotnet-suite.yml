@@ -11,6 +11,8 @@ on:
         description: 'Benchmark mode (default/phased/all)'
         required: false
         default: 'default'
+  release:
+    types: [published]
 
 jobs:
   benchmarkdotnet-suite:
@@ -44,19 +46,22 @@ jobs:
       
       - name: Run BenchmarkDotNet Suite
         id: benchmark
+        env:
+          BENCHMARK_MODE: ${{ github.event.inputs.mode || 'default' }}
+          BENCHMARK_FILTER: ${{ github.event.inputs.benchmark_filter || '*' }}
         run: |
           cd tests/performance/Benchmarks
           
           MODE_ARG=""
-          if [ "${{ github.event.inputs.mode }}" = "phased" ]; then
+          if [ "$BENCHMARK_MODE" = "phased" ]; then
             MODE_ARG="--phased"
-          elif [ "${{ github.event.inputs.mode }}" = "all" ]; then
+          elif [ "$BENCHMARK_MODE" = "all" ]; then
             MODE_ARG="--all"
           fi
           
           FILTER_ARG=""
-          if [ "${{ github.event.inputs.benchmark_filter }}" != "*" ]; then
-            FILTER_ARG="--filter ${{ github.event.inputs.benchmark_filter }}"
+          if [ "$BENCHMARK_FILTER" != "*" ]; then
+            FILTER_ARG="--filter $BENCHMARK_FILTER"
           fi
           
           dotnet run -c Release -- $MODE_ARG $FILTER_ARG

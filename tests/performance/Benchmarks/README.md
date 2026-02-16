@@ -84,8 +84,8 @@ Compares all three runtimes across all scenarios:
 dotnet run -c Release
 ```
 
-#### js2il Phase Separation
-Benchmarks js2il compile and execute phases separately:
+#### Phased Comparison (js2il + Jint prepared)
+Benchmarks js2il compile and execute phases separately, alongside Jint prepare and prepared execution for direct comparison:
 
 ```powershell
 dotnet run -c Release -- --phased
@@ -122,11 +122,13 @@ dotnet run -c Release -- --exporters html,json,markdown
 - **StdDev**: Standard deviation of all measurements
 - **Median**: Middle value of sorted measurements
 
-### js2il Phases
+### Phased Metrics
 
 - **js2il (compile+execute)**: Total time including AOT compilation
 - **js2il compile**: AOT compilation time only
 - **js2il execute (pre-compiled)**: Execution time of pre-compiled assembly
+- **Jint prepare**: Script preparation/parsing phase via `Engine.PrepareScript`
+- **Jint execute (prepared)**: Execution phase using a previously prepared script
 
 ### Interpreting Ratios
 

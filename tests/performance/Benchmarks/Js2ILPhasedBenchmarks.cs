@@ -2,8 +2,13 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Order;
-using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Loader;
 using Js2IL;
+using Js2IL.Runtime;
+using Benchmarks.Runtimes;
+using Jint;
+using Acornima.Ast;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Benchmarks;
@@ -19,7 +24,11 @@ namespace Benchmarks;
 public class Js2ILPhasedBenchmarks
 {
     private readonly Dictionary<string, string> _scripts = new();
-    private readonly Dictionary<string, string> _compiledPaths = new();
+    private readonly Dictionary<string, Prepared<Script>> _jintPreparedScripts = new();
+    private readonly Dictionary<string, AssemblyLoadContext> _compiledLoadContexts = new();
+    private readonly Dictionary<string, Assembly> _compiledAssemblies = new();
+    private readonly Dictionary<string, string> _compiledModuleIds = new();
+    private readonly Dictionary<string, string> _js2IlCompileFailures = new();
     private string _tempDir = "";
 
     [GlobalSetup]
@@ -43,7 +52,9 @@ public class Js2ILPhasedBenchmarks
             if (File.Exists(path))
             {
                 var scriptName = Path.GetFileNameWithoutExtension(scriptFile);
-                _scripts[scriptName] = File.ReadAllText(path);
+                var scriptContent = File.ReadAllText(path);
+                _scripts[scriptName] = scriptContent;
+                _jintPreparedScripts[scriptName] = Engine.PrepareScript(scriptContent, scriptFile);
             }
         }
 
@@ -57,25 +68,67 @@ public class Js2ILPhasedBenchmarks
             var scriptName = kvp.Key;
             var scriptContent = kvp.Value;
             var tempScriptFile = Path.Combine(_tempDir, $"{scriptName}.js");
-            File.WriteAllText(tempScriptFile, scriptContent);
+            try
+            {
+                File.WriteAllText(tempScriptFile, scriptContent);
 
-            var outputPath = Path.Combine(_tempDir, scriptName);
-            
-            // Build compiler with service provider
-            var options = new CompilerOptions { OutputDirectory = outputPath };
-            var serviceProvider = CompilerServices.BuildServiceProvider(options);
-            var compiler = serviceProvider.GetRequiredService<Compiler>();
-            compiler.Compile(tempScriptFile, scriptName);
+                var outputPath = Path.Combine(_tempDir, scriptName);
 
-            // The DLL is placed directly in outputPath (not in a nested directory)
-            // It's named after the input file (scriptName.js -> scriptName.dll)
-            _compiledPaths[scriptName] = Path.Combine(outputPath, $"{scriptName}.dll");
+                // Build compiler with service provider
+                var options = new CompilerOptions { OutputDirectory = outputPath };
+                var serviceProvider = CompilerServices.BuildServiceProvider(options);
+                var compiler = serviceProvider.GetRequiredService<Compiler>();
+                if (!compiler.Compile(tempScriptFile, scriptName))
+                {
+                    _js2IlCompileFailures[scriptName] = "js2il compilation failed for this scenario";
+                    continue;
+                }
+
+                // The DLL is placed directly in outputPath (not in a nested directory)
+                // It's named after the input file (scriptName.js -> scriptName.dll)
+                var dllPath = Path.Combine(outputPath, $"{scriptName}.dll");
+                if (!File.Exists(dllPath))
+                {
+                    _js2IlCompileFailures[scriptName] = $"compiled assembly not found: {dllPath}";
+                    continue;
+                }
+
+                var fullDllPath = Path.GetFullPath(dllPath);
+                var loadContext = new BenchmarkModuleLoadContext(
+                    typeof(JavaScriptRuntime.EnvironmentProvider).Assembly,
+                    fullDllPath,
+                    $"js2il-bench-{scriptName}-{Guid.NewGuid():N}");
+                var assembly = loadContext.LoadFromAssemblyPath(fullDllPath);
+
+                _compiledLoadContexts[scriptName] = loadContext;
+                _compiledAssemblies[scriptName] = assembly;
+                _compiledModuleIds[scriptName] = ResolveModuleId(assembly, scriptName);
+            }
+            catch (Exception ex)
+            {
+                _js2IlCompileFailures[scriptName] = $"setup failed: {ex.Message}";
+            }
         }
     }
 
     [GlobalCleanup]
     public void Cleanup()
     {
+        foreach (var loadContext in _compiledLoadContexts.Values)
+        {
+            loadContext.Unload();
+        }
+
+        _compiledLoadContexts.Clear();
+        _compiledAssemblies.Clear();
+        _compiledModuleIds.Clear();
+        _js2IlCompileFailures.Clear();
+        _jintPreparedScripts.Clear();
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
         if (Directory.Exists(_tempDir))
         {
             try
@@ -96,7 +149,13 @@ public class Js2ILPhasedBenchmarks
     {
         if (_scripts.Count > 0)
         {
-            return _scripts.Keys;
+            var names = _scripts.Keys.AsEnumerable();
+            if (_js2IlCompileFailures.Count > 0)
+            {
+                names = names.Where(name => !_js2IlCompileFailures.ContainsKey(name));
+            }
+
+            return names.OrderBy(name => name, StringComparer.Ordinal);
         }
 
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
@@ -114,6 +173,11 @@ public class Js2ILPhasedBenchmarks
     [Benchmark(Description = "js2il compile")]
     public void Js2IL_Compile()
     {
+        if (_js2IlCompileFailures.TryGetValue(ScriptName, out _))
+        {
+            return;
+        }
+
         var script = _scripts[ScriptName];
         var tempScriptFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.js");
         var tempOutputDir = Path.Combine(Path.GetTempPath(), $"js2il-compile-{Guid.NewGuid()}");
@@ -147,30 +211,80 @@ public class Js2ILPhasedBenchmarks
     [Benchmark(Description = "js2il execute (pre-compiled)")]
     public void Js2IL_ExecuteOnly()
     {
-        var dllPath = _compiledPaths[ScriptName];
-
-        var processInfo = new ProcessStartInfo
+        if (_js2IlCompileFailures.TryGetValue(ScriptName, out _))
         {
-            FileName = "dotnet",
-            Arguments = $"\"{dllPath}\"",
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
-        };
-
-        using var process = Process.Start(processInfo);
-        if (process == null)
-        {
-            throw new Exception("Failed to start dotnet process");
+            return;
         }
 
-        process.WaitForExit();
+        var assembly = _compiledAssemblies[ScriptName];
+        var moduleId = _compiledModuleIds[ScriptName];
+        using var exports = JsEngine.LoadModule(assembly, moduleId);
+    }
 
-        if (process.ExitCode != 0)
+    [Benchmark(Description = "Jint prepare")]
+    public void Jint_Prepare()
+    {
+        var script = _scripts[ScriptName];
+        _ = Engine.PrepareScript(script, $"{ScriptName}.js");
+    }
+
+    [Benchmark(Description = "Jint execute (prepared)")]
+    public void Jint_ExecutePrepared()
+    {
+        var engine = new Engine(options => options.Strict());
+        engine.Execute(_jintPreparedScripts[ScriptName]);
+    }
+
+    private static string ResolveModuleId(Assembly assembly, string fallback)
+    {
+        var moduleIds = assembly
+            .GetCustomAttributes<JsCompiledModuleAttribute>()
+            .Select(a => a.ModuleId)
+            .Where(m => !string.IsNullOrWhiteSpace(m))
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        if (moduleIds.Length == 0)
         {
-            var error = process.StandardError.ReadToEnd();
-            throw new Exception($"js2il execution failed: {error}");
+            return fallback;
+        }
+
+        if (moduleIds.Contains(fallback, StringComparer.Ordinal))
+        {
+            return fallback;
+        }
+
+        return moduleIds[0];
+    }
+
+    private sealed class BenchmarkModuleLoadContext : AssemblyLoadContext
+    {
+        private readonly Assembly _runtimeAssembly;
+        private readonly string _runtimeAssemblyName;
+        private readonly AssemblyDependencyResolver _resolver;
+
+        public BenchmarkModuleLoadContext(Assembly runtimeAssembly, string mainAssemblyPath, string contextName)
+            : base(contextName, isCollectible: true)
+        {
+            _runtimeAssembly = runtimeAssembly;
+            _runtimeAssemblyName = runtimeAssembly.GetName().Name ?? nameof(JavaScriptRuntime.EnvironmentProvider);
+            _resolver = new AssemblyDependencyResolver(mainAssemblyPath);
+        }
+
+        protected override Assembly? Load(AssemblyName assemblyName)
+        {
+            if (string.Equals(assemblyName.Name, _runtimeAssemblyName, StringComparison.Ordinal))
+            {
+                return _runtimeAssembly;
+            }
+
+            var resolvedPath = _resolver.ResolveAssemblyToPath(assemblyName);
+            if (!string.IsNullOrWhiteSpace(resolvedPath))
+            {
+                return LoadFromAssemblyPath(resolvedPath);
+            }
+
+            return null;
         }
     }
 }
