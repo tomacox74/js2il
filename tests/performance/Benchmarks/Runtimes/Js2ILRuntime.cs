@@ -73,11 +73,15 @@ public class Js2ILRuntime : IJavaScriptRuntime
 
             var dllPath = dllFiles[0];
 
-            var moduleLoadContext = new AssemblyLoadContext($"js2il-benchmark-runtime-{Guid.NewGuid():N}", isCollectible: true);
+            var fullDllPath = Path.GetFullPath(dllPath);
+            var moduleLoadContext = new BenchmarkModuleLoadContext(
+                typeof(JavaScriptRuntime.EnvironmentProvider).Assembly,
+                fullDllPath,
+                $"js2il-benchmark-runtime-{Guid.NewGuid():N}");
 
             try
             {
-                var assembly = moduleLoadContext.LoadFromAssemblyPath(Path.GetFullPath(dllPath));
+                var assembly = moduleLoadContext.LoadFromAssemblyPath(fullDllPath);
                 var moduleId = ResolveModuleId(assembly, outputName);
 
                 // Measure execution time
@@ -92,9 +96,6 @@ public class Js2ILRuntime : IJavaScriptRuntime
             finally
             {
                 moduleLoadContext.Unload();
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
             }
         }
         catch (Exception ex)
@@ -145,5 +146,36 @@ public class Js2ILRuntime : IJavaScriptRuntime
         }
 
         return moduleIds[0];
+    }
+
+    private sealed class BenchmarkModuleLoadContext : AssemblyLoadContext
+    {
+        private readonly Assembly _runtimeAssembly;
+        private readonly string _runtimeAssemblyName;
+        private readonly AssemblyDependencyResolver _resolver;
+
+        public BenchmarkModuleLoadContext(Assembly runtimeAssembly, string mainAssemblyPath, string contextName)
+            : base(contextName, isCollectible: true)
+        {
+            _runtimeAssembly = runtimeAssembly;
+            _runtimeAssemblyName = runtimeAssembly.GetName().Name ?? nameof(JavaScriptRuntime.EnvironmentProvider);
+            _resolver = new AssemblyDependencyResolver(mainAssemblyPath);
+        }
+
+        protected override Assembly? Load(AssemblyName assemblyName)
+        {
+            if (string.Equals(assemblyName.Name, _runtimeAssemblyName, StringComparison.Ordinal))
+            {
+                return _runtimeAssembly;
+            }
+
+            var resolvedPath = _resolver.ResolveAssemblyToPath(assemblyName);
+            if (!string.IsNullOrWhiteSpace(resolvedPath))
+            {
+                return LoadFromAssemblyPath(resolvedPath);
+            }
+
+            return null;
+        }
     }
 }
