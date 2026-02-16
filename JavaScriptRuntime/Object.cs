@@ -373,6 +373,265 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// ECMA-262 Object.keys(O).
+        /// Returns an array of own enumerable string keys.
+        /// </summary>
+        public static object keys(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var keys = new List<string>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            EnumerateOwnEnumerableProperties(
+                obj,
+                seen,
+                (name, _) => keys.Add(name));
+
+            return new JavaScriptRuntime.Array(keys);
+        }
+
+        /// <summary>
+        /// ECMA-262 Object.values(O).
+        /// Returns an array of own enumerable property values.
+        /// </summary>
+        public static object values(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var values = new List<object?>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            EnumerateOwnEnumerableProperties(
+                obj,
+                seen,
+                (_, value) => values.Add(value));
+
+            return new JavaScriptRuntime.Array(values);
+        }
+
+        /// <summary>
+        /// ECMA-262 Object.entries(O).
+        /// Returns an array of [key, value] pairs for own enumerable properties.
+        /// </summary>
+        public static object entries(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var entries = new List<object?>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            EnumerateOwnEnumerableProperties(
+                obj,
+                seen,
+                (name, value) =>
+                {
+                    var pair = new JavaScriptRuntime.Array();
+                    pair.Add(name);
+                    pair.Add(value);
+                    entries.Add(pair);
+                });
+
+            return new JavaScriptRuntime.Array(entries);
+        }
+
+        private static void EnumerateOwnEnumerableProperties(object obj, ISet<string> seen, Action<string, object?> processProperty)
+        {
+            foreach (var k in PropertyDescriptorStore.GetOwnKeys(obj))
+            {
+                if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
+                {
+                    continue;
+                }
+
+                if (seen.Add(k))
+                {
+                    object? value = null;
+                    if (!TryGetOwnPropertyValue(obj, k, out value))
+                    {
+                        value = GetProperty(obj, k);
+                    }
+
+                    processProperty(k, value);
+                }
+            }
+
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                foreach (var kvp in dict)
+                {
+                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, kvp.Key) && seen.Add(kvp.Key))
+                    {
+                        processProperty(kvp.Key, kvp.Value);
+                    }
+                }
+
+                return;
+            }
+
+            if (obj is IDictionary<string, object?> dictGeneric)
+            {
+                foreach (var kvp in dictGeneric)
+                {
+                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key) && seen.Add(kvp.Key))
+                    {
+                        processProperty(kvp.Key, kvp.Value);
+                    }
+                }
+
+                return;
+            }
+
+            if (obj is System.Collections.IDictionary dictObj)
+            {
+                var sortedKeys = new List<string>();
+                foreach (var k in dictObj.Keys)
+                {
+                    sortedKeys.Add(DotNet2JSConversions.ToString(k));
+                }
+
+                sortedKeys.Sort(StringComparer.Ordinal);
+                foreach (var k in sortedKeys)
+                {
+                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k) && seen.Add(k))
+                    {
+                        processProperty(k, dictObj[k]);
+                    }
+                }
+
+                return;
+            }
+
+            var type = obj.GetType();
+            foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(p => p.Name, StringComparer.Ordinal))
+            {
+                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, p.Name) && seen.Add(p.Name))
+                {
+                    processProperty(p.Name, p.GetValue(obj));
+                }
+            }
+
+            foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(f => f.Name, StringComparer.Ordinal))
+            {
+                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, f.Name) && seen.Add(f.Name))
+                {
+                    processProperty(f.Name, f.GetValue(obj));
+                }
+            }
+        }
+
+        /// <summary>
+        /// ECMA-262 Object.assign(target, ...sources).
+        /// Copies enumerable own properties from source objects to the target.
+        /// </summary>
+        public static object assign(object target, params object?[] sources)
+        {
+            if (target is null || target is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            foreach (var source in sources)
+            {
+                // Skip null/undefined sources
+                if (source is null || source is JsNull)
+                {
+                    continue;
+                }
+
+                // Use SpreadInto which handles enumerable own properties
+                SpreadInto(target, source);
+            }
+
+            return target;
+        }
+
+        /// <summary>
+        /// ECMA-262 Object.fromEntries(iterable).
+        /// Creates an object from an iterable of [key, value] pairs.
+        /// </summary>
+        public static object fromEntries(object iterable)
+        {
+            if (iterable is null || iterable is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var result = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)result;
+
+            // Get iterator for the iterable
+            var iterator = GetIterator(iterable);
+
+            try
+            {
+                while (true)
+                {
+                    var iterResult = IteratorNext(iterator);
+                    if (IteratorResultDone(iterResult))
+                    {
+                        break;
+                    }
+
+                    var entry = IteratorResultValue(iterResult);
+                    if (entry is null || entry is JsNull)
+                    {
+                        throw new TypeError("Iterator value must be an object");
+                    }
+
+                    // Extract key and value from the entry
+                    // Entry should be array-like with length >= 2
+                    object? key;
+                    object? value;
+
+                    if (entry is JavaScriptRuntime.Array arr)
+                    {
+                        if (arr.Count < 2)
+                        {
+                            throw new TypeError("Iterator value must have at least 2 elements");
+                        }
+                        key = arr[0];
+                        value = arr[1];
+                    }
+                    else if (entry is System.Collections.IList list)
+                    {
+                        if (list.Count < 2)
+                        {
+                            throw new TypeError("Iterator value must have at least 2 elements");
+                        }
+                        key = list[0];
+                        value = list[1];
+                    }
+                    else
+                    {
+                        // Try to get via indexed access
+                        key = GetItem(entry, 0.0);
+                        value = GetItem(entry, 1.0);
+                    }
+
+                    var keyStr = ToPropertyKeyString(key);
+                    dict[keyStr] = value;
+                }
+            }
+            finally
+            {
+                IteratorClose(iterator);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// ECMA-262 Object.defineProperty(O, P, Attributes).
         /// Returns the target object.
         /// </summary>

@@ -132,7 +132,7 @@
     {
       "clause": "19.3.21",
       "title": "Map ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-map"
     },
     {
@@ -246,7 +246,7 @@
     {
       "clause": "19.3.40",
       "title": "WeakMap ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakmap"
     },
     {
@@ -258,7 +258,7 @@
     {
       "clause": "19.3.42",
       "title": "WeakSet ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakset"
     }
   ],
@@ -325,6 +325,47 @@
           "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js"
         ],
         "notes": "Exposes JavaScriptRuntime.GlobalThis.Function as a callable function value so libraries can reference Function as a global identifier (e.g., Function.prototype...). Invoking Function(...) throws NotSupportedException until Function constructor semantics are implemented."
+      },
+      {
+        "clause": "19.3.21",
+        "feature": "Map constructor and core prototype methods",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-map",
+        "testScripts": [
+          "Js2IL.Tests/Map/JavaScript/Map_Constructor_Empty.js",
+          "Js2IL.Tests/Map/JavaScript/Map_Set_Get_Basic.js",
+          "Js2IL.Tests/Map/JavaScript/Map_Has_Basic.js",
+          "Js2IL.Tests/Map/JavaScript/Map_Delete_Basic.js",
+          "Js2IL.Tests/Map/JavaScript/Map_Clear_Basic.js",
+          "Js2IL.Tests/Map/JavaScript/Map_Size_Property.js",
+          "Js2IL.Tests/Map/JavaScript/Map_Keys_Values_Entries.js"
+        ],
+        "notes": "Implements new Map() constructor and core prototype methods: set, get, has, delete, clear, size property, keys, values, and entries. Uses SameValueZero semantics for key equality. Does not support constructor with iterable argument or forEach method. Iterator support is basic - does not implement full iterator protocol with Symbol.iterator."
+      },
+      {
+        "clause": "19.3.40",
+        "feature": "WeakMap constructor and core prototype methods",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakmap",
+        "testScripts": [
+          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js",
+          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js",
+          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js",
+          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js"
+        ],
+        "notes": "Implements new WeakMap() constructor and core prototype methods: set, get, has, delete. Keys must be objects (non-null reference types). Uses ConditionalWeakTable to allow garbage collection of keys. Does not support constructor with iterable argument. Does not implement full object-type validation."
+      },
+      {
+        "clause": "19.3.42",
+        "feature": "WeakSet constructor and core prototype methods",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakset",
+        "testScripts": [
+          "Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js",
+          "Js2IL.Tests/WeakSet/JavaScript/WeakSet_Add_Has_Basic.js",
+          "Js2IL.Tests/WeakSet/JavaScript/WeakSet_Delete_Basic.js"
+        ],
+        "notes": "Implements new WeakSet() constructor and core prototype methods: add, has, delete. Values must be objects (non-null reference types). Uses ConditionalWeakTable to allow garbage collection of values. Does not support constructor with iterable argument. Does not implement full object-type validation."
       }
     ]
   }

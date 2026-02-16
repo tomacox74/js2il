@@ -1,0 +1,168 @@
+﻿// IL code: Object_Values_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Object_Values_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x217d
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 289 (0x121)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Object_Values_Basic/Scope,
+			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[2] object,
+			[3] object,
+			[4] object
+		)
+
+		IL_0000: newobj instance void Modules.Object_Values_Basic/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_000b: dup
+		IL_000c: ldstr "a"
+		IL_0011: ldc.r8 1
+		IL_001a: box [System.Runtime]System.Double
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0024: pop
+		IL_0025: dup
+		IL_0026: ldstr "b"
+		IL_002b: ldc.r8 2
+		IL_0034: box [System.Runtime]System.Double
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_003e: pop
+		IL_003f: dup
+		IL_0040: ldstr "c"
+		IL_0045: ldc.r8 3
+		IL_004e: box [System.Runtime]System.Double
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0058: pop
+		IL_0059: stloc.1
+		IL_005a: ldloc.1
+		IL_005b: ldstr "hidden"
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0065: dup
+		IL_0066: ldstr "value"
+		IL_006b: ldc.r8 4
+		IL_0074: box [System.Runtime]System.Double
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_007e: pop
+		IL_007f: dup
+		IL_0080: ldstr "enumerable"
+		IL_0085: ldc.i4.0
+		IL_0086: box [System.Runtime]System.Boolean
+		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0090: pop
+		IL_0091: dup
+		IL_0092: ldstr "configurable"
+		IL_0097: ldc.i4.1
+		IL_0098: box [System.Runtime]System.Boolean
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_00a2: pop
+		IL_00a3: dup
+		IL_00a4: ldstr "writable"
+		IL_00a9: ldc.i4.1
+		IL_00aa: box [System.Runtime]System.Boolean
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_00b4: pop
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_00ba: pop
+		IL_00bb: ldloc.1
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::values(object)
+		IL_00c1: stloc.3
+		IL_00c2: ldloc.3
+		IL_00c3: stloc.2
+		IL_00c4: ldstr "length="
+		IL_00c9: ldloc.2
+		IL_00ca: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_00d4: stloc.s 4
+		IL_00d6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00db: ldc.i4.1
+		IL_00dc: newarr [System.Runtime]System.Object
+		IL_00e1: dup
+		IL_00e2: ldc.i4.0
+		IL_00e3: ldloc.s 4
+		IL_00e5: stelem.ref
+		IL_00e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00eb: pop
+		IL_00ec: ldloc.2
+		IL_00ed: ldstr "join"
+		IL_00f2: ldstr ","
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00fc: stloc.3
+		IL_00fd: ldstr "values="
+		IL_0102: ldloc.3
+		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0108: stloc.s 4
+		IL_010a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_010f: ldc.i4.1
+		IL_0110: newarr [System.Runtime]System.Object
+		IL_0115: dup
+		IL_0116: ldc.i4.0
+		IL_0117: ldloc.s 4
+		IL_0119: stelem.ref
+		IL_011a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_011f: pop
+		IL_0120: ret
+	} // end of method Object_Values_Basic::__js_module_init__
+
+} // end of class Modules.Object_Values_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2186
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Object_Values_Basic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -30,7 +30,7 @@
     {
       "clause": "20.1.2.1",
       "title": "Object.assign ( target , ... sources )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.assign"
     },
     {
@@ -60,7 +60,7 @@
     {
       "clause": "20.1.2.5",
       "title": "Object.entries ( O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.entries"
     },
     {
@@ -72,7 +72,7 @@
     {
       "clause": "20.1.2.7",
       "title": "Object.fromEntries ( iterable )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.fromentries"
     },
     {
@@ -150,7 +150,7 @@
     {
       "clause": "20.1.2.19",
       "title": "Object.keys ( O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.keys"
     },
     {
@@ -180,7 +180,7 @@
     {
       "clause": "20.1.2.24",
       "title": "Object.values ( O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object.values"
     },
     {
@@ -402,6 +402,56 @@
           "Js2IL.Tests/Object/JavaScript/Object_Prototype_HasOwnProperty_Basic.js"
         ],
         "notes": "Seeded onto Object.prototype via JavaScriptRuntime.GlobalThis. Works when invoked via Object.prototype.hasOwnProperty (e.g., using apply/call). Default Object.prototype wiring for all object literals is incomplete."
+      },
+      {
+        "clause": "20.1.2.19",
+        "feature": "Object.keys",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.keys",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.keys. Returns an array of own enumerable string keys. Respects PropertyDescriptorStore for enumerable:false filtering. Symbol-keyed properties and full spec ordering guarantees are not implemented."
+      },
+      {
+        "clause": "20.1.2.24",
+        "feature": "Object.values",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.values",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.values. Returns an array of own enumerable property values. Respects PropertyDescriptorStore for enumerable:false filtering. Symbol-keyed properties and full spec ordering guarantees are not implemented."
+      },
+      {
+        "clause": "20.1.2.5",
+        "feature": "Object.entries",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.entries",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.entries. Returns an array of [key, value] pairs for own enumerable properties. Respects PropertyDescriptorStore for enumerable:false filtering. Symbol-keyed properties and full spec ordering guarantees are not implemented."
+      },
+      {
+        "clause": "20.1.2.1",
+        "feature": "Object.assign",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.assign",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_Assign_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.assign. Copies enumerable own properties from source objects to the target using SpreadInto semantics. Returns the target object. Symbol-keyed properties, property descriptor copying, and full error handling are not implemented."
+      },
+      {
+        "clause": "20.1.2.7",
+        "feature": "Object.fromEntries",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.fromentries",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_FromEntries_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.fromEntries. Creates an object from an iterable of [key, value] pairs using GetIterator. Supports array-like entries. Symbol keys and full iterator protocol edge cases are not implemented."
       }
     ]
   }
