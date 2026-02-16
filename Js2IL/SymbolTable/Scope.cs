@@ -80,6 +80,12 @@ public class Scope
     public bool ReferencesParentScopeVariables { get; set; }
 
     /// <summary>
+    /// Indicates whether any descendant callable/class scope under this scope references parent-scope variables.
+    /// Computed during bottom-up free-variable analysis to avoid repeated subtree scans.
+    /// </summary>
+    public bool HasDescendantCallableReferencingParentScopeVariables { get; set; }
+
+    /// <summary>
     /// True when this (non-arrow) function scope requires an implicit <c>arguments</c> object.
     /// This is set during symbol table construction when an Identifier reference to <c>arguments</c>
     /// occurs within this function or within an arrow function nested inside it.

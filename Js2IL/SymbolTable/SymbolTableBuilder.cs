@@ -518,33 +518,19 @@ namespace Js2IL.SymbolTables
                 scope.ReferencesParentScopeVariables = CheckArrowFunctionReferencesParentVariables(arrowExpr, scope);
             }
 
+            var hasDescendantCallableReferencingParentScopeVariables = scope.Children.Any(child =>
+                ((child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class) && child.ReferencesParentScopeVariables)
+                || child.HasDescendantCallableReferencingParentScopeVariables);
+            scope.HasDescendantCallableReferencingParentScopeVariables = hasDescendantCallableReferencingParentScopeVariables;
+
             // IMPORTANT: for function scopes, also propagate child-scope parent references.
             // Nested functions may reference globals/parent scopes even when the immediate
             // parent function body does not. Closures still require the parent scope slot(s)
             // in the scopes array to exist to avoid IndexOutOfRange at runtime.
             if (scope.Kind == ScopeKind.Function && !scope.ReferencesParentScopeVariables)
             {
-                scope.ReferencesParentScopeVariables = HasDescendantCallableReferencingParentScopeVariables(scope);
+                scope.ReferencesParentScopeVariables = hasDescendantCallableReferencingParentScopeVariables;
             }
-        }
-
-        private static bool HasDescendantCallableReferencingParentScopeVariables(Scope scope)
-        {
-            foreach (var child in scope.Children)
-            {
-                if ((child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class)
-                    && child.ReferencesParentScopeVariables)
-                {
-                    return true;
-                }
-
-                if (HasDescendantCallableReferencingParentScopeVariables(child))
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private void BuildScopeRecursive(Scope globalScope, Node node, Scope currentScope)
