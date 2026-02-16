@@ -7,6 +7,8 @@ using System.Runtime.Loader;
 using Js2IL;
 using Js2IL.Runtime;
 using Benchmarks.Runtimes;
+using Jint;
+using Acornima.Ast;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Benchmarks;
@@ -22,7 +24,7 @@ namespace Benchmarks;
 public class Js2ILPhasedBenchmarks
 {
     private readonly Dictionary<string, string> _scripts = new();
-    private readonly JintRuntime _jintRuntime = new();
+    private readonly Dictionary<string, Prepared<Script>> _jintPreparedScripts = new();
     private readonly Dictionary<string, string> _compiledPaths = new();
     private readonly Dictionary<string, AssemblyLoadContext> _compiledLoadContexts = new();
     private readonly Dictionary<string, Assembly> _compiledAssemblies = new();
@@ -50,7 +52,9 @@ public class Js2ILPhasedBenchmarks
             if (File.Exists(path))
             {
                 var scriptName = Path.GetFileNameWithoutExtension(scriptFile);
-                _scripts[scriptName] = File.ReadAllText(path);
+                var scriptContent = File.ReadAllText(path);
+                _scripts[scriptName] = scriptContent;
+                _jintPreparedScripts[scriptName] = Engine.PrepareScript(scriptContent, scriptFile);
             }
         }
 
@@ -107,6 +111,7 @@ public class Js2ILPhasedBenchmarks
         _compiledLoadContexts.Clear();
         _compiledAssemblies.Clear();
         _compiledModuleIds.Clear();
+        _jintPreparedScripts.Clear();
 
         GC.Collect();
         GC.WaitForPendingFinalizers();
@@ -193,16 +198,18 @@ public class Js2ILPhasedBenchmarks
         using var exports = JsEngine.LoadModule(assembly, moduleId);
     }
 
-    [Benchmark(Description = "Jint execute (in-proc)")]
-    public void Jint_Execute()
+    [Benchmark(Description = "Jint prepare")]
+    public void Jint_Prepare()
     {
         var script = _scripts[ScriptName];
-        var result = _jintRuntime.Execute(script, $"{ScriptName}.js");
+        _ = Engine.PrepareScript(script, $"{ScriptName}.js");
+    }
 
-        if (!result.Success)
-        {
-            throw new Exception($"Jint execution failed: {result.Error}");
-        }
+    [Benchmark(Description = "Jint execute (prepared)")]
+    public void Jint_ExecutePrepared()
+    {
+        var engine = new Engine(options => options.Strict());
+        engine.Execute(_jintPreparedScripts[ScriptName]);
     }
 
     private static string ResolveModuleId(Assembly assembly, string fallback)
