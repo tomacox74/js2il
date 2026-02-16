@@ -96,8 +96,9 @@ jobs:
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
-          if ($output -notmatch 'title=JS2IL Domino Sample') { throw 'Expected output containing title=JS2IL Domino Sample' }
-          if ($output -notmatch 'links=2') { throw 'Expected output containing links=2' }
+          $outputText = ($output -join "`n")
+          if ($outputText -notmatch 'title=JS2IL Domino Sample') { throw 'Expected output containing title=JS2IL Domino Sample' }
+          if ($outputText -notmatch 'links=2') { throw 'Expected output containing links=2' }
 
       - name: Build and run Hosting.Basic sample
         shell: pwsh
@@ -107,8 +108,9 @@ jobs:
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
-          if ($output -notmatch 'version=') { throw 'Expected output containing version=' }
-          if ($output -notmatch '1\+2=') { throw 'Expected output containing 1+2=' }
+          $outputText = ($output -join "`n")
+          if ($outputText -notmatch 'version=') { throw 'Expected output containing version=' }
+          if ($outputText -notmatch '1\+2=') { throw 'Expected output containing 1+2=' }
 
       - name: Build and run Hosting.Typed sample
         shell: pwsh
@@ -118,9 +120,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
-          if ($output -notmatch 'version=') { throw 'Expected output containing version=' }
-          if ($output -notmatch 'add\(1,2\)=') { throw 'Expected output containing add(1,2)=' }
-          if ($output -notmatch 'counter\.add\(5\)=') { throw 'Expected output containing counter.add(5)=' }
-          if ($output -notmatch 'counter\.value=') { throw 'Expected output containing counter.value=' }
-          if ($output -notmatch 'addAsync\(1,2\)=') { throw 'Expected output containing addAsync(1,2)=' }
-          if ($output -notmatch 'created\.add\(1\)=') { throw 'Expected output containing created.add(1)=' }
+          $outputText = ($output -join "`n")
+          if ($outputText -notmatch 'version=') { throw 'Expected output containing version=' }
+          if ($outputText -notmatch 'add\(1,2\)=') { throw 'Expected output containing add(1,2)=' }
+          if ($outputText -notmatch 'counter\.add\(5\)=') { throw 'Expected output containing counter.add(5)=' }
+          if ($outputText -notmatch 'counter\.value=') { throw 'Expected output containing counter.value=' }
+          if ($outputText -notmatch 'addAsync\(1,2\)=') { throw 'Expected output containing addAsync(1,2)=' }
+          if ($outputText -notmatch 'created\.add\(1\)=') { throw 'Expected output containing created.add(1)=' }
