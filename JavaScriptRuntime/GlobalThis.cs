@@ -102,12 +102,10 @@ namespace JavaScriptRuntime
 
         private static readonly Func<object[], object?[], object> _objectAssignValue = static (_, args) =>
         {
-            if (args == null || args.Length == 0)
-            {
-                throw new TypeError("Object.assign requires at least 1 argument");
-            }
-            var target = args[0];
-            var sources = args.Length > 1 ? args.Skip(1).ToArray() : System.Array.Empty<object?>();
+            var target = (args == null || args.Length == 0) ? null : args[0];
+            var sources = (args != null && args.Length > 1)
+                ? args.Skip(1).ToArray()
+                : System.Array.Empty<object?>();
             return JavaScriptRuntime.Object.assign(target!, sources);
         };
 

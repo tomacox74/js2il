@@ -386,78 +386,10 @@ namespace JavaScriptRuntime
             var keys = new List<string>();
             var seen = new HashSet<string>(StringComparer.Ordinal);
 
-            static void AddKey(List<string> keys, HashSet<string> seen, string? key)
-            {
-                if (string.IsNullOrEmpty(key))
-                {
-                    return;
-                }
-
-                if (seen.Add(key))
-                {
-                    keys.Add(key);
-                }
-            }
-
-            // ExpandoObject: enumerate own enumerable keys
-            if (obj is System.Dynamic.ExpandoObject exp)
-            {
-                var dict = (IDictionary<string, object?>)exp;
-                foreach (var k in dict.Keys)
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, k))
-                    {
-                        AddKey(keys, seen, k);
-                    }
-                }
-            }
-            else if (obj is IDictionary<string, object?> dictGeneric)
-            {
-                foreach (var k in dictGeneric.Keys)
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
-                    {
-                        AddKey(keys, seen, k);
-                    }
-                }
-            }
-            else if (obj is System.Collections.IDictionary dictObj)
-            {
-                var convertedKeys = new List<string>();
-                foreach (var k in dictObj.Keys)
-                {
-                    convertedKeys.Add(DotNet2JSConversions.ToString(k));
-                }
-
-                // IDictionary key ordering can be unstable; sort for determinism.
-                convertedKeys.Sort(StringComparer.Ordinal);
-                foreach (var k in convertedKeys)
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
-                    {
-                        AddKey(keys, seen, k);
-                    }
-                }
-            }
-            else
-            {
-                // Reflection fallback for host objects.
-                var type = obj.GetType();
-                foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(p => p.Name, StringComparer.Ordinal))
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, p.Name))
-                    {
-                        AddKey(keys, seen, p.Name);
-                    }
-                }
-                foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(f => f.Name, StringComparer.Ordinal))
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, f.Name))
-                    {
-                        AddKey(keys, seen, f.Name);
-                    }
-                }
-            }
+            EnumerateOwnEnumerableProperties(
+                obj,
+                seen,
+                (name, _) => keys.Add(name));
 
             return new JavaScriptRuntime.Array(keys);
         }
@@ -476,79 +408,10 @@ namespace JavaScriptRuntime
             var values = new List<object?>();
             var seen = new HashSet<string>(StringComparer.Ordinal);
 
-            // ExpandoObject: enumerate own enumerable values
-            if (obj is System.Dynamic.ExpandoObject exp)
-            {
-                var dict = (IDictionary<string, object?>)exp;
-                foreach (var kvp in dict)
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, kvp.Key))
-                    {
-                        if (seen.Add(kvp.Key))
-                        {
-                            values.Add(kvp.Value);
-                        }
-                    }
-                }
-            }
-            else if (obj is IDictionary<string, object?> dictGeneric)
-            {
-                foreach (var kvp in dictGeneric)
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key))
-                    {
-                        if (seen.Add(kvp.Key))
-                        {
-                            values.Add(kvp.Value);
-                        }
-                    }
-                }
-            }
-            else if (obj is System.Collections.IDictionary dictObj)
-            {
-                var sortedKeys = new List<string>();
-                foreach (var k in dictObj.Keys)
-                {
-                    sortedKeys.Add(DotNet2JSConversions.ToString(k));
-                }
-                sortedKeys.Sort(StringComparer.Ordinal);
-
-                foreach (var k in sortedKeys)
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
-                    {
-                        if (seen.Add(k))
-                        {
-                            values.Add(dictObj[k]);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // Reflection fallback for host objects.
-                var type = obj.GetType();
-                foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(p => p.Name, StringComparer.Ordinal))
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, p.Name))
-                    {
-                        if (seen.Add(p.Name))
-                        {
-                            values.Add(p.GetValue(obj));
-                        }
-                    }
-                }
-                foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(f => f.Name, StringComparer.Ordinal))
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, f.Name))
-                    {
-                        if (seen.Add(f.Name))
-                        {
-                            values.Add(f.GetValue(obj));
-                        }
-                    }
-                }
-            }
+            EnumerateOwnEnumerableProperties(
+                obj,
+                seen,
+                (_, value) => values.Add(value));
 
             return new JavaScriptRuntime.Array(values);
         }
@@ -567,96 +430,104 @@ namespace JavaScriptRuntime
             var entries = new List<object?>();
             var seen = new HashSet<string>(StringComparer.Ordinal);
 
-            // ExpandoObject: enumerate own enumerable key-value pairs
+            EnumerateOwnEnumerableProperties(
+                obj,
+                seen,
+                (name, value) =>
+                {
+                    var pair = new JavaScriptRuntime.Array();
+                    pair.Add(name);
+                    pair.Add(value);
+                    entries.Add(pair);
+                });
+
+            return new JavaScriptRuntime.Array(entries);
+        }
+
+        private static void EnumerateOwnEnumerableProperties(object obj, ISet<string> seen, Action<string, object?> processProperty)
+        {
+            foreach (var k in PropertyDescriptorStore.GetOwnKeys(obj))
+            {
+                if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
+                {
+                    continue;
+                }
+
+                if (seen.Add(k))
+                {
+                    object? value = null;
+                    if (!TryGetOwnPropertyValue(obj, k, out value))
+                    {
+                        value = GetProperty(obj, k);
+                    }
+
+                    processProperty(k, value);
+                }
+            }
+
             if (obj is System.Dynamic.ExpandoObject exp)
             {
                 var dict = (IDictionary<string, object?>)exp;
                 foreach (var kvp in dict)
                 {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, kvp.Key))
+                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, kvp.Key) && seen.Add(kvp.Key))
                     {
-                        if (seen.Add(kvp.Key))
-                        {
-                            var pair = new JavaScriptRuntime.Array();
-                            pair.Add(kvp.Key);
-                            pair.Add(kvp.Value);
-                            entries.Add(pair);
-                        }
+                        processProperty(kvp.Key, kvp.Value);
                     }
                 }
+
+                return;
             }
-            else if (obj is IDictionary<string, object?> dictGeneric)
+
+            if (obj is IDictionary<string, object?> dictGeneric)
             {
                 foreach (var kvp in dictGeneric)
                 {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key))
+                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key) && seen.Add(kvp.Key))
                     {
-                        if (seen.Add(kvp.Key))
-                        {
-                            var pair = new JavaScriptRuntime.Array();
-                            pair.Add(kvp.Key);
-                            pair.Add(kvp.Value);
-                            entries.Add(pair);
-                        }
+                        processProperty(kvp.Key, kvp.Value);
                     }
                 }
+
+                return;
             }
-            else if (obj is System.Collections.IDictionary dictObj)
+
+            if (obj is System.Collections.IDictionary dictObj)
             {
                 var sortedKeys = new List<string>();
                 foreach (var k in dictObj.Keys)
                 {
                     sortedKeys.Add(DotNet2JSConversions.ToString(k));
                 }
-                sortedKeys.Sort(StringComparer.Ordinal);
 
+                sortedKeys.Sort(StringComparer.Ordinal);
                 foreach (var k in sortedKeys)
                 {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
+                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k) && seen.Add(k))
                     {
-                        if (seen.Add(k))
-                        {
-                            var pair = new JavaScriptRuntime.Array();
-                            pair.Add(k);
-                            pair.Add(dictObj[k]);
-                            entries.Add(pair);
-                        }
+                        processProperty(k, dictObj[k]);
                     }
                 }
+
+                return;
             }
-            else
+
+            var type = obj.GetType();
+            foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(p => p.Name, StringComparer.Ordinal))
             {
-                // Reflection fallback for host objects.
-                var type = obj.GetType();
-                foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(p => p.Name, StringComparer.Ordinal))
+                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, p.Name) && seen.Add(p.Name))
                 {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, p.Name))
-                    {
-                        if (seen.Add(p.Name))
-                        {
-                            var pair = new JavaScriptRuntime.Array();
-                            pair.Add(p.Name);
-                            pair.Add(p.GetValue(obj));
-                            entries.Add(pair);
-                        }
-                    }
-                }
-                foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(f => f.Name, StringComparer.Ordinal))
-                {
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, f.Name))
-                    {
-                        if (seen.Add(f.Name))
-                        {
-                            var pair = new JavaScriptRuntime.Array();
-                            pair.Add(f.Name);
-                            pair.Add(f.GetValue(obj));
-                            entries.Add(pair);
-                        }
-                    }
+                    processProperty(p.Name, p.GetValue(obj));
                 }
             }
 
-            return new JavaScriptRuntime.Array(entries);
+            foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(f => f.Name, StringComparer.Ordinal))
+            {
+                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, f.Name) && seen.Add(f.Name))
+                {
+                    processProperty(f.Name, f.GetValue(obj));
+                }
+            }
         }
 
         /// <summary>
