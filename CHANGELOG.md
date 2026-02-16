@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Runtime/spec: implement `Object.keys`, `Object.values`, `Object.entries`, `Object.assign`, and `Object.fromEntries` with own-enumerable property semantics and descriptor-aware enumeration behavior (fixes #627).
 - Documentation/tests: Document async generator function support (ECMA-262 §15.6, `async function*`). Async generators were already implemented via dual-dispatch state machine combining async (Promise-based suspension) with generator (user-controlled iteration) semantics. Added test coverage for yield/await interaction and for-await-of consumption. Updated documentation from "Not Yet Supported" to "Supported with Limitations" with known limitations documented (throw()/return() protocol methods, try/catch/finally edge cases) (closes #628).
 - IR/runtime: implement ECMA-262 meta properties with CommonJS-hosted semantics — `new.target` (function call/new plumbing + lexical arrow inheritance) and `import.meta` (host object with stable identity and `url` when available), with execution/generator coverage (closes #612).
 - IR/Runtime/spec: implement tagged template expressions (ECMA-262 §13.3.11) with template object caching, cooked/raw string arrays, and correct evaluation order (fixes #611).
