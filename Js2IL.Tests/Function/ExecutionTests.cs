@@ -126,6 +126,9 @@ namespace Js2IL.Tests.Function
         public Task Function_ObjectLiteralMethod_ThisBinding_AsyncAwait() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding_AsyncAwait); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_ObjectLiteralValueFunction_ForEachCapturesOuter() { var testName = nameof(Function_ObjectLiteralValueFunction_ForEachCapturesOuter); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_Apply_Basic() { var testName = nameof(Function_Apply_Basic); return ExecutionTest(testName); }
 
         [Fact]

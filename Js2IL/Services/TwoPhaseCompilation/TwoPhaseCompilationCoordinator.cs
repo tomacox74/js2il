@@ -1702,9 +1702,74 @@ public sealed class TwoPhaseCompilationCoordinator
             return true;
         }
 
-        // Check if this scope references parent scope variables
-        // ReferencesParentScopeVariables is computed during symbol table construction
-        return scope.ReferencesParentScopeVariables;
+        // Check if this scope references parent scope variables.
+        // ReferencesParentScopeVariables is computed during symbol table construction,
+        // but for deeply nested callables there may be intermediate block scopes between
+        // a callable and the nested closure that captures parent variables.
+        // Be conservative and require scopes when any descendant callable needs parent scopes.
+        if (scope.ReferencesParentScopeVariables || HasDescendantCallableRequiringParentScopes(scope))
+        {
+            return true;
+        }
+
+        // Additional conservative fallback: if this callable contains nested callable literals,
+        // keep scopes enabled so closure binding can always forward caller scope chain.
+        // This avoids no-scopes ABI selection for outer functions whose nested callbacks are
+        // wrapped in intermediate block scopes.
+        return callable.AstNode switch
+        {
+            FunctionDeclaration functionDeclaration => ContainsNestedCallableLiteral(functionDeclaration.Body),
+            FunctionExpression functionExpression => ContainsNestedCallableLiteral(functionExpression.Body),
+            ArrowFunctionExpression arrowFunctionExpression => ContainsNestedCallableLiteral(arrowFunctionExpression.Body),
+            _ => false
+        };
+    }
+
+    private static bool HasDescendantCallableRequiringParentScopes(Scope scope)
+    {
+        foreach (var child in scope.Children)
+        {
+            if ((child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class)
+                && child.ReferencesParentScopeVariables)
+            {
+                return true;
+            }
+
+            if (HasDescendantCallableRequiringParentScopes(child))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ContainsNestedCallableLiteral(Node? node)
+    {
+        if (node == null)
+        {
+            return false;
+        }
+
+        foreach (var child in node.ChildNodes)
+        {
+            if (child == null)
+            {
+                continue;
+            }
+
+            if (child is FunctionExpression or FunctionDeclaration or ArrowFunctionExpression or ClassExpression or ClassDeclaration)
+            {
+                return true;
+            }
+
+            if (ContainsNestedCallableLiteral(child))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
     
     /// <summary>

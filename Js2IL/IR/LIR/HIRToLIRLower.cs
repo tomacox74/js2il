@@ -66,9 +66,12 @@ public sealed partial class HIRToLIRLowerer
             try
             {
                 environmentLayoutBuilder = new EnvironmentLayoutBuilder(scopeMetadataRegistry);
-                var needsParentScopesOverride = callableKind == Js2IL.Services.ScopesAbi.CallableKind.Constructor
-                    ? hasScopesParameter
-                    : (bool?)null;
+                var needsParentScopesOverride = callableKind switch
+                {
+                    Js2IL.Services.ScopesAbi.CallableKind.Constructor => hasScopesParameter,
+                    Js2IL.Services.ScopesAbi.CallableKind.Function => hasScopesParameter,
+                    _ => (bool?)null
+                };
                 environmentLayout = environmentLayoutBuilder.Build(scope, callableKind, needsParentScopesOverride: needsParentScopesOverride);
             }
             catch (Exception ex)

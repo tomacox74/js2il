@@ -96,6 +96,9 @@ namespace Js2IL.Tests.Function
         public Task Function_ObjectLiteralMethod_ThisBinding() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_ObjectLiteralValueFunction_ForEachCapturesOuter() { var testName = nameof(Function_ObjectLiteralValueFunction_ForEachCapturesOuter); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_Apply_Basic() { var testName = nameof(Function_Apply_Basic); return GenerateTest(testName); }
 
         [Fact]
