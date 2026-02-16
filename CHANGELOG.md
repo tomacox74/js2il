@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.12 - 2026-02-16
+
 - Runtime/spec: improve `RegExp` behavior by implementing `test()` lastIndex semantics for global regexes, adding `toString()`, and exposing `flags` plus related flag getters (`dotAll`, `sticky`, `unicode`, `unicodeSets`, `hasIndices`) with canonical flag ordering (closes #630).
 - Runtime/spec: implement ECMA-262 core keyed collections: `Map`, `WeakMap`, and `WeakSet` constructors with essential prototype methods (`Map`: set/get/has/delete/clear/size/keys/values/entries with SameValueZero key semantics; `WeakMap`: set/get/has/delete; `WeakSet`: add/has/delete). Uses ConditionalWeakTable for weak collections to enable garbage collection of unused keys/values. `Map.delete()` currently preserves insertion-order behavior via compaction/reindex (O(n) in current MVP). Includes comprehensive execution and generator tests (closes #629).
 - Runtime/spec: implement `Object.keys`, `Object.values`, `Object.entries`, `Object.assign`, and `Object.fromEntries` with own-enumerable property semantics and descriptor-aware enumeration behavior (fixes #627).
