@@ -9,7 +9,6 @@ namespace JavaScriptRuntime
         private readonly Regex _regex;
         private readonly bool _global;
         private readonly string _source;
-        private readonly string _flags;
 
         // Minimal support for RegExp.prototype.lastIndex (used heavily by parsers).
         // In JS this participates in exec() when /g or /y are set. We currently only
@@ -21,7 +20,6 @@ namespace JavaScriptRuntime
             _source = string.Empty;
             _regex = new Regex(_source);
             _global = false;
-            _flags = string.Empty;
             lastIndex = 0;
         }
 
@@ -30,7 +28,6 @@ namespace JavaScriptRuntime
             _source = DotNet2JSConversions.ToString(pattern);
             _regex = new Regex(_source);
             _global = false;
-            _flags = string.Empty;
             lastIndex = 0;
         }
 
@@ -41,9 +38,8 @@ namespace JavaScriptRuntime
             var opts = RegexOptions.None;
             if (f.IndexOf('i') >= 0) opts |= RegexOptions.IgnoreCase;
             if (f.IndexOf('m') >= 0) opts |= RegexOptions.Multiline;
-            // 'g' (global) does not affect test(); keep for completeness but unused here
+            // 'g' (global) enables lastIndex tracking (affects exec() and test()).
             _global = f.IndexOf('g') >= 0;
-            _flags = f;
             _regex = new Regex(_source, opts);
             lastIndex = 0;
         }
@@ -64,7 +60,7 @@ namespace JavaScriptRuntime
         public bool unicodeSets => false; // 'v' flag - not supported yet
         public bool hasIndices => false; // 'd' flag - not supported yet
         
-        // Return flags in canonical order: "dgimsuy"
+        // Return flags in canonical order: "dgimsuvy"
         public string flags
         {
             get
