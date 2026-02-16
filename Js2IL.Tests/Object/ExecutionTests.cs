@@ -68,5 +68,20 @@ namespace Js2IL.Tests.Object
 
         [Fact]
         public Task Object_Prototype_HasOwnProperty_Basic() { var testName = nameof(Object_Prototype_HasOwnProperty_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Keys_Basic() { var testName = nameof(Object_Keys_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Values_Basic() { var testName = nameof(Object_Values_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Entries_Basic() { var testName = nameof(Object_Entries_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Assign_Basic() { var testName = nameof(Object_Assign_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_FromEntries_Basic() { var testName = nameof(Object_FromEntries_Basic); return ExecutionTest(testName); }
     }
 }
