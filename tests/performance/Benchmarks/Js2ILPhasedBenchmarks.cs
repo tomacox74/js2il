@@ -2,8 +2,10 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Order;
-using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Loader;
 using Js2IL;
+using Js2IL.Runtime;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Benchmarks;
@@ -20,6 +22,9 @@ public class Js2ILPhasedBenchmarks
 {
     private readonly Dictionary<string, string> _scripts = new();
     private readonly Dictionary<string, string> _compiledPaths = new();
+    private readonly Dictionary<string, AssemblyLoadContext> _compiledLoadContexts = new();
+    private readonly Dictionary<string, Assembly> _compiledAssemblies = new();
+    private readonly Dictionary<string, string> _compiledModuleIds = new();
     private string _tempDir = "";
 
     [GlobalSetup]
@@ -65,17 +70,46 @@ public class Js2ILPhasedBenchmarks
             var options = new CompilerOptions { OutputDirectory = outputPath };
             var serviceProvider = CompilerServices.BuildServiceProvider(options);
             var compiler = serviceProvider.GetRequiredService<Compiler>();
-            compiler.Compile(tempScriptFile, scriptName);
+            if (!compiler.Compile(tempScriptFile, scriptName))
+            {
+                continue;
+            }
 
             // The DLL is placed directly in outputPath (not in a nested directory)
             // It's named after the input file (scriptName.js -> scriptName.dll)
-            _compiledPaths[scriptName] = Path.Combine(outputPath, $"{scriptName}.dll");
+            var dllPath = Path.Combine(outputPath, $"{scriptName}.dll");
+            if (!File.Exists(dllPath))
+            {
+                continue;
+            }
+
+            _compiledPaths[scriptName] = dllPath;
+
+            var loadContext = new AssemblyLoadContext($"js2il-bench-{scriptName}-{Guid.NewGuid():N}", isCollectible: true);
+            var assembly = loadContext.LoadFromAssemblyPath(Path.GetFullPath(dllPath));
+
+            _compiledLoadContexts[scriptName] = loadContext;
+            _compiledAssemblies[scriptName] = assembly;
+            _compiledModuleIds[scriptName] = ResolveModuleId(assembly, scriptName);
         }
     }
 
     [GlobalCleanup]
     public void Cleanup()
     {
+        foreach (var loadContext in _compiledLoadContexts.Values)
+        {
+            loadContext.Unload();
+        }
+
+        _compiledLoadContexts.Clear();
+        _compiledAssemblies.Clear();
+        _compiledModuleIds.Clear();
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
         if (Directory.Exists(_tempDir))
         {
             try
@@ -94,6 +128,11 @@ public class Js2ILPhasedBenchmarks
 
     public IEnumerable<string> ScriptNames()
     {
+        if (_compiledAssemblies.Count > 0)
+        {
+            return _compiledAssemblies.Keys.OrderBy(name => name, StringComparer.Ordinal);
+        }
+
         if (_scripts.Count > 0)
         {
             return _scripts.Keys;
@@ -147,30 +186,30 @@ public class Js2ILPhasedBenchmarks
     [Benchmark(Description = "js2il execute (pre-compiled)")]
     public void Js2IL_ExecuteOnly()
     {
-        var dllPath = _compiledPaths[ScriptName];
+        var assembly = _compiledAssemblies[ScriptName];
+        var moduleId = _compiledModuleIds[ScriptName];
+        using var exports = JsEngine.LoadModule(assembly, moduleId);
+    }
 
-        var processInfo = new ProcessStartInfo
-        {
-            FileName = "dotnet",
-            Arguments = $"\"{dllPath}\"",
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
-        };
+    private static string ResolveModuleId(Assembly assembly, string fallback)
+    {
+        var moduleIds = assembly
+            .GetCustomAttributes<JsCompiledModuleAttribute>()
+            .Select(a => a.ModuleId)
+            .Where(m => !string.IsNullOrWhiteSpace(m))
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
 
-        using var process = Process.Start(processInfo);
-        if (process == null)
+        if (moduleIds.Length == 0)
         {
-            throw new Exception("Failed to start dotnet process");
+            return fallback;
         }
 
-        process.WaitForExit();
-
-        if (process.ExitCode != 0)
+        if (moduleIds.Contains(fallback, StringComparer.Ordinal))
         {
-            var error = process.StandardError.ReadToEnd();
-            throw new Exception($"js2il execution failed: {error}");
+            return fallback;
         }
+
+        return moduleIds[0];
     }
 }

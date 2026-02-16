@@ -1,5 +1,8 @@
 using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Loader;
 using Js2IL;
+using Js2IL.Runtime;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Benchmarks.Runtimes;
@@ -56,9 +59,6 @@ public class Js2ILRuntime : IJavaScriptRuntime
             compileStopwatch.Stop();
             result.CompileTime = compileStopwatch.Elapsed;
 
-            // Measure execution time
-            var executeStopwatch = Stopwatch.StartNew();
-
             // Find the generated DLL (it's named after the input file, not the outputName parameter)
             var dllFiles = Directory.GetFiles(tempDir, "*.dll", SearchOption.TopDirectoryOnly)
                 .Where(f => !f.Contains("JavaScriptRuntime"))  // Exclude the runtime DLL
@@ -73,40 +73,28 @@ public class Js2ILRuntime : IJavaScriptRuntime
 
             var dllPath = dllFiles[0];
 
-            // Execute the compiled assembly
-            var processInfo = new ProcessStartInfo
+            var moduleLoadContext = new AssemblyLoadContext($"js2il-benchmark-runtime-{Guid.NewGuid():N}", isCollectible: true);
+
+            try
             {
-                FileName = "dotnet",
-                Arguments = $"\"{dllPath}\"",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
+                var assembly = moduleLoadContext.LoadFromAssemblyPath(Path.GetFullPath(dllPath));
+                var moduleId = ResolveModuleId(assembly, outputName);
 
-            using var process = Process.Start(processInfo);
-            if (process == null)
-            {
-                result.Error = "Failed to start dotnet process";
-                return result;
-            }
+                // Measure execution time
+                var executeStopwatch = Stopwatch.StartNew();
+                using var exports = JsEngine.LoadModule(assembly, moduleId);
+                executeStopwatch.Stop();
 
-            var output = process.StandardOutput.ReadToEnd();
-            var error = process.StandardError.ReadToEnd();
-            process.WaitForExit();
-
-            executeStopwatch.Stop();
-
-            if (process.ExitCode == 0)
-            {
                 result.Success = true;
                 result.ExecutionTime = executeStopwatch.Elapsed;
-                result.Output = output;
+                result.Output = string.Empty;
             }
-            else
+            finally
             {
-                result.Success = false;
-                result.Error = $"js2il execution failed with exit code {process.ExitCode}: {error}";
+                moduleLoadContext.Unload();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
             }
         }
         catch (Exception ex)
@@ -135,5 +123,27 @@ public class Js2ILRuntime : IJavaScriptRuntime
         }
 
         return result;
+    }
+
+    private static string ResolveModuleId(Assembly assembly, string fallback)
+    {
+        var moduleIds = assembly
+            .GetCustomAttributes<JsCompiledModuleAttribute>()
+            .Select(a => a.ModuleId)
+            .Where(m => !string.IsNullOrWhiteSpace(m))
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        if (moduleIds.Length == 0)
+        {
+            return fallback;
+        }
+
+        if (moduleIds.Contains(fallback, StringComparer.Ordinal))
+        {
+            return fallback;
+        }
+
+        return moduleIds[0];
     }
 }
