@@ -17,6 +17,7 @@ namespace Js2IL.Tests
         private readonly JavaScriptParser _parser;
         private readonly JavaScriptAstValidator _validator;
         private readonly string _outputPath;
+        private readonly string _testCategory;
         private readonly VerifySettings _verifySettings = new();
 
         protected ExecutionTestsBase(string testCategory)
@@ -24,6 +25,7 @@ namespace Js2IL.Tests
             _parser = new JavaScriptParser();
             _validator = new JavaScriptAstValidator();
             _verifySettings.DisableDiff();
+            _testCategory = testCategory;
 
             // Use a unique per-run directory to avoid file locks from in-proc AssemblyLoadContext
             // execution causing intermittent failures when re-running tests on Windows.
@@ -35,99 +37,20 @@ namespace Js2IL.Tests
 
         protected async Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
         {
-            var (js, jsSourcePath) = GetJavaScriptAndSourcePath(testName, sourceFilePath);
-            var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
+            // Use shared compilation to avoid compiling the same JS twice for ExecutionTests and GeneratorTests
+            var compiled = SharedTestCompilation.GetOrCompile(
+                _testCategory,
+                testName,
+                additionalScripts,
+                outputDir => TestCompiler.Compile(
+                    testName,
+                    _testCategory,
+                    outputDir,
+                    name => GetJavaScriptAndSourcePath(name, sourceFilePath),
+                    additionalScripts,
+                    enableIRMetrics: true));
 
-            // Prefer a stable on-disk path (within the repo) as the logical module path.
-            // This ensures the PDB "document" points at a file VS Code can open when clicking stack frames.
-            var entryPathForCompilation = jsSourcePath ?? testFilePath;
-
-            // If we couldn't resolve a stable on-disk source path, write the JS to the temp location
-            // so debuggers can still open the file when the PDB points at it.
-            if (entryPathForCompilation == testFilePath && !File.Exists(testFilePath))
-            {
-                var testDir = Path.GetDirectoryName(testFilePath);
-                if (!string.IsNullOrWhiteSpace(testDir))
-                {
-                    Directory.CreateDirectory(testDir);
-                }
-                File.WriteAllText(testFilePath, js);
-            }
-
-            var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile(entryPathForCompilation, js, jsSourcePath);
-
-            // Add additional scripts to the mock file system
-            if (additionalScripts != null)
-            {
-                foreach (var scriptName in additionalScripts)
-                {
-                    var (scriptContent, scriptSourcePath) = GetJavaScriptAndSourcePath(scriptName, sourceFilePath);
-
-                    // Same rule as the entry file: prefer the stable source path so module resolution + PDB
-                    // documents stay rooted in the repo.
-                    var scriptTempPath = Path.Combine(_outputPath, $"{scriptName}.js");
-                    var scriptPathForCompilation = scriptSourcePath ?? scriptTempPath;
-
-                    if (scriptPathForCompilation == scriptTempPath && !File.Exists(scriptTempPath))
-                    {
-                        var scriptDir = Path.GetDirectoryName(scriptTempPath);
-                        if (!string.IsNullOrWhiteSpace(scriptDir))
-                        {
-                            Directory.CreateDirectory(scriptDir);
-                        }
-                        File.WriteAllText(scriptTempPath, scriptContent);
-                    }
-
-                    mockFileSystem.AddFile(scriptPathForCompilation, scriptContent, scriptSourcePath);
-                }
-            }
-
-            var options = new CompilerOptions
-            {
-                OutputDirectory = _outputPath,
-                EmitPdb = true
-            };
-
-            var testLogger = new TestLogger();
-            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, testLogger);
-            var compiler = serviceProvider.GetRequiredService<Compiler>();
-
-            var prevMetricsEnabled = IRPipelineMetrics.Enabled;
-            IRPipelineMetrics.Enabled = true;
-            IRPipelineMetrics.Reset();
-            try
-            {
-                if (!compiler.Compile(entryPathForCompilation))
-                {
-                    var details = string.IsNullOrWhiteSpace(testLogger.Errors)
-                        ? string.Empty
-                        : $"\nErrors:\n{testLogger.Errors}";
-                    var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings)
-                        ? string.Empty
-                        : $"\nWarnings:\n{testLogger.Warnings}";
-                    var lastFailure = IRPipelineMetrics.GetLastFailure();
-                    var failureDetails = string.IsNullOrWhiteSpace(lastFailure)
-                        ? string.Empty
-                        : $"\nIR failure: {lastFailure}";
-                    throw new InvalidOperationException($"Compilation failed for test {testName}.{failureDetails}{details}{warnings}");
-                }
-            }
-            finally
-            {
-                IRPipelineMetrics.Enabled = prevMetricsEnabled;
-            }
-
-            // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
-            // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
-            var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
-            var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
-
-            if (options.EmitPdb)
-            {
-                var expectedPdbPath = Path.Combine(_outputPath, $"{assemblyName}.pdb");
-                Assert.True(File.Exists(expectedPdbPath), $"Expected PDB to be emitted at '{expectedPdbPath}'.");
-            }
+            var expectedPath = compiled.AssemblyPath;
 
             string il;
             if (preferOutOfProc)

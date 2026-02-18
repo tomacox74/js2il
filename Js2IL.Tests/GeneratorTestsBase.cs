@@ -14,11 +14,13 @@ namespace Js2IL.Tests
     public abstract class GeneratorTestsBase
     {
         private readonly string _outputPath;
+        private readonly string _testCategory;
         private readonly VerifySettings _verifySettings = new();
 
         protected GeneratorTestsBase(string testCategory)
         {
             _verifySettings.DisableDiff();
+            _testCategory = testCategory;
 
             // Create a temp directory for the generated assemblies.
             // Use a unique per-run directory to avoid file locks from Assembly.LoadFile() causing
@@ -36,50 +38,21 @@ namespace Js2IL.Tests
         {
             async Task RunAsync()
             {
-                var js = GetJavaScript(testName);
-                var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
+                // Use shared compilation to avoid compiling the same JS twice for ExecutionTests and GeneratorTests
+                var compiled = SharedTestCompilation.GetOrCompile(
+                    _testCategory,
+                    testName,
+                    additionalScripts,
+                    outputDir => TestCompiler.Compile(
+                        testName,
+                        _testCategory,
+                        outputDir,
+                        name => GetJavaScriptAndSourcePath(name, sourceFilePath),
+                        additionalScripts,
+                        enableIRMetrics: false));
 
-                var mockFileSystem = new MockFileSystem();
-                mockFileSystem.AddFile(testFilePath, js);
-
-                // Add additional scripts to the mock file system
-                if (additionalScripts != null)
-                {
-                    foreach (var scriptName in additionalScripts)
-                    {
-                        var scriptContent = GetJavaScript(scriptName);
-                        var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
-                        mockFileSystem.AddFile(scriptPath, scriptContent);
-                    }
-                }
-
-                var options = new CompilerOptions
-                {
-                    OutputDirectory = _outputPath,
-                    EmitPdb = true
-                };
-
-                var testLogger = new TestLogger();
-                var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, testLogger);
-                var compiler = serviceProvider.GetRequiredService<Compiler>();
-
-                if (!compiler.Compile(testFilePath))
-                {
-                    var compileDetails = string.IsNullOrWhiteSpace(testLogger.Errors)
-                        ? string.Empty
-                        : $"\nErrors:\n{testLogger.Errors}";
-                    var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings)
-                        ? string.Empty
-                        : $"\nWarnings:\n{testLogger.Warnings}";
-                    throw new InvalidOperationException($"Compilation failed for test {testName}.{compileDetails}{warnings}");
-                }
-
-                // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
-                // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
-                var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
-                var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
-
-                AssertCompiledModuleManifest(expectedPath, testFilePath, additionalScripts);
+                var expectedPath = compiled.AssemblyPath;
+                AssertCompiledModuleManifest(expectedPath, compiled.TestFilePath, additionalScripts, compiled.OutputDirectory);
 
                 var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
 
@@ -105,7 +78,7 @@ namespace Js2IL.Tests
             return RunAsync();
         }
 
-        private string GetJavaScript(string testName)
+        private (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var category = GetCategoryFromNamespace();
@@ -116,8 +89,16 @@ namespace Js2IL.Tests
                 ? null
                 : $"Js2IL.Tests.{category}.JavaScript.{resourceKey}.js";
             var legacy = $"Js2IL.Tests.JavaScript.{resourceKey}.js";
-            using (var stream = (categorySpecific != null ? assembly.GetManifestResourceStream(categorySpecific) : null)
-                               ?? assembly.GetManifestResourceStream(legacy))
+
+            Stream? stream = categorySpecific != null ? assembly.GetManifestResourceStream(categorySpecific) : null;
+            var resolvedResourceName = categorySpecific;
+            if (stream == null)
+            {
+                stream = assembly.GetManifestResourceStream(legacy);
+                resolvedResourceName = legacy;
+            }
+
+            using (stream)
             {
                 if (stream == null)
                 {
@@ -125,12 +106,90 @@ namespace Js2IL.Tests
                 }
                 using (var reader = new StreamReader(stream))
                 {
-                    return reader.ReadToEnd();
+                    var script = reader.ReadToEnd();
+                    var sourcePath = TryGetOriginalSourcePathFromEmbeddedResource(assembly, resolvedResourceName!, callerSourceFilePath);
+                    if (string.IsNullOrWhiteSpace(sourcePath) && !string.IsNullOrWhiteSpace(category))
+                    {
+                        var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
+                        if (projectRoot != null)
+                        {
+                            var categoryPath = category.Replace('.', Path.DirectorySeparatorChar);
+                            var relative = Path.Combine(
+                                categoryPath,
+                                "JavaScript",
+                                testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js");
+
+                            var candidate = Path.GetFullPath(Path.Combine(projectRoot, relative));
+                            if (File.Exists(candidate))
+                            {
+                                sourcePath = candidate;
+                            }
+                        }
+                    }
+
+                    return (script, sourcePath);
                 }
             }
         }
 
-        private void AssertCompiledModuleManifest(string assemblyPath, string rootScriptPath, string[]? additionalScripts)
+        private static string? TryGetOriginalSourcePathFromEmbeddedResource(Assembly assembly, string jsResourceName, string callerSourceFilePath)
+        {
+            var pathResourceName = jsResourceName.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+                ? jsResourceName.Substring(0, jsResourceName.Length - 3) + ".path"
+                : jsResourceName + ".path";
+
+            using var pathStream = assembly.GetManifestResourceStream(pathResourceName);
+            if (pathStream == null)
+            {
+                return null;
+            }
+
+            using var reader = new StreamReader(pathStream);
+            var relativePath = reader.ReadToEnd().Trim();
+            if (string.IsNullOrWhiteSpace(relativePath))
+            {
+                return null;
+            }
+
+            if (Path.IsPathRooted(relativePath))
+            {
+                return relativePath;
+            }
+
+            var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
+            if (projectRoot == null)
+            {
+                return null;
+            }
+
+            relativePath = relativePath.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+            return Path.GetFullPath(Path.Combine(projectRoot, relativePath));
+        }
+
+        private static string? FindDirectoryContainingFile(string startDirectory, string fileName)
+        {
+            var current = startDirectory;
+            while (!string.IsNullOrWhiteSpace(current))
+            {
+                var candidate = Path.Combine(current, fileName);
+                if (File.Exists(candidate))
+                {
+                    return current;
+                }
+
+                var parent = Directory.GetParent(current);
+                if (parent == null)
+                {
+                    break;
+                }
+
+                current = parent.FullName;
+            }
+
+            return null;
+        }
+
+        private void AssertCompiledModuleManifest(string assemblyPath, string rootScriptPath, string[]? additionalScripts, string outputDirectory)
         {
             var expected = new HashSet<string>(StringComparer.Ordinal)
             {
@@ -138,7 +197,7 @@ namespace Js2IL.Tests
             };
 
             expected.UnionWith((additionalScripts ?? System.Array.Empty<string>())
-                .Select(scriptName => Path.Combine(_outputPath, $"{scriptName}.js"))
+                .Select(scriptName => Path.Combine(outputDirectory, $"{scriptName}.js"))
                 .Select(scriptPath => GetExpectedModuleId(scriptPath, rootScriptPath)));
 
             var actual = ReadCompiledModuleIdsFromManifest(assemblyPath);
