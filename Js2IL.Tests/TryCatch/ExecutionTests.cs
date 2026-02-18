@@ -19,7 +19,7 @@ namespace Js2IL.Tests.TryCatch
 
         // Try/Finally (no catch) with throw inside try
         [Fact]
-        public Task TryFinally_NoCatch_Throw() { var testName = nameof(TryFinally_NoCatch_Throw); return ExecutionTest(testName, allowUnhandledException: true, preferOutOfProc: true); }
+        public Task TryFinally_NoCatch_Throw() { var testName = nameof(TryFinally_NoCatch_Throw); return ExecutionTest(testName, allowUnhandledException: true); }
 
         // New pipeline regression coverage
         [Fact]
