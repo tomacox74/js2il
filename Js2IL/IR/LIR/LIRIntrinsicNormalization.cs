@@ -116,6 +116,18 @@ internal static class LIRIntrinsicNormalization
                     continue;
                 }
 
+                if (receiverType == typeof(JavaScriptRuntime.Node.Buffer))
+                {
+                    methodBody.Instructions[i] = new LIRCallInstanceMethod(
+                        Receiver: getLength.Object,
+                        ReceiverClrType: typeof(JavaScriptRuntime.Node.Buffer),
+                        MethodName: "get_length",
+                        Arguments: Array.Empty<TempVariable>(),
+                        Result: getLength.Result);
+                    methodBody.TempStorages[getLength.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                    continue;
+                }
+
                 continue;
             }
 
