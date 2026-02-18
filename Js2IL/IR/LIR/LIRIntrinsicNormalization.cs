@@ -221,6 +221,10 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember0 callMember0)
             {
+                // Intentionally limited to zero-arg member calls for now.
+                // Multi-arg string members frequently require runtime coercions
+                // (e.g., string conversion of searchString) that are currently
+                // centralized in runtime dispatch and should stay behaviorally identical.
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember0.Receiver.Index, out var receiverType)
                     || receiverType != typeof(string)
                     || !IsZeroArgStringMethodSafeToEarlyBind(callMember0.MethodName))
