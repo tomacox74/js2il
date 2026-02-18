@@ -18,21 +18,33 @@ namespace Js2IL.Tests.Node.Path
         public Task Require_Path_Extname_And_IsAbsolute() => GenerateTest(
             nameof(Require_Path_Extname_And_IsAbsolute));
 
-        [Fact(Skip = "Snapshot differs across OS environments; covered by execution tests")]
+        [Fact]
         public Task Require_Path_Parse_And_Format() => GenerateTest(
-            nameof(Require_Path_Parse_And_Format));
+            nameof(Require_Path_Parse_And_Format),
+            configureSettings: s =>
+            {
+                s.AddScrubber(sb => sb.Replace('\\', '/'));
+            });
 
-        [Fact(Skip = "Snapshot differs across OS environments; covered by execution tests")]
+        [Fact]
         public Task Require_Path_Normalize_And_Sep() => GenerateTest(
-            nameof(Require_Path_Normalize_And_Sep));
+            nameof(Require_Path_Normalize_And_Sep),
+            configureSettings: s =>
+            {
+                s.AddScrubber(sb => sb.Replace('\\', '/'));
+            });
 
         [Fact]
         public Task Require_Path_Delimiter() => GenerateTest(
             nameof(Require_Path_Delimiter));
 
-        [Fact(Skip = "Snapshot differs across OS environments; covered by execution tests")]
+        [Fact]
         public Task Require_Path_ToNamespacedPath() => GenerateTest(
-            nameof(Require_Path_ToNamespacedPath));
+            nameof(Require_Path_ToNamespacedPath),
+            configureSettings: s =>
+            {
+                s.AddScrubber(sb => sb.Replace('\\', '/'));
+            });
 
         [Fact]
         public Task Require_Path_Relative_SamePath_EmptyString() => GenerateTest(

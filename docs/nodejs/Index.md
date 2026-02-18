@@ -8,7 +8,7 @@
 
 ## Summary
 
-- **Modules:** 7
+- **Modules:** 8
 - **Globals:** 14
   - Supported: 13
   - Partial: 8
@@ -18,6 +18,7 @@
 | Module | Status | Documentation |
 | --- | --- | --- |
 | [child_process](child_process.md) | partial | [Node.js](https://nodejs.org/api/child_process.html) |
+| [events](events.md) | partial | [Node.js](https://nodejs.org/api/events.html) |
 | [fs](fs.md) | partial | [Node.js](https://nodejs.org/api/fs.html) |
 | [fs/promises](fs_promises.md) | partial | [Node.js](https://nodejs.org/api/fs.html#fspromisesapi) |
 | [os](os.md) | partial | [Node.js](https://nodejs.org/api/os.html) |
