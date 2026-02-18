@@ -4,7 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- Node/path compatibility: added support for `path.extname`, `path.isAbsolute`, `path.normalize`, `path.parse`, `path.format`, `path.sep`, `path.delimiter`, and `path.toNamespacedPath`, and aligned `path.relative(from, to)` same-path behavior with Node (returns empty string).
+- Node tests/docs reorganization: split monolithic Node tests into focused subfolders (`Node/FS`, `Node/Path`, `Node/Process`, `Node/Timers`) with migrated JavaScript fixtures, snapshots, and updated docs references.
+- Node docs synchronization: refreshed `docs/nodejs/*.json` and generated markdown pages to reflect current API coverage and moved test locations.
+- Planning/triage continuity: added `docs/tracking-issues/NodeGapPopularityBacklog_2026-02-17.md`, promoted `docs/tracking-issues/TriageScoreboard.md` as active prioritization source, and linked tracking docs for interruption-safe handoff.
 
 ## v0.8.13 - 2026-02-16
 
