@@ -101,13 +101,13 @@ public class ModuleLoadTests
     }
 
     [Fact]
-    public void JsEngine_LoadModule_AllowsCallingExports_FromAnotherThread()
+    public async Task JsEngine_LoadModule_AllowsCallingExports_FromAnotherThread()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
         using var exports = Js2IL.Runtime.JsEngine.LoadModule<IMathExports>(module.Assembly, "math");
 
         // Validate cross-thread marshalling: calls from any host thread should execute on the script thread.
-        var result = Task.Run(() => exports.Add(1, 2)).GetAwaiter().GetResult();
+        var result = await Task.Run(() => exports.Add(1, 2));
         Assert.Equal(3.0, result);
     }
 

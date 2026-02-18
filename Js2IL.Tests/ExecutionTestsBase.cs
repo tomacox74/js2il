@@ -33,7 +33,7 @@ namespace Js2IL.Tests
             Directory.CreateDirectory(_outputPath);
         }
 
-        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
+        protected async Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
         {
             var (js, jsSourcePath) = GetJavaScriptAndSourcePath(testName, sourceFilePath);
             var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
@@ -129,9 +129,15 @@ namespace Js2IL.Tests
                 Assert.True(File.Exists(expectedPdbPath), $"Expected PDB to be emitted at '{expectedPdbPath}'.");
             }
 
-            var il = preferOutOfProc
-                ? ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName)
-                : ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
+            string il;
+            if (preferOutOfProc)
+            {
+                il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
+            }
+            else
+            {
+                il = await ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
+            }
 
             var settings = new VerifySettings(_verifySettings);
             var directory = Path.GetDirectoryName(sourceFilePath);
@@ -142,7 +148,7 @@ namespace Js2IL.Tests
                 settings.UseDirectory(snapshotsDirectory);
             }
             configureSettings?.Invoke(settings);
-            return Verify(il, settings);
+            await Verify(il, settings);
         }
 
         private string ExecuteGeneratedAssembly(string assemblyPath, bool allowUnhandledException, string? testName = null, int timeoutMs = 30000)
@@ -191,7 +197,7 @@ namespace Js2IL.Tests
             return stdOut;
         }
 
-        private string ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null, int timeoutMs = 30000, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
+        private async Task<string> ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null, int timeoutMs = 30000, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
         {
             ArgumentNullException.ThrowIfNull(assemblyPath, nameof(assemblyPath));
             ArgumentNullException.ThrowIfNull(testName, nameof(testName));
@@ -293,6 +299,7 @@ namespace Js2IL.Tests
 
                 // Run the entry point in a separate thread with timeout to prevent infinite hangs
                 ExceptionDispatchInfo? threadException = null;
+                var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
                 var executionThread = new Thread(() =>
                 {
                     setupMocks();
@@ -308,10 +315,13 @@ namespace Js2IL.Tests
                     finally
                     {
                         JavaScriptRuntime.Engine._serviceProviderOverride.Value = null;
+                        completion.TrySetResult();
                     }
                 });
                 executionThread.Start();
-                bool completed = executionThread.Join(timeoutMs);
+                var timeoutTask = Task.Delay(timeoutMs);
+                var completedTask = await Task.WhenAny(completion.Task, timeoutTask);
+                bool completed = completedTask == completion.Task;
                 if (!completed)
                 {
                     // Cannot safely abort managed threads, but we can at least fail the test
