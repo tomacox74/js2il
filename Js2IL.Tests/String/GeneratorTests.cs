@@ -151,5 +151,12 @@ namespace Js2IL.Tests.String
 
         [Fact]
         public Task String_MemberCall_Arity3_Replace() { var testName = nameof(String_MemberCall_Arity3_Replace); return GenerateTest(testName); }
+
+        [Fact]
+        public Task String_MemberCall_FastPath_CommonMethods()
+        {
+            var testName = nameof(String_MemberCall_FastPath_CommonMethods);
+            return GenerateTest(testName);
+        }
     }
 }

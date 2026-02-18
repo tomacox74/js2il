@@ -948,79 +948,16 @@ namespace JavaScriptRuntime
                 }
             }
 
-            // 1) String receiver -> route to JavaScriptRuntime.String static methods
+            // 1) String-like receiver -> direct fast-path helpers for parser-heavy operations.
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
             {
                 var input = DotNet2JSConversions.ToString(receiver);
-
-                var stringType = typeof(JavaScriptRuntime.String);
-                var candidates = stringType
-                    .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                    .Where(m => string.Equals(m.Name, methodName, StringComparison.OrdinalIgnoreCase))
-                    .Where(m =>
-                    {
-                        var ps = m.GetParameters();
-                        return ps.Length >= 1 && ps[0].ParameterType == typeof(string);
-                    })
-                    .ToList();
-
-                if (candidates.Count == 0)
+                if (TryCallStringMemberFastPath(input, methodName, callArgs, out var stringResult))
                 {
-                    throw new TypeError($"String.{methodName} is not a function");
+                    return stringResult;
                 }
 
-                // Prefer exact-arity overloads (receiver + provided args). Only fall back to
-                // longer-arity methods (padding with defaults) when no exact match exists.
-                int jsArgCount = callArgs.Length;
-                var exact = candidates
-                    .Where(m => m.GetParameters().Length == 1 + jsArgCount)
-                    .ToList();
-
-                var viable = exact.Count > 0
-                    ? exact
-                    : candidates
-                        .Where(m => m.GetParameters().Length >= 1 + jsArgCount)
-                        .OrderBy(m => m.GetParameters().Length)
-                        .ToList();
-                var chosen = viable
-                    .OrderByDescending(m => m.GetParameters().Skip(1).Take(jsArgCount).Count(p => p.ParameterType != typeof(object)))
-                    .FirstOrDefault();
-
-                if (chosen == null)
-                {
-                    throw new TypeError($"String.{methodName} is not a function");
-                }
-
-                var ps = chosen.GetParameters();
-                var invokeArgs = new object?[ps.Length];
-                // first param is the string receiver
-                invokeArgs[0] = input;
-
-                // Fill provided args with basic coercions based on target param types
-                for (int i = 0; i < jsArgCount && (i + 1) < ps.Length; i++)
-                {
-                    var target = ps[i + 1].ParameterType;
-                    var src = callArgs[i];
-                    if (target == typeof(string))
-                    {
-                        invokeArgs[i + 1] = DotNet2JSConversions.ToString(src);
-                    }
-                    else if (target == typeof(bool))
-                    {
-                        invokeArgs[i + 1] = JavaScriptRuntime.TypeUtilities.ToBoolean(src);
-                    }
-                    else
-                    {
-                        invokeArgs[i + 1] = src;
-                    }
-                }
-                // Pad any remaining parameters (beyond provided args): false for bool, null otherwise
-                for (int pi = 1 + jsArgCount; pi < ps.Length; pi++)
-                {
-                    invokeArgs[pi] = ps[pi].ParameterType == typeof(bool) ? (object)false : null;
-                }
-
-                return chosen.Invoke(null, invokeArgs);
+                throw new TypeError($"String.{methodName} is not a function");
             }
 
             // 2) JavaScriptRuntime.Array -> instance methods
@@ -1119,6 +1056,16 @@ namespace JavaScriptRuntime
                 }
             }
 
+            if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
+            {
+                var input = DotNet2JSConversions.ToString(receiver);
+                if (TryCallStringMemberFastPath(input, methodName, 0, null, null, null, out var stringResult))
+                {
+                    return stringResult;
+                }
+                throw new TypeError($"String.{methodName} is not a function");
+            }
+
             // For other cases, fall back to the general method with empty array
             return CallMember(receiver, methodName, System.Array.Empty<object>());
         }
@@ -1142,6 +1089,16 @@ namespace JavaScriptRuntime
                 {
                     return JavaScriptRuntime.Function.Bind(del, a0, System.Array.Empty<object?>());
                 }
+            }
+
+            if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
+            {
+                var input = DotNet2JSConversions.ToString(receiver);
+                if (TryCallStringMemberFastPath(input, methodName, 1, a0, null, null, out var stringResult))
+                {
+                    return stringResult;
+                }
+                throw new TypeError($"String.{methodName} is not a function");
             }
 
             // For other cases, fall back to the general method
@@ -1169,6 +1126,16 @@ namespace JavaScriptRuntime
                 }
             }
 
+            if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
+            {
+                var input = DotNet2JSConversions.ToString(receiver);
+                if (TryCallStringMemberFastPath(input, methodName, 2, a0, a1, null, out var stringResult))
+                {
+                    return stringResult;
+                }
+                throw new TypeError($"String.{methodName} is not a function");
+            }
+
             // For other cases, fall back to the general method
             return CallMember(receiver, methodName, new object[] { a0!, a1! });
         }
@@ -1194,8 +1161,144 @@ namespace JavaScriptRuntime
                 }
             }
 
+            if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
+            {
+                var input = DotNet2JSConversions.ToString(receiver);
+                if (TryCallStringMemberFastPath(input, methodName, 3, a0, a1, a2, out var stringResult))
+                {
+                    return stringResult;
+                }
+                throw new TypeError($"String.{methodName} is not a function");
+            }
+
             // For other cases, fall back to the general method
             return CallMember(receiver, methodName, new object[] { a0!, a1!, a2! });
+        }
+
+        private static bool TryCallStringMemberFastPath(string input, string methodName, object[] callArgs, out object? result)
+        {
+            var argCount = callArgs.Length;
+            var a0 = argCount > 0 ? callArgs[0] : null;
+            var a1 = argCount > 1 ? callArgs[1] : null;
+            var a2 = argCount > 2 ? callArgs[2] : null;
+            return TryCallStringMemberFastPath(input, methodName, argCount, a0, a1, a2, out result);
+        }
+
+        private static bool TryCallStringMemberFastPath(string input, string methodName, int argCount, object? a0, object? a1, object? a2, out object? result)
+        {
+            switch (methodName)
+            {
+                case "charCodeAt":
+                    result = argCount <= 0
+                        ? JavaScriptRuntime.String.CharCodeAt(input)
+                        : JavaScriptRuntime.String.CharCodeAt(input, a0);
+                    return true;
+
+                case "substring":
+                    result = argCount switch
+                    {
+                        <= 0 => JavaScriptRuntime.String.Substring(input, null),
+                        1 => JavaScriptRuntime.String.Substring(input, a0),
+                        _ => JavaScriptRuntime.String.Substring(input, a0, a1)
+                    };
+                    return true;
+
+                case "substr":
+                    result = argCount switch
+                    {
+                        <= 0 => JavaScriptRuntime.String.Substr(input, null),
+                        1 => JavaScriptRuntime.String.Substr(input, a0),
+                        _ => JavaScriptRuntime.String.Substr(input, a0, a1)
+                    };
+                    return true;
+
+                case "slice":
+                    result = argCount switch
+                    {
+                        <= 0 => JavaScriptRuntime.String.Slice(input, null),
+                        1 => JavaScriptRuntime.String.Slice(input, a0),
+                        _ => JavaScriptRuntime.String.Slice(input, a0, a1)
+                    };
+                    return true;
+
+                case "indexOf":
+                    result = argCount switch
+                    {
+                        <= 0 => JavaScriptRuntime.String.IndexOf(input, string.Empty),
+                        1 => JavaScriptRuntime.String.IndexOf(input, DotNet2JSConversions.ToString(a0)),
+                        _ => JavaScriptRuntime.String.IndexOf(input, DotNet2JSConversions.ToString(a0), a1)
+                    };
+                    return true;
+
+                case "startsWith":
+                    result = argCount switch
+                    {
+                        <= 0 => JavaScriptRuntime.String.StartsWith(input, string.Empty),
+                        1 => JavaScriptRuntime.String.StartsWith(input, DotNet2JSConversions.ToString(a0)),
+                        _ => JavaScriptRuntime.String.StartsWith(input, DotNet2JSConversions.ToString(a0), a1)
+                    };
+                    return true;
+
+                case "endsWith":
+                    result = argCount switch
+                    {
+                        <= 0 => JavaScriptRuntime.String.EndsWith(input, string.Empty),
+                        1 => JavaScriptRuntime.String.EndsWith(input, DotNet2JSConversions.ToString(a0)),
+                        _ => JavaScriptRuntime.String.EndsWith(input, DotNet2JSConversions.ToString(a0), a1)
+                    };
+                    return true;
+
+                case "includes":
+                    result = argCount switch
+                    {
+                        <= 0 => JavaScriptRuntime.String.Includes(input, string.Empty),
+                        1 => JavaScriptRuntime.String.Includes(input, DotNet2JSConversions.ToString(a0)),
+                        _ => JavaScriptRuntime.String.Includes(input, DotNet2JSConversions.ToString(a0), a1)
+                    };
+                    return true;
+
+                case "trim":
+                    result = JavaScriptRuntime.String.Trim(input);
+                    return true;
+
+                case "trimStart":
+                case "trimLeft":
+                    result = JavaScriptRuntime.String.TrimStart(input);
+                    return true;
+
+                case "trimEnd":
+                case "trimRight":
+                    result = JavaScriptRuntime.String.TrimEnd(input);
+                    return true;
+
+                case "toLowerCase":
+                    result = JavaScriptRuntime.String.ToLowerCase(input);
+                    return true;
+
+                case "toUpperCase":
+                    result = JavaScriptRuntime.String.ToUpperCase(input);
+                    return true;
+
+                case "split":
+                    result = argCount switch
+                    {
+                        <= 0 => JavaScriptRuntime.String.Split(input, null),
+                        1 => JavaScriptRuntime.String.Split(input, a0),
+                        _ => JavaScriptRuntime.String.Split(input, a0, a1)
+                    };
+                    return true;
+
+                case "replace":
+                    if (argCount >= 2)
+                    {
+                        result = JavaScriptRuntime.String.Replace(input, a0!, a1!);
+                        return true;
+                    }
+                    break;
+            }
+
+            result = null;
+            return false;
         }
 
         private static string ToPropertyKeyString(object? key)

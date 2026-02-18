@@ -21,7 +21,7 @@ internal static class LIRIntrinsicNormalization
             return;
         }
 
-        // Track temps with proven intrinsic CLR receiver types.
+        // Track temps with proven CLR receiver types.
         // Start with strongly typed user-class field loads, then propagate through CopyTemp.
         var knownIntrinsicReceiverClrTypes = new Dictionary<int, Type>();
 
@@ -37,7 +37,8 @@ internal static class LIRIntrinsicNormalization
             if (storage.Kind == ValueStorageKind.Reference
                 && storage.ClrType != null
                 && storage.ClrType != typeof(object)
-                && storage.ClrType.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
+                && (storage.ClrType == typeof(string)
+                    || storage.ClrType.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true))
             {
                 knownIntrinsicReceiverClrTypes.TryAdd(tempIndex, storage.ClrType);
             }
@@ -215,7 +216,45 @@ internal static class LIRIntrinsicNormalization
                     }
                 }
             }
+
+            if (instruction is LIRCallMember0 callMember0)
+            {
+                if (!knownIntrinsicReceiverClrTypes.TryGetValue(callMember0.Receiver.Index, out var receiverType)
+                    || receiverType != typeof(string)
+                    || !IsZeroArgStringMethodSafeToEarlyBind(callMember0.MethodName))
+                {
+                    continue;
+                }
+
+                methodBody.Instructions[i] = new LIRCallIntrinsicStatic(
+                    IntrinsicName: "String",
+                    MethodName: callMember0.MethodName,
+                    Arguments: new[] { callMember0.Receiver },
+                    Result: callMember0.Result);
+
+                if (callMember0.Result.Index >= 0)
+                {
+                    methodBody.TempStorages[callMember0.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
+                }
+
+                continue;
+            }
         }
+    }
+
+    private static bool IsZeroArgStringMethodSafeToEarlyBind(string methodName)
+    {
+        return methodName switch
+        {
+            "trim" => true,
+            "trimStart" => true,
+            "trimLeft" => true,
+            "trimEnd" => true,
+            "trimRight" => true,
+            "toLowerCase" => true,
+            "toUpperCase" => true,
+            _ => false
+        };
     }
 
     private static bool IsNumericDouble(MethodBodyIR methodBody, TempVariable temp)
