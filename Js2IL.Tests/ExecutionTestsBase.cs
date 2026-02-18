@@ -136,7 +136,7 @@ namespace Js2IL.Tests
             }
             else
             {
-                il = await ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
+                il = await ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, allowUnhandledException: allowUnhandledException, addMocks: addMocks);
             }
 
             var settings = new VerifySettings(_verifySettings);
@@ -197,7 +197,7 @@ namespace Js2IL.Tests
             return stdOut;
         }
 
-        private async Task<string> ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null, int timeoutMs = 30000, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
+        private async Task<string> ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null, bool allowUnhandledException = false, int timeoutMs = 30000, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
         {
             ArgumentNullException.ThrowIfNull(assemblyPath, nameof(assemblyPath));
             ArgumentNullException.ThrowIfNull(testName, nameof(testName));
@@ -329,7 +329,10 @@ namespace Js2IL.Tests
                 }
                 if (threadException != null)
                 {
-                    threadException.Throw();
+                    if (!allowUnhandledException)
+                    {
+                        threadException.Throw();
+                    }
                 }
                 
                 postTestProcessingAction?.Invoke(captured);

@@ -21,7 +21,7 @@ namespace Js2IL.Tests.Node.Timers
         [Fact]
         public Task SetTimeout_MultipleZeroDelay_ExecutedInOrder() => ExecutionTest(nameof(SetTimeout_MultipleZeroDelay_ExecutedInOrder));
 
-        [Fact(Skip = "Flaky in full suite; investigate root cause and re-enable")]
+        [Fact]
         public Task SetInterval_ExecutesThreeTimes_ThenClears()
         {
             return ExecutionTest(nameof(SetInterval_ExecutesThreeTimes_ThenClears));
