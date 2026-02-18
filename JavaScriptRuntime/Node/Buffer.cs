@@ -353,9 +353,19 @@ namespace JavaScriptRuntime.Node
                 try
                 {
                     var decoded = System.Convert.FromBase64String(text);
-                    if (bytes.Length > 0)
+                    if (bytes.Length > 0 && byteIndex < bytes.Length)
                     {
-                        System.Buffer.BlockCopy(decoded, 0, bytes, byteIndex, decoded.Length);
+                        var available = bytes.Length - byteIndex;
+                        if (available > 0)
+                        {
+                            var copyLength = System.Math.Min(decoded.Length, available);
+                            if (copyLength > 0)
+                            {
+                                System.Buffer.BlockCopy(decoded, 0, bytes, byteIndex, copyLength);
+                            }
+
+                            return copyLength;
+                        }
                     }
 
                     return decoded.Length;
@@ -418,6 +428,11 @@ namespace JavaScriptRuntime.Node
 
                     if (bytes.Length > 0)
                     {
+                        if (byteIndex + written >= bytes.Length)
+                        {
+                            break;
+                        }
+
                         bytes[byteIndex + written] = b;
                     }
 
