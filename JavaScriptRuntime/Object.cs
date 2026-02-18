@@ -957,7 +957,7 @@ namespace JavaScriptRuntime
                     return stringResult;
                 }
 
-                throw new TypeError($"String.{methodName} is not a function");
+                return CallStringMemberViaReflection(input, methodName, callArgs);
             }
 
             // 2) JavaScriptRuntime.Array -> instance methods
@@ -1063,7 +1063,8 @@ namespace JavaScriptRuntime
                 {
                     return stringResult;
                 }
-                throw new TypeError($"String.{methodName} is not a function");
+
+                return CallMember(receiver, methodName, System.Array.Empty<object>());
             }
 
             // For other cases, fall back to the general method with empty array
@@ -1098,7 +1099,8 @@ namespace JavaScriptRuntime
                 {
                     return stringResult;
                 }
-                throw new TypeError($"String.{methodName} is not a function");
+
+                return CallMember(receiver, methodName, new object[] { a0! });
             }
 
             // For other cases, fall back to the general method
@@ -1133,7 +1135,8 @@ namespace JavaScriptRuntime
                 {
                     return stringResult;
                 }
-                throw new TypeError($"String.{methodName} is not a function");
+
+                return CallMember(receiver, methodName, new object[] { a0!, a1! });
             }
 
             // For other cases, fall back to the general method
@@ -1168,7 +1171,8 @@ namespace JavaScriptRuntime
                 {
                     return stringResult;
                 }
-                throw new TypeError($"String.{methodName} is not a function");
+
+                return CallMember(receiver, methodName, new object[] { a0!, a1!, a2! });
             }
 
             // For other cases, fall back to the general method
@@ -1182,6 +1186,74 @@ namespace JavaScriptRuntime
             var a1 = argCount > 1 ? callArgs[1] : null;
             var a2 = argCount > 2 ? callArgs[2] : null;
             return TryCallStringMemberFastPath(input, methodName, argCount, a0, a1, a2, out result);
+        }
+
+        private static object? CallStringMemberViaReflection(string input, string methodName, object[] callArgs)
+        {
+            var stringType = typeof(JavaScriptRuntime.String);
+            var candidates = stringType
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .Where(m => string.Equals(m.Name, methodName, StringComparison.OrdinalIgnoreCase))
+                .Where(m =>
+                {
+                    var ps = m.GetParameters();
+                    return ps.Length >= 1 && ps[0].ParameterType == typeof(string);
+                })
+                .ToList();
+
+            if (candidates.Count == 0)
+            {
+                throw new TypeError($"String.{methodName} is not a function");
+            }
+
+            int jsArgCount = callArgs.Length;
+            var exact = candidates
+                .Where(m => m.GetParameters().Length == 1 + jsArgCount)
+                .ToList();
+
+            var viable = exact.Count > 0
+                ? exact
+                : candidates
+                    .Where(m => m.GetParameters().Length >= 1 + jsArgCount)
+                    .OrderBy(m => m.GetParameters().Length)
+                    .ToList();
+            var chosen = viable
+                .OrderByDescending(m => m.GetParameters().Skip(1).Take(jsArgCount).Count(p => p.ParameterType != typeof(object)))
+                .FirstOrDefault();
+
+            if (chosen == null)
+            {
+                throw new TypeError($"String.{methodName} is not a function");
+            }
+
+            var ps = chosen.GetParameters();
+            var invokeArgs = new object?[ps.Length];
+            invokeArgs[0] = input;
+
+            for (int i = 0; i < jsArgCount && (i + 1) < ps.Length; i++)
+            {
+                var target = ps[i + 1].ParameterType;
+                var src = callArgs[i];
+                if (target == typeof(string))
+                {
+                    invokeArgs[i + 1] = DotNet2JSConversions.ToString(src);
+                }
+                else if (target == typeof(bool))
+                {
+                    invokeArgs[i + 1] = JavaScriptRuntime.TypeUtilities.ToBoolean(src);
+                }
+                else
+                {
+                    invokeArgs[i + 1] = src;
+                }
+            }
+
+            for (int pi = 1 + jsArgCount; pi < ps.Length; pi++)
+            {
+                invokeArgs[pi] = ps[pi].ParameterType == typeof(bool) ? (object)false : null;
+            }
+
+            return chosen.Invoke(null, invokeArgs);
         }
 
         private static bool TryCallStringMemberFastPath(string input, string methodName, int argCount, object? a0, object? a1, object? a2, out object? result)
