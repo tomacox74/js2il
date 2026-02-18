@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e8
+			// Method begins at RVA 0x21c6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,22 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 140 (0x8c)
+		// Code size: 362 (0x16a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Normalize_And_Sep/Scope,
 			[1] object,
-			[2] object[],
-			[3] object
+			[2] object,
+			[3] object,
+			[4] object[],
+			[5] object,
+			[6] object,
+			[7] bool,
+			[8] object,
+			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[10] object,
+			[11] object,
+			[12] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_Normalize_And_Sep/Scope::.ctor()
@@ -57,54 +66,123 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldnull
 		IL_000f: stelem.ref
-		IL_0010: stloc.2
-		IL_0011: ldarg.1
-		IL_0012: ldloc.2
-		IL_0013: ldstr "path"
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_001d: stloc.3
-		IL_001e: ldloc.3
-		IL_001f: stloc.1
-		IL_0020: ldloc.1
-		IL_0021: ldstr "normalize"
-		IL_0026: ldstr "a//b/../c"
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0030: stloc.3
-		IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0036: ldc.i4.1
-		IL_0037: newarr [System.Runtime]System.Object
-		IL_003c: dup
-		IL_003d: ldc.i4.0
-		IL_003e: ldloc.3
-		IL_003f: stelem.ref
-		IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0045: pop
-		IL_0046: ldloc.1
-		IL_0047: ldstr "normalize"
-		IL_004c: ldstr "/tmp//x/./y"
-		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0056: stloc.3
-		IL_0057: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005c: ldc.i4.1
-		IL_005d: newarr [System.Runtime]System.Object
-		IL_0062: dup
-		IL_0063: ldc.i4.0
-		IL_0064: ldloc.3
-		IL_0065: stelem.ref
-		IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006b: pop
-		IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0071: ldc.i4.1
-		IL_0072: newarr [System.Runtime]System.Object
-		IL_0077: dup
-		IL_0078: ldc.i4.0
-		IL_0079: ldloc.1
-		IL_007a: ldstr "sep"
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0084: stelem.ref
-		IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_008a: pop
-		IL_008b: ret
+		IL_0010: stloc.s 4
+		IL_0012: ldarg.1
+		IL_0013: ldloc.s 4
+		IL_0015: ldstr "path"
+		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+		IL_001f: stloc.s 5
+		IL_0021: ldloc.s 5
+		IL_0023: stloc.1
+		IL_0024: ldloc.1
+		IL_0025: ldstr "normalize"
+		IL_002a: ldstr "a//b/../c"
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0034: stloc.s 5
+		IL_0036: ldstr "\\\\"
+		IL_003b: ldstr "g"
+		IL_0040: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_0045: stloc.s 6
+		IL_0047: ldloc.s 5
+		IL_0049: ldstr "replace"
+		IL_004e: ldloc.s 6
+		IL_0050: ldstr "/"
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_005a: stloc.s 6
+		IL_005c: ldloc.s 6
+		IL_005e: stloc.2
+		IL_005f: ldloc.1
+		IL_0060: ldstr "normalize"
+		IL_0065: ldstr "/tmp//x/./y"
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_006f: stloc.s 6
+		IL_0071: ldstr "\\\\"
+		IL_0076: ldstr "g"
+		IL_007b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_0080: stloc.s 5
+		IL_0082: ldloc.s 6
+		IL_0084: ldstr "replace"
+		IL_0089: ldloc.s 5
+		IL_008b: ldstr "/"
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0095: stloc.s 5
+		IL_0097: ldloc.s 5
+		IL_0099: stloc.3
+		IL_009a: ldloc.2
+		IL_009b: ldstr "a/c"
+		IL_00a0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00a5: stloc.s 7
+		IL_00a7: ldloc.s 7
+		IL_00a9: box [System.Runtime]System.Boolean
+		IL_00ae: stloc.s 8
+		IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b5: ldc.i4.1
+		IL_00b6: newarr [System.Runtime]System.Object
+		IL_00bb: dup
+		IL_00bc: ldc.i4.0
+		IL_00bd: ldloc.s 8
+		IL_00bf: stelem.ref
+		IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00c5: pop
+		IL_00c6: ldloc.3
+		IL_00c7: ldstr "/tmp/x/y"
+		IL_00cc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00d1: stloc.s 7
+		IL_00d3: ldloc.s 7
+		IL_00d5: box [System.Runtime]System.Boolean
+		IL_00da: stloc.s 8
+		IL_00dc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e1: ldc.i4.1
+		IL_00e2: newarr [System.Runtime]System.Object
+		IL_00e7: dup
+		IL_00e8: ldc.i4.0
+		IL_00e9: ldloc.s 8
+		IL_00eb: stelem.ref
+		IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00f1: pop
+		IL_00f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f7: stloc.s 9
+		IL_00f9: ldloc.1
+		IL_00fa: ldstr "sep"
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0104: ldstr "/"
+		IL_0109: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_010e: stloc.s 7
+		IL_0110: ldloc.s 7
+		IL_0112: box [System.Runtime]System.Boolean
+		IL_0117: stloc.s 8
+		IL_0119: ldloc.s 8
+		IL_011b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0120: stloc.s 7
+		IL_0122: ldloc.s 7
+		IL_0124: brtrue IL_0152
+
+		IL_0129: ldloc.1
+		IL_012a: ldstr "sep"
+		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0134: ldstr "\\"
+		IL_0139: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_013e: stloc.s 7
+		IL_0140: ldloc.s 7
+		IL_0142: box [System.Runtime]System.Boolean
+		IL_0147: stloc.s 10
+		IL_0149: ldloc.s 10
+		IL_014b: stloc.s 12
+		IL_014d: br IL_0156
+
+		IL_0152: ldloc.s 8
+		IL_0154: stloc.s 12
+
+		IL_0156: ldloc.s 9
+		IL_0158: ldc.i4.1
+		IL_0159: newarr [System.Runtime]System.Object
+		IL_015e: dup
+		IL_015f: ldc.i4.0
+		IL_0160: ldloc.s 12
+		IL_0162: stelem.ref
+		IL_0163: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0168: pop
+		IL_0169: ret
 	} // end of method Require_Path_Normalize_And_Sep::__js_module_init__
 
 } // end of class Modules.Require_Path_Normalize_And_Sep
@@ -116,7 +194,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f1
+		// Method begins at RVA 0x21cf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

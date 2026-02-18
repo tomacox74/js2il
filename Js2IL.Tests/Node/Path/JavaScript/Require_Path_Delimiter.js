@@ -2,4 +2,4 @@
 
 const path = require('path');
 
-console.log(path.delimiter);
+console.log(path.delimiter === ':' || path.delimiter === ';');
