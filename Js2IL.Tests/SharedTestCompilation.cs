@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 
@@ -21,10 +22,9 @@ namespace Js2IL.Tests
 
         static SharedTestCompilation()
         {
-            // Use a shared directory for all cached compilations in this test run
+            // Use the same temp root shape as the historical execution tests output.
             var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
-            var runId = Guid.NewGuid().ToString("N");
-            _sharedOutputRoot = Path.Combine(root, $"Shared", runId);
+            _sharedOutputRoot = root;
             Directory.CreateDirectory(_sharedOutputRoot);
         }
 
@@ -37,7 +37,8 @@ namespace Js2IL.Tests
             string[]? additionalScripts,
             Func<string, CompiledAssembly> compileFunc)
         {
-            var key = new CompilationKey(testCategory, testName, additionalScripts);
+            var keyScripts = additionalScripts?.ToArray();
+            var key = new CompilationKey(testCategory, testName, keyScripts);
 
             // Use Lazy<T> to ensure only one thread compiles, even with concurrent access
             var lazyResult = _cache.GetOrAdd(key, _ => new Lazy<CompilationResult>(() =>
@@ -70,9 +71,10 @@ namespace Js2IL.Tests
 
         private static string GetTestOutputPath(string testCategory, string testName)
         {
-            // Sanitize test name for use in directory path (replace path separators)
-            var sanitized = testName.Replace('/', '_').Replace('\\', '_');
-            var path = Path.Combine(_sharedOutputRoot, testCategory, sanitized);
+            // Keep per-compilation isolation via a unique leaf directory so repeated test runs
+            // in the same process do not collide on locked output files.
+            var runId = Guid.NewGuid().ToString("N");
+            var path = Path.Combine(_sharedOutputRoot, $"{testCategory}.ExecutionTests", runId);
             Directory.CreateDirectory(path);
             return path;
         }
