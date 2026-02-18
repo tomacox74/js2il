@@ -52,7 +52,7 @@ namespace Js2IL.Tests
                         enableIRMetrics: false));
 
                 var expectedPath = compiled.AssemblyPath;
-                AssertCompiledModuleManifest(expectedPath, compiled.TestFilePath, additionalScripts);
+                AssertCompiledModuleManifest(expectedPath, compiled.TestFilePath, additionalScripts, compiled.OutputDirectory);
 
                 var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
 
@@ -103,7 +103,7 @@ namespace Js2IL.Tests
             }
         }
 
-        private void AssertCompiledModuleManifest(string assemblyPath, string rootScriptPath, string[]? additionalScripts)
+        private void AssertCompiledModuleManifest(string assemblyPath, string rootScriptPath, string[]? additionalScripts, string outputDirectory)
         {
             var expected = new HashSet<string>(StringComparer.Ordinal)
             {
@@ -111,7 +111,7 @@ namespace Js2IL.Tests
             };
 
             expected.UnionWith((additionalScripts ?? System.Array.Empty<string>())
-                .Select(scriptName => Path.Combine(_outputPath, $"{scriptName}.js"))
+                .Select(scriptName => Path.Combine(outputDirectory, $"{scriptName}.js"))
                 .Select(scriptPath => GetExpectedModuleId(scriptPath, rootScriptPath)));
 
             var actual = ReadCompiledModuleIdsFromManifest(assemblyPath);

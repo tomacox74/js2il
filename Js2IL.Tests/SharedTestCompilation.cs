@@ -44,8 +44,10 @@ namespace Js2IL.Tests
             {
                 try
                 {
-                    var categoryOutputPath = GetSharedOutputPath(testCategory);
-                    var compiled = compileFunc(categoryOutputPath);
+                    // Create a unique output subdirectory per test to avoid collisions
+                    // when multiple tests produce assemblies with the same name (e.g., "a.dll")
+                    var testOutputPath = GetTestOutputPath(testCategory, testName);
+                    var compiled = compileFunc(testOutputPath);
                     return new CompilationResult(compiled);
                 }
                 catch (Exception ex)
@@ -66,9 +68,11 @@ namespace Js2IL.Tests
             return result.CompiledAssembly!;
         }
 
-        private static string GetSharedOutputPath(string testCategory)
+        private static string GetTestOutputPath(string testCategory, string testName)
         {
-            var path = Path.Combine(_sharedOutputRoot, testCategory);
+            // Sanitize test name for use in directory path (replace path separators)
+            var sanitized = testName.Replace('/', '_').Replace('\\', '_');
+            var path = Path.Combine(_sharedOutputRoot, testCategory, sanitized);
             Directory.CreateDirectory(path);
             return path;
         }
