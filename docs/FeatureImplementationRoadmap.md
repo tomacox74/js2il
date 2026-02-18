@@ -2,6 +2,9 @@
 
 > **Last Updated**: 2026-02-12  
 > **Based on**: ECMA-262 Documentation Analysis (docs/ECMA262)
+> **Status**: Historical planning snapshot for sequencing context
+
+> **Note (2026-02-17)**: Active execution sequencing now lives in `docs/tracking-issues/TriageScoreboard.md`. Use this roadmap for background rationale and implementation notes.
 
 ## Executive Summary
 

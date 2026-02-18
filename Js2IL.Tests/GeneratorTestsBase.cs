@@ -108,7 +108,7 @@ namespace Js2IL.Tests
         private string GetJavaScript(string testName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var category = GetType().Namespace?.Split('.').Last();
+            var category = GetCategoryFromNamespace();
             // Support nested module paths in tests (e.g., "CommonJS_Require_X/helpers/b").
             // Embedded resource names use '.' separators, so normalize path separators to '.'.
             var resourceKey = testName.Replace('\\', '.').Replace('/', '.');
@@ -264,6 +264,22 @@ namespace Js2IL.Tests
             }
 
             return false;
+        }
+
+        private string GetCategoryFromNamespace()
+        {
+            var ns = GetType().Namespace ?? string.Empty;
+            const string rootNs = "Js2IL.Tests.";
+            if (ns.StartsWith(rootNs, StringComparison.Ordinal))
+            {
+                var category = ns.Substring(rootNs.Length);
+                if (!string.IsNullOrWhiteSpace(category))
+                {
+                    return category;
+                }
+            }
+
+            return ns.Split('.').LastOrDefault() ?? string.Empty;
         }
 
     }

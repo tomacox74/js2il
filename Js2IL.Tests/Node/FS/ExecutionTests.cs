@@ -1,11 +1,21 @@
-using System.IO;
 using System.Threading.Tasks;
 
-namespace Js2IL.Tests.Node
+namespace Js2IL.Tests.Node.FS
 {
-    public class FSAdditionalTests : ExecutionTestsBase
+    public class ExecutionTests : ExecutionTestsBase
     {
-        public FSAdditionalTests() : base("Node") { }
+        public ExecutionTests() : base("Node/FS") { }
+
+        [Fact]
+        public Task FS_ReadWrite_Utf8()
+            => ExecutionTest(
+                nameof(FS_ReadWrite_Utf8),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
 
         [Fact]
         public Task FS_ExistsSync_File_And_Directory()
@@ -14,7 +24,7 @@ namespace Js2IL.Tests.Node
                 configureSettings: s =>
                 {
                     s.AddScrubber(sb => sb.Replace('\\', '/'));
-                    var temp = Path.GetTempPath().Replace('\\', '/');
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
                     s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
                 });
 
@@ -54,7 +64,6 @@ namespace Js2IL.Tests.Node
                     s.AddScrubber(sb => sb.Replace('\\', '/'));
                 });
 
-        // --- Negative / edge case tests ---
         [Fact]
         public Task FS_ExistsSync_EmptyPath_ReturnsFalse()
             => ExecutionTest(

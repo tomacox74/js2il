@@ -405,7 +405,8 @@ namespace Js2IL.Tests
             // Embedded resource names use '.' separators, so normalize path separators to '.'.
             var resourceKey = testName.Replace('\\', '.').Replace('/', '.');
 
-            var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{resourceKey}.js";
+            var category = GetCategoryFromNamespace();
+            var categorySpecific = $"Js2IL.Tests.{category}.JavaScript.{resourceKey}.js";
             var legacy = $"Js2IL.Tests.JavaScript.{resourceKey}.js";
 
             Stream? stream = assembly.GetManifestResourceStream(categorySpecific);
@@ -430,14 +431,14 @@ namespace Js2IL.Tests
                     {
                         // Fallback: derive the repo path from known test layout:
                         // Js2IL.Tests/<Category>/JavaScript/<testName>.js
-                        var category = GetType().Namespace?.Split('.').Last();
                         if (!string.IsNullOrWhiteSpace(category))
                         {
                             var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
                             if (projectRoot != null)
                             {
+                                var categoryPath = category.Replace('.', Path.DirectorySeparatorChar);
                                 var relative = Path.Combine(
-                                    category,
+                                    categoryPath,
                                     "JavaScript",
                                     testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js");
 
@@ -511,6 +512,22 @@ namespace Js2IL.Tests
             }
 
             return null;
+        }
+
+        private string GetCategoryFromNamespace()
+        {
+            var ns = GetType().Namespace ?? string.Empty;
+            const string rootNs = "Js2IL.Tests.";
+            if (ns.StartsWith(rootNs, StringComparison.Ordinal))
+            {
+                var category = ns.Substring(rootNs.Length);
+                if (!string.IsNullOrWhiteSpace(category))
+                {
+                    return category;
+                }
+            }
+
+            return ns.Split('.').LastOrDefault() ?? string.Empty;
         }
     }
 }

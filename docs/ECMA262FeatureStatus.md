@@ -2,6 +2,9 @@
 
 > **Last Updated**: 2026-02-12  
 > **Quick lookup for feature support status and implementation plans**
+> **Status**: Historical snapshot; may not reflect latest releases
+
+> **Note (2026-02-17)**: This file predates recent runtime/spec work. For active prioritization use `docs/tracking-issues/TriageScoreboard.md`, and for shipped behavior cross-check `CHANGELOG.md` plus section/module JSON docs.
 
 ## How to Use This Guide
 

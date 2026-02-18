@@ -1,8 +1,10 @@
 # JS2IL ECMA-262 Feature Priority - Executive Summary
 
 > **Date**: February 12, 2026  
-> **Status**: Analysis Complete  
-> **Next Action**: Begin Phase 1 Implementation
+> **Status**: Historical Snapshot (superseded for active sequencing)  
+> **Next Action**: Use `docs/tracking-issues/TriageScoreboard.md` for current prioritization
+
+> **Note (2026-02-17)**: Several items listed below as planned/not supported were implemented in subsequent releases (for example, v0.8.12). Treat this document as strategy context, not current support truth.
 
 ## TL;DR
 
