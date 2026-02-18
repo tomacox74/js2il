@@ -14,11 +14,13 @@ namespace Js2IL.Tests
     public abstract class GeneratorTestsBase
     {
         private readonly string _outputPath;
+        private readonly string _testCategory;
         private readonly VerifySettings _verifySettings = new();
 
         protected GeneratorTestsBase(string testCategory)
         {
             _verifySettings.DisableDiff();
+            _testCategory = testCategory;
 
             // Create a temp directory for the generated assemblies.
             // Use a unique per-run directory to avoid file locks from Assembly.LoadFile() causing
@@ -36,50 +38,21 @@ namespace Js2IL.Tests
         {
             async Task RunAsync()
             {
-                var js = GetJavaScript(testName);
-                var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
+                // Use shared compilation to avoid compiling the same JS twice for ExecutionTests and GeneratorTests
+                var compiled = SharedTestCompilation.GetOrCompile(
+                    _testCategory,
+                    testName,
+                    additionalScripts,
+                    outputDir => TestCompiler.Compile(
+                        testName,
+                        _testCategory,
+                        outputDir,
+                        name => (GetJavaScript(name), (string?)null),  // No source path for generator tests
+                        additionalScripts,
+                        enableIRMetrics: false));
 
-                var mockFileSystem = new MockFileSystem();
-                mockFileSystem.AddFile(testFilePath, js);
-
-                // Add additional scripts to the mock file system
-                if (additionalScripts != null)
-                {
-                    foreach (var scriptName in additionalScripts)
-                    {
-                        var scriptContent = GetJavaScript(scriptName);
-                        var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
-                        mockFileSystem.AddFile(scriptPath, scriptContent);
-                    }
-                }
-
-                var options = new CompilerOptions
-                {
-                    OutputDirectory = _outputPath,
-                    EmitPdb = true
-                };
-
-                var testLogger = new TestLogger();
-                var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, testLogger);
-                var compiler = serviceProvider.GetRequiredService<Compiler>();
-
-                if (!compiler.Compile(testFilePath))
-                {
-                    var compileDetails = string.IsNullOrWhiteSpace(testLogger.Errors)
-                        ? string.Empty
-                        : $"\nErrors:\n{testLogger.Errors}";
-                    var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings)
-                        ? string.Empty
-                        : $"\nWarnings:\n{testLogger.Warnings}";
-                    throw new InvalidOperationException($"Compilation failed for test {testName}.{compileDetails}{warnings}");
-                }
-
-                // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
-                // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
-                var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
-                var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
-
-                AssertCompiledModuleManifest(expectedPath, testFilePath, additionalScripts);
+                var expectedPath = compiled.AssemblyPath;
+                AssertCompiledModuleManifest(expectedPath, compiled.TestFilePath, additionalScripts);
 
                 var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
 
