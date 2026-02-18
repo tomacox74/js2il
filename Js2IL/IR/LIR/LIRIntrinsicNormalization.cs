@@ -21,9 +21,11 @@ internal static class LIRIntrinsicNormalization
             return;
         }
 
-        // Track temps with proven CLR receiver types.
+        // Track temps with proven specialized CLR receiver types.
+        // "Specialized" primarily means JavaScriptRuntime.* types; string is included as a special-case
+        // because we can safely early-bind a constrained subset of string member calls.
         // Start with strongly typed user-class field loads, then propagate through CopyTemp.
-        var knownIntrinsicReceiverClrTypes = new Dictionary<int, Type>();
+        var knownSpecializedReceiverClrTypes = new Dictionary<int, Type>();
 
         // Track temps proven to be constant strings (e.g., property access keys).
         // This allows safe rewrites like `r.promise` -> direct CLR getter when r is known.
@@ -40,7 +42,7 @@ internal static class LIRIntrinsicNormalization
                 && (storage.ClrType == typeof(string)
                     || storage.ClrType.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true))
             {
-                knownIntrinsicReceiverClrTypes.TryAdd(tempIndex, storage.ClrType);
+                knownSpecializedReceiverClrTypes.TryAdd(tempIndex, storage.ClrType);
             }
         }
 
@@ -71,16 +73,16 @@ internal static class LIRIntrinsicNormalization
                         if (fieldClrType != typeof(object)
                             && fieldClrType.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
                         {
-                            knownIntrinsicReceiverClrTypes[loadInstanceField.Result.Index] = fieldClrType;
+                            knownSpecializedReceiverClrTypes[loadInstanceField.Result.Index] = fieldClrType;
                         }
                     }
                     break;
 
                 case LIRCopyTemp copyTemp:
                     if (copyTemp.Destination.Index >= 0
-                        && knownIntrinsicReceiverClrTypes.TryGetValue(copyTemp.Source.Index, out var srcClrType))
+                        && knownSpecializedReceiverClrTypes.TryGetValue(copyTemp.Source.Index, out var srcClrType))
                     {
-                        knownIntrinsicReceiverClrTypes[copyTemp.Destination.Index] = srcClrType;
+                        knownSpecializedReceiverClrTypes[copyTemp.Destination.Index] = srcClrType;
                     }
 
                     if (copyTemp.Destination.Index >= 0
@@ -98,7 +100,7 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRGetLength getLength)
             {
-                if (!knownIntrinsicReceiverClrTypes.TryGetValue(getLength.Object.Index, out var receiverType))
+                if (!knownSpecializedReceiverClrTypes.TryGetValue(getLength.Object.Index, out var receiverType))
                 {
                     continue;
                 }
@@ -134,7 +136,7 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRGetItem getItem)
             {
-                if (!knownIntrinsicReceiverClrTypes.TryGetValue(getItem.Object.Index, out var receiverType))
+                if (!knownSpecializedReceiverClrTypes.TryGetValue(getItem.Object.Index, out var receiverType))
                 {
                     continue;
                 }
@@ -184,7 +186,7 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRSetItem setItem)
             {
-                if (!knownIntrinsicReceiverClrTypes.TryGetValue(setItem.Object.Index, out var receiverType))
+                if (!knownSpecializedReceiverClrTypes.TryGetValue(setItem.Object.Index, out var receiverType))
                 {
                     continue;
                 }
@@ -219,7 +221,7 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember0 callMember0)
             {
-                if (!knownIntrinsicReceiverClrTypes.TryGetValue(callMember0.Receiver.Index, out var receiverType)
+                if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember0.Receiver.Index, out var receiverType)
                     || receiverType != typeof(string)
                     || !IsZeroArgStringMethodSafeToEarlyBind(callMember0.MethodName))
                 {
@@ -234,6 +236,9 @@ internal static class LIRIntrinsicNormalization
 
                 if (callMember0.Result.Index >= 0)
                 {
+                    // Keep this in sync with IsZeroArgStringMethodSafeToEarlyBind.
+                    // We intentionally only early-bind zero-arg methods that return string,
+                    // so result storage can remain strongly typed as string.
                     methodBody.TempStorages[callMember0.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
                 }
 

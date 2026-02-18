@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22d8
+				// Method begins at RVA 0x23dc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -39,9 +39,9 @@
 				object s
 			) cil managed 
 		{
-			// Method begins at RVA 0x20fc
+			// Method begins at RVA 0x217c
 			// Header size: 12
-			// Code size: 455 (0x1c7)
+			// Code size: 587 (0x24b)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -196,8 +196,60 @@
 			IL_01be: stelem.ref
 			IL_01bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 			IL_01c4: pop
-			IL_01c5: ldnull
-			IL_01c6: ret
+			IL_01c5: ldarg.1
+			IL_01c6: ldstr "trimStart"
+			IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_01d0: stloc.0
+			IL_01d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01d6: ldc.i4.1
+			IL_01d7: newarr [System.Runtime]System.Object
+			IL_01dc: dup
+			IL_01dd: ldc.i4.0
+			IL_01de: ldloc.0
+			IL_01df: stelem.ref
+			IL_01e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_01e5: pop
+			IL_01e6: ldarg.1
+			IL_01e7: ldstr "trimEnd"
+			IL_01ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_01f1: stloc.0
+			IL_01f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01f7: ldc.i4.1
+			IL_01f8: newarr [System.Runtime]System.Object
+			IL_01fd: dup
+			IL_01fe: ldc.i4.0
+			IL_01ff: ldloc.0
+			IL_0200: stelem.ref
+			IL_0201: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0206: pop
+			IL_0207: ldarg.1
+			IL_0208: ldstr "trimLeft"
+			IL_020d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0212: stloc.0
+			IL_0213: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0218: ldc.i4.1
+			IL_0219: newarr [System.Runtime]System.Object
+			IL_021e: dup
+			IL_021f: ldc.i4.0
+			IL_0220: ldloc.0
+			IL_0221: stelem.ref
+			IL_0222: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0227: pop
+			IL_0228: ldarg.1
+			IL_0229: ldstr "trimRight"
+			IL_022e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0233: stloc.0
+			IL_0234: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0239: ldc.i4.1
+			IL_023a: newarr [System.Runtime]System.Object
+			IL_023f: dup
+			IL_0240: ldc.i4.0
+			IL_0241: ldloc.0
+			IL_0242: stelem.ref
+			IL_0243: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0248: pop
+			IL_0249: ldnull
+			IL_024a: ret
 		} // end of method runCommon::__js_call__
 
 	} // end of class runCommon
@@ -216,7 +268,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22cf
+			// Method begins at RVA 0x23d3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -242,7 +294,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 157 (0x9d)
+		// Code size: 285 (0x11d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_MemberCall_FastPath_CommonMethods/Scope,
@@ -285,8 +337,8 @@
 		IL_0055: stelem.ref
 		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_005b: pop
-		IL_005c: ldstr "A"
-		IL_0061: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToLowerCase(string)
+		IL_005c: ldstr "  x  "
+		IL_0061: call string [JavaScriptRuntime]JavaScriptRuntime.String::TrimStart(string)
 		IL_0066: stloc.3
 		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_006c: ldc.i4.1
@@ -297,8 +349,8 @@
 		IL_0075: stelem.ref
 		IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_007b: pop
-		IL_007c: ldstr "a"
-		IL_0081: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToUpperCase(string)
+		IL_007c: ldstr "x  "
+		IL_0081: call string [JavaScriptRuntime]JavaScriptRuntime.String::TrimEnd(string)
 		IL_0086: stloc.3
 		IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_008c: ldc.i4.1
@@ -309,7 +361,55 @@
 		IL_0095: stelem.ref
 		IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_009b: pop
-		IL_009c: ret
+		IL_009c: ldstr "  x  "
+		IL_00a1: call string [JavaScriptRuntime]JavaScriptRuntime.String::TrimLeft(string)
+		IL_00a6: stloc.3
+		IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ac: ldc.i4.1
+		IL_00ad: newarr [System.Runtime]System.Object
+		IL_00b2: dup
+		IL_00b3: ldc.i4.0
+		IL_00b4: ldloc.3
+		IL_00b5: stelem.ref
+		IL_00b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00bb: pop
+		IL_00bc: ldstr "x  "
+		IL_00c1: call string [JavaScriptRuntime]JavaScriptRuntime.String::TrimRight(string)
+		IL_00c6: stloc.3
+		IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cc: ldc.i4.1
+		IL_00cd: newarr [System.Runtime]System.Object
+		IL_00d2: dup
+		IL_00d3: ldc.i4.0
+		IL_00d4: ldloc.3
+		IL_00d5: stelem.ref
+		IL_00d6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00db: pop
+		IL_00dc: ldstr "A"
+		IL_00e1: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToLowerCase(string)
+		IL_00e6: stloc.3
+		IL_00e7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ec: ldc.i4.1
+		IL_00ed: newarr [System.Runtime]System.Object
+		IL_00f2: dup
+		IL_00f3: ldc.i4.0
+		IL_00f4: ldloc.3
+		IL_00f5: stelem.ref
+		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00fb: pop
+		IL_00fc: ldstr "a"
+		IL_0101: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToUpperCase(string)
+		IL_0106: stloc.3
+		IL_0107: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_010c: ldc.i4.1
+		IL_010d: newarr [System.Runtime]System.Object
+		IL_0112: dup
+		IL_0113: ldc.i4.0
+		IL_0114: ldloc.3
+		IL_0115: stelem.ref
+		IL_0116: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_011b: pop
+		IL_011c: ret
 	} // end of method String_MemberCall_FastPath_CommonMethods::__js_module_init__
 
 } // end of class Modules.String_MemberCall_FastPath_CommonMethods
@@ -321,7 +421,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22e1
+		// Method begins at RVA 0x23e5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

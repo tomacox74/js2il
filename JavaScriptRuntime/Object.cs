@@ -1256,6 +1256,9 @@ namespace JavaScriptRuntime
             return chosen.Invoke(null, invokeArgs);
         }
 
+        // Keep this switch intentionally limited to hot-path members.
+        // Any method not listed here is still handled by CallStringMemberViaReflection,
+        // preserving backward compatibility for String member dispatch.
         private static bool TryCallStringMemberFastPath(string input, string methodName, int argCount, object? a0, object? a1, object? a2, out object? result)
         {
             switch (methodName)
@@ -1366,6 +1369,48 @@ namespace JavaScriptRuntime
                         result = JavaScriptRuntime.String.Replace(input, a0!, a1!);
                         return true;
                     }
+                    break;
+
+                case "match":
+                    if (argCount <= 0)
+                    {
+                        result = JavaScriptRuntime.String.Match(input, null);
+                        return true;
+                    }
+
+                    if (argCount == 1)
+                    {
+                        result = JavaScriptRuntime.String.Match(input, a0);
+                        return true;
+                    }
+
+                    break;
+
+                case "localeCompare":
+                    if (argCount <= 0)
+                    {
+                        result = JavaScriptRuntime.String.LocaleCompare(input, string.Empty, null, null);
+                        return true;
+                    }
+
+                    if (argCount == 1)
+                    {
+                        result = JavaScriptRuntime.String.LocaleCompare(input, DotNet2JSConversions.ToString(a0), null, null);
+                        return true;
+                    }
+
+                    if (argCount == 2)
+                    {
+                        result = JavaScriptRuntime.String.LocaleCompare(input, DotNet2JSConversions.ToString(a0), a1, null);
+                        return true;
+                    }
+
+                    if (argCount == 3)
+                    {
+                        result = JavaScriptRuntime.String.LocaleCompare(input, DotNet2JSConversions.ToString(a0), a1, a2);
+                        return true;
+                    }
+
                     break;
             }
 
