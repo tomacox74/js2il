@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f7
+			// Method begins at RVA 0x2173
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,15 +40,20 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 155 (0x9b)
+		// Code size: 279 (0x117)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_ToNamespacedPath/Scope,
 			[1] object,
-			[2] object[],
+			[2] object,
 			[3] object,
-			[4] bool,
-			[5] object
+			[4] string,
+			[5] object[],
+			[6] object,
+			[7] string,
+			[8] object,
+			[9] bool,
+			[10] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_ToNamespacedPath/Scope::.ctor()
@@ -59,57 +64,104 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldnull
 		IL_000f: stelem.ref
-		IL_0010: stloc.2
-		IL_0011: ldarg.1
-		IL_0012: ldloc.2
-		IL_0013: ldstr "path"
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_001d: stloc.3
-		IL_001e: ldloc.3
-		IL_001f: stloc.1
-		IL_0020: ldloc.1
-		IL_0021: ldstr "toNamespacedPath"
-		IL_0026: ldstr "/tmp/a/b"
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0030: stloc.3
-		IL_0031: ldloc.3
-		IL_0032: ldstr "/tmp/a/b"
-		IL_0037: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_003c: stloc.s 4
-		IL_003e: ldloc.s 4
-		IL_0040: box [System.Runtime]System.Boolean
-		IL_0045: stloc.s 5
-		IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004c: ldc.i4.1
-		IL_004d: newarr [System.Runtime]System.Object
-		IL_0052: dup
-		IL_0053: ldc.i4.0
-		IL_0054: ldloc.s 5
-		IL_0056: stelem.ref
-		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005c: pop
-		IL_005d: ldloc.1
-		IL_005e: ldstr "toNamespacedPath"
-		IL_0063: ldstr "relative/path"
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_006d: stloc.3
-		IL_006e: ldloc.3
-		IL_006f: ldstr "relative/path"
-		IL_0074: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0079: stloc.s 4
-		IL_007b: ldloc.s 4
-		IL_007d: box [System.Runtime]System.Boolean
-		IL_0082: stloc.s 5
-		IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0089: ldc.i4.1
-		IL_008a: newarr [System.Runtime]System.Object
-		IL_008f: dup
-		IL_0090: ldc.i4.0
-		IL_0091: ldloc.s 5
-		IL_0093: stelem.ref
-		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0099: pop
-		IL_009a: ret
+		IL_0010: stloc.s 5
+		IL_0012: ldarg.1
+		IL_0013: ldloc.s 5
+		IL_0015: ldstr "path"
+		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+		IL_001f: stloc.s 6
+		IL_0021: ldloc.s 6
+		IL_0023: stloc.1
+		IL_0024: ldloc.1
+		IL_0025: ldstr "sep"
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_002f: stloc.2
+		IL_0030: ldc.i4.3
+		IL_0031: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0036: dup
+		IL_0037: ldstr "tmp"
+		IL_003c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0041: dup
+		IL_0042: ldstr "a"
+		IL_0047: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_004c: dup
+		IL_004d: ldstr "b"
+		IL_0052: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0057: ldc.i4.1
+		IL_0058: newarr [System.Runtime]System.Object
+		IL_005d: dup
+		IL_005e: ldc.i4.0
+		IL_005f: ldloc.2
+		IL_0060: stelem.ref
+		IL_0061: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0066: stloc.s 7
+		IL_0068: ldloc.2
+		IL_0069: ldloc.s 7
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0070: stloc.s 8
+		IL_0072: ldloc.s 8
+		IL_0074: stloc.3
+		IL_0075: ldc.i4.2
+		IL_0076: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_007b: dup
+		IL_007c: ldstr "relative"
+		IL_0081: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0086: dup
+		IL_0087: ldstr "path"
+		IL_008c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0091: ldc.i4.1
+		IL_0092: newarr [System.Runtime]System.Object
+		IL_0097: dup
+		IL_0098: ldc.i4.0
+		IL_0099: ldloc.2
+		IL_009a: stelem.ref
+		IL_009b: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00a0: stloc.s 7
+		IL_00a2: ldloc.s 7
+		IL_00a4: stloc.s 4
+		IL_00a6: ldloc.1
+		IL_00a7: ldstr "toNamespacedPath"
+		IL_00ac: ldloc.3
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b2: stloc.s 6
+		IL_00b4: ldloc.s 6
+		IL_00b6: ldloc.3
+		IL_00b7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00bc: stloc.s 9
+		IL_00be: ldloc.s 9
+		IL_00c0: box [System.Runtime]System.Boolean
+		IL_00c5: stloc.s 10
+		IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cc: ldc.i4.1
+		IL_00cd: newarr [System.Runtime]System.Object
+		IL_00d2: dup
+		IL_00d3: ldc.i4.0
+		IL_00d4: ldloc.s 10
+		IL_00d6: stelem.ref
+		IL_00d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00dc: pop
+		IL_00dd: ldloc.1
+		IL_00de: ldstr "toNamespacedPath"
+		IL_00e3: ldloc.s 4
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00ea: stloc.s 6
+		IL_00ec: ldloc.s 6
+		IL_00ee: ldloc.s 4
+		IL_00f0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00f5: stloc.s 9
+		IL_00f7: ldloc.s 9
+		IL_00f9: box [System.Runtime]System.Boolean
+		IL_00fe: stloc.s 10
+		IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0105: ldc.i4.1
+		IL_0106: newarr [System.Runtime]System.Object
+		IL_010b: dup
+		IL_010c: ldc.i4.0
+		IL_010d: ldloc.s 10
+		IL_010f: stelem.ref
+		IL_0110: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0115: pop
+		IL_0116: ret
 	} // end of method Require_Path_ToNamespacedPath::__js_module_init__
 
 } // end of class Modules.Require_Path_ToNamespacedPath
@@ -121,7 +173,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2100
+		// Method begins at RVA 0x217c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
