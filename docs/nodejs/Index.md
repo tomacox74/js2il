@@ -4,14 +4,14 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-02-12T21:28:08Z`
+**Generated:** `2026-02-18T05:38:07Z`
 
 ## Summary
 
 - **Modules:** 7
-- **Globals:** 13
+- **Globals:** 14
   - Supported: 13
-  - Partial: 7
+  - Partial: 8
 
 ## Modules
 
@@ -31,6 +31,7 @@
 | --- | --- | --- |
 | [__dirname](__dirname.md) | supported | [Node.js](https://nodejs.org/api/modules.html#dirname) |
 | [__filename](__filename.md) | supported | [Node.js](https://nodejs.org/api/modules.html#filename) |
+| [Buffer](Buffer.md) | partial | [Node.js](https://nodejs.org/api/buffer.html#class-buffer) |
 | [clearImmediate](clearImmediate.md) | supported | [Node.js](https://nodejs.org/api/timers.html#clearimmediateimmediate) |
 | [clearInterval](clearInterval.md) | supported | [Node.js](https://nodejs.org/api/timers.html#clearintervaltimeout) |
 | [clearTimeout](clearTimeout.md) | supported | [Node.js](https://nodejs.org/api/timers.html#cleartimeouttimeout) |
@@ -45,6 +46,6 @@
 
 ## Limitations
 
-- No Buffer support yet; fs APIs operate on UTF-8 text only.
+- Buffer support is partial (Buffer.from/isBuffer/length/toString utf8 only).
 - CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; ESM import.meta.url is not.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.

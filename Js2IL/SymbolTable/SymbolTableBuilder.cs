@@ -419,9 +419,6 @@ namespace Js2IL.SymbolTables
                 }
             }
 
-            // Explicitly excluded: Buffer is not supported yet.
-            intrinsicNames.Remove("Buffer");
-
             return intrinsicNames;
         }
 

@@ -3073,6 +3073,8 @@ namespace JavaScriptRuntime
                     return arr.length;
                 case Int32Array i32:
                     return i32.length;
+                case JavaScriptRuntime.Node.Buffer buffer:
+                    return buffer.length;
                 case string s:
                     return s.Length;
                 default:

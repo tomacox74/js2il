@@ -10,6 +10,7 @@ namespace JavaScriptRuntime.Node
     public sealed class FS
     {
         private static readonly object _constants = CreateConstants();
+        private static readonly Encoding Utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
         public object constants => _constants;
 
@@ -55,12 +56,11 @@ namespace JavaScriptRuntime.Node
         }
 
         public object readFileSync(string file)
-            => System.IO.File.ReadAllText(file);
+            => readFileSync(file, null);
 
         public object writeFileSync(string file, object? content)
         {
-            System.IO.File.WriteAllText(file, content?.ToString() ?? string.Empty);
-            return null!; // JS: undefined
+            return writeFileSync(file, content, null);
         }
 
         public object mkdirSync(object dir, object? options)
@@ -105,13 +105,12 @@ namespace JavaScriptRuntime.Node
             var path = file?.ToString() ?? string.Empty;
             if (string.IsNullOrEmpty(path)) throw new ArgumentException("Path must be a non-empty string", nameof(file));
 
-            if (options is string enc && IsUtf8(enc))
+            if (TryGetTextEncoding(options, out var textEncoding))
             {
-                return System.IO.File.ReadAllText(path, Encoding.UTF8);
+                return System.IO.File.ReadAllText(path, textEncoding!);
             }
 
-            // Minimal support: no Buffer type; default to UTF-8 text
-            return System.IO.File.ReadAllText(path, Encoding.UTF8);
+            return Buffer.FromBytes(System.IO.File.ReadAllBytes(path));
         }
 
         // Overload supporting Node-style encoding option: 'utf8'
@@ -120,16 +119,68 @@ namespace JavaScriptRuntime.Node
             var path = file?.ToString() ?? string.Empty;
             if (string.IsNullOrEmpty(path)) throw new ArgumentException("Path must be a non-empty string", nameof(file));
 
-            var text = content?.ToString() ?? string.Empty;
-            if (options is string enc && IsUtf8(enc))
+            if (content is Buffer buffer)
             {
-                System.IO.File.WriteAllText(path, text, Encoding.UTF8);
+                System.IO.File.WriteAllBytes(path, buffer.ToByteArray());
+                return null!;
+            }
+
+            if (content is byte[] bytes)
+            {
+                System.IO.File.WriteAllBytes(path, bytes);
+                return null!;
+            }
+
+            var text = content?.ToString() ?? string.Empty;
+            if (TryGetTextEncoding(options, out var textEncoding))
+            {
+                System.IO.File.WriteAllText(path, text, textEncoding!);
                 return null!; // JS: undefined
             }
 
-            // Minimal support: default to UTF-8 text
-            System.IO.File.WriteAllText(path, text, Encoding.UTF8);
+            System.IO.File.WriteAllText(path, text, Utf8NoBom);
             return null!; // JS: undefined
+        }
+
+        private static bool TryGetTextEncoding(object? options, out Encoding? encoding)
+        {
+            encoding = null;
+            if (options == null || options is JsNull)
+            {
+                return false;
+            }
+
+            if (options is string optionString)
+            {
+                return TryResolveTextEncoding(optionString, out encoding);
+            }
+
+            try
+            {
+                var encodingValue = JavaScriptRuntime.Object.GetProperty(options, "encoding");
+                if (encodingValue == null || encodingValue is JsNull)
+                {
+                    return false;
+                }
+
+                return TryResolveTextEncoding(encodingValue.ToString() ?? string.Empty, out encoding);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryResolveTextEncoding(string value, out Encoding? encoding)
+        {
+            encoding = null;
+            if (IsUtf8(value))
+            {
+                encoding = Utf8NoBom;
+                return true;
+            }
+
+            return false;
         }
 
         private static bool IsUtf8(string s)

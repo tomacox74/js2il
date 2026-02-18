@@ -53,11 +53,13 @@ Returns an array of names (strings).
 
 ### readFileSync(path[, options])
 
-Text-only, returns UTF-8 string. Buffer is not implemented. Recognizes string encoding option 'utf8'/'utf-8'.
+Returns Buffer by default. Recognizes UTF-8 text mode when options is 'utf8'/'utf-8' or { encoding: 'utf8'/'utf-8' }.
 
 **Tests:**
 - `Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadWrite_Buffer` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Buffer` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
 
 ### rmSync(path[, options])
 
@@ -76,8 +78,10 @@ Returns a minimal Stats-like object supporting size (number). Directories report
 
 ### writeFileSync(path, data[, options])
 
-Text-only, accepts stringifiable data. Writes UTF-8. Recognizes string encoding option 'utf8'/'utf-8'.
+Supports Buffer and byte[] binary writes. String writes default to UTF-8 and recognize string encoding option 'utf8'/'utf-8'.
 
 **Tests:**
 - `Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadWrite_Buffer` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Buffer` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
