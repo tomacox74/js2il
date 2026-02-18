@@ -10,6 +10,7 @@ namespace JavaScriptRuntime.Node
     public sealed class FS
     {
         private static readonly object _constants = CreateConstants();
+        private static readonly Encoding Utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
         public object constants => _constants;
 
@@ -137,7 +138,7 @@ namespace JavaScriptRuntime.Node
                 return null!; // JS: undefined
             }
 
-            System.IO.File.WriteAllText(path, text, Encoding.UTF8);
+            System.IO.File.WriteAllText(path, text, Utf8NoBom);
             return null!; // JS: undefined
         }
 
@@ -175,7 +176,7 @@ namespace JavaScriptRuntime.Node
             encoding = null;
             if (IsUtf8(value))
             {
-                encoding = Encoding.UTF8;
+                encoding = Utf8NoBom;
                 return true;
             }
 
