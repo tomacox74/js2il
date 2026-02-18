@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c6
+			// Method begins at RVA 0x2248
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,22 +40,20 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 362 (0x16a)
+		// Code size: 492 (0x1ec)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Normalize_And_Sep/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object[],
-			[5] object,
+			[4] object,
+			[5] object[],
 			[6] object,
-			[7] bool,
-			[8] object,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[10] object,
-			[11] object,
-			[12] object
+			[7] object,
+			[8] bool,
+			[9] object,
+			[10] string
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_Normalize_And_Sep/Scope::.ctor()
@@ -66,123 +64,174 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldnull
 		IL_000f: stelem.ref
-		IL_0010: stloc.s 4
+		IL_0010: stloc.s 5
 		IL_0012: ldarg.1
-		IL_0013: ldloc.s 4
+		IL_0013: ldloc.s 5
 		IL_0015: ldstr "path"
 		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_001f: stloc.s 5
-		IL_0021: ldloc.s 5
+		IL_001f: stloc.s 6
+		IL_0021: ldloc.s 6
 		IL_0023: stloc.1
 		IL_0024: ldloc.1
-		IL_0025: ldstr "normalize"
-		IL_002a: ldstr "a//b/../c"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0034: stloc.s 5
-		IL_0036: ldstr "\\\\"
-		IL_003b: ldstr "g"
-		IL_0040: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_0045: stloc.s 6
-		IL_0047: ldloc.s 5
-		IL_0049: ldstr "replace"
-		IL_004e: ldloc.s 6
-		IL_0050: ldstr "/"
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_005a: stloc.s 6
-		IL_005c: ldloc.s 6
-		IL_005e: stloc.2
-		IL_005f: ldloc.1
-		IL_0060: ldstr "normalize"
-		IL_0065: ldstr "/tmp//x/./y"
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_006f: stloc.s 6
-		IL_0071: ldstr "\\\\"
-		IL_0076: ldstr "g"
-		IL_007b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_0080: stloc.s 5
-		IL_0082: ldloc.s 6
-		IL_0084: ldstr "replace"
-		IL_0089: ldloc.s 5
-		IL_008b: ldstr "/"
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0095: stloc.s 5
-		IL_0097: ldloc.s 5
-		IL_0099: stloc.3
-		IL_009a: ldloc.2
-		IL_009b: ldstr "a/c"
-		IL_00a0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00a5: stloc.s 7
-		IL_00a7: ldloc.s 7
-		IL_00a9: box [System.Runtime]System.Boolean
-		IL_00ae: stloc.s 8
-		IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b5: ldc.i4.1
-		IL_00b6: newarr [System.Runtime]System.Object
-		IL_00bb: dup
-		IL_00bc: ldc.i4.0
-		IL_00bd: ldloc.s 8
-		IL_00bf: stelem.ref
-		IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c5: pop
-		IL_00c6: ldloc.3
-		IL_00c7: ldstr "/tmp/x/y"
-		IL_00cc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00d1: stloc.s 7
-		IL_00d3: ldloc.s 7
-		IL_00d5: box [System.Runtime]System.Boolean
-		IL_00da: stloc.s 8
-		IL_00dc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e1: ldc.i4.1
-		IL_00e2: newarr [System.Runtime]System.Object
-		IL_00e7: dup
-		IL_00e8: ldc.i4.0
-		IL_00e9: ldloc.s 8
-		IL_00eb: stelem.ref
-		IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00f1: pop
-		IL_00f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f7: stloc.s 9
-		IL_00f9: ldloc.1
-		IL_00fa: ldstr "sep"
-		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0104: ldstr "/"
-		IL_0109: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_010e: stloc.s 7
-		IL_0110: ldloc.s 7
-		IL_0112: box [System.Runtime]System.Boolean
-		IL_0117: stloc.s 8
-		IL_0119: ldloc.s 8
-		IL_011b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0120: stloc.s 7
-		IL_0122: ldloc.s 7
-		IL_0124: brtrue IL_0152
-
-		IL_0129: ldloc.1
-		IL_012a: ldstr "sep"
-		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0134: ldstr "\\"
-		IL_0139: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_013e: stloc.s 7
-		IL_0140: ldloc.s 7
-		IL_0142: box [System.Runtime]System.Boolean
-		IL_0147: stloc.s 10
-		IL_0149: ldloc.s 10
-		IL_014b: stloc.s 12
-		IL_014d: br IL_0156
-
-		IL_0152: ldloc.s 8
-		IL_0154: stloc.s 12
-
-		IL_0156: ldloc.s 9
-		IL_0158: ldc.i4.1
-		IL_0159: newarr [System.Runtime]System.Object
+		IL_0025: ldstr "sep"
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_002f: stloc.2
+		IL_0030: ldstr "a"
+		IL_0035: ldloc.2
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_003b: stloc.s 7
+		IL_003d: ldloc.s 7
+		IL_003f: ldloc.2
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0045: stloc.s 7
+		IL_0047: ldloc.s 7
+		IL_0049: ldstr "b"
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0053: stloc.s 7
+		IL_0055: ldloc.s 7
+		IL_0057: ldloc.2
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_005d: stloc.s 7
+		IL_005f: ldloc.s 7
+		IL_0061: ldstr ".."
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_006b: stloc.s 7
+		IL_006d: ldloc.s 7
+		IL_006f: ldloc.2
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0075: stloc.s 7
+		IL_0077: ldloc.s 7
+		IL_0079: ldstr "c"
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0083: stloc.s 7
+		IL_0085: ldloc.1
+		IL_0086: ldstr "normalize"
+		IL_008b: ldloc.s 7
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0092: stloc.s 6
+		IL_0094: ldloc.s 6
+		IL_0096: stloc.3
+		IL_0097: ldloc.2
+		IL_0098: ldstr "tmp"
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00a2: stloc.s 7
+		IL_00a4: ldloc.s 7
+		IL_00a6: ldloc.2
+		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00ac: stloc.s 7
+		IL_00ae: ldloc.s 7
+		IL_00b0: ldloc.2
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00b6: stloc.s 7
+		IL_00b8: ldloc.s 7
+		IL_00ba: ldstr "x"
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00c4: stloc.s 7
+		IL_00c6: ldloc.s 7
+		IL_00c8: ldloc.2
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00ce: stloc.s 7
+		IL_00d0: ldloc.s 7
+		IL_00d2: ldstr "."
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00dc: stloc.s 7
+		IL_00de: ldloc.s 7
+		IL_00e0: ldloc.2
+		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00e6: stloc.s 7
+		IL_00e8: ldloc.s 7
+		IL_00ea: ldstr "y"
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00f4: stloc.s 7
+		IL_00f6: ldloc.1
+		IL_00f7: ldstr "normalize"
+		IL_00fc: ldloc.s 7
+		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0103: stloc.s 6
+		IL_0105: ldloc.s 6
+		IL_0107: stloc.s 4
+		IL_0109: ldstr "a"
+		IL_010e: ldloc.2
+		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0114: stloc.s 7
+		IL_0116: ldloc.s 7
+		IL_0118: ldstr "c"
+		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0122: stloc.s 7
+		IL_0124: ldloc.3
+		IL_0125: ldloc.s 7
+		IL_0127: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_012c: stloc.s 8
+		IL_012e: ldloc.s 8
+		IL_0130: box [System.Runtime]System.Boolean
+		IL_0135: stloc.s 9
+		IL_0137: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_013c: ldc.i4.1
+		IL_013d: newarr [System.Runtime]System.Object
+		IL_0142: dup
+		IL_0143: ldc.i4.0
+		IL_0144: ldloc.s 9
+		IL_0146: stelem.ref
+		IL_0147: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_014c: pop
+		IL_014d: ldc.i4.3
+		IL_014e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0153: dup
+		IL_0154: ldstr "tmp"
+		IL_0159: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_015e: dup
-		IL_015f: ldc.i4.0
-		IL_0160: ldloc.s 12
-		IL_0162: stelem.ref
-		IL_0163: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0168: pop
-		IL_0169: ret
+		IL_015f: ldstr "x"
+		IL_0164: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0169: dup
+		IL_016a: ldstr "y"
+		IL_016f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0174: ldc.i4.1
+		IL_0175: newarr [System.Runtime]System.Object
+		IL_017a: dup
+		IL_017b: ldc.i4.0
+		IL_017c: ldloc.2
+		IL_017d: stelem.ref
+		IL_017e: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0183: stloc.s 10
+		IL_0185: ldloc.2
+		IL_0186: ldloc.s 10
+		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_018d: stloc.s 7
+		IL_018f: ldloc.s 4
+		IL_0191: ldloc.s 7
+		IL_0193: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0198: stloc.s 8
+		IL_019a: ldloc.s 8
+		IL_019c: box [System.Runtime]System.Boolean
+		IL_01a1: stloc.s 9
+		IL_01a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01a8: ldc.i4.1
+		IL_01a9: newarr [System.Runtime]System.Object
+		IL_01ae: dup
+		IL_01af: ldc.i4.0
+		IL_01b0: ldloc.s 9
+		IL_01b2: stelem.ref
+		IL_01b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_01b8: pop
+		IL_01b9: ldloc.1
+		IL_01ba: ldstr "sep"
+		IL_01bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_01c4: ldloc.2
+		IL_01c5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01ca: stloc.s 8
+		IL_01cc: ldloc.s 8
+		IL_01ce: box [System.Runtime]System.Boolean
+		IL_01d3: stloc.s 9
+		IL_01d5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01da: ldc.i4.1
+		IL_01db: newarr [System.Runtime]System.Object
+		IL_01e0: dup
+		IL_01e1: ldc.i4.0
+		IL_01e2: ldloc.s 9
+		IL_01e4: stelem.ref
+		IL_01e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_01ea: pop
+		IL_01eb: ret
 	} // end of method Require_Path_Normalize_And_Sep::__js_module_init__
 
 } // end of class Modules.Require_Path_Normalize_And_Sep
@@ -194,7 +243,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21cf
+		// Method begins at RVA 0x2251
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

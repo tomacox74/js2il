@@ -4,7 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-- Node/runtime: add initial global `Buffer` foundation (`Buffer.from(string|array|buffer)`, `Buffer.isBuffer`, `buffer.length`, `buffer.toString('utf8')`) and enable intrinsic discovery/compilation for `Buffer` references.
+- Node/runtime: expand global `Buffer` support with core APIs (`Buffer.alloc`, `Buffer.byteLength`, `Buffer.concat`) and string encoding support for `utf8`/`hex`/`base64` in `Buffer.from(...)` and `buffer.toString(...)`, alongside intrinsic discovery/compilation for `Buffer` references.
+- Node/events: add initial `events` module baseline with `EventEmitter` and core listener lifecycle APIs (`on`/`addListener`, `once`, `off`/`removeListener`, `emit`, `listenerCount`, `removeAllListeners`) plus execution/generator coverage.
 - Node/fs: extend `fs.readFileSync`/`fs.writeFileSync` to support Buffer binary roundtrips (default read now returns Buffer; UTF-8 text mode remains supported via encoding options).
 - Node/path compatibility: added support for `path.extname`, `path.isAbsolute`, `path.normalize`, `path.parse`, `path.format`, `path.sep`, `path.delimiter`, and `path.toNamespacedPath`, and aligned `path.relative(from, to)` same-path behavior with Node (returns empty string).
 - Node tests/docs reorganization: split monolithic Node tests into focused subfolders (`Node/FS`, `Node/Path`, `Node/Process`, `Node/Timers`) with migrated JavaScript fixtures, snapshots, and updated docs references.
