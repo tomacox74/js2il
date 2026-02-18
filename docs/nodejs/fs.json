@@ -63,7 +63,7 @@
       "name": "readFileSync(path[, options])",
       "kind": "function",
       "status": "supported",
-      "notes": "Text-only, returns UTF-8 string. Buffer is not implemented. Recognizes string encoding option 'utf8'/'utf-8'.",
+      "notes": "Returns Buffer by default. Recognizes UTF-8 text mode when options is 'utf8'/'utf-8' or { encoding: 'utf8'/'utf-8' }.",
       "docs": "https://nodejs.org/api/fs.html#fsreadfilesyncpath-options",
       "tests": [
         {
@@ -71,7 +71,15 @@
           "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
         },
         {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadWrite_Buffer",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
           "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Utf8",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Buffer",
           "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
         }
       ]
@@ -110,7 +118,7 @@
       "name": "writeFileSync(path, data[, options])",
       "kind": "function",
       "status": "supported",
-      "notes": "Text-only, accepts stringifiable data. Writes UTF-8. Recognizes string encoding option 'utf8'/'utf-8'.",
+      "notes": "Supports Buffer and byte[] binary writes. String writes default to UTF-8 and recognize string encoding option 'utf8'/'utf-8'.",
       "docs": "https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options",
       "tests": [
         {
@@ -118,7 +126,15 @@
           "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
         },
         {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadWrite_Buffer",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
           "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Utf8",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Buffer",
           "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
         }
       ]

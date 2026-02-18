@@ -9,5 +9,9 @@ namespace Js2IL.Tests.Node.FS
         [Fact]
         public Task FS_ReadWrite_Utf8() => GenerateTest(
             nameof(FS_ReadWrite_Utf8));
+
+        [Fact]
+        public Task FS_ReadWrite_Buffer() => GenerateTest(
+            nameof(FS_ReadWrite_Buffer));
     }
 }

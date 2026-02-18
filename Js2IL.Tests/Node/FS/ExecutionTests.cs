@@ -18,6 +18,17 @@ namespace Js2IL.Tests.Node.FS
                 });
 
         [Fact]
+        public Task FS_ReadWrite_Buffer()
+            => ExecutionTest(
+                nameof(FS_ReadWrite_Buffer),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
         public Task FS_ExistsSync_File_And_Directory()
             => ExecutionTest(
                 nameof(FS_ExistsSync_File_And_Directory),
