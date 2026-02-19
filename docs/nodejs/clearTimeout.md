@@ -19,5 +19,5 @@ Cancels a timer that was previously created with setTimeout. Returns undefined (
 
 ## Tests
 
-- `Js2IL.Tests.Node.Timers.ExecutionTests.ClearTimeout_ZeroDelay` (`Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Timers.ExecutionTests.ClearTimeout_MultipleZeroDelay_ClearSecondTimer` (`Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.ClearTimeout_ZeroDelay` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.ClearTimeout_MultipleZeroDelay_ClearSecondTimer` (`Js2IL.Tests/Node/ExecutionTests.cs`)

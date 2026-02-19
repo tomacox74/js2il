@@ -8,7 +8,7 @@
 
 ## Summary
 
-- **Modules:** 8
+- **Modules:** 9
 - **Globals:** 14
   - Supported: 14
   - Partial: 8
@@ -25,6 +25,7 @@
 | [path](path.md) | partial | [Node.js](https://nodejs.org/api/path.html) |
 | [perf_hooks](perf_hooks.md) | partial | [Node.js](https://nodejs.org/api/perf_hooks.html) |
 | [process](process.md) | partial | [Node.js](https://nodejs.org/api/process.html) |
+| [util](util.md) | partial | [Node.js](https://nodejs.org/api/util.html) |
 
 ## Globals
 
