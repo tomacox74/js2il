@@ -14,7 +14,7 @@
 
 ## Current Baseline (Snapshot)
 
-- Node docs track **8 modules** (all currently `partial`) and **14 globals** (**14 `supported`**, **0 `partial`**).
+- Node docs track **10 modules** (9 currently `partial`, 1 `completed`) and **14 globals** (**14 `supported`**, **0 `partial`**).
 - Major blockers currently documented:
    - `require(id)` is marked **supported** but still limited to implemented core modules + compiled local modules (no `node_modules` / `package.json` resolution)
    - no ESM `import.meta.url`
@@ -46,9 +46,12 @@
 ### P1 (High value, after P0 foundations)
 
 4. **stream core baseline**
-   - Status: 🔴 **Not started in docs/runtime inventory**
+   - Status: ✅ **Completed**
    - Why: critical for many adapters and network/file stacks.
-   - Suggested first surface: minimal `Readable`/`Writable` + pipeline primitives required by popular libs.
+   - What was delivered: minimal `Readable`/`Writable` classes with EventEmitter inheritance, supporting push/read/pipe for Readable and write/end for Writable. Both emit standard stream events ('data', 'end', 'error', 'drain', 'finish').
+   - Location: `JavaScriptRuntime/Node/Stream.cs`, `JavaScriptRuntime/Node/Readable.cs`, `JavaScriptRuntime/Node/Writable.cs`
+   - Tests: 8 tests (4 execution + 4 generator) in `Js2IL.Tests/Node/Stream/`
+   - Documentation: `docs/nodejs/stream.json`, `docs/nodejs/stream.md`
 
 5. **fs/promises breadth expansion**
    - Status: 🟡 **Partially implemented**
