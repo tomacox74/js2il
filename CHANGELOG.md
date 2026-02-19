@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Node/process: complete process module expansion with documentation for `process.cwd()` (already implemented) and expanded `process.versions` object including `v8` (12.4.254.21-node.22), `modules` (127), `js2il` (assembly version), and `dotnet` (runtime description) for Node.js 22.x compatibility checks. Added comprehensive test coverage (`Process_Versions_Expanded`, `Process_NextTick_Queue_Semantics`) verifying all version properties and confirming nextTick queue semantics match Node.js (nextTick executes before setImmediate).
 - Node/runtime: expand global `Buffer` support with core APIs (`Buffer.alloc`, `Buffer.byteLength`, `Buffer.concat`) and string encoding support for `utf8`/`hex`/`base64` in `Buffer.from(...)` and `buffer.toString(...)`, alongside intrinsic discovery/compilation for `Buffer` references.
 - Node/events: add initial `events` module baseline with `EventEmitter` and core listener lifecycle APIs (`on`/`addListener`, `once`, `off`/`removeListener`, `emit`, `listenerCount`, `removeAllListeners`) plus execution/generator coverage.
 - Node/fs: extend `fs.readFileSync`/`fs.writeFileSync` to support Buffer binary roundtrips (default read now returns Buffer; UTF-8 text mode remains supported via encoding options).
