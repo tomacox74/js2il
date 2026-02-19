@@ -1,7 +1,6 @@
 using System;
 using System.Dynamic;
 using System.IO;
-using System.Text;
 
 namespace JavaScriptRuntime.Node
 {
@@ -10,7 +9,6 @@ namespace JavaScriptRuntime.Node
     public sealed class FS
     {
         private static readonly object _constants = CreateConstants();
-        private static readonly Encoding Utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
         public object constants => _constants;
 
@@ -105,7 +103,7 @@ namespace JavaScriptRuntime.Node
             var path = file?.ToString() ?? string.Empty;
             if (string.IsNullOrEmpty(path)) throw new ArgumentException("Path must be a non-empty string", nameof(file));
 
-            if (TryGetTextEncoding(options, out var textEncoding))
+            if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
             {
                 return System.IO.File.ReadAllText(path, textEncoding!);
             }
@@ -132,61 +130,14 @@ namespace JavaScriptRuntime.Node
             }
 
             var text = content?.ToString() ?? string.Empty;
-            if (TryGetTextEncoding(options, out var textEncoding))
+            if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
             {
                 System.IO.File.WriteAllText(path, text, textEncoding!);
                 return null!; // JS: undefined
             }
 
-            System.IO.File.WriteAllText(path, text, Utf8NoBom);
+            System.IO.File.WriteAllText(path, text, FsEncodingOptions.Utf8NoBom);
             return null!; // JS: undefined
-        }
-
-        private static bool TryGetTextEncoding(object? options, out Encoding? encoding)
-        {
-            encoding = null;
-            if (options == null || options is JsNull)
-            {
-                return false;
-            }
-
-            if (options is string optionString)
-            {
-                return TryResolveTextEncoding(optionString, out encoding);
-            }
-
-            try
-            {
-                var encodingValue = JavaScriptRuntime.Object.GetProperty(options, "encoding");
-                if (encodingValue == null || encodingValue is JsNull)
-                {
-                    return false;
-                }
-
-                return TryResolveTextEncoding(encodingValue.ToString() ?? string.Empty, out encoding);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static bool TryResolveTextEncoding(string value, out Encoding? encoding)
-        {
-            encoding = null;
-            if (IsUtf8(value))
-            {
-                encoding = Utf8NoBom;
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool IsUtf8(string s)
-        {
-            return s.Equals("utf8", StringComparison.OrdinalIgnoreCase)
-                || s.Equals("utf-8", StringComparison.OrdinalIgnoreCase);
         }
 
         // --- Additions to support cleanUnusedSnapshots.js ---

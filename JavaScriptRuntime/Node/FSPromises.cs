@@ -140,5 +140,183 @@ namespace JavaScriptRuntime.Node
                 return Promise.reject(new Error(ex.Message, ex));
             }
         }
+
+        public object? readFile(object file, object? options = null)
+        {
+            var path = file?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                return Promise.reject(new Error("Path must be a non-empty string"));
+            }
+
+            try
+            {
+                if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
+                {
+                    var content = File.ReadAllText(path, textEncoding!);
+                    return Promise.resolve(content);
+                }
+
+                var buffer = Buffer.FromBytes(File.ReadAllBytes(path));
+                return Promise.resolve(buffer);
+            }
+            catch (Exception ex)
+            {
+                return Promise.reject(TranslateReadFileError(path, ex));
+            }
+        }
+
+        public object? writeFile(object file, object? content, object? options = null)
+        {
+            var path = file?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                return Promise.reject(new Error("Path must be a non-empty string"));
+            }
+
+            if (content == null || content is JsNull)
+            {
+                return Promise.reject(new TypeError("The \"data\" argument must be of type string or Buffer or TypedArray or DataView. Received null"));
+            }
+
+            try
+            {
+                if (content is Buffer buffer)
+                {
+                    File.WriteAllBytes(path, buffer.ToByteArray());
+                    return Promise.resolve(null);
+                }
+
+                if (content is byte[] bytes)
+                {
+                    File.WriteAllBytes(path, bytes);
+                    return Promise.resolve(null);
+                }
+
+                var text = content?.ToString() ?? string.Empty;
+                if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
+                {
+                    File.WriteAllText(path, text, textEncoding!);
+                    return Promise.resolve(null);
+                }
+
+                File.WriteAllText(path, text, FsEncodingOptions.Utf8NoBom);
+                return Promise.resolve(null);
+            }
+            catch (Exception ex)
+            {
+                return Promise.reject(TranslateWriteFileError(path, ex));
+            }
+        }
+
+        public object? stat(object file)
+        {
+            try
+            {
+                var path = file?.ToString() ?? string.Empty;
+                if (string.IsNullOrEmpty(path))
+                {
+                    return Promise.reject(new Error("Path must be a non-empty string"));
+                }
+
+                if (File.Exists(path))
+                {
+                    var fi = new FileInfo(path);
+                    return Promise.resolve(new FS.Stats(fi.Length));
+                }
+
+                if (Directory.Exists(path))
+                {
+                    return Promise.resolve(new FS.Stats(0));
+                }
+
+                return Promise.reject(new Error($"ENOENT: no such file or directory, stat '{path}'"));
+            }
+            catch (Exception ex)
+            {
+                return Promise.reject(new Error(ex.Message, ex));
+            }
+        }
+
+        public object? lstat(object file)
+        {
+            // In .NET, we don't have direct symlink support in the same way as Node
+            // For now, lstat behaves the same as stat
+            return stat(file);
+        }
+
+        public object? realpath(object file)
+        {
+            var path = file?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                return Promise.reject(new Error("Path must be a non-empty string"));
+            }
+
+            try
+            {
+                if (!File.Exists(path) && !Directory.Exists(path))
+                {
+                    return Promise.reject(new Error($"ENOENT: no such file or directory, realpath '{path}'"));
+                }
+
+                var fullPath = System.IO.Path.GetFullPath(path);
+                return Promise.resolve(fullPath);
+            }
+            catch (Exception ex)
+            {
+                return Promise.reject(new Error($"EIO: i/o error, realpath '{path}'", ex));
+            }
+        }
+
+        private static Error TranslateReadFileError(string path, Exception ex)
+        {
+            if (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                return new Error($"ENOENT: no such file or directory, open '{path}'", ex);
+            }
+
+            if (Directory.Exists(path))
+            {
+                return new Error($"EISDIR: illegal operation on a directory, read '{path}'", ex);
+            }
+
+            if (ex is UnauthorizedAccessException)
+            {
+                return new Error($"EACCES: permission denied, open '{path}'", ex);
+            }
+
+            if (ex is IOException)
+            {
+                return new Error($"EIO: i/o error, read '{path}'", ex);
+            }
+
+            return new Error($"EIO: i/o error, read '{path}'", ex);
+        }
+
+        private static Error TranslateWriteFileError(string path, Exception ex)
+        {
+            if (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                return new Error($"ENOENT: no such file or directory, open '{path}'", ex);
+            }
+
+            if (Directory.Exists(path))
+            {
+                return new Error($"EISDIR: illegal operation on a directory, open '{path}'", ex);
+            }
+
+            if (ex is UnauthorizedAccessException)
+            {
+                return new Error($"EACCES: permission denied, open '{path}'", ex);
+            }
+
+            if (ex is IOException)
+            {
+                return new Error($"EIO: i/o error, write '{path}'", ex);
+            }
+
+            return new Error($"EIO: i/o error, write '{path}'", ex);
+        }
     }
 }

@@ -54,10 +54,10 @@
    - Documentation: `docs/nodejs/stream.json`, `docs/nodejs/stream.md`
 
 5. **fs/promises breadth expansion**
-   - Status: 🟡 **Partially implemented**
+   - Status: ✅ **Completed** (basic watch strategy remains for future work)
    - Why: modern Node codepaths prefer async fs APIs.
-   - Current state: `access`, `readdir({ withFileTypes: true })`, `mkdir({ recursive: true })`, `copyFile` are implemented.
-   - Remaining additions: `readFile`, `writeFile`, `stat/lstat`, `realpath`, basic `watch` strategy.
+   - Current state: `access`, `readdir({ withFileTypes: true })`, `mkdir({ recursive: true })`, `copyFile`, `readFile`, `writeFile`, `stat`, `lstat`, and `realpath` are implemented.
+   - Remaining additions: basic `watch` strategy (deferred to future work).
 
 6. **process expansion**
    - Status: 🟡 **Partially implemented**
