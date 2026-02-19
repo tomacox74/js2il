@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace JavaScriptRuntime.Node
 {
     public class EventEmitter
     {
         private readonly Dictionary<string, List<object?>> _listeners = new(StringComparer.Ordinal);
+        private double _maxListeners = 10;
 
         public EventEmitter on(object? eventName, object? listener)
         {
@@ -82,8 +84,36 @@ namespace JavaScriptRuntime.Node
         private bool EmitCore(object? eventName, object?[] args)
         {
             var key = GetEventKey(eventName);
+
+            // Node-style special handling for 'error' events:
+            // - invoke errorMonitor listeners first
+            // - if no normal 'error' listeners are present, throw the error value
+            if (string.Equals(key, "error", StringComparison.Ordinal))
+            {
+                var monitorKey = GetEventKey(Events.ErrorMonitorSymbol);
+                if (_listeners.TryGetValue(monitorKey, out var monitorHandlers) && monitorHandlers.Count > 0)
+                {
+                    var monitorSnapshot = monitorHandlers.ToArray();
+                    foreach (var monitorHandler in monitorSnapshot)
+                    {
+                        _ = InvokeListener(monitorHandler, args);
+                    }
+                }
+            }
+
             if (!_listeners.TryGetValue(key, out var handlers) || handlers.Count == 0)
             {
+                if (string.Equals(key, "error", StringComparison.Ordinal))
+                {
+                    var reason = args.Length > 0 ? args[0] : new Error("Unhandled error event");
+                    if (reason is Exception ex)
+                    {
+                        throw ex;
+                    }
+
+                    throw new JsThrownValueException(reason);
+                }
+
                 return false;
             }
 
@@ -120,6 +150,87 @@ namespace JavaScriptRuntime.Node
             }
 
             return 0;
+        }
+
+        public object?[] eventNames()
+        {
+            var names = new List<object?>();
+            foreach (var key in _listeners.Keys)
+            {
+                names.Add(key);
+            }
+            return names.ToArray();
+        }
+
+        public object?[] listeners(object? eventName)
+        {
+            var key = GetEventKey(eventName);
+            if (_listeners.TryGetValue(key, out var handlers))
+            {
+                return handlers.ToArray();
+            }
+            return System.Array.Empty<object?>();
+        }
+
+        public object?[] rawListeners(object? eventName)
+        {
+            // For now, rawListeners is the same as listeners
+            // In full Node.js implementation, this would return wrapper functions for once listeners
+            return listeners(eventName);
+        }
+
+        public EventEmitter prependListener(object? eventName, object? listener)
+        {
+            if (listener is not Delegate)
+            {
+                throw new TypeError("EventEmitter listener must be a function");
+            }
+
+            var key = GetEventKey(eventName);
+            if (!_listeners.TryGetValue(key, out var handlers))
+            {
+                handlers = new List<object?>();
+                _listeners[key] = handlers;
+            }
+
+            handlers.Insert(0, listener);
+            return this;
+        }
+
+        public EventEmitter prependOnceListener(object? eventName, object? listener)
+        {
+            if (listener is not Delegate)
+            {
+                throw new TypeError("EventEmitter listener must be a function");
+            }
+
+            var emitter = this;
+            Func<object[], object?[], object?>? wrapper = null;
+            wrapper = (scopes, args) =>
+            {
+                emitter.off(eventName, wrapper);
+                return InvokeListener(listener, args);
+            };
+
+            return prependListener(eventName, wrapper);
+        }
+
+        public EventEmitter setMaxListeners(object? n)
+        {
+            var value = TypeUtilities.ToNumber(n);
+            
+            if (double.IsNaN(value) || value < 0)
+            {
+                throw new RangeError("The value of \"n\" is out of range. It must be a non-negative number.");
+            }
+            
+            _maxListeners = value;
+            return this;
+        }
+
+        public double getMaxListeners()
+        {
+            return _maxListeners;
         }
 
         private object? InvokeListener(object? listener, object?[] args)

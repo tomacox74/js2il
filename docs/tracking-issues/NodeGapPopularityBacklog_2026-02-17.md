@@ -14,9 +14,8 @@
 
 ## Current Baseline (Snapshot)
 
-- Node docs track **8 modules** (all currently `partial`) and **14 globals** (**13 `supported`**, **1 `partial`**).
+- Node docs track **10 modules** (9 currently `partial`, 1 `completed`) and **14 globals** (**14 `supported`**, **0 `partial`**).
 - Major blockers currently documented:
-   - `Buffer` is now **partial** (core foundation exists, advanced APIs still missing)
    - `require(id)` is marked **supported** but still limited to implemented core modules + compiled local modules (no `node_modules` / `package.json` resolution)
    - no ESM `import.meta.url`
 - ECMA matrix remains sparse (many sections incomplete/untracked), which increases risk for modern package behavior.
@@ -26,40 +25,46 @@
 ### P0 (Highest impact / broadest unblock)
 
 1. **Buffer + binary I/O path**
-   - Status: 🟡 **In progress**
+   - Status: ✅ **Completed**
    - Why: unlocks large portions of npm ecosystem (`fs`, crypto-like flows, parsers, protocol clients).
-   - Current state: `Buffer.from/isBuffer/alloc/byteLength/concat` and fs sync Buffer read/write are implemented.
-   - Remaining gap: broader Buffer API coverage and deeper binary interoperability across more Node surfaces.
+   - Current state: Buffer binary workflow surface is implemented (`Buffer.from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare`, `slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes`, array-like indexing, `read/writeInt8/16/32`, `read/writeUInt8/16/32`, `read/writeFloatLE/BE`, `read/writeDoubleLE/BE`) and fs sync Buffer read/write interop is in place.
+   - Remaining gap: none for this backlog item; any future long-tail Node Buffer parity work should be tracked as a separate lower-priority item.
 
 2. **events/EventEmitter core semantics**
-   - Status: 🟡 **Baseline implemented**
+   - Status: ✅ **Completed**
    - Why: central dependency pattern across Node packages and many polyfills.
-   - Current state: `on/addListener`, `once`, `off/removeListener`, `emit`, `listenerCount`, `removeAllListeners` are implemented.
-   - Remaining gap: advanced APIs (`errorMonitor`, `prepend*`, `rawListeners`, max listeners controls, async iterator helpers).
+   - Current state: `on/addListener`, `once`, `off/removeListener`, `emit`, `listenerCount`, `removeAllListeners`, `prepend*`, `rawListeners`, max listeners controls, `events.errorMonitor`, and async helper APIs (`events.on`, `events.once`) are implemented.
+   - Remaining gap: none for this backlog item; future Node parity work (for example `captureRejections` and `newListener/removeListener` event semantics) should be tracked separately.
 
 3. **util essentials**
-   - Status: 🔴 **Not started in docs/runtime inventory**
+   - Status: ✅ **Completed**
    - Why: common in transitive dependencies.
-   - Suggested first APIs: `promisify`, `inherits`, `types` subset, `inspect` minimal compatibility.
+   - Implemented APIs: `promisify`, `inherits`, `types` subset (isArray, isDate, isError, isFunction, isPromise, isRegExp, isString, isNumber, isBoolean, isUndefined, isNull, isObject, isBigInt, isSymbol, isAsyncFunction), `inspect` minimal compatibility.
+   - Documentation: `docs/nodejs/util.json` and `docs/nodejs/util.md`.
+   - Tests: Comprehensive execution and generator tests in `Js2IL.Tests/Node/Util/`.
 
 ### P1 (High value, after P0 foundations)
 
 4. **stream core baseline**
-   - Status: 🔴 **Not started in docs/runtime inventory**
+   - Status: ✅ **Completed**
    - Why: critical for many adapters and network/file stacks.
-   - Suggested first surface: minimal `Readable`/`Writable` + pipeline primitives required by popular libs.
+   - What was delivered: minimal `Readable`/`Writable` classes with EventEmitter inheritance, supporting push/read/pipe for Readable and write/end for Writable. Both emit standard stream events ('data', 'end', 'error', 'drain', 'finish').
+   - Location: `JavaScriptRuntime/Node/Stream.cs`, `JavaScriptRuntime/Node/Readable.cs`, `JavaScriptRuntime/Node/Writable.cs`
+   - Tests: 8 tests (4 execution + 4 generator) in `Js2IL.Tests/Node/Stream/`
+   - Documentation: `docs/nodejs/stream.json`, `docs/nodejs/stream.md`
 
 5. **fs/promises breadth expansion**
-   - Status: 🟡 **Partially implemented**
+   - Status: ✅ **Completed** (basic watch strategy remains for future work)
    - Why: modern Node codepaths prefer async fs APIs.
-   - Current state: `access`, `readdir({ withFileTypes: true })`, `mkdir({ recursive: true })`, `copyFile` are implemented.
-   - Remaining additions: `readFile`, `writeFile`, `stat/lstat`, `realpath`, basic `watch` strategy.
+   - Current state: `access`, `readdir({ withFileTypes: true })`, `mkdir({ recursive: true })`, `copyFile`, `readFile`, `writeFile`, `stat`, `lstat`, and `realpath` are implemented.
+   - Remaining additions: basic `watch` strategy (deferred to future work).
 
 6. **process expansion**
-   - Status: ✅ **Complete**
+   - Status: 🟡 **Partially implemented**
    - Why: common runtime feature checks and environment access.
    - Current state: `argv`, `exit`, `exitCode`, `env`, `chdir`, `cwd`, `nextTick`, `platform`, and comprehensive `versions` object (node, v8, modules, js2il, dotnet) are all implemented and documented.
-   - Completed work: Added `cwd()` documentation, expanded `process.versions` with v8/modules/js2il/dotnet properties, and verified nextTick semantics are correct.
+   - Completed work: Added `cwd()` documentation and expanded `process.versions` with v8/modules/js2il/dotnet properties.
+   - Remaining additions: tighten `nextTick` semantics to match Node ordering guarantees in cases where `setImmediate` is queued before `nextTick`.
 
 ### P2 (Important but can follow the core runtime path)
 

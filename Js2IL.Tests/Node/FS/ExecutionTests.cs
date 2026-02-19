@@ -101,5 +101,71 @@ namespace Js2IL.Tests.Node.FS
                 {
                     s.AddScrubber(sb => sb.Replace('\\', '/'));
                 });
+
+        [Fact]
+        public Task FSPromises_ReadFile_Utf8()
+            => ExecutionTest(
+                nameof(FSPromises_ReadFile_Utf8),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_WriteFile_Utf8()
+            => ExecutionTest(
+                nameof(FSPromises_WriteFile_Utf8),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_WriteFile_NullRejects()
+            => ExecutionTest(
+                nameof(FSPromises_WriteFile_NullRejects),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_Stat_FileSize()
+            => ExecutionTest(
+                nameof(FSPromises_Stat_FileSize),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_Realpath()
+            => ExecutionTest(
+                nameof(FSPromises_Realpath),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_ReadFile_Buffer()
+            => ExecutionTest(
+                nameof(FSPromises_ReadFile_Buffer),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
     }
 }

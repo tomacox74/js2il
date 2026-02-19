@@ -1,6 +1,6 @@
 "use strict";
 
-// Test that nextTick callbacks execute in order and before setImmediate
+// Verifies current queue behavior for this scheduling pattern.
 const order = [];
 
 process.nextTick(() => order.push("nextTick1"));
@@ -14,8 +14,7 @@ setImmediate(() => {
   order.push("setImmediate");
   console.log("order", order.join(","));
   
-  // Expected order: All sync code, then all nextTick callbacks in order, then setImmediate
-  // sync, nextTick1, nextTick2, nextTick3, setImmediate
+  // Expected order for this case: sync, all queued nextTick callbacks, then setImmediate.
   const expected = "sync,nextTick1,nextTick2,nextTick3,setImmediate";
   console.log("correct order", order.join(",") === expected);
 });
