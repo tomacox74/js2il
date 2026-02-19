@@ -30,24 +30,24 @@
 argv[0] normalized to current script filename; extra host args trimmed in tests.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Process.GeneratorTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/Process/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/ExecutionTests.cs#L21`)
+- `Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/GeneratorTests.cs`)
 
 ### exit()
 
 Sets the current exitCode on the host environment abstraction without terminating the test host.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Exit_Uses_Current_ExitCode` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ProcessAdditionalTests.Process_Exit_Uses_Current_ExitCode` (`Js2IL.Tests/Node/ProcessAdditionalTests.cs`)
 
 ### exit(code)
 
 Coerces the code to int, sets it on the environment abstraction, and does not terminate the test host.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Exit_Code_Sets_ExitCode` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ProcessAdditionalTests.Process_Exit_Code_Sets_ExitCode` (`Js2IL.Tests/Node/ProcessAdditionalTests.cs`)
 
 ### exitCode
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment` (`Js2IL.Tests/Node/Process/ProcessExitCodeTests.cs`)
+- `Js2IL.Tests.Node.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment` (`Js2IL.Tests/Node/ProcessExitCodeTests.cs`)
