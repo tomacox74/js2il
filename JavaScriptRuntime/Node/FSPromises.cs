@@ -1,6 +1,7 @@
 using System;
 using System.Dynamic;
 using System.IO;
+using System.Text;
 using JavaScriptRuntime;
 
 namespace JavaScriptRuntime.Node
@@ -8,6 +9,7 @@ namespace JavaScriptRuntime.Node
     [NodeModule("fs/promises")]
     public sealed class FSPromises
     {
+        private static readonly Encoding Utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         public object? access(object path, object? mode = null)
         {
             _ = mode;
@@ -139,6 +141,171 @@ namespace JavaScriptRuntime.Node
             {
                 return Promise.reject(new Error(ex.Message, ex));
             }
+        }
+
+        public object? readFile(object file, object? options = null)
+        {
+            try
+            {
+                var path = file?.ToString() ?? string.Empty;
+                if (string.IsNullOrEmpty(path))
+                {
+                    return Promise.reject(new Error("Path must be a non-empty string"));
+                }
+
+                if (TryGetTextEncoding(options, out var textEncoding))
+                {
+                    var content = File.ReadAllText(path, textEncoding!);
+                    return Promise.resolve(content);
+                }
+
+                var buffer = Buffer.FromBytes(File.ReadAllBytes(path));
+                return Promise.resolve(buffer);
+            }
+            catch (Exception ex)
+            {
+                return Promise.reject(new Error(ex.Message, ex));
+            }
+        }
+
+        public object? writeFile(object file, object? content, object? options = null)
+        {
+            try
+            {
+                var path = file?.ToString() ?? string.Empty;
+                if (string.IsNullOrEmpty(path))
+                {
+                    return Promise.reject(new Error("Path must be a non-empty string"));
+                }
+
+                if (content is Buffer buffer)
+                {
+                    File.WriteAllBytes(path, buffer.ToByteArray());
+                    return Promise.resolve(null);
+                }
+
+                if (content is byte[] bytes)
+                {
+                    File.WriteAllBytes(path, bytes);
+                    return Promise.resolve(null);
+                }
+
+                var text = content?.ToString() ?? string.Empty;
+                if (TryGetTextEncoding(options, out var textEncoding))
+                {
+                    File.WriteAllText(path, text, textEncoding!);
+                    return Promise.resolve(null);
+                }
+
+                File.WriteAllText(path, text, Utf8NoBom);
+                return Promise.resolve(null);
+            }
+            catch (Exception ex)
+            {
+                return Promise.reject(new Error(ex.Message, ex));
+            }
+        }
+
+        public object? stat(object file)
+        {
+            try
+            {
+                var path = file?.ToString() ?? string.Empty;
+                if (string.IsNullOrEmpty(path))
+                {
+                    return Promise.reject(new Error("Path must be a non-empty string"));
+                }
+
+                if (File.Exists(path))
+                {
+                    var fi = new FileInfo(path);
+                    return Promise.resolve(new FS.Stats(fi.Length));
+                }
+
+                if (Directory.Exists(path))
+                {
+                    return Promise.resolve(new FS.Stats(0));
+                }
+
+                return Promise.reject(new Error($"ENOENT: no such file or directory, stat '{path}'"));
+            }
+            catch (Exception ex)
+            {
+                return Promise.reject(new Error(ex.Message, ex));
+            }
+        }
+
+        public object? lstat(object file)
+        {
+            // In .NET, we don't have direct symlink support in the same way as Node
+            // For now, lstat behaves the same as stat
+            return stat(file);
+        }
+
+        public object? realpath(object file)
+        {
+            try
+            {
+                var path = file?.ToString() ?? string.Empty;
+                if (string.IsNullOrEmpty(path))
+                {
+                    return Promise.reject(new Error("Path must be a non-empty string"));
+                }
+
+                var fullPath = System.IO.Path.GetFullPath(path);
+                return Promise.resolve(fullPath);
+            }
+            catch (Exception ex)
+            {
+                return Promise.reject(new Error(ex.Message, ex));
+            }
+        }
+
+        private static bool TryGetTextEncoding(object? options, out Encoding? encoding)
+        {
+            encoding = null;
+            if (options == null || options is JsNull)
+            {
+                return false;
+            }
+
+            if (options is string optionString)
+            {
+                return TryResolveTextEncoding(optionString, out encoding);
+            }
+
+            try
+            {
+                var encodingValue = JavaScriptRuntime.Object.GetProperty(options, "encoding");
+                if (encodingValue == null || encodingValue is JsNull)
+                {
+                    return false;
+                }
+
+                return TryResolveTextEncoding(encodingValue.ToString() ?? string.Empty, out encoding);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryResolveTextEncoding(string value, out Encoding? encoding)
+        {
+            encoding = null;
+            if (IsUtf8(value))
+            {
+                encoding = Utf8NoBom;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsUtf8(string s)
+        {
+            return s.Equals("utf8", StringComparison.OrdinalIgnoreCase)
+                || s.Equals("utf-8", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
