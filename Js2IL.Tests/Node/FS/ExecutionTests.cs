@@ -189,5 +189,16 @@ namespace Js2IL.Tests.Node.FS
                     var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
                     s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
                 });
+
+        [Fact]
+        public Task FSPromises_CopyFile()
+            => ExecutionTest(
+                nameof(FSPromises_CopyFile),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
     }
 }

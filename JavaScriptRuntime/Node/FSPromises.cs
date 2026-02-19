@@ -132,22 +132,28 @@ namespace JavaScriptRuntime.Node
 
         public object? copyFile(object src, object dest)
         {
+            var s = src?.ToString() ?? string.Empty;
+            var d = dest?.ToString() ?? string.Empty;
+
+            if (string.IsNullOrEmpty(s) || string.IsNullOrEmpty(d))
+            {
+                return Promise.reject(new Error("src and dest must be non-empty strings"));
+            }
+
+            var promiseWithResolvers = Promise.withResolvers();
+            _ioScheduler.BeginIo();
+
             try
             {
-                var s = src?.ToString() ?? string.Empty;
-                var d = dest?.ToString() ?? string.Empty;
-
-                if (string.IsNullOrEmpty(s) || string.IsNullOrEmpty(d))
-                {
-                    return Promise.reject(new Error("src and dest must be non-empty strings"));
-                }
-
-                File.Copy(s, d, overwrite: true);
-                return Promise.resolve(null);
+                // Fire-and-forget is intentional: exceptions are handled inside
+                // CompleteCopyFileAsync and forwarded via _ioScheduler.EndIo(...).
+                _ = CompleteCopyFileAsync(s, d, promiseWithResolvers);
+                return promiseWithResolvers.promise;
             }
             catch (Exception ex)
             {
-                return Promise.reject(new Error(ex.Message, ex));
+                _ioScheduler.EndIo(promiseWithResolvers, new Error(ex.Message, ex), isError: true);
+                return promiseWithResolvers.promise;
             }
         }
 
@@ -224,33 +230,101 @@ namespace JavaScriptRuntime.Node
                 return Promise.reject(new TypeError("The \"data\" argument must be of type string or Buffer or TypedArray or DataView. Received null"));
             }
 
+            var promiseWithResolvers = Promise.withResolvers();
+            _ioScheduler.BeginIo();
+
             try
             {
                 if (content is Buffer buffer)
                 {
-                    File.WriteAllBytes(path, buffer.ToByteArray());
-                    return Promise.resolve(null);
+                    // Fire-and-forget is intentional: exceptions are handled inside
+                    // CompleteWriteFileBytesAsync and forwarded via _ioScheduler.EndIo(...).
+                    _ = CompleteWriteFileBytesAsync(path, buffer.ToByteArray(), promiseWithResolvers);
+                    return promiseWithResolvers.promise;
                 }
 
                 if (content is byte[] bytes)
                 {
-                    File.WriteAllBytes(path, bytes);
-                    return Promise.resolve(null);
+                    // Fire-and-forget is intentional: exceptions are handled inside
+                    // CompleteWriteFileBytesAsync and forwarded via _ioScheduler.EndIo(...).
+                    _ = CompleteWriteFileBytesAsync(path, bytes, promiseWithResolvers);
+                    return promiseWithResolvers.promise;
                 }
 
                 var text = content?.ToString() ?? string.Empty;
                 if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
                 {
-                    File.WriteAllText(path, text, textEncoding!);
-                    return Promise.resolve(null);
+                    // Fire-and-forget is intentional: exceptions are handled inside
+                    // CompleteWriteFileTextAsync and forwarded via _ioScheduler.EndIo(...).
+                    _ = CompleteWriteFileTextAsync(path, text, textEncoding!, promiseWithResolvers);
+                    return promiseWithResolvers.promise;
                 }
 
-                File.WriteAllText(path, text, FsEncodingOptions.Utf8NoBom);
-                return Promise.resolve(null);
+                // Fire-and-forget is intentional: exceptions are handled inside
+                // CompleteWriteFileTextAsync and forwarded via _ioScheduler.EndIo(...).
+                _ = CompleteWriteFileTextAsync(path, text, FsEncodingOptions.Utf8NoBom, promiseWithResolvers);
+                return promiseWithResolvers.promise;
             }
             catch (Exception ex)
             {
-                return Promise.reject(TranslateWriteFileError(path, ex));
+                _ioScheduler.EndIo(promiseWithResolvers, TranslateWriteFileError(path, ex), isError: true);
+                return promiseWithResolvers.promise;
+            }
+        }
+
+        private async Task CompleteCopyFileAsync(string sourcePath, string destinationPath, PromiseWithResolvers promiseWithResolvers)
+        {
+            try
+            {
+                await using var source = new FileStream(
+                    sourcePath,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read,
+                    bufferSize: 81920,
+                    options: FileOptions.Asynchronous);
+
+                await using var destination = new FileStream(
+                    destinationPath,
+                    FileMode.Create,
+                    FileAccess.Write,
+                    FileShare.None,
+                    bufferSize: 81920,
+                    options: FileOptions.Asynchronous);
+
+                await source.CopyToAsync(destination).ConfigureAwait(false);
+                await destination.FlushAsync().ConfigureAwait(false);
+                _ioScheduler.EndIo(promiseWithResolvers, null, isError: false);
+            }
+            catch (Exception ex)
+            {
+                _ioScheduler.EndIo(promiseWithResolvers, new Error(ex.Message, ex), isError: true);
+            }
+        }
+
+        private async Task CompleteWriteFileBytesAsync(string path, byte[] bytes, PromiseWithResolvers promiseWithResolvers)
+        {
+            try
+            {
+                await File.WriteAllBytesAsync(path, bytes).ConfigureAwait(false);
+                _ioScheduler.EndIo(promiseWithResolvers, null, isError: false);
+            }
+            catch (Exception ex)
+            {
+                _ioScheduler.EndIo(promiseWithResolvers, TranslateWriteFileError(path, ex), isError: true);
+            }
+        }
+
+        private async Task CompleteWriteFileTextAsync(string path, string text, System.Text.Encoding encoding, PromiseWithResolvers promiseWithResolvers)
+        {
+            try
+            {
+                await File.WriteAllTextAsync(path, text, encoding).ConfigureAwait(false);
+                _ioScheduler.EndIo(promiseWithResolvers, null, isError: false);
+            }
+            catch (Exception ex)
+            {
+                _ioScheduler.EndIo(promiseWithResolvers, TranslateWriteFileError(path, ex), isError: true);
             }
         }
 
