@@ -217,6 +217,7 @@ public class RuntimeServices
         container.Register<EngineCore.NodeEventLoopPump>();
         container.Register<EngineCore.IMicrotaskScheduler, EngineCore.NodeSchedulerState>();
         container.Register<EngineCore.IScheduler, EngineCore.NodeSchedulerState>();
+        container.Register<EngineCore.IIOScheduler, EngineCore.NodeSchedulerState>();
         container.Register<CommonJS.Require>();
         container.Register<LocalModulesAssembly>();
         container.Register<IEnvironment, DefaultEnvironment>();

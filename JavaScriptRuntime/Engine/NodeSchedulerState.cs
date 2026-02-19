@@ -42,10 +42,11 @@ internal struct ImmediateEntry : IEquatable<ImmediateEntry>
 ///
 /// The event loop/message pump is responsible for draining and executing work.
 /// </summary>
-public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler
+public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IIOScheduler
 {
     private long _nextTimerId = 0;
     private long _nextImmediateId = 0;
+    private long _pendingIoCount = 0;
 
     private readonly object _nextTickLock = new();
     private readonly Queue<Action> _nextTick = new();
@@ -85,6 +86,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler
         lock (_immediateLock)
         {
             if (_immediate.Count > 0) return true;
+        }
+
+        if (System.Threading.Interlocked.Read(ref _pendingIoCount) > 0)
+        {
+            return true;
         }
 
         lock (_timerLock)
@@ -391,5 +397,50 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler
         }
 
         _wakeup.Set();
+    }
+
+    public void BeginIo()
+    {
+        System.Threading.Interlocked.Increment(ref _pendingIoCount);
+        _wakeup.Set();
+    }
+
+    public void EndIo(global::JavaScriptRuntime.PromiseWithResolvers promiseWithResolvers, object? result, bool isError = false)
+    {
+        void CompleteNow()
+        {
+            try
+            {
+                if (isError)
+                {
+                    Closure.InvokeWithArgs(promiseWithResolvers.reject, System.Array.Empty<object>(), result);
+                }
+                else
+                {
+                    Closure.InvokeWithArgs(promiseWithResolvers.resolve, System.Array.Empty<object>(), result);
+                }
+            }
+            finally
+            {
+                var value = System.Threading.Interlocked.Decrement(ref _pendingIoCount);
+                if (value < 0)
+                {
+                    System.Threading.Interlocked.Exchange(ref _pendingIoCount, 0);
+                }
+
+                _wakeup.Set();
+            }
+        }
+
+        try
+        {
+            ((IScheduler)this).ScheduleImmediate(CompleteNow);
+        }
+        catch
+        {
+            // Fallback path: if enqueueing completion fails, complete immediately
+            // so pending I/O does not remain elevated indefinitely.
+            CompleteNow();
+        }
     }
 }

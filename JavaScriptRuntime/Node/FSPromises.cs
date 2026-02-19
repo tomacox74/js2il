@@ -1,13 +1,23 @@
 using System;
 using System.Dynamic;
 using System.IO;
+using System.Threading.Tasks;
 using JavaScriptRuntime;
+using JavaScriptRuntime.EngineCore;
 
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("fs/promises")]
     public sealed class FSPromises
     {
+        private readonly IIOScheduler _ioScheduler;
+
+        public FSPromises()
+        {
+            _ioScheduler = GlobalThis.ServiceProvider?.Resolve<IIOScheduler>()
+                ?? throw new InvalidOperationException("IIOScheduler is not available for fs/promises.");
+        }
+
         public object? access(object path, object? mode = null)
         {
             _ = mode;
@@ -149,20 +159,51 @@ namespace JavaScriptRuntime.Node
                 return Promise.reject(new Error("Path must be a non-empty string"));
             }
 
+            var promiseWithResolvers = Promise.withResolvers();
+            _ioScheduler.BeginIo();
+
             try
             {
                 if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
                 {
-                    var content = File.ReadAllText(path, textEncoding!);
-                    return Promise.resolve(content);
+                    _ = CompleteReadFileTextAsync(path, textEncoding!, promiseWithResolvers);
+                    return promiseWithResolvers.promise;
                 }
 
-                var buffer = Buffer.FromBytes(File.ReadAllBytes(path));
-                return Promise.resolve(buffer);
+                _ = CompleteReadFileBytesAsync(path, promiseWithResolvers);
+                return promiseWithResolvers.promise;
             }
             catch (Exception ex)
             {
-                return Promise.reject(TranslateReadFileError(path, ex));
+                _ioScheduler.EndIo(promiseWithResolvers, TranslateReadFileError(path, ex), isError: true);
+                return promiseWithResolvers.promise;
+            }
+        }
+
+        private async Task CompleteReadFileTextAsync(string path, System.Text.Encoding textEncoding, PromiseWithResolvers promiseWithResolvers)
+        {
+            try
+            {
+                var content = await File.ReadAllTextAsync(path, textEncoding).ConfigureAwait(false);
+                _ioScheduler.EndIo(promiseWithResolvers, content, isError: false);
+            }
+            catch (Exception ex)
+            {
+                _ioScheduler.EndIo(promiseWithResolvers, TranslateReadFileError(path, ex), isError: true);
+            }
+        }
+
+        private async Task CompleteReadFileBytesAsync(string path, PromiseWithResolvers promiseWithResolvers)
+        {
+            try
+            {
+                var bytes = await File.ReadAllBytesAsync(path).ConfigureAwait(false);
+                var buffer = Buffer.FromBytes(bytes);
+                _ioScheduler.EndIo(promiseWithResolvers, buffer, isError: false);
+            }
+            catch (Exception ex)
+            {
+                _ioScheduler.EndIo(promiseWithResolvers, TranslateReadFileError(path, ex), isError: true);
             }
         }
 

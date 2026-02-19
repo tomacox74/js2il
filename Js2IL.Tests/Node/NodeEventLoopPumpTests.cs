@@ -165,6 +165,43 @@ namespace Js2IL.Tests.Node
             Assert.Equal(0, counts[1]);
             Assert.Equal(0, counts[2]);
         }
+
+        [Fact]
+        public void EndIo_WhenSchedulingWakeupThrows_DoesNotLeavePendingIoHung()
+        {
+            var mockTickSource = new MockTickSource();
+            var setCalls = 0;
+            var mockWaitHandle = new MockWaitHandle(
+                onSet: () =>
+                {
+                    setCalls++;
+                    if (setCalls == 2)
+                    {
+                        throw new InvalidOperationException("Injected wakeup failure.");
+                    }
+                },
+                onWaitOne: _ => { });
+
+            var schedulerState = new NodeSchedulerState(mockTickSource, mockWaitHandle);
+            var eventLoop = new NodeEventLoopPump(schedulerState, mockTickSource, mockWaitHandle);
+            var ioScheduler = (IIOScheduler)schedulerState;
+
+            var promiseWithResolvers = JavaScriptRuntime.Promise.withResolvers();
+
+            ioScheduler.BeginIo();
+
+            var ex = Record.Exception(() => ioScheduler.EndIo(promiseWithResolvers, "ok", isError: false));
+            Assert.Null(ex);
+
+            var iterations = 0;
+            while (eventLoop.HasPendingWork() && iterations < 10)
+            {
+                eventLoop.RunOneIteration();
+                iterations++;
+            }
+
+            Assert.False(eventLoop.HasPendingWork());
+        }
     }
 }
 
