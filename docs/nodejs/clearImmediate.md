@@ -19,4 +19,4 @@ Cancels an immediate that was previously created with setImmediate. Returns unde
 
 ## Tests
 
-- `Js2IL.Tests.Node.Timers.ExecutionTests.ClearImmediate_CancelsCallback` (`Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.ClearImmediate_CancelsCallback` (`Js2IL.Tests/Node/ExecutionTests.cs`)

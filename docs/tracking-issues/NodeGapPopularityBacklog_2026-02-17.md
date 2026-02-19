@@ -62,8 +62,9 @@
 6. **process expansion**
    - Status: 🟡 **Partially implemented**
    - Why: common runtime feature checks and environment access.
-   - Current state: `argv`, `exit`, `exitCode`, `env`, `chdir`, `nextTick`, `platform`, and `versions.node` are implemented.
-   - Remaining additions: `cwd()`, broader `versions` surface, and tighter `nextTick` semantics parity.
+   - Current state: `argv`, `exit`, `exitCode`, `env`, `chdir`, `cwd`, `nextTick`, `platform`, and comprehensive `versions` object (node, v8, modules, js2il, dotnet) are all implemented and documented.
+   - Completed work: Added `cwd()` documentation and expanded `process.versions` with v8/modules/js2il/dotnet properties.
+   - Remaining additions: tighten `nextTick` semantics to match Node ordering guarantees in cases where `setImmediate` is queued before `nextTick`.
 
 ### P2 (Important but can follow the core runtime path)
 
