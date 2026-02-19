@@ -19,4 +19,4 @@ Cancels a repeating timer that was previously created with setInterval. Returns 
 
 ## Tests
 
-- `Js2IL.Tests.Node.ExecutionTests.SetInterval_ExecutesThreeTimes_ThenClears` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Timers.ExecutionTests.SetInterval_ExecutesThreeTimes_ThenClears` (`Js2IL.Tests/Node/Timers/ExecutionTests.cs`)

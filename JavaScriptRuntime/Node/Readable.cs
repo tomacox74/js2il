@@ -7,6 +7,7 @@ namespace JavaScriptRuntime.Node
     {
         private readonly Queue<object?> _buffer = new();
         private bool _ended = false;
+        private bool _endEmitted = false;
 
         public bool readable => !_ended;
 
@@ -24,12 +25,18 @@ namespace JavaScriptRuntime.Node
             if (chunk == null || chunk is JsNull)
             {
                 _ended = true;
-                emit("end");
+                EmitEndIfReady();
                 return false;
             }
 
-            _buffer.Enqueue(chunk);
-            emit("data", chunk);
+            if (listenerCount("data") > 0)
+            {
+                emit("data", chunk);
+            }
+            else
+            {
+                _buffer.Enqueue(chunk);
+            }
             return true;
         }
 
@@ -38,11 +45,14 @@ namespace JavaScriptRuntime.Node
         {
             if (_buffer.Count > 0)
             {
-                return _buffer.Dequeue();
+                var value = _buffer.Dequeue();
+                EmitEndIfReady();
+                return value;
             }
 
             if (_ended)
             {
+                EmitEndIfReady();
                 return null;
             }
 
@@ -78,12 +88,24 @@ namespace JavaScriptRuntime.Node
 
             onEnd = (scopes, args) =>
             {
+                if (onData != null)
+                {
+                    off("data", onData);
+                }
+                if (onError != null)
+                {
+                    off("error", onError);
+                }
                 writable.end();
                 return null;
             };
 
             onError = (scopes, args) =>
             {
+                if (onData != null)
+                {
+                    off("data", onData);
+                }
                 if (args.Length > 0)
                 {
                     writable.emit("error", args[0]);
@@ -96,6 +118,15 @@ namespace JavaScriptRuntime.Node
             once("error", onError);
 
             return writable;
+        }
+
+        private void EmitEndIfReady()
+        {
+            if (_ended && !_endEmitted && _buffer.Count == 0)
+            {
+                _endEmitted = true;
+                emit("end");
+            }
         }
 
         // Helper to simulate reading process

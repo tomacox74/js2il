@@ -5,9 +5,11 @@ namespace JavaScriptRuntime.Node
 {
     public class Writable : EventEmitter
     {
+        private const int BackpressureThreshold = 16;
         private readonly Queue<object?> _buffer = new();
         private bool _ended = false;
         private bool _writing = false;
+        private bool _needDrain = false;
 
         public bool writable => !_ended;
 
@@ -23,16 +25,36 @@ namespace JavaScriptRuntime.Node
             }
 
             _buffer.Enqueue(chunk);
-            
+
+            var canAcceptMore = _buffer.Count < BackpressureThreshold;
+            if (!canAcceptMore)
+            {
+                _needDrain = true;
+            }
+
             if (!_writing)
             {
                 _writing = true;
-                _doWrite();
-                _writing = false;
+                try
+                {
+                    while (_buffer.Count > 0)
+                    {
+                        _doWrite();
+                    }
+                }
+                finally
+                {
+                    _writing = false;
+                }
+
+                if (_needDrain && _buffer.Count == 0)
+                {
+                    _needDrain = false;
+                    emit("drain");
+                }
             }
 
-            // Return false if buffer is getting large (backpressure signal)
-            return _buffer.Count < 16;
+            return canAcceptMore;
         }
 
         public bool write(object? chunk, object? encoding)
@@ -52,15 +74,32 @@ namespace JavaScriptRuntime.Node
         {
             if (_ended)
             {
+                emit("error", new Error("write after end"));
                 return;
             }
 
             _ended = true;
-            
-            // Process remaining buffer
-            while (_buffer.Count > 0)
+
+            if (!_writing)
             {
-                _doWrite();
+                _writing = true;
+                try
+                {
+                    while (_buffer.Count > 0)
+                    {
+                        _doWrite();
+                    }
+                }
+                finally
+                {
+                    _writing = false;
+                }
+            }
+
+            if (_needDrain && _buffer.Count == 0)
+            {
+                _needDrain = false;
+                emit("drain");
             }
 
             emit("finish");
@@ -88,11 +127,6 @@ namespace JavaScriptRuntime.Node
             {
                 var chunk = _buffer.Dequeue();
                 InvokeWrite(chunk);
-                
-                if (_buffer.Count == 0)
-                {
-                    emit("drain");
-                }
             }
         }
 
