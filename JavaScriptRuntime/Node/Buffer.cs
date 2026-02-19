@@ -11,13 +11,22 @@ namespace JavaScriptRuntime.Node
     public sealed class Buffer
     {
         private readonly byte[] _bytes;
+        private readonly int _offset;
+        private readonly int _length;
 
         public Buffer(byte[] bytes)
+            : this(bytes ?? System.Array.Empty<byte>(), 0, bytes?.Length ?? 0)
         {
-            _bytes = bytes ?? System.Array.Empty<byte>();
         }
 
-        public double length => _bytes.Length;
+        private Buffer(byte[] bytes, int offset, int length)
+        {
+            _bytes = bytes ?? System.Array.Empty<byte>();
+            _offset = offset;
+            _length = length;
+        }
+
+        public double length => _length;
 
         public static Buffer from(object? value)
         {
@@ -28,7 +37,7 @@ namespace JavaScriptRuntime.Node
         {
             if (value is Buffer buffer)
             {
-                return new Buffer((byte[])buffer._bytes.Clone());
+                return new Buffer(buffer.ToByteArray());
             }
 
             if (value is byte[] bytes)
@@ -128,242 +137,335 @@ namespace JavaScriptRuntime.Node
 
         public static Buffer allocUnsafe(object? size)
         {
-            return alloc(size, null, null);
+            var length = ToLength(size);
+            return new Buffer(GC.AllocateUninitializedArray<byte>(length));
         }
 
         public double readInt8(object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            return (sbyte)_bytes[idx];
+            return (sbyte)_bytes[_offset + idx];
         }
 
         public double readUInt8(object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            return _bytes[idx];
+            return _bytes[_offset + idx];
         }
 
         public double readInt16BE(object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 1 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 1 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            return (short)((_bytes[idx] << 8) | _bytes[idx + 1]);
+            return (short)((_bytes[_offset + idx] << 8) | _bytes[_offset + idx + 1]);
         }
 
         public double readInt16LE(object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 1 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 1 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            return (short)(_bytes[idx] | (_bytes[idx + 1] << 8));
+            return (short)(_bytes[_offset + idx] | (_bytes[_offset + idx + 1] << 8));
         }
 
         public double readUInt16BE(object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 1 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 1 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            return (ushort)((_bytes[idx] << 8) | _bytes[idx + 1]);
+            return (ushort)((_bytes[_offset + idx] << 8) | _bytes[_offset + idx + 1]);
         }
 
         public double readUInt16LE(object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 1 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 1 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            return (ushort)(_bytes[idx] | (_bytes[idx + 1] << 8));
+            return (ushort)(_bytes[_offset + idx] | (_bytes[_offset + idx + 1] << 8));
         }
 
         public double readInt32BE(object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 3 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            return (_bytes[idx] << 24) | (_bytes[idx + 1] << 16) | (_bytes[idx + 2] << 8) | _bytes[idx + 3];
+            return (_bytes[_offset + idx] << 24) | (_bytes[_offset + idx + 1] << 16) | (_bytes[_offset + idx + 2] << 8) | _bytes[_offset + idx + 3];
         }
 
         public double readInt32LE(object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 3 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            return _bytes[idx] | (_bytes[idx + 1] << 8) | (_bytes[idx + 2] << 16) | (_bytes[idx + 3] << 24);
+            return _bytes[_offset + idx] | (_bytes[_offset + idx + 1] << 8) | (_bytes[_offset + idx + 2] << 16) | (_bytes[_offset + idx + 3] << 24);
         }
 
         public double readUInt32BE(object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 3 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            return (uint)((_bytes[idx] << 24) | (_bytes[idx + 1] << 16) | (_bytes[idx + 2] << 8) | _bytes[idx + 3]);
+            return (uint)((_bytes[_offset + idx] << 24) | (_bytes[_offset + idx + 1] << 16) | (_bytes[_offset + idx + 2] << 8) | _bytes[_offset + idx + 3]);
         }
 
         public double readUInt32LE(object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 3 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            return (uint)(_bytes[idx] | (_bytes[idx + 1] << 8) | (_bytes[idx + 2] << 16) | (_bytes[idx + 3] << 24));
+            return (uint)(_bytes[_offset + idx] | (_bytes[_offset + idx + 1] << 8) | (_bytes[_offset + idx + 2] << 16) | (_bytes[_offset + idx + 3] << 24));
         }
 
         public double writeInt8(object? value, object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
             var intValue = (int)TypeUtilities.ToNumber(value);
-            _bytes[idx] = (byte)(sbyte)intValue;
+            _bytes[_offset + idx] = (byte)(sbyte)intValue;
             return idx + 1;
         }
 
         public double writeUInt8(object? value, object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
-            _bytes[idx] = ToUint8(value);
+            _bytes[_offset + idx] = ToUint8(value);
             return idx + 1;
         }
 
         public double writeInt16BE(object? value, object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 1 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 1 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
             var intValue = (short)TypeUtilities.ToNumber(value);
-            _bytes[idx] = (byte)(intValue >> 8);
-            _bytes[idx + 1] = (byte)intValue;
+            _bytes[_offset + idx] = (byte)(intValue >> 8);
+            _bytes[_offset + idx + 1] = (byte)intValue;
             return idx + 2;
         }
 
         public double writeInt16LE(object? value, object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 1 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 1 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
             var intValue = (short)TypeUtilities.ToNumber(value);
-            _bytes[idx] = (byte)intValue;
-            _bytes[idx + 1] = (byte)(intValue >> 8);
+            _bytes[_offset + idx] = (byte)intValue;
+            _bytes[_offset + idx + 1] = (byte)(intValue >> 8);
             return idx + 2;
         }
 
         public double writeUInt16BE(object? value, object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 1 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 1 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
             var intValue = (ushort)TypeUtilities.ToNumber(value);
-            _bytes[idx] = (byte)(intValue >> 8);
-            _bytes[idx + 1] = (byte)intValue;
+            _bytes[_offset + idx] = (byte)(intValue >> 8);
+            _bytes[_offset + idx + 1] = (byte)intValue;
             return idx + 2;
         }
 
         public double writeUInt16LE(object? value, object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 1 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 1 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
             var intValue = (ushort)TypeUtilities.ToNumber(value);
-            _bytes[idx] = (byte)intValue;
-            _bytes[idx + 1] = (byte)(intValue >> 8);
+            _bytes[_offset + idx] = (byte)intValue;
+            _bytes[_offset + idx + 1] = (byte)(intValue >> 8);
             return idx + 2;
         }
 
         public double writeInt32BE(object? value, object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 3 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
             var intValue = (int)TypeUtilities.ToNumber(value);
-            _bytes[idx] = (byte)(intValue >> 24);
-            _bytes[idx + 1] = (byte)(intValue >> 16);
-            _bytes[idx + 2] = (byte)(intValue >> 8);
-            _bytes[idx + 3] = (byte)intValue;
+            _bytes[_offset + idx] = (byte)(intValue >> 24);
+            _bytes[_offset + idx + 1] = (byte)(intValue >> 16);
+            _bytes[_offset + idx + 2] = (byte)(intValue >> 8);
+            _bytes[_offset + idx + 3] = (byte)intValue;
             return idx + 4;
         }
 
         public double writeInt32LE(object? value, object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 3 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
             var intValue = (int)TypeUtilities.ToNumber(value);
-            _bytes[idx] = (byte)intValue;
-            _bytes[idx + 1] = (byte)(intValue >> 8);
-            _bytes[idx + 2] = (byte)(intValue >> 16);
-            _bytes[idx + 3] = (byte)(intValue >> 24);
+            _bytes[_offset + idx] = (byte)intValue;
+            _bytes[_offset + idx + 1] = (byte)(intValue >> 8);
+            _bytes[_offset + idx + 2] = (byte)(intValue >> 16);
+            _bytes[_offset + idx + 3] = (byte)(intValue >> 24);
             return idx + 4;
         }
 
         public double writeUInt32BE(object? value, object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 3 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
             var intValue = (uint)TypeUtilities.ToNumber(value);
-            _bytes[idx] = (byte)(intValue >> 24);
-            _bytes[idx + 1] = (byte)(intValue >> 16);
-            _bytes[idx + 2] = (byte)(intValue >> 8);
-            _bytes[idx + 3] = (byte)intValue;
+            _bytes[_offset + idx] = (byte)(intValue >> 24);
+            _bytes[_offset + idx + 1] = (byte)(intValue >> 16);
+            _bytes[_offset + idx + 2] = (byte)(intValue >> 8);
+            _bytes[_offset + idx + 3] = (byte)intValue;
             return idx + 4;
         }
 
         public double writeUInt32LE(object? value, object? offset)
         {
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            if (idx < 0 || idx + 3 >= _bytes.Length)
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
             {
                 throw CreateOffsetOutOfRangeError();
             }
             var intValue = (uint)TypeUtilities.ToNumber(value);
-            _bytes[idx] = (byte)intValue;
-            _bytes[idx + 1] = (byte)(intValue >> 8);
-            _bytes[idx + 2] = (byte)(intValue >> 16);
-            _bytes[idx + 3] = (byte)(intValue >> 24);
+            _bytes[_offset + idx] = (byte)intValue;
+            _bytes[_offset + idx + 1] = (byte)(intValue >> 8);
+            _bytes[_offset + idx + 2] = (byte)(intValue >> 16);
+            _bytes[_offset + idx + 3] = (byte)(intValue >> 24);
             return idx + 4;
+        }
+
+        public double readFloatLE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
+            {
+                throw CreateOffsetOutOfRangeError();
+            }
+
+            return ReadSingleAt(idx, littleEndian: true);
+        }
+
+        public double readFloatBE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
+            {
+                throw CreateOffsetOutOfRangeError();
+            }
+
+            return ReadSingleAt(idx, littleEndian: false);
+        }
+
+        public double readDoubleLE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 7 >= _length)
+            {
+                throw CreateOffsetOutOfRangeError();
+            }
+
+            return ReadDoubleAt(idx, littleEndian: true);
+        }
+
+        public double readDoubleBE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 7 >= _length)
+            {
+                throw CreateOffsetOutOfRangeError();
+            }
+
+            return ReadDoubleAt(idx, littleEndian: false);
+        }
+
+        public double writeFloatLE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
+            {
+                throw CreateOffsetOutOfRangeError();
+            }
+
+            WriteSingleAt((float)TypeUtilities.ToNumber(value), idx, littleEndian: true);
+            return idx + 4;
+        }
+
+        public double writeFloatBE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 3 >= _length)
+            {
+                throw CreateOffsetOutOfRangeError();
+            }
+
+            WriteSingleAt((float)TypeUtilities.ToNumber(value), idx, littleEndian: false);
+            return idx + 4;
+        }
+
+        public double writeDoubleLE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 7 >= _length)
+            {
+                throw CreateOffsetOutOfRangeError();
+            }
+
+            WriteDoubleAt(TypeUtilities.ToNumber(value), idx, littleEndian: true);
+            return idx + 8;
+        }
+
+        public double writeDoubleBE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _length);
+            if (idx < 0 || idx + 7 >= _length)
+            {
+                throw CreateOffsetOutOfRangeError();
+            }
+
+            WriteDoubleAt(TypeUtilities.ToNumber(value), idx, littleEndian: false);
+            return idx + 8;
         }
 
         public double write(object? text)
@@ -405,8 +507,8 @@ namespace JavaScriptRuntime.Node
             var enc = ResolveEncoding(effectiveEncodingArg);
             var bytes = enc.GetBytes(str);
 
-            var idx = CoerceToIndex(offset, 0, _bytes.Length);
-            var maxLen = _bytes.Length - idx;
+            var idx = CoerceToIndex(offset, 0, _length);
+            var maxLen = _length - idx;
 
             int len;
             if (effectiveLengthArg == null || effectiveLengthArg is JsNull)
@@ -421,7 +523,7 @@ namespace JavaScriptRuntime.Node
             var bytesToWrite = System.Math.Min(bytes.Length, len);
             if (bytesToWrite > 0)
             {
-                System.Buffer.BlockCopy(bytes, 0, _bytes, idx, bytesToWrite);
+                System.Buffer.BlockCopy(bytes, 0, _bytes, _offset + idx, bytesToWrite);
             }
 
             return bytesToWrite;
@@ -523,17 +625,19 @@ namespace JavaScriptRuntime.Node
                 throw new global::JavaScriptRuntime.TypeError("The \"buf2\" argument must be an instance of Buffer or Uint8Array.");
             }
 
-            var len = System.Math.Min(buffer1._bytes.Length, buffer2._bytes.Length);
+            var len = System.Math.Min(buffer1._length, buffer2._length);
             for (int i = 0; i < len; i++)
             {
-                if (buffer1._bytes[i] != buffer2._bytes[i])
+                var b1 = buffer1._bytes[buffer1._offset + i];
+                var b2 = buffer2._bytes[buffer2._offset + i];
+                if (b1 != b2)
                 {
-                    return buffer1._bytes[i] < buffer2._bytes[i] ? -1 : 1;
+                    return b1 < b2 ? -1 : 1;
                 }
             }
 
-            if (buffer1._bytes.Length < buffer2._bytes.Length) return -1;
-            if (buffer1._bytes.Length > buffer2._bytes.Length) return 1;
+            if (buffer1._length < buffer2._length) return -1;
+            if (buffer1._length > buffer2._length) return 1;
             return 0;
         }
 
@@ -555,7 +659,7 @@ namespace JavaScriptRuntime.Node
         public string toString(object? encoding, object? start, object? end)
         {
             var enc = ResolveEncoding(encoding);
-            var len = _bytes.Length;
+            var len = _length;
 
             var startIdx = CoerceToIndex(start, 0, len);
             var endIdx = CoerceToIndex(end, len, len);
@@ -565,7 +669,7 @@ namespace JavaScriptRuntime.Node
                 return string.Empty;
             }
 
-            return enc.GetString(_bytes, startIdx, endIdx - startIdx);
+            return enc.GetString(_bytes, _offset + startIdx, endIdx - startIdx);
         }
 
         public Buffer slice()
@@ -580,7 +684,7 @@ namespace JavaScriptRuntime.Node
 
         public Buffer slice(object? start, object? end)
         {
-            var len = _bytes.Length;
+            var len = _length;
             var startIdx = CoerceToIndex(start, 0, len);
             var endIdx = CoerceToIndex(end, len, len);
 
@@ -590,9 +694,22 @@ namespace JavaScriptRuntime.Node
             }
 
             var sliceLength = endIdx - startIdx;
-            var sliced = new byte[sliceLength];
-            System.Buffer.BlockCopy(_bytes, startIdx, sliced, 0, sliceLength);
-            return new Buffer(sliced);
+            return new Buffer(_bytes, _offset + startIdx, sliceLength);
+        }
+
+        public Buffer subarray()
+        {
+            return subarray(null, null);
+        }
+
+        public Buffer subarray(object? start)
+        {
+            return subarray(start, null);
+        }
+
+        public Buffer subarray(object? start, object? end)
+        {
+            return slice(start, end);
         }
 
         public double copy(object? target)
@@ -617,8 +734,8 @@ namespace JavaScriptRuntime.Node
                 throw new ArgumentException("Target must be a Buffer");
             }
 
-            var targetLength = targetBuffer._bytes.Length;
-            var sourceLength = _bytes.Length;
+            var targetLength = targetBuffer._length;
+            var sourceLength = _length;
 
             var targetIdx = CoerceToIndex(targetStart, 0, targetLength);
             var sourceStartIdx = CoerceToIndex(sourceStart, 0, sourceLength);
@@ -635,8 +752,137 @@ namespace JavaScriptRuntime.Node
                 return 0;
             }
 
-            System.Buffer.BlockCopy(_bytes, sourceStartIdx, targetBuffer._bytes, targetIdx, bytesToCopy);
+            System.Buffer.BlockCopy(_bytes, _offset + sourceStartIdx, targetBuffer._bytes, targetBuffer._offset + targetIdx, bytesToCopy);
             return bytesToCopy;
+        }
+
+        public bool equals(object? other)
+        {
+            if (other is not Buffer otherBuffer)
+            {
+                throw new global::JavaScriptRuntime.TypeError("The \"otherBuffer\" argument must be an instance of Buffer or Uint8Array.");
+            }
+
+            if (_length != otherBuffer._length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < _length; i++)
+            {
+                if (_bytes[_offset + i] != otherBuffer._bytes[otherBuffer._offset + i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public double indexOf(object? value)
+        {
+            return indexOf(value, null, null);
+        }
+
+        public double indexOf(object? value, object? byteOffset)
+        {
+            return indexOf(value, byteOffset, null);
+        }
+
+        public double indexOf(object? value, object? byteOffset, object? encoding)
+        {
+            var needle = CoerceSearchBytes(value, encoding);
+            var startIndex = CoerceToIndex(byteOffset, 0, _length);
+            return FindForward(needle, startIndex);
+        }
+
+        public double lastIndexOf(object? value)
+        {
+            return lastIndexOf(value, null, null);
+        }
+
+        public double lastIndexOf(object? value, object? byteOffset)
+        {
+            return lastIndexOf(value, byteOffset, null);
+        }
+
+        public double lastIndexOf(object? value, object? byteOffset, object? encoding)
+        {
+            var needle = CoerceSearchBytes(value, encoding);
+            var startIndex = byteOffset == null || byteOffset is JsNull
+                ? _length - 1
+                : CoerceToIndex(byteOffset, 0, _length);
+            return FindBackward(needle, startIndex);
+        }
+
+        public bool includes(object? value)
+        {
+            return includes(value, null, null);
+        }
+
+        public bool includes(object? value, object? byteOffset)
+        {
+            return includes(value, byteOffset, null);
+        }
+
+        public bool includes(object? value, object? byteOffset, object? encoding)
+        {
+            return indexOf(value, byteOffset, encoding) >= 0;
+        }
+
+        public Buffer fill(object? value)
+        {
+            return fill(value, null, null, null);
+        }
+
+        public Buffer fill(object? value, object? offset)
+        {
+            return fill(value, offset, null, null);
+        }
+
+        public Buffer fill(object? value, object? offset, object? end)
+        {
+            return fill(value, offset, end, null);
+        }
+
+        public Buffer fill(object? value, object? offset, object? end, object? encoding)
+        {
+            var startIdx = CoerceToIndex(offset, 0, _length);
+            var endIdx = CoerceToIndex(end, _length, _length);
+            if (startIdx >= endIdx)
+            {
+                return this;
+            }
+
+            byte[] fillBytes;
+            if (value is Buffer buffer)
+            {
+                fillBytes = buffer.ToByteArray();
+            }
+            else if (value is byte[] byteFill)
+            {
+                fillBytes = byteFill;
+            }
+            else if (value is string fillText)
+            {
+                fillBytes = ResolveEncoding(encoding).GetBytes(fillText);
+            }
+            else
+            {
+                fillBytes = new[] { ToUint8(value) };
+            }
+
+            if (fillBytes.Length == 0)
+            {
+                return this;
+            }
+
+            for (int i = startIdx; i < endIdx; i++)
+            {
+                _bytes[_offset + i] = fillBytes[(i - startIdx) % fillBytes.Length];
+            }
+
+            return this;
         }
 
         public object? this[double index]
@@ -647,13 +893,13 @@ namespace JavaScriptRuntime.Node
                 {
                     return null; // undefined
                 }
-                return (double)_bytes[idx];
+                return (double)_bytes[_offset + idx];
             }
             set
             {
                 if (TryGetValidElementIndex(index, out var idx))
                 {
-                    _bytes[idx] = ToUint8(value);
+                    _bytes[_offset + idx] = ToUint8(value);
                 }
             }
         }
@@ -665,7 +911,14 @@ namespace JavaScriptRuntime.Node
 
         internal byte[] ToByteArray()
         {
-            return (byte[])_bytes.Clone();
+            if (_length == 0)
+            {
+                return System.Array.Empty<byte>();
+            }
+
+            var result = new byte[_length];
+            System.Buffer.BlockCopy(_bytes, _offset, result, 0, _length);
+            return result;
         }
 
         private static byte ToUint8(object? value)
@@ -793,7 +1046,132 @@ namespace JavaScriptRuntime.Node
             }
 
             normalizedIndex = (int)index;
-            return normalizedIndex < _bytes.Length;
+            return normalizedIndex < _length;
+        }
+
+        private double ReadSingleAt(int idx, bool littleEndian)
+        {
+            if (BitConverter.IsLittleEndian == littleEndian)
+            {
+                return BitConverter.ToSingle(_bytes, _offset + idx);
+            }
+
+            var tmp = new byte[4];
+            System.Buffer.BlockCopy(_bytes, _offset + idx, tmp, 0, 4);
+            System.Array.Reverse(tmp);
+            return BitConverter.ToSingle(tmp, 0);
+        }
+
+        private double ReadDoubleAt(int idx, bool littleEndian)
+        {
+            if (BitConverter.IsLittleEndian == littleEndian)
+            {
+                return BitConverter.ToDouble(_bytes, _offset + idx);
+            }
+
+            var tmp = new byte[8];
+            System.Buffer.BlockCopy(_bytes, _offset + idx, tmp, 0, 8);
+            System.Array.Reverse(tmp);
+            return BitConverter.ToDouble(tmp, 0);
+        }
+
+        private void WriteSingleAt(float value, int idx, bool littleEndian)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            if (BitConverter.IsLittleEndian != littleEndian)
+            {
+                System.Array.Reverse(bytes);
+            }
+
+            System.Buffer.BlockCopy(bytes, 0, _bytes, _offset + idx, 4);
+        }
+
+        private void WriteDoubleAt(double value, int idx, bool littleEndian)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            if (BitConverter.IsLittleEndian != littleEndian)
+            {
+                System.Array.Reverse(bytes);
+            }
+
+            System.Buffer.BlockCopy(bytes, 0, _bytes, _offset + idx, 8);
+        }
+
+        private byte[] CoerceSearchBytes(object? value, object? encoding)
+        {
+            if (value is Buffer buffer)
+            {
+                return buffer.ToByteArray();
+            }
+
+            if (value is byte[] bytes)
+            {
+                return bytes;
+            }
+
+            if (value is string text)
+            {
+                return ResolveEncoding(encoding).GetBytes(text);
+            }
+
+            return new[] { ToUint8(value) };
+        }
+
+        private double FindForward(byte[] needle, int startIndex)
+        {
+            if (needle.Length == 0)
+            {
+                return startIndex;
+            }
+
+            for (int i = startIndex; i <= _length - needle.Length; i++)
+            {
+                bool match = true;
+                for (int j = 0; j < needle.Length; j++)
+                {
+                    if (_bytes[_offset + i + j] != needle[j])
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+
+                if (match)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private double FindBackward(byte[] needle, int startIndex)
+        {
+            if (needle.Length == 0)
+            {
+                return System.Math.Min(startIndex, _length);
+            }
+
+            int start = System.Math.Min(startIndex, _length - needle.Length);
+            for (int i = start; i >= 0; i--)
+            {
+                bool match = true;
+                for (int j = 0; j < needle.Length; j++)
+                {
+                    if (_bytes[_offset + i + j] != needle[j])
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+
+                if (match)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         private static byte[] CoerceToBytes(object? value)

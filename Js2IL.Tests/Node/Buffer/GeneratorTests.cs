@@ -25,5 +25,9 @@ namespace Js2IL.Tests.Node.Buffer
         [Fact]
         public Task Buffer_ReadWrite_Methods() => GenerateTest(
             nameof(Buffer_ReadWrite_Methods));
+
+        [Fact]
+        public Task Buffer_Advanced_CoreApis() => GenerateTest(
+            nameof(Buffer_Advanced_CoreApis));
     }
 }
