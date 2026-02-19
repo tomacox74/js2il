@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Node/events: complete EventEmitter implementation with all core instance methods (`eventNames`, `listeners`, `rawListeners`, `prependListener`, `prependOnceListener`, `setMaxListeners`, `getMaxListeners`) to support full event-driven programming patterns; status changed from "partial" to "completed".
 - Node/runtime: expand global `Buffer` support with core APIs (`Buffer.alloc`, `Buffer.byteLength`, `Buffer.concat`) and string encoding support for `utf8`/`hex`/`base64` in `Buffer.from(...)` and `buffer.toString(...)`, alongside intrinsic discovery/compilation for `Buffer` references.
 - Node/events: add initial `events` module baseline with `EventEmitter` and core listener lifecycle APIs (`on`/`addListener`, `once`, `off`/`removeListener`, `emit`, `listenerCount`, `removeAllListeners`) plus execution/generator coverage.
 - Node/fs: extend `fs.readFileSync`/`fs.writeFileSync` to support Buffer binary roundtrips (default read now returns Buffer; UTF-8 text mode remains supported via encoding options).

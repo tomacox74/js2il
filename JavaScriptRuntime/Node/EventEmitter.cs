@@ -129,14 +129,7 @@ namespace JavaScriptRuntime.Node
             var names = new List<object?>();
             foreach (var key in _listeners.Keys)
             {
-                if (string.IsNullOrEmpty(key))
-                {
-                    names.Add(null);
-                }
-                else
-                {
-                    names.Add(key);
-                }
+                names.Add(key);
             }
             return names.ToArray();
         }
@@ -196,10 +189,14 @@ namespace JavaScriptRuntime.Node
 
         public EventEmitter setMaxListeners(object? n)
         {
-            if (n is double d)
+            var value = TypeUtilities.ToNumber(n);
+            
+            if (double.IsNaN(value) || value < 0)
             {
-                _maxListeners = d;
+                throw new RangeError("The value of \"n\" is out of range. It must be a non-negative number.");
             }
+            
+            _maxListeners = value;
             return this;
         }
 

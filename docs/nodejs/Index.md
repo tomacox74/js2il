@@ -48,6 +48,6 @@
 ## Limitations
 
 - Buffer support is partial (core APIs like from/isBuffer/alloc/byteLength/concat and utf8/hex/base64 string conversions are implemented; many advanced APIs remain unimplemented).
-- events module support is partial with baseline EventEmitter listener lifecycle APIs; advanced emitter APIs are not implemented yet.
+- events module implements the standard EventEmitter listener lifecycle APIs; advanced features such as errorMonitor, captureRejections, and some Node-specific helpers are not yet implemented.
 - CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; ESM import.meta.url is not.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.

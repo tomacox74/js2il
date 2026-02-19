@@ -17,5 +17,9 @@ namespace Js2IL.Tests.Node.Events
         [Fact]
         public Task Events_EventEmitter_Complete()
             => GenerateTest(nameof(Events_EventEmitter_Complete));
+
+        [Fact]
+        public Task Events_EventEmitter_SetMaxListeners_Validation()
+            => GenerateTest(nameof(Events_EventEmitter_SetMaxListeners_Validation));
     }
 }
