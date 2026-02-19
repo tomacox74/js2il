@@ -4,7 +4,7 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-02-18T05:38:07Z`
+**Generated:** `2026-02-19T01:37:48Z`
 
 ## Summary
 
@@ -18,7 +18,7 @@
 | Module | Status | Documentation |
 | --- | --- | --- |
 | [child_process](child_process.md) | partial | [Node.js](https://nodejs.org/api/child_process.html) |
-| [events](events.md) | partial | [Node.js](https://nodejs.org/api/events.html) |
+| [events](events.md) | completed | [Node.js](https://nodejs.org/api/events.html) |
 | [fs](fs.md) | partial | [Node.js](https://nodejs.org/api/fs.html) |
 | [fs/promises](fs_promises.md) | partial | [Node.js](https://nodejs.org/api/fs.html#fspromisesapi) |
 | [os](os.md) | partial | [Node.js](https://nodejs.org/api/os.html) |
@@ -47,6 +47,7 @@
 
 ## Limitations
 
-- Buffer support is partial (Buffer.from/isBuffer/length/toString utf8 only).
+- Buffer support is partial (core APIs like from/isBuffer/alloc/byteLength/concat and utf8/hex/base64 string conversions are implemented; many advanced APIs remain unimplemented).
+- events module support is partial with baseline EventEmitter listener lifecycle APIs; advanced emitter APIs are not implemented yet.
 - CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; ESM import.meta.url is not.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.

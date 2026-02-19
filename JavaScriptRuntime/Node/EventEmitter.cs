@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace JavaScriptRuntime.Node
 {
     public class EventEmitter
     {
         private readonly Dictionary<string, List<object?>> _listeners = new(StringComparer.Ordinal);
+        private double _maxListeners = 10;
 
         public EventEmitter on(object? eventName, object? listener)
         {
@@ -120,6 +122,90 @@ namespace JavaScriptRuntime.Node
             }
 
             return 0;
+        }
+
+        public object?[] eventNames()
+        {
+            var names = new List<object?>();
+            foreach (var key in _listeners.Keys)
+            {
+                if (string.IsNullOrEmpty(key))
+                {
+                    names.Add(null);
+                }
+                else
+                {
+                    names.Add(key);
+                }
+            }
+            return names.ToArray();
+        }
+
+        public object?[] listeners(object? eventName)
+        {
+            var key = GetEventKey(eventName);
+            if (_listeners.TryGetValue(key, out var handlers))
+            {
+                return handlers.ToArray();
+            }
+            return System.Array.Empty<object?>();
+        }
+
+        public object?[] rawListeners(object? eventName)
+        {
+            // For now, rawListeners is the same as listeners
+            // In full Node.js implementation, this would return wrapper functions for once listeners
+            return listeners(eventName);
+        }
+
+        public EventEmitter prependListener(object? eventName, object? listener)
+        {
+            if (listener is not Delegate)
+            {
+                throw new TypeError("EventEmitter listener must be a function");
+            }
+
+            var key = GetEventKey(eventName);
+            if (!_listeners.TryGetValue(key, out var handlers))
+            {
+                handlers = new List<object?>();
+                _listeners[key] = handlers;
+            }
+
+            handlers.Insert(0, listener);
+            return this;
+        }
+
+        public EventEmitter prependOnceListener(object? eventName, object? listener)
+        {
+            if (listener is not Delegate)
+            {
+                throw new TypeError("EventEmitter listener must be a function");
+            }
+
+            var emitter = this;
+            Func<object[], object?[], object?>? wrapper = null;
+            wrapper = (scopes, args) =>
+            {
+                emitter.off(eventName, wrapper);
+                return InvokeListener(listener, args);
+            };
+
+            return prependListener(eventName, wrapper);
+        }
+
+        public EventEmitter setMaxListeners(object? n)
+        {
+            if (n is double d)
+            {
+                _maxListeners = d;
+            }
+            return this;
+        }
+
+        public double getMaxListeners()
+        {
+            return _maxListeners;
         }
 
         private object? InvokeListener(object? listener, object?[] args)
