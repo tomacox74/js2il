@@ -167,5 +167,27 @@ namespace Js2IL.Tests.Node.FS
                     var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
                     s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
                 });
+
+        [Fact]
+        public Task FSPromises_ReadFile_MissingFile_Rejects()
+            => ExecutionTest(
+                nameof(FSPromises_ReadFile_MissingFile_Rejects),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_ReadFile_Directory_RejectsEISDIR()
+            => ExecutionTest(
+                nameof(FSPromises_ReadFile_Directory_RejectsEISDIR),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
     }
 }
