@@ -4,14 +4,14 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-02-18T05:38:07Z`
+**Generated:** `2026-02-19T01:50:17Z`
 
 ## Summary
 
 - **Modules:** 8
 - **Globals:** 14
   - Supported: 13
-  - Partial: 8
+  - Partial: 9
 
 ## Modules
 
@@ -47,6 +47,6 @@
 
 ## Limitations
 
-- Buffer support is partial (Buffer.from/isBuffer/length/toString utf8 only).
+- No Buffer support yet; fs APIs operate on UTF-8 text only.
 - CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; ESM import.meta.url is not.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.

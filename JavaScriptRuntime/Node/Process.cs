@@ -170,6 +170,17 @@ namespace JavaScriptRuntime.Node
             var result = new ExpandoObject();
             var dict = (IDictionary<string, object?>)result;
             dict["node"] = TargetNodeVersion;
+            
+            // Add .NET runtime version info
+            var frameworkDescription = RuntimeInformation.FrameworkDescription;
+            dict["v8"] = "12.4.254.21-node.22"; // V8 version from Node 22.x
+            dict["modules"] = "127"; // Node modules ABI version for Node 22.x
+            
+            // Add js2il-specific version info
+            var js2ilVersion = typeof(Process).Assembly.GetName().Version?.ToString() ?? "0.0.0";
+            dict["js2il"] = js2ilVersion;
+            dict["dotnet"] = frameworkDescription;
+            
             return result;
         }
 

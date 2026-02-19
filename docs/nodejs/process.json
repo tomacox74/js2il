@@ -19,12 +19,12 @@
       "docs": "https://nodejs.org/api/process.html#processargv",
       "tests": [
         {
-          "name": "Js2IL.Tests.Node.Process.ExecutionTests.Environment_EnumerateProcessArgV",
-          "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+          "name": "Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs#L21"
         },
         {
-          "name": "Js2IL.Tests.Node.Process.GeneratorTests.Environment_EnumerateProcessArgV",
-          "file": "Js2IL.Tests/Node/Process/GeneratorTests.cs"
+          "name": "Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV",
+          "file": "Js2IL.Tests/Node/GeneratorTests.cs"
         }
       ]
     },
@@ -36,8 +36,8 @@
       "docs": "https://nodejs.org/api/process.html#processexitcode",
       "tests": [
         {
-          "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Exit_Uses_Current_ExitCode",
-          "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+          "name": "Js2IL.Tests.Node.ProcessAdditionalTests.Process_Exit_Uses_Current_ExitCode",
+          "file": "Js2IL.Tests/Node/ProcessAdditionalTests.cs"
         }
       ]
     },
@@ -49,8 +49,8 @@
       "docs": "https://nodejs.org/api/process.html#process_exit_code",
       "tests": [
         {
-          "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Exit_Code_Sets_ExitCode",
-          "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+          "name": "Js2IL.Tests.Node.ProcessAdditionalTests.Process_Exit_Code_Sets_ExitCode",
+          "file": "Js2IL.Tests/Node/ProcessAdditionalTests.cs"
         }
       ]
     },
@@ -61,8 +61,8 @@
       "docs": "https://nodejs.org/api/process.html#processexitcode",
       "tests": [
         {
-          "name": "Js2IL.Tests.Node.Process.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment",
-          "file": "Js2IL.Tests/Node/Process/ProcessExitCodeTests.cs"
+          "name": "Js2IL.Tests.Node.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment",
+          "file": "Js2IL.Tests/Node/ProcessExitCodeTests.cs"
         }
       ]
     },
@@ -93,6 +93,58 @@
       ]
     },
     {
+      "name": "versions.v8",
+      "kind": "property",
+      "status": "supported",
+      "notes": "V8 version string compatible with Node.js 22.x for compatibility checks.",
+      "docs": "https://nodejs.org/api/process.html#processversions",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded",
+          "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "versions.modules",
+      "kind": "property",
+      "status": "supported",
+      "notes": "Node modules ABI version (127) for Node.js 22.x compatibility.",
+      "docs": "https://nodejs.org/api/process.html#processversions",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded",
+          "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "versions.js2il",
+      "kind": "property",
+      "status": "supported",
+      "notes": "JS2IL compiler version. JS2IL-specific extension to process.versions.",
+      "docs": "https://nodejs.org/api/process.html#processversions",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded",
+          "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "versions.dotnet",
+      "kind": "property",
+      "status": "supported",
+      "notes": ".NET runtime version description. JS2IL-specific extension to process.versions.",
+      "docs": "https://nodejs.org/api/process.html#processversions",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded",
+          "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
       "name": "env",
       "kind": "property",
       "status": "supported",
@@ -111,6 +163,19 @@
       "status": "supported",
       "notes": "Changes the current working directory for the running process.",
       "docs": "https://nodejs.org/api/process.html#processchdirdirectory",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics",
+          "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "cwd()",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Returns the current working directory of the Node.js process.",
+      "docs": "https://nodejs.org/api/process.html#processcwd",
       "tests": [
         {
           "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics",

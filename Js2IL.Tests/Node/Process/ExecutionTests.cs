@@ -57,5 +57,9 @@ namespace Js2IL.Tests.Node.Process
         [Fact]
         public Task Process_Chdir_And_NextTick_Basics()
             => ExecutionTest(nameof(Process_Chdir_And_NextTick_Basics));
+
+        [Fact]
+        public Task Process_Versions_Expanded()
+            => ExecutionTest(nameof(Process_Versions_Expanded));
     }
 }

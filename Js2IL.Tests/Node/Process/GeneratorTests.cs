@@ -25,5 +25,9 @@ namespace Js2IL.Tests.Node.Process
         [Fact]
         public Task Process_Chdir_And_NextTick_Basics() => GenerateTest(
             nameof(Process_Chdir_And_NextTick_Basics));
+
+        [Fact]
+        public Task Process_Versions_Expanded() => GenerateTest(
+            nameof(Process_Versions_Expanded));
     }
 }
