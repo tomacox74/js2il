@@ -5,7 +5,7 @@
 | Property | Value |
 | --- | --- |
 | Type | global |
-| Status | supported |
+| Status | partial |
 | Node.js Version | 22.x LTS |
 | Documentation | [Node.js Docs](https://nodejs.org/api/buffer.html#class-buffer) |
 
@@ -15,7 +15,7 @@
 
 ## Notes
 
-Core Buffer APIs implemented: Buffer.from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, instance methods (slice/copy/write/toString/length), array-like indexing (buffer[i]), and binary read/write methods (readInt8/16/32BE/LE, writeInt8/16/32BE/LE, readUInt8/16/32BE/LE, writeUInt8/16/32BE/LE) with utf8/base64/hex encoding support. Covers common use cases for binary data manipulation and I/O operations.
+Core Buffer APIs implemented: Buffer.from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, instance methods (slice/copy/write/toString/length), array-like indexing (buffer[i]), and binary read/write methods (readInt8/16/32BE/LE, writeInt8/16/32BE/LE, readUInt8/16/32BE/LE, writeUInt8/16/32BE/LE) with utf8/base64/hex encoding support. Current deviations from Node.js: slice() returns a copy rather than a shared view, and allocUnsafe() is zero-filled for runtime safety.
 
 ## Tests
 

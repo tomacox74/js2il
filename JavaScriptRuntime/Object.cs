@@ -1965,8 +1965,19 @@ namespace JavaScriptRuntime
             }
             else if (obj is JavaScriptRuntime.Node.Buffer buffer)
             {
+                if (double.IsNaN(index) || double.IsInfinity(index) || index % 1.0 != 0.0)
+                {
+                    var propName = ToPropertyKeyString(index);
+                    return GetProperty(buffer, propName)!;
+                }
+
+                if (index < 0 || index > int.MaxValue)
+                {
+                    return null!;
+                }
+
                 // Reads outside bounds return undefined per Node.js Buffer semantics
-                return buffer[(double)intIndex]!;
+                return buffer[index]!;
             }
             else
             {

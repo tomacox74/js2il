@@ -10,8 +10,8 @@
 
 - **Modules:** 8
 - **Globals:** 14
-  - Supported: 14
-  - Partial: 8
+  - Supported: 13
+  - Partial: 9
 
 ## Modules
 
@@ -32,7 +32,7 @@
 | --- | --- | --- |
 | [__dirname](__dirname.md) | supported | [Node.js](https://nodejs.org/api/modules.html#dirname) |
 | [__filename](__filename.md) | supported | [Node.js](https://nodejs.org/api/modules.html#filename) |
-| [Buffer](Buffer.md) | supported | [Node.js](https://nodejs.org/api/buffer.html#class-buffer) |
+| [Buffer](Buffer.md) | partial | [Node.js](https://nodejs.org/api/buffer.html#class-buffer) |
 | [clearImmediate](clearImmediate.md) | supported | [Node.js](https://nodejs.org/api/timers.html#clearimmediateimmediate) |
 | [clearInterval](clearInterval.md) | supported | [Node.js](https://nodejs.org/api/timers.html#clearintervaltimeout) |
 | [clearTimeout](clearTimeout.md) | supported | [Node.js](https://nodejs.org/api/timers.html#cleartimeouttimeout) |
@@ -47,7 +47,7 @@
 
 ## Limitations
 
-- Buffer core APIs (from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, slice/copy/write/toString, array-like indexing, and binary read/write methods for Int8/16/32 and UInt8/16/32 in BE/LE variants with utf8/hex/base64 encodings) are implemented; some advanced/specialized Buffer APIs remain unimplemented.
+- Buffer core APIs (from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, slice/copy/write/toString, array-like indexing, and binary read/write methods for Int8/16/32 and UInt8/16/32 in BE/LE variants with utf8/hex/base64 encodings) are implemented; current deviations include slice() returning a copy (not a shared view) and allocUnsafe() returning zero-filled memory for safety.
 - events module support is partial with baseline EventEmitter listener lifecycle APIs; advanced emitter APIs are not implemented yet.
 - CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; ESM import.meta.url is not.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.

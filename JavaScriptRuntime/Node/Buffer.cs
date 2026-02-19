@@ -128,8 +128,7 @@ namespace JavaScriptRuntime.Node
 
         public static Buffer allocUnsafe(object? size)
         {
-            var length = ToLength(size);
-            return new Buffer(new byte[length]);
+            return alloc(size, null, null);
         }
 
         public double readInt8(object? offset)
@@ -137,7 +136,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             return (sbyte)_bytes[idx];
         }
@@ -147,7 +146,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             return _bytes[idx];
         }
@@ -157,7 +156,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 1 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             return (short)((_bytes[idx] << 8) | _bytes[idx + 1]);
         }
@@ -167,7 +166,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 1 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             return (short)(_bytes[idx] | (_bytes[idx + 1] << 8));
         }
@@ -177,7 +176,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 1 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             return (ushort)((_bytes[idx] << 8) | _bytes[idx + 1]);
         }
@@ -187,7 +186,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 1 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             return (ushort)(_bytes[idx] | (_bytes[idx + 1] << 8));
         }
@@ -197,7 +196,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 3 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             return (_bytes[idx] << 24) | (_bytes[idx + 1] << 16) | (_bytes[idx + 2] << 8) | _bytes[idx + 3];
         }
@@ -207,7 +206,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 3 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             return _bytes[idx] | (_bytes[idx + 1] << 8) | (_bytes[idx + 2] << 16) | (_bytes[idx + 3] << 24);
         }
@@ -217,7 +216,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 3 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             return (uint)((_bytes[idx] << 24) | (_bytes[idx + 1] << 16) | (_bytes[idx + 2] << 8) | _bytes[idx + 3]);
         }
@@ -227,7 +226,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 3 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             return (uint)(_bytes[idx] | (_bytes[idx + 1] << 8) | (_bytes[idx + 2] << 16) | (_bytes[idx + 3] << 24));
         }
@@ -237,7 +236,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             var intValue = (int)TypeUtilities.ToNumber(value);
             _bytes[idx] = (byte)(sbyte)intValue;
@@ -249,7 +248,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             _bytes[idx] = ToUint8(value);
             return idx + 1;
@@ -260,7 +259,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 1 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             var intValue = (short)TypeUtilities.ToNumber(value);
             _bytes[idx] = (byte)(intValue >> 8);
@@ -273,7 +272,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 1 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             var intValue = (short)TypeUtilities.ToNumber(value);
             _bytes[idx] = (byte)intValue;
@@ -286,7 +285,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 1 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             var intValue = (ushort)TypeUtilities.ToNumber(value);
             _bytes[idx] = (byte)(intValue >> 8);
@@ -299,7 +298,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 1 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             var intValue = (ushort)TypeUtilities.ToNumber(value);
             _bytes[idx] = (byte)intValue;
@@ -312,7 +311,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 3 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             var intValue = (int)TypeUtilities.ToNumber(value);
             _bytes[idx] = (byte)(intValue >> 24);
@@ -327,7 +326,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 3 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             var intValue = (int)TypeUtilities.ToNumber(value);
             _bytes[idx] = (byte)intValue;
@@ -342,7 +341,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 3 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             var intValue = (uint)TypeUtilities.ToNumber(value);
             _bytes[idx] = (byte)(intValue >> 24);
@@ -357,7 +356,7 @@ namespace JavaScriptRuntime.Node
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             if (idx < 0 || idx + 3 >= _bytes.Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+                throw CreateOffsetOutOfRangeError();
             }
             var intValue = (uint)TypeUtilities.ToNumber(value);
             _bytes[idx] = (byte)intValue;
@@ -390,20 +389,33 @@ namespace JavaScriptRuntime.Node
                 return 0;
             }
 
-            var enc = ResolveEncoding(encoding);
+            object? effectiveEncodingArg;
+            object? effectiveLengthArg;
+            if (length is string)
+            {
+                effectiveEncodingArg = length;
+                effectiveLengthArg = null;
+            }
+            else
+            {
+                effectiveEncodingArg = encoding;
+                effectiveLengthArg = length;
+            }
+
+            var enc = ResolveEncoding(effectiveEncodingArg);
             var bytes = enc.GetBytes(str);
 
             var idx = CoerceToIndex(offset, 0, _bytes.Length);
             var maxLen = _bytes.Length - idx;
 
             int len;
-            if (length == null || length is JsNull)
+            if (effectiveLengthArg == null || effectiveLengthArg is JsNull)
             {
                 len = maxLen;
             }
             else
             {
-                len = System.Math.Min(ToLength(length), maxLen);
+                len = System.Math.Min(ToLength(effectiveLengthArg), maxLen);
             }
 
             var bytesToWrite = System.Math.Min(bytes.Length, len);
@@ -503,12 +515,12 @@ namespace JavaScriptRuntime.Node
         {
             if (buf1 is not Buffer buffer1)
             {
-                throw new ArgumentException("First argument must be a Buffer");
+                throw new global::JavaScriptRuntime.TypeError("The \"buf1\" argument must be an instance of Buffer or Uint8Array.");
             }
 
             if (buf2 is not Buffer buffer2)
             {
-                throw new ArgumentException("Second argument must be a Buffer");
+                throw new global::JavaScriptRuntime.TypeError("The \"buf2\" argument must be an instance of Buffer or Uint8Array.");
             }
 
             var len = System.Math.Min(buffer1._bytes.Length, buffer2._bytes.Length);
@@ -532,7 +544,28 @@ namespace JavaScriptRuntime.Node
 
         public string toString(object? encoding)
         {
-            return ResolveEncoding(encoding).GetString(_bytes);
+            return toString(encoding, null, null);
+        }
+
+        public string toString(object? encoding, object? start)
+        {
+            return toString(encoding, start, null);
+        }
+
+        public string toString(object? encoding, object? start, object? end)
+        {
+            var enc = ResolveEncoding(encoding);
+            var len = _bytes.Length;
+
+            var startIdx = CoerceToIndex(start, 0, len);
+            var endIdx = CoerceToIndex(end, len, len);
+
+            if (startIdx >= endIdx || startIdx >= len)
+            {
+                return string.Empty;
+            }
+
+            return enc.GetString(_bytes, startIdx, endIdx - startIdx);
         }
 
         public Buffer slice()
@@ -610,8 +643,7 @@ namespace JavaScriptRuntime.Node
         {
             get
             {
-                var idx = (int)index;
-                if (idx < 0 || idx >= _bytes.Length)
+                if (!TryGetValidElementIndex(index, out var idx))
                 {
                     return null; // undefined
                 }
@@ -619,8 +651,7 @@ namespace JavaScriptRuntime.Node
             }
             set
             {
-                var idx = (int)index;
-                if (idx >= 0 && idx < _bytes.Length)
+                if (TryGetValidElementIndex(index, out var idx))
                 {
                     _bytes[idx] = ToUint8(value);
                 }
@@ -740,6 +771,29 @@ namespace JavaScriptRuntime.Node
             }
 
             return System.Math.Min(index, length);
+        }
+
+        private static Exception CreateOffsetOutOfRangeError()
+        {
+            return new global::JavaScriptRuntime.RangeError("The value of \"offset\" is out of range.");
+        }
+
+        private bool TryGetValidElementIndex(double index, out int normalizedIndex)
+        {
+            normalizedIndex = 0;
+
+            if (double.IsNaN(index) || double.IsInfinity(index) || index % 1.0 != 0.0)
+            {
+                return false;
+            }
+
+            if (index < 0 || index > int.MaxValue)
+            {
+                return false;
+            }
+
+            normalizedIndex = (int)index;
+            return normalizedIndex < _bytes.Length;
         }
 
         private static byte[] CoerceToBytes(object? value)
