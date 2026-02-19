@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Node/util: add `util` module with essential APIs (`promisify` for callback-to-Promise conversion, `inherits` for prototype chain setup, `types` property with 15 type-checking functions including `isArray`/`isPromise`/`isFunction`, and `inspect` for object debugging with depth limits and circular reference handling) plus execution/generator test coverage.
 - Node/runtime: expand global `Buffer` support with core APIs (`Buffer.alloc`, `Buffer.byteLength`, `Buffer.concat`) and string encoding support for `utf8`/`hex`/`base64` in `Buffer.from(...)` and `buffer.toString(...)`, alongside intrinsic discovery/compilation for `Buffer` references.
 - Node/events: add initial `events` module baseline with `EventEmitter` and core listener lifecycle APIs (`on`/`addListener`, `once`, `off`/`removeListener`, `emit`, `listenerCount`, `removeAllListeners`) plus execution/generator coverage.
 - Node/fs: extend `fs.readFileSync`/`fs.writeFileSync` to support Buffer binary roundtrips (default read now returns Buffer; UTF-8 text mode remains supported via encoding options).
