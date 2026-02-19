@@ -21,5 +21,13 @@ namespace Js2IL.Tests.Node.Events
         [Fact]
         public Task Events_EventEmitter_SetMaxListeners_Validation()
             => ExecutionTest(nameof(Events_EventEmitter_SetMaxListeners_Validation));
+
+        [Fact]
+        public Task Events_EventEmitter_ErrorMonitor()
+            => ExecutionTest(nameof(Events_EventEmitter_ErrorMonitor));
+
+        [Fact]
+        public Task Events_AsyncHelpers_On_Once()
+            => ExecutionTest(nameof(Events_AsyncHelpers_On_Once));
     }
 }

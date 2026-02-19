@@ -84,8 +84,36 @@ namespace JavaScriptRuntime.Node
         private bool EmitCore(object? eventName, object?[] args)
         {
             var key = GetEventKey(eventName);
+
+            // Node-style special handling for 'error' events:
+            // - invoke errorMonitor listeners first
+            // - if no normal 'error' listeners are present, throw the error value
+            if (string.Equals(key, "error", StringComparison.Ordinal))
+            {
+                var monitorKey = GetEventKey(Events.ErrorMonitorSymbol);
+                if (_listeners.TryGetValue(monitorKey, out var monitorHandlers) && monitorHandlers.Count > 0)
+                {
+                    var monitorSnapshot = monitorHandlers.ToArray();
+                    foreach (var monitorHandler in monitorSnapshot)
+                    {
+                        _ = InvokeListener(monitorHandler, args);
+                    }
+                }
+            }
+
             if (!_listeners.TryGetValue(key, out var handlers) || handlers.Count == 0)
             {
+                if (string.Equals(key, "error", StringComparison.Ordinal))
+                {
+                    var reason = args.Length > 0 ? args[0] : new Error("Unhandled error event");
+                    if (reason is Exception ex)
+                    {
+                        throw ex;
+                    }
+
+                    throw new JsThrownValueException(reason);
+                }
+
                 return false;
             }
 

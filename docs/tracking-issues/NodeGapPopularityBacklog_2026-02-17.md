@@ -31,10 +31,10 @@
    - Remaining gap: none for this backlog item; any future long-tail Node Buffer parity work should be tracked as a separate lower-priority item.
 
 2. **events/EventEmitter core semantics**
-   - Status: 🟡 **Baseline implemented**
+   - Status: ✅ **Completed**
    - Why: central dependency pattern across Node packages and many polyfills.
-   - Current state: `on/addListener`, `once`, `off/removeListener`, `emit`, `listenerCount`, `removeAllListeners` are implemented.
-   - Remaining gap: advanced APIs (`errorMonitor`, `prepend*`, `rawListeners`, max listeners controls, async iterator helpers).
+   - Current state: `on/addListener`, `once`, `off/removeListener`, `emit`, `listenerCount`, `removeAllListeners`, `prepend*`, `rawListeners`, max listeners controls, `events.errorMonitor`, and async helper APIs (`events.on`, `events.once`) are implemented.
+   - Remaining gap: none for this backlog item; future Node parity work (for example `captureRejections` and `newListener/removeListener` event semantics) should be tracked separately.
 
 3. **util essentials**
    - Status: 🔴 **Not started in docs/runtime inventory**

@@ -12,7 +12,7 @@
       "name": "EventEmitter",
       "kind": "class",
       "status": "supported",
-      "notes": "Comprehensive EventEmitter implementation supporting all core listener lifecycle APIs: on/addListener, once, off/removeListener, emit (with argument forwarding), listenerCount, removeAllListeners, prependListener, prependOnceListener, eventNames, listeners, rawListeners, setMaxListeners, and getMaxListeners.",
+      "notes": "Comprehensive EventEmitter implementation supporting all core listener lifecycle APIs: on/addListener, once, off/removeListener, emit (with argument forwarding), listenerCount, removeAllListeners, prependListener, prependOnceListener, eventNames, listeners, rawListeners, setMaxListeners, getMaxListeners, and errorMonitor behavior for error events.",
       "docs": "https://nodejs.org/api/events.html#class-eventemitter",
       "tests": [
         {
@@ -38,9 +38,25 @@
         {
           "name": "Js2IL.Tests.Node.Events.GeneratorTests.Events_EventEmitter_Complete",
           "file": "Js2IL.Tests/Node/Events/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Events.ExecutionTests.Events_EventEmitter_ErrorMonitor",
+          "file": "Js2IL.Tests/Node/Events/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Events.GeneratorTests.Events_EventEmitter_ErrorMonitor",
+          "file": "Js2IL.Tests/Node/Events/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Events.ExecutionTests.Events_AsyncHelpers_On_Once",
+          "file": "Js2IL.Tests/Node/Events/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Events.GeneratorTests.Events_AsyncHelpers_On_Once",
+          "file": "Js2IL.Tests/Node/Events/GeneratorTests.cs"
         }
       ]
     }
   ],
-  "notes": "Complete EventEmitter implementation for event-driven programming patterns. Supports all core instance listener lifecycle and emission behavior APIs. Advanced features like errorMonitor, captureRejections, newListener/removeListener events, and async iterator helpers are not implemented."
+  "notes": "Complete EventEmitter implementation for event-driven programming patterns. Supports core instance listener lifecycle and emission behavior APIs plus events.errorMonitor and async helper APIs (events.on/events.once). Advanced features like captureRejections and newListener/removeListener event semantics are not implemented."
 }

@@ -15,7 +15,7 @@
 
 ## Notes
 
-Complete EventEmitter implementation for event-driven programming patterns. Supports all core instance listener lifecycle and emission behavior APIs. Advanced features like errorMonitor, captureRejections, newListener/removeListener events, and async iterator helpers are not implemented.
+Complete EventEmitter implementation for event-driven programming patterns. Supports core instance listener lifecycle and emission behavior APIs plus events.errorMonitor and async helper APIs (events.on/events.once). Advanced features like captureRejections and newListener/removeListener event semantics are not implemented.
 
 ## APIs
 
@@ -27,7 +27,7 @@ Complete EventEmitter implementation for event-driven programming patterns. Supp
 
 ### EventEmitter
 
-Comprehensive EventEmitter implementation supporting all core listener lifecycle APIs: on/addListener, once, off/removeListener, emit (with argument forwarding), listenerCount, removeAllListeners, prependListener, prependOnceListener, eventNames, listeners, rawListeners, setMaxListeners, and getMaxListeners.
+Comprehensive EventEmitter implementation supporting all core listener lifecycle APIs: on/addListener, once, off/removeListener, emit (with argument forwarding), listenerCount, removeAllListeners, prependListener, prependOnceListener, eventNames, listeners, rawListeners, setMaxListeners, getMaxListeners, and errorMonitor behavior for error events.
 
 **Tests:**
 - `Js2IL.Tests.Node.Events.ExecutionTests.Events_EventEmitter_On_Off_Once` (`Js2IL.Tests/Node/Events/ExecutionTests.cs`)
@@ -36,3 +36,7 @@ Comprehensive EventEmitter implementation supporting all core listener lifecycle
 - `Js2IL.Tests.Node.Events.GeneratorTests.Events_EventEmitter_Emit_Args` (`Js2IL.Tests/Node/Events/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Events.ExecutionTests.Events_EventEmitter_Complete` (`Js2IL.Tests/Node/Events/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Events.GeneratorTests.Events_EventEmitter_Complete` (`Js2IL.Tests/Node/Events/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Events.ExecutionTests.Events_EventEmitter_ErrorMonitor` (`Js2IL.Tests/Node/Events/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Events.GeneratorTests.Events_EventEmitter_ErrorMonitor` (`Js2IL.Tests/Node/Events/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Events.ExecutionTests.Events_AsyncHelpers_On_Once` (`Js2IL.Tests/Node/Events/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Events.GeneratorTests.Events_AsyncHelpers_On_Once` (`Js2IL.Tests/Node/Events/GeneratorTests.cs`)
