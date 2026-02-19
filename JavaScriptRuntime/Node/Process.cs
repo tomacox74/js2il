@@ -13,6 +13,7 @@ namespace JavaScriptRuntime.Node
     [NodeModule("process")]
     public sealed class Process
     {
+        private const string TargetNodeVersion = "22.0.0";
         private static readonly Lazy<string> _platform = new(DetectPlatform);
         IEnvironment _environment;
         private readonly Lazy<object> _versions;
@@ -168,7 +169,7 @@ namespace JavaScriptRuntime.Node
         {
             var result = new ExpandoObject();
             var dict = (IDictionary<string, object?>)result;
-            dict["node"] = "22.0.0";
+            dict["node"] = TargetNodeVersion;
             return result;
         }
 
@@ -207,6 +208,11 @@ namespace JavaScriptRuntime.Node
                 throw new TypeError("The \"directory\" argument must be a non-empty string.");
             }
 
+            if (!System.IO.Directory.Exists(target))
+            {
+                throw new Error($"ENOENT: no such file or directory, chdir '{target}'");
+            }
+
             try
             {
                 System.Environment.CurrentDirectory = target;
@@ -219,10 +225,16 @@ namespace JavaScriptRuntime.Node
         }
 
         /// <summary>
-        /// Queues a callback to run on the next turn, before later scheduled immediates.
+        /// Queues a callback for next-turn execution using the immediate queue.
+        /// This is a pragmatic approximation and does not model full Node nextTick queue semantics.
         /// </summary>
         public object? nextTick(object callback, params object[] args)
         {
+            if (callback is not Delegate)
+            {
+                throw new TypeError("Callback must be a function.");
+            }
+
             var tickArgs = args ?? System.Array.Empty<object>();
             _ = GlobalThis.setImmediate(callback, tickArgs);
             return null;
