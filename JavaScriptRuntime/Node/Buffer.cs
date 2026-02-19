@@ -126,6 +126,295 @@ namespace JavaScriptRuntime.Node
             return new Buffer(bytes);
         }
 
+        public static Buffer allocUnsafe(object? size)
+        {
+            var length = ToLength(size);
+            return new Buffer(new byte[length]);
+        }
+
+        public double readInt8(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            return (sbyte)_bytes[idx];
+        }
+
+        public double readUInt8(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            return _bytes[idx];
+        }
+
+        public double readInt16BE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 1 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            return (short)((_bytes[idx] << 8) | _bytes[idx + 1]);
+        }
+
+        public double readInt16LE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 1 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            return (short)(_bytes[idx] | (_bytes[idx + 1] << 8));
+        }
+
+        public double readUInt16BE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 1 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            return (ushort)((_bytes[idx] << 8) | _bytes[idx + 1]);
+        }
+
+        public double readUInt16LE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 1 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            return (ushort)(_bytes[idx] | (_bytes[idx + 1] << 8));
+        }
+
+        public double readInt32BE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 3 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            return (_bytes[idx] << 24) | (_bytes[idx + 1] << 16) | (_bytes[idx + 2] << 8) | _bytes[idx + 3];
+        }
+
+        public double readInt32LE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 3 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            return _bytes[idx] | (_bytes[idx + 1] << 8) | (_bytes[idx + 2] << 16) | (_bytes[idx + 3] << 24);
+        }
+
+        public double readUInt32BE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 3 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            return (uint)((_bytes[idx] << 24) | (_bytes[idx + 1] << 16) | (_bytes[idx + 2] << 8) | _bytes[idx + 3]);
+        }
+
+        public double readUInt32LE(object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 3 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            return (uint)(_bytes[idx] | (_bytes[idx + 1] << 8) | (_bytes[idx + 2] << 16) | (_bytes[idx + 3] << 24));
+        }
+
+        public double writeInt8(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            var intValue = (int)TypeUtilities.ToNumber(value);
+            _bytes[idx] = (byte)(sbyte)intValue;
+            return idx + 1;
+        }
+
+        public double writeUInt8(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            _bytes[idx] = ToUint8(value);
+            return idx + 1;
+        }
+
+        public double writeInt16BE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 1 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            var intValue = (short)TypeUtilities.ToNumber(value);
+            _bytes[idx] = (byte)(intValue >> 8);
+            _bytes[idx + 1] = (byte)intValue;
+            return idx + 2;
+        }
+
+        public double writeInt16LE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 1 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            var intValue = (short)TypeUtilities.ToNumber(value);
+            _bytes[idx] = (byte)intValue;
+            _bytes[idx + 1] = (byte)(intValue >> 8);
+            return idx + 2;
+        }
+
+        public double writeUInt16BE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 1 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            var intValue = (ushort)TypeUtilities.ToNumber(value);
+            _bytes[idx] = (byte)(intValue >> 8);
+            _bytes[idx + 1] = (byte)intValue;
+            return idx + 2;
+        }
+
+        public double writeUInt16LE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 1 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            var intValue = (ushort)TypeUtilities.ToNumber(value);
+            _bytes[idx] = (byte)intValue;
+            _bytes[idx + 1] = (byte)(intValue >> 8);
+            return idx + 2;
+        }
+
+        public double writeInt32BE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 3 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            var intValue = (int)TypeUtilities.ToNumber(value);
+            _bytes[idx] = (byte)(intValue >> 24);
+            _bytes[idx + 1] = (byte)(intValue >> 16);
+            _bytes[idx + 2] = (byte)(intValue >> 8);
+            _bytes[idx + 3] = (byte)intValue;
+            return idx + 4;
+        }
+
+        public double writeInt32LE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 3 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            var intValue = (int)TypeUtilities.ToNumber(value);
+            _bytes[idx] = (byte)intValue;
+            _bytes[idx + 1] = (byte)(intValue >> 8);
+            _bytes[idx + 2] = (byte)(intValue >> 16);
+            _bytes[idx + 3] = (byte)(intValue >> 24);
+            return idx + 4;
+        }
+
+        public double writeUInt32BE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 3 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            var intValue = (uint)TypeUtilities.ToNumber(value);
+            _bytes[idx] = (byte)(intValue >> 24);
+            _bytes[idx + 1] = (byte)(intValue >> 16);
+            _bytes[idx + 2] = (byte)(intValue >> 8);
+            _bytes[idx + 3] = (byte)intValue;
+            return idx + 4;
+        }
+
+        public double writeUInt32LE(object? value, object? offset)
+        {
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            if (idx < 0 || idx + 3 >= _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset is out of bounds");
+            }
+            var intValue = (uint)TypeUtilities.ToNumber(value);
+            _bytes[idx] = (byte)intValue;
+            _bytes[idx + 1] = (byte)(intValue >> 8);
+            _bytes[idx + 2] = (byte)(intValue >> 16);
+            _bytes[idx + 3] = (byte)(intValue >> 24);
+            return idx + 4;
+        }
+
+        public double write(object? text)
+        {
+            return write(text, null, null, null);
+        }
+
+        public double write(object? text, object? offset)
+        {
+            return write(text, offset, null, null);
+        }
+
+        public double write(object? text, object? offset, object? length)
+        {
+            return write(text, offset, length, null);
+        }
+
+        public double write(object? text, object? offset, object? length, object? encoding)
+        {
+            var str = DotNet2JSConversions.ToString(text);
+            if (string.IsNullOrEmpty(str))
+            {
+                return 0;
+            }
+
+            var enc = ResolveEncoding(encoding);
+            var bytes = enc.GetBytes(str);
+
+            var idx = CoerceToIndex(offset, 0, _bytes.Length);
+            var maxLen = _bytes.Length - idx;
+
+            int len;
+            if (length == null || length is JsNull)
+            {
+                len = maxLen;
+            }
+            else
+            {
+                len = System.Math.Min(ToLength(length), maxLen);
+            }
+
+            var bytesToWrite = System.Math.Min(bytes.Length, len);
+            if (bytesToWrite > 0)
+            {
+                System.Buffer.BlockCopy(bytes, 0, _bytes, idx, bytesToWrite);
+            }
+
+            return bytesToWrite;
+        }
+
         public static double byteLength(object? value)
         {
             return byteLength(value, null);
@@ -210,6 +499,32 @@ namespace JavaScriptRuntime.Node
             return value is Buffer;
         }
 
+        public static double compare(object? buf1, object? buf2)
+        {
+            if (buf1 is not Buffer buffer1)
+            {
+                throw new ArgumentException("First argument must be a Buffer");
+            }
+
+            if (buf2 is not Buffer buffer2)
+            {
+                throw new ArgumentException("Second argument must be a Buffer");
+            }
+
+            var len = System.Math.Min(buffer1._bytes.Length, buffer2._bytes.Length);
+            for (int i = 0; i < len; i++)
+            {
+                if (buffer1._bytes[i] != buffer2._bytes[i])
+                {
+                    return buffer1._bytes[i] < buffer2._bytes[i] ? -1 : 1;
+                }
+            }
+
+            if (buffer1._bytes.Length < buffer2._bytes.Length) return -1;
+            if (buffer1._bytes.Length > buffer2._bytes.Length) return 1;
+            return 0;
+        }
+
         public string toString()
         {
             return toString("utf8");
@@ -218,6 +533,98 @@ namespace JavaScriptRuntime.Node
         public string toString(object? encoding)
         {
             return ResolveEncoding(encoding).GetString(_bytes);
+        }
+
+        public Buffer slice()
+        {
+            return slice(null, null);
+        }
+
+        public Buffer slice(object? start)
+        {
+            return slice(start, null);
+        }
+
+        public Buffer slice(object? start, object? end)
+        {
+            var len = _bytes.Length;
+            var startIdx = CoerceToIndex(start, 0, len);
+            var endIdx = CoerceToIndex(end, len, len);
+
+            if (startIdx >= endIdx || startIdx >= len)
+            {
+                return new Buffer(System.Array.Empty<byte>());
+            }
+
+            var sliceLength = endIdx - startIdx;
+            var sliced = new byte[sliceLength];
+            System.Buffer.BlockCopy(_bytes, startIdx, sliced, 0, sliceLength);
+            return new Buffer(sliced);
+        }
+
+        public double copy(object? target)
+        {
+            return copy(target, null, null, null);
+        }
+
+        public double copy(object? target, object? targetStart)
+        {
+            return copy(target, targetStart, null, null);
+        }
+
+        public double copy(object? target, object? targetStart, object? sourceStart)
+        {
+            return copy(target, targetStart, sourceStart, null);
+        }
+
+        public double copy(object? target, object? targetStart, object? sourceStart, object? sourceEnd)
+        {
+            if (target is not Buffer targetBuffer)
+            {
+                throw new ArgumentException("Target must be a Buffer");
+            }
+
+            var targetLength = targetBuffer._bytes.Length;
+            var sourceLength = _bytes.Length;
+
+            var targetIdx = CoerceToIndex(targetStart, 0, targetLength);
+            var sourceStartIdx = CoerceToIndex(sourceStart, 0, sourceLength);
+            var sourceEndIdx = CoerceToIndex(sourceEnd, sourceLength, sourceLength);
+
+            if (sourceStartIdx >= sourceEndIdx || sourceStartIdx >= sourceLength)
+            {
+                return 0;
+            }
+
+            var bytesToCopy = System.Math.Min(sourceEndIdx - sourceStartIdx, targetLength - targetIdx);
+            if (bytesToCopy <= 0)
+            {
+                return 0;
+            }
+
+            System.Buffer.BlockCopy(_bytes, sourceStartIdx, targetBuffer._bytes, targetIdx, bytesToCopy);
+            return bytesToCopy;
+        }
+
+        public object? this[double index]
+        {
+            get
+            {
+                var idx = (int)index;
+                if (idx < 0 || idx >= _bytes.Length)
+                {
+                    return null; // undefined
+                }
+                return (double)_bytes[idx];
+            }
+            set
+            {
+                var idx = (int)index;
+                if (idx >= 0 && idx < _bytes.Length)
+                {
+                    _bytes[idx] = ToUint8(value);
+                }
+            }
         }
 
         internal static Buffer FromBytes(byte[] bytes)
@@ -297,6 +704,42 @@ namespace JavaScriptRuntime.Node
             }
 
             return (int)System.Math.Truncate(n);
+        }
+
+        private static int CoerceToIndex(object? value, int defaultValue, int length)
+        {
+            if (value == null || value is JsNull)
+            {
+                return defaultValue;
+            }
+
+            double n;
+            try
+            {
+                n = TypeUtilities.ToNumber(value);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+
+            if (double.IsNaN(n))
+            {
+                return defaultValue;
+            }
+
+            if (double.IsInfinity(n))
+            {
+                return n > 0 ? length : 0;
+            }
+
+            var index = (int)System.Math.Truncate(n);
+            if (index < 0)
+            {
+                index = System.Math.Max(0, length + index);
+            }
+
+            return System.Math.Min(index, length);
         }
 
         private static byte[] CoerceToBytes(object? value)

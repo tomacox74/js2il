@@ -1903,6 +1903,15 @@ namespace JavaScriptRuntime
                 // Reads outside bounds return 0 per typed array semantics
                 return i32[(double)intIndex];
             }
+            else if (obj is JavaScriptRuntime.Node.Buffer buffer)
+            {
+                if (!isIndex)
+                {
+                    return GetProperty(buffer, propName)!;
+                }
+                // Reads outside bounds return undefined per Node.js Buffer semantics
+                return buffer[(double)intIndex]!;
+            }
             else
             {
                 // Generic object index access: treat index as a property key (JS ToPropertyKey -> string)
@@ -1953,6 +1962,11 @@ namespace JavaScriptRuntime
             {
                 // Reads outside bounds return 0 per typed array semantics
                 return i32[(double)intIndex];
+            }
+            else if (obj is JavaScriptRuntime.Node.Buffer buffer)
+            {
+                // Reads outside bounds return undefined per Node.js Buffer semantics
+                return buffer[(double)intIndex]!;
             }
             else
             {
@@ -2039,6 +2053,18 @@ namespace JavaScriptRuntime
                 }
                 // Index/value are numeric for typed arrays; coerce here so Int32Array can remain numeric.
                 i32[(double)intIndex] = JavaScriptRuntime.TypeUtilities.ToNumber(value);
+                return value;
+            }
+
+            // Buffer: coerce and store when in-bounds
+            if (obj is JavaScriptRuntime.Node.Buffer buffer)
+            {
+                if (!isIndex)
+                {
+                    return SetProperty(buffer, propName, value);
+                }
+                // Buffer indexer expects numeric value
+                buffer[(double)intIndex] = value;
                 return value;
             }
 
@@ -2735,6 +2761,29 @@ namespace JavaScriptRuntime
                             i32.SetFromDouble(i32Index, value);
                         }
                         // Out-of-bounds: no-op (typed arrays don't expand)
+                    }
+                    // Negative or too large: no-op
+                }
+                // NaN/Infinity/fractional: no-op (do not treat as element 0 or property)
+                return value;
+            }
+
+            // Buffer: only use element write path if index is finite, integer, and in-bounds.
+            if (obj is JavaScriptRuntime.Node.Buffer buffer)
+            {
+                // Check if index is a valid integer index
+                if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
+                {
+                    // Validate index is within int32 range before casting
+                    if (index >= 0 && index <= int.MaxValue)
+                    {
+                        int bufferIndex = (int)index;
+                        // Only write if in bounds [0, length)
+                        if (bufferIndex < (int)buffer.length)
+                        {
+                            buffer[(double)bufferIndex] = value;
+                        }
+                        // Out-of-bounds: no-op (buffers don't expand)
                     }
                     // Negative or too large: no-op
                 }

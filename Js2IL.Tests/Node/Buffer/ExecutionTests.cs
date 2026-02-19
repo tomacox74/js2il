@@ -13,5 +13,17 @@ namespace Js2IL.Tests.Node.Buffer
         [Fact]
         public Task Buffer_Alloc_ByteLength_Concat()
             => ExecutionTest(nameof(Buffer_Alloc_ByteLength_Concat));
+
+        [Fact]
+        public Task Buffer_Slice_Copy_IndexAccess()
+            => ExecutionTest(nameof(Buffer_Slice_Copy_IndexAccess));
+
+        [Fact]
+        public Task Buffer_AllocUnsafe_Compare()
+            => ExecutionTest(nameof(Buffer_AllocUnsafe_Compare));
+
+        [Fact]
+        public Task Buffer_ReadWrite_Methods()
+            => ExecutionTest(nameof(Buffer_ReadWrite_Methods));
     }
 }
