@@ -251,22 +251,12 @@ namespace JavaScriptRuntime.Node
             var scheduler = GlobalThis.ServiceProvider?.Resolve<JavaScriptRuntime.EngineCore.NodeSchedulerState>();
             if (scheduler == null)
             {
-                _ = GlobalThis.setImmediate(callback, tickArgs);
-                return null;
+                throw new InvalidOperationException("NodeSchedulerState is not available for process.nextTick.");
             }
 
             scheduler.QueueNextTick(() =>
             {
-                var paramCount = del.Method.GetParameters().Length;
-                var expectedArgCount = System.Math.Max(0, paramCount - 1);
-
-                var invokeArgs = new object[expectedArgCount];
-                for (int i = 0; i < expectedArgCount; i++)
-                {
-                    invokeArgs[i] = i < tickArgs.Length ? tickArgs[i] : null!;
-                }
-
-                Closure.InvokeWithArgs(del, System.Array.Empty<object>(), invokeArgs);
+                Closure.InvokeWithArgs(del, System.Array.Empty<object>(), tickArgs);
             });
 
             return null;
