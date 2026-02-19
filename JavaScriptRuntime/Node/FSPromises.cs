@@ -166,10 +166,14 @@ namespace JavaScriptRuntime.Node
             {
                 if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
                 {
+                    // Fire-and-forget is intentional: exceptions are handled inside
+                    // CompleteReadFileTextAsync and forwarded via _ioScheduler.EndIo(...).
                     _ = CompleteReadFileTextAsync(path, textEncoding!, promiseWithResolvers);
                     return promiseWithResolvers.promise;
                 }
 
+                // Fire-and-forget is intentional: exceptions are handled inside
+                // CompleteReadFileBytesAsync and forwarded via _ioScheduler.EndIo(...).
                 _ = CompleteReadFileBytesAsync(path, promiseWithResolvers);
                 return promiseWithResolvers.promise;
             }

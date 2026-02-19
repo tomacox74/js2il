@@ -175,7 +175,7 @@ namespace Js2IL.Tests.Node
                 onSet: () =>
                 {
                     setCalls++;
-                    if (setCalls == 2)
+                    if (setCalls == 1)
                     {
                         throw new InvalidOperationException("Injected wakeup failure.");
                     }

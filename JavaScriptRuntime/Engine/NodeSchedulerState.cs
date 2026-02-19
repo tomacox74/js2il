@@ -402,7 +402,6 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IIOSch
     public void BeginIo()
     {
         System.Threading.Interlocked.Increment(ref _pendingIoCount);
-        _wakeup.Set();
     }
 
     public void EndIo(global::JavaScriptRuntime.PromiseWithResolvers promiseWithResolvers, object? result, bool isError = false)
@@ -438,9 +437,18 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IIOSch
         }
         catch
         {
-            // Fallback path: if enqueueing completion fails, complete immediately
-            // so pending I/O does not remain elevated indefinitely.
-            CompleteNow();
+            try
+            {
+                // Fallback path: if enqueueing completion via ScheduleImmediate fails,
+                // queue it as a next-tick task so completion still runs on the event-loop
+                // thread and pending I/O does not remain elevated indefinitely.
+                QueueNextTick(CompleteNow);
+            }
+            catch
+            {
+                // Last-resort fallback if queue signaling itself fails.
+                CompleteNow();
+            }
         }
     }
 }
