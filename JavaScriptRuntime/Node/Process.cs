@@ -13,11 +13,16 @@ namespace JavaScriptRuntime.Node
     [NodeModule("process")]
     public sealed class Process
     {
+        private static readonly Lazy<string> _platform = new(DetectPlatform);
         IEnvironment _environment;
+        private readonly Lazy<object> _versions;
+        private readonly Lazy<object> _env;
 
         public Process(IEnvironment environment)
         {
             _environment = environment;
+            _versions = new Lazy<object>(CreateVersions);
+            _env = new Lazy<object>(CreateEnvSnapshot);
         }
 
         /// <summary>
@@ -120,25 +125,7 @@ namespace JavaScriptRuntime.Node
         /// </summary>
         public string platform
         {
-            get
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    return "win32";
-                }
-
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    return "darwin";
-                }
-
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    return "linux";
-                }
-
-                return "unknown";
-            }
+            get => _platform.Value;
         }
 
         /// <summary>
@@ -146,13 +133,7 @@ namespace JavaScriptRuntime.Node
         /// </summary>
         public object versions
         {
-            get
-            {
-                var result = new ExpandoObject();
-                var dict = (IDictionary<string, object?>)result;
-                dict["node"] = "22.0.0";
-                return result;
-            }
+            get => _versions.Value;
         }
 
         /// <summary>
@@ -160,24 +141,54 @@ namespace JavaScriptRuntime.Node
         /// </summary>
         public object env
         {
-            get
+            get => _env.Value;
+        }
+
+        private static string DetectPlatform()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                var result = new ExpandoObject();
-                var dict = (IDictionary<string, object?>)result;
+                return "win32";
+            }
 
-                foreach (DictionaryEntry entry in System.Environment.GetEnvironmentVariables())
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return "darwin";
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return "linux";
+            }
+
+            return "unknown";
+        }
+
+        private static object CreateVersions()
+        {
+            var result = new ExpandoObject();
+            var dict = (IDictionary<string, object?>)result;
+            dict["node"] = "22.0.0";
+            return result;
+        }
+
+        private static object CreateEnvSnapshot()
+        {
+            var result = new ExpandoObject();
+            var dict = (IDictionary<string, object?>)result;
+
+            foreach (DictionaryEntry entry in System.Environment.GetEnvironmentVariables())
+            {
+                var key = entry.Key?.ToString();
+                if (string.IsNullOrWhiteSpace(key))
                 {
-                    var key = entry.Key?.ToString();
-                    if (string.IsNullOrWhiteSpace(key))
-                    {
-                        continue;
-                    }
-
-                    dict[key] = entry.Value?.ToString() ?? string.Empty;
+                    continue;
                 }
 
-                return result;
+                dict[key] = entry.Value?.ToString() ?? string.Empty;
             }
+
+            return result;
         }
 
         /// <summary>
