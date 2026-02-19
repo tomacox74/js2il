@@ -125,6 +125,17 @@ namespace Js2IL.Tests.Node.FS
                 });
 
         [Fact]
+        public Task FSPromises_WriteFile_NullRejects()
+            => ExecutionTest(
+                nameof(FSPromises_WriteFile_NullRejects),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
         public Task FSPromises_Stat_FileSize()
             => ExecutionTest(
                 nameof(FSPromises_Stat_FileSize),

@@ -174,6 +174,11 @@ namespace JavaScriptRuntime.Node
                 return Promise.reject(new Error("Path must be a non-empty string"));
             }
 
+            if (content == null || content is JsNull)
+            {
+                return Promise.reject(new TypeError("The \"data\" argument must be of type string or Buffer or TypedArray or DataView. Received null"));
+            }
+
             try
             {
                 if (content is Buffer buffer)
