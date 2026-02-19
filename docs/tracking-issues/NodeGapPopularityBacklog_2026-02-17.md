@@ -38,9 +38,11 @@
    - Remaining gap: advanced APIs (`errorMonitor`, `prepend*`, `rawListeners`, max listeners controls, async iterator helpers).
 
 3. **util essentials**
-   - Status: 🔴 **Not started in docs/runtime inventory**
+   - Status: ✅ **Completed**
    - Why: common in transitive dependencies.
-   - Suggested first APIs: `promisify`, `inherits`, `types` subset, `inspect` minimal compatibility.
+   - Implemented APIs: `promisify`, `inherits`, `types` subset (isArray, isDate, isError, isFunction, isPromise, isRegExp, isString, isNumber, isBoolean, isUndefined, isNull, isObject, isBigInt, isSymbol, isAsyncFunction), `inspect` minimal compatibility.
+   - Documentation: `docs/nodejs/util.json` and `docs/nodejs/util.md`.
+   - Tests: Comprehensive execution and generator tests in `Js2IL.Tests/Node/Util/`.
 
 ### P1 (High value, after P0 foundations)
 
