@@ -1,4 +1,8 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Runtime.InteropServices;
 
 namespace JavaScriptRuntime.Node
 {
@@ -108,6 +112,109 @@ namespace JavaScriptRuntime.Node
             {
                 return string.Empty;
             }
+        }
+
+        /// <summary>
+        /// Minimal Node-compatible platform identifier.
+        /// Returns values like "win32", "linux", or "darwin".
+        /// </summary>
+        public string platform
+        {
+            get
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return "win32";
+                }
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    return "darwin";
+                }
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    return "linux";
+                }
+
+                return "unknown";
+            }
+        }
+
+        /// <summary>
+        /// Minimal process.versions object with Node version identity.
+        /// </summary>
+        public object versions
+        {
+            get
+            {
+                var result = new ExpandoObject();
+                var dict = (IDictionary<string, object?>)result;
+                dict["node"] = "22.0.0";
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Snapshot of host environment variables as a JS object.
+        /// </summary>
+        public object env
+        {
+            get
+            {
+                var result = new ExpandoObject();
+                var dict = (IDictionary<string, object?>)result;
+
+                foreach (DictionaryEntry entry in System.Environment.GetEnvironmentVariables())
+                {
+                    var key = entry.Key?.ToString();
+                    if (string.IsNullOrWhiteSpace(key))
+                    {
+                        continue;
+                    }
+
+                    dict[key] = entry.Value?.ToString() ?? string.Empty;
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Changes the current working directory.
+        /// </summary>
+        public object? chdir(object? directory)
+        {
+            if (directory is null || directory is JsNull)
+            {
+                throw new TypeError("The \"directory\" argument must be of type string.");
+            }
+
+            var target = DotNet2JSConversions.ToString(directory);
+            if (string.IsNullOrWhiteSpace(target))
+            {
+                throw new TypeError("The \"directory\" argument must be a non-empty string.");
+            }
+
+            try
+            {
+                System.Environment.CurrentDirectory = target;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Error(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Queues a callback to run on the next turn, before later scheduled immediates.
+        /// </summary>
+        public object? nextTick(object callback, params object[] args)
+        {
+            var tickArgs = args ?? System.Array.Empty<object>();
+            _ = GlobalThis.setImmediate(callback, tickArgs);
+            return null;
         }
 
         /// <summary>
