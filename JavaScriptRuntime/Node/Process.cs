@@ -236,18 +236,39 @@ namespace JavaScriptRuntime.Node
         }
 
         /// <summary>
-        /// Queues a callback for next-turn execution using the immediate queue.
-        /// This is a pragmatic approximation and does not model full Node nextTick queue semantics.
+        /// Queues a callback for execution in the dedicated nextTick queue.
+        /// nextTick callbacks run before immediates and Promise microtasks at callback checkpoints.
         /// </summary>
         public object? nextTick(object callback, params object[] args)
         {
-            if (callback is not Delegate)
+            if (callback is not Delegate del)
             {
                 throw new TypeError("Callback must be a function.");
             }
 
             var tickArgs = args ?? System.Array.Empty<object>();
-            _ = GlobalThis.setImmediate(callback, tickArgs);
+
+            var scheduler = GlobalThis.ServiceProvider?.Resolve<JavaScriptRuntime.EngineCore.NodeSchedulerState>();
+            if (scheduler == null)
+            {
+                _ = GlobalThis.setImmediate(callback, tickArgs);
+                return null;
+            }
+
+            scheduler.QueueNextTick(() =>
+            {
+                var paramCount = del.Method.GetParameters().Length;
+                var expectedArgCount = System.Math.Max(0, paramCount - 1);
+
+                var invokeArgs = new object[expectedArgCount];
+                for (int i = 0; i < expectedArgCount; i++)
+                {
+                    invokeArgs[i] = i < tickArgs.Length ? tickArgs[i] : null!;
+                }
+
+                Closure.InvokeWithArgs(del, System.Array.Empty<object>(), invokeArgs);
+            });
+
             return null;
         }
 

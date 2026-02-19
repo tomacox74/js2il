@@ -66,14 +66,19 @@ public sealed class NodeEventLoopPump
     {
         ThrowIfNotOwnerThread();
 
+        DrainNextTicks();
+        DrainMicrotasks();
+        DrainNextTicks();
         DrainImmediatesOneTick();
         PromoteOneDueTimerToMacro();
 
         if (_macro.Count > 0)
         {
             _macro.Dequeue().Invoke();
+            DrainNextTicks();
         }
 
+        DrainNextTicks();
         DrainMicrotasks();
     }
 
@@ -102,8 +107,25 @@ public sealed class NodeEventLoopPump
 
             callback.Invoke();
 
+            // Node-compatible ordering: process.nextTick callbacks run before Promise jobs.
+            DrainNextTicks();
+
             // Promise reactions are modeled as microtasks. Run a microtask checkpoint after each callback.
             DrainMicrotasks();
+        }
+    }
+
+    private void DrainNextTicks(int max = 1024)
+    {
+        int count = _state.GetNextTickCountSnapshot(max);
+        for (int i = 0; i < count; i++)
+        {
+            if (!_state.TryDequeueNextTick(out var callback) || callback == null)
+            {
+                return;
+            }
+
+            callback.Invoke();
         }
     }
 
@@ -123,9 +145,19 @@ public sealed class NodeEventLoopPump
         // We intentionally bound the number of microtasks drained in one checkpoint.
         // This preserves forward progress for timers/macrotasks and avoids starvation.
         int ticks = 0;
-        while (ticks++ < max && _state.TryDequeueMicrotask(out var action) && action != null)
+        while (ticks++ < max)
         {
+            // Maintain Node-like priority for process.nextTick, including those queued from microtasks.
+            DrainNextTicks();
+
+            if (!_state.TryDequeueMicrotask(out var action) || action == null)
+            {
+                break;
+            }
+
             action.Invoke();
+
+            DrainNextTicks();
         }
     }
 }

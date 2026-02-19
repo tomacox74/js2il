@@ -47,6 +47,9 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler
     private long _nextTimerId = 0;
     private long _nextImmediateId = 0;
 
+    private readonly object _nextTickLock = new();
+    private readonly Queue<Action> _nextTick = new();
+
     private readonly object _immediateLock = new();
     private readonly Queue<ImmediateEntry> _immediate = new();
     private readonly HashSet<long> _immediateIds = new();
@@ -74,6 +77,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler
             if (_micro.Count > 0) return true;
         }
 
+        lock (_nextTickLock)
+        {
+            if (_nextTick.Count > 0) return true;
+        }
+
         lock (_immediateLock)
         {
             if (_immediate.Count > 0) return true;
@@ -90,6 +98,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler
         lock (_micro)
         {
             if (_micro.Count > 0) return true;
+        }
+
+        lock (_nextTickLock)
+        {
+            if (_nextTick.Count > 0) return true;
         }
 
         lock (_immediateLock)
@@ -133,6 +146,29 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler
         {
             return System.Math.Min(_immediate.Count, max);
         }
+    }
+
+    internal int GetNextTickCountSnapshot(int max)
+    {
+        lock (_nextTickLock)
+        {
+            return System.Math.Min(_nextTick.Count, max);
+        }
+    }
+
+    internal bool TryDequeueNextTick(out Action? callback)
+    {
+        lock (_nextTickLock)
+        {
+            if (_nextTick.Count > 0)
+            {
+                callback = _nextTick.Dequeue();
+                return true;
+            }
+        }
+
+        callback = null;
+        return false;
     }
 
     internal bool TryDequeueImmediate(out Action? callback)
@@ -342,6 +378,16 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler
         lock (_micro)
         {
             _micro.Enqueue(task);
+        }
+
+        _wakeup.Set();
+    }
+
+    internal void QueueNextTick(Action task)
+    {
+        lock (_nextTickLock)
+        {
+            _nextTick.Enqueue(task);
         }
 
         _wakeup.Set();
