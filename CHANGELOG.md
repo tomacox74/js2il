@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Node/stream: add initial `stream` module baseline with minimal `Readable` and `Writable` classes extending `EventEmitter`. `Readable` supports `push()`, `read()`, `pipe()`, and the `readable` property, emitting 'data', 'end', and 'error' events. `Writable` supports `write()`, `end()`, the `writable` property, and a user-settable `_write` field for custom write behavior, emitting 'drain', 'finish', and 'error' events. Includes execution/generator test coverage for basic stream operations and pipe functionality.
 - Node/runtime: expand global `Buffer` support with core APIs (`Buffer.alloc`, `Buffer.byteLength`, `Buffer.concat`) and string encoding support for `utf8`/`hex`/`base64` in `Buffer.from(...)` and `buffer.toString(...)`, alongside intrinsic discovery/compilation for `Buffer` references.
 - Node/events: add initial `events` module baseline with `EventEmitter` and core listener lifecycle APIs (`on`/`addListener`, `once`, `off`/`removeListener`, `emit`, `listenerCount`, `removeAllListeners`) plus execution/generator coverage.
 - Node/fs: extend `fs.readFileSync`/`fs.writeFileSync` to support Buffer binary roundtrips (default read now returns Buffer; UTF-8 text mode remains supported via encoding options).
