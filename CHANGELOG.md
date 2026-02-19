@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.14 - 2026-02-19
+
 - Node/process: expand process documentation with `cwd()` and broaden `process.versions` to include `v8` (12.4.254.21-node.22), `modules` (127), `js2il` (runtime assembly version), and `dotnet` (runtime description). Added coverage (`Process_Versions_Expanded`, `Process_NextTick_Queue_Semantics`) for versions and current next-tick scheduling behavior.
 - Node/stream: add initial `stream` module baseline with minimal `Readable` and `Writable` classes extending `EventEmitter`. `Readable` supports `push()`, `read()`, `pipe()`, and the `readable` property, emitting 'data', 'end', and 'error' events. `Writable` supports `write()`, `end()`, the `writable` property, and a user-settable `_write` field for custom write behavior, emitting 'drain', 'finish', and 'error' events. Includes execution/generator test coverage for basic stream operations and pipe functionality.
 - Node/util: add `util` module with essential APIs (`promisify` for callback-to-Promise conversion, `inherits` for prototype chain setup, `types` property with 15 type-checking functions including `isArray`/`isPromise`/`isFunction`, and `inspect` for object debugging with depth limits and circular reference handling) plus execution/generator test coverage.
