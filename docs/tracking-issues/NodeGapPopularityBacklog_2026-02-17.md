@@ -14,9 +14,8 @@
 
 ## Current Baseline (Snapshot)
 
-- Node docs track **8 modules** (all currently `partial`) and **14 globals** (**13 `supported`**, **1 `partial`**).
+- Node docs track **8 modules** (all currently `partial`) and **14 globals** (**14 `supported`**, **0 `partial`**).
 - Major blockers currently documented:
-   - `Buffer` is now **partial** (core foundation exists, advanced APIs still missing)
    - `require(id)` is marked **supported** but still limited to implemented core modules + compiled local modules (no `node_modules` / `package.json` resolution)
    - no ESM `import.meta.url`
 - ECMA matrix remains sparse (many sections incomplete/untracked), which increases risk for modern package behavior.
@@ -26,16 +25,16 @@
 ### P0 (Highest impact / broadest unblock)
 
 1. **Buffer + binary I/O path**
-   - Status: 🟡 **In progress**
+   - Status: ✅ **Completed**
    - Why: unlocks large portions of npm ecosystem (`fs`, crypto-like flows, parsers, protocol clients).
-   - Current state: `Buffer.from/isBuffer/alloc/byteLength/concat` and fs sync Buffer read/write are implemented.
-   - Remaining gap: broader Buffer API coverage and deeper binary interoperability across more Node surfaces.
+   - Current state: Buffer binary workflow surface is implemented (`Buffer.from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare`, `slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes`, array-like indexing, `read/writeInt8/16/32`, `read/writeUInt8/16/32`, `read/writeFloatLE/BE`, `read/writeDoubleLE/BE`) and fs sync Buffer read/write interop is in place.
+   - Remaining gap: none for this backlog item; any future long-tail Node Buffer parity work should be tracked as a separate lower-priority item.
 
 2. **events/EventEmitter core semantics**
-   - Status: 🟡 **Baseline implemented**
+   - Status: ✅ **Completed**
    - Why: central dependency pattern across Node packages and many polyfills.
-   - Current state: `on/addListener`, `once`, `off/removeListener`, `emit`, `listenerCount`, `removeAllListeners` are implemented.
-   - Remaining gap: advanced APIs (`errorMonitor`, `prepend*`, `rawListeners`, max listeners controls, async iterator helpers).
+   - Current state: `on/addListener`, `once`, `off/removeListener`, `emit`, `listenerCount`, `removeAllListeners`, `prepend*`, `rawListeners`, max listeners controls, `events.errorMonitor`, and async helper APIs (`events.on`, `events.once`) are implemented.
+   - Remaining gap: none for this backlog item; future Node parity work (for example `captureRejections` and `newListener/removeListener` event semantics) should be tracked separately.
 
 3. **util essentials**
    - Status: ✅ **Completed**

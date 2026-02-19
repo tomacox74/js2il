@@ -1,13 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("util")]
     public sealed class Util
     {
+        private readonly object _types;
+
+        public Util()
+        {
+            _types = CreateTypesObject();
+        }
+
         public object promisify(object callback)
         {
             if (callback is not Delegate original)
@@ -90,32 +96,7 @@ namespace JavaScriptRuntime.Node
             return null;
         }
 
-        public object types
-        {
-            get
-            {
-                var typesObj = new System.Dynamic.ExpandoObject();
-                var dict = (IDictionary<string, object?>)typesObj;
-
-                dict["isArray"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Array);
-                dict["isDate"] = new Func<object?, bool>(v => v is DateTime);
-                dict["isError"] = new Func<object?, bool>(v => v is Error || v is Exception);
-                dict["isFunction"] = new Func<object?, bool>(v => v is Delegate);
-                dict["isPromise"] = new Func<object?, bool>(v => v is Promise);
-                dict["isRegExp"] = new Func<object?, bool>(v => v is System.Text.RegularExpressions.Regex);
-                dict["isString"] = new Func<object?, bool>(v => v is string);
-                dict["isNumber"] = new Func<object?, bool>(v => v is double || v is float || v is int || v is long || v is short || v is byte || v is decimal);
-                dict["isBoolean"] = new Func<object?, bool>(v => v is bool);
-                dict["isUndefined"] = new Func<object?, bool>(v => v == null);
-                dict["isNull"] = new Func<object?, bool>(v => v is JsNull);
-                dict["isObject"] = new Func<object?, bool>(v => v != null && v is not JsNull && !(v is double || v is float || v is int || v is long || v is short || v is byte || v is decimal || v is string || v is bool));
-                dict["isBigInt"] = new Func<object?, bool>(v => v is System.Numerics.BigInteger);
-                dict["isSymbol"] = new Func<object?, bool>(v => v is Symbol);
-                dict["isAsyncFunction"] = new Func<object?, bool>(v => v is Delegate d && d.Method.GetCustomAttributes(typeof(System.Runtime.CompilerServices.AsyncStateMachineAttribute), false).Length > 0);
-
-                return typesObj;
-            }
-        }
+        public object types => _types;
 
         public string inspect(object? value, object? options = null)
         {
@@ -148,7 +129,34 @@ namespace JavaScriptRuntime.Node
                 }
             }
 
+            _ = showHidden;
+            _ = colors;
+
             return InspectValue(value, depth, 0, new HashSet<object>());
+        }
+
+        private static object CreateTypesObject()
+        {
+            var typesObj = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)typesObj;
+
+            dict["isArray"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Array);
+            dict["isDate"] = new Func<object?, bool>(v => v is DateTime);
+            dict["isError"] = new Func<object?, bool>(v => v is Error || v is Exception);
+            dict["isFunction"] = new Func<object?, bool>(v => v is Delegate);
+            dict["isPromise"] = new Func<object?, bool>(v => v is Promise);
+            dict["isRegExp"] = new Func<object?, bool>(v => v is System.Text.RegularExpressions.Regex);
+            dict["isString"] = new Func<object?, bool>(v => v is string);
+            dict["isNumber"] = new Func<object?, bool>(v => v is double || v is float || v is int || v is long || v is short || v is byte || v is decimal);
+            dict["isBoolean"] = new Func<object?, bool>(v => v is bool);
+            dict["isUndefined"] = new Func<object?, bool>(v => v == null);
+            dict["isNull"] = new Func<object?, bool>(v => v is JsNull);
+            dict["isObject"] = new Func<object?, bool>(v => v != null && v is not JsNull && !(v is double || v is float || v is int || v is long || v is short || v is byte || v is decimal || v is string || v is bool));
+            dict["isBigInt"] = new Func<object?, bool>(v => v is System.Numerics.BigInteger);
+            dict["isSymbol"] = new Func<object?, bool>(v => v is Symbol);
+            dict["isAsyncFunction"] = new Func<object?, bool>(v => v is Delegate d && d.Method.GetCustomAttributes(typeof(System.Runtime.CompilerServices.AsyncStateMachineAttribute), false).Length > 0);
+
+            return typesObj;
         }
 
         private string InspectValue(object? value, int maxDepth, int currentDepth, HashSet<object> visited)

@@ -4,21 +4,21 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-02-19T01:42:23Z`
+**Generated:** `2026-02-19T01:44:08Z`
 
 ## Summary
 
 - **Modules:** 9
 - **Globals:** 14
-  - Supported: 13
-  - Partial: 10
+  - Supported: 14
+  - Partial: 8
 
 ## Modules
 
 | Module | Status | Documentation |
 | --- | --- | --- |
 | [child_process](child_process.md) | partial | [Node.js](https://nodejs.org/api/child_process.html) |
-| [events](events.md) | partial | [Node.js](https://nodejs.org/api/events.html) |
+| [events](events.md) | completed | [Node.js](https://nodejs.org/api/events.html) |
 | [fs](fs.md) | partial | [Node.js](https://nodejs.org/api/fs.html) |
 | [fs/promises](fs_promises.md) | partial | [Node.js](https://nodejs.org/api/fs.html#fspromisesapi) |
 | [os](os.md) | partial | [Node.js](https://nodejs.org/api/os.html) |
@@ -33,7 +33,7 @@
 | --- | --- | --- |
 | [__dirname](__dirname.md) | supported | [Node.js](https://nodejs.org/api/modules.html#dirname) |
 | [__filename](__filename.md) | supported | [Node.js](https://nodejs.org/api/modules.html#filename) |
-| [Buffer](Buffer.md) | partial | [Node.js](https://nodejs.org/api/buffer.html#class-buffer) |
+| [Buffer](Buffer.md) | supported | [Node.js](https://nodejs.org/api/buffer.html#class-buffer) |
 | [clearImmediate](clearImmediate.md) | supported | [Node.js](https://nodejs.org/api/timers.html#clearimmediateimmediate) |
 | [clearInterval](clearInterval.md) | supported | [Node.js](https://nodejs.org/api/timers.html#clearintervaltimeout) |
 | [clearTimeout](clearTimeout.md) | supported | [Node.js](https://nodejs.org/api/timers.html#cleartimeouttimeout) |
@@ -48,6 +48,7 @@
 
 ## Limitations
 
-- No Buffer support yet; fs APIs operate on UTF-8 text only.
+- Buffer core APIs for binary workflows are implemented, including from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes, array-like indexing, and binary read/write methods for Int8/16/32, UInt8/16/32, FloatLE/BE, and DoubleLE/BE with utf8/hex/base64 encodings.
+- events module implements full core EventEmitter listener lifecycle APIs, events.errorMonitor behavior, and async helper APIs (events.on/events.once); advanced features such as captureRejections and newListener/removeListener event semantics are not yet implemented.
 - CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; ESM import.meta.url is not.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.
