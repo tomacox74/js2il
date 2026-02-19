@@ -29,5 +29,9 @@ namespace Js2IL.Tests.Node.Process
         [Fact]
         public Task Process_Versions_Expanded() => GenerateTest(
             nameof(Process_Versions_Expanded));
+
+        [Fact]
+        public Task Process_NextTick_Queue_Semantics() => GenerateTest(
+            nameof(Process_NextTick_Queue_Semantics));
     }
 }
