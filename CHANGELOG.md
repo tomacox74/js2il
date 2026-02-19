@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-- Node/runtime: expand global `Buffer` support with core APIs (`Buffer.alloc`, `Buffer.byteLength`, `Buffer.concat`) and string encoding support for `utf8`/`hex`/`base64` in `Buffer.from(...)` and `buffer.toString(...)`, alongside intrinsic discovery/compilation for `Buffer` references.
+- Node/runtime: complete global `Buffer` support with comprehensive APIs (`Buffer.from`, `Buffer.isBuffer`, `Buffer.alloc`, `Buffer.allocUnsafe`, `Buffer.byteLength`, `Buffer.concat`, `Buffer.compare`) and instance methods (`slice`, `copy`, `write`, `toString`, array-like indexing with `buffer[i]`), binary read/write methods (`readInt8/16/32BE/LE`, `writeInt8/16/32BE/LE`, `readUInt8/16/32BE/LE`, `writeUInt8/16/32BE/LE`), and string encoding support for `utf8`/`hex`/`base64`. Buffer is now marked as `supported` in documentation and covers common use cases for binary data manipulation and I/O operations.
 - Node/events: add initial `events` module baseline with `EventEmitter` and core listener lifecycle APIs (`on`/`addListener`, `once`, `off`/`removeListener`, `emit`, `listenerCount`, `removeAllListeners`) plus execution/generator coverage.
 - Node/fs: extend `fs.readFileSync`/`fs.writeFileSync` to support Buffer binary roundtrips (default read now returns Buffer; UTF-8 text mode remains supported via encoding options).
 - Node/path compatibility: added support for `path.extname`, `path.isAbsolute`, `path.normalize`, `path.parse`, `path.format`, `path.sep`, `path.delimiter`, and `path.toNamespacedPath`, and aligned `path.relative(from, to)` same-path behavior with Node (returns empty string).
