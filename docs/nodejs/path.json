@@ -34,58 +34,6 @@
       ]
     },
     {
-      "name": "extname(path)",
-      "kind": "function",
-      "status": "supported",
-      "notes": "Supports common extension extraction semantics including empty-extension and trailing-dot cases.",
-      "docs": "https://nodejs.org/api/path.html#pathextnamepath",
-      "tests": [
-        {
-          "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_Extname_And_IsAbsolute",
-          "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
-        }
-      ]
-    },
-    {
-      "name": "isAbsolute(path)",
-      "kind": "function",
-      "status": "supported",
-      "notes": "Uses platform-rooted path checks for common absolute/relative path scenarios.",
-      "docs": "https://nodejs.org/api/path.html#pathisabsolutepath",
-      "tests": [
-        {
-          "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_Extname_And_IsAbsolute",
-          "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
-        }
-      ]
-    },
-    {
-      "name": "normalize(path)",
-      "kind": "function",
-      "status": "supported",
-      "notes": "Normalizes separators and dot segments for common relative and absolute path inputs.",
-      "docs": "https://nodejs.org/api/path.html#pathnormalizepath",
-      "tests": [
-        {
-          "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_Normalize_And_Sep",
-          "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
-        }
-      ]
-    },
-    {
-      "name": "parse(path)",
-      "kind": "function",
-      "status": "supported",
-      "notes": "Returns an object with root, dir, base, ext, and name for common path parsing scenarios.",
-      "docs": "https://nodejs.org/api/path.html#pathparsepath",
-      "tests": [
-        {
-          "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_Parse_And_Format",
-          "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
-        }
-      ]
-    },
-    {
       "name": "join(...parts)",
       "kind": "function",
       "status": "supported",
@@ -113,15 +61,11 @@
       "name": "relative(from, to)",
       "kind": "function",
       "status": "supported",
-      "notes": "Uses platform-correct separators and returns an empty string when both paths resolve to the same location (Node-compatible behavior).",
+      "notes": "Uses System.IO.Path.GetRelativePath for platform-correct separators.",
       "docs": "https://nodejs.org/api/path.html#pathrelativefrom-to",
       "tests": [
         {
           "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_Relative_Between_Two_Paths",
-          "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
-        },
-        {
-          "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_Relative_SamePath_EmptyString",
           "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
         }
       ]
@@ -135,58 +79,6 @@
       "tests": [
         {
           "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_Resolve_Relative_To_Absolute",
-          "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
-        }
-      ]
-    },
-    {
-      "name": "format(pathObject)",
-      "kind": "function",
-      "status": "supported",
-      "notes": "Formats a path object using dir/root + base/name/ext precedence for common Node-style composition.",
-      "docs": "https://nodejs.org/api/path.html#pathformatpathobject",
-      "tests": [
-        {
-          "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_Parse_And_Format",
-          "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
-        }
-      ]
-    },
-    {
-      "name": "sep",
-      "kind": "property",
-      "status": "supported",
-      "notes": "Exposes the platform path segment separator character.",
-      "docs": "https://nodejs.org/api/path.html#pathsep",
-      "tests": [
-        {
-          "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_Normalize_And_Sep",
-          "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
-        }
-      ]
-    },
-    {
-      "name": "delimiter",
-      "kind": "property",
-      "status": "supported",
-      "notes": "Exposes the platform path list delimiter character (for example ':' on POSIX and ';' on Windows).",
-      "docs": "https://nodejs.org/api/path.html#pathdelimiter",
-      "tests": [
-        {
-          "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_Delimiter",
-          "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
-        }
-      ]
-    },
-    {
-      "name": "toNamespacedPath(path)",
-      "kind": "function",
-      "status": "supported",
-      "notes": "Currently returns the provided path unchanged for common cross-platform compatibility scenarios.",
-      "docs": "https://nodejs.org/api/path.html#pathtonamespacedpathpath",
-      "tests": [
-        {
-          "name": "Js2IL.Tests.Node.Path.ExecutionTests.Require_Path_ToNamespacedPath",
           "file": "Js2IL.Tests/Node/Path/ExecutionTests.cs"
         }
       ]

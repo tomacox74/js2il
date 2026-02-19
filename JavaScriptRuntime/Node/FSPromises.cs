@@ -1,7 +1,6 @@
 using System;
 using System.Dynamic;
 using System.IO;
-using System.Text;
 using JavaScriptRuntime;
 
 namespace JavaScriptRuntime.Node
@@ -9,7 +8,6 @@ namespace JavaScriptRuntime.Node
     [NodeModule("fs/promises")]
     public sealed class FSPromises
     {
-        private static readonly Encoding Utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         public object? access(object path, object? mode = null)
         {
             _ = mode;
@@ -145,15 +143,15 @@ namespace JavaScriptRuntime.Node
 
         public object? readFile(object file, object? options = null)
         {
+            var path = file?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                return Promise.reject(new Error("Path must be a non-empty string"));
+            }
+
             try
             {
-                var path = file?.ToString() ?? string.Empty;
-                if (string.IsNullOrEmpty(path))
-                {
-                    return Promise.reject(new Error("Path must be a non-empty string"));
-                }
-
-                if (TryGetTextEncoding(options, out var textEncoding))
+                if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
                 {
                     var content = File.ReadAllText(path, textEncoding!);
                     return Promise.resolve(content);
@@ -164,20 +162,20 @@ namespace JavaScriptRuntime.Node
             }
             catch (Exception ex)
             {
-                return Promise.reject(new Error(ex.Message, ex));
+                return Promise.reject(TranslateReadFileError(path, ex));
             }
         }
 
         public object? writeFile(object file, object? content, object? options = null)
         {
+            var path = file?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                return Promise.reject(new Error("Path must be a non-empty string"));
+            }
+
             try
             {
-                var path = file?.ToString() ?? string.Empty;
-                if (string.IsNullOrEmpty(path))
-                {
-                    return Promise.reject(new Error("Path must be a non-empty string"));
-                }
-
                 if (content is Buffer buffer)
                 {
                     File.WriteAllBytes(path, buffer.ToByteArray());
@@ -191,18 +189,18 @@ namespace JavaScriptRuntime.Node
                 }
 
                 var text = content?.ToString() ?? string.Empty;
-                if (TryGetTextEncoding(options, out var textEncoding))
+                if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
                 {
                     File.WriteAllText(path, text, textEncoding!);
                     return Promise.resolve(null);
                 }
 
-                File.WriteAllText(path, text, Utf8NoBom);
+                File.WriteAllText(path, text, FsEncodingOptions.Utf8NoBom);
                 return Promise.resolve(null);
             }
             catch (Exception ex)
             {
-                return Promise.reject(new Error(ex.Message, ex));
+                return Promise.reject(TranslateWriteFileError(path, ex));
             }
         }
 
@@ -244,12 +242,17 @@ namespace JavaScriptRuntime.Node
 
         public object? realpath(object file)
         {
+            var path = file?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                return Promise.reject(new Error("Path must be a non-empty string"));
+            }
+
             try
             {
-                var path = file?.ToString() ?? string.Empty;
-                if (string.IsNullOrEmpty(path))
+                if (!File.Exists(path) && !Directory.Exists(path))
                 {
-                    return Promise.reject(new Error("Path must be a non-empty string"));
+                    return Promise.reject(new Error($"ENOENT: no such file or directory, realpath '{path}'"));
                 }
 
                 var fullPath = System.IO.Path.GetFullPath(path);
@@ -257,55 +260,58 @@ namespace JavaScriptRuntime.Node
             }
             catch (Exception ex)
             {
-                return Promise.reject(new Error(ex.Message, ex));
+                return Promise.reject(new Error($"EIO: i/o error, realpath '{path}'", ex));
             }
         }
 
-        private static bool TryGetTextEncoding(object? options, out Encoding? encoding)
+        private static Error TranslateReadFileError(string path, Exception ex)
         {
-            encoding = null;
-            if (options == null || options is JsNull)
+            if (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                return false;
+                return new Error($"ENOENT: no such file or directory, open '{path}'", ex);
             }
 
-            if (options is string optionString)
+            if (Directory.Exists(path))
             {
-                return TryResolveTextEncoding(optionString, out encoding);
+                return new Error($"EISDIR: illegal operation on a directory, read '{path}'", ex);
             }
 
-            try
+            if (ex is UnauthorizedAccessException)
             {
-                var encodingValue = JavaScriptRuntime.Object.GetProperty(options, "encoding");
-                if (encodingValue == null || encodingValue is JsNull)
-                {
-                    return false;
-                }
+                return new Error($"EACCES: permission denied, open '{path}'", ex);
+            }
 
-                return TryResolveTextEncoding(encodingValue.ToString() ?? string.Empty, out encoding);
-            }
-            catch
+            if (ex is IOException)
             {
-                return false;
+                return new Error($"EIO: i/o error, read '{path}'", ex);
             }
+
+            return new Error($"EIO: i/o error, read '{path}'", ex);
         }
 
-        private static bool TryResolveTextEncoding(string value, out Encoding? encoding)
+        private static Error TranslateWriteFileError(string path, Exception ex)
         {
-            encoding = null;
-            if (IsUtf8(value))
+            if (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                encoding = Utf8NoBom;
-                return true;
+                return new Error($"ENOENT: no such file or directory, open '{path}'", ex);
             }
 
-            return false;
-        }
+            if (Directory.Exists(path))
+            {
+                return new Error($"EISDIR: illegal operation on a directory, open '{path}'", ex);
+            }
 
-        private static bool IsUtf8(string s)
-        {
-            return s.Equals("utf8", StringComparison.OrdinalIgnoreCase)
-                || s.Equals("utf-8", StringComparison.OrdinalIgnoreCase);
+            if (ex is UnauthorizedAccessException)
+            {
+                return new Error($"EACCES: permission denied, open '{path}'", ex);
+            }
+
+            if (ex is IOException)
+            {
+                return new Error($"EIO: i/o error, write '{path}'", ex);
+            }
+
+            return new Error($"EIO: i/o error, write '{path}'", ex);
         }
     }
 }
