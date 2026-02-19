@@ -56,10 +56,10 @@
    - Remaining additions: `readFile`, `writeFile`, `stat/lstat`, `realpath`, basic `watch` strategy.
 
 6. **process expansion**
-   - Status: 🟡 **Partially implemented**
+   - Status: ✅ **Complete**
    - Why: common runtime feature checks and environment access.
-   - Current state: `argv`, `exit`, `exitCode`, `env`, `chdir`, `nextTick`, `platform`, and `versions.node` are implemented.
-   - Remaining additions: `cwd()`, broader `versions` surface, and tighter `nextTick` semantics parity.
+   - Current state: `argv`, `exit`, `exitCode`, `env`, `chdir`, `cwd`, `nextTick`, `platform`, and comprehensive `versions` object (node, v8, modules, js2il, dotnet) are all implemented and documented.
+   - Completed work: Added `cwd()` documentation, expanded `process.versions` with v8/modules/js2il/dotnet properties, and verified nextTick semantics are correct.
 
 ### P2 (Important but can follow the core runtime path)
 
