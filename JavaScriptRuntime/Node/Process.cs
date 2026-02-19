@@ -1,4 +1,8 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Runtime.InteropServices;
 
 namespace JavaScriptRuntime.Node
 {
@@ -9,11 +13,17 @@ namespace JavaScriptRuntime.Node
     [NodeModule("process")]
     public sealed class Process
     {
+        private const string TargetNodeVersion = "22.0.0";
+        private static readonly Lazy<string> _platform = new(DetectPlatform);
         IEnvironment _environment;
+        private readonly Lazy<object> _versions;
+        private readonly Lazy<object> _env;
 
         public Process(IEnvironment environment)
         {
             _environment = environment;
+            _versions = new Lazy<object>(CreateVersions);
+            _env = new Lazy<object>(CreateEnvSnapshot);
         }
 
         /// <summary>
@@ -108,6 +118,126 @@ namespace JavaScriptRuntime.Node
             {
                 return string.Empty;
             }
+        }
+
+        /// <summary>
+        /// Minimal Node-compatible platform identifier.
+        /// Returns values like "win32", "linux", or "darwin".
+        /// </summary>
+        public string platform
+        {
+            get => _platform.Value;
+        }
+
+        /// <summary>
+        /// Minimal process.versions object with Node version identity.
+        /// </summary>
+        public object versions
+        {
+            get => _versions.Value;
+        }
+
+        /// <summary>
+        /// Snapshot of host environment variables as a JS object.
+        /// </summary>
+        public object env
+        {
+            get => _env.Value;
+        }
+
+        private static string DetectPlatform()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return "win32";
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return "darwin";
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return "linux";
+            }
+
+            return "unknown";
+        }
+
+        private static object CreateVersions()
+        {
+            var result = new ExpandoObject();
+            var dict = (IDictionary<string, object?>)result;
+            dict["node"] = TargetNodeVersion;
+            return result;
+        }
+
+        private static object CreateEnvSnapshot()
+        {
+            var result = new ExpandoObject();
+            var dict = (IDictionary<string, object?>)result;
+
+            foreach (DictionaryEntry entry in System.Environment.GetEnvironmentVariables())
+            {
+                var key = entry.Key?.ToString();
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    continue;
+                }
+
+                dict[key] = entry.Value?.ToString() ?? string.Empty;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Changes the current working directory.
+        /// </summary>
+        public object? chdir(object? directory)
+        {
+            if (directory is null || directory is JsNull)
+            {
+                throw new TypeError("The \"directory\" argument must be of type string.");
+            }
+
+            var target = DotNet2JSConversions.ToString(directory);
+            if (string.IsNullOrWhiteSpace(target))
+            {
+                throw new TypeError("The \"directory\" argument must be a non-empty string.");
+            }
+
+            if (!System.IO.Directory.Exists(target))
+            {
+                throw new Error($"ENOENT: no such file or directory, chdir '{target}'");
+            }
+
+            try
+            {
+                System.Environment.CurrentDirectory = target;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Error(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Queues a callback for next-turn execution using the immediate queue.
+        /// This is a pragmatic approximation and does not model full Node nextTick queue semantics.
+        /// </summary>
+        public object? nextTick(object callback, params object[] args)
+        {
+            if (callback is not Delegate)
+            {
+                throw new TypeError("Callback must be a function.");
+            }
+
+            var tickArgs = args ?? System.Array.Empty<object>();
+            _ = GlobalThis.setImmediate(callback, tickArgs);
+            return null;
         }
 
         /// <summary>

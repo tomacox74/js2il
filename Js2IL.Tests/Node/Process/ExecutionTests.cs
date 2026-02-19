@@ -49,5 +49,13 @@ namespace Js2IL.Tests.Node.Process
                 allowUnhandledException: true,
                 configureSettings: _ => { },
                 preferOutOfProc: false);
+
+        [Fact]
+        public Task Process_Platform_Versions_And_Env_Basics()
+            => ExecutionTest(nameof(Process_Platform_Versions_And_Env_Basics));
+
+        [Fact]
+        public Task Process_Chdir_And_NextTick_Basics()
+            => ExecutionTest(nameof(Process_Chdir_And_NextTick_Basics));
     }
 }

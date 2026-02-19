@@ -1,0 +1,313 @@
+﻿// IL code: Process_Platform_Versions_And_Env_Basics
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Process_Platform_Versions_And_Env_Basics
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2331
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 725 (0x2d5)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Process_Platform_Versions_And_Env_Basics/Scope,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] bool,
+			[5] object,
+			[6] object,
+			[7] object,
+			[8] object,
+			[9] object,
+			[10] object,
+			[11] object,
+			[12] object,
+			[13] object,
+			[14] object,
+			[15] object,
+			[16] object
+		)
+
+		IL_0000: newobj instance void Modules.Process_Platform_Versions_And_Env_Basics/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_000b: ldstr "platform"
+		IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0015: ldstr "win32"
+		IL_001a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_001f: stloc.s 4
+		IL_0021: ldloc.s 4
+		IL_0023: box [System.Runtime]System.Boolean
+		IL_0028: stloc.s 5
+		IL_002a: ldloc.s 5
+		IL_002c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0031: stloc.s 4
+		IL_0033: ldloc.s 4
+		IL_0035: brtrue IL_0067
+
+		IL_003a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_003f: ldstr "platform"
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0049: ldstr "linux"
+		IL_004e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0053: stloc.s 4
+		IL_0055: ldloc.s 4
+		IL_0057: box [System.Runtime]System.Boolean
+		IL_005c: stloc.s 6
+		IL_005e: ldloc.s 6
+		IL_0060: stloc.s 8
+		IL_0062: br IL_006b
+
+		IL_0067: ldloc.s 5
+		IL_0069: stloc.s 8
+
+		IL_006b: ldloc.s 8
+		IL_006d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0072: stloc.s 4
+		IL_0074: ldloc.s 4
+		IL_0076: brtrue IL_00a8
+
+		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_0080: ldstr "platform"
+		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_008a: ldstr "darwin"
+		IL_008f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0094: stloc.s 4
+		IL_0096: ldloc.s 4
+		IL_0098: box [System.Runtime]System.Boolean
+		IL_009d: stloc.s 5
+		IL_009f: ldloc.s 5
+		IL_00a1: stloc.s 8
+		IL_00a3: br IL_00a8
+
+		IL_00a8: ldloc.s 8
+		IL_00aa: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_00af: stloc.s 4
+		IL_00b1: ldloc.s 4
+		IL_00b3: brtrue IL_00e5
+
+		IL_00b8: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_00bd: ldstr "platform"
+		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00c7: ldstr "unknown"
+		IL_00cc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00d1: stloc.s 4
+		IL_00d3: ldloc.s 4
+		IL_00d5: box [System.Runtime]System.Boolean
+		IL_00da: stloc.s 5
+		IL_00dc: ldloc.s 5
+		IL_00de: stloc.s 8
+		IL_00e0: br IL_00e5
+
+		IL_00e5: ldloc.s 8
+		IL_00e7: stloc.1
+		IL_00e8: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_00ed: ldstr "versions"
+		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00f7: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00fc: ldstr "object"
+		IL_0101: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0106: stloc.s 4
+		IL_0108: ldloc.s 4
+		IL_010a: box [System.Runtime]System.Boolean
+		IL_010f: stloc.s 5
+		IL_0111: ldloc.s 5
+		IL_0113: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0118: stloc.s 4
+		IL_011a: ldloc.s 4
+		IL_011c: brfalse IL_0153
+
+		IL_0121: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_0126: ldstr "versions"
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0130: stloc.s 11
+		IL_0132: ldloc.s 11
+		IL_0134: ldc.i4.0
+		IL_0135: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_013a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+		IL_013f: stloc.s 4
+		IL_0141: ldloc.s 4
+		IL_0143: box [System.Runtime]System.Boolean
+		IL_0148: stloc.s 6
+		IL_014a: ldloc.s 6
+		IL_014c: stloc.s 12
+		IL_014e: br IL_0157
+
+		IL_0153: ldloc.s 5
+		IL_0155: stloc.s 12
+
+		IL_0157: ldloc.s 12
+		IL_0159: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_015e: stloc.s 4
+		IL_0160: ldloc.s 4
+		IL_0162: brfalse IL_01a3
+
+		IL_0167: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_016c: ldstr "versions"
+		IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0176: ldstr "node"
+		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0180: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0185: ldstr "string"
+		IL_018a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_018f: stloc.s 4
+		IL_0191: ldloc.s 4
+		IL_0193: box [System.Runtime]System.Boolean
+		IL_0198: stloc.s 5
+		IL_019a: ldloc.s 5
+		IL_019c: stloc.s 12
+		IL_019e: br IL_01a3
+
+		IL_01a3: ldloc.s 12
+		IL_01a5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_01aa: stloc.s 4
+		IL_01ac: ldloc.s 4
+		IL_01ae: brfalse IL_01e8
+
+		IL_01b3: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_01b8: ldstr "versions"
+		IL_01bd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_01c2: ldstr "node"
+		IL_01c7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_01cc: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_01d1: ldc.r8 0.0
+		IL_01da: cgt
+		IL_01dc: box [System.Runtime]System.Boolean
+		IL_01e1: stloc.s 12
+		IL_01e3: br IL_01e8
+
+		IL_01e8: ldloc.s 12
+		IL_01ea: stloc.2
+		IL_01eb: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_01f0: ldstr "env"
+		IL_01f5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_01fa: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_01ff: ldstr "object"
+		IL_0204: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0209: stloc.s 4
+		IL_020b: ldloc.s 4
+		IL_020d: box [System.Runtime]System.Boolean
+		IL_0212: stloc.s 5
+		IL_0214: ldloc.s 5
+		IL_0216: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_021b: stloc.s 4
+		IL_021d: ldloc.s 4
+		IL_021f: brfalse IL_0256
+
+		IL_0224: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_0229: ldstr "env"
+		IL_022e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0233: stloc.s 11
+		IL_0235: ldloc.s 11
+		IL_0237: ldc.i4.0
+		IL_0238: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_023d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictNotEqual(object, object)
+		IL_0242: stloc.s 4
+		IL_0244: ldloc.s 4
+		IL_0246: box [System.Runtime]System.Boolean
+		IL_024b: stloc.s 6
+		IL_024d: ldloc.s 6
+		IL_024f: stloc.s 15
+		IL_0251: br IL_025a
+
+		IL_0256: ldloc.s 5
+		IL_0258: stloc.s 15
+
+		IL_025a: ldloc.s 15
+		IL_025c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0261: stloc.s 4
+		IL_0263: ldloc.s 4
+		IL_0265: brfalse IL_029e
+
+		IL_026a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_026f: ldstr "env"
+		IL_0274: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0279: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+		IL_027e: stloc.s 11
+		IL_0280: ldloc.s 11
+		IL_0282: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0287: ldc.r8 0.0
+		IL_0290: cgt
+		IL_0292: box [System.Runtime]System.Boolean
+		IL_0297: stloc.s 15
+		IL_0299: br IL_029e
+
+		IL_029e: ldloc.s 15
+		IL_02a0: stloc.3
+		IL_02a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02a6: ldstr "known platform"
+		IL_02ab: ldloc.1
+		IL_02ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02b1: pop
+		IL_02b2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02b7: ldstr "has versions.node"
+		IL_02bc: ldloc.2
+		IL_02bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02c2: pop
+		IL_02c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02c8: ldstr "has env"
+		IL_02cd: ldloc.3
+		IL_02ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02d3: pop
+		IL_02d4: ret
+	} // end of method Process_Platform_Versions_And_Env_Basics::__js_module_init__
+
+} // end of class Modules.Process_Platform_Versions_And_Env_Basics
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x233a
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Process_Platform_Versions_And_Env_Basics::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
