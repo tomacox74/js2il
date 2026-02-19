@@ -5,14 +5,16 @@
 | Property | Value |
 | --- | --- |
 | Type | module |
-| Status | partial |
+| Status | completed |
 | Node.js Version | 22.x LTS |
 | Documentation | [Node.js Docs](https://nodejs.org/api/process.html) |
 
 ## Implementation
 
 - `JavaScriptRuntime/Node/Process.cs`
-- `JavaScriptRuntime/GlobalVariables.cs`
+- `JavaScriptRuntime/GlobalThis.cs`
+- `JavaScriptRuntime/Engine/NodeSchedulerState.cs`
+- `JavaScriptRuntime/Engine/NodeEventLoopPump.cs`
 
 ## APIs
 
@@ -125,7 +127,9 @@ Returns the current working directory of the Node.js process.
 - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 ### nextTick(callback, ...args)
 
-Queues a callback for next-turn execution using the immediate queue. This is an approximation and does not implement full Node nextTick queue semantics.
+Queues a callback into a dedicated nextTick queue with priority over Promise microtasks and immediates at callback checkpoints.
 
 **Tests:**
 - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_NextTick_Precedes_SetImmediate_When_Queued_Later` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_NextTick_And_Promise_Ordering` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)

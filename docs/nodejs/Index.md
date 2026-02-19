@@ -11,7 +11,7 @@
 - **Modules:** 10
 - **Globals:** 14
   - Supported: 14
-  - Partial: 9
+  - Partial: 8
 
 ## Modules
 
@@ -24,7 +24,7 @@
 | [os](os.md) | partial | [Node.js](https://nodejs.org/api/os.html) |
 | [path](path.md) | partial | [Node.js](https://nodejs.org/api/path.html) |
 | [perf_hooks](perf_hooks.md) | partial | [Node.js](https://nodejs.org/api/perf_hooks.html) |
-| [process](process.md) | partial | [Node.js](https://nodejs.org/api/process.html) |
+| [process](process.md) | completed | [Node.js](https://nodejs.org/api/process.html) |
 | [stream](stream.md) | partial | [Node.js](https://nodejs.org/api/stream.html) |
 | [util](util.md) | partial | [Node.js](https://nodejs.org/api/util.html) |
 

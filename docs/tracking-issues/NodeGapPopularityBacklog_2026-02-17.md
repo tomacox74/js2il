@@ -60,11 +60,11 @@
    - Remaining additions: basic `watch` strategy (deferred to future work).
 
 6. **process expansion**
-   - Status: 🟡 **Partially implemented**
+   - Status: ✅ **Completed**
    - Why: common runtime feature checks and environment access.
    - Current state: `argv`, `exit`, `exitCode`, `env`, `chdir`, `cwd`, `nextTick`, `platform`, and comprehensive `versions` object (node, v8, modules, js2il, dotnet) are all implemented and documented.
-   - Completed work: Added `cwd()` documentation and expanded `process.versions` with v8/modules/js2il/dotnet properties.
-   - Remaining additions: tighten `nextTick` semantics to match Node ordering guarantees in cases where `setImmediate` is queued before `nextTick`.
+   - Completed work: Added `cwd()` documentation, expanded `process.versions` with v8/modules/js2il/dotnet properties, and implemented dedicated `process.nextTick` queue priority semantics with ordering tests covering nextTick vs `setImmediate` and Promise jobs.
+   - Remaining additions: none for this backlog item; any deeper event-loop parity edge cases should be tracked separately.
 
 ### P2 (Important but can follow the core runtime path)
 

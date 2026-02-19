@@ -2,6 +2,7 @@
 
 JS2IL's runtime provides a small, deterministic event loop to support JavaScript semantics for:
 
+- process.nextTick callbacks
 - Promise reactions ("microtasks")
 - timers (`setTimeout` / `setInterval`)
 - immediates (`setImmediate`)
@@ -82,6 +83,12 @@ When any work is scheduled or canceled, the scheduler signals a wake-up handle s
 
 `setImmediate` enqueues work into an immediates queue. Immediates are treated as high priority work within a tick.
 
+### NextTick
+
+`process.nextTick` enqueues work into a dedicated nextTick queue.
+
+At callback checkpoints, nextTick callbacks run before Promise microtasks and before the immediate/timer phases in a loop iteration.
+
 ### Microtasks
 
 Promise reactions (from `Promise.prototype.then/catch/finally`) enqueue a microtask.
@@ -92,12 +99,13 @@ Microtasks are *always* drained at the end of each event-loop iteration.
 
 Each `RunOneIteration()` performs the following steps (simplified):
 
-1) Drain a bounded number of immediates
-2) Promote at most one due timer to the macro queue (rescheduling intervals immediately)
-3) Execute at most one macro callback
-4) Drain a bounded number of microtasks
+1) Drain a bounded number of nextTick callbacks
+2) Drain a bounded number of immediates
+3) Promote at most one due timer to the macro queue (rescheduling intervals immediately)
+4) Execute at most one macro callback
+5) Drain a bounded number of microtasks
 
-Additionally, a microtask checkpoint runs after each immediate callback.
+Additionally, callback checkpoints prioritize nextTick callbacks before microtasks (including nextTick callbacks queued from microtask handlers).
 
 ## Waiting / Idling
 

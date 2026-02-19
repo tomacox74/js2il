@@ -33,5 +33,13 @@ namespace Js2IL.Tests.Node.Process
         [Fact]
         public Task Process_NextTick_Queue_Semantics() => GenerateTest(
             nameof(Process_NextTick_Queue_Semantics));
+
+        [Fact]
+        public Task Process_NextTick_Precedes_SetImmediate_When_Queued_Later() => GenerateTest(
+            nameof(Process_NextTick_Precedes_SetImmediate_When_Queued_Later));
+
+        [Fact]
+        public Task Process_NextTick_And_Promise_Ordering() => GenerateTest(
+            nameof(Process_NextTick_And_Promise_Ordering));
     }
 }
