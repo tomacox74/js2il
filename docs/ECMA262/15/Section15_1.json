@@ -56,7 +56,7 @@
           "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_MaxParameters_32.js",
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_MaxParameters_32.js"
         ],
-        "notes": "JS2IL supports simple parameter lists but enforces a current limit of 32 parameters (validator) and does not support rest parameters (...args)."
+        "notes": "JS2IL supports simple parameter lists but enforces a current limit of 32 parameters (validator)."
       },
       {
         "clause": "15.1.4",
@@ -91,9 +91,17 @@
       {
         "clause": "15.1",
         "feature": "rest parameters (...args)",
-        "status": "Not Yet Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-parameter-lists",
-        "notes": "Explicitly rejected in validator (ValidateFunctionParameters)."
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_RestParameters_Basic.js",
+          "Js2IL.Tests/Function/JavaScript/Function_RestParameters_Empty.js",
+          "Js2IL.Tests/Function/JavaScript/Function_RestParameters_WithNamedParams.js",
+          "Js2IL.Tests/Function/JavaScript/Function_RestParameters_MultipleNamed.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_RestParameters_Basic.js",
+          "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_RestParameters_WithNamedParams.js"
+        ],
+        "notes": "Rest parameters (...args) are fully supported in function declarations, function expressions, and arrow functions. Remaining arguments are collected into a JavaScript Array and are available for normal array operations and iteration."
       }
     ]
   }
