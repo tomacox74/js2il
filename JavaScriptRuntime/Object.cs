@@ -188,21 +188,7 @@ namespace JavaScriptRuntime
             return TypeUtilities.IsConstructorReturnOverride(value);
         }
 
-        // Runtime-only operator bridge methods used by compiler-emitted intrinsic static calls.
-        public static object OpSubtract(object? left, object? right) => Operators.Subtract(left, right);
-        public static object OpDivide(object? left, object? right) => Operators.Divide(left, right);
-        public static object OpRemainder(object? left, object? right) => Operators.Remainder(left, right);
-        public static object OpExponentiate(object? left, object? right) => Operators.Exponentiate(left, right);
-        public static object OpBitwiseAnd(object? left, object? right) => Operators.BitwiseAnd(left, right);
-        public static object OpBitwiseOr(object? left, object? right) => Operators.BitwiseOr(left, right);
-        public static object OpBitwiseXor(object? left, object? right) => Operators.BitwiseXor(left, right);
-        public static object OpLeftShift(object? left, object? right) => Operators.LeftShift(left, right);
-        public static object OpSignedRightShift(object? left, object? right) => Operators.SignedRightShift(left, right);
-        public static object OpUnsignedRightShift(object? left, object? right) => Operators.UnsignedRightShift(left, right);
-        public static bool OpLessThan(object? left, object? right) => Operators.LessThan(left, right);
-        public static bool OpGreaterThan(object? left, object? right) => Operators.GreaterThan(left, right);
-        public static bool OpLessThanOrEqual(object? left, object? right) => Operators.LessThanOrEqual(left, right);
-        public static bool OpGreaterThanOrEqual(object? left, object? right) => Operators.GreaterThanOrEqual(left, right);
+        // Runtime-only unary operator bridge methods used by compiler-emitted intrinsic static calls.
         public static object OpUnaryMinus(object? value) => Operators.UnaryMinus(value);
         public static object OpBitwiseNot(object? value) => Operators.BitwiseNot(value);
 
