@@ -1,3 +1,4 @@
+using Js2IL.IR;
 using Js2IL.Services.ILGenerators;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -117,6 +118,35 @@ internal sealed partial class LIRToILCompiler
     private void EmitOperatorsStrictNotEqual(InstructionEncoder ilEncoder)
     {
         var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.StrictNotEqual));
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsDynamicBinary(DynamicBinaryOperatorKind operatorKind, InstructionEncoder ilEncoder)
+    {
+        var methodName = operatorKind switch
+        {
+            DynamicBinaryOperatorKind.Subtract => nameof(JavaScriptRuntime.Operators.Subtract),
+            DynamicBinaryOperatorKind.Divide => nameof(JavaScriptRuntime.Operators.Divide),
+            DynamicBinaryOperatorKind.Remainder => nameof(JavaScriptRuntime.Operators.Remainder),
+            DynamicBinaryOperatorKind.Exponentiate => nameof(JavaScriptRuntime.Operators.Exponentiate),
+            DynamicBinaryOperatorKind.BitwiseAnd => nameof(JavaScriptRuntime.Operators.BitwiseAnd),
+            DynamicBinaryOperatorKind.BitwiseOr => nameof(JavaScriptRuntime.Operators.BitwiseOr),
+            DynamicBinaryOperatorKind.BitwiseXor => nameof(JavaScriptRuntime.Operators.BitwiseXor),
+            DynamicBinaryOperatorKind.LeftShift => nameof(JavaScriptRuntime.Operators.LeftShift),
+            DynamicBinaryOperatorKind.SignedRightShift => nameof(JavaScriptRuntime.Operators.SignedRightShift),
+            DynamicBinaryOperatorKind.UnsignedRightShift => nameof(JavaScriptRuntime.Operators.UnsignedRightShift),
+            DynamicBinaryOperatorKind.LessThan => nameof(JavaScriptRuntime.Operators.LessThan),
+            DynamicBinaryOperatorKind.GreaterThan => nameof(JavaScriptRuntime.Operators.GreaterThan),
+            DynamicBinaryOperatorKind.LessThanOrEqual => nameof(JavaScriptRuntime.Operators.LessThanOrEqual),
+            DynamicBinaryOperatorKind.GreaterThanOrEqual => nameof(JavaScriptRuntime.Operators.GreaterThanOrEqual),
+            _ => throw new NotSupportedException($"Unsupported dynamic binary operator: {operatorKind}")
+        };
+
+        var methodRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.Operators),
+            methodName,
+            new[] { typeof(object), typeof(object) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }

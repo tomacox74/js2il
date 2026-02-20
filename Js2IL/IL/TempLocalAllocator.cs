@@ -404,6 +404,10 @@ internal static class TempLocalAllocator
                 yield return strictNotEqualDyn.Left;
                 yield return strictNotEqualDyn.Right;
                 break;
+            case LIRBinaryDynamicOperator binaryDynamic:
+                yield return binaryDynamic.Left;
+                yield return binaryDynamic.Right;
+                break;
             case LIRReturn ret:
                 yield return ret.ReturnValue;
                 break;
@@ -936,6 +940,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRStrictNotEqualDynamic strictNotEqualDyn:
                 defined = strictNotEqualDyn.Result;
+                return true;
+            case LIRBinaryDynamicOperator binaryDynamic:
+                defined = binaryDynamic.Result;
                 return true;
             case LIRCallFunction callFunc:
                 defined = callFunc.Result;

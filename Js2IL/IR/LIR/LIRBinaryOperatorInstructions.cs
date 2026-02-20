@@ -97,6 +97,34 @@ public record LIRRightShift(TempVariable Left, TempVariable Right, TempVariable 
 /// </summary>
 public record LIRUnsignedRightShift(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
+public enum DynamicBinaryOperatorKind
+{
+    Subtract,
+    Divide,
+    Remainder,
+    Exponentiate,
+    BitwiseAnd,
+    BitwiseOr,
+    BitwiseXor,
+    LeftShift,
+    SignedRightShift,
+    UnsignedRightShift,
+    LessThan,
+    GreaterThan,
+    LessThanOrEqual,
+    GreaterThanOrEqual,
+}
+
+/// <summary>
+/// Dynamic binary operation using JavaScriptRuntime.Operators with boxed operands.
+/// Used when operand types are not known to be unboxed doubles.
+/// </summary>
+public record LIRBinaryDynamicOperator(
+    DynamicBinaryOperatorKind Operator,
+    TempVariable Left,
+    TempVariable Right,
+    TempVariable Result) : LIRInstruction;
+
 // ============================================================================
 // Comparison Operators
 // ============================================================================

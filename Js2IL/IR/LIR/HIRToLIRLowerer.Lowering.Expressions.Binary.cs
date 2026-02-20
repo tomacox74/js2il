@@ -234,10 +234,10 @@ public sealed partial class HIRToLIRLowerer
 
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpSubtract),
-                new[] { leftBoxed, rightBoxed },
+            _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                DynamicBinaryOperatorKind.Subtract,
+                leftBoxed,
+                rightBoxed,
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -259,10 +259,10 @@ public sealed partial class HIRToLIRLowerer
 
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpDivide),
-                new[] { leftBoxed, rightBoxed },
+            _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                DynamicBinaryOperatorKind.Divide,
+                leftBoxed,
+                rightBoxed,
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -284,10 +284,10 @@ public sealed partial class HIRToLIRLowerer
 
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpRemainder),
-                new[] { leftBoxed, rightBoxed },
+            _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                DynamicBinaryOperatorKind.Remainder,
+                leftBoxed,
+                rightBoxed,
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -309,10 +309,10 @@ public sealed partial class HIRToLIRLowerer
 
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpExponentiate),
-                new[] { leftBoxed, rightBoxed },
+            _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                DynamicBinaryOperatorKind.Exponentiate,
+                leftBoxed,
+                rightBoxed,
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -332,10 +332,10 @@ public sealed partial class HIRToLIRLowerer
 
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpBitwiseAnd),
-                new[] { leftBoxed, rightBoxed },
+            _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                DynamicBinaryOperatorKind.BitwiseAnd,
+                leftBoxed,
+                rightBoxed,
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -354,10 +354,10 @@ public sealed partial class HIRToLIRLowerer
 
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpBitwiseOr),
-                new[] { leftBoxed, rightBoxed },
+            _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                DynamicBinaryOperatorKind.BitwiseOr,
+                leftBoxed,
+                rightBoxed,
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -376,10 +376,10 @@ public sealed partial class HIRToLIRLowerer
 
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpBitwiseXor),
-                new[] { leftBoxed, rightBoxed },
+            _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                DynamicBinaryOperatorKind.BitwiseXor,
+                leftBoxed,
+                rightBoxed,
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -399,10 +399,10 @@ public sealed partial class HIRToLIRLowerer
 
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpLeftShift),
-                new[] { leftBoxed, rightBoxed },
+            _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                DynamicBinaryOperatorKind.LeftShift,
+                leftBoxed,
+                rightBoxed,
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -421,10 +421,10 @@ public sealed partial class HIRToLIRLowerer
 
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpSignedRightShift),
-                new[] { leftBoxed, rightBoxed },
+            _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                DynamicBinaryOperatorKind.SignedRightShift,
+                leftBoxed,
+                rightBoxed,
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -443,10 +443,10 @@ public sealed partial class HIRToLIRLowerer
 
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpUnsignedRightShift),
-                new[] { leftBoxed, rightBoxed },
+            _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                DynamicBinaryOperatorKind.UnsignedRightShift,
+                leftBoxed,
+                rightBoxed,
                 resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -475,10 +475,10 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                    nameof(JavaScriptRuntime.Object),
-                    nameof(JavaScriptRuntime.Object.OpLessThan),
-                    new[] { EnsureObject(leftTempVar), EnsureObject(rightTempVar) },
+                _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                    DynamicBinaryOperatorKind.LessThan,
+                    EnsureObject(leftTempVar),
+                    EnsureObject(rightTempVar),
                     resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                 return true;
@@ -492,10 +492,10 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                    nameof(JavaScriptRuntime.Object),
-                    nameof(JavaScriptRuntime.Object.OpGreaterThan),
-                    new[] { EnsureObject(leftTempVar), EnsureObject(rightTempVar) },
+                _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                    DynamicBinaryOperatorKind.GreaterThan,
+                    EnsureObject(leftTempVar),
+                    EnsureObject(rightTempVar),
                     resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                 return true;
@@ -509,10 +509,10 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                    nameof(JavaScriptRuntime.Object),
-                    nameof(JavaScriptRuntime.Object.OpLessThanOrEqual),
-                    new[] { EnsureObject(leftTempVar), EnsureObject(rightTempVar) },
+                _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                    DynamicBinaryOperatorKind.LessThanOrEqual,
+                    EnsureObject(leftTempVar),
+                    EnsureObject(rightTempVar),
                     resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                 return true;
@@ -526,10 +526,10 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                    nameof(JavaScriptRuntime.Object),
-                    nameof(JavaScriptRuntime.Object.OpGreaterThanOrEqual),
-                    new[] { EnsureObject(leftTempVar), EnsureObject(rightTempVar) },
+                _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
+                    DynamicBinaryOperatorKind.GreaterThanOrEqual,
+                    EnsureObject(leftTempVar),
+                    EnsureObject(rightTempVar),
                     resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                 return true;

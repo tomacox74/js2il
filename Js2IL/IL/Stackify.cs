@@ -767,6 +767,7 @@ internal static class Stackify
             case LIRNotEqualDynamic:
             case LIRStrictEqualDynamic:
             case LIRStrictNotEqualDynamic:
+            case LIRBinaryDynamicOperator:
             case LIRCompareNumberLessThan:
             case LIRCompareNumberGreaterThan:
             case LIRCompareNumberLessThanOrEqual:

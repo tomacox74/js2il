@@ -410,6 +410,11 @@ internal sealed partial class LIRToILCompiler
                 EmitLoadTempAsDouble(addDynamicObjectDouble.RightDouble, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsAddObjectDouble(ilEncoder);
                 break;
+            case LIRBinaryDynamicOperator binaryDynamic:
+                EmitLoadTemp(binaryDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(binaryDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsDynamicBinary(binaryDynamic.Operator, ilEncoder);
+                break;
             case LIRLoadLeafScopeField loadLeafField:
                 // Emit inline: ldloc.0 (scope instance), ldfld (field handle)
                 {
