@@ -784,6 +784,7 @@ internal static class Stackify
             case LIRIsInstanceOf:
             case LIRTypeof:
             case LIRNegateNumber:
+            case LIRNegateNumberDynamic:
             case LIRBitwiseNotNumber:
             case LIRCallIsTruthy:
             case LIRCopyTemp:

@@ -122,6 +122,16 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.Token(methodRef);
     }
 
+    private void EmitOperatorsUnaryMinus(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.Operators),
+            nameof(JavaScriptRuntime.Operators.UnaryMinus),
+            new[] { typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
     private void EmitOperatorsDynamicBinary(DynamicBinaryOperatorKind operatorKind, InstructionEncoder ilEncoder)
     {
         var methodName = operatorKind switch

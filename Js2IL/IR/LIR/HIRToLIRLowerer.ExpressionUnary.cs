@@ -126,10 +126,8 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                nameof(JavaScriptRuntime.Object),
-                nameof(JavaScriptRuntime.Object.OpUnaryMinus),
-                new[] { EnsureObject(unaryArgTempVar) },
+            _methodBodyIR.Instructions.Add(new LIRNegateNumberDynamic(
+                EnsureObject(unaryArgTempVar),
                 resultTempVar));
             this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;

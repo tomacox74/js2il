@@ -296,6 +296,9 @@ internal static class TempLocalAllocator
             case LIRNegateNumber neg:
                 yield return neg.Value;
                 break;
+            case LIRNegateNumberDynamic negDyn:
+                yield return negDyn.Value;
+                break;
             case LIRBitwiseNotNumber not:
                 yield return not.Value;
                 break;
@@ -859,6 +862,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRNegateNumber neg:
                 defined = neg.Result;
+                return true;
+            case LIRNegateNumberDynamic negDyn:
+                defined = negDyn.Result;
                 return true;
             case LIRBitwiseNotNumber not:
                 defined = not.Result;

@@ -808,6 +808,10 @@ internal sealed partial class LIRToILCompiler
                 EmitLoadTemp(negateNumber.Value, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Neg);
                 break;
+            case LIRNegateNumberDynamic negateDynamic:
+                EmitLoadTemp(negateDynamic.Value, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsUnaryMinus(ilEncoder);
+                break;
             case LIRCallFunction callFunc:
                 {
                     if (callFunc.CallableId is not { } callableId)

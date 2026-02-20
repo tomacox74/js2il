@@ -189,7 +189,6 @@ namespace JavaScriptRuntime
         }
 
         // Runtime-only unary operator bridge methods used by compiler-emitted intrinsic static calls.
-        public static object OpUnaryMinus(object? value) => Operators.UnaryMinus(value);
         public static object OpBitwiseNot(object? value) => Operators.BitwiseNot(value);
 
         /// <summary>
