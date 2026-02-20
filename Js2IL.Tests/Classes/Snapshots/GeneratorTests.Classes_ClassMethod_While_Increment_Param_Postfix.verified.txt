@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e4
+				// Method begins at RVA 0x20f6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x20f6
+					// Method begins at RVA 0x2108
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ed
+				// Method begins at RVA 0x20ff
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -93,29 +93,34 @@
 				object n
 			) cil managed 
 		{
-			// Method begins at RVA 0x20a6
-			// Header size: 1
-			// Code size: 52 (0x34)
+			// Method begins at RVA 0x20a8
+			// Header size: 12
+			// Code size: 57 (0x39)
 			.maxstack 8
+			.locals init (
+				[0] bool
+			)
 
 			// loop start
 				IL_0000: ldarg.1
-				IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0006: ldc.r8 3
-				IL_000f: clt
-				IL_0011: brfalse IL_0032
+				IL_0001: ldc.r8 3
+				IL_000a: box [System.Runtime]System.Double
+				IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::OpLessThan(object, object)
+				IL_0014: stloc.0
+				IL_0015: ldloc.0
+				IL_0016: brfalse IL_0037
 
-				IL_0016: ldarg.1
-				IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_001c: ldc.r8 1
-				IL_0025: add
-				IL_0026: box [System.Runtime]System.Double
-				IL_002b: starg.s n
-				IL_002d: br IL_0000
+				IL_001b: ldarg.1
+				IL_001c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0021: ldc.r8 1
+				IL_002a: add
+				IL_002b: box [System.Runtime]System.Double
+				IL_0030: starg.s n
+				IL_0032: br IL_0000
 			// end loop
 
-			IL_0032: ldnull
-			IL_0033: ret
+			IL_0037: ldnull
+			IL_0038: ret
 		} // end of method Counter::run
 
 	} // end of class Counter
@@ -127,7 +132,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20db
+			// Method begins at RVA 0x20ed
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -194,7 +199,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ff
+		// Method begins at RVA 0x2111
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
