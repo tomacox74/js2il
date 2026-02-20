@@ -55,6 +55,8 @@ namespace JavaScriptRuntime
                             : double.NaN;
                     }
                 case JsNull: return 0d; // JS ToNumber(null) => +0 (JsNull represents JS null)
+                case BigInteger:
+                    throw new TypeError("Cannot convert a BigInt value to a number");
             }
             try
             {
@@ -144,6 +146,8 @@ namespace JavaScriptRuntime
                     return sh != 0;
                 case byte by:
                     return by != 0;
+                case BigInteger bi:
+                    return bi != BigInteger.Zero;
             }
             // Objects (including arrays, functions, expando) are truthy
             return true;

@@ -14,6 +14,12 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_LastIndexOf_Basic()
+        {
+            return ExecutionTest(nameof(String_LastIndexOf_Basic));
+        }
+
+        [Fact]
         public Task String_PlusEquals_Append()
         {
             return ExecutionTest(nameof(String_PlusEquals_Append));

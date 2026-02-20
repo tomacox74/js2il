@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Numerics;
+using System.Text;
 
 namespace JavaScriptRuntime;
 
@@ -14,6 +15,8 @@ namespace JavaScriptRuntime;
 [IntrinsicObject("BigInt")]
 public static class BigInt
 {
+    private const string Digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+
     public static object Call()
     {
         // ECMAScript: BigInt() requires an argument; BigInt(undefined) throws.
@@ -23,6 +26,62 @@ public static class BigInt
     public static object Call(object? value)
     {
         return ToBigInteger(value);
+    }
+
+    public static string ToString(object? value)
+    {
+        return ToString(value, null);
+    }
+
+    public static string ToString(object? value, object? radix)
+    {
+        var bigInt = ToBigInteger(value);
+        var radixValue = 10;
+        if (radix is not null)
+        {
+            var radixNumber = TypeUtilities.ToNumber(radix);
+            if (double.IsNaN(radixNumber) || double.IsInfinity(radixNumber))
+            {
+                throw new RangeError("toString() radix argument must be between 2 and 36");
+            }
+
+            radixValue = (int)global::System.Math.Truncate(radixNumber);
+            if (radixValue < 2 || radixValue > 36)
+            {
+                throw new RangeError("toString() radix argument must be between 2 and 36");
+            }
+        }
+
+        if (radixValue == 10)
+        {
+            return bigInt.ToString(CultureInfo.InvariantCulture);
+        }
+
+        if (bigInt.IsZero)
+        {
+            return "0";
+        }
+
+        var isNegative = bigInt.Sign < 0;
+        if (isNegative)
+        {
+            bigInt = BigInteger.Negate(bigInt);
+        }
+
+        var radixBigInt = new BigInteger(radixValue);
+        var builder = new StringBuilder();
+        while (bigInt > BigInteger.Zero)
+        {
+            bigInt = BigInteger.DivRem(bigInt, radixBigInt, out var remainder);
+            builder.Insert(0, Digits[(int)remainder]);
+        }
+
+        if (isNegative)
+        {
+            builder.Insert(0, '-');
+        }
+
+        return builder.ToString();
     }
 
     private static BigInteger ToBigInteger(object? value)

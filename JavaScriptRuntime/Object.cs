@@ -188,6 +188,29 @@ namespace JavaScriptRuntime
             return TypeUtilities.IsConstructorReturnOverride(value);
         }
 
+        // Runtime-only operator bridge methods used by compiler-emitted intrinsic static calls.
+        public static object OpSubtract(object? left, object? right) => Operators.Subtract(left, right);
+        public static object OpDivide(object? left, object? right) => Operators.Divide(left, right);
+        public static object OpRemainder(object? left, object? right) => Operators.Remainder(left, right);
+        public static object OpExponentiate(object? left, object? right) => Operators.Exponentiate(left, right);
+        public static object OpBitwiseAnd(object? left, object? right) => Operators.BitwiseAnd(left, right);
+        public static object OpBitwiseOr(object? left, object? right) => Operators.BitwiseOr(left, right);
+        public static object OpBitwiseXor(object? left, object? right) => Operators.BitwiseXor(left, right);
+        public static object OpLeftShift(object? left, object? right) => Operators.LeftShift(left, right);
+        public static object OpSignedRightShift(object? left, object? right) => Operators.SignedRightShift(left, right);
+        public static object OpUnsignedRightShift(object? left, object? right) => Operators.UnsignedRightShift(left, right);
+        public static bool OpLessThan(object? left, object? right) => Operators.LessThan(left, right);
+        public static bool OpGreaterThan(object? left, object? right) => Operators.GreaterThan(left, right);
+        public static bool OpLessThanOrEqual(object? left, object? right) => Operators.LessThanOrEqual(left, right);
+        public static bool OpGreaterThanOrEqual(object? left, object? right) => Operators.GreaterThanOrEqual(left, right);
+        public static object OpUnaryMinus(object? value) => Operators.UnaryMinus(value);
+        public static object OpBitwiseNot(object? value) => Operators.BitwiseNot(value);
+
+        /// <summary>
+        /// Implements <c>Object.is(value1, value2)</c> via SameValue semantics.
+        /// </summary>
+        public static bool @is(object? value1, object? value2) => Operators.SameValue(value1, value2);
+
         /// <summary>
         /// Minimal implementation of <c>Object.getPrototypeOf(obj)</c>.
         /// Note: this runtime does not currently model a default Object.prototype; if no prototype
@@ -960,6 +983,14 @@ namespace JavaScriptRuntime
                 return CallStringMemberViaReflection(input, methodName, callArgs);
             }
 
+            // BigInt primitive helper dispatch.
+            if (receiver is System.Numerics.BigInteger bigInt && string.Equals(methodName, "toString", StringComparison.Ordinal))
+            {
+                return callArgs.Length > 0
+                    ? JavaScriptRuntime.BigInt.ToString(bigInt, callArgs[0])
+                    : JavaScriptRuntime.BigInt.ToString(bigInt);
+            }
+
             // 2) JavaScriptRuntime.Array -> instance methods
             if (receiver is Array jsArray)
             {
@@ -1302,6 +1333,15 @@ namespace JavaScriptRuntime
                         <= 0 => JavaScriptRuntime.String.IndexOf(input, string.Empty),
                         1 => JavaScriptRuntime.String.IndexOf(input, DotNet2JSConversions.ToString(a0)),
                         _ => JavaScriptRuntime.String.IndexOf(input, DotNet2JSConversions.ToString(a0), a1)
+                    };
+                    return true;
+
+                case "lastIndexOf":
+                    result = argCount switch
+                    {
+                        <= 0 => JavaScriptRuntime.String.LastIndexOf(input, string.Empty),
+                        1 => JavaScriptRuntime.String.LastIndexOf(input, DotNet2JSConversions.ToString(a0)),
+                        _ => JavaScriptRuntime.String.LastIndexOf(input, DotNet2JSConversions.ToString(a0), a1)
                     };
                     return true;
 

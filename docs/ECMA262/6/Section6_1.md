@@ -14,11 +14,11 @@
 | 6.1.2 | The Null Type | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-null-type) |
 | 6.1.3 | The Boolean Type | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-boolean-type) |
 | 6.1.4 | The String Type | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-string-type) |
-| 6.1.4.1 | StringIndexOf ( string , searchValue , fromIndex ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-stringindexof) |
-| 6.1.4.2 | StringLastIndexOf ( string , searchValue , fromIndex ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-stringlastindexof) |
+| 6.1.4.1 | StringIndexOf ( string , searchValue , fromIndex ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringindexof) |
+| 6.1.4.2 | StringLastIndexOf ( string , searchValue , fromIndex ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringlastindexof) |
 | 6.1.5 | The Symbol Type | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-symbol-type) |
 | 6.1.5.1 | Well-Known Symbols | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-well-known-symbols) |
-| 6.1.6 | Numeric Types | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types) |
+| 6.1.6 | Numeric Types | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types) |
 | 6.1.6.1 | The Number Type | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-number-type) |
 | 6.1.6.1.1 | Number::unaryMinus ( x ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-unaryMinus) |
 | 6.1.6.1.2 | Number::bitwiseNOT ( x ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-bitwiseNOT) |
@@ -33,7 +33,7 @@
 | 6.1.6.1.11 | Number::unsignedRightShift ( x , y ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-unsignedRightShift) |
 | 6.1.6.1.12 | Number::lessThan ( x , y ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-lessThan) |
 | 6.1.6.1.13 | Number::equal ( x , y ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-equal) |
-| 6.1.6.1.14 | Number::sameValue ( x , y ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-sameValue) |
+| 6.1.6.1.14 | Number::sameValue ( x , y ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-sameValue) |
 | 6.1.6.1.15 | Number::sameValueZero ( x , y ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-sameValueZero) |
 | 6.1.6.1.16 | NumberBitwiseOp ( op , x , y ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-numberbitwiseop) |
 | 6.1.6.1.17 | Number::bitwiseAND ( x , y ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-bitwiseAND) |
@@ -41,27 +41,27 @@
 | 6.1.6.1.19 | Number::bitwiseOR ( x , y ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-bitwiseOR) |
 | 6.1.6.1.20 | Number::toString ( x , radix ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-tostring) |
 | 6.1.6.2 | The BigInt Type | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-bigint-type) |
-| 6.1.6.2.1 | BigInt::unaryMinus ( x ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-unaryMinus) |
-| 6.1.6.2.2 | BigInt::bitwiseNOT ( x ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseNOT) |
-| 6.1.6.2.3 | BigInt::exponentiate ( base , exponent ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-exponentiate) |
-| 6.1.6.2.4 | BigInt::multiply ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-multiply) |
-| 6.1.6.2.5 | BigInt::divide ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-divide) |
-| 6.1.6.2.6 | BigInt::remainder ( n , d ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-remainder) |
-| 6.1.6.2.7 | BigInt::add ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-add) |
-| 6.1.6.2.8 | BigInt::subtract ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-subtract) |
-| 6.1.6.2.9 | BigInt::leftShift ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-leftShift) |
-| 6.1.6.2.10 | BigInt::signedRightShift ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-signedRightShift) |
-| 6.1.6.2.11 | BigInt::unsignedRightShift ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-unsignedRightShift) |
-| 6.1.6.2.12 | BigInt::lessThan ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-lessThan) |
-| 6.1.6.2.13 | BigInt::equal ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-equal) |
-| 6.1.6.2.14 | BinaryAnd ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-binaryand) |
-| 6.1.6.2.15 | BinaryOr ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-binaryor) |
-| 6.1.6.2.16 | BinaryXor ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-binaryxor) |
-| 6.1.6.2.17 | BigIntBitwiseOp ( op , x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-bigintbitwiseop) |
-| 6.1.6.2.18 | BigInt::bitwiseAND ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseAND) |
-| 6.1.6.2.19 | BigInt::bitwiseXOR ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseXOR) |
-| 6.1.6.2.20 | BigInt::bitwiseOR ( x , y ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseOR) |
-| 6.1.6.2.21 | BigInt::toString ( x , radix ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-tostring) |
+| 6.1.6.2.1 | BigInt::unaryMinus ( x ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-unaryMinus) |
+| 6.1.6.2.2 | BigInt::bitwiseNOT ( x ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseNOT) |
+| 6.1.6.2.3 | BigInt::exponentiate ( base , exponent ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-exponentiate) |
+| 6.1.6.2.4 | BigInt::multiply ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-multiply) |
+| 6.1.6.2.5 | BigInt::divide ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-divide) |
+| 6.1.6.2.6 | BigInt::remainder ( n , d ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-remainder) |
+| 6.1.6.2.7 | BigInt::add ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-add) |
+| 6.1.6.2.8 | BigInt::subtract ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-subtract) |
+| 6.1.6.2.9 | BigInt::leftShift ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-leftShift) |
+| 6.1.6.2.10 | BigInt::signedRightShift ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-signedRightShift) |
+| 6.1.6.2.11 | BigInt::unsignedRightShift ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-unsignedRightShift) |
+| 6.1.6.2.12 | BigInt::lessThan ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-lessThan) |
+| 6.1.6.2.13 | BigInt::equal ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-equal) |
+| 6.1.6.2.14 | BinaryAnd ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-binaryand) |
+| 6.1.6.2.15 | BinaryOr ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-binaryor) |
+| 6.1.6.2.16 | BinaryXor ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-binaryxor) |
+| 6.1.6.2.17 | BigIntBitwiseOp ( op , x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigintbitwiseop) |
+| 6.1.6.2.18 | BigInt::bitwiseAND ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseAND) |
+| 6.1.6.2.19 | BigInt::bitwiseXOR ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseXOR) |
+| 6.1.6.2.20 | BigInt::bitwiseOR ( x , y ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseOR) |
+| 6.1.6.2.21 | BigInt::toString ( x , radix ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-tostring) |
 | 6.1.7 | The Object Type | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-object-type) |
 | 6.1.7.1 | Property Attributes | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-property-attributes) |
 | 6.1.7.2 | Object Internal Methods and Internal Slots | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-object-internal-methods-and-internal-slots) |
@@ -106,13 +106,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| StringIndexOf | Untracked |  |  |
+| StringIndexOf | Supported |  |  |
 
 ### 6.1.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-stringlastindexof))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| StringLastIndexOf | Untracked |  |  |
+| StringLastIndexOf | Supported |  |  |
 
 ### 6.1.5 ([tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-symbol-type))
 
@@ -130,7 +130,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Numeric Types | Incomplete |  |  |
+| Numeric Types | Supported with Limitations |  |  |
 
 ### 6.1.6.1 ([tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types-number-type))
 
@@ -220,7 +220,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Number::sameValue | Untracked |  |  |
+| Number::sameValue | Supported |  |  |
 
 ### 6.1.6.1.15 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-number-sameValueZero))
 
@@ -268,127 +268,127 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::unaryMinus | Not Yet Supported |  |  |
+| BigInt::unaryMinus | Supported with Limitations |  |  |
 
 ### 6.1.6.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseNOT))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::bitwiseNOT | Not Yet Supported |  |  |
+| BigInt::bitwiseNOT | Supported with Limitations |  |  |
 
 ### 6.1.6.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-exponentiate))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::exponentiate | Not Yet Supported |  |  |
+| BigInt::exponentiate | Supported with Limitations |  |  |
 
 ### 6.1.6.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-multiply))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::multiply | Not Yet Supported |  |  |
+| BigInt::multiply | Supported with Limitations |  |  |
 
 ### 6.1.6.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-divide))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::divide | Not Yet Supported |  |  |
+| BigInt::divide | Supported with Limitations |  |  |
 
 ### 6.1.6.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-remainder))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::remainder | Not Yet Supported |  |  |
+| BigInt::remainder | Supported with Limitations |  |  |
 
 ### 6.1.6.2.7 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-add))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::add | Not Yet Supported |  |  |
+| BigInt::add | Supported with Limitations |  |  |
 
 ### 6.1.6.2.8 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-subtract))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::subtract | Not Yet Supported |  |  |
+| BigInt::subtract | Supported with Limitations |  |  |
 
 ### 6.1.6.2.9 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-leftShift))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::leftShift | Not Yet Supported |  |  |
+| BigInt::leftShift | Supported with Limitations |  |  |
 
 ### 6.1.6.2.10 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-signedRightShift))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::signedRightShift | Not Yet Supported |  |  |
+| BigInt::signedRightShift | Supported with Limitations |  |  |
 
 ### 6.1.6.2.11 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-unsignedRightShift))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::unsignedRightShift | Not Yet Supported |  |  |
+| BigInt::unsignedRightShift | Supported with Limitations |  |  |
 
 ### 6.1.6.2.12 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-lessThan))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::lessThan | Not Yet Supported |  |  |
+| BigInt::lessThan | Supported with Limitations |  |  |
 
 ### 6.1.6.2.13 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-equal))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::equal | Not Yet Supported |  |  |
+| BigInt::equal | Supported with Limitations |  |  |
 
 ### 6.1.6.2.14 ([tc39.es](https://tc39.es/ecma262/#sec-binaryand))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BinaryAnd | Not Yet Supported |  |  |
+| BinaryAnd | Supported with Limitations |  |  |
 
 ### 6.1.6.2.15 ([tc39.es](https://tc39.es/ecma262/#sec-binaryor))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BinaryOr | Not Yet Supported |  |  |
+| BinaryOr | Supported with Limitations |  |  |
 
 ### 6.1.6.2.16 ([tc39.es](https://tc39.es/ecma262/#sec-binaryxor))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BinaryXor | Not Yet Supported |  |  |
+| BinaryXor | Supported with Limitations |  |  |
 
 ### 6.1.6.2.17 ([tc39.es](https://tc39.es/ecma262/#sec-bigintbitwiseop))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigIntBitwiseOp | Not Yet Supported |  |  |
+| BigIntBitwiseOp | Supported with Limitations |  |  |
 
 ### 6.1.6.2.18 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseAND))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::bitwiseAND | Not Yet Supported |  |  |
+| BigInt::bitwiseAND | Supported with Limitations |  |  |
 
 ### 6.1.6.2.19 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseXOR))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::bitwiseXOR | Not Yet Supported |  |  |
+| BigInt::bitwiseXOR | Supported with Limitations |  |  |
 
 ### 6.1.6.2.20 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-bitwiseOR))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::bitwiseOR | Not Yet Supported |  |  |
+| BigInt::bitwiseOR | Supported with Limitations |  |  |
 
 ### 6.1.6.2.21 ([tc39.es](https://tc39.es/ecma262/#sec-numeric-types-bigint-tostring))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt::toString | Not Yet Supported |  |  |
+| BigInt::toString | Supported with Limitations |  |  |
 
 ### 6.1.7 ([tc39.es](https://tc39.es/ecma262/#sec-object-type))
 

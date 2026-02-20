@@ -118,24 +118,40 @@ public sealed partial class HIRToLIRLowerer
         if (unaryExpr.Operator == Acornima.Operator.UnaryNegation)
         {
             resultTempVar = CreateTempVariable();
-            // JS unary negation: numeric coercion (ToNumber) then negate.
-            unaryArgTempVar = EnsureNumber(unaryArgTempVar);
-            _methodBodyIR.Instructions.Add(new LIRNegateNumber(unaryArgTempVar, resultTempVar));
-            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            var unaryArgStorage = GetTempStorage(unaryArgTempVar);
+            if (unaryArgStorage.Kind == ValueStorageKind.UnboxedValue && unaryArgStorage.ClrType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRNegateNumber(unaryArgTempVar, resultTempVar));
+                this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.Object),
+                nameof(JavaScriptRuntime.Object.OpUnaryMinus),
+                new[] { EnsureObject(unaryArgTempVar) },
+                resultTempVar));
+            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
         }
 
         if (unaryExpr.Operator == Acornima.Operator.BitwiseNot)
         {
             resultTempVar = CreateTempVariable();
-            // Minimal: ~x where x is numeric (double). Legacy pipeline coerces via ToNumber;
-            // IR pipeline currently only supports number operands for this operator.
-            if (GetTempStorage(unaryArgTempVar).ClrType != typeof(double))
+            var unaryArgStorage = GetTempStorage(unaryArgTempVar);
+            if (unaryArgStorage.Kind == ValueStorageKind.UnboxedValue && unaryArgStorage.ClrType == typeof(double))
             {
-                return false;
+                _methodBodyIR.Instructions.Add(new LIRBitwiseNotNumber(unaryArgTempVar, resultTempVar));
+                this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
             }
-            _methodBodyIR.Instructions.Add(new LIRBitwiseNotNumber(unaryArgTempVar, resultTempVar));
-            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.Object),
+                nameof(JavaScriptRuntime.Object.OpBitwiseNot),
+                new[] { EnsureObject(unaryArgTempVar) },
+                resultTempVar));
+            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
         }
 

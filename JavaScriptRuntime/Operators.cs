@@ -1,10 +1,44 @@
 using System;
 using System.Globalization;
+using System.Numerics;
 
 namespace JavaScriptRuntime
 {
     public static class Operators
     {
+        private const string MixedBigIntTypeError = "Cannot mix BigInt and other types, use explicit conversions";
+
+        private static bool IsBigInt(object? value) => value is BigInteger;
+
+        private static bool IsFiniteInteger(double value)
+            => !double.IsNaN(value) && !double.IsInfinity(value) && global::System.Math.Truncate(value) == value;
+
+        private static int ToShiftCount(BigInteger shiftCount)
+        {
+            if (shiftCount > int.MaxValue || shiftCount < int.MinValue)
+            {
+                throw new RangeError("BigInt shift count is out of range");
+            }
+
+            return (int)shiftCount;
+        }
+
+        private static void ThrowMixedBigIntTypeError()
+        {
+            throw new TypeError(MixedBigIntTypeError);
+        }
+
+        private static bool BigIntLooseEquals(BigInteger left, object? right)
+        {
+            var rightNumber = ToNumber(right);
+            if (!IsFiniteInteger(rightNumber))
+            {
+                return false;
+            }
+
+            return left == new BigInteger(rightNumber);
+        }
+
         private static double ToNumber(object? value)
         {
             // JS ToNumber(undefined) => NaN (undefined is represented as CLR null)
@@ -42,6 +76,8 @@ namespace JavaScriptRuntime
                         : double.NaN;
                 case JsNull:
                     return 0d;
+                case BigInteger:
+                    throw new TypeError("Cannot convert a BigInt value to a number");
             }
             try
             {
@@ -66,6 +102,16 @@ namespace JavaScriptRuntime
                 var sa = DotNet2JSConversions.ToString(a);
                 var sb = DotNet2JSConversions.ToString(b);
                 return string.Concat(sa, sb);
+            }
+
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                return leftBigInt + rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
             }
 
             // Try numeric addition (JavaScript uses double-precision floats)
@@ -98,6 +144,11 @@ namespace JavaScriptRuntime
                 return string.Concat(sa, sb);
             }
 
+            if (b is BigInteger)
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
             var db = ToNumber(b);
             return a + db; // boxed double
         }
@@ -115,6 +166,11 @@ namespace JavaScriptRuntime
                 return string.Concat(sa, sb);
             }
 
+            if (a is BigInteger)
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
             var da = ToNumber(a);
             return da + b; // boxed double
         }
@@ -124,6 +180,16 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object Subtract(object? a, object? b)
         {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                return leftBigInt - rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
             var da = ToNumber(a);
             var db = ToNumber(b);
             return da - db;
@@ -134,9 +200,334 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object Multiply(object? a, object? b)
         {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                return leftBigInt * rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
             var da = ToNumber(a);
             var db = ToNumber(b);
             return da * db;
+        }
+
+        public static object Divide(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                if (rightBigInt == BigInteger.Zero)
+                {
+                    throw new RangeError("Division by zero");
+                }
+
+                return leftBigInt / rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            var da = ToNumber(a);
+            var db = ToNumber(b);
+            return da / db;
+        }
+
+        public static object Remainder(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                if (rightBigInt == BigInteger.Zero)
+                {
+                    throw new RangeError("Division by zero");
+                }
+
+                return leftBigInt % rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            var da = ToNumber(a);
+            var db = ToNumber(b);
+            return da % db;
+        }
+
+        public static object Exponentiate(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                if (rightBigInt < BigInteger.Zero)
+                {
+                    throw new RangeError("Exponent must be positive");
+                }
+
+                if (rightBigInt > int.MaxValue)
+                {
+                    throw new RangeError("BigInt exponent is out of range");
+                }
+
+                return BigInteger.Pow(leftBigInt, (int)rightBigInt);
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            var da = ToNumber(a);
+            var db = ToNumber(b);
+            return global::System.Math.Pow(da, db);
+        }
+
+        public static object BitwiseAnd(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                return leftBigInt & rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            var left = TypeUtilities.ToInt32(a);
+            var right = TypeUtilities.ToInt32(b);
+            return (double)(left & right);
+        }
+
+        public static object BitwiseOr(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                return leftBigInt | rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            var left = TypeUtilities.ToInt32(a);
+            var right = TypeUtilities.ToInt32(b);
+            return (double)(left | right);
+        }
+
+        public static object BitwiseXor(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                return leftBigInt ^ rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            var left = TypeUtilities.ToInt32(a);
+            var right = TypeUtilities.ToInt32(b);
+            return (double)(left ^ right);
+        }
+
+        public static object LeftShift(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                var shiftCount = ToShiftCount(rightBigInt);
+                return shiftCount >= 0
+                    ? leftBigInt << shiftCount
+                    : leftBigInt >> -shiftCount;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            var left = TypeUtilities.ToInt32(a);
+            var right = TypeUtilities.ToInt32(b) & 0x1f;
+            return (double)(left << right);
+        }
+
+        public static object SignedRightShift(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                var shiftCount = ToShiftCount(rightBigInt);
+                return shiftCount >= 0
+                    ? leftBigInt >> shiftCount
+                    : leftBigInt << -shiftCount;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            var left = TypeUtilities.ToInt32(a);
+            var right = TypeUtilities.ToInt32(b) & 0x1f;
+            return (double)(left >> right);
+        }
+
+        public static object UnsignedRightShift(object? a, object? b)
+        {
+            if (a is BigInteger && b is BigInteger)
+            {
+                throw new TypeError("BigInts have no unsigned right shift, use >> instead");
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            var left = unchecked((uint)TypeUtilities.ToInt32(a));
+            var right = TypeUtilities.ToInt32(b) & 0x1f;
+            return (double)(left >> right);
+        }
+
+        public static bool LessThan(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                return leftBigInt < rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            return ToNumber(a) < ToNumber(b);
+        }
+
+        public static bool GreaterThan(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                return leftBigInt > rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            return ToNumber(a) > ToNumber(b);
+        }
+
+        public static bool LessThanOrEqual(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                return leftBigInt <= rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            return ToNumber(a) <= ToNumber(b);
+        }
+
+        public static bool GreaterThanOrEqual(object? a, object? b)
+        {
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            {
+                return leftBigInt >= rightBigInt;
+            }
+
+            if (IsBigInt(a) || IsBigInt(b))
+            {
+                ThrowMixedBigIntTypeError();
+            }
+
+            return ToNumber(a) >= ToNumber(b);
+        }
+
+        public static object UnaryMinus(object? value)
+        {
+            if (value is BigInteger bigInt)
+            {
+                return -bigInt;
+            }
+
+            return -ToNumber(value);
+        }
+
+        public static object BitwiseNot(object? value)
+        {
+            if (value is BigInteger bigInt)
+            {
+                return ~bigInt;
+            }
+
+            var intValue = TypeUtilities.ToInt32(value);
+            return (double)(~intValue);
+        }
+
+        public static bool SameValue(object? a, object? b)
+        {
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+
+            if (a is double da && b is double db)
+            {
+                if (double.IsNaN(da) && double.IsNaN(db))
+                {
+                    return true;
+                }
+
+                if (da == 0d && db == 0d)
+                {
+                    return double.IsNegative(da) == double.IsNegative(db);
+                }
+
+                return da == db;
+            }
+
+            if (a is BigInteger bigIntA && b is BigInteger bigIntB)
+            {
+                return bigIntA == bigIntB;
+            }
+
+            if (a == null || b == null)
+            {
+                return a == null && b == null;
+            }
+
+            if (a.GetType() != b.GetType())
+            {
+                return false;
+            }
+
+            return a.Equals(b);
+        }
+
+        public static bool SameValueZero(object? a, object? b)
+        {
+            if (a is double da && b is double db)
+            {
+                if (double.IsNaN(da) && double.IsNaN(db))
+                {
+                    return true;
+                }
+
+                return da == db;
+            }
+
+            return SameValue(a, b);
         }
 
         /// <summary>
@@ -160,6 +551,15 @@ namespace JavaScriptRuntime
             // direct equality (==) is intentional and matches JS behavior (NaN != NaN, etc.)
             if (a is double da && b is double db)
                 return da == db;
+
+            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+                return leftBigInt == rightBigInt;
+
+            if (a is BigInteger leftBigIntLoose)
+                return BigIntLooseEquals(leftBigIntLoose, b);
+
+            if (b is BigInteger rightBigIntLoose)
+                return BigIntLooseEquals(rightBigIntLoose, a);
 
             if (a is int ia && b is int ib)
                 return ia == ib;
@@ -486,6 +886,8 @@ namespace JavaScriptRuntime
             // Note: JavaScript uses IEEE 754 semantics - 0, -0, and NaN are falsy
             if (value is double d)
                 return d != 0 && !double.IsNaN(d);
+            if (value is BigInteger bi)
+                return bi != BigInteger.Zero;
             if (value is int i)
                 return i != 0;
             if (value is string s)
