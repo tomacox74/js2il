@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2108
+				// Method begins at RVA 0x2118
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,22 +41,29 @@
 		{
 			// Method begins at RVA 0x20d0
 			// Header size: 12
-			// Code size: 35 (0x23)
+			// Code size: 51 (0x33)
 			.maxstack 8
 			.locals init (
-				[0] float64
+				[0] object,
+				[1] bool,
+				[2] object
 			)
 
 			IL_0000: ldarg.1
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: ldc.r8 2
-			IL_000f: rem
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldc.r8 0.0
-			IL_001b: ceq
-			IL_001d: box [System.Runtime]System.Boolean
-			IL_0022: ret
+			IL_0001: ldc.r8 2
+			IL_000a: box [System.Runtime]System.Double
+			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::OpRemainder(object, object)
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: ldc.r8 0.0
+			IL_001f: box [System.Runtime]System.Double
+			IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+			IL_0029: stloc.1
+			IL_002a: ldloc.1
+			IL_002b: box [System.Runtime]System.Boolean
+			IL_0030: stloc.2
+			IL_0031: ldloc.2
+			IL_0032: ret
 		} // end of method isEven::__js_call__
 
 	} // end of class isEven
@@ -75,7 +82,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ff
+			// Method begins at RVA 0x210f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -163,7 +170,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2111
+		// Method begins at RVA 0x2121
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

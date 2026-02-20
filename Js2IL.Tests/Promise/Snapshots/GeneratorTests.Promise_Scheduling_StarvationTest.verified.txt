@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x222e
+					// Method begins at RVA 0x2232
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 					object newTarget
 				) cil managed 
 			{
-				// Method begins at RVA 0x21e5
+				// Method begins at RVA 0x21e9
 				// Header size: 1
 				// Code size: 27 (0x1b)
 				.maxstack 8
@@ -77,7 +77,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2225
+					// Method begins at RVA 0x2229
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -97,7 +97,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2237
+					// Method begins at RVA 0x223b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -118,7 +118,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x221c
+				// Method begins at RVA 0x2220
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -139,7 +139,7 @@
 				object id
 			) cil managed 
 		{
-			// Method begins at RVA 0x2100
+			// Method begins at RVA 0x2104
 			// Header size: 12
 			// Code size: 217 (0xd9)
 			.maxstack 8
@@ -239,7 +239,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2201
+			// Method begins at RVA 0x2205
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -263,7 +263,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2213
+				// Method begins at RVA 0x2217
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -281,7 +281,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x220a
+			// Method begins at RVA 0x220e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -307,15 +307,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 161 (0xa1)
+		// Code size: 168 (0xa8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Scheduling_StarvationTest/Scope,
 			[1] object,
-			[2] object,
+			[2] bool,
 			[3] object,
-			[4] float64,
-			[5] object
+			[4] object,
+			[5] float64,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Promise_Scheduling_StarvationTest/Scope::.ctor()
@@ -334,47 +335,49 @@
 		IL_002d: stloc.1
 		// loop start (head: IL_002e)
 			IL_002e: ldloc.1
-			IL_002f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0034: ldc.r8 2048
-			IL_003d: clt
-			IL_003f: brfalse IL_00a0
+			IL_002f: ldc.r8 2048
+			IL_0038: box [System.Runtime]System.Double
+			IL_003d: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::OpLessThan(object, object)
+			IL_0042: stloc.2
+			IL_0043: ldloc.2
+			IL_0044: brfalse IL_00a7
 
-			IL_0044: ldloc.1
-			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-			IL_004a: stloc.2
-			IL_004b: ldnull
-			IL_004c: ldftn object Modules.Promise_Scheduling_StarvationTest/ArrowFunction_L7C29::__js_call__(object, object)
-			IL_0052: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0057: ldc.i4.1
-			IL_0058: newarr [System.Runtime]System.Object
-			IL_005d: dup
-			IL_005e: ldc.i4.0
-			IL_005f: ldloc.0
-			IL_0060: stelem.ref
-			IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_006b: stloc.3
-			IL_006c: ldloc.2
-			IL_006d: ldstr "then"
+			IL_0049: ldloc.1
+			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+			IL_004f: stloc.3
+			IL_0050: ldnull
+			IL_0051: ldftn object Modules.Promise_Scheduling_StarvationTest/ArrowFunction_L7C29::__js_call__(object, object)
+			IL_0057: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_005c: ldc.i4.1
+			IL_005d: newarr [System.Runtime]System.Object
+			IL_0062: dup
+			IL_0063: ldc.i4.0
+			IL_0064: ldloc.0
+			IL_0065: stelem.ref
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0070: stloc.s 4
 			IL_0072: ldloc.3
-			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0078: pop
-			IL_0079: ldloc.1
-			IL_007a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_007f: stloc.s 4
-			IL_0081: ldloc.s 4
-			IL_0083: ldc.r8 1
-			IL_008c: add
-			IL_008d: stloc.s 4
-			IL_008f: ldloc.s 4
-			IL_0091: box [System.Runtime]System.Double
-			IL_0096: stloc.s 5
-			IL_0098: ldloc.s 5
-			IL_009a: stloc.1
-			IL_009b: br IL_002e
+			IL_0073: ldstr "then"
+			IL_0078: ldloc.s 4
+			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_007f: pop
+			IL_0080: ldloc.1
+			IL_0081: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0086: stloc.s 5
+			IL_0088: ldloc.s 5
+			IL_008a: ldc.r8 1
+			IL_0093: add
+			IL_0094: stloc.s 5
+			IL_0096: ldloc.s 5
+			IL_0098: box [System.Runtime]System.Double
+			IL_009d: stloc.s 6
+			IL_009f: ldloc.s 6
+			IL_00a1: stloc.1
+			IL_00a2: br IL_002e
 		// end loop
 
-		IL_00a0: ret
+		IL_00a7: ret
 	} // end of method Promise_Scheduling_StarvationTest::__js_module_init__
 
 } // end of class Modules.Promise_Scheduling_StarvationTest
@@ -386,7 +389,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2240
+		// Method begins at RVA 0x2244
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
