@@ -7,6 +7,8 @@ All notable changes to this project are documented here.
 - ECMA-262 §6.1: expand runtime coverage with BigInt-capable arithmetic/bitwise/shift/relational operators, `String.prototype.lastIndexOf`, and `Object.is` SameValue semantics, with corresponding execution + generator coverage.
 - IR/IL operator lowering: introduce dedicated dynamic operator LIR instructions (`LIRBinaryDynamicOperator`, `LIRNegateNumberDynamic`, `LIRBitwiseNotDynamic`) so dynamic paths call `JavaScriptRuntime.Operators` directly; remove now-unused `JavaScriptRuntime.Object` operator bridge methods.
 - Performance telemetry: add Supabase ingestion for benchmark workflows (`performance-comparison`, `benchmarkdotnet-suite`, `linux-smoke`, `windows-smoke`) via `tests/performance/ingestPerfToSupabase.js`, including host/runtime metadata capture and BenchmarkDotNet markdown-summary fallback parsing.
+- Performance/regression: recover `PrimeJavaScript.js` throughput after BigInt-era operator changes by restoring numeric fast-path lowering for statically non-BigInt binary/relational/bitwise/shift flows, while preserving dynamic BigInt-safe semantics where needed.
+- Runtime/performance: optimize `JavaScriptRuntime.Operators` hot paths for numeric-double operands and keep BigInt behavior/spec guards intact.
 
 ## v0.8.15 - 2026-02-21
 
