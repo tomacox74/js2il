@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "7.4",
   "title": "Operations on Iterator Objects",
-  "status": "Untracked",
+  "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-operations-on-iterator-objects",
   "parent": {
     "clause": "7"
@@ -12,110 +12,199 @@
     {
       "clause": "7.4.1",
       "title": "Iterator Records",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iterator-records"
     },
     {
       "clause": "7.4.2",
       "title": "GetIteratorDirect ( obj )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-getiteratordirect"
     },
     {
       "clause": "7.4.3",
       "title": "GetIteratorFromMethod ( obj , method )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-getiteratorfrommethod"
     },
     {
       "clause": "7.4.4",
       "title": "GetIterator ( obj , kind )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-getiterator"
     },
     {
       "clause": "7.4.5",
       "title": "GetIteratorFlattenable ( obj , primitiveHandling )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-getiteratorflattenable"
     },
     {
       "clause": "7.4.6",
       "title": "IteratorNext ( iteratorRecord [ , value ] )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratornext"
     },
     {
       "clause": "7.4.7",
       "title": "IteratorComplete ( iteratorResult )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratorcomplete"
     },
     {
       "clause": "7.4.8",
       "title": "IteratorValue ( iteratorResult )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratorvalue"
     },
     {
       "clause": "7.4.9",
       "title": "IteratorStep ( iteratorRecord )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratorstep"
     },
     {
       "clause": "7.4.10",
       "title": "IteratorStepValue ( iteratorRecord )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratorstepvalue"
     },
     {
       "clause": "7.4.11",
       "title": "IteratorClose ( iteratorRecord , completion )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratorclose"
     },
     {
       "clause": "7.4.12",
       "title": "IteratorCloseAll ( iters , completion )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratorcloseall"
     },
     {
       "clause": "7.4.13",
       "title": "IfAbruptCloseIterator ( value , iteratorRecord )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ifabruptcloseiterator"
     },
     {
       "clause": "7.4.14",
       "title": "AsyncIteratorClose ( iteratorRecord , completion )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-asynciteratorclose"
     },
     {
       "clause": "7.4.15",
       "title": "IfAbruptCloseAsyncIterator ( value , iteratorRecord )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ifabruptcloseasynciterator"
     },
     {
       "clause": "7.4.16",
       "title": "CreateIteratorResultObject ( value , done )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createiterresultobject"
     },
     {
       "clause": "7.4.17",
       "title": "CreateListIteratorRecord ( list )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-createlistiteratorRecord"
     },
     {
       "clause": "7.4.18",
       "title": "IteratorToList ( iteratorRecord )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratortolist"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "7.4.4",
+        "feature": "GetIterator for for..of sources",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-getiterator",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js"
+        ],
+        "notes": "Supports built-in iterables, user-defined Symbol.iterator sources, and IEnumerable fallback paths."
+      },
+      {
+        "clause": "7.4.6",
+        "feature": "IteratorNext",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iteratornext",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js",
+          "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js"
+        ],
+        "notes": "Iterator advancement is implemented for native and dynamic iterator objects used by lowering/runtime helpers."
+      },
+      {
+        "clause": "7.4.7",
+        "feature": "IteratorComplete",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iteratorcomplete",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js"
+        ],
+        "notes": "Done-state checks are implemented through IteratorResultDone in iteration paths."
+      },
+      {
+        "clause": "7.4.8",
+        "feature": "IteratorValue",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iteratorvalue",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js"
+        ],
+        "notes": "Value extraction is implemented through IteratorResultValue for native and dynamic iterator result shapes."
+      },
+      {
+        "clause": "7.4.11",
+        "feature": "IteratorClose",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iteratorclose",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js"
+        ],
+        "notes": "Break/throw paths invoke iterator return() for supported iterator forms."
+      },
+      {
+        "clause": "7.4.14",
+        "feature": "AsyncIteratorClose",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-asynciteratorclose",
+        "testScripts": [
+          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js",
+          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
+        ],
+        "notes": "Async iterator close is implemented for both native async iterators and sync-iterator fallback wrappers."
+      },
+      {
+        "clause": "7.4.15",
+        "feature": "IfAbruptCloseAsyncIterator behavior in for-await control flow",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-ifabruptcloseasynciterator",
+        "testScripts": [
+          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js",
+          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
+        ],
+        "notes": "Abrupt loop exits trigger async iterator close in supported lowered paths."
+      },
+      {
+        "clause": "7.4.16",
+        "feature": "CreateIteratorResultObject",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-createiterresultobject",
+        "testScripts": [
+          "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js",
+          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js"
+        ],
+        "notes": "Iterator result objects are produced via IteratorResult helpers for sync and async iterator implementations."
+      }
+    ]
+  }
 }

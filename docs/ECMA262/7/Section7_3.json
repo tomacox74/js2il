@@ -48,7 +48,7 @@
     {
       "clause": "7.3.7",
       "title": "CreateNonEnumerableDataPropertyOrThrow ( O , P , V )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createnonenumerabledatapropertyorthrow"
     },
     {
@@ -60,7 +60,7 @@
     {
       "clause": "7.3.9",
       "title": "DeletePropertyOrThrow ( O , P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-deletepropertyorthrow"
     },
     {
@@ -78,7 +78,7 @@
     {
       "clause": "7.3.12",
       "title": "HasOwnProperty ( O , P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-hasownproperty"
     },
     {
@@ -132,7 +132,7 @@
     {
       "clause": "7.3.21",
       "title": "OrdinaryHasInstance ( C , O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinaryhasinstance"
     },
     {
@@ -144,7 +144,7 @@
     {
       "clause": "7.3.23",
       "title": "EnumerableOwnProperties ( O , kind )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-enumerableownproperties"
     },
     {
@@ -156,13 +156,13 @@
     {
       "clause": "7.3.25",
       "title": "CopyDataProperties ( target , source , excludedItems )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-copydataproperties"
     },
     {
       "clause": "7.3.26",
       "title": "PrivateElementFind ( O , P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-privateelementfind"
     },
     {
@@ -243,7 +243,7 @@
           "Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js",
           "Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js"
         ],
-        "notes": "Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. When descriptor APIs are used, accessor getters and prototype chain lookup are supported via side-tables. Symbol-keyed properties and many exotic/internal-method behaviors are not implemented."
+        "notes": "Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. Descriptor APIs enable accessor/prototype lookup via side-tables; symbol-keyed properties and many exotic behaviors are incomplete."
       },
       {
         "clause": "7.3.4",
@@ -254,7 +254,17 @@
           "Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js",
           "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
         ],
-        "notes": "Supported via runtime set dispatch for ExpandoObject/object literals and reflection for host objects. When descriptor APIs are used, accessor setters and non-writable data properties are approximated via a side-table descriptor store; full Throw behavior, redefinition validation, and invariant checks are not implemented."
+        "notes": "Supported via runtime set dispatch for ExpandoObject/object literals and reflection for host objects. Throw/invariant behavior is not fully spec-complete."
+      },
+      {
+        "clause": "7.3.7",
+        "feature": "CreateNonEnumerableDataPropertyOrThrow (approx.)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-createnonenumerabledatapropertyorthrow",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js"
+        ],
+        "notes": "Non-enumerable data properties can be created through descriptor APIs; strict throw/invariant semantics are approximate."
       },
       {
         "clause": "7.3.8",
@@ -266,7 +276,17 @@
           "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js",
           "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
         ],
-        "notes": "Approximated by JavaScriptRuntime.Object.defineProperty/defineProperties/create using a ConditionalWeakTable-backed descriptor store. Supports defining data and accessor descriptors and respecting enumerable:false for for..in enumeration. Many spec validation and invariant checks (including strict throw behavior) are not implemented."
+        "notes": "Approximated by runtime defineProperty/defineProperties/create using PropertyDescriptorStore; many spec validation and throw paths are incomplete."
+      },
+      {
+        "clause": "7.3.9",
+        "feature": "DeletePropertyOrThrow (approx.)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-deletepropertyorthrow",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js"
+        ],
+        "notes": "Delete operations are supported for dynamic object shapes; full non-configurable property behavior and strict throw fidelity are incomplete."
       },
       {
         "clause": "7.3.11",
@@ -277,7 +297,17 @@
           "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js",
           "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js"
         ],
-        "notes": "Implemented by runtime helper for object literals (ExpandoObject), arrays, typed arrays, and strings. Prototype chain traversal is supported when prototype-chain mode is enabled; symbols are not supported."
+        "notes": "Implemented for object literals, arrays, typed arrays, strings, and host objects. Prototype traversal is supported with prototype-chain mode; symbol support is limited."
+      },
+      {
+        "clause": "7.3.12",
+        "feature": "HasOwnProperty",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-hasownproperty",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_Prototype_HasOwnProperty_Basic.js"
+        ],
+        "notes": "Object.prototype.hasOwnProperty is provided with descriptor-store, dictionary, and host-object fallbacks."
       },
       {
         "clause": "7.3.13",
@@ -291,7 +321,7 @@
           "Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js",
           "Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js"
         ],
-        "notes": "Supports calling declared functions, function expressions, and delegates stored as object-literal properties. Function.prototype.apply and Function.prototype.bind are implemented for delegate-backed function values; Function.prototype.call is not implemented."
+        "notes": "Supports common declared/function-expression/delegate call paths. Some exotic call semantics are not implemented."
       },
       {
         "clause": "7.3.14",
@@ -304,11 +334,11 @@
           "Js2IL.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js",
           "Js2IL.Tests/Hosting/JavaScript/ctorPadding.js"
         ],
-        "notes": "Supports statically-known constructors and a runtime fallback for dynamic constructor values crossing module boundaries. Missing arguments are permitted on the dynamic construction fallback and are treated as undefined/null for host constructor activation. newTarget semantics and many exotic constructor behaviors are not implemented."
+        "notes": "Supports statically-known constructors and runtime fallback for dynamic constructor values; full newTarget and exotic constructor behavior is incomplete."
       },
       {
         "clause": "7.3.18",
-        "feature": "Array-like length",
+        "feature": "LengthOfArrayLike",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-lengthofarraylike",
         "testScripts": [
@@ -316,7 +346,51 @@
           "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
           "Js2IL.Tests/String/JavaScript/String_Split_Basic.js"
         ],
-        "notes": "Supported for JS arrays, Int32Array, and strings. General iterator/array-like conversion semantics are not implemented."
+        "notes": "Implemented for supported array-like runtime types with partial coercion behavior."
+      },
+      {
+        "clause": "7.3.21",
+        "feature": "OrdinaryHasInstance (instanceof paths)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-ordinaryhasinstance",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
+        ],
+        "notes": "Implemented with prototype-chain checks for supported callable constructor values; full spec hooks are incomplete."
+      },
+      {
+        "clause": "7.3.23",
+        "feature": "EnumerableOwnProperties (keys/values/entries)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-enumerableownproperties",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js"
+        ],
+        "notes": "Implemented for supported object shapes with descriptor-store enumerable filtering."
+      },
+      {
+        "clause": "7.3.25",
+        "feature": "CopyDataProperties (object spread)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-copydataproperties",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_SkipsNonEnumerable.js"
+        ],
+        "notes": "Implemented via SpreadInto/Object spread for enumerable own string-keyed properties; full symbol/exotic semantics are incomplete."
+      },
+      {
+        "clause": "7.3.26",
+        "feature": "PrivateElementFind for private fields",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-privateelementfind",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js"
+        ],
+        "notes": "Private field access works for supported class forms; private methods/accessors and complete validation coverage are not yet implemented."
       },
       {
         "clause": "7.3.33",
@@ -327,7 +401,7 @@
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js",
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
         ],
-        "notes": "Supports instance field initializers and private instance fields (name-mangled .NET fields). Inheritance/super and static blocks are not supported."
+        "notes": "Supports instance field initializers and private instance fields. Static blocks, private methods/accessors, and some inheritance details are incomplete."
       }
     ]
   }

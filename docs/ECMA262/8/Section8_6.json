@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "8.6",
   "title": "Miscellaneous",
-  "status": "Untracked",
+  "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-syntax-directed-operations-miscellaneous",
   "parent": {
     "clause": "8"
@@ -12,38 +12,111 @@
     {
       "clause": "8.6.1",
       "title": "Runtime Semantics: InstantiateFunctionObject",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiatefunctionobject"
     },
     {
       "clause": "8.6.2",
       "title": "Runtime Semantics: BindingInitialization",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-bindinginitialization"
     },
     {
       "clause": "8.6.2.1",
       "title": "InitializeBoundName ( name , value , environment )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-initializeboundname"
     },
     {
       "clause": "8.6.3",
       "title": "Runtime Semantics: IteratorBindingInitialization",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-iteratorbindinginitialization"
     },
     {
       "clause": "8.6.4",
       "title": "Static Semantics: AssignmentTargetType",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-assignmenttargettype"
     },
     {
       "clause": "8.6.5",
       "title": "Static Semantics: PropName",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-propname"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "8.6.1",
+        "feature": "Instantiation of function/arrow/class callable objects",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiatefunctionobject",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js",
+          "Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js"
+        ],
+        "notes": "Function-like AST forms are lowered to delegate-backed callables and class types, but full spec object-internal-slot behavior for every callable form is not complete."
+      },
+      {
+        "clause": "8.6.2",
+        "feature": "BindingInitialization for declarations and supported destructuring",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-bindinginitialization",
+        "testScripts": [
+          "Js2IL.Tests/Variable/JavaScript/Variable_ArrayDestructuring_Basic.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Basic.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_ParameterDestructuring.js"
+        ],
+        "notes": "Identifier/object/array/rest/default binding paths are implemented for supported contexts, with unsupported binding-pattern forms rejected by validation/parsing."
+      },
+      {
+        "clause": "8.6.2.1",
+        "feature": "InitializeBoundName behavior (writes/const restrictions)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-initializeboundname",
+        "testScripts": [
+          "Js2IL.Tests/Variable/JavaScript/Variable_ConstReassignmentError.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_DestructuringAssignment_Basic.js"
+        ],
+        "notes": "Binding writes are lowered with scope-aware storage operations and enforce const write restrictions in supported assignment/destructuring paths."
+      },
+      {
+        "clause": "8.6.3",
+        "feature": "IteratorBindingInitialization in for-of and destructuring flows",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-iteratorbindinginitialization",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_Destructuring_PerIterationBinding.js",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js"
+        ],
+        "notes": "Iterator-driven binding initialization is implemented in lowered for-of/for-await and destructuring paths, with subset-based coverage of exotic iterator semantics."
+      },
+      {
+        "clause": "8.6.4",
+        "feature": "AssignmentTargetType checks for supported assignment targets",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-assignmenttargettype",
+        "testScripts": [
+          "Js2IL.Tests/ValidatorTests.cs",
+          "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_DestructuringAssignment_Basic.js"
+        ],
+        "notes": "Assignment lowering/validation supports identifier, member, index, and supported destructuring targets; unsupported target forms are rejected."
+      },
+      {
+        "clause": "8.6.5",
+        "feature": "PropName evaluation for object/class member keys",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-propname",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js"
+        ],
+        "notes": "Property-name extraction/evaluation is implemented for identifier/literal/computed object keys in supported forms; several class-specific computed/private key variants remain limited."
+      }
+    ]
+  }
 }

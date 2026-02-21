@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "8.3",
   "title": "Labels",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-syntax-directed-operations-labels",
   "parent": {
     "clause": "8"
@@ -12,20 +12,56 @@
     {
       "clause": "8.3.1",
       "title": "Static Semantics: ContainsDuplicateLabels",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-containsduplicatelabels"
     },
     {
       "clause": "8.3.2",
       "title": "Static Semantics: ContainsUndefinedBreakTarget",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-containsundefinedbreaktarget"
     },
     {
       "clause": "8.3.3",
       "title": "Static Semantics: ContainsUndefinedContinueTarget",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-containsundefinedcontinuetarget"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "8.3.1",
+        "feature": "Duplicate label detection",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-containsduplicatelabels",
+        "testScripts": [
+          "Js2IL.Tests/ValidatorTests.cs"
+        ],
+        "notes": "JavaScriptAstValidator tracks active labels and rejects duplicate declarations in the same label set; explicit negative duplicate-label coverage is still light."
+      },
+      {
+        "clause": "8.3.2",
+        "feature": "Undefined break-target detection",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-containsundefinedbreaktarget",
+        "testScripts": [
+          "Js2IL.Tests/ParserTests.cs",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledBreak.js"
+        ],
+        "notes": "Parser/validator reject breaks to missing labels and runtime lowering supports valid labeled break targets."
+      },
+      {
+        "clause": "8.3.3",
+        "feature": "Undefined/invalid continue-target detection",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-containsundefinedcontinuetarget",
+        "testScripts": [
+          "Js2IL.Tests/ParserTests.cs",
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledContinue.js"
+        ],
+        "notes": "Continue targets are validated to reference iteration labels; non-loop targets are rejected."
+      }
+    ]
+  }
 }

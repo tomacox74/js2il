@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "7.2",
   "title": "Testing and Comparison Operations",
-  "status": "Untracked",
+  "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-testing-and-comparison-operations",
   "parent": {
     "clause": "7"
@@ -12,86 +12,189 @@
     {
       "clause": "7.2.1",
       "title": "RequireObjectCoercible ( argument )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-requireobjectcoercible"
     },
     {
       "clause": "7.2.2",
       "title": "IsArray ( argument )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-isarray"
     },
     {
       "clause": "7.2.3",
       "title": "IsCallable ( argument )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iscallable"
     },
     {
       "clause": "7.2.4",
       "title": "IsConstructor ( argument )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-isconstructor"
     },
     {
       "clause": "7.2.5",
       "title": "IsExtensible ( O )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-isextensible-o"
     },
     {
       "clause": "7.2.6",
       "title": "IsRegExp ( argument )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-isregexp"
     },
     {
       "clause": "7.2.7",
       "title": "Static Semantics: IsStringWellFormedUnicode ( string )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-isstringwellformedunicode"
     },
     {
       "clause": "7.2.8",
       "title": "SameType ( x , y )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-sametype"
     },
     {
       "clause": "7.2.9",
       "title": "SameValue ( x , y )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-samevalue"
     },
     {
       "clause": "7.2.10",
       "title": "SameValueZero ( x , y )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-samevaluezero"
     },
     {
       "clause": "7.2.11",
       "title": "SameValueNonNumber ( x , y )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-samevaluenonnumber"
     },
     {
       "clause": "7.2.12",
       "title": "IsLessThan ( x , y , LeftFirst )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-islessthan"
     },
     {
       "clause": "7.2.13",
       "title": "IsLooselyEqual ( x , y )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-islooselyequal"
     },
     {
       "clause": "7.2.14",
       "title": "IsStrictlyEqual ( x , y )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-isstrictlyequal"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "7.2.2",
+        "feature": "IsArray",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-isarray",
+        "testScripts": [
+          "Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js",
+          "Js2IL.Tests/Array/JavaScript/Array_AsArray_Ternary.js"
+        ],
+        "notes": "Implemented by JavaScriptRuntime.Array.isArray for JS array instances."
+      },
+      {
+        "clause": "7.2.3",
+        "feature": "IsCallable checks in invocation paths",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iscallable",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js"
+        ],
+        "notes": "Callable detection is primarily delegate-based in runtime dispatch and intrinsic paths."
+      },
+      {
+        "clause": "7.2.4",
+        "feature": "IsConstructor checks for new-expression paths",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-isconstructor",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
+        ],
+        "notes": "Dynamic construction supports delegate/type/Construct-member shapes used by JS2IL; full constructability semantics are not complete."
+      },
+      {
+        "clause": "7.2.6",
+        "feature": "IsRegExp classification in RegExp-aware operations",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-isregexp",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js",
+          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js"
+        ],
+        "notes": "RegExp-aware behavior is implemented for JavaScriptRuntime.RegExp call sites; Symbol.match override semantics are not fully modeled."
+      },
+      {
+        "clause": "7.2.9",
+        "feature": "SameValue",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-samevalue",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_Is_SameValue.js"
+        ],
+        "notes": "Implemented by Operators.SameValue and exposed via Object.is."
+      },
+      {
+        "clause": "7.2.10",
+        "feature": "SameValueZero",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-samevaluezero",
+        "testScripts": [
+          "Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js"
+        ],
+        "notes": "Implemented in array includes/search paths and runtime helper comparisons."
+      },
+      {
+        "clause": "7.2.12",
+        "feature": "IsLessThan relational comparison",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-islessthan",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js",
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js",
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js",
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js"
+        ],
+        "notes": "Implements numeric and BigInt relational behavior for supported operand kinds; full coercion-order edge cases are incomplete."
+      },
+      {
+        "clause": "7.2.13",
+        "feature": "IsLooselyEqual (==)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-islooselyequal",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js",
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js",
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js"
+        ],
+        "notes": "Covers core loose-equality coercions (including nullish and numeric cases); complete spec edge-case parity is not yet implemented."
+      },
+      {
+        "clause": "7.2.14",
+        "feature": "IsStrictlyEqual (===)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-isstrictlyequal",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_StrictEqualCapturedVariable.js"
+        ],
+        "notes": "Implements strict-equality behavior across supported runtime representations, with CLR/JS representation normalization in key paths."
+      }
+    ]
+  }
 }

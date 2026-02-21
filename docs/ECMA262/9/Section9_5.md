@@ -6,7 +6,7 @@
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 9.5 | Jobs and Host Operations to Enqueue Jobs | Supported | [tc39.es](https://tc39.es/ecma262/#sec-jobs) |
+| 9.5 | Jobs and Host Operations to Enqueue Jobs | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-jobs) |
 
 ## Subclauses
 
@@ -15,9 +15,9 @@
 | 9.5.1 | JobCallback Records | Supported | [tc39.es](https://tc39.es/ecma262/#sec-jobcallback-records) |
 | 9.5.2 | HostMakeJobCallback ( callback ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-hostmakejobcallback) |
 | 9.5.3 | HostCallJobCallback ( jobCallback , V , argumentsList ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-hostcalljobcallback) |
-| 9.5.4 | HostEnqueueGenericJob ( job , realm ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-hostenqueuegenericjob) |
-| 9.5.5 | HostEnqueuePromiseJob ( job , realm ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-hostenqueuepromisejob) |
-| 9.5.6 | HostEnqueueTimeoutJob ( timeoutJob , realm , milliseconds ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-hostenqueuetimeoutjob) |
+| 9.5.4 | HostEnqueueGenericJob ( job , realm ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-hostenqueuegenericjob) |
+| 9.5.5 | HostEnqueuePromiseJob ( job , realm ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-hostenqueuepromisejob) |
+| 9.5.6 | HostEnqueueTimeoutJob ( timeoutJob , realm , milliseconds ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-hostenqueuetimeoutjob) |
 
 ## Support
 
@@ -27,25 +27,37 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| JobCallback Records | Supported | [`Promise_Resolve_Then.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js)<br>[`Promise_Scheduling_StarvationTest.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js) | Implemented as an internal JobCallback record carrying a callback plus a host-defined context slot (currently null/empty). Used by Promise reaction job scheduling so future host-defined context/realm data can be threaded without changing observable behavior. |
+| JobCallback Records | Supported | [`Promise_Resolve_Then.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js)<br>[`Promise_Scheduling_StarvationTest.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js) | Implemented as internal JobCallback records carrying callback plus host-defined payload slot. |
 
 ### 9.5.2 ([tc39.es](https://tc39.es/ecma262/#sec-hostmakejobcallback))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| HostMakeJobCallback | Supported | [`Promise_Resolve_Then.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js)<br>[`Promise_Scheduling_StarvationTest.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js) | Default host behavior: wraps a callback into a JobCallback record with an empty HostDefined field. |
+| HostMakeJobCallback | Supported | [`Promise_Resolve_Then.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js) | Host operation wraps callbacks in JobCallbackRecord for queueing/invocation. |
 
 ### 9.5.3 ([tc39.es](https://tc39.es/ecma262/#sec-hostcalljobcallback))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| HostCallJobCallback | Supported | [`Promise_Resolve_Then.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js)<br>[`Promise_Scheduling_StarvationTest.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js) | Default host behavior: invokes the stored callback. Parameters (V, argumentsList) are accepted for spec-shape compatibility; JS2IL currently models Promise jobs as parameterless Actions. |
+| HostCallJobCallback | Supported | [`Promise_Resolve_Then.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js) | Host operation invokes stored job callback; JS2IL currently uses Action-based jobs for Promise reactions. |
 
 ### 9.5.4 ([tc39.es](https://tc39.es/ecma262/#sec-hostenqueuegenericjob))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| HostEnqueuePromiseJob | Supported | [`Promise_Resolve_Then.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js)<br>[`Promise_Scheduling_StarvationTest.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js) | Promise reaction jobs are enqueued onto the runtime microtask queue (IMicrotaskScheduler) and executed by the event loop pump. |
+| HostEnqueueGenericJob | Supported with Limitations | [`Promise_Scheduling_StarvationTest.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js)<br>[`Process_NextTick_And_Promise_Ordering.js`](../../../Js2IL.Tests/Node/Process/JavaScript/Process_NextTick_And_Promise_Ordering.js) | Generic host job enqueuing is modeled through NodeSchedulerState/EventLoopPump queues; realm-specific behavior is limited. |
+
+### 9.5.5 ([tc39.es](https://tc39.es/ecma262/#sec-hostenqueuepromisejob))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| HostEnqueuePromiseJob | Supported with Limitations | [`Promise_Resolve_Then.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js)<br>[`Promise_Scheduling_StarvationTest.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js) | Promise reactions enqueue microtasks via IMicrotaskScheduler and are drained by the event-loop microtask checkpoints. |
+
+### 9.5.6 ([tc39.es](https://tc39.es/ecma262/#sec-hostenqueuetimeoutjob))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| HostEnqueueTimeoutJob | Supported with Limitations | [`SetTimeout_ZeroDelay.js`](../../../Js2IL.Tests/Node/Timers/JavaScript/SetTimeout_ZeroDelay.js)<br>[`SetInterval_ExecutesThreeTimes_ThenClears.js`](../../../Js2IL.Tests/Node/Timers/JavaScript/SetInterval_ExecutesThreeTimes_ThenClears.js) | Timers enqueue timeout jobs through scheduler timer queues (setTimeout/setInterval) with host-specific event loop behavior. |
 
 ## Reference: Converted Spec Text
 

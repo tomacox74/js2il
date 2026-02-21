@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "9.5",
   "title": "Jobs and Host Operations to Enqueue Jobs",
-  "status": "Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-jobs",
   "parent": {
     "clause": "9"
@@ -30,19 +30,19 @@
     {
       "clause": "9.5.4",
       "title": "HostEnqueueGenericJob ( job , realm )",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-hostenqueuegenericjob"
     },
     {
       "clause": "9.5.5",
       "title": "HostEnqueuePromiseJob ( job , realm )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-hostenqueuepromisejob"
     },
     {
       "clause": "9.5.6",
       "title": "HostEnqueueTimeoutJob ( timeoutJob , realm , milliseconds )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-hostenqueuetimeoutjob"
     }
   ],
@@ -61,7 +61,7 @@
           "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
           "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
         ],
-        "notes": "Implemented as an internal JobCallback record carrying a callback plus a host-defined context slot (currently null/empty). Used by Promise reaction job scheduling so future host-defined context/realm data can be threaded without changing observable behavior."
+        "notes": "Implemented as internal JobCallback records carrying callback plus host-defined payload slot."
       },
       {
         "clause": "9.5.2",
@@ -69,10 +69,9 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-hostmakejobcallback",
         "testScripts": [
-          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
-          "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js"
         ],
-        "notes": "Default host behavior: wraps a callback into a JobCallback record with an empty HostDefined field."
+        "notes": "Host operation wraps callbacks in JobCallbackRecord for queueing/invocation."
       },
       {
         "clause": "9.5.3",
@@ -80,21 +79,42 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-hostcalljobcallback",
         "testScripts": [
-          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
-          "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+          "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js"
         ],
-        "notes": "Default host behavior: invokes the stored callback. Parameters (V, argumentsList) are accepted for spec-shape compatibility; JS2IL currently models Promise jobs as parameterless Actions."
+        "notes": "Host operation invokes stored job callback; JS2IL currently uses Action-based jobs for Promise reactions."
       },
       {
         "clause": "9.5.4",
+        "feature": "HostEnqueueGenericJob",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-hostenqueuegenericjob",
+        "testScripts": [
+          "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js",
+          "Js2IL.Tests/Node/Process/JavaScript/Process_NextTick_And_Promise_Ordering.js"
+        ],
+        "notes": "Generic host job enqueuing is modeled through NodeSchedulerState/EventLoopPump queues; realm-specific behavior is limited."
+      },
+      {
+        "clause": "9.5.5",
         "feature": "HostEnqueuePromiseJob",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-hostenqueuepromisejob",
         "testScripts": [
           "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
           "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
         ],
-        "notes": "Promise reaction jobs are enqueued onto the runtime microtask queue (IMicrotaskScheduler) and executed by the event loop pump."
+        "notes": "Promise reactions enqueue microtasks via IMicrotaskScheduler and are drained by the event-loop microtask checkpoints."
+      },
+      {
+        "clause": "9.5.6",
+        "feature": "HostEnqueueTimeoutJob",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-hostenqueuetimeoutjob",
+        "testScripts": [
+          "Js2IL.Tests/Node/Timers/JavaScript/SetTimeout_ZeroDelay.js",
+          "Js2IL.Tests/Node/Timers/JavaScript/SetInterval_ExecutesThreeTimes_ThenClears.js"
+        ],
+        "notes": "Timers enqueue timeout jobs through scheduler timer queues (setTimeout/setInterval) with host-specific event loop behavior."
       }
     ]
   }
