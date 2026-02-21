@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2114
+				// Method begins at RVA 0x211d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x212f
+						// Method begins at RVA 0x2138
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -64,7 +64,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2126
+					// Method begins at RVA 0x212f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -82,7 +82,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211d
+				// Method begins at RVA 0x2126
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -100,7 +100,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210b
+			// Method begins at RVA 0x2114
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -126,14 +126,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 175 (0xaf)
+		// Code size: 184 (0xb8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_DoWhile_LabeledContinue/Scope,
 			[1] float64,
 			[2] object,
-			[3] object,
-			[4] float64
+			[3] bool,
+			[4] object,
+			[5] float64
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_DoWhile_LabeledContinue/Scope::.ctor()
@@ -150,54 +151,56 @@
 			IL_002a: stloc.2
 			// loop start (head: IL_002b)
 				IL_002b: ldloc.2
-				IL_002c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0031: ldc.r8 1
-				IL_003a: clt
-				IL_003c: brfalse IL_0098
+				IL_002c: ldc.r8 1
+				IL_0035: box [System.Runtime]System.Double
+				IL_003a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+				IL_003f: stloc.3
+				IL_0040: ldloc.3
+				IL_0041: brfalse IL_00a1
 
-				IL_0041: ldloc.1
-				IL_0042: ldc.r8 2
-				IL_004b: ceq
-				IL_004d: brfalse IL_0057
+				IL_0046: ldloc.1
+				IL_0047: ldc.r8 2
+				IL_0050: ceq
+				IL_0052: brfalse IL_005c
 
-				IL_0052: br IL_0098
+				IL_0057: br IL_00a1
 
-				IL_0057: ldloc.1
-				IL_0058: box [System.Runtime]System.Double
-				IL_005d: stloc.3
-				IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0063: ldc.i4.1
-				IL_0064: newarr [System.Runtime]System.Object
-				IL_0069: dup
-				IL_006a: ldc.i4.0
-				IL_006b: ldloc.3
-				IL_006c: stelem.ref
-				IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_0072: pop
-				IL_0073: ldloc.2
-				IL_0074: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0079: stloc.s 4
-				IL_007b: ldloc.s 4
-				IL_007d: ldc.r8 1
-				IL_0086: add
-				IL_0087: stloc.s 4
-				IL_0089: ldloc.s 4
-				IL_008b: box [System.Runtime]System.Double
-				IL_0090: stloc.3
-				IL_0091: ldloc.3
-				IL_0092: stloc.2
-				IL_0093: br IL_002b
+				IL_005c: ldloc.1
+				IL_005d: box [System.Runtime]System.Double
+				IL_0062: stloc.s 4
+				IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0069: ldc.i4.1
+				IL_006a: newarr [System.Runtime]System.Object
+				IL_006f: dup
+				IL_0070: ldc.i4.0
+				IL_0071: ldloc.s 4
+				IL_0073: stelem.ref
+				IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0079: pop
+				IL_007a: ldloc.2
+				IL_007b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0080: stloc.s 5
+				IL_0082: ldloc.s 5
+				IL_0084: ldc.r8 1
+				IL_008d: add
+				IL_008e: stloc.s 5
+				IL_0090: ldloc.s 5
+				IL_0092: box [System.Runtime]System.Double
+				IL_0097: stloc.s 4
+				IL_0099: ldloc.s 4
+				IL_009b: stloc.2
+				IL_009c: br IL_002b
 			// end loop
 
-			IL_0098: ldloc.1
-			IL_0099: ldc.r8 3
-			IL_00a2: clt
-			IL_00a4: brfalse IL_00ae
+			IL_00a1: ldloc.1
+			IL_00a2: ldc.r8 3
+			IL_00ab: clt
+			IL_00ad: brfalse IL_00b7
 
-			IL_00a9: br IL_0010
+			IL_00b2: br IL_0010
 		// end loop
 
-		IL_00ae: ret
+		IL_00b7: ret
 	} // end of method ControlFlow_DoWhile_LabeledContinue::__js_module_init__
 
 } // end of class Modules.ControlFlow_DoWhile_LabeledContinue
@@ -209,7 +212,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2138
+		// Method begins at RVA 0x2141
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

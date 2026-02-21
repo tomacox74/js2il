@@ -296,8 +296,14 @@ internal static class TempLocalAllocator
             case LIRNegateNumber neg:
                 yield return neg.Value;
                 break;
+            case LIRNegateNumberDynamic negDyn:
+                yield return negDyn.Value;
+                break;
             case LIRBitwiseNotNumber not:
                 yield return not.Value;
+                break;
+            case LIRBitwiseNotDynamic notDyn:
+                yield return notDyn.Value;
                 break;
             case LIRLogicalNot logicalNot:
                 yield return logicalNot.Value;
@@ -403,6 +409,10 @@ internal static class TempLocalAllocator
             case LIRStrictNotEqualDynamic strictNotEqualDyn:
                 yield return strictNotEqualDyn.Left;
                 yield return strictNotEqualDyn.Right;
+                break;
+            case LIRBinaryDynamicOperator binaryDynamic:
+                yield return binaryDynamic.Left;
+                yield return binaryDynamic.Right;
                 break;
             case LIRReturn ret:
                 yield return ret.ReturnValue;
@@ -856,8 +866,14 @@ internal static class TempLocalAllocator
             case LIRNegateNumber neg:
                 defined = neg.Result;
                 return true;
+            case LIRNegateNumberDynamic negDyn:
+                defined = negDyn.Result;
+                return true;
             case LIRBitwiseNotNumber not:
                 defined = not.Result;
+                return true;
+            case LIRBitwiseNotDynamic notDyn:
+                defined = notDyn.Result;
                 return true;
             case LIRLogicalNot logicalNot:
                 defined = logicalNot.Result;
@@ -936,6 +952,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRStrictNotEqualDynamic strictNotEqualDyn:
                 defined = strictNotEqualDyn.Result;
+                return true;
+            case LIRBinaryDynamicOperator binaryDynamic:
+                defined = binaryDynamic.Result;
                 return true;
             case LIRCallFunction callFunc:
                 defined = callFunc.Result;

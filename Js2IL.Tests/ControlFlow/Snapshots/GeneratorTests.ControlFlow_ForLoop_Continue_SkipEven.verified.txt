@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e7
+			// Method begins at RVA 0x20fe
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f9
+				// Method begins at RVA 0x2110
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f0
+			// Method begins at RVA 0x2107
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,13 +82,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 139 (0x8b)
+		// Code size: 162 (0xa2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_Continue_SkipEven/Scope,
 			[1] object,
-			[2] float64,
-			[3] object
+			[2] bool,
+			[3] object,
+			[4] float64,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_Continue_SkipEven/Scope::.ctor()
@@ -98,51 +100,54 @@
 		IL_0014: stloc.1
 		// loop start (head: IL_0015)
 			IL_0015: ldloc.1
-			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_001b: ldc.r8 10
-			IL_0024: clt
-			IL_0026: brfalse IL_008a
+			IL_0016: ldc.r8 10
+			IL_001f: box [System.Runtime]System.Double
+			IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+			IL_0029: stloc.2
+			IL_002a: ldloc.2
+			IL_002b: brfalse IL_00a1
 
-			IL_002b: ldloc.1
-			IL_002c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0031: stloc.2
-			IL_0032: ldloc.2
-			IL_0033: ldc.r8 2
-			IL_003c: rem
-			IL_003d: stloc.2
-			IL_003e: ldloc.2
-			IL_003f: ldc.r8 0.0
-			IL_0048: ceq
-			IL_004a: brfalse IL_0054
+			IL_0030: ldloc.1
+			IL_0031: ldc.r8 2
+			IL_003a: box [System.Runtime]System.Double
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Remainder(object, object)
+			IL_0044: stloc.3
+			IL_0045: ldloc.3
+			IL_0046: ldc.r8 0.0
+			IL_004f: box [System.Runtime]System.Double
+			IL_0054: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0059: stloc.2
+			IL_005a: ldloc.2
+			IL_005b: brfalse IL_0065
 
-			IL_004f: br IL_0069
+			IL_0060: br IL_007a
 
-			IL_0054: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0059: ldc.i4.1
-			IL_005a: newarr [System.Runtime]System.Object
-			IL_005f: dup
-			IL_0060: ldc.i4.0
-			IL_0061: ldloc.1
-			IL_0062: stelem.ref
-			IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0068: pop
+			IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_006a: ldc.i4.1
+			IL_006b: newarr [System.Runtime]System.Object
+			IL_0070: dup
+			IL_0071: ldc.i4.0
+			IL_0072: ldloc.1
+			IL_0073: stelem.ref
+			IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0079: pop
 
-			IL_0069: ldloc.1
-			IL_006a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_006f: stloc.2
-			IL_0070: ldloc.2
-			IL_0071: ldc.r8 1
-			IL_007a: add
-			IL_007b: stloc.2
-			IL_007c: ldloc.2
-			IL_007d: box [System.Runtime]System.Double
-			IL_0082: stloc.3
-			IL_0083: ldloc.3
-			IL_0084: stloc.1
-			IL_0085: br IL_0015
+			IL_007a: ldloc.1
+			IL_007b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0080: stloc.s 4
+			IL_0082: ldloc.s 4
+			IL_0084: ldc.r8 1
+			IL_008d: add
+			IL_008e: stloc.s 4
+			IL_0090: ldloc.s 4
+			IL_0092: box [System.Runtime]System.Double
+			IL_0097: stloc.s 5
+			IL_0099: ldloc.s 5
+			IL_009b: stloc.1
+			IL_009c: br IL_0015
 		// end loop
 
-		IL_008a: ret
+		IL_00a1: ret
 	} // end of method ControlFlow_ForLoop_Continue_SkipEven::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_Continue_SkipEven
@@ -154,7 +159,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2102
+		// Method begins at RVA 0x2119
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

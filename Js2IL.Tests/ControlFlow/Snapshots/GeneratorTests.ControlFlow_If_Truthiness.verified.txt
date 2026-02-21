@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b8
+			// Method begins at RVA 0x21bf
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21d3
+					// Method begins at RVA 0x21da
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -62,7 +62,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21dc
+					// Method begins at RVA 0x21e3
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -80,7 +80,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ca
+				// Method begins at RVA 0x21d1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +98,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c1
+			// Method begins at RVA 0x21c8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -124,7 +124,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 348 (0x15c)
+		// Code size: 355 (0x163)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_If_Truthiness/Scope,
@@ -199,58 +199,60 @@
 		IL_00d3: stloc.2
 		// loop start (head: IL_00d4)
 			IL_00d4: ldloc.2
-			IL_00d5: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00da: ldloc.1
-			IL_00db: callvirt instance int32 class [System.Collections]System.Collections.Generic.List`1<object>::get_Count()
-			IL_00e0: conv.r8
-			IL_00e1: clt
-			IL_00e3: brfalse IL_015b
+			IL_00d5: ldloc.1
+			IL_00d6: callvirt instance int32 class [System.Collections]System.Collections.Generic.List`1<object>::get_Count()
+			IL_00db: conv.r8
+			IL_00dc: box [System.Runtime]System.Double
+			IL_00e1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+			IL_00e6: stloc.s 6
+			IL_00e8: ldloc.s 6
+			IL_00ea: brfalse IL_0162
 
-			IL_00e8: ldloc.1
-			IL_00e9: ldloc.2
-			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00ef: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_00f4: stloc.s 6
-			IL_00f6: ldloc.s 6
-			IL_00f8: brfalse IL_011b
+			IL_00ef: ldloc.1
+			IL_00f0: ldloc.2
+			IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00f6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_00fb: stloc.s 6
+			IL_00fd: ldloc.s 6
+			IL_00ff: brfalse IL_0122
 
-			IL_00fd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0102: ldc.i4.1
-			IL_0103: newarr [System.Runtime]System.Object
-			IL_0108: dup
-			IL_0109: ldc.i4.0
-			IL_010a: ldstr "T"
-			IL_010f: stelem.ref
-			IL_0110: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0115: pop
-			IL_0116: br IL_0134
+			IL_0104: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0109: ldc.i4.1
+			IL_010a: newarr [System.Runtime]System.Object
+			IL_010f: dup
+			IL_0110: ldc.i4.0
+			IL_0111: ldstr "T"
+			IL_0116: stelem.ref
+			IL_0117: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_011c: pop
+			IL_011d: br IL_013b
 
-			IL_011b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0120: ldc.i4.1
-			IL_0121: newarr [System.Runtime]System.Object
-			IL_0126: dup
-			IL_0127: ldc.i4.0
-			IL_0128: ldstr "F"
-			IL_012d: stelem.ref
-			IL_012e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0133: pop
+			IL_0122: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0127: ldc.i4.1
+			IL_0128: newarr [System.Runtime]System.Object
+			IL_012d: dup
+			IL_012e: ldc.i4.0
+			IL_012f: ldstr "F"
+			IL_0134: stelem.ref
+			IL_0135: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_013a: pop
 
-			IL_0134: ldloc.2
-			IL_0135: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_013a: stloc.s 7
-			IL_013c: ldloc.s 7
-			IL_013e: ldc.r8 1
-			IL_0147: add
-			IL_0148: stloc.s 7
-			IL_014a: ldloc.s 7
-			IL_014c: box [System.Runtime]System.Double
-			IL_0151: stloc.s 8
-			IL_0153: ldloc.s 8
-			IL_0155: stloc.2
-			IL_0156: br IL_00d4
+			IL_013b: ldloc.2
+			IL_013c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0141: stloc.s 7
+			IL_0143: ldloc.s 7
+			IL_0145: ldc.r8 1
+			IL_014e: add
+			IL_014f: stloc.s 7
+			IL_0151: ldloc.s 7
+			IL_0153: box [System.Runtime]System.Double
+			IL_0158: stloc.s 8
+			IL_015a: ldloc.s 8
+			IL_015c: stloc.2
+			IL_015d: br IL_00d4
 		// end loop
 
-		IL_015b: ret
+		IL_0162: ret
 	} // end of method ControlFlow_If_Truthiness::__js_module_init__
 
 } // end of class Modules.ControlFlow_If_Truthiness
@@ -262,7 +264,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e5
+		// Method begins at RVA 0x21ec
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -26,6 +26,9 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_AddStringString() { var testName = nameof(BinaryOperator_AddStringString); return ExecutionTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_BigInt_Operators() { var testName = nameof(BinaryOperator_BigInt_Operators); return ExecutionTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_BitwiseAndNumberNumber() { var testName = nameof(BinaryOperator_BitwiseAndNumberNumber); return ExecutionTest(testName); }
 
         [Fact]

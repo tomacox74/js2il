@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d8
+			// Method begins at RVA 0x20e1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ea
+				// Method begins at RVA 0x20f3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e1
+			// Method begins at RVA 0x20ea
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,13 +82,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 124 (0x7c)
+		// Code size: 133 (0x85)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_CountToFive/Scope,
 			[1] object,
-			[2] float64,
-			[3] object
+			[2] bool,
+			[3] float64,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_CountToFive/Scope::.ctor()
@@ -98,46 +99,48 @@
 		IL_0014: stloc.1
 		// loop start (head: IL_0015)
 			IL_0015: ldloc.1
-			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_001b: ldc.r8 5
-			IL_0024: clt
-			IL_0026: brfalse IL_007b
+			IL_0016: ldc.r8 5
+			IL_001f: box [System.Runtime]System.Double
+			IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
+			IL_0029: stloc.2
+			IL_002a: ldloc.2
+			IL_002b: brfalse IL_0084
 
-			IL_002b: ldloc.1
-			IL_002c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0031: stloc.2
-			IL_0032: ldloc.2
-			IL_0033: ldc.r8 1
-			IL_003c: add
-			IL_003d: stloc.2
-			IL_003e: ldloc.2
-			IL_003f: box [System.Runtime]System.Double
-			IL_0044: stloc.3
-			IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004a: ldc.i4.1
-			IL_004b: newarr [System.Runtime]System.Object
-			IL_0050: dup
-			IL_0051: ldc.i4.0
-			IL_0052: ldloc.3
-			IL_0053: stelem.ref
-			IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0059: pop
-			IL_005a: ldloc.1
-			IL_005b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0060: stloc.2
-			IL_0061: ldloc.2
-			IL_0062: ldc.r8 1
-			IL_006b: add
-			IL_006c: stloc.2
-			IL_006d: ldloc.2
-			IL_006e: box [System.Runtime]System.Double
+			IL_0030: ldloc.1
+			IL_0031: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0036: stloc.3
+			IL_0037: ldloc.3
+			IL_0038: ldc.r8 1
+			IL_0041: add
+			IL_0042: stloc.3
+			IL_0043: ldloc.3
+			IL_0044: box [System.Runtime]System.Double
+			IL_0049: stloc.s 4
+			IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0050: ldc.i4.1
+			IL_0051: newarr [System.Runtime]System.Object
+			IL_0056: dup
+			IL_0057: ldc.i4.0
+			IL_0058: ldloc.s 4
+			IL_005a: stelem.ref
+			IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0060: pop
+			IL_0061: ldloc.1
+			IL_0062: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0067: stloc.3
+			IL_0068: ldloc.3
+			IL_0069: ldc.r8 1
+			IL_0072: add
 			IL_0073: stloc.3
 			IL_0074: ldloc.3
-			IL_0075: stloc.1
-			IL_0076: br IL_0015
+			IL_0075: box [System.Runtime]System.Double
+			IL_007a: stloc.s 4
+			IL_007c: ldloc.s 4
+			IL_007e: stloc.1
+			IL_007f: br IL_0015
 		// end loop
 
-		IL_007b: ret
+		IL_0084: ret
 	} // end of method ControlFlow_ForLoop_CountToFive::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_CountToFive
@@ -149,7 +152,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f3
+		// Method begins at RVA 0x20fc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

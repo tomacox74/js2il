@@ -359,7 +359,11 @@ public record LIRTypeof(TempVariable Value, TempVariable Result) : LIRInstructio
 
 public record LIRNegateNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
 
+public record LIRNegateNumberDynamic(TempVariable Value, TempVariable Result) : LIRInstruction;
+
 public record LIRBitwiseNotNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
+
+public record LIRBitwiseNotDynamic(TempVariable Value, TempVariable Result) : LIRInstruction;
 
 public record LIRLogicalNot(TempVariable Value, TempVariable Result) : LIRInstruction;
 

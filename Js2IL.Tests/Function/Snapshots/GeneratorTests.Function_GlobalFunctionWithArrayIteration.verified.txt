@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2199
+					// Method begins at RVA 0x219e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2190
+				// Method begins at RVA 0x2195
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -63,12 +63,14 @@
 		{
 			// Method begins at RVA 0x211c
 			// Header size: 12
-			// Code size: 95 (0x5f)
+			// Code size: 100 (0x64)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 				[1] float64,
-				[2] object
+				[2] object,
+				[3] object,
+				[4] object
 			)
 
 			IL_0000: ldc.i4.0
@@ -81,34 +83,37 @@
 				IL_0012: ldarg.1
 				IL_0013: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 				IL_0018: clt
-				IL_001a: brfalse IL_005d
+				IL_001a: brfalse IL_0062
 
 				IL_001f: ldarg.1
 				IL_0020: ldloc.1
 				IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-				IL_0026: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_002b: ldc.r8 2
-				IL_0034: mul
-				IL_0035: box [System.Runtime]System.Double
-				IL_003a: stloc.2
-				IL_003b: ldloc.0
-				IL_003c: ldc.i4.1
-				IL_003d: newarr [System.Runtime]System.Object
-				IL_0042: dup
-				IL_0043: ldc.i4.0
-				IL_0044: ldloc.2
-				IL_0045: stelem.ref
-				IL_0046: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
-				IL_004b: pop
-				IL_004c: ldloc.1
-				IL_004d: ldc.r8 1
-				IL_0056: add
-				IL_0057: stloc.1
-				IL_0058: br IL_0011
+				IL_0026: stloc.3
+				IL_0027: ldloc.3
+				IL_0028: ldc.r8 2
+				IL_0031: box [System.Runtime]System.Double
+				IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+				IL_003b: stloc.s 4
+				IL_003d: ldloc.s 4
+				IL_003f: stloc.2
+				IL_0040: ldloc.0
+				IL_0041: ldc.i4.1
+				IL_0042: newarr [System.Runtime]System.Object
+				IL_0047: dup
+				IL_0048: ldc.i4.0
+				IL_0049: ldloc.2
+				IL_004a: stelem.ref
+				IL_004b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+				IL_0050: pop
+				IL_0051: ldloc.1
+				IL_0052: ldc.r8 1
+				IL_005b: add
+				IL_005c: stloc.1
+				IL_005d: br IL_0011
 			// end loop
 
-			IL_005d: ldloc.0
-			IL_005e: ret
+			IL_0062: ldloc.0
+			IL_0063: ret
 		} // end of method processArray::__js_call__
 
 	} // end of class processArray
@@ -128,7 +133,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2187
+			// Method begins at RVA 0x218c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -233,7 +238,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a2
+		// Method begins at RVA 0x21a7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

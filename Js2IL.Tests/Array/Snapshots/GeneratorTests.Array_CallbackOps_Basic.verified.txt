@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b4
+				// Method begins at RVA 0x23cd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -70,7 +70,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23bd
+				// Method begins at RVA 0x23d6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -93,22 +93,29 @@
 		{
 			// Method begins at RVA 0x2314
 			// Header size: 12
-			// Code size: 35 (0x23)
+			// Code size: 51 (0x33)
 			.maxstack 8
 			.locals init (
-				[0] float64
+				[0] object,
+				[1] bool,
+				[2] object
 			)
 
 			IL_0000: ldarg.1
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: ldc.r8 2
-			IL_000f: rem
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldc.r8 0.0
-			IL_001b: ceq
-			IL_001d: box [System.Runtime]System.Boolean
-			IL_0022: ret
+			IL_0001: ldc.r8 2
+			IL_000a: box [System.Runtime]System.Double
+			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Remainder(object, object)
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: ldc.r8 0.0
+			IL_001f: box [System.Runtime]System.Double
+			IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0029: stloc.1
+			IL_002a: ldloc.1
+			IL_002b: box [System.Runtime]System.Boolean
+			IL_0030: stloc.2
+			IL_0031: ldloc.2
+			IL_0032: ret
 		} // end of method FunctionExpression_evens::__js_call__
 
 	} // end of class FunctionExpression_evens
@@ -124,7 +131,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23c6
+				// Method begins at RVA 0x23df
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -145,17 +152,25 @@
 				object x
 			) cil managed 
 		{
-			// Method begins at RVA 0x2343
-			// Header size: 1
-			// Code size: 23 (0x17)
+			// Method begins at RVA 0x2354
+			// Header size: 12
+			// Code size: 30 (0x1e)
 			.maxstack 8
+			.locals init (
+				[0] bool,
+				[1] object
+			)
 
 			IL_0000: ldarg.1
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: ldc.r8 0.0
-			IL_000f: cgt
-			IL_0011: box [System.Runtime]System.Boolean
-			IL_0016: ret
+			IL_0001: ldc.r8 0.0
+			IL_000a: box [System.Runtime]System.Double
+			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, object)
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: box [System.Runtime]System.Boolean
+			IL_001b: stloc.1
+			IL_001c: ldloc.1
+			IL_001d: ret
 		} // end of method FunctionExpression_L11C20::__js_call__
 
 	} // end of class FunctionExpression_L11C20
@@ -171,7 +186,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23cf
+				// Method begins at RVA 0x23e8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -193,7 +208,7 @@
 				object x
 			) cil managed 
 		{
-			// Method begins at RVA 0x235c
+			// Method begins at RVA 0x2380
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -222,7 +237,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23d8
+				// Method begins at RVA 0x23f1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -244,23 +259,20 @@
 				object x
 			) cil managed 
 		{
-			// Method begins at RVA 0x2374
+			// Method begins at RVA 0x2398
 			// Header size: 12
-			// Code size: 21 (0x15)
+			// Code size: 10 (0xa)
 			.maxstack 8
 			.locals init (
-				[0] float64
+				[0] object
 			)
 
 			IL_0000: ldarg.1
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: stloc.0
-			IL_0007: ldloc.0
-			IL_0008: ldarg.2
-			IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000e: sub
-			IL_000f: box [System.Runtime]System.Double
-			IL_0014: ret
+			IL_0001: ldarg.2
+			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
+			IL_0007: stloc.0
+			IL_0008: ldloc.0
+			IL_0009: ret
 		} // end of method FunctionExpression_L13C26::__js_call__
 
 	} // end of class FunctionExpression_L13C26
@@ -276,7 +288,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23e1
+				// Method begins at RVA 0x23fa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -297,7 +309,7 @@
 				object x
 			) cil managed 
 		{
-			// Method begins at RVA 0x2395
+			// Method begins at RVA 0x23ae
 			// Header size: 1
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -322,7 +334,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23ab
+			// Method begins at RVA 0x23c4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -604,7 +616,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23ea
+		// Method begins at RVA 0x2403
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

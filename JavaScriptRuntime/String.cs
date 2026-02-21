@@ -318,6 +318,60 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Implements String.prototype.lastIndexOf(searchString[, position]).
+        /// </summary>
+        public static double LastIndexOf(string input, string searchString)
+        {
+            return LastIndexOf(input, searchString, null);
+        }
+
+        public static double LastIndexOf(string input, string searchString, object? position)
+        {
+            input ??= string.Empty;
+            searchString ??= string.Empty;
+
+            int len = input.Length;
+            int startIndex = len;
+            if (position is not null)
+            {
+                double d;
+                try { d = TypeUtilities.ToNumber(position); }
+                catch { d = double.NaN; }
+                if (double.IsNaN(d)) d = double.PositiveInfinity;
+                if (double.IsNegativeInfinity(d)) d = 0;
+                if (double.IsPositiveInfinity(d)) d = len;
+                d = global::System.Math.Truncate(d);
+                startIndex = (int)d;
+                if (startIndex < 0) startIndex = 0;
+                if (startIndex > len) startIndex = len;
+            }
+
+            if (searchString.Length == 0)
+            {
+                return (double)startIndex;
+            }
+
+            if (len == 0)
+            {
+                return -1;
+            }
+
+            int maxStart = len - searchString.Length;
+            if (maxStart < 0)
+            {
+                return -1;
+            }
+
+            if (startIndex > maxStart)
+            {
+                startIndex = maxStart;
+            }
+
+            int idx = input.LastIndexOf(searchString, startIndex, StringComparison.Ordinal);
+            return (double)idx;
+        }
+
+        /// <summary>
         /// Implements String.prototype.trim().
         /// </summary>
         public static string Trim(string input)

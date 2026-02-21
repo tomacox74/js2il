@@ -189,6 +189,11 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Implements <c>Object.is(value1, value2)</c> via SameValue semantics.
+        /// </summary>
+        public static bool @is(object? value1, object? value2) => Operators.SameValue(value1, value2);
+
+        /// <summary>
         /// Minimal implementation of <c>Object.getPrototypeOf(obj)</c>.
         /// Note: this runtime does not currently model a default Object.prototype; if no prototype
         /// has been explicitly assigned, this returns CLR null (the runtime's representation of
@@ -960,6 +965,14 @@ namespace JavaScriptRuntime
                 return CallStringMemberViaReflection(input, methodName, callArgs);
             }
 
+            // BigInt primitive helper dispatch.
+            if (receiver is System.Numerics.BigInteger bigInt && string.Equals(methodName, "toString", StringComparison.Ordinal))
+            {
+                return callArgs.Length > 0
+                    ? JavaScriptRuntime.BigInt.ToString(bigInt, callArgs[0])
+                    : JavaScriptRuntime.BigInt.ToString(bigInt);
+            }
+
             // 2) JavaScriptRuntime.Array -> instance methods
             if (receiver is Array jsArray)
             {
@@ -1302,6 +1315,15 @@ namespace JavaScriptRuntime
                         <= 0 => JavaScriptRuntime.String.IndexOf(input, string.Empty),
                         1 => JavaScriptRuntime.String.IndexOf(input, DotNet2JSConversions.ToString(a0)),
                         _ => JavaScriptRuntime.String.IndexOf(input, DotNet2JSConversions.ToString(a0), a1)
+                    };
+                    return true;
+
+                case "lastIndexOf":
+                    result = argCount switch
+                    {
+                        <= 0 => JavaScriptRuntime.String.LastIndexOf(input, string.Empty),
+                        1 => JavaScriptRuntime.String.LastIndexOf(input, DotNet2JSConversions.ToString(a0)),
+                        _ => JavaScriptRuntime.String.LastIndexOf(input, DotNet2JSConversions.ToString(a0), a1)
                     };
                     return true;
 

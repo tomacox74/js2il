@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ff
+			// Method begins at RVA 0x20f3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,74 +40,71 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 163 (0xa3)
+		// Code size: 151 (0x97)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.UnaryOperator_UnaryNegation_CoercesToNumber/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[2] bool,
-			[3] object,
-			[4] object,
-			[5] float64
+			[1] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] bool,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.UnaryOperator_UnaryNegation_CoercesToNumber/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000b: ldc.i4.1
-		IL_000c: newarr [System.Runtime]System.Object
-		IL_0011: dup
-		IL_0012: ldc.i4.0
-		IL_0013: ldstr "2"
-		IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001d: neg
-		IL_001e: box [System.Runtime]System.Double
-		IL_0023: stelem.ref
-		IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0029: pop
-		IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002f: stloc.1
-		IL_0030: ldstr "2"
-		IL_0035: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_003a: stloc.2
-		IL_003b: ldloc.2
-		IL_003c: brtrue IL_0056
+		IL_0006: ldstr "2"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnaryMinus(object)
+		IL_0010: stloc.1
+		IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0016: ldc.i4.1
+		IL_0017: newarr [System.Runtime]System.Object
+		IL_001c: dup
+		IL_001d: ldc.i4.0
+		IL_001e: ldloc.1
+		IL_001f: stelem.ref
+		IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0025: pop
+		IL_0026: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002b: stloc.2
+		IL_002c: ldstr "2"
+		IL_0031: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0036: stloc.3
+		IL_0037: ldloc.3
+		IL_0038: brtrue IL_0052
 
-		IL_0041: ldc.r8 1
-		IL_004a: box [System.Runtime]System.Double
-		IL_004f: stloc.s 4
-		IL_0051: br IL_005d
+		IL_003d: ldc.r8 1
+		IL_0046: box [System.Runtime]System.Double
+		IL_004b: stloc.s 4
+		IL_004d: br IL_0059
 
-		IL_0056: ldstr "2"
-		IL_005b: stloc.s 4
+		IL_0052: ldstr "2"
+		IL_0057: stloc.s 4
 
-		IL_005d: ldloc.s 4
-		IL_005f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0064: stloc.s 5
-		IL_0066: ldloc.1
-		IL_0067: ldc.i4.1
-		IL_0068: newarr [System.Runtime]System.Object
-		IL_006d: dup
-		IL_006e: ldc.i4.0
-		IL_006f: ldloc.s 5
-		IL_0071: neg
-		IL_0072: box [System.Runtime]System.Double
-		IL_0077: stelem.ref
-		IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007d: pop
-		IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0083: ldc.i4.1
-		IL_0084: newarr [System.Runtime]System.Object
-		IL_0089: dup
-		IL_008a: ldc.i4.0
-		IL_008b: ldstr "3"
-		IL_0090: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0095: neg
-		IL_0096: box [System.Runtime]System.Double
-		IL_009b: stelem.ref
-		IL_009c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a1: pop
-		IL_00a2: ret
+		IL_0059: ldloc.s 4
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnaryMinus(object)
+		IL_0060: stloc.s 4
+		IL_0062: ldloc.2
+		IL_0063: ldc.i4.1
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldloc.s 4
+		IL_006d: stelem.ref
+		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0073: pop
+		IL_0074: ldstr "3"
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnaryMinus(object)
+		IL_007e: stloc.s 4
+		IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0085: ldc.i4.1
+		IL_0086: newarr [System.Runtime]System.Object
+		IL_008b: dup
+		IL_008c: ldc.i4.0
+		IL_008d: ldloc.s 4
+		IL_008f: stelem.ref
+		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0095: pop
+		IL_0096: ret
 	} // end of method UnaryOperator_UnaryNegation_CoercesToNumber::__js_module_init__
 
 } // end of class Modules.UnaryOperator_UnaryNegation_CoercesToNumber
@@ -119,7 +116,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2108
+		// Method begins at RVA 0x20fc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -14,6 +14,13 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_LastIndexOf_Basic()
+        {
+            var testName = nameof(String_LastIndexOf_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_PlusEquals_Append()
         {
             var testName = nameof(String_PlusEquals_Append);

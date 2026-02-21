@@ -76,6 +76,9 @@ namespace Js2IL.Tests.Object
         public Task Object_Values_Basic() { var testName = nameof(Object_Values_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Object_Is_SameValue() { var testName = nameof(Object_Is_SameValue); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Object_Entries_Basic() { var testName = nameof(Object_Entries_Basic); return ExecutionTest(testName); }
 
         [Fact]
