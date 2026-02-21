@@ -1,6 +1,8 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime
 {
@@ -8,6 +10,7 @@ namespace JavaScriptRuntime
     {
         private const string MixedBigIntTypeError = "Cannot mix BigInt and other types, use explicit conversions";
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsBigInt(object? value) => value is BigInteger;
 
         private static bool IsFiniteInteger(double value)
@@ -23,6 +26,19 @@ namespace JavaScriptRuntime
             return (int)shiftCount;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int ToInt32FromDouble(double number)
+        {
+            if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
+            {
+                return 0;
+            }
+
+            return unchecked((int)(long)number);
+        }
+
+        [DoesNotReturn]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ThrowMixedBigIntTypeError()
         {
             throw new TypeError(MixedBigIntTypeError);
@@ -39,6 +55,7 @@ namespace JavaScriptRuntime
             return left == new BigInteger(rightNumber);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static double ToNumber(object? value)
         {
             // JS ToNumber(undefined) => NaN (undefined is represented as CLR null)
@@ -94,8 +111,14 @@ namespace JavaScriptRuntime
         /// - Otherwise, both are coerced to numbers and added (as double).
         /// This is a minimal subset sufficient for current tests (strings and numbers).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Add(object? a, object? b)
         {
+            if (a is double leftDouble && b is double rightDouble)
+            {
+                return leftDouble + rightDouble;
+            }
+
             // If either is a string, concatenate string representations
             if (a is string || b is string)
             {
@@ -104,39 +127,38 @@ namespace JavaScriptRuntime
                 return string.Concat(sa, sb);
             }
 
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is BigInteger leftBigInt)
             {
-                return leftBigInt + rightBigInt;
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt + rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
 
-            // Try numeric addition (JavaScript uses double-precision floats)
-            // Accept common numeric types and convert to double
-            try
-            {
-                double da = ToNumber(a);
-                double db = ToNumber(b);
-                return da + db; // boxed double
-            }
-            catch
-            {
-                // Fallback: concat string representations (closest to JS when non-numeric)
-                var sa = DotNet2JSConversions.ToString(a);
-                var sb = DotNet2JSConversions.ToString(b);
-                return string.Concat(sa, sb);
-            }
+            double da = ToNumber(a);
+            double db = ToNumber(b);
+            return da + db;
         }
 
         /// <summary>
         /// Implements JavaScript '+' semantics where the left operand is already an unboxed double.
         /// Avoids boxing the double in common numeric hot paths.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Add(double a, object? b)
         {
+            if (b is double db)
+            {
+                return a + db;
+            }
+
             if (b is string)
             {
                 var sa = DotNet2JSConversions.ToString(a);
@@ -149,16 +171,22 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            var db = ToNumber(b);
-            return a + db; // boxed double
+            var numberB = ToNumber(b);
+            return a + numberB; // boxed double
         }
 
         /// <summary>
         /// Implements JavaScript '+' semantics where the right operand is already an unboxed double.
         /// Avoids boxing the double in common numeric hot paths.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Add(object? a, double b)
         {
+            if (a is double da)
+            {
+                return da + b;
+            }
+
             if (a is string)
             {
                 var sa = DotNet2JSConversions.ToString(a);
@@ -171,21 +199,32 @@ namespace JavaScriptRuntime
                 ThrowMixedBigIntTypeError();
             }
 
-            var da = ToNumber(a);
-            return da + b; // boxed double
+            var numberA = ToNumber(a);
+            return numberA + b; // boxed double
         }
 
         /// <summary>
         /// Implements JavaScript '-' semantics. Both operands are coerced to numbers; result is a double (may be NaN).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Subtract(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                return leftBigInt - rightBigInt;
+                return leftDouble - rightDouble;
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt - rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -198,14 +237,25 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Implements JavaScript '*' semantics. Both operands are coerced to numbers; result is a double (may be NaN).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Multiply(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                return leftBigInt * rightBigInt;
+                return leftDouble * rightDouble;
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt * rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -215,19 +265,30 @@ namespace JavaScriptRuntime
             return da * db;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Divide(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                if (rightBigInt == BigInteger.Zero)
-                {
-                    throw new RangeError("Division by zero");
-                }
-
-                return leftBigInt / rightBigInt;
+                return leftDouble / rightDouble;
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    if (rightBigInt == BigInteger.Zero)
+                    {
+                        throw new RangeError("Division by zero");
+                    }
+
+                    return leftBigInt / rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -237,19 +298,30 @@ namespace JavaScriptRuntime
             return da / db;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Remainder(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                if (rightBigInt == BigInteger.Zero)
-                {
-                    throw new RangeError("Division by zero");
-                }
-
-                return leftBigInt % rightBigInt;
+                return leftDouble % rightDouble;
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    if (rightBigInt == BigInteger.Zero)
+                    {
+                        throw new RangeError("Division by zero");
+                    }
+
+                    return leftBigInt % rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -286,14 +358,27 @@ namespace JavaScriptRuntime
             return global::System.Math.Pow(da, db);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object BitwiseAnd(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                return leftBigInt & rightBigInt;
+                var leftInt = ToInt32FromDouble(leftDouble);
+                var rightInt = ToInt32FromDouble(rightDouble);
+                return (double)(leftInt & rightInt);
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt & rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -303,14 +388,27 @@ namespace JavaScriptRuntime
             return (double)(left & right);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object BitwiseOr(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                return leftBigInt | rightBigInt;
+                var leftInt = ToInt32FromDouble(leftDouble);
+                var rightInt = ToInt32FromDouble(rightDouble);
+                return (double)(leftInt | rightInt);
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt | rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -320,14 +418,27 @@ namespace JavaScriptRuntime
             return (double)(left | right);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object BitwiseXor(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                return leftBigInt ^ rightBigInt;
+                var leftInt = ToInt32FromDouble(leftDouble);
+                var rightInt = ToInt32FromDouble(rightDouble);
+                return (double)(leftInt ^ rightInt);
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt ^ rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -337,17 +448,30 @@ namespace JavaScriptRuntime
             return (double)(left ^ right);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object LeftShift(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                var shiftCount = ToShiftCount(rightBigInt);
-                return shiftCount >= 0
-                    ? leftBigInt << shiftCount
-                    : leftBigInt >> -shiftCount;
+                var leftInt = ToInt32FromDouble(leftDouble);
+                var rightInt = ToInt32FromDouble(rightDouble) & 0x1f;
+                return (double)(leftInt << rightInt);
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    var shiftCount = ToShiftCount(rightBigInt);
+                    return shiftCount >= 0
+                        ? leftBigInt << shiftCount
+                        : leftBigInt >> -shiftCount;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -357,17 +481,30 @@ namespace JavaScriptRuntime
             return (double)(left << right);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object SignedRightShift(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                var shiftCount = ToShiftCount(rightBigInt);
-                return shiftCount >= 0
-                    ? leftBigInt >> shiftCount
-                    : leftBigInt << -shiftCount;
+                var leftInt = ToInt32FromDouble(leftDouble);
+                var rightInt = ToInt32FromDouble(rightDouble) & 0x1f;
+                return (double)(leftInt >> rightInt);
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    var shiftCount = ToShiftCount(rightBigInt);
+                    return shiftCount >= 0
+                        ? leftBigInt >> shiftCount
+                        : leftBigInt << -shiftCount;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -377,14 +514,22 @@ namespace JavaScriptRuntime
             return (double)(left >> right);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object UnsignedRightShift(object? a, object? b)
         {
+            if (a is double leftDouble && b is double rightDouble)
+            {
+                var leftUint = unchecked((uint)ToInt32FromDouble(leftDouble));
+                var rightInt = ToInt32FromDouble(rightDouble) & 0x1f;
+                return (double)(leftUint >> rightInt);
+            }
+
             if (a is BigInteger && b is BigInteger)
             {
                 throw new TypeError("BigInts have no unsigned right shift, use >> instead");
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger || b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -394,14 +539,25 @@ namespace JavaScriptRuntime
             return (double)(left >> right);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool LessThan(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                return leftBigInt < rightBigInt;
+                return leftDouble < rightDouble;
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt < rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -409,14 +565,25 @@ namespace JavaScriptRuntime
             return ToNumber(a) < ToNumber(b);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool GreaterThan(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                return leftBigInt > rightBigInt;
+                return leftDouble > rightDouble;
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt > rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -424,14 +591,25 @@ namespace JavaScriptRuntime
             return ToNumber(a) > ToNumber(b);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool LessThanOrEqual(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                return leftBigInt <= rightBigInt;
+                return leftDouble <= rightDouble;
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt <= rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -439,14 +617,25 @@ namespace JavaScriptRuntime
             return ToNumber(a) <= ToNumber(b);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool GreaterThanOrEqual(object? a, object? b)
         {
-            if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
+            if (a is double leftDouble && b is double rightDouble)
             {
-                return leftBigInt >= rightBigInt;
+                return leftDouble >= rightDouble;
             }
 
-            if (IsBigInt(a) || IsBigInt(b))
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt >= rightBigInt;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger)
             {
                 ThrowMixedBigIntTypeError();
             }
@@ -454,8 +643,14 @@ namespace JavaScriptRuntime
             return ToNumber(a) >= ToNumber(b);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object UnaryMinus(object? value)
         {
+            if (value is double number)
+            {
+                return -number;
+            }
+
             if (value is BigInteger bigInt)
             {
                 return -bigInt;
@@ -464,8 +659,14 @@ namespace JavaScriptRuntime
             return -ToNumber(value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object BitwiseNot(object? value)
         {
+            if (value is double number)
+            {
+                return (double)(~ToInt32FromDouble(number));
+            }
+
             if (value is BigInteger bigInt)
             {
                 return ~bigInt;
