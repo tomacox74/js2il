@@ -6,6 +6,11 @@ All notable changes to this project are documented here.
 
 _Nothing yet._
 
+## v0.8.15 - 2026-02-21
+
+
+
+
 ## v0.8.14 - 2026-02-19
 
 - Node/process: expand process documentation with `cwd()` and broaden `process.versions` to include `v8` (12.4.254.21-node.22), `modules` (127), `js2il` (runtime assembly version), and `dotnet` (runtime description). Added coverage (`Process_Versions_Expanded`, `Process_NextTick_Queue_Semantics`) for versions and current next-tick scheduling behavior.
