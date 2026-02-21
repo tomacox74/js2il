@@ -10,7 +10,7 @@ on:
       mode:
         description: 'Benchmark mode (default/phased/all)'
         required: false
-        default: 'default'
+        default: 'all'
   release:
     types: [published]
 
@@ -47,7 +47,7 @@ jobs:
       - name: Run BenchmarkDotNet Suite
         id: benchmark
         env:
-          BENCHMARK_MODE: ${{ github.event.inputs.mode || 'default' }}
+          BENCHMARK_MODE: ${{ github.event.inputs.mode || 'all' }}
           BENCHMARK_FILTER: ${{ github.event.inputs.benchmark_filter || '*' }}
         run: |
           cd tests/performance/Benchmarks
