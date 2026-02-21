@@ -311,7 +311,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 222 (0xde)
+		// Code size: 223 (0xdf)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Map_NestedParam/Scope,
@@ -320,7 +320,7 @@
 			[3] object,
 			[4] object,
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[6] bool,
+			[6] float64,
 			[7] float64,
 			[8] object
 		)
@@ -371,42 +371,44 @@
 		IL_007b: box [System.Runtime]System.Double
 		IL_0080: stloc.3
 		// loop start (head: IL_0081)
-			IL_0081: ldloc.3
-			IL_0082: ldloc.2
-			IL_0083: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0088: box [System.Runtime]System.Double
-			IL_008d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
-			IL_0092: stloc.s 6
-			IL_0094: ldloc.s 6
-			IL_0096: brfalse IL_00dd
+			IL_0081: ldloc.2
+			IL_0082: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0087: stloc.s 6
+			IL_0089: ldloc.3
+			IL_008a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_008f: stloc.s 7
+			IL_0091: ldloc.s 7
+			IL_0093: ldloc.s 6
+			IL_0095: clt
+			IL_0097: brfalse IL_00de
 
-			IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00a0: ldc.i4.1
-			IL_00a1: newarr [System.Runtime]System.Object
-			IL_00a6: dup
-			IL_00a7: ldc.i4.0
-			IL_00a8: ldloc.2
-			IL_00a9: ldloc.3
-			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00af: stelem.ref
-			IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00b5: pop
-			IL_00b6: ldloc.3
-			IL_00b7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00bc: stloc.s 7
-			IL_00be: ldloc.s 7
-			IL_00c0: ldc.r8 1
-			IL_00c9: add
-			IL_00ca: stloc.s 7
-			IL_00cc: ldloc.s 7
-			IL_00ce: box [System.Runtime]System.Double
-			IL_00d3: stloc.s 8
-			IL_00d5: ldloc.s 8
-			IL_00d7: stloc.3
-			IL_00d8: br IL_0081
+			IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a1: ldc.i4.1
+			IL_00a2: newarr [System.Runtime]System.Object
+			IL_00a7: dup
+			IL_00a8: ldc.i4.0
+			IL_00a9: ldloc.2
+			IL_00aa: ldloc.3
+			IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00b0: stelem.ref
+			IL_00b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00b6: pop
+			IL_00b7: ldloc.3
+			IL_00b8: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00bd: stloc.s 6
+			IL_00bf: ldloc.s 6
+			IL_00c1: ldc.r8 1
+			IL_00ca: add
+			IL_00cb: stloc.s 6
+			IL_00cd: ldloc.s 6
+			IL_00cf: box [System.Runtime]System.Double
+			IL_00d4: stloc.s 8
+			IL_00d6: ldloc.s 8
+			IL_00d8: stloc.3
+			IL_00d9: br IL_0081
 		// end loop
 
-		IL_00dd: ret
+		IL_00de: ret
 	} // end of method Array_Map_NestedParam::__js_module_init__
 
 } // end of class Modules.Array_Map_NestedParam

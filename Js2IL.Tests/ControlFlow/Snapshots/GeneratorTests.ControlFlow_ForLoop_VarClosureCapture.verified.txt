@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d2
+				// Method begins at RVA 0x21c5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -39,7 +39,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x21b1
+			// Method begins at RVA 0x21a4
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -68,7 +68,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c9
+				// Method begins at RVA 0x21bc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -89,7 +89,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c0
+			// Method begins at RVA 0x21b3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -115,14 +115,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 341 (0x155)
+		// Code size: 328 (0x148)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_VarClosureCapture/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] object,
-			[3] bool,
-			[4] object[]
+			[3] object[]
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_VarClosureCapture/Scope::.ctor()
@@ -137,120 +136,116 @@
 		// loop start (head: IL_0021)
 			IL_0021: ldloc.0
 			IL_0022: ldfld object Modules.ControlFlow_ForLoop_VarClosureCapture/Scope::i
-			IL_0027: stloc.2
-			IL_0028: ldloc.2
-			IL_0029: ldc.r8 3
-			IL_0032: box [System.Runtime]System.Double
-			IL_0037: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::LessThan(object, object)
-			IL_003c: stloc.3
-			IL_003d: ldloc.3
-			IL_003e: brfalse IL_009a
+			IL_0027: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002c: ldc.r8 3
+			IL_0035: clt
+			IL_0037: brfalse IL_0093
 
-			IL_0043: ldnull
-			IL_0044: ldftn object Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12::__js_call__(object[], object)
-			IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-			IL_004f: ldc.i4.1
-			IL_0050: newarr [System.Runtime]System.Object
-			IL_0055: dup
-			IL_0056: ldc.i4.0
-			IL_0057: ldloc.0
-			IL_0058: stelem.ref
-			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0063: stloc.2
-			IL_0064: ldloc.1
-			IL_0065: ldc.i4.1
-			IL_0066: newarr [System.Runtime]System.Object
-			IL_006b: dup
-			IL_006c: ldc.i4.0
-			IL_006d: ldloc.2
-			IL_006e: stelem.ref
-			IL_006f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
-			IL_0074: pop
-			IL_0075: ldloc.0
-			IL_0076: ldloc.0
-			IL_0077: ldfld object Modules.ControlFlow_ForLoop_VarClosureCapture/Scope::i
-			IL_007c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0081: ldc.r8 1
-			IL_008a: add
-			IL_008b: box [System.Runtime]System.Double
-			IL_0090: stfld object Modules.ControlFlow_ForLoop_VarClosureCapture/Scope::i
-			IL_0095: br IL_0021
+			IL_003c: ldnull
+			IL_003d: ldftn object Modules.ControlFlow_ForLoop_VarClosureCapture/ArrowFunction_L6C12::__js_call__(object[], object)
+			IL_0043: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+			IL_0048: ldc.i4.1
+			IL_0049: newarr [System.Runtime]System.Object
+			IL_004e: dup
+			IL_004f: ldc.i4.0
+			IL_0050: ldloc.0
+			IL_0051: stelem.ref
+			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_005c: stloc.2
+			IL_005d: ldloc.1
+			IL_005e: ldc.i4.1
+			IL_005f: newarr [System.Runtime]System.Object
+			IL_0064: dup
+			IL_0065: ldc.i4.0
+			IL_0066: ldloc.2
+			IL_0067: stelem.ref
+			IL_0068: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_006d: pop
+			IL_006e: ldloc.0
+			IL_006f: ldloc.0
+			IL_0070: ldfld object Modules.ControlFlow_ForLoop_VarClosureCapture/Scope::i
+			IL_0075: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_007a: ldc.r8 1
+			IL_0083: add
+			IL_0084: box [System.Runtime]System.Double
+			IL_0089: stfld object Modules.ControlFlow_ForLoop_VarClosureCapture/Scope::i
+			IL_008e: br IL_0021
 		// end loop
 
-		IL_009a: ldc.i4.0
-		IL_009b: newarr [System.Runtime]System.Object
-		IL_00a0: stloc.s 4
-		IL_00a2: ldloc.1
-		IL_00a3: ldc.r8 0.0
-		IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_00b1: ldc.i4.1
-		IL_00b2: newarr [System.Runtime]System.Object
-		IL_00b7: dup
-		IL_00b8: ldc.i4.0
-		IL_00b9: ldnull
-		IL_00ba: stelem.ref
-		IL_00bb: ldloc.s 4
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_00c2: stloc.2
-		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c8: ldc.i4.1
-		IL_00c9: newarr [System.Runtime]System.Object
-		IL_00ce: dup
+		IL_0093: ldc.i4.0
+		IL_0094: newarr [System.Runtime]System.Object
+		IL_0099: stloc.3
+		IL_009a: ldloc.1
+		IL_009b: ldc.r8 0.0
+		IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_00a9: ldc.i4.1
+		IL_00aa: newarr [System.Runtime]System.Object
+		IL_00af: dup
+		IL_00b0: ldc.i4.0
+		IL_00b1: ldnull
+		IL_00b2: stelem.ref
+		IL_00b3: ldloc.3
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_00b9: stloc.2
+		IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bf: ldc.i4.1
+		IL_00c0: newarr [System.Runtime]System.Object
+		IL_00c5: dup
+		IL_00c6: ldc.i4.0
+		IL_00c7: ldloc.2
+		IL_00c8: stelem.ref
+		IL_00c9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ce: pop
 		IL_00cf: ldc.i4.0
-		IL_00d0: ldloc.2
-		IL_00d1: stelem.ref
-		IL_00d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00d7: pop
-		IL_00d8: ldc.i4.0
-		IL_00d9: newarr [System.Runtime]System.Object
-		IL_00de: stloc.s 4
-		IL_00e0: ldloc.1
-		IL_00e1: ldc.r8 1
-		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_00ef: ldc.i4.1
-		IL_00f0: newarr [System.Runtime]System.Object
-		IL_00f5: dup
-		IL_00f6: ldc.i4.0
-		IL_00f7: ldnull
-		IL_00f8: stelem.ref
-		IL_00f9: ldloc.s 4
-		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0100: stloc.2
-		IL_0101: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0106: ldc.i4.1
-		IL_0107: newarr [System.Runtime]System.Object
-		IL_010c: dup
-		IL_010d: ldc.i4.0
-		IL_010e: ldloc.2
-		IL_010f: stelem.ref
-		IL_0110: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0115: pop
-		IL_0116: ldc.i4.0
-		IL_0117: newarr [System.Runtime]System.Object
-		IL_011c: stloc.s 4
-		IL_011e: ldloc.1
-		IL_011f: ldc.r8 2
-		IL_0128: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_012d: ldc.i4.1
-		IL_012e: newarr [System.Runtime]System.Object
-		IL_0133: dup
-		IL_0134: ldc.i4.0
-		IL_0135: ldnull
-		IL_0136: stelem.ref
-		IL_0137: ldloc.s 4
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_013e: stloc.2
-		IL_013f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0144: ldc.i4.1
-		IL_0145: newarr [System.Runtime]System.Object
-		IL_014a: dup
-		IL_014b: ldc.i4.0
-		IL_014c: ldloc.2
-		IL_014d: stelem.ref
-		IL_014e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0153: pop
-		IL_0154: ret
+		IL_00d0: newarr [System.Runtime]System.Object
+		IL_00d5: stloc.3
+		IL_00d6: ldloc.1
+		IL_00d7: ldc.r8 1
+		IL_00e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_00e5: ldc.i4.1
+		IL_00e6: newarr [System.Runtime]System.Object
+		IL_00eb: dup
+		IL_00ec: ldc.i4.0
+		IL_00ed: ldnull
+		IL_00ee: stelem.ref
+		IL_00ef: ldloc.3
+		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_00f5: stloc.2
+		IL_00f6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00fb: ldc.i4.1
+		IL_00fc: newarr [System.Runtime]System.Object
+		IL_0101: dup
+		IL_0102: ldc.i4.0
+		IL_0103: ldloc.2
+		IL_0104: stelem.ref
+		IL_0105: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_010a: pop
+		IL_010b: ldc.i4.0
+		IL_010c: newarr [System.Runtime]System.Object
+		IL_0111: stloc.3
+		IL_0112: ldloc.1
+		IL_0113: ldc.r8 2
+		IL_011c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_0121: ldc.i4.1
+		IL_0122: newarr [System.Runtime]System.Object
+		IL_0127: dup
+		IL_0128: ldc.i4.0
+		IL_0129: ldnull
+		IL_012a: stelem.ref
+		IL_012b: ldloc.3
+		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0131: stloc.2
+		IL_0132: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0137: ldc.i4.1
+		IL_0138: newarr [System.Runtime]System.Object
+		IL_013d: dup
+		IL_013e: ldc.i4.0
+		IL_013f: ldloc.2
+		IL_0140: stelem.ref
+		IL_0141: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0146: pop
+		IL_0147: ret
 	} // end of method ControlFlow_ForLoop_VarClosureCapture::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_VarClosureCapture
@@ -262,7 +257,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21db
+		// Method begins at RVA 0x21ce
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

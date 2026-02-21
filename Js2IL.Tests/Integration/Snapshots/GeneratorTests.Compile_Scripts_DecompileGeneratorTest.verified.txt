@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2e6b
+				// Method begins at RVA 0x2e77
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -126,7 +126,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2e86
+					// Method begins at RVA 0x2e92
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -147,7 +147,7 @@
 					object d
 				) cil managed 
 			{
-				// Method begins at RVA 0x2e04
+				// Method begins at RVA 0x2e10
 				// Header size: 12
 				// Code size: 14 (0xe)
 				.maxstack 8
@@ -182,7 +182,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2e8f
+					// Method begins at RVA 0x2e9b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -204,7 +204,7 @@
 					object d
 				) cil managed 
 			{
-				// Method begins at RVA 0x2e20
+				// Method begins at RVA 0x2e2c
 				// Header size: 12
 				// Code size: 54 (0x36)
 				.maxstack 8
@@ -255,7 +255,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2e7d
+					// Method begins at RVA 0x2e89
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -276,7 +276,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2e74
+				// Method begins at RVA 0x2e80
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -304,7 +304,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2eaa
+						// Method begins at RVA 0x2eb6
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -322,7 +322,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2ea1
+					// Method begins at RVA 0x2ead
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -340,7 +340,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2e98
+				// Method begins at RVA 0x2ea4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -365,7 +365,7 @@
 		{
 			// Method begins at RVA 0x2270
 			// Header size: 12
-			// Code size: 682 (0x2aa)
+			// Code size: 693 (0x2b5)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Compile_Scripts_DecompileGeneratorTest/tryFindLatestGeneratedAssembly/Scope,
@@ -383,7 +383,9 @@
 				[12] object,
 				[13] string,
 				[14] bool,
-				[15] object
+				[15] object,
+				[16] float64,
+				[17] float64
 			)
 
 			IL_0000: newobj instance void Modules.Compile_Scripts_DecompileGeneratorTest/tryFindLatestGeneratedAssembly/Scope::.ctor()
@@ -549,7 +551,7 @@
 					IL_01b2: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
 					IL_01b7: stloc.s 14
 					IL_01b9: ldloc.s 14
-					IL_01bb: brtrue IL_0289
+					IL_01bb: brtrue IL_0294
 
 					IL_01c0: ldloc.s 15
 					IL_01c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
@@ -585,7 +587,7 @@
 					IL_0214: ldloc.s 14
 					IL_0216: brfalse IL_0220
 
-					IL_021b: br IL_0275
+					IL_021b: br IL_0280
 
 					IL_0220: ldarg.0
 					IL_0221: ldc.i4.0
@@ -601,51 +603,55 @@
 					IL_023f: ldloc.s 11
 					IL_0241: ldstr "mtimeMs"
 					IL_0246: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-					IL_024b: ldloc.s 5
-					IL_024d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, object)
-					IL_0252: stloc.s 14
-					IL_0254: ldloc.s 14
-					IL_0256: brfalse IL_0275
+					IL_024b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0250: stloc.s 16
+					IL_0252: ldloc.s 5
+					IL_0254: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_0259: stloc.s 17
+					IL_025b: ldloc.s 16
+					IL_025d: ldloc.s 17
+					IL_025f: cgt
+					IL_0261: brfalse IL_0280
 
-					IL_025b: ldloc.s 11
-					IL_025d: ldstr "mtimeMs"
-					IL_0262: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-					IL_0267: stloc.s 15
-					IL_0269: ldloc.s 15
-					IL_026b: stloc.s 5
-					IL_026d: ldloc.s 10
-					IL_026f: stloc.s 15
-					IL_0271: ldloc.s 15
-					IL_0273: stloc.s 4
+					IL_0266: ldloc.s 11
+					IL_0268: ldstr "mtimeMs"
+					IL_026d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+					IL_0272: stloc.s 15
+					IL_0274: ldloc.s 15
+					IL_0276: stloc.s 5
+					IL_0278: ldloc.s 10
+					IL_027a: stloc.s 15
+					IL_027c: ldloc.s 15
+					IL_027e: stloc.s 4
 
-					IL_0275: br IL_01a7
+					IL_0280: br IL_01a7
 				// end loop
-				IL_027a: ldloc.s 6
-				IL_027c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
-				IL_0281: ldc.i4.1
-				IL_0282: stloc.s 8
-				IL_0284: leave IL_02a7
+				IL_0285: ldloc.s 6
+				IL_0287: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+				IL_028c: ldc.i4.1
+				IL_028d: stloc.s 8
+				IL_028f: leave IL_02b2
 
-				IL_0289: ldc.i4.1
-				IL_028a: stloc.s 7
-				IL_028c: leave IL_02a7
+				IL_0294: ldc.i4.1
+				IL_0295: stloc.s 7
+				IL_0297: leave IL_02b2
 			} // end .try
 			finally
 			{
-				IL_0291: ldloc.s 7
-				IL_0293: brtrue IL_02a6
+				IL_029c: ldloc.s 7
+				IL_029e: brtrue IL_02b1
 
-				IL_0298: ldloc.s 8
-				IL_029a: brtrue IL_02a6
+				IL_02a3: ldloc.s 8
+				IL_02a5: brtrue IL_02b1
 
-				IL_029f: ldloc.s 6
-				IL_02a1: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+				IL_02aa: ldloc.s 6
+				IL_02ac: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
 
-				IL_02a6: endfinally
+				IL_02b1: endfinally
 			} // end handler
 
-			IL_02a7: ldloc.s 4
-			IL_02a9: ret
+			IL_02b2: ldloc.s 4
+			IL_02b4: ret
 		} // end of method tryFindLatestGeneratedAssembly::__js_call__
 
 	} // end of class tryFindLatestGeneratedAssembly
@@ -669,7 +675,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2ec5
+						// Method begins at RVA 0x2ed1
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -687,7 +693,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2ebc
+					// Method begins at RVA 0x2ec8
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -705,7 +711,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2eb3
+				// Method begins at RVA 0x2ebf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -727,7 +733,7 @@
 				object startDir
 			) cil managed 
 		{
-			// Method begins at RVA 0x2538
+			// Method begins at RVA 0x2544
 			// Header size: 12
 			// Code size: 360 (0x168)
 			.maxstack 8
@@ -910,7 +916,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2ece
+				// Method begins at RVA 0x2eda
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -932,7 +938,7 @@
 				object assemblyPath
 			) cil managed 
 		{
-			// Method begins at RVA 0x26ac
+			// Method begins at RVA 0x26b8
 			// Header size: 12
 			// Code size: 153 (0x99)
 			.maxstack 8
@@ -1018,7 +1024,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2ee0
+					// Method begins at RVA 0x2eec
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1042,7 +1048,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2ef2
+						// Method begins at RVA 0x2efe
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -1060,7 +1066,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2ee9
+					// Method begins at RVA 0x2ef5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1080,7 +1086,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2efb
+					// Method begins at RVA 0x2f07
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1100,7 +1106,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2f04
+					// Method begins at RVA 0x2f10
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1120,7 +1126,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2f0d
+					// Method begins at RVA 0x2f19
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1138,7 +1144,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2ed7
+				// Method begins at RVA 0x2ee3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1159,7 +1165,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2754
+			// Method begins at RVA 0x2760
 			// Header size: 12
 			// Code size: 1684 (0x694)
 			.maxstack 8
@@ -1812,7 +1818,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2e62
+			// Method begins at RVA 0x2e6e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -2018,7 +2024,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2f16
+		// Method begins at RVA 0x2f22
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

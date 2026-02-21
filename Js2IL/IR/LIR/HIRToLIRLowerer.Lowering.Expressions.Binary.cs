@@ -132,6 +132,8 @@ public sealed partial class HIRToLIRLowerer
         var rightStorage = GetTempStorage(rightTempVar);
         var leftType = leftStorage.ClrType;
         var rightType = rightStorage.ClrType;
+        var canUseLegacyNumericFallback = leftType != typeof(System.Numerics.BigInteger)
+            && rightType != typeof(System.Numerics.BigInteger);
 
         // Handle 'instanceof'
         if (binaryExpr.Operator == Acornima.Operator.InstanceOf)
@@ -209,6 +211,15 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRMulNumber(leftNumber, rightNumber, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
             // Dynamic path supports BigInt and non-number operands.
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
@@ -228,6 +239,15 @@ public sealed partial class HIRToLIRLowerer
             if (leftIsUnboxedDouble && rightIsUnboxedDouble)
             {
                 _methodBodyIR.Instructions.Add(new LIRSubNumber(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRSubNumber(leftNumber, rightNumber, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
             }
@@ -257,6 +277,15 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRDivNumber(leftNumber, rightNumber, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
@@ -278,6 +307,15 @@ public sealed partial class HIRToLIRLowerer
             if (leftIsUnboxedDouble && rightIsUnboxedDouble)
             {
                 _methodBodyIR.Instructions.Add(new LIRModNumber(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRModNumber(leftNumber, rightNumber, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
             }
@@ -307,6 +345,15 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRExpNumber(leftNumber, rightNumber, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
@@ -326,6 +373,15 @@ public sealed partial class HIRToLIRLowerer
             if (leftIsUnboxedDouble && rightIsUnboxedDouble)
             {
                 _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(leftNumber, rightNumber, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
             }
@@ -352,6 +408,15 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRBitwiseOr(leftNumber, rightNumber, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
@@ -370,6 +435,15 @@ public sealed partial class HIRToLIRLowerer
             if (leftIsUnboxedDouble && rightIsUnboxedDouble)
             {
                 _methodBodyIR.Instructions.Add(new LIRBitwiseXor(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRBitwiseXor(leftNumber, rightNumber, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
             }
@@ -397,6 +471,15 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRLeftShift(leftNumber, rightNumber, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
@@ -419,6 +502,15 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRRightShift(leftNumber, rightNumber, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
@@ -437,6 +529,15 @@ public sealed partial class HIRToLIRLowerer
             if (leftIsUnboxedDouble && rightIsUnboxedDouble)
             {
                 _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
+            if (canUseLegacyNumericFallback)
+            {
+                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftNumber, rightNumber, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
             }
@@ -475,6 +576,15 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
+                if (canUseLegacyNumericFallback)
+                {
+                    var leftNumber = EnsureNumber(leftTempVar);
+                    var rightNumber = EnsureNumber(rightTempVar);
+                    _methodBodyIR.Instructions.Add(new LIRCompareNumberLessThan(leftNumber, rightNumber, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+
                 _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
                     DynamicBinaryOperatorKind.LessThan,
                     EnsureObject(leftTempVar),
@@ -488,6 +598,15 @@ public sealed partial class HIRToLIRLowerer
                     && leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThan(leftTempVar, rightTempVar, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+
+                if (canUseLegacyNumericFallback)
+                {
+                    var leftNumber = EnsureNumber(leftTempVar);
+                    var rightNumber = EnsureNumber(rightTempVar);
+                    _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThan(leftNumber, rightNumber, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
@@ -509,6 +628,15 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
+                if (canUseLegacyNumericFallback)
+                {
+                    var leftNumber = EnsureNumber(leftTempVar);
+                    var rightNumber = EnsureNumber(rightTempVar);
+                    _methodBodyIR.Instructions.Add(new LIRCompareNumberLessThanOrEqual(leftNumber, rightNumber, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+
                 _methodBodyIR.Instructions.Add(new LIRBinaryDynamicOperator(
                     DynamicBinaryOperatorKind.LessThanOrEqual,
                     EnsureObject(leftTempVar),
@@ -522,6 +650,15 @@ public sealed partial class HIRToLIRLowerer
                     && leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThanOrEqual(leftTempVar, rightTempVar, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+
+                if (canUseLegacyNumericFallback)
+                {
+                    var leftNumber = EnsureNumber(leftTempVar);
+                    var rightNumber = EnsureNumber(rightTempVar);
+                    _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThanOrEqual(leftNumber, rightNumber, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }

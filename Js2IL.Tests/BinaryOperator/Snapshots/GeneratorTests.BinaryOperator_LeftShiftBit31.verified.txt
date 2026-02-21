@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21bf
+				// Method begins at RVA 0x21b5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b6
+			// Method begins at RVA 0x21ac
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,7 +62,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 346 (0x15a)
+		// Code size: 336 (0x150)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_LeftShiftBit31/Scope,
@@ -74,7 +74,7 @@
 			[6] float64,
 			[7] float64,
 			[8] object,
-			[9] object
+			[9] float64
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_LeftShiftBit31/Scope::.ctor()
@@ -174,27 +174,27 @@
 		IL_0119: shl
 		IL_011a: conv.r8
 		IL_011b: stloc.s 7
-		IL_011d: ldloc.s 7
-		IL_011f: box [System.Runtime]System.Double
-		IL_0124: stloc.s 8
-		IL_0126: ldloc.s 5
-		IL_0128: ldloc.s 8
-		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseAnd(object, object)
-		IL_012f: stloc.s 9
-		IL_0131: ldloc.s 9
-		IL_0133: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0138: stloc.s 7
-		IL_013a: ldloc.s 7
-		IL_013c: stloc.s 6
-		IL_013e: ldloc.s 6
-		IL_0140: box [System.Runtime]System.Double
-		IL_0145: stloc.s 8
-		IL_0147: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_014c: ldstr "AND result with bit 31:"
-		IL_0151: ldloc.s 8
-		IL_0153: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0158: pop
-		IL_0159: ret
+		IL_011d: ldloc.s 5
+		IL_011f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0124: stloc.s 9
+		IL_0126: ldloc.s 9
+		IL_0128: conv.i4
+		IL_0129: ldloc.s 7
+		IL_012b: conv.i4
+		IL_012c: and
+		IL_012d: conv.r8
+		IL_012e: stloc.s 7
+		IL_0130: ldloc.s 7
+		IL_0132: stloc.s 6
+		IL_0134: ldloc.s 6
+		IL_0136: box [System.Runtime]System.Double
+		IL_013b: stloc.s 8
+		IL_013d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0142: ldstr "AND result with bit 31:"
+		IL_0147: ldloc.s 8
+		IL_0149: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_014e: pop
+		IL_014f: ret
 	} // end of method BinaryOperator_LeftShiftBit31::__js_module_init__
 
 } // end of class Modules.BinaryOperator_LeftShiftBit31
@@ -206,7 +206,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c8
+		// Method begins at RVA 0x21be
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

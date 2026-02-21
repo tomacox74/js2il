@@ -204,7 +204,7 @@ public sealed partial class HIRToLIRLowerer
                         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("BigInt", "Call", new[] { bigIntArgs[0] }, resultTempVar));
                     }
 
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(System.Numerics.BigInteger)));
                     return true;
                 }
 
@@ -399,7 +399,7 @@ public sealed partial class HIRToLIRLowerer
                         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("BigInt", "Call", new[] { args[0] }, resultTempVar));
                     }
 
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(System.Numerics.BigInteger)));
                     return true;
                 }
 
