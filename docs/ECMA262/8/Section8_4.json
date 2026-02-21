@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "8.4",
   "title": "Function Name Inference",
-  "status": "Untracked",
+  "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-syntax-directed-operations-function-name-inference",
   "parent": {
     "clause": "8"
@@ -12,32 +12,64 @@
     {
       "clause": "8.4.1",
       "title": "Static Semantics: HasName",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-hasname"
     },
     {
       "clause": "8.4.2",
       "title": "Static Semantics: IsFunctionDefinition",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-isfunctiondefinition"
     },
     {
       "clause": "8.4.3",
       "title": "Static Semantics: IsAnonymousFunctionDefinition ( expr )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-isanonymousfunctiondefinition"
     },
     {
       "clause": "8.4.4",
       "title": "Static Semantics: IsIdentifierRef",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-isidentifierref"
     },
     {
       "clause": "8.4.5",
       "title": "Runtime Semantics: NamedEvaluation",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-namedevaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "8.4.1",
+        "feature": "Function-expression naming for internal scope/binding identity",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-hasname",
+        "testScripts": [
+          "Js2IL.Tests/SymbolTableBuilderTests.cs",
+          "Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js"
+        ],
+        "notes": "Named function expressions create internal bindings and anonymous function expressions receive deterministic internal scope names."
+      },
+      {
+        "clause": "8.4.3",
+        "feature": "Anonymous function-expression detection in scope construction",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-isanonymousfunctiondefinition",
+        "testScripts": [
+          "Js2IL.Tests/SymbolTableBuilderTests.cs"
+        ],
+        "notes": "Anonymous function expressions are distinguished for compiler-internal naming, but observable Function.name semantics are not fully implemented."
+      },
+      {
+        "clause": "8.4.5",
+        "feature": "NamedEvaluation / SetFunctionName observable semantics",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-namedevaluation",
+        "notes": "JS2IL does not currently implement spec-complete runtime name inference/exposure (for example full Function.prototype.name behavior for anonymous function assignment targets)."
+      }
+    ]
+  }
 }

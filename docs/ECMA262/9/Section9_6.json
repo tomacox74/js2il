@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "9.6",
   "title": "Agents",
-  "status": "Untracked",
+  "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-agents",
   "parent": {
     "clause": "9"
@@ -12,20 +12,45 @@
     {
       "clause": "9.6.1",
       "title": "AgentSignifier ( )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-agentsignifier"
     },
     {
       "clause": "9.6.2",
       "title": "AgentCanSuspend ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-agentcansuspend"
     },
     {
       "clause": "9.6.3",
       "title": "IncrementModuleAsyncEvaluationCount ( )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-IncrementModuleAsyncEvaluationCount"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "9.6.2",
+        "feature": "AgentCanSuspend behavior in host event loop",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-agentcansuspend",
+        "testScripts": [
+          "Js2IL.Tests/Hosting/JavaScript/Hosting_EventLoopKeepAlive.js",
+          "Js2IL.Tests/Node/Process/JavaScript/Process_NextTick_And_Promise_Ordering.js"
+        ],
+        "notes": "Current runtime can suspend/resume work via event-loop pumping, but only for the implemented single-agent host model."
+      },
+      {
+        "clause": "9.6.3",
+        "feature": "IncrementModuleAsyncEvaluationCount",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-IncrementModuleAsyncEvaluationCount",
+        "testScripts": [
+          "Js2IL.Tests/ValidatorTests.cs"
+        ],
+        "notes": "Depends on ES module async evaluation machinery, which is not implemented."
+      }
+    ]
+  }
 }

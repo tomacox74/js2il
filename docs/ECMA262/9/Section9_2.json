@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "9.2",
   "title": "PrivateEnvironment Records",
-  "status": "Untracked",
+  "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-privateenvironment-records",
   "parent": {
     "clause": "9"
@@ -12,20 +12,46 @@
     {
       "clause": "9.2.1",
       "title": "PrivateEnvironment Record Operations",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-privateenvironment-record-operations"
     },
     {
       "clause": "9.2.1.1",
       "title": "NewPrivateEnvironment ( outerPrivateEnv )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-newprivateenvironment"
     },
     {
       "clause": "9.2.1.2",
       "title": "ResolvePrivateIdentifier ( privateEnv , identifier )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-resolve-private-identifier"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "9.2.1",
+        "feature": "PrivateEnvironment record operations for class private fields",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-privateenvironment-record-operations",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js"
+        ],
+        "notes": "Private field declarations/access use compiler-managed metadata and runtime helpers; private methods/accessors are still incomplete."
+      },
+      {
+        "clause": "9.2.1.2",
+        "feature": "ResolvePrivateIdentifier in supported class forms",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-resolve-private-identifier",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
+          "Js2IL.Tests/ValidatorTests.cs"
+        ],
+        "notes": "Private identifier resolution is supported for private fields/properties; validator rejects unsupported private methods/accessors."
+      }
+    ]
+  }
 }

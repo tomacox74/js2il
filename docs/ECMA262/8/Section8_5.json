@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "8.5",
   "title": "Contains",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-syntax-directed-operations-contains",
   "parent": {
     "clause": "8"
@@ -12,14 +12,40 @@
     {
       "clause": "8.5.1",
       "title": "Static Semantics: Contains",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-contains"
     },
     {
       "clause": "8.5.2",
       "title": "Static Semantics: ComputedPropertyContains",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-computedpropertycontains"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "8.5.1",
+        "feature": "Targeted AST containment checks for early-error validation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-contains",
+        "testScripts": [
+          "Js2IL.Tests/ValidatorTests.cs"
+        ],
+        "notes": "JS2IL performs explicit AST-walk checks for required early-error contexts (for example await/yield/new.target/label rules) rather than implementing every spec Contains production generically."
+      },
+      {
+        "clause": "8.5.2",
+        "feature": "Computed-property containment checks",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-computedpropertycontains",
+        "testScripts": [
+          "Js2IL.Tests/ValidatorTests.cs",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js"
+        ],
+        "notes": "Computed keys are supported for object literals and tracked during evaluation-order/lowering, but computed keys in object binding patterns are currently rejected."
+      }
+    ]
+  }
 }
