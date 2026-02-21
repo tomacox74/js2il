@@ -13,6 +13,7 @@
     <ModuleProj>$(MSBuildProjectDirectory)\..\compiler\HostedDomino.proj</ModuleProj>
     <ModuleOutputDir>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','$(BaseIntermediateOutputPath)','HostedDomino'))))</ModuleOutputDir>
     <ModuleDll>$([System.IO.Path]::Combine('$(ModuleOutputDir)','$(ModuleName).dll'))</ModuleDll>
+    <ModulePdb>$([System.IO.Path]::Combine('$(ModuleOutputDir)','$(ModuleName).pdb'))</ModulePdb>
 
     <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\..\'))</RepoRoot>
     <LocalJavaScriptRuntimeProject>$(RepoRoot)JavaScriptRuntime\JavaScriptRuntime.csproj</LocalJavaScriptRuntimeProject>
@@ -42,8 +43,9 @@
   </Target>
 
   <Target Name="CopyHostedModuleToOutput" AfterTargets="Build" DependsOnTargets="BuildHostedModule"
-          Inputs="$(ModuleDll)" Outputs="$(TargetDir)$(ModuleName).dll">
+          Inputs="$(ModuleDll);$(ModulePdb)" Outputs="$(TargetDir)$(ModuleName).dll;$(TargetDir)$(ModuleName).pdb">
     <Copy SourceFiles="$(ModuleDll)" DestinationFiles="$(TargetDir)$(ModuleName).dll" SkipUnchangedFiles="true" />
+    <Copy Condition="Exists('$(ModulePdb)')" SourceFiles="$(ModulePdb)" DestinationFiles="$(TargetDir)$(ModuleName).pdb" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>
