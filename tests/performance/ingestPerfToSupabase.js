@@ -35,12 +35,28 @@ const HOST_COLUMN_KEYS = [
     'github_image_version'
 ];
 
+const HTML_ENTITY_MAP = {
+    '&#39;': "'",
+    '&quot;': '"',
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>'
+};
+
 function slugify(value) {
     return String(value ?? 'unknown')
         .trim()
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '') || 'unknown';
+}
+
+function decodeHtmlEntities(value) {
+    let text = String(value ?? '');
+    for (const [entity, literal] of Object.entries(HTML_ENTITY_MAP)) {
+        text = text.split(entity).join(literal);
+    }
+    return text;
 }
 
 function normalizeRuntime(raw) {
@@ -61,6 +77,33 @@ function parseScriptNameFromDisplay(displayInfo) {
     const text = String(displayInfo ?? '');
     const match = text.match(/ScriptName\s*[:=]\s*([A-Za-z0-9._-]+)/i);
     return match ? slugify(match[1]) : null;
+}
+
+function parseDurationToNs(value) {
+    if (value === null || value === undefined) return null;
+    const raw = decodeHtmlEntities(String(value)).trim();
+    if (!raw || raw === 'NA') return null;
+
+    const normalized = raw.replace(/,/g, '');
+    const match = normalized.match(/^(-?\d+(?:\.\d+)?)\s*(ns|us|μs|ms|s)$/i);
+    if (!match) {
+        const numeric = Number.parseFloat(normalized);
+        return Number.isFinite(numeric) ? numeric : null;
+    }
+
+    const amount = Number.parseFloat(match[1]);
+    if (!Number.isFinite(amount)) return null;
+
+    const unit = match[2].toLowerCase();
+    const multiplier = unit === 'ns'
+        ? 1
+        : unit === 'us' || unit === 'μs'
+            ? 1_000
+            : unit === 'ms'
+                ? 1_000_000
+                : 1_000_000_000;
+
+    return amount * multiplier;
 }
 
 function getNumber(value) {
@@ -283,6 +326,82 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata) {
             }
             if (stdDev !== null) {
                 rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'stddev_ns', stdDev, 'ns', runAt, meta, hostColumns));
+            }
+        }
+    }
+
+    if (rows.length > 0) {
+        return rows;
+    }
+
+    return parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata);
+}
+
+function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata) {
+    const files = fs.readdirSync(resultsDir)
+        .filter(file => file.endsWith('.md'))
+        .map(file => path.join(resultsDir, file));
+
+    const rows = [];
+
+    for (const filePath of files) {
+        const text = fs.readFileSync(filePath, 'utf8');
+        const lines = text.split(/\r?\n/);
+        const headerIndex = lines.findIndex(line => line.includes('| Method') && line.includes('| ScriptName'));
+        if (headerIndex < 0) {
+            continue;
+        }
+
+        const hostColumns = buildHostColumns(hostMetadata);
+        const runAt = new Date().toISOString();
+
+        for (let i = headerIndex + 2; i < lines.length; i++) {
+            const line = lines[i];
+            if (!line.startsWith('|')) {
+                if (rows.length > 0) {
+                    break;
+                }
+                continue;
+            }
+
+            const columns = line.split('|').map(column => decodeHtmlEntities(column.trim()));
+            if (columns.length < 6) {
+                continue;
+            }
+
+            const method = columns[1];
+            const scenario = columns[2];
+            const meanText = columns[3];
+            const stdDevText = columns[4];
+            const medianText = columns[5];
+
+            if (!scenario || scenario === '-' || scenario === 'ScriptName') {
+                continue;
+            }
+
+            if (!method && !scenario) {
+                continue;
+            }
+
+            const runtime = method || 'unknown';
+            const meta = {
+                report_file: path.basename(filePath),
+                source_format: 'benchmarkdotnet-markdown',
+                host: hostMetadata
+            };
+
+            const meanNs = parseDurationToNs(meanText);
+            const medianNs = parseDurationToNs(medianText);
+            const stdDevNs = parseDurationToNs(stdDevText);
+
+            if (meanNs !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'mean_ns', meanNs, 'ns', runAt, meta, hostColumns));
+            }
+            if (medianNs !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'median_ns', medianNs, 'ns', runAt, meta, hostColumns));
+            }
+            if (stdDevNs !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'stddev_ns', stdDevNs, 'ns', runAt, meta, hostColumns));
             }
         }
     }
