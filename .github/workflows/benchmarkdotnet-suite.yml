@@ -64,7 +64,16 @@ jobs:
             FILTER_ARG="--filter $BENCHMARK_FILTER"
           fi
           
-          dotnet run -c Release -- $MODE_ARG $FILTER_ARG
+          dotnet run -c Release -- $MODE_ARG $FILTER_ARG --exporters json
+
+      - name: Ingest Benchmark Results to Supabase
+        if: always()
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node tests/performance/ingestPerfToSupabase.js --source benchmarkdotnet --input tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results
       
       - name: Upload BenchmarkDotNet Artifacts
         if: always()

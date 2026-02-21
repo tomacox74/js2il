@@ -57,12 +57,23 @@ jobs:
           cd tests/performance
           node RunComparison.js | tee results.txt
           cat results.txt
+
+      - name: Ingest Prime Comparison Results to Supabase
+        if: always()
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node tests/performance/ingestPerfToSupabase.js --source prime-script --input tests/performance/results.json
       
       - name: Upload Results
         uses: actions/upload-artifact@v4
         with:
           name: performance-results
-          path: tests/performance/results.txt
+          path: |
+            tests/performance/results.txt
+            tests/performance/results.json
           retention-days: 30
       
       - name: Comment on PR (if applicable)
