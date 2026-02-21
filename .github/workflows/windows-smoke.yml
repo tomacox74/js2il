@@ -113,6 +113,18 @@ jobs:
           node RunComparison.js
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
+      - name: Ingest Prime Comparison Results to Supabase
+        if: always()
+        continue-on-error: true
+        shell: pwsh
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          node tests/performance/ingestPerfToSupabase.js --source prime-script --input tests/performance/results.json
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
       - name: Build and run Hosting.Domino sample
         shell: pwsh
         run: |

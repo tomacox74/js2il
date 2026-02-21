@@ -92,6 +92,15 @@ jobs:
           cd tests/performance
           node RunComparison.js
 
+      - name: Ingest Prime Comparison Results to Supabase
+        if: always()
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node tests/performance/ingestPerfToSupabase.js --source prime-script --input tests/performance/results.json
+
       - name: Build and run Hosting.Domino sample
         run: |
           set -euo pipefail
