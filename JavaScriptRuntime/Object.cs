@@ -188,9 +188,6 @@ namespace JavaScriptRuntime
             return TypeUtilities.IsConstructorReturnOverride(value);
         }
 
-        // Runtime-only unary operator bridge methods used by compiler-emitted intrinsic static calls.
-        public static object OpBitwiseNot(object? value) => Operators.BitwiseNot(value);
-
         /// <summary>
         /// Implements <c>Object.is(value1, value2)</c> via SameValue semantics.
         /// </summary>

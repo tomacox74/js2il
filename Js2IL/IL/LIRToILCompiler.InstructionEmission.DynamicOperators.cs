@@ -45,6 +45,12 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(negateDynamic.Result, ilEncoder, allocation);
                 return true;
 
+            case LIRBitwiseNotDynamic bitwiseNotDynamic:
+                EmitLoadTemp(bitwiseNotDynamic.Value, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsBitwiseNot(ilEncoder);
+                EmitStoreTemp(bitwiseNotDynamic.Result, ilEncoder, allocation);
+                return true;
+
             // Dynamic equality - calls Operators.Equal
             case LIREqualDynamic equalDynamic:
                 EmitLoadTemp(equalDynamic.Left, ilEncoder, allocation, methodDescriptor);

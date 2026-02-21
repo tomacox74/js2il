@@ -363,6 +363,8 @@ public record LIRNegateNumberDynamic(TempVariable Value, TempVariable Result) : 
 
 public record LIRBitwiseNotNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
 
+public record LIRBitwiseNotDynamic(TempVariable Value, TempVariable Result) : LIRInstruction;
+
 public record LIRLogicalNot(TempVariable Value, TempVariable Result) : LIRInstruction;
 
 /// <summary>

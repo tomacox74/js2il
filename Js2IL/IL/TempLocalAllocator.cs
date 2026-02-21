@@ -302,6 +302,9 @@ internal static class TempLocalAllocator
             case LIRBitwiseNotNumber not:
                 yield return not.Value;
                 break;
+            case LIRBitwiseNotDynamic notDyn:
+                yield return notDyn.Value;
+                break;
             case LIRLogicalNot logicalNot:
                 yield return logicalNot.Value;
                 break;
@@ -868,6 +871,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRBitwiseNotNumber not:
                 defined = not.Result;
+                return true;
+            case LIRBitwiseNotDynamic notDyn:
+                defined = notDyn.Result;
                 return true;
             case LIRLogicalNot logicalNot:
                 defined = logicalNot.Result;

@@ -812,6 +812,10 @@ internal sealed partial class LIRToILCompiler
                 EmitLoadTemp(negateDynamic.Value, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsUnaryMinus(ilEncoder);
                 break;
+            case LIRBitwiseNotDynamic bitwiseNotDynamic:
+                EmitLoadTemp(bitwiseNotDynamic.Value, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsBitwiseNot(ilEncoder);
+                break;
             case LIRCallFunction callFunc:
                 {
                     if (callFunc.CallableId is not { } callableId)
