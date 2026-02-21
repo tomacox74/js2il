@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x26a2
+			// Method begins at RVA 0x26c6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1606 (0x646)
+		// Code size: 1642 (0x66a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Buffer_Advanced_CoreApis/Scope,
@@ -52,9 +52,8 @@
 			[6] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
 			[7] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
 			[8] object,
-			[9] object,
-			[10] float64,
-			[11] object
+			[9] float64,
+			[10] object
 		)
 
 		IL_0000: newobj instance void Modules.Buffer_Advanced_CoreApis/Scope::.ctor()
@@ -319,171 +318,191 @@
 		IL_03de: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_03e3: stloc.s 8
 		IL_03e5: ldloc.s 8
-		IL_03e7: ldc.r8 100
-		IL_03f0: box [System.Runtime]System.Double
-		IL_03f5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_03e7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_03ec: stloc.s 9
+		IL_03ee: ldloc.s 9
+		IL_03f0: ldc.r8 100
+		IL_03f9: mul
 		IL_03fa: stloc.s 9
 		IL_03fc: ldloc.s 9
-		IL_03fe: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
+		IL_03fe: box [System.Runtime]System.Double
 		IL_0403: stloc.s 10
 		IL_0405: ldloc.s 10
-		IL_0407: ldc.r8 100
-		IL_0410: div
-		IL_0411: stloc.s 10
-		IL_0413: ldloc.s 10
-		IL_0415: box [System.Runtime]System.Double
-		IL_041a: stloc.s 11
-		IL_041c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0421: ldc.i4.1
-		IL_0422: newarr [System.Runtime]System.Object
-		IL_0427: dup
-		IL_0428: ldc.i4.0
-		IL_0429: ldloc.s 11
-		IL_042b: stelem.ref
-		IL_042c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0431: pop
-		IL_0432: ldloc.s 5
-		IL_0434: ldstr "readFloatBE"
-		IL_0439: ldc.r8 4
-		IL_0442: box [System.Runtime]System.Double
-		IL_0447: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_044c: stloc.s 8
-		IL_044e: ldloc.s 8
-		IL_0450: ldc.r8 100
-		IL_0459: box [System.Runtime]System.Double
-		IL_045e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
-		IL_0463: stloc.s 9
-		IL_0465: ldloc.s 9
-		IL_0467: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
-		IL_046c: stloc.s 10
-		IL_046e: ldloc.s 10
-		IL_0470: ldc.r8 100
-		IL_0479: div
-		IL_047a: stloc.s 10
-		IL_047c: ldloc.s 10
-		IL_047e: box [System.Runtime]System.Double
-		IL_0483: stloc.s 11
-		IL_0485: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_048a: ldc.i4.1
-		IL_048b: newarr [System.Runtime]System.Object
-		IL_0490: dup
-		IL_0491: ldc.i4.0
-		IL_0492: ldloc.s 11
-		IL_0494: stelem.ref
-		IL_0495: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_049a: pop
-		IL_049b: ldloc.s 5
-		IL_049d: ldstr "readDoubleLE"
-		IL_04a2: ldc.r8 8
-		IL_04ab: box [System.Runtime]System.Double
-		IL_04b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_04b5: stloc.s 8
-		IL_04b7: ldloc.s 8
-		IL_04b9: ldc.r8 100
-		IL_04c2: box [System.Runtime]System.Double
-		IL_04c7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
-		IL_04cc: stloc.s 9
-		IL_04ce: ldloc.s 9
-		IL_04d0: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
-		IL_04d5: stloc.s 10
-		IL_04d7: ldloc.s 10
-		IL_04d9: ldc.r8 100
-		IL_04e2: div
-		IL_04e3: stloc.s 10
-		IL_04e5: ldloc.s 10
-		IL_04e7: box [System.Runtime]System.Double
-		IL_04ec: stloc.s 11
-		IL_04ee: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04f3: ldc.i4.1
-		IL_04f4: newarr [System.Runtime]System.Object
-		IL_04f9: dup
-		IL_04fa: ldc.i4.0
-		IL_04fb: ldloc.s 11
-		IL_04fd: stelem.ref
-		IL_04fe: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0503: pop
-		IL_0504: ldc.r8 2.5
-		IL_050d: neg
-		IL_050e: box [System.Runtime]System.Double
-		IL_0513: stloc.s 11
-		IL_0515: ldloc.s 5
-		IL_0517: ldstr "writeDoubleBE"
-		IL_051c: ldloc.s 11
-		IL_051e: ldc.r8 0.0
-		IL_0527: box [System.Runtime]System.Double
-		IL_052c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0531: pop
-		IL_0532: ldloc.s 5
-		IL_0534: ldstr "readDoubleBE"
+		IL_0407: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
+		IL_040c: stloc.s 9
+		IL_040e: ldloc.s 9
+		IL_0410: ldc.r8 100
+		IL_0419: div
+		IL_041a: stloc.s 9
+		IL_041c: ldloc.s 9
+		IL_041e: box [System.Runtime]System.Double
+		IL_0423: stloc.s 10
+		IL_0425: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_042a: ldc.i4.1
+		IL_042b: newarr [System.Runtime]System.Object
+		IL_0430: dup
+		IL_0431: ldc.i4.0
+		IL_0432: ldloc.s 10
+		IL_0434: stelem.ref
+		IL_0435: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_043a: pop
+		IL_043b: ldloc.s 5
+		IL_043d: ldstr "readFloatBE"
+		IL_0442: ldc.r8 4
+		IL_044b: box [System.Runtime]System.Double
+		IL_0450: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0455: stloc.s 8
+		IL_0457: ldloc.s 8
+		IL_0459: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_045e: stloc.s 9
+		IL_0460: ldloc.s 9
+		IL_0462: ldc.r8 100
+		IL_046b: mul
+		IL_046c: stloc.s 9
+		IL_046e: ldloc.s 9
+		IL_0470: box [System.Runtime]System.Double
+		IL_0475: stloc.s 10
+		IL_0477: ldloc.s 10
+		IL_0479: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
+		IL_047e: stloc.s 9
+		IL_0480: ldloc.s 9
+		IL_0482: ldc.r8 100
+		IL_048b: div
+		IL_048c: stloc.s 9
+		IL_048e: ldloc.s 9
+		IL_0490: box [System.Runtime]System.Double
+		IL_0495: stloc.s 10
+		IL_0497: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_049c: ldc.i4.1
+		IL_049d: newarr [System.Runtime]System.Object
+		IL_04a2: dup
+		IL_04a3: ldc.i4.0
+		IL_04a4: ldloc.s 10
+		IL_04a6: stelem.ref
+		IL_04a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_04ac: pop
+		IL_04ad: ldloc.s 5
+		IL_04af: ldstr "readDoubleLE"
+		IL_04b4: ldc.r8 8
+		IL_04bd: box [System.Runtime]System.Double
+		IL_04c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_04c7: stloc.s 8
+		IL_04c9: ldloc.s 8
+		IL_04cb: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_04d0: stloc.s 9
+		IL_04d2: ldloc.s 9
+		IL_04d4: ldc.r8 100
+		IL_04dd: mul
+		IL_04de: stloc.s 9
+		IL_04e0: ldloc.s 9
+		IL_04e2: box [System.Runtime]System.Double
+		IL_04e7: stloc.s 10
+		IL_04e9: ldloc.s 10
+		IL_04eb: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
+		IL_04f0: stloc.s 9
+		IL_04f2: ldloc.s 9
+		IL_04f4: ldc.r8 100
+		IL_04fd: div
+		IL_04fe: stloc.s 9
+		IL_0500: ldloc.s 9
+		IL_0502: box [System.Runtime]System.Double
+		IL_0507: stloc.s 10
+		IL_0509: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_050e: ldc.i4.1
+		IL_050f: newarr [System.Runtime]System.Object
+		IL_0514: dup
+		IL_0515: ldc.i4.0
+		IL_0516: ldloc.s 10
+		IL_0518: stelem.ref
+		IL_0519: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_051e: pop
+		IL_051f: ldc.r8 2.5
+		IL_0528: neg
+		IL_0529: box [System.Runtime]System.Double
+		IL_052e: stloc.s 10
+		IL_0530: ldloc.s 5
+		IL_0532: ldstr "writeDoubleBE"
+		IL_0537: ldloc.s 10
 		IL_0539: ldc.r8 0.0
 		IL_0542: box [System.Runtime]System.Double
-		IL_0547: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_054c: stloc.s 8
-		IL_054e: ldloc.s 8
-		IL_0550: ldc.r8 10
-		IL_0559: box [System.Runtime]System.Double
-		IL_055e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
-		IL_0563: stloc.s 9
-		IL_0565: ldloc.s 9
-		IL_0567: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
-		IL_056c: stloc.s 10
-		IL_056e: ldloc.s 10
-		IL_0570: ldc.r8 10
-		IL_0579: div
-		IL_057a: stloc.s 10
-		IL_057c: ldloc.s 10
-		IL_057e: box [System.Runtime]System.Double
-		IL_0583: stloc.s 11
-		IL_0585: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_058a: ldc.i4.1
-		IL_058b: newarr [System.Runtime]System.Object
-		IL_0590: dup
-		IL_0591: ldc.i4.0
-		IL_0592: ldloc.s 11
-		IL_0594: stelem.ref
-		IL_0595: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_059a: pop
-		IL_059b: ldc.r8 4
-		IL_05a4: box [System.Runtime]System.Double
-		IL_05a9: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::allocUnsafe(object)
-		IL_05ae: stloc.s 7
-		IL_05b0: ldloc.s 7
-		IL_05b2: stloc.s 6
-		IL_05b4: ldloc.s 6
-		IL_05b6: ldc.r8 0.0
-		IL_05bf: ldc.r8 1
-		IL_05c8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-		IL_05cd: pop
-		IL_05ce: ldloc.s 6
-		IL_05d0: ldc.r8 1
-		IL_05d9: ldc.r8 2
-		IL_05e2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-		IL_05e7: pop
-		IL_05e8: ldloc.s 6
-		IL_05ea: ldc.r8 2
-		IL_05f3: ldc.r8 3
-		IL_05fc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-		IL_0601: pop
-		IL_0602: ldloc.s 6
-		IL_0604: ldc.r8 3
-		IL_060d: ldc.r8 4
-		IL_0616: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-		IL_061b: pop
-		IL_061c: ldloc.s 6
-		IL_061e: ldstr "toString"
-		IL_0623: ldstr "hex"
-		IL_0628: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_062d: stloc.s 8
-		IL_062f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0634: ldc.i4.1
-		IL_0635: newarr [System.Runtime]System.Object
-		IL_063a: dup
-		IL_063b: ldc.i4.0
-		IL_063c: ldloc.s 8
-		IL_063e: stelem.ref
-		IL_063f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0644: pop
-		IL_0645: ret
+		IL_0547: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_054c: pop
+		IL_054d: ldloc.s 5
+		IL_054f: ldstr "readDoubleBE"
+		IL_0554: ldc.r8 0.0
+		IL_055d: box [System.Runtime]System.Double
+		IL_0562: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0567: stloc.s 8
+		IL_0569: ldloc.s 8
+		IL_056b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0570: stloc.s 9
+		IL_0572: ldloc.s 9
+		IL_0574: ldc.r8 10
+		IL_057d: mul
+		IL_057e: stloc.s 9
+		IL_0580: ldloc.s 9
+		IL_0582: box [System.Runtime]System.Double
+		IL_0587: stloc.s 10
+		IL_0589: ldloc.s 10
+		IL_058b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
+		IL_0590: stloc.s 9
+		IL_0592: ldloc.s 9
+		IL_0594: ldc.r8 10
+		IL_059d: div
+		IL_059e: stloc.s 9
+		IL_05a0: ldloc.s 9
+		IL_05a2: box [System.Runtime]System.Double
+		IL_05a7: stloc.s 10
+		IL_05a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05ae: ldc.i4.1
+		IL_05af: newarr [System.Runtime]System.Object
+		IL_05b4: dup
+		IL_05b5: ldc.i4.0
+		IL_05b6: ldloc.s 10
+		IL_05b8: stelem.ref
+		IL_05b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_05be: pop
+		IL_05bf: ldc.r8 4
+		IL_05c8: box [System.Runtime]System.Double
+		IL_05cd: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::allocUnsafe(object)
+		IL_05d2: stloc.s 7
+		IL_05d4: ldloc.s 7
+		IL_05d6: stloc.s 6
+		IL_05d8: ldloc.s 6
+		IL_05da: ldc.r8 0.0
+		IL_05e3: ldc.r8 1
+		IL_05ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
+		IL_05f1: pop
+		IL_05f2: ldloc.s 6
+		IL_05f4: ldc.r8 1
+		IL_05fd: ldc.r8 2
+		IL_0606: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
+		IL_060b: pop
+		IL_060c: ldloc.s 6
+		IL_060e: ldc.r8 2
+		IL_0617: ldc.r8 3
+		IL_0620: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
+		IL_0625: pop
+		IL_0626: ldloc.s 6
+		IL_0628: ldc.r8 3
+		IL_0631: ldc.r8 4
+		IL_063a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
+		IL_063f: pop
+		IL_0640: ldloc.s 6
+		IL_0642: ldstr "toString"
+		IL_0647: ldstr "hex"
+		IL_064c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0651: stloc.s 8
+		IL_0653: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0658: ldc.i4.1
+		IL_0659: newarr [System.Runtime]System.Object
+		IL_065e: dup
+		IL_065f: ldc.i4.0
+		IL_0660: ldloc.s 8
+		IL_0662: stelem.ref
+		IL_0663: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0668: pop
+		IL_0669: ret
 	} // end of method Buffer_Advanced_CoreApis::__js_module_init__
 
 } // end of class Modules.Buffer_Advanced_CoreApis
@@ -495,7 +514,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x26ab
+		// Method begins at RVA 0x26cf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

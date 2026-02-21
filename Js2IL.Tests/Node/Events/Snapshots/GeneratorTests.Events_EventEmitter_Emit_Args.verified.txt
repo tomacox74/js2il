@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22a2
+				// Method begins at RVA 0x22ae
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22ab
+				// Method begins at RVA 0x22b7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -102,28 +102,32 @@
 		{
 			// Method begins at RVA 0x226c
 			// Header size: 12
-			// Code size: 33 (0x21)
+			// Code size: 45 (0x2d)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] float64
 			)
 
 			IL_0000: ldarg.2
-			IL_0001: ldarg.3
-			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
-			IL_0007: stloc.0
-			IL_0008: ldloc.0
-			IL_0009: ldarg.s c
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldc.i4.0
-			IL_0013: ldelem.ref
-			IL_0014: castclass Modules.Events_EventEmitter_Emit_Args/Scope
-			IL_0019: ldloc.0
-			IL_001a: stfld object Modules.Events_EventEmitter_Emit_Args/Scope::product
-			IL_001f: ldnull
-			IL_0020: ret
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldarg.3
+			IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000e: mul
+			IL_000f: stloc.0
+			IL_0010: ldarg.0
+			IL_0011: ldc.i4.0
+			IL_0012: ldelem.ref
+			IL_0013: castclass Modules.Events_EventEmitter_Emit_Args/Scope
+			IL_0018: ldloc.0
+			IL_0019: ldarg.s c
+			IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0020: mul
+			IL_0021: box [System.Runtime]System.Double
+			IL_0026: stfld object Modules.Events_EventEmitter_Emit_Args/Scope::product
+			IL_002b: ldnull
+			IL_002c: ret
 		} // end of method FunctionExpression_L14C22::__js_call__
 
 	} // end of class FunctionExpression_L14C22
@@ -144,7 +148,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2299
+			// Method begins at RVA 0x22a5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -352,7 +356,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22b4
+		// Method begins at RVA 0x22c0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

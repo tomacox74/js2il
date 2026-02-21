@@ -26,7 +26,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x222b
+					// Method begins at RVA 0x2224
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2234
+					// Method begins at RVA 0x222d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -67,7 +67,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2222
+				// Method begins at RVA 0x221b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -91,14 +91,13 @@
 		{
 			// Method begins at RVA 0x2164
 			// Header size: 12
-			// Code size: 169 (0xa9)
+			// Code size: 162 (0xa2)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] object,
 				[2] object,
-				[3] bool,
-				[4] object
+				[3] object
 			)
 
 			IL_0000: ldarg.1
@@ -112,54 +111,52 @@
 			IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
 			IL_001d: pop
 			IL_001e: ldarg.2
-			IL_001f: ldc.r8 2
-			IL_0028: box [System.Runtime]System.Double
-			IL_002d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::GreaterThan(object, object)
-			IL_0032: stloc.3
-			IL_0033: ldloc.3
-			IL_0034: brfalse IL_003b
+			IL_001f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0024: ldc.r8 2
+			IL_002d: cgt
+			IL_002f: brfalse IL_0036
 
-			IL_0039: ldnull
-			IL_003a: ret
+			IL_0034: ldnull
+			IL_0035: ret
 
-			IL_003b: ldc.r8 0.0
-			IL_0044: stloc.0
-			// loop start (head: IL_0045)
-				IL_0045: ldloc.0
-				IL_0046: ldarg.1
-				IL_0047: ldstr "children"
-				IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_0051: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-				IL_0056: clt
-				IL_0058: brfalse IL_00a7
+			IL_0036: ldc.r8 0.0
+			IL_003f: stloc.0
+			// loop start (head: IL_0040)
+				IL_0040: ldloc.0
+				IL_0041: ldarg.1
+				IL_0042: ldstr "children"
+				IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_004c: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+				IL_0051: clt
+				IL_0053: brfalse IL_00a0
 
-				IL_005d: ldarg.1
-				IL_005e: ldstr "children"
-				IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_0068: ldloc.0
-				IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-				IL_006e: stloc.1
-				IL_006f: ldarg.2
-				IL_0070: ldc.r8 1
-				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-				IL_007e: stloc.s 4
-				IL_0080: ldnull
-				IL_0081: ldftn object Modules.Function_IIFE_Recursive/walk::__js_call__(object, object, object)
-				IL_0087: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-				IL_008c: ldnull
-				IL_008d: ldloc.1
-				IL_008e: ldloc.s 4
-				IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
-				IL_0095: pop
-				IL_0096: ldloc.0
-				IL_0097: ldc.r8 1
-				IL_00a0: add
-				IL_00a1: stloc.0
-				IL_00a2: br IL_0045
+				IL_0058: ldarg.1
+				IL_0059: ldstr "children"
+				IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_0063: ldloc.0
+				IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+				IL_0069: stloc.1
+				IL_006a: ldarg.2
+				IL_006b: ldc.r8 1
+				IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_0079: stloc.3
+				IL_007a: ldnull
+				IL_007b: ldftn object Modules.Function_IIFE_Recursive/walk::__js_call__(object, object, object)
+				IL_0081: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+				IL_0086: ldnull
+				IL_0087: ldloc.1
+				IL_0088: ldloc.3
+				IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+				IL_008e: pop
+				IL_008f: ldloc.0
+				IL_0090: ldc.r8 1
+				IL_0099: add
+				IL_009a: stloc.0
+				IL_009b: br IL_0040
 			// end loop
 
-			IL_00a7: ldnull
-			IL_00a8: ret
+			IL_00a0: ldnull
+			IL_00a1: ret
 		} // end of method walk::__js_call__
 
 	} // end of class walk
@@ -171,7 +168,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2219
+			// Method begins at RVA 0x2212
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -310,7 +307,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x223d
+		// Method begins at RVA 0x2236
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
