@@ -37,8 +37,7 @@ internal static class Program
                 return;
             }
 
-            using var exportsDisposable = JsEngine.LoadModule(asm, moduleId: "@mixmark-io/domino");
-            dynamic exports = exportsDisposable;
+            using dynamic exports = JsEngine.LoadModule(asm, moduleId: "@mixmark-io/domino");
 
             dynamic window = exports.createWindow(html);
             dynamic document = window.document;
