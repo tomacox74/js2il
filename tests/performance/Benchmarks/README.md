@@ -25,7 +25,8 @@ Benchmarks/
 │   ├── evaluation.js
 │   ├── evaluation-modern.js
 │   ├── stopwatch.js
-│   └── array-stress.js
+│   ├── array-stress.js
+│   └── ... (additional imported Jint scenarios)
 ├── Runtimes/            # Runtime adapter implementations
 │   ├── IJavaScriptRuntime.cs
 │   ├── NodeJsRuntime.cs
@@ -39,6 +40,8 @@ Benchmarks/
 ## Benchmark Scenarios
 
 ### Phase 1 Scenarios (Current)
+
+Additional imported scenarios from Jint are available in `Scenarios/` for future use (with targeted js2il-compatibility shims where needed, e.g. strict preamble + dromaeo harness helpers).
 
 1. **minimal.js** - Simple arithmetic (`1 + 1 === 2`)
    - Purpose: Baseline minimal execution overhead
