@@ -33,5 +33,17 @@ namespace Js2IL.Tests.Node.FS
         [Fact]
         public Task FSPromises_ReadFile_Buffer() => GenerateTest(
             nameof(FSPromises_ReadFile_Buffer));
+
+        [Fact]
+        public Task FSPromises_Readdir_Names() => GenerateTest(
+            nameof(FSPromises_Readdir_Names));
+
+        [Fact]
+        public Task FSPromises_Readdir_WithFileTypes() => GenerateTest(
+            nameof(FSPromises_Readdir_WithFileTypes));
+
+        [Fact]
+        public Task FSPromises_Readdir_MissingDir_Rejects() => GenerateTest(
+            nameof(FSPromises_Readdir_MissingDir_Rejects));
     }
 }

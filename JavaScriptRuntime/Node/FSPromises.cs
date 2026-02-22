@@ -39,55 +39,75 @@ namespace JavaScriptRuntime.Node
 
         public object? readdir(object dir, object? options = null)
         {
+            var path = dir?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                path = Environment.CurrentDirectory;
+            }
+
+            bool withFileTypes = false;
             try
             {
-                var path = dir?.ToString() ?? string.Empty;
-                if (string.IsNullOrEmpty(path))
+                if (options is ExpandoObject exp)
                 {
-                    path = Environment.CurrentDirectory;
-                }
-
-                bool withFileTypes = false;
-                try
-                {
-                    if (options is ExpandoObject exp)
+                    var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
+                    if (dict.TryGetValue("withFileTypes", out var val))
                     {
-                        var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
-                        if (dict.TryGetValue("withFileTypes", out var val))
-                        {
-                            withFileTypes = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
-                        }
-                    }
-                    else if (options != null)
-                    {
-                        var val = JavaScriptRuntime.Object.GetProperty(options, "withFileTypes");
                         withFileTypes = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
                     }
                 }
-                catch { }
-
-                var list = new JavaScriptRuntime.Array();
-
-                foreach (var entry in Directory.EnumerateFileSystemEntries(path))
+                else if (options != null)
                 {
-                    var name = System.IO.Path.GetFileName(entry);
-
-                    if (!withFileTypes)
-                    {
-                        list.Add(name);
-                        continue;
-                    }
-
-                    bool isDir = false;
-                    try { isDir = Directory.Exists(entry); } catch { }
-                    list.Add(new FS.DirEnt(name, isDir));
+                    var val = JavaScriptRuntime.Object.GetProperty(options, "withFileTypes");
+                    withFileTypes = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
                 }
+            }
+            catch { }
 
-                return Promise.resolve(list);
+            var promiseWithResolvers = Promise.withResolvers();
+            _ioScheduler.BeginIo();
+
+            try
+            {
+                // Fire-and-forget is intentional: exceptions are handled inside
+                // CompleteReaddirAsync and forwarded via _ioScheduler.EndIo(...).
+                _ = CompleteReaddirAsync(path, withFileTypes, promiseWithResolvers);
+                return promiseWithResolvers.promise;
             }
             catch (Exception ex)
             {
-                return Promise.reject(new Error(ex.Message, ex));
+                _ioScheduler.EndIo(promiseWithResolvers, new Error(ex.Message, ex), isError: true);
+                return promiseWithResolvers.promise;
+            }
+        }
+
+        private async Task CompleteReaddirAsync(string path, bool withFileTypes, PromiseWithResolvers promiseWithResolvers)
+        {
+            try
+            {
+                var list = await Task.Run(() =>
+                {
+                    var result = new JavaScriptRuntime.Array();
+                    foreach (var entry in Directory.EnumerateFileSystemEntries(path))
+                    {
+                        var name = System.IO.Path.GetFileName(entry);
+                        if (!withFileTypes)
+                        {
+                            result.Add(name);
+                            continue;
+                        }
+                        bool isDir = false;
+                        try { isDir = Directory.Exists(entry); } catch { }
+                        result.Add(new FS.DirEnt(name, isDir));
+                    }
+                    return result;
+                }).ConfigureAwait(false);
+
+                _ioScheduler.EndIo(promiseWithResolvers, list, isError: false);
+            }
+            catch (Exception ex)
+            {
+                _ioScheduler.EndIo(promiseWithResolvers, new Error(ex.Message, ex), isError: true);
             }
         }
 
