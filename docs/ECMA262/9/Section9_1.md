@@ -107,7 +107,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Module Environment Records | Not Yet Supported | `Js2IL.Tests/ValidatorTests.cs` | ES module import/export semantics are not supported yet. |
+| Module Environment Records | Supported with Limitations | [`Import_StaticImport_FromCjs.js`](../../../Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js)<br>[`Import_RequireEsmModule.js`](../../../Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule.js) | Static import/export declarations are supported via lowering to the CommonJS runtime model. Full spec module environment records (including complete live-binding/linking semantics) remain incomplete. |
 
 ### 9.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-getidentifierreference))
 

@@ -1,5 +1,8 @@
+using Acornima.Ast;
 using Js2IL.Services;
 using Js2IL.Validation;
+using System.Globalization;
+using System.Text;
 
 namespace Js2IL;
 
@@ -166,16 +169,16 @@ public class ModuleLoader
         }
 
         Acornima.Ast.Program ast;
+        var sourceFileForDebugging = modulePath;
+        if (_fileSystem is ISourceFilePathResolver resolver
+            && resolver.TryGetSourceFilePath(modulePath, out var resolved)
+            && !string.IsNullOrWhiteSpace(resolved))
+        {
+            sourceFileForDebugging = resolved;
+        }
+
         try
         {
-            var sourceFileForDebugging = modulePath;
-            if (_fileSystem is ISourceFilePathResolver resolver
-                && resolver.TryGetSourceFilePath(modulePath, out var resolved)
-                && !string.IsNullOrWhiteSpace(resolved))
-            {
-                sourceFileForDebugging = resolved;
-            }
-
             ast = _parser.ParseJavaScript(jsSource, sourceFileForDebugging);
         }
         catch (Exception ex)
@@ -183,6 +186,28 @@ public class ModuleLoader
             module = null;
             diagnostics.AddParseError(modulePath, ex.Message);
             return false;
+        }
+
+        if (!TryRewriteStaticModuleSyntax(jsSource, ast, out var rewrittenSource, out var rewriteError))
+        {
+            module = null;
+            diagnostics.AddParseError(modulePath, rewriteError ?? "Failed to rewrite ES module syntax.");
+            return false;
+        }
+
+        if (!string.Equals(jsSource, rewrittenSource, StringComparison.Ordinal))
+        {
+            jsSource = rewrittenSource;
+            try
+            {
+                ast = _parser.ParseJavaScript(jsSource, sourceFileForDebugging);
+            }
+            catch (Exception ex)
+            {
+                module = null;
+                diagnostics.AddParseError(modulePath, $"Failed to parse rewritten ES module syntax: {ex.Message}");
+                return false;
+            }
         }
 
         // Compute canonical logical module id (runtime-facing) and CLR type name.
@@ -286,6 +311,467 @@ public class ModuleLoader
         return true;
     }
 
+    private static readonly string EsModuleInteropPrelude =
+@"function __js2il_esm_mark() {
+    if (!Object.prototype.hasOwnProperty.call(exports, ""__esModule"")) {
+        Object.defineProperty(exports, ""__esModule"", { value: true, enumerable: false, configurable: true });
+    }
+}
+function __js2il_esm_default(mod) {
+    return (mod != null && Object.prototype.hasOwnProperty.call(mod, ""default"")) ? mod.default : mod;
+}
+function __js2il_esm_namespace(mod) {
+    if (mod != null && mod.__esModule === true) {
+        return mod;
+    }
+    var ns = { default: mod };
+    ns[""module.exports""] = mod;
+    if (mod != null && (typeof mod === ""object"" || typeof mod === ""function"")) {
+        for (var key in mod) {
+            if (!Object.prototype.hasOwnProperty.call(mod, key)) {
+                continue;
+            }
+            if (key !== ""default"" && key !== ""module.exports"" && key !== ""__esModule"") {
+                ns[key] = mod[key];
+            }
+        }
+    }
+    return ns;
+}
+function __js2il_esm_export(name, getter) {
+    __js2il_esm_mark();
+    Object.defineProperty(exports, name, { enumerable: true, configurable: true, get: getter });
+}";
+
+    private bool TryRewriteStaticModuleSyntax(string source, Acornima.Ast.Program ast, out string rewrittenSource, out string? error)
+    {
+        rewrittenSource = source;
+        error = null;
+
+        var topLevelModuleStatements = new HashSet<Node>(ReferenceEqualityComparer.Instance);
+        foreach (var statement in ast.Body)
+        {
+            if (IsStaticModuleDeclaration(statement))
+            {
+                topLevelModuleStatements.Add(statement);
+            }
+        }
+
+        if (topLevelModuleStatements.Count == 0)
+        {
+            return true;
+        }
+
+        Node? nestedStaticModuleNode = null;
+        _parser.VisitAst(ast, node =>
+        {
+            if (nestedStaticModuleNode != null)
+            {
+                return;
+            }
+
+            if (IsStaticModuleDeclaration(node) && !topLevelModuleStatements.Contains(node))
+            {
+                nestedStaticModuleNode = node;
+            }
+        });
+
+        if (nestedStaticModuleNode != null)
+        {
+            error = $"Static import/export declarations are only supported at top level (line {nestedStaticModuleNode.Location.Start.Line}).";
+            return false;
+        }
+
+        var seenNonDirectiveNonModuleStatement = false;
+        foreach (var statement in ast.Body)
+        {
+            if (IsStaticModuleDeclaration(statement))
+            {
+                if (seenNonDirectiveNonModuleStatement)
+                {
+                    error = $"Static import/export declarations must appear before non-directive top-level statements in this MVP implementation (line {statement.Location.Start.Line}).";
+                    return false;
+                }
+
+                continue;
+            }
+
+            if (!IsDirectivePrologueStatement(statement))
+            {
+                seenNonDirectiveNonModuleStatement = true;
+            }
+        }
+
+        var builder = new StringBuilder(source.Length + 512);
+        var cursor = 0;
+        var tempCounter = 0;
+        var rewrittenAny = false;
+
+        foreach (var statement in ast.Body)
+        {
+            if (!TryRewriteTopLevelModuleStatement(statement, source, ref tempCounter, out var rewrittenStatement, out var rewriteError))
+            {
+                if (!string.IsNullOrWhiteSpace(rewriteError))
+                {
+                    error = rewriteError;
+                    return false;
+                }
+                continue;
+            }
+
+            rewrittenAny = true;
+            builder.Append(source, cursor, statement.Start - cursor);
+
+            builder.AppendLine(rewrittenStatement);
+            cursor = statement.End;
+        }
+
+        if (!rewrittenAny)
+        {
+            return true;
+        }
+
+        builder.Append(source, cursor, source.Length - cursor);
+        builder.AppendLine();
+        builder.AppendLine(EsModuleInteropPrelude);
+        rewrittenSource = builder.ToString();
+        return true;
+    }
+
+    private static bool TryRewriteTopLevelModuleStatement(
+        Statement statement,
+        string source,
+        ref int tempCounter,
+        out string rewrittenStatement,
+        out string? error)
+    {
+        rewrittenStatement = string.Empty;
+        error = null;
+
+        try
+        {
+            switch (statement)
+            {
+                case ImportDeclaration importDeclaration:
+                    rewrittenStatement = RewriteImportDeclaration(importDeclaration, source, ref tempCounter);
+                    return true;
+
+                case ExportNamedDeclaration exportNamedDeclaration:
+                    rewrittenStatement = RewriteExportNamedDeclaration(exportNamedDeclaration, source, ref tempCounter);
+                    return true;
+
+                case ExportDefaultDeclaration exportDefaultDeclaration:
+                    rewrittenStatement = RewriteExportDefaultDeclaration(exportDefaultDeclaration, source, ref tempCounter);
+                    return true;
+
+                case ExportAllDeclaration exportAllDeclaration:
+                    rewrittenStatement = RewriteExportAllDeclaration(exportAllDeclaration, source, ref tempCounter);
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+        catch (NotSupportedException ex)
+        {
+            error = $"{ex.Message} (line {statement.Location.Start.Line}).";
+            return false;
+        }
+    }
+
+    private static string RewriteImportDeclaration(ImportDeclaration importDeclaration, string source, ref int tempCounter)
+    {
+        if (importDeclaration.Attributes.Count > 0)
+        {
+            throw new NotSupportedException("Import attributes are not yet supported");
+        }
+
+        var importSourceLiteral = GetNodeSource(source, importDeclaration.Source);
+        if (importDeclaration.Specifiers.Count == 0)
+        {
+            return $"require({importSourceLiteral});";
+        }
+
+        var moduleTemp = $"__js2il_esm_mod_{tempCounter++}";
+        var builder = new StringBuilder();
+        builder.Append("var ").Append(moduleTemp).Append(" = require(").Append(importSourceLiteral).AppendLine(");");
+
+        foreach (var specifier in importDeclaration.Specifiers)
+        {
+            switch (specifier)
+            {
+                case ImportDefaultSpecifier defaultSpecifier:
+                    if (defaultSpecifier.Local is not Identifier defaultLocal)
+                    {
+                        throw new NotSupportedException("Default import local binding must be an identifier");
+                    }
+                    builder.Append("var ").Append(defaultLocal.Name).Append(" = __js2il_esm_default(").Append(moduleTemp).AppendLine(");");
+                    break;
+
+                case ImportNamespaceSpecifier namespaceSpecifier:
+                    if (namespaceSpecifier.Local is not Identifier namespaceLocal)
+                    {
+                        throw new NotSupportedException("Namespace import local binding must be an identifier");
+                    }
+                    builder.Append("var ").Append(namespaceLocal.Name).Append(" = __js2il_esm_namespace(").Append(moduleTemp).AppendLine(");");
+                    break;
+
+                case ImportSpecifier importSpecifier:
+                    if (importSpecifier.Local is not Identifier importLocal)
+                    {
+                        throw new NotSupportedException("Named import local binding must be an identifier");
+                    }
+                    var importedName = GetExpressionName(importSpecifier.Imported);
+                    builder.Append("var ").Append(importLocal.Name).Append(" = ")
+                        .Append(moduleTemp).Append("[\"").Append(EscapeJsString(importedName)).AppendLine("\"];");
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Unsupported import specifier form '{specifier.TypeText}'");
+            }
+        }
+
+        return builder.ToString();
+    }
+
+    private static string RewriteExportNamedDeclaration(ExportNamedDeclaration exportNamedDeclaration, string source, ref int tempCounter)
+    {
+        if (exportNamedDeclaration.Attributes.Count > 0)
+        {
+            throw new NotSupportedException("Export attributes are not yet supported");
+        }
+
+        var builder = new StringBuilder();
+
+        if (exportNamedDeclaration.Declaration != null)
+        {
+            if (exportNamedDeclaration.Declaration is not Node declarationNode)
+            {
+                throw new NotSupportedException("Unsupported export declaration node");
+            }
+
+            builder.AppendLine(GetNodeSource(source, declarationNode));
+
+            switch (exportNamedDeclaration.Declaration)
+            {
+                case VariableDeclaration variableDeclaration:
+                    var bindingNames = new List<string>();
+                    foreach (var variableDeclarator in variableDeclaration.Declarations)
+                    {
+                        CollectBindingNames(variableDeclarator.Id, bindingNames);
+                    }
+
+                    foreach (var name in bindingNames.Distinct(StringComparer.Ordinal))
+                    {
+                        AppendExportGetter(builder, name, name);
+                    }
+                    break;
+
+                case FunctionDeclaration functionDeclaration when functionDeclaration.Id != null:
+                    AppendExportGetter(builder, functionDeclaration.Id.Name, functionDeclaration.Id.Name);
+                    break;
+
+                case ClassDeclaration classDeclaration when classDeclaration.Id != null:
+                    AppendExportGetter(builder, classDeclaration.Id.Name, classDeclaration.Id.Name);
+                    break;
+
+                default:
+                    throw new NotSupportedException("Unsupported export declaration form");
+            }
+
+            return builder.ToString();
+        }
+
+        if (exportNamedDeclaration.Source != null)
+        {
+            var moduleTemp = $"__js2il_esm_mod_{tempCounter++}";
+            var exportSourceLiteral = GetNodeSource(source, exportNamedDeclaration.Source);
+            builder.Append("var ").Append(moduleTemp).Append(" = require(").Append(exportSourceLiteral).AppendLine(");");
+
+            foreach (var specifier in exportNamedDeclaration.Specifiers)
+            {
+                var localName = GetExpressionName(specifier.Local);
+                var exportName = GetExpressionName(specifier.Exported);
+                AppendExportGetter(builder, exportName, $"{moduleTemp}[\"{EscapeJsString(localName)}\"]");
+            }
+
+            return builder.ToString();
+        }
+
+        foreach (var specifier in exportNamedDeclaration.Specifiers)
+        {
+            var localName = GetExpressionName(specifier.Local);
+            var exportName = GetExpressionName(specifier.Exported);
+            AppendExportGetter(builder, exportName, localName);
+        }
+
+        return builder.ToString();
+    }
+
+    private static string RewriteExportDefaultDeclaration(ExportDefaultDeclaration exportDefaultDeclaration, string source, ref int tempCounter)
+    {
+        var builder = new StringBuilder();
+
+        switch (exportDefaultDeclaration.Declaration)
+        {
+            case FunctionDeclaration functionDeclaration when functionDeclaration.Id != null:
+                builder.AppendLine(GetNodeSource(source, functionDeclaration));
+                AppendExportGetter(builder, "default", functionDeclaration.Id.Name);
+                return builder.ToString();
+
+            case ClassDeclaration classDeclaration when classDeclaration.Id != null:
+                builder.AppendLine(GetNodeSource(source, classDeclaration));
+                AppendExportGetter(builder, "default", classDeclaration.Id.Name);
+                return builder.ToString();
+        }
+
+        if (exportDefaultDeclaration.Declaration is not Node declarationNode)
+        {
+            throw new NotSupportedException("Unsupported export default declaration node");
+        }
+
+        var defaultTemp = $"__js2il_esm_default_{tempCounter++}";
+        builder.Append("var ").Append(defaultTemp).Append(" = ").Append(GetNodeSource(source, declarationNode)).AppendLine(";");
+        AppendExportGetter(builder, "default", defaultTemp);
+        return builder.ToString();
+    }
+
+    private static string RewriteExportAllDeclaration(ExportAllDeclaration exportAllDeclaration, string source, ref int tempCounter)
+    {
+        if (exportAllDeclaration.Attributes.Count > 0)
+        {
+            throw new NotSupportedException("Export attributes are not yet supported");
+        }
+
+        var moduleTemp = $"__js2il_esm_mod_{tempCounter++}";
+        var exportSourceLiteral = GetNodeSource(source, exportAllDeclaration.Source);
+        var builder = new StringBuilder();
+        builder.Append("var ").Append(moduleTemp).Append(" = require(").Append(exportSourceLiteral).AppendLine(");");
+
+        if (exportAllDeclaration.Exported != null)
+        {
+            var exportName = GetExpressionName(exportAllDeclaration.Exported);
+            AppendExportGetter(builder, exportName, $"__js2il_esm_namespace({moduleTemp})");
+            return builder.ToString();
+        }
+
+        var keyName = $"__js2il_esm_key_{tempCounter++}";
+        builder.Append("for (var ").Append(keyName).Append(" in ").Append(moduleTemp).AppendLine(") {");
+        builder.Append("  if (!Object.prototype.hasOwnProperty.call(")
+            .Append(moduleTemp)
+            .Append(", ")
+            .Append(keyName)
+            .AppendLine(")) { continue; }");
+        builder.Append("  if (")
+            .Append(keyName)
+            .AppendLine(" === \"default\" || " + keyName + " === \"__esModule\" || " + keyName + " === \"module.exports\") { continue; }");
+        builder.Append("  (function(__k) { __js2il_esm_export(__k, function() { return ")
+            .Append(moduleTemp)
+            .Append("[__k]; }); })(")
+            .Append(keyName)
+            .AppendLine(");");
+        builder.AppendLine("}");
+        return builder.ToString();
+    }
+
+    private static void AppendExportGetter(StringBuilder builder, string exportName, string valueExpression)
+    {
+        builder.Append("__js2il_esm_export(\"")
+            .Append(EscapeJsString(exportName))
+            .Append("\", function() { return ")
+            .Append(valueExpression)
+            .AppendLine("; });");
+    }
+
+    private static string GetNodeSource(string source, Node node)
+    {
+        return source.Substring(node.Start, node.End - node.Start);
+    }
+
+    private static string GetExpressionName(Expression expression)
+    {
+        return expression switch
+        {
+            Identifier identifier => identifier.Name,
+            Literal literal when literal.Value is string s => s,
+            Literal literal when literal.Value != null => Convert.ToString(literal.Value, CultureInfo.InvariantCulture) ?? string.Empty,
+            _ => throw new NotSupportedException("Only identifier and string-literal names are supported in import/export specifiers")
+        };
+    }
+
+    private static void CollectBindingNames(Node pattern, List<string> names)
+    {
+        switch (pattern)
+        {
+            case Identifier identifier:
+                names.Add(identifier.Name);
+                break;
+
+            case AssignmentPattern assignmentPattern:
+                CollectBindingNames(assignmentPattern.Left, names);
+                break;
+
+            case RestElement restElement:
+                CollectBindingNames(restElement.Argument, names);
+                break;
+
+            case ArrayPattern arrayPattern:
+                foreach (var element in arrayPattern.Elements)
+                {
+                    if (element != null)
+                    {
+                        CollectBindingNames(element, names);
+                    }
+                }
+                break;
+
+            case ObjectPattern objectPattern:
+                foreach (var property in objectPattern.Properties)
+                {
+                    switch (property)
+                    {
+                        case Property objectProperty when objectProperty.Value != null:
+                            CollectBindingNames(objectProperty.Value, names);
+                            break;
+
+                        case Property objectProperty:
+                            CollectBindingNames(objectProperty.Key, names);
+                            break;
+
+                        case RestElement objectRestElement:
+                            CollectBindingNames(objectRestElement.Argument, names);
+                            break;
+                    }
+                }
+                break;
+
+            default:
+                throw new NotSupportedException($"Unsupported export binding pattern '{pattern.TypeText}'");
+        }
+    }
+
+    private static string EscapeJsString(string value)
+    {
+        return value
+            .Replace("\\", "\\\\", StringComparison.Ordinal)
+            .Replace("\"", "\\\"", StringComparison.Ordinal)
+            .Replace("\r", "\\r", StringComparison.Ordinal)
+            .Replace("\n", "\\n", StringComparison.Ordinal);
+    }
+
+    private static bool IsDirectivePrologueStatement(Statement statement)
+    {
+        return statement is ExpressionStatement { Expression: Literal literal } && literal.Value is string;
+    }
+
+    private static bool IsStaticModuleDeclaration(Node node)
+    {
+        return node is ImportDeclaration
+            or ExportNamedDeclaration
+            or ExportDefaultDeclaration
+            or ExportAllDeclaration;
+    }
+
     private static void AddAliasIfMissing(ModuleDefinition module, string alias)
     {
         var normalized = alias.Replace('\\', '/').Trim();
@@ -324,12 +810,21 @@ public class ModuleLoader
             return null;
         }
 
-        if (s.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
-        {
-            s = s.Substring(0, s.Length - 3);
-        }
+        s = TrimKnownModuleExtension(s);
 
         return s;
+    }
+
+    private static string TrimKnownModuleExtension(string value)
+    {
+        if (value.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+            || value.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase)
+            || value.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase))
+        {
+            return Path.ChangeExtension(value, null) ?? value;
+        }
+
+        return value;
     }
 
     private static string ComputeCanonicalModuleId(string modulePath, string rootModulePath)

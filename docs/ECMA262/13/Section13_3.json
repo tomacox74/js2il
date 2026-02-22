@@ -146,12 +146,12 @@
           {
             "feature": "import(specifier) with string literal",
             "status": "Supported",
-            "notes": "Dynamic import() returns a Promise that resolves to CommonJS module.exports. Only string literals are supported as specifiers (compile-time dependency discovery)."
+            "notes": "Dynamic import() returns a Promise that resolves to CommonJS module.exports."
           },
           {
             "feature": "import(specifier) with non-literal expression",
-            "status": "Not Supported",
-            "notes": "Runtime-computed specifiers (e.g., import(variable)) are rejected during validation to ensure all dependencies can be resolved at compile time."
+            "status": "Supported with Limitations",
+            "notes": "Runtime-computed specifiers are allowed. Compile-time dependency discovery is best-effort for non-literal forms, so modules referenced only through dynamic values may require explicit inclusion."
           },
           {
             "feature": "import(specifier, options)",
@@ -173,7 +173,7 @@
       "title": "EvaluateImportCall ( specifierExpression [ , optionsExpression ] )",
       "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-evaluate-import-call",
-      "notes": "Implemented for literal string specifiers only. Options parameter is rejected during validation."
+      "notes": "Implemented for dynamic and literal specifiers. Options parameter is rejected during validation."
     },
     {
       "clause": "13.3.10.3",

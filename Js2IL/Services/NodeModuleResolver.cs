@@ -4,14 +4,15 @@ using System.Linq;
 namespace Js2IL.Services;
 
 /// <summary>
-/// Resolves CommonJS module specifiers to concrete .js files at compile time.
+/// Resolves CommonJS module specifiers to concrete JavaScript module files at compile time.
 ///
 /// This mirrors Node.js module resolution rules as closely as practical for JS2IL,
-/// but enforces that resolved targets must be <c>.js</c> files.
+/// and supports <c>.js</c>, <c>.mjs</c>, and <c>.cjs</c> targets.
 /// </summary>
 public sealed class NodeModuleResolver
 {
     private readonly IFileSystem _fileSystem;
+    private static readonly string[] KnownScriptExtensions = [".js", ".mjs", ".cjs"];
 
     public NodeModuleResolver(IFileSystem fileSystem)
     {
@@ -100,9 +101,11 @@ public sealed class NodeModuleResolver
 
             // Determine whether the package exists at this level by probing for common markers.
             var packageJsonPath = Path.Combine(packageRoot, "package.json");
-            var packageIndexJs = Path.Combine(packageRoot, "index.js");
+            var hasIndexCandidate = KnownScriptExtensions
+                .Select(ext => Path.Combine(packageRoot, "index" + ext))
+                .Any(_fileSystem.FileExists);
 
-            if (!_fileSystem.FileExists(packageJsonPath) && !_fileSystem.FileExists(packageIndexJs))
+            if (!_fileSystem.FileExists(packageJsonPath) && !hasIndexCandidate)
             {
                 continue;
             }
@@ -135,11 +138,15 @@ public sealed class NodeModuleResolver
                 return true;
             }
 
-            // Fallback: <packageRoot>/index.js
-            if (_fileSystem.FileExists(packageIndexJs))
+            // Fallback: <packageRoot>/index.(js|mjs|cjs)
+            foreach (var ext in KnownScriptExtensions)
             {
-                resolvedPath = Path.GetFullPath(packageIndexJs);
-                return true;
+                var packageIndexCandidate = Path.Combine(packageRoot, "index" + ext);
+                if (_fileSystem.FileExists(packageIndexCandidate))
+                {
+                    resolvedPath = Path.GetFullPath(packageIndexCandidate);
+                    return true;
+                }
             }
 
             error = $"Could not resolve entry for package '{packageName}'.";
@@ -156,22 +163,25 @@ public sealed class NodeModuleResolver
         error = null;
 
         // 1) Exact file
-        if (TryAcceptResolvedJsFile(requestPath, out resolvedPath, out error))
+        if (TryAcceptResolvedScriptFile(requestPath, out resolvedPath, out error))
         {
             return true;
         }
 
-        // 2) Append .js
+        // 2) Append common script extensions
         if (!Path.HasExtension(requestPath))
         {
-            var withJs = requestPath + ".js";
-            if (TryAcceptResolvedJsFile(withJs, out resolvedPath, out error))
+            foreach (var ext in KnownScriptExtensions)
             {
-                return true;
+                var withExtension = requestPath + ext;
+                if (TryAcceptResolvedScriptFile(withExtension, out resolvedPath, out error))
+                {
+                    return true;
+                }
             }
         }
 
-        // 3) Directory: package.json -> entry, then index.js
+        // 3) Directory: package.json -> entry, then index.(js|mjs|cjs)
         var packageJson = Path.Combine(requestPath, "package.json");
         if (_fileSystem.FileExists(packageJson)
             && TryResolvePackageEntryFromPackageJson(requestPath, packageJson, out resolvedPath, out error))
@@ -179,18 +189,21 @@ public sealed class NodeModuleResolver
             return true;
         }
 
-        var indexJs = Path.Combine(requestPath, "index.js");
-        if (_fileSystem.FileExists(indexJs))
+        foreach (var ext in KnownScriptExtensions)
         {
-            resolvedPath = Path.GetFullPath(indexJs);
-            return true;
+            var indexCandidate = Path.Combine(requestPath, "index" + ext);
+            if (_fileSystem.FileExists(indexCandidate))
+            {
+                resolvedPath = Path.GetFullPath(indexCandidate);
+                return true;
+            }
         }
 
-        error = $"Cannot resolve module path '{requestPath}' to a .js file.";
+        error = $"Cannot resolve module path '{requestPath}' to a supported script file (.js, .mjs, .cjs).";
         return false;
     }
 
-    private bool TryAcceptResolvedJsFile(string path, out string resolvedPath, out string? error)
+    private bool TryAcceptResolvedScriptFile(string path, out string resolvedPath, out string? error)
     {
         resolvedPath = string.Empty;
         error = null;
@@ -201,9 +214,9 @@ public sealed class NodeModuleResolver
         }
 
         var full = Path.GetFullPath(path);
-        if (!full.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
+        if (!KnownScriptExtensions.Any(ext => full.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
         {
-            error = $"Resolved module target '{full}' is not a .js file (only .js is supported).";
+            error = $"Resolved module target '{full}' is not a supported script file (.js, .mjs, .cjs).";
             return false;
         }
 
