@@ -380,14 +380,16 @@
         "testScripts": [
           "Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js"
         ],
-        "notes": "Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls."
+        "notes": "Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls. In this MVP, static import/export declarations must appear before non-directive top-level statements."
       },
       {
         "clause": "16.2.3",
         "feature": "Top-level export declarations",
         "status": "Supported with Limitations",
         "testScripts": [
-          "Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule_Lib.mjs"
+          "Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule_Lib.mjs",
+          "Js2IL.Tests/Import/JavaScript/Import_ExportNamedFrom.js",
+          "Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js"
         ],
         "notes": "Supported forms include named/default exports, `export ... from`, and `export *` re-exports. Exports are projected through CommonJS `exports` with getter-based wiring."
       },

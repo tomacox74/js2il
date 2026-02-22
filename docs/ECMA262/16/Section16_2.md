@@ -89,11 +89,11 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Top-level static import declarations | Supported with Limitations | [`Import_StaticImport_FromCjs.js`](../../../Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js) | Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls. |
+| Top-level static import declarations | Supported with Limitations | [`Import_StaticImport_FromCjs.js`](../../../Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js) | Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls. In this MVP, static import/export declarations must appear before non-directive top-level statements. |
 
 ### 16.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-exports))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Top-level export declarations | Supported with Limitations | `Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule_Lib.mjs` | Supported forms include named/default exports, `export ... from`, and `export *` re-exports. Exports are projected through CommonJS `exports` with getter-based wiring. |
+| Top-level export declarations | Supported with Limitations | `Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule_Lib.mjs`<br>[`Import_ExportNamedFrom.js`](../../../Js2IL.Tests/Import/JavaScript/Import_ExportNamedFrom.js)<br>[`Import_ExportStarFrom.js`](../../../Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js) | Supported forms include named/default exports, `export ... from`, and `export *` re-exports. Exports are projected through CommonJS `exports` with getter-based wiring. |
 

@@ -28,5 +28,19 @@ namespace Js2IL.Tests.Import
             var testName = nameof(Import_RequireEsmModule);
             return ExecutionTest(testName);
         }
+
+        [Fact]
+        public Task Import_ExportNamedFrom()
+        {
+            var testName = nameof(Import_ExportNamedFrom);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Import_ExportStarFrom()
+        {
+            var testName = nameof(Import_ExportStarFrom);
+            return ExecutionTest(testName);
+        }
     }
 }

@@ -312,7 +312,11 @@ public class ModuleLoader
     }
 
     private static readonly string EsModuleInteropPrelude =
-@"Object.defineProperty(exports, ""__esModule"", { value: true, enumerable: false, configurable: true });
+@"function __js2il_esm_mark() {
+    if (!Object.prototype.hasOwnProperty.call(exports, ""__esModule"")) {
+        Object.defineProperty(exports, ""__esModule"", { value: true, enumerable: false, configurable: true });
+    }
+}
 function __js2il_esm_default(mod) {
     return (mod != null && Object.prototype.hasOwnProperty.call(mod, ""default"")) ? mod.default : mod;
 }
@@ -324,7 +328,10 @@ function __js2il_esm_namespace(mod) {
     ns[""module.exports""] = mod;
     if (mod != null && (typeof mod === ""object"" || typeof mod === ""function"")) {
         for (var key in mod) {
-            if (key !== ""default"" && key !== ""module.exports"") {
+            if (!Object.prototype.hasOwnProperty.call(mod, key)) {
+                continue;
+            }
+            if (key !== ""default"" && key !== ""module.exports"" && key !== ""__esModule"") {
                 ns[key] = mod[key];
             }
         }
@@ -332,6 +339,7 @@ function __js2il_esm_namespace(mod) {
     return ns;
 }
 function __js2il_esm_export(name, getter) {
+    __js2il_esm_mark();
     Object.defineProperty(exports, name, { enumerable: true, configurable: true, get: getter });
 }";
 
@@ -374,11 +382,30 @@ function __js2il_esm_export(name, getter) {
             return false;
         }
 
+        var seenNonDirectiveNonModuleStatement = false;
+        foreach (var statement in ast.Body)
+        {
+            if (IsStaticModuleDeclaration(statement))
+            {
+                if (seenNonDirectiveNonModuleStatement)
+                {
+                    error = $"Static import/export declarations must appear before non-directive top-level statements in this MVP implementation (line {statement.Location.Start.Line}).";
+                    return false;
+                }
+
+                continue;
+            }
+
+            if (!IsDirectivePrologueStatement(statement))
+            {
+                seenNonDirectiveNonModuleStatement = true;
+            }
+        }
+
         var builder = new StringBuilder(source.Length + 512);
         var cursor = 0;
         var tempCounter = 0;
         var rewrittenAny = false;
-        var helperInjected = false;
 
         foreach (var statement in ast.Body)
         {
@@ -395,13 +422,6 @@ function __js2il_esm_export(name, getter) {
             rewrittenAny = true;
             builder.Append(source, cursor, statement.Start - cursor);
 
-            if (!helperInjected)
-            {
-                builder.AppendLine();
-                builder.AppendLine(EsModuleInteropPrelude);
-                helperInjected = true;
-            }
-
             builder.AppendLine(rewrittenStatement);
             cursor = statement.End;
         }
@@ -412,6 +432,8 @@ function __js2il_esm_export(name, getter) {
         }
 
         builder.Append(source, cursor, source.Length - cursor);
+        builder.AppendLine();
+        builder.AppendLine(EsModuleInteropPrelude);
         rewrittenSource = builder.ToString();
         return true;
     }
@@ -635,6 +657,11 @@ function __js2il_esm_export(name, getter) {
 
         var keyName = $"__js2il_esm_key_{tempCounter++}";
         builder.Append("for (var ").Append(keyName).Append(" in ").Append(moduleTemp).AppendLine(") {");
+        builder.Append("  if (!Object.prototype.hasOwnProperty.call(")
+            .Append(moduleTemp)
+            .Append(", ")
+            .Append(keyName)
+            .AppendLine(")) { continue; }");
         builder.Append("  if (")
             .Append(keyName)
             .AppendLine(" === \"default\" || " + keyName + " === \"__esModule\" || " + keyName + " === \"module.exports\") { continue; }");
@@ -730,6 +757,11 @@ function __js2il_esm_export(name, getter) {
             .Replace("\"", "\\\"", StringComparison.Ordinal)
             .Replace("\r", "\\r", StringComparison.Ordinal)
             .Replace("\n", "\\n", StringComparison.Ordinal);
+    }
+
+    private static bool IsDirectivePrologueStatement(Statement statement)
+    {
+        return statement is ExpressionStatement { Expression: Literal literal } && literal.Value is string;
     }
 
     private static bool IsStaticModuleDeclaration(Node node)
