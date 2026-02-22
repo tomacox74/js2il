@@ -26,9 +26,10 @@ namespace JavaScriptRuntime.CommonJS
                 s = s.Substring(2);
             }
 
-            if (s.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
+            if (HasKnownModuleExtension(s))
             {
-                s = s.Substring(0, s.Length - 3);
+                s = Path.ChangeExtension(s.Replace('/', Path.DirectorySeparatorChar), null) ?? s;
+                s = s.Replace('\\', '/');
             }
 
             return SanitizeModuleId(s);
@@ -139,6 +140,13 @@ namespace JavaScriptRuntime.CommonJS
             }
 
             return sb.ToString();
+        }
+
+        private static bool HasKnownModuleExtension(string value)
+        {
+            return value.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+                || value.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase)
+                || value.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

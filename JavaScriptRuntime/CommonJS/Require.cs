@@ -269,9 +269,12 @@ namespace JavaScriptRuntime.CommonJS
                 s = s.Substring(1);
             }
 
-            if (s.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
+            if (s.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+                || s.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase)
+                || s.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase))
             {
-                s = s.Substring(0, s.Length - 3);
+                s = Path.ChangeExtension(s.Replace('/', Path.DirectorySeparatorChar), null) ?? s;
+                s = s.Replace('\\', '/');
             }
 
             return s;
