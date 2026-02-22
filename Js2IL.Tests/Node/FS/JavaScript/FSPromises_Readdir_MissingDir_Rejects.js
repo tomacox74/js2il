@@ -10,5 +10,5 @@ fs.readdir(missing)
         console.log('Unexpected success');
     })
     .catch(err => {
-        console.log('Is ENOENT:', String(err.message).startsWith('ENOENT:') || String(err.message).includes('not find'));
+        console.log('Is ENOENT:', String(err.message).startsWith('ENOENT:'));
     });

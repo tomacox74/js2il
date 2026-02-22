@@ -76,7 +76,7 @@ namespace JavaScriptRuntime.Node
             }
             catch (Exception ex)
             {
-                _ioScheduler.EndIo(promiseWithResolvers, new Error(ex.Message, ex), isError: true);
+                _ioScheduler.EndIo(promiseWithResolvers, TranslateReaddirError(path, ex), isError: true);
                 return promiseWithResolvers.promise;
             }
         }
@@ -107,7 +107,7 @@ namespace JavaScriptRuntime.Node
             }
             catch (Exception ex)
             {
-                _ioScheduler.EndIo(promiseWithResolvers, new Error(ex.Message, ex), isError: true);
+                _ioScheduler.EndIo(promiseWithResolvers, TranslateReaddirError(path, ex), isError: true);
             }
         }
 
@@ -456,6 +456,31 @@ namespace JavaScriptRuntime.Node
             }
 
             return new Error($"EIO: i/o error, write '{path}'", ex);
+        }
+
+        private static Error TranslateReaddirError(string path, Exception ex)
+        {
+            if (ex is DirectoryNotFoundException)
+            {
+                return new Error($"ENOENT: no such file or directory, scandir '{path}'", ex);
+            }
+
+            if (File.Exists(path))
+            {
+                return new Error($"ENOTDIR: not a directory, scandir '{path}'", ex);
+            }
+
+            if (ex is UnauthorizedAccessException)
+            {
+                return new Error($"EACCES: permission denied, scandir '{path}'", ex);
+            }
+
+            if (ex is IOException)
+            {
+                return new Error($"EIO: i/o error, scandir '{path}'", ex);
+            }
+
+            return new Error($"EIO: i/o error, scandir '{path}'", ex);
         }
     }
 }
