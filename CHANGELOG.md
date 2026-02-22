@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.17 - 2026-02-22
+
 - Modules/interop: add MVP static ESM syntax support by lowering top-level `import`/`export` declarations onto the existing CommonJS runtime model.
 - Node-style mixed module behavior: support `.js`/`.mjs`/`.cjs` resolution in module loading and runtime module-id normalization to improve CJS/ESM interop parity.
 - Tests: add import/export mixed-module coverage (`Import_StaticImport_FromCjs`, `Import_RequireEsmModule`) with execution and generator snapshots.
