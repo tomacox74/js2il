@@ -53,37 +53,14 @@ namespace JavaScriptRuntime
                 return string.Join(",", items);
             }
 
+            if (value is JsObject jsObject)
+            {
+                return FormatObject(jsObject);
+            }
+
             if (value is ExpandoObject expandObject)
             {
-                // Check if the object has a custom toString method
-                var dict = (IDictionary<string, object?>)expandObject;
-                if (dict.TryGetValue("toString", out var toStringMethod) && toStringMethod is Delegate toStringDelegate)
-                {
-                    try
-                    {
-                        // Call the toString method
-                        var result = toStringDelegate.DynamicInvoke(new object[] { System.Array.Empty<object>() });
-                        if (result != null)
-                        {
-                            return ToString(result);
-                        }
-                    }
-                    catch
-                    {
-                        // Fall through to default behavior
-                    }
-                }
-
-                // Default object representation
-                string propertyValues = string.Join(", ", expandObject
-                    .Select(kvp =>
-                    {
-                        var value = kvp.Value is string ? $"'{kvp.Value}'" : ToString(kvp.Value);
-
-                        return $"{kvp.Key}: {value}";
-                     }));
-
-                return string.Format("{{ {0} }}", propertyValues);
+                return FormatObject((IDictionary<string, object?>)expandObject);
             }
 
             // Numbers: normalize to JS-like string forms using invariant culture and exact tokens
@@ -142,6 +119,38 @@ namespace JavaScriptRuntime
                 return formattable.ToString(null, System.Globalization.CultureInfo.InvariantCulture);
             }
             return value!.ToString()!;
+        }
+
+        private static string FormatObject(IDictionary<string, object?> dict)
+        {
+            // Check if the object has a custom toString method
+            if (dict.TryGetValue("toString", out var toStringMethod) && toStringMethod is Delegate toStringDelegate)
+            {
+                try
+                {
+                    // Call the toString method
+                    var result = toStringDelegate.DynamicInvoke(new object[] { System.Array.Empty<object>() });
+                    if (result != null)
+                    {
+                        return ToString(result);
+                    }
+                }
+                catch
+                {
+                    // Fall through to default behavior
+                }
+            }
+
+            // Default object representation
+            string propertyValues = string.Join(", ", dict
+                .Select(kvp =>
+                {
+                    var value = kvp.Value is string ? $"'{kvp.Value}'" : ToString(kvp.Value);
+
+                    return $"{kvp.Key}: {value}";
+                }));
+
+            return string.Format("{{ {0} }}", propertyValues);
         }
     }
 }

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2105
+			// Method begins at RVA 0x2104
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 169 (0xa9)
+		// Code size: 168 (0xa8)
 		.maxstack 8
 		.locals (
 			[0] class Modules.CommonJS_Module_Exports_Reassign/Scope
@@ -64,33 +64,32 @@
 		IL_003b: pop
 		IL_003c: ldarg.2
 		IL_003d: ldstr "exports"
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0047: dup
 		IL_0048: ldstr "newObject"
 		IL_004d: ldstr "reassigned module.exports"
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0057: pop
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_005d: pop
-		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0063: ldstr "module.exports.newObject:"
-		IL_0068: ldarg.2
-		IL_0069: ldstr "exports"
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0073: ldstr "newObject"
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0082: pop
-		IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0088: ldstr "module.exports.fromExports after reassign:"
-		IL_008d: ldarg.2
-		IL_008e: ldstr "exports"
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0098: ldstr "fromExports"
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00a7: pop
-		IL_00a8: ret
+		IL_0052: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_005c: pop
+		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0062: ldstr "module.exports.newObject:"
+		IL_0067: ldarg.2
+		IL_0068: ldstr "exports"
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0072: ldstr "newObject"
+		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_007c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0081: pop
+		IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0087: ldstr "module.exports.fromExports after reassign:"
+		IL_008c: ldarg.2
+		IL_008d: ldstr "exports"
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0097: ldstr "fromExports"
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00a6: pop
+		IL_00a7: ret
 	} // end of method CommonJS_Module_Exports_Reassign::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_Reassign
@@ -102,7 +101,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210e
+		// Method begins at RVA 0x210d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
