@@ -187,7 +187,7 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRGetItemAsNumber getItemAsNumber)
             {
-                if (IsReferenceString(methodBody, getItemAsNumber.Index))
+                if (IsTempStringReference(methodBody, getItemAsNumber.Index))
                 {
                     methodBody.Instructions[i] = new LIRGetItemAsNumberString(
                         getItemAsNumber.Object,
@@ -402,7 +402,7 @@ internal static class LIRIntrinsicNormalization
         return storage.Kind == ValueStorageKind.BoxedValue && storage.ClrType == typeof(double);
     }
 
-    private static bool IsReferenceString(MethodBodyIR methodBody, TempVariable temp)
+    private static bool IsTempStringReference(MethodBodyIR methodBody, TempVariable temp)
     {
         if (temp.Index < 0 || temp.Index >= methodBody.TempStorages.Count)
         {
