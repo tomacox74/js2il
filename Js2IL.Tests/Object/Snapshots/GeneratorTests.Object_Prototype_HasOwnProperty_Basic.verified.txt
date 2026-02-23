@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x215c
+			// Method begins at RVA 0x2156
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 256 (0x100)
+		// Code size: 250 (0xfa)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_Prototype_HasOwnProperty_Basic/Scope,
-			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] object,
 			[3] object,
 			[4] object
@@ -52,84 +52,82 @@
 
 		IL_0000: newobj instance void Modules.Object_Prototype_HasOwnProperty_Basic/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "p"
 		IL_0011: ldc.r8 123
-		IL_001a: box [System.Runtime]System.Double
-		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-		IL_0024: pop
-		IL_0025: stloc.1
-		IL_0026: ldloc.1
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::create(object)
-		IL_002c: stloc.3
-		IL_002d: ldloc.3
-		IL_002e: stloc.2
-		IL_002f: ldloc.2
-		IL_0030: ldstr "own"
-		IL_0035: ldc.r8 456
-		IL_003e: box [System.Runtime]System.Double
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-		IL_0048: pop
-		IL_0049: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-		IL_004e: ldstr "prototype"
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
-		IL_0058: ldstr "hasOwnProperty"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
-		IL_0062: stloc.3
-		IL_0063: ldloc.3
-		IL_0064: ldstr "apply"
-		IL_0069: ldloc.2
-		IL_006a: ldc.i4.1
-		IL_006b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0070: dup
-		IL_0071: ldstr "own"
-		IL_0076: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0080: stloc.3
-		IL_0081: ldstr "own="
-		IL_0086: ldloc.3
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_008c: stloc.s 4
-		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0093: ldc.i4.1
-		IL_0094: newarr [System.Runtime]System.Object
-		IL_0099: dup
-		IL_009a: ldc.i4.0
-		IL_009b: ldloc.s 4
-		IL_009d: stelem.ref
-		IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a3: pop
-		IL_00a4: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-		IL_00a9: ldstr "prototype"
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
-		IL_00b3: ldstr "hasOwnProperty"
-		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
-		IL_00bd: stloc.3
-		IL_00be: ldloc.3
-		IL_00bf: ldstr "apply"
-		IL_00c4: ldloc.2
-		IL_00c5: ldc.i4.1
-		IL_00c6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00cb: dup
-		IL_00cc: ldstr "p"
-		IL_00d1: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00db: stloc.3
-		IL_00dc: ldstr "p="
-		IL_00e1: ldloc.3
-		IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00e7: stloc.s 4
-		IL_00e9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ee: ldc.i4.1
-		IL_00ef: newarr [System.Runtime]System.Object
-		IL_00f4: dup
-		IL_00f5: ldc.i4.0
-		IL_00f6: ldloc.s 4
-		IL_00f8: stelem.ref
-		IL_00f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00fe: pop
-		IL_00ff: ret
+		IL_001a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_001f: stloc.1
+		IL_0020: ldloc.1
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::create(object)
+		IL_0026: stloc.3
+		IL_0027: ldloc.3
+		IL_0028: stloc.2
+		IL_0029: ldloc.2
+		IL_002a: ldstr "own"
+		IL_002f: ldc.r8 456
+		IL_0038: box [System.Runtime]System.Double
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
+		IL_0042: pop
+		IL_0043: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
+		IL_0048: ldstr "prototype"
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_0052: ldstr "hasOwnProperty"
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_005c: stloc.3
+		IL_005d: ldloc.3
+		IL_005e: ldstr "apply"
+		IL_0063: ldloc.2
+		IL_0064: ldc.i4.1
+		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_006a: dup
+		IL_006b: ldstr "own"
+		IL_0070: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_007a: stloc.3
+		IL_007b: ldstr "own="
+		IL_0080: ldloc.3
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0086: stloc.s 4
+		IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008d: ldc.i4.1
+		IL_008e: newarr [System.Runtime]System.Object
+		IL_0093: dup
+		IL_0094: ldc.i4.0
+		IL_0095: ldloc.s 4
+		IL_0097: stelem.ref
+		IL_0098: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_009d: pop
+		IL_009e: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
+		IL_00a3: ldstr "prototype"
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_00ad: ldstr "hasOwnProperty"
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_00b7: stloc.3
+		IL_00b8: ldloc.3
+		IL_00b9: ldstr "apply"
+		IL_00be: ldloc.2
+		IL_00bf: ldc.i4.1
+		IL_00c0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00c5: dup
+		IL_00c6: ldstr "p"
+		IL_00cb: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00d5: stloc.3
+		IL_00d6: ldstr "p="
+		IL_00db: ldloc.3
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00e1: stloc.s 4
+		IL_00e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e8: ldc.i4.1
+		IL_00e9: newarr [System.Runtime]System.Object
+		IL_00ee: dup
+		IL_00ef: ldc.i4.0
+		IL_00f0: ldloc.s 4
+		IL_00f2: stelem.ref
+		IL_00f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00f8: pop
+		IL_00f9: ret
 	} // end of method Object_Prototype_HasOwnProperty_Basic::__js_module_init__
 
 } // end of class Modules.Object_Prototype_HasOwnProperty_Basic
@@ -141,7 +139,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2165
+		// Method begins at RVA 0x215f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

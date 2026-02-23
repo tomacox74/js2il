@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x25ce
+					// Method begins at RVA 0x25bd
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -43,14 +43,14 @@
 					object newTarget
 				) cil managed 
 			{
-				// Method begins at RVA 0x2504
+				// Method begins at RVA 0x2500
 				// Header size: 12
-				// Code size: 122 (0x7a)
+				// Code size: 115 (0x73)
 				.maxstack 8
 				.locals init (
 					[0] float64,
 					[1] object,
-					[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+					[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 				)
 
 				IL_0000: ldarg.0
@@ -72,28 +72,25 @@
 				IL_002c: add
 				IL_002d: box [System.Runtime]System.Double
 				IL_0032: stfld object Modules.Async_ForAwaitOf_SyncIteratorFallback_BreakCloses/FunctionExpression_iterable/Scope::i
-				IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 				IL_003c: dup
 				IL_003d: ldstr "value"
 				IL_0042: ldloc.1
-				IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-				IL_0048: pop
-				IL_0049: dup
-				IL_004a: ldstr "done"
-				IL_004f: ldarg.0
-				IL_0050: ldc.i4.1
-				IL_0051: ldelem.ref
-				IL_0052: castclass Modules.Async_ForAwaitOf_SyncIteratorFallback_BreakCloses/FunctionExpression_iterable/Scope
-				IL_0057: ldfld object Modules.Async_ForAwaitOf_SyncIteratorFallback_BreakCloses/FunctionExpression_iterable/Scope::i
-				IL_005c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0061: ldc.r8 3
-				IL_006a: cgt
-				IL_006c: box [System.Runtime]System.Boolean
-				IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-				IL_0076: pop
-				IL_0077: stloc.2
-				IL_0078: ldloc.2
-				IL_0079: ret
+				IL_0043: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0048: dup
+				IL_0049: ldstr "done"
+				IL_004e: ldarg.0
+				IL_004f: ldc.i4.1
+				IL_0050: ldelem.ref
+				IL_0051: castclass Modules.Async_ForAwaitOf_SyncIteratorFallback_BreakCloses/FunctionExpression_iterable/Scope
+				IL_0056: ldfld object Modules.Async_ForAwaitOf_SyncIteratorFallback_BreakCloses/FunctionExpression_iterable/Scope::i
+				IL_005b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0060: ldc.r8 3
+				IL_0069: cgt
+				IL_006b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_0070: stloc.2
+				IL_0071: ldloc.2
+				IL_0072: ret
 			} // end of method ArrowFunction_L9C19::__js_call__
 
 		} // end of class ArrowFunction_L9C19
@@ -109,7 +106,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x25d7
+					// Method begins at RVA 0x25c6
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -130,9 +127,9 @@
 					object newTarget
 				) cil managed 
 			{
-				// Method begins at RVA 0x258a
+				// Method begins at RVA 0x257f
 				// Header size: 1
-				// Code size: 49 (0x31)
+				// Code size: 43 (0x2b)
 				.maxstack 8
 
 				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -144,14 +141,12 @@
 				IL_0012: stelem.ref
 				IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 				IL_0018: pop
-				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0019: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 				IL_001e: dup
 				IL_001f: ldstr "done"
 				IL_0024: ldc.i4.1
-				IL_0025: box [System.Runtime]System.Boolean
-				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-				IL_002f: pop
-				IL_0030: ret
+				IL_0025: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_002a: ret
 			} // end of method ArrowFunction_L10C21::__js_call__
 
 		} // end of class ArrowFunction_L10C21
@@ -169,7 +164,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x25c5
+				// Method begins at RVA 0x25b4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -192,13 +187,13 @@
 		{
 			// Method begins at RVA 0x2110
 			// Header size: 12
-			// Code size: 138 (0x8a)
+			// Code size: 136 (0x88)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Async_ForAwaitOf_SyncIteratorFallback_BreakCloses/FunctionExpression_iterable/Scope,
 				[1] object,
 				[2] object,
-				[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: newobj instance void Modules.Async_ForAwaitOf_SyncIteratorFallback_BreakCloses/FunctionExpression_iterable/Scope::.ctor()
@@ -243,20 +238,18 @@
 			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
 			IL_0067: stloc.2
-			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_006d: dup
 			IL_006e: ldstr "next"
 			IL_0073: ldloc.1
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-			IL_0079: pop
-			IL_007a: dup
-			IL_007b: ldstr "return"
-			IL_0080: ldloc.2
-			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-			IL_0086: pop
-			IL_0087: stloc.3
-			IL_0088: ldloc.3
-			IL_0089: ret
+			IL_0074: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0079: dup
+			IL_007a: ldstr "return"
+			IL_007f: ldloc.2
+			IL_0080: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0085: stloc.3
+			IL_0086: ldloc.3
+			IL_0087: ret
 		} // end of method FunctionExpression_iterable::__js_call__
 
 	} // end of class FunctionExpression_iterable
@@ -282,7 +275,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x25e0
+				// Method begins at RVA 0x25cf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -310,7 +303,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x25fb
+						// Method begins at RVA 0x25ea
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -328,7 +321,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x25f2
+					// Method begins at RVA 0x25e1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -346,7 +339,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x25e9
+				// Method begins at RVA 0x25d8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -367,7 +360,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x21a8
+			// Method begins at RVA 0x21a4
 			// Header size: 12
 			// Code size: 820 (0x334)
 			.maxstack 8
@@ -749,7 +742,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2604
+				// Method begins at RVA 0x25f3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -769,7 +762,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x24e8
+			// Method begins at RVA 0x24e4
 			// Header size: 1
 			// Code size: 27 (0x1b)
 			.maxstack 8
@@ -805,7 +798,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x25bc
+			// Method begins at RVA 0x25ab
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -837,7 +830,7 @@
 			[0] class Modules.Async_ForAwaitOf_SyncIteratorFallback_BreakCloses/Scope,
 			[1] object,
 			[2] object,
-			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] object
 		)
 
@@ -856,7 +849,7 @@
 		IL_0021: stloc.2
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0029: stloc.3
 		IL_002a: ldstr "iterator"
 		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
@@ -921,7 +914,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x260d
+		// Method begins at RVA 0x25fc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

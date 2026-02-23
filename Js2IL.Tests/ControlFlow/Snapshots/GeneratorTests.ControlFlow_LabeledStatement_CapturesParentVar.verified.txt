@@ -219,12 +219,12 @@
 		{
 			// Method begins at RVA 0x20b8
 			// Header size: 12
-			// Code size: 98 (0x62)
+			// Code size: 97 (0x61)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope,
 				[1] object,
-				[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: newobj instance void Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::.ctor()
@@ -242,35 +242,34 @@
 			IL_001d: stelem.ref
 			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 			IL_0023: stloc.1
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_0029: dup
 			IL_002a: ldstr "nextSkippingChildren"
 			IL_002f: ldloc.1
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-			IL_0035: pop
-			IL_0036: stloc.2
-			IL_0037: ldloc.0
-			IL_0038: ldloc.2
-			IL_0039: stfld object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::NodeTraversal
-			IL_003e: ldnull
-			IL_003f: ldftn object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/nextNode::__js_call__(object[], object)
-			IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-			IL_004a: ldc.i4.2
-			IL_004b: newarr [System.Runtime]System.Object
-			IL_0050: dup
-			IL_0051: ldc.i4.0
-			IL_0052: ldarg.0
-			IL_0053: ldc.i4.0
-			IL_0054: ldelem.ref
-			IL_0055: stelem.ref
-			IL_0056: dup
-			IL_0057: ldc.i4.1
-			IL_0058: ldloc.0
-			IL_0059: stelem.ref
-			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_005f: stloc.1
-			IL_0060: ldloc.1
-			IL_0061: ret
+			IL_0030: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0035: stloc.2
+			IL_0036: ldloc.0
+			IL_0037: ldloc.2
+			IL_0038: stfld object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/Scope::NodeTraversal
+			IL_003d: ldnull
+			IL_003e: ldftn object Modules.ControlFlow_LabeledStatement_CapturesParentVar/outer/nextNode::__js_call__(object[], object)
+			IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+			IL_0049: ldc.i4.2
+			IL_004a: newarr [System.Runtime]System.Object
+			IL_004f: dup
+			IL_0050: ldc.i4.0
+			IL_0051: ldarg.0
+			IL_0052: ldc.i4.0
+			IL_0053: ldelem.ref
+			IL_0054: stelem.ref
+			IL_0055: dup
+			IL_0056: ldc.i4.1
+			IL_0057: ldloc.0
+			IL_0058: stelem.ref
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_005e: stloc.1
+			IL_005f: ldloc.1
+			IL_0060: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer

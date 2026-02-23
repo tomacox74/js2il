@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21f1
+			// Method begins at RVA 0x21ed
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -111,7 +111,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2203
+				// Method begins at RVA 0x21ff
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -131,7 +131,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x21af
+			// Method begins at RVA 0x21ac
 			// Header size: 1
 			// Code size: 6 (0x6)
 			.maxstack 8
@@ -153,7 +153,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x220c
+				// Method begins at RVA 0x2208
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -175,7 +175,7 @@
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x21b8
+			// Method begins at RVA 0x21b4
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -204,7 +204,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2215
+				// Method begins at RVA 0x2211
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -226,7 +226,7 @@
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x21d0
+			// Method begins at RVA 0x21cc
 			// Header size: 12
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -265,7 +265,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21fa
+			// Method begins at RVA 0x21f6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -291,7 +291,7 @@
 	{
 		// Method begins at RVA 0x2100
 		// Header size: 12
-		// Code size: 163 (0xa3)
+		// Code size: 160 (0xa0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_ObjectWithFunctions_Lib/Scope,
@@ -299,7 +299,7 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithFunctions_Lib/Scope::.ctor()
@@ -343,29 +343,26 @@
 		IL_0061: stloc.s 4
 		IL_0063: ldloc.s 4
 		IL_0065: stloc.3
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_006b: dup
 		IL_006c: ldstr "foo"
 		IL_0071: ldloc.1
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-		IL_0077: pop
-		IL_0078: dup
-		IL_0079: ldstr "add"
-		IL_007e: ldloc.2
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-		IL_0084: pop
-		IL_0085: dup
-		IL_0086: ldstr "multiply"
-		IL_008b: ldloc.3
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-		IL_0091: pop
-		IL_0092: stloc.s 5
-		IL_0094: ldarg.2
-		IL_0095: ldstr "exports"
-		IL_009a: ldloc.s 5
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-		IL_00a1: pop
-		IL_00a2: ret
+		IL_0072: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0077: dup
+		IL_0078: ldstr "add"
+		IL_007d: ldloc.2
+		IL_007e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0083: dup
+		IL_0084: ldstr "multiply"
+		IL_0089: ldloc.3
+		IL_008a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_008f: stloc.s 5
+		IL_0091: ldarg.2
+		IL_0092: ldstr "exports"
+		IL_0097: ldloc.s 5
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
+		IL_009e: pop
+		IL_009f: ret
 	} // end of method CommonJS_Export_ObjectWithFunctions_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ObjectWithFunctions_Lib
@@ -377,7 +374,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x221e
+		// Method begins at RVA 0x221a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

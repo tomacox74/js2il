@@ -112,13 +112,13 @@
 		{
 			// Method begins at RVA 0x213c
 			// Header size: 12
-			// Code size: 70 (0x46)
+			// Code size: 69 (0x45)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_ClosureEscapesScope_ObjectLiteralProperty/createCalculator/Scope,
 				[1] object,
 				[2] object,
-				[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: newobj instance void Modules.Function_ClosureEscapesScope_ObjectLiteralProperty/createCalculator/Scope::.ctor()
@@ -145,15 +145,14 @@
 			IL_002e: stloc.2
 			IL_002f: ldloc.2
 			IL_0030: stloc.1
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_0036: dup
 			IL_0037: ldstr "multiply"
 			IL_003c: ldloc.1
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-			IL_0042: pop
-			IL_0043: stloc.3
-			IL_0044: ldloc.3
-			IL_0045: ret
+			IL_003d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0042: stloc.3
+			IL_0043: ldloc.3
+			IL_0044: ret
 		} // end of method createCalculator::__js_call__
 
 	} // end of class createCalculator
