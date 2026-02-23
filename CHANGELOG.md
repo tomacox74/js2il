@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- CommonJS/LIR: normalize `RequireDelegate` call emission during LIR intrinsic normalization for consistent module `require(...)` lowering and generator snapshots (PR #690).
 
 ## v0.8.18 - 2026-02-23
 
