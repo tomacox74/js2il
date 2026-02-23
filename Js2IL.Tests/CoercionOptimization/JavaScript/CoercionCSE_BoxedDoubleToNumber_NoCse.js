@@ -1,8 +1,8 @@
 "use strict";
 
-// Tests that repeated Number() calls on the same typed-double variable are
-// CSE'd (the second call is replaced by a copy of the first result) while
-// still producing correct output.
+// This verifies the non-optimized path: repeated Number() calls on a scope
+// variable that is represented as boxed/object should NOT be CSE'd by
+// LIRCoercionCSE, because only unboxed primitive sources are eligible.
 
 function compute(n) {
     let x = n - 0; // coerce to double

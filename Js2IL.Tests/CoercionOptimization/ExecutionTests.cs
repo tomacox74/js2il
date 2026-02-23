@@ -8,9 +8,9 @@ namespace Js2IL.Tests.CoercionOptimization
         public ExecutionTests() : base("CoercionOptimization") { }
 
         [Fact]
-        public Task CoercionCSE_DoubleToNumber()
+        public Task CoercionCSE_BoxedDoubleToNumber_NoCse()
         {
-            return ExecutionTest(nameof(CoercionCSE_DoubleToNumber));
+            return ExecutionTest(nameof(CoercionCSE_BoxedDoubleToNumber_NoCse));
         }
 
         [Fact]
