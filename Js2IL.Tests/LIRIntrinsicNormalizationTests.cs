@@ -228,4 +228,28 @@ public sealed class LIRIntrinsicNormalizationTests
         Assert.IsType<LIRGetItem>(body.Instructions[0]);
         Assert.IsType<LIRConvertToNumber>(body.Instructions[1]);
     }
+
+    [Fact]
+    public void Normalize_DoesNotFuse_GetItem_ConvertToNumber_WhenInstructionIntervenes()
+    {
+        var classRegistry = new ClassRegistry();
+        var body = new MethodBodyIR();
+
+        var receiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var index = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var getItemResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var numResult = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var otherResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        body.Instructions.Add(new LIRGetItem(receiver, index, getItemResult));
+        body.Instructions.Add(new LIRConvertToObject(receiver, typeof(object), otherResult));
+        body.Instructions.Add(new LIRConvertToNumber(getItemResult, numResult));
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry);
+
+        Assert.Equal(3, body.Instructions.Count);
+        Assert.IsType<LIRGetItem>(body.Instructions[0]);
+        Assert.IsType<LIRConvertToObject>(body.Instructions[1]);
+        Assert.IsType<LIRConvertToNumber>(body.Instructions[2]);
+    }
 }

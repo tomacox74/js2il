@@ -315,6 +315,12 @@ internal static class LIRIntrinsicNormalization
                 continue;
             }
 
+            // Keep evaluation/exception ordering intact: only fuse when ConvertToNumber is immediately after GetItem.
+            if (convIdx != i + 1)
+            {
+                continue;
+            }
+
             var conv = (LIRConvertToNumber)methodBody.Instructions[convIdx];
 
             // Verify the result temp is not used by any other instruction (besides the GetItem def and the ConvertToNumber).
