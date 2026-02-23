@@ -1,6 +1,7 @@
 using Acornima.Ast;
 using Js2IL.Services;
 using Js2IL.Validation;
+using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Text;
 
@@ -19,17 +20,24 @@ public class ModuleLoader
     private readonly JavaScriptAstValidator _validator;
     private readonly IFileSystem _fileSystem;
     private readonly NodeModuleResolver _moduleResolver;
-    private readonly ILogger _logger;
+    private readonly ICompilerOutput _ux;
+    private readonly Microsoft.Extensions.Logging.ILogger<ModuleLoader> _diagnosticLogger;
 
-    private readonly bool _verbose;
+    private readonly bool _diagnosticsEnabled;
 
-    public ModuleLoader(CompilerOptions options, IFileSystem fileSystem, NodeModuleResolver moduleResolver, ILogger logger)
+    public ModuleLoader(
+        CompilerOptions options,
+        IFileSystem fileSystem,
+        NodeModuleResolver moduleResolver,
+        ICompilerOutput ux,
+        Microsoft.Extensions.Logging.ILogger<ModuleLoader>? diagnosticLogger = null)
     {
-        _verbose = options.Verbose;
+        _diagnosticsEnabled = options.DiagnosticsEnabled;
         _validator = new JavaScriptAstValidator(options.StrictMode);
         _fileSystem = fileSystem;
         _moduleResolver = moduleResolver;
-        _logger = logger;
+        _ux = ux;
+        _diagnosticLogger = diagnosticLogger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<ModuleLoader>.Instance;
     }
 
     public Modules? LoadModules(string modulePath, string? rootModuleIdOverride = null)
@@ -110,7 +118,7 @@ public class ModuleLoader
 
         LoadRecursive(rootModulePath, requestedAliasModuleId: TryNormalizeBareAlias(rootModuleIdOverride));
 
-        diagnostics.Flush(_logger);
+        diagnostics.Flush(_ux);
 
         if (rootModule is null)
         {
@@ -278,9 +286,9 @@ public class ModuleLoader
             }
         }
 
-        if (this._verbose)
+        if (this._diagnosticsEnabled)
         {
-            _logger.WriteLine("AST Structure:");
+            _diagnosticLogger.LogInformation("AST Structure:");
             _parser.VisitAst(ast, node =>
             {
                 var message = $"Node Type: {node.Type}";
@@ -288,13 +296,13 @@ public class ModuleLoader
                     message += $", Value: {num.Value}";
                 if (node is Acornima.Ast.UnaryExpression unary)
                     message += $", Operator: {unary.Operator}";
-                _logger.WriteLine(message);
+                _diagnosticLogger.LogInformation("{AstNodeMessage}", message);
             });
         }
 
-        if (this._verbose)
+        if (this._diagnosticsEnabled)
         {
-            _logger.WriteLine($"\nValidating module: {modulePath}");
+            _diagnosticLogger.LogInformation("Validating module: {ModulePath}", modulePath);
         }
         var validationResult = _validator.Validate(ast);
         if (!validationResult.IsValid)
@@ -964,7 +972,7 @@ function __js2il_esm_export(name, getter) {
             }
         }
 
-        public void Flush(ILogger logger)
+        public void Flush(ICompilerOutput logger)
         {
             if (_parseErrors.Count > 0)
             {
