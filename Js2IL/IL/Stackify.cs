@@ -794,6 +794,8 @@ internal static class Stackify
             case LIRBitwiseNotNumber:
             case LIRBitwiseNotDynamic:
             case LIRCallIsTruthy:
+            case LIRCallIsTruthyDouble:
+            case LIRCallIsTruthyBool:
             case LIRCopyTemp:
                 return (1, 1);
 

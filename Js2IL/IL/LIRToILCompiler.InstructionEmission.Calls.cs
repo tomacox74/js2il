@@ -894,25 +894,4 @@ internal sealed partial class LIRToILCompiler
 
         return true;
     }
-
-    /// <summary>
-    /// Tries to find the LIRBuildArray instruction that defines the given temp variable.
-    /// Returns true if found and the array has a fixed size, with the element temps in the out parameter.
-    /// </summary>
-    private bool TryGetBuildArraySource(TempVariable arrayTemp, out IReadOnlyList<TempVariable> elements)
-    {
-        elements = System.Array.Empty<TempVariable>();
-        
-        // Search backwards through instructions to find the LIRBuildArray that defines this temp
-        foreach (var instr in MethodBody.Instructions)
-        {
-            if (instr is LIRBuildArray buildArray && buildArray.Result.Index == arrayTemp.Index)
-            {
-                elements = buildArray.Elements;
-                return true;
-            }
-        }
-        
-        return false;
-    }
 }

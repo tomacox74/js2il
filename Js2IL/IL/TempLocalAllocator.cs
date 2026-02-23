@@ -387,6 +387,12 @@ internal static class TempLocalAllocator
             case LIRCallIsTruthy callIsTruthy:
                 yield return callIsTruthy.Value;
                 break;
+            case LIRCallIsTruthyDouble callIsTruthyDouble:
+                yield return callIsTruthyDouble.Value;
+                break;
+            case LIRCallIsTruthyBool callIsTruthyBool:
+                yield return callIsTruthyBool.Value;
+                break;
             case LIRCopyTemp copyTemp:
                 yield return copyTemp.Source;
                 break;
@@ -942,6 +948,12 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCallIsTruthy callIsTruthy:
                 defined = callIsTruthy.Result;
+                return true;
+            case LIRCallIsTruthyDouble callIsTruthyDouble:
+                defined = callIsTruthyDouble.Result;
+                return true;
+            case LIRCallIsTruthyBool callIsTruthyBool:
+                defined = callIsTruthyBool.Result;
                 return true;
             case LIRCopyTemp copyTemp:
                 defined = copyTemp.Destination;
