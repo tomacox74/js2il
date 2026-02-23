@@ -103,6 +103,43 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRGetItemAsNumber getItemAsNumber:
+                {
+                    if (!IsMaterialized(getItemAsNumber.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    var indexStorage = GetTempStorage(getItemAsNumber.Index);
+                    if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
+                    {
+                        // Emit: call float64 JavaScriptRuntime.Object.GetItemAsNumber(object, double)
+                        EmitLoadTempAsObject(getItemAsNumber.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(getItemAsNumber.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItemAsNumber),
+                            parameterTypes: new[] { typeof(object), typeof(double) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemAsNumberMethod);
+                    }
+                    else
+                    {
+                        // Emit: call float64 JavaScriptRuntime.Object.GetItemAsNumber(object, object)
+                        EmitLoadTempAsObject(getItemAsNumber.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(getItemAsNumber.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItemAsNumber),
+                            parameterTypes: new[] { typeof(object), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemAsNumberMethod);
+                    }
+
+                    EmitStoreTemp(getItemAsNumber.Result, ilEncoder, allocation);
+                    break;
+                }
+
             case LIRGetItem getItem:
                 {
                     if (!IsMaterialized(getItem.Result, allocation))

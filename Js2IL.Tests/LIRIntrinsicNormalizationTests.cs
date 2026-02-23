@@ -222,4 +222,82 @@ public sealed class LIRIntrinsicNormalizationTests
         Assert.IsType<LIRBuildArray>(body.Instructions[0]);
         Assert.IsType<LIRCallIntrinsic>(body.Instructions[1]);
     }
+
+    [Fact]
+    public void Normalize_Fuses_GetItem_And_ConvertToNumber_Into_GetItemAsNumber_WhenResultUsedOnlyByConvert()
+    {
+        var classRegistry = new ClassRegistry();
+        var body = new MethodBodyIR();
+
+        // receiver: unknown type (object), index: unboxed double
+        var receiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var index = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var getItemResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var numResult = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        body.Instructions.Add(new LIRGetItem(receiver, index, getItemResult));
+        body.Instructions.Add(new LIRConvertToNumber(getItemResult, numResult));
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry);
+
+        // Should be fused into a single GetItemAsNumber
+        Assert.Single(body.Instructions);
+        var fused = Assert.IsType<LIRGetItemAsNumber>(body.Instructions[0]);
+        Assert.Equal(receiver, fused.Object);
+        Assert.Equal(index, fused.Index);
+        Assert.Equal(numResult, fused.Result);
+
+        // numResult storage should be unboxed double
+        Assert.Equal(ValueStorageKind.UnboxedValue, body.TempStorages[numResult.Index].Kind);
+        Assert.Equal(typeof(double), body.TempStorages[numResult.Index].ClrType);
+    }
+
+    [Fact]
+    public void Normalize_DoesNotFuse_GetItem_ConvertToNumber_WhenResultUsedElsewhere()
+    {
+        var classRegistry = new ClassRegistry();
+        var body = new MethodBodyIR();
+
+        var receiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var index = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var getItemResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var numResult = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var otherResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        body.Instructions.Add(new LIRGetItem(receiver, index, getItemResult));
+        body.Instructions.Add(new LIRConvertToNumber(getItemResult, numResult));
+        // getItemResult is also used by another instruction (e.g., boxing it back)
+        body.Instructions.Add(new LIRConvertToObject(getItemResult, typeof(object), otherResult));
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry);
+
+        // Should NOT fuse since getItemResult is used by two instructions
+        Assert.Equal(3, body.Instructions.Count);
+        Assert.IsType<LIRGetItem>(body.Instructions[0]);
+        Assert.IsType<LIRConvertToNumber>(body.Instructions[1]);
+    }
+
+    [Fact]
+    public void Normalize_DoesNotFuse_GetItem_ConvertToNumber_WhenInstructionIntervenes()
+    {
+        var classRegistry = new ClassRegistry();
+        var body = new MethodBodyIR();
+
+        var receiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var index = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var getItemResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var numResult = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var otherResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        body.Instructions.Add(new LIRGetItem(receiver, index, getItemResult));
+        body.Instructions.Add(new LIRConvertToObject(receiver, typeof(object), otherResult));
+        body.Instructions.Add(new LIRConvertToNumber(getItemResult, numResult));
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry);
+
+        Assert.Equal(3, body.Instructions.Count);
+        Assert.IsType<LIRGetItem>(body.Instructions[0]);
+        Assert.IsType<LIRConvertToObject>(body.Instructions[1]);
+        Assert.IsType<LIRConvertToNumber>(body.Instructions[2]);
+    }
 }

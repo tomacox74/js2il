@@ -6,6 +6,10 @@ All notable changes to this project are documented here.
 
 _Nothing yet._
 
+## v0.8.19 - 2026-02-23
+
+- CommonJS/LIR: normalize `RequireDelegate` call emission during LIR intrinsic normalization for consistent module `require(...)` lowering and generator snapshots (PR #690).
+
 ## v0.8.18 - 2026-02-23
 
 - IR/runtime perf: collapse dynamic `+` followed by immediate numeric coercion into `Operators.AddAndToNumber(...)` overloads in assignment/update hot paths, reducing emitted Add→ToNumber roundtrips while preserving JavaScript `+` semantics, mixed double/object no-boxing paths, and numeric-result no-boxing fast paths.
