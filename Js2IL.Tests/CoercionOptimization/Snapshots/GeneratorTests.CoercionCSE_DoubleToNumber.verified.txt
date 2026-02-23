@@ -1,0 +1,241 @@
+﻿// IL code: CoercionCSE_DoubleToNumber
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.CoercionCSE_DoubleToNumber
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit compute
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2198
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object n
+			) cil managed 
+		{
+			// Method begins at RVA 0x2128
+			// Header size: 12
+			// Code size: 91 (0x5b)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] object,
+				[2] object,
+				[3] float64,
+				[4] object,
+				[5] float64
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: ldc.r8 0.0
+			IL_000f: sub
+			IL_0010: box [System.Runtime]System.Double
+			IL_0015: stloc.0
+			IL_0016: ldloc.0
+			IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001c: stloc.3
+			IL_001d: ldloc.3
+			IL_001e: box [System.Runtime]System.Double
+			IL_0023: stloc.s 4
+			IL_0025: ldloc.s 4
+			IL_0027: stloc.1
+			IL_0028: ldloc.0
+			IL_0029: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002e: stloc.3
+			IL_002f: ldloc.3
+			IL_0030: box [System.Runtime]System.Double
+			IL_0035: stloc.s 4
+			IL_0037: ldloc.s 4
+			IL_0039: stloc.2
+			IL_003a: ldloc.1
+			IL_003b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0040: stloc.3
+			IL_0041: ldloc.2
+			IL_0042: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0047: stloc.s 5
+			IL_0049: ldloc.3
+			IL_004a: ldloc.s 5
+			IL_004c: add
+			IL_004d: stloc.s 5
+			IL_004f: ldloc.s 5
+			IL_0051: box [System.Runtime]System.Double
+			IL_0056: stloc.s 4
+			IL_0058: ldloc.s 4
+			IL_005a: ret
+		} // end of method compute::__js_call__
+
+	} // end of class compute
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 17 53 63 6f 70 65 20 63 6f 6d 70 75 74 65
+			3d 7b 63 6f 6d 70 75 74 65 7d 00 00
+		)
+		// Fields
+		.field public object compute
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x218f
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 202 (0xca)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.CoercionCSE_DoubleToNumber/Scope,
+			[1] object,
+			[2] object,
+			[3] object
+		)
+
+		IL_0000: newobj instance void Modules.CoercionCSE_DoubleToNumber/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.CoercionCSE_DoubleToNumber/compute::__js_call__(object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: stloc.1
+		IL_0024: ldnull
+		IL_0025: ldftn object Modules.CoercionCSE_DoubleToNumber/compute::__js_call__(object, object)
+		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0030: ldnull
+		IL_0031: ldc.r8 5
+		IL_003a: box [System.Runtime]System.Double
+		IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_0044: stloc.2
+		IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.2
+		IL_0053: stelem.ref
+		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0059: pop
+		IL_005a: ldnull
+		IL_005b: ldftn object Modules.CoercionCSE_DoubleToNumber/compute::__js_call__(object, object)
+		IL_0061: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0066: ldnull
+		IL_0067: ldc.r8 3.14
+		IL_0070: box [System.Runtime]System.Double
+		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_007a: stloc.2
+		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0080: ldc.i4.1
+		IL_0081: newarr [System.Runtime]System.Object
+		IL_0086: dup
+		IL_0087: ldc.i4.0
+		IL_0088: ldloc.2
+		IL_0089: stelem.ref
+		IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008f: pop
+		IL_0090: ldc.r8 2
+		IL_0099: neg
+		IL_009a: box [System.Runtime]System.Double
+		IL_009f: stloc.3
+		IL_00a0: ldnull
+		IL_00a1: ldftn object Modules.CoercionCSE_DoubleToNumber/compute::__js_call__(object, object)
+		IL_00a7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00ac: ldnull
+		IL_00ad: ldloc.3
+		IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_00b3: stloc.2
+		IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b9: ldc.i4.1
+		IL_00ba: newarr [System.Runtime]System.Object
+		IL_00bf: dup
+		IL_00c0: ldc.i4.0
+		IL_00c1: ldloc.2
+		IL_00c2: stelem.ref
+		IL_00c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00c8: pop
+		IL_00c9: ret
+	} // end of method CoercionCSE_DoubleToNumber::__js_module_init__
+
+} // end of class Modules.CoercionCSE_DoubleToNumber
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21a1
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.CoercionCSE_DoubleToNumber::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
