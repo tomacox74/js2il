@@ -300,4 +300,22 @@ public sealed class LIRIntrinsicNormalizationTests
         Assert.IsType<LIRConvertToObject>(body.Instructions[1]);
         Assert.IsType<LIRConvertToNumber>(body.Instructions[2]);
     }
+
+    [Fact]
+    public void Normalize_Rewrites_GetItemAsNumber_To_StringSpecificInstruction_WhenIndexIsString()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var index = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var result = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        body.Instructions.Add(new LIRGetItemAsNumber(receiver, index, result));
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry: new ClassRegistry());
+
+        var rewritten = Assert.IsType<LIRGetItemAsNumberString>(body.Instructions[0]);
+        Assert.Equal(receiver, rewritten.Object);
+        Assert.Equal(index, rewritten.Index);
+        Assert.Equal(result, rewritten.Result);
+    }
 }

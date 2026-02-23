@@ -779,18 +779,6 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemAsNumberMethod);
                     }
-                    else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string))
-                    {
-                        // Emit inline: call float64 JavaScriptRuntime.Object.GetItemAsNumber(object, string)
-                        EmitLoadTempAsObject(getItemAsNumber.Object, ilEncoder, allocation, methodDescriptor);
-                        EmitLoadTemp(getItemAsNumber.Index, ilEncoder, allocation, methodDescriptor);
-                        var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Object),
-                            nameof(JavaScriptRuntime.Object.GetItemAsNumber),
-                            parameterTypes: new[] { typeof(object), typeof(string) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getItemAsNumberMethod);
-                    }
                     else
                     {
                         // Emit inline: call float64 JavaScriptRuntime.Object.GetItemAsNumber(object, object)
@@ -803,6 +791,20 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemAsNumberMethod);
                     }
+                }
+                break;
+
+            case LIRGetItemAsNumberString getItemAsNumberString:
+                {
+                    // Emit inline: call float64 JavaScriptRuntime.Object.GetItemAsNumber(object, string)
+                    EmitLoadTempAsObject(getItemAsNumberString.Object, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(getItemAsNumberString.Index, ilEncoder, allocation, methodDescriptor);
+                    var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.GetItemAsNumber),
+                        parameterTypes: new[] { typeof(object), typeof(string) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(getItemAsNumberMethod);
                 }
                 break;
 
