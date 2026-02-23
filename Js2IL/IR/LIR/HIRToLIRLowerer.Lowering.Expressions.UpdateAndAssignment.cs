@@ -482,7 +482,7 @@ public sealed partial class HIRToLIRLowerer
 
         // Flow-sensitive refinement: if tempVar originated from a variable load, record that the
         // binding is now proven double so subsequent loads can return the coerced temp directly.
-        if (_tempBindingOrigin.TryGetValue(tempVar, out var sourceBinding))
+        if (_tempBindingOrigin.TryGetValue(tempVar, out var sourceBinding) && CanTrackNumericRefinement(sourceBinding))
         {
             _numericRefinements[sourceBinding] = numberTempVar;
         }
@@ -496,6 +496,12 @@ public sealed partial class HIRToLIRLowerer
     // assigned value is itself an unboxed double (e.g. after x = Number(x)).
     private void InvalidateNumericRefinement(BindingInfo binding, TempVariable newValue)
     {
+        if (!CanTrackNumericRefinement(binding))
+        {
+            _numericRefinements.Remove(binding);
+            return;
+        }
+
         var storage = GetTempStorage(newValue);
         if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
         {

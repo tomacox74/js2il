@@ -293,7 +293,7 @@ public sealed partial class HIRToLIRLowerer
         // Flow-sensitive numeric refinement: if this binding was previously proven to hold an
         // unboxed double (e.g. via an earlier Number(x) call or EnsureNumber coercion), return
         // that temp directly to avoid a redundant TypeUtilities.ToNumber call at the use site.
-        if (_numericRefinements.TryGetValue(binding, out var refinedTemp))
+        if (CanTrackNumericRefinement(binding) && _numericRefinements.TryGetValue(binding, out var refinedTemp))
         {
             result = refinedTemp;
             return true;

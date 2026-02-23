@@ -744,4 +744,12 @@ public sealed partial class HIRToLIRLowerer
         _numericRefinements.Clear();
     }
 
+    // Flow-sensitive numeric refinements are only safe for non-captured, non-global bindings.
+    // Captured/global bindings can be read/written through other runtime paths (closures, global object),
+    // which can invalidate local dominance assumptions.
+    private static bool CanTrackNumericRefinement(BindingInfo binding)
+    {
+        return !binding.IsCaptured && binding.Kind != BindingKind.Global;
+    }
+
 }
