@@ -392,6 +392,17 @@ public sealed partial class HIRToLIRLowerer
                     resultTempVar = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRLoadScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, resultTempVar));
                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                    _tempBindingOrigin[resultTempVar] = binding;
+                    return true;
+                }
+
+                // Flow-sensitive numeric refinement: if this binding was previously proven to hold an
+                // unboxed double (e.g. via an earlier Number(x) call or EnsureNumber coercion within
+                // this basic block), return that temp directly to avoid a redundant ToNumber call.
+                SyncNumericRefinementStateWithLabels();
+                if (CanTrackNumericRefinement(binding) && _numericRefinements.TryGetValue(binding, out var numericRefined))
+                {
+                    resultTempVar = numericRefined;
                     return true;
                 }
                 
@@ -455,6 +466,7 @@ public sealed partial class HIRToLIRLowerer
                                     else
                                     {
                                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                        _tempBindingOrigin[resultTempVar] = binding;
                                     }
                                     return true;
                                 }
@@ -467,6 +479,7 @@ public sealed partial class HIRToLIRLowerer
                                     resultTempVar = CreateTempVariable();
                                     _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, resultTempVar));
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                                    _tempBindingOrigin[resultTempVar] = binding;
                                     return true;
                                 }
                                 break;
@@ -485,6 +498,7 @@ public sealed partial class HIRToLIRLowerer
                                     }
                                     _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, resultTempVar));
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                                    _tempBindingOrigin[resultTempVar] = binding;
                                     return true;
                                 }
                                 break;
@@ -509,6 +523,7 @@ public sealed partial class HIRToLIRLowerer
                     {
                         // Parameters are typically treated as object (unknown type)
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        _tempBindingOrigin[resultTempVar] = binding;
                     }
                     return true;
                 }

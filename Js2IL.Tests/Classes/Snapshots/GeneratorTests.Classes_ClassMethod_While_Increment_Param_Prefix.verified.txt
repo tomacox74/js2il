@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e4
+				// Method begins at RVA 0x20ee
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x20f6
+					// Method begins at RVA 0x2100
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ed
+				// Method begins at RVA 0x20f7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -93,29 +93,33 @@
 				object n
 			) cil managed 
 		{
-			// Method begins at RVA 0x20a6
-			// Header size: 1
-			// Code size: 52 (0x34)
+			// Method begins at RVA 0x20a8
+			// Header size: 12
+			// Code size: 49 (0x31)
 			.maxstack 8
+			.locals init (
+				[0] float64
+			)
 
 			// loop start
 				IL_0000: ldarg.1
 				IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0006: ldc.r8 3
-				IL_000f: clt
-				IL_0011: brfalse IL_0032
+				IL_0006: stloc.0
+				IL_0007: ldloc.0
+				IL_0008: ldc.r8 3
+				IL_0011: clt
+				IL_0013: brfalse IL_002f
 
-				IL_0016: ldarg.1
-				IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_001c: ldc.r8 1
-				IL_0025: add
-				IL_0026: box [System.Runtime]System.Double
-				IL_002b: starg.s n
-				IL_002d: br IL_0000
+				IL_0018: ldloc.0
+				IL_0019: ldc.r8 1
+				IL_0022: add
+				IL_0023: box [System.Runtime]System.Double
+				IL_0028: starg.s n
+				IL_002a: br IL_0000
 			// end loop
 
-			IL_0032: ldnull
-			IL_0033: ret
+			IL_002f: ldnull
+			IL_0030: ret
 		} // end of method Counter::run
 
 	} // end of class Counter
@@ -127,7 +131,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20db
+			// Method begins at RVA 0x20e5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -194,7 +198,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ff
+		// Method begins at RVA 0x2109
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
