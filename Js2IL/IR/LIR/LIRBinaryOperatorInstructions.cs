@@ -181,8 +181,20 @@ public record LIRStrictNotEqualDynamic(TempVariable Left, TempVariable Right, Te
 /// <summary>
 /// Calls Operators.IsTruthy to check if a value is truthy according to JavaScript semantics.
 /// Result is a boolean (true/false).
+/// When the value type is provably double or bool, LIRTypeNormalization replaces this with
+/// the typed variants below to avoid boxing and select the correct overload directly.
 /// </summary>
 public record LIRCallIsTruthy(TempVariable Value, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls Operators.IsTruthy(double) - emitted by LIRTypeNormalization when value is a proven unboxed double.
+/// </summary>
+public record LIRCallIsTruthyDouble(TempVariable Value, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls Operators.IsTruthy(bool) - emitted by LIRTypeNormalization when value is a proven unboxed bool.
+/// </summary>
+public record LIRCallIsTruthyBool(TempVariable Value, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Copies a temp variable value to another temp variable.
