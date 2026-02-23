@@ -36,6 +36,17 @@ public sealed partial class HIRToLIRLowerer
     // (e.g., per-iteration loop environments).
     private readonly Dictionary<string, TempVariable> _activeScopeTempsByScopeName = new(StringComparer.Ordinal);
 
+    // Flow-sensitive numeric type refinement: maps a binding to the last proven unboxed-double
+    // temp that holds its value.  Used to avoid redundant TypeUtilities.ToNumber calls when the
+    // same variable is used in multiple numeric contexts without any intervening write.
+    // Entries for writable bindings are cleared when the binding is assigned and at every
+    // control-flow label (branch / loop header), keeping the optimisation safe.
+    private readonly Dictionary<BindingInfo, TempVariable> _numericRefinements = new Dictionary<BindingInfo, TempVariable>();
+
+    // Reverse map: records which binding a freshly-created load temp originated from so that
+    // EnsureNumber can propagate the coercion result back into _numericRefinements.
+    private readonly Dictionary<TempVariable, BindingInfo> _tempBindingOrigin = new Dictionary<TempVariable, BindingInfo>();
+
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
 
@@ -722,6 +733,15 @@ public sealed partial class HIRToLIRLowerer
     public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR? lirMethod)
     {
         return TryLower(hirMethod, null, null, out lirMethod);
-    } 
+    }
+
+    // Clear all numeric refinements at a control-flow label (branch / loop header).
+    // Refinements are only valid within a single basic block; once control flow can
+    // arrive from multiple predecessors, a previously cached coercion result may no
+    // longer reflect the current value of the variable, so we must discard them.
+    private void ClearNumericRefinementsAtLabel()
+    {
+        _numericRefinements.Clear();
+    }
 
 }

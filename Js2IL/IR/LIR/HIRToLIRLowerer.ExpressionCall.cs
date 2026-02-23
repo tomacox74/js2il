@@ -336,6 +336,17 @@ public sealed partial class HIRToLIRLowerer
                         return true;
                     }
 
+                    // Fast path: if the argument is already an unboxed double, Number() is a no-op.
+                    // This avoids a redundant box+ToNumber round-trip when the value was previously
+                    // proven numeric (e.g. flow-sensitive refinement after Number(x) assignment).
+                    var argStorage = GetTempStorage(args[0]);
+                    if (argStorage.Kind == ValueStorageKind.UnboxedValue && argStorage.ClrType == typeof(double))
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCopyTemp(args[0], resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                        return true;
+                    }
+
                     var source = EnsureObject(args[0]);
                     _methodBodyIR.Instructions.Add(new LIRConvertToNumber(source, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));

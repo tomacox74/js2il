@@ -43,6 +43,10 @@ public sealed partial class HIRToLIRLowerer
         // Branch to else if condition is false
         lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, elseLabel));
 
+        // Numeric refinements from before the branch are no longer valid inside the branch
+        // body since either the then- or else-path may be taken at runtime.
+        ClearNumericRefinementsAtLabel();
+
         // Consequent block (then)
         if (!TryLowerStatement(ifStmt.Consequent))
         {
@@ -59,6 +63,7 @@ public sealed partial class HIRToLIRLowerer
 
             // Else label
             lirInstructions.Add(new LIRLabel(elseLabel));
+            ClearNumericRefinementsAtLabel();
 
             if (!TryLowerStatement(ifStmt.Alternate))
             {
@@ -68,11 +73,13 @@ public sealed partial class HIRToLIRLowerer
 
             // End label
             lirInstructions.Add(new LIRLabel(endLabel));
+            ClearNumericRefinementsAtLabel();
         }
         else
         {
             // No else block - just emit the else label (which is effectively the end)
             lirInstructions.Add(new LIRLabel(elseLabel));
+            ClearNumericRefinementsAtLabel();
         }
 
         return true;
