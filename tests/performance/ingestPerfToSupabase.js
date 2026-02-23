@@ -108,11 +108,64 @@ function parseDurationToNs(value) {
     return amount * multiplier;
 }
 
+function parseMemoryToBytes(value) {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+
+    const raw = decodeHtmlEntities(String(value)).trim();
+    if (!raw || raw === 'NA' || raw === '-') return null;
+
+    const normalized = raw.replace(/,/g, '');
+    const match = normalized.match(/^(-?\d+(?:\.\d+)?)\s*(B|KB|MB|GB|TB)$/i);
+    if (!match) {
+        const numeric = Number.parseFloat(normalized);
+        return Number.isFinite(numeric) ? numeric : null;
+    }
+
+    const amount = Number.parseFloat(match[1]);
+    if (!Number.isFinite(amount)) return null;
+
+    const unit = match[2].toLowerCase();
+    const multiplier = unit === 'b'
+        ? 1
+        : unit === 'kb'
+            ? 1024
+            : unit === 'mb'
+                ? 1024 * 1024
+                : unit === 'gb'
+                    ? 1024 * 1024 * 1024
+                    : 1024 * 1024 * 1024 * 1024;
+
+    return amount * multiplier;
+}
+
 function getNumber(value) {
     if (typeof value === 'number' && Number.isFinite(value)) return value;
     if (typeof value === 'string') {
-        const parsed = Number.parseFloat(value);
+        const normalized = decodeHtmlEntities(value).trim().replace(/,/g, '');
+        if (!normalized || normalized === 'NA' || normalized === '-') return null;
+        const parsed = Number.parseFloat(normalized);
         if (Number.isFinite(parsed)) return parsed;
+    }
+    return null;
+}
+
+function firstNumber(...values) {
+    for (const value of values) {
+        const parsed = getNumber(value);
+        if (parsed !== null) {
+            return parsed;
+        }
+    }
+    return null;
+}
+
+function firstMemoryBytes(...values) {
+    for (const value of values) {
+        const parsed = parseMemoryToBytes(value);
+        if (parsed !== null) {
+            return parsed;
+        }
     }
     return null;
 }
@@ -319,6 +372,56 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata) {
             const mean = getNumber(stats.Mean ?? stats.mean);
             const median = getNumber(stats.Median ?? stats.median);
             const stdDev = getNumber(stats.StandardDeviation ?? stats.standardDeviation ?? stats.StdDev ?? stats.stdDev);
+            const memoryStats = benchmark.Memory ?? benchmark.memory ?? benchmark.MemoryStatistics ?? benchmark.memoryStatistics ?? {};
+            const gcStats = benchmark.GcStats ?? benchmark.gcStats ?? memoryStats.GcStats ?? memoryStats.gcStats ?? {};
+            const allocatedBytes = firstMemoryBytes(
+                benchmark.AllocatedBytes,
+                benchmark.allocatedBytes,
+                memoryStats.AllocatedBytes,
+                memoryStats.allocatedBytes,
+                memoryStats.BytesAllocatedPerOperation,
+                memoryStats.bytesAllocatedPerOperation,
+                memoryStats.Allocated,
+                memoryStats.allocated
+            );
+            const allocatedNativeMemoryBytes = firstMemoryBytes(
+                benchmark.AllocatedNativeMemory,
+                benchmark.allocatedNativeMemory,
+                memoryStats.AllocatedNativeMemory,
+                memoryStats.allocatedNativeMemory,
+                memoryStats.NativeMemoryBytes,
+                memoryStats.nativeMemoryBytes
+            );
+            const gen0Collections = firstNumber(
+                benchmark.Gen0,
+                benchmark.gen0,
+                benchmark.Gen0Collections,
+                benchmark.gen0Collections,
+                gcStats.Gen0Collections,
+                gcStats.gen0Collections,
+                memoryStats.Gen0Collections,
+                memoryStats.gen0Collections
+            );
+            const gen1Collections = firstNumber(
+                benchmark.Gen1,
+                benchmark.gen1,
+                benchmark.Gen1Collections,
+                benchmark.gen1Collections,
+                gcStats.Gen1Collections,
+                gcStats.gen1Collections,
+                memoryStats.Gen1Collections,
+                memoryStats.gen1Collections
+            );
+            const gen2Collections = firstNumber(
+                benchmark.Gen2,
+                benchmark.gen2,
+                benchmark.Gen2Collections,
+                benchmark.gen2Collections,
+                gcStats.Gen2Collections,
+                gcStats.gen2Collections,
+                memoryStats.Gen2Collections,
+                memoryStats.gen2Collections
+            );
 
             if (mean !== null) {
                 rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'mean_ns', mean, 'ns', runAt, meta, hostColumns));
@@ -328,6 +431,21 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata) {
             }
             if (stdDev !== null) {
                 rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'stddev_ns', stdDev, 'ns', runAt, meta, hostColumns));
+            }
+            if (allocatedBytes !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'allocated_bytes', allocatedBytes, 'bytes', runAt, meta, hostColumns));
+            }
+            if (allocatedNativeMemoryBytes !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'allocated_native_memory_bytes', allocatedNativeMemoryBytes, 'bytes', runAt, meta, hostColumns));
+            }
+            if (gen0Collections !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen0_collections_per_1000_ops', gen0Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
+            }
+            if (gen1Collections !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen1_collections_per_1000_ops', gen1Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
+            }
+            if (gen2Collections !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen2_collections_per_1000_ops', gen2Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
             }
         }
     }
@@ -353,6 +471,25 @@ function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata) {
         if (headerIndex < 0) {
             continue;
         }
+        const headers = lines[headerIndex]
+            .split('|')
+            .map(column => decodeHtmlEntities(column.trim()))
+            .slice(1, -1);
+        const normalizedHeaders = headers.map(header => header.toLowerCase().replace(/[^a-z0-9]+/g, ''));
+        const methodIndex = normalizedHeaders.indexOf('method');
+        const scenarioIndex = normalizedHeaders.indexOf('scriptname');
+        const meanIndex = normalizedHeaders.indexOf('mean');
+        const stdDevIndex = normalizedHeaders.indexOf('stddev');
+        const medianIndex = normalizedHeaders.indexOf('median');
+        const allocatedIndex = normalizedHeaders.indexOf('allocated');
+        const allocatedNativeMemoryIndex = normalizedHeaders.indexOf('allocatednativememory');
+        const gen0Index = normalizedHeaders.indexOf('gen0');
+        const gen1Index = normalizedHeaders.indexOf('gen1');
+        const gen2Index = normalizedHeaders.indexOf('gen2');
+
+        if (methodIndex < 0 || scenarioIndex < 0) {
+            continue;
+        }
 
         const hostColumns = buildHostColumns(hostMetadata);
         const runAt = new Date().toISOString();
@@ -366,16 +503,24 @@ function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata) {
                 continue;
             }
 
-            const columns = line.split('|').map(column => decodeHtmlEntities(column.trim()));
-            if (columns.length < 6) {
+            const columns = line
+                .split('|')
+                .map(column => decodeHtmlEntities(column.trim()))
+                .slice(1, -1);
+            if (columns.length < headers.length) {
                 continue;
             }
 
-            const method = columns[1];
-            const scenario = columns[2];
-            const meanText = columns[3];
-            const stdDevText = columns[4];
-            const medianText = columns[5];
+            const method = columns[methodIndex];
+            const scenario = columns[scenarioIndex];
+            const meanText = meanIndex >= 0 ? columns[meanIndex] : null;
+            const stdDevText = stdDevIndex >= 0 ? columns[stdDevIndex] : null;
+            const medianText = medianIndex >= 0 ? columns[medianIndex] : null;
+            const allocatedText = allocatedIndex >= 0 ? columns[allocatedIndex] : null;
+            const allocatedNativeMemoryText = allocatedNativeMemoryIndex >= 0 ? columns[allocatedNativeMemoryIndex] : null;
+            const gen0Text = gen0Index >= 0 ? columns[gen0Index] : null;
+            const gen1Text = gen1Index >= 0 ? columns[gen1Index] : null;
+            const gen2Text = gen2Index >= 0 ? columns[gen2Index] : null;
 
             if (!scenario || scenario === '-' || scenario === 'ScriptName') {
                 continue;
@@ -395,6 +540,11 @@ function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata) {
             const meanNs = parseDurationToNs(meanText);
             const medianNs = parseDurationToNs(medianText);
             const stdDevNs = parseDurationToNs(stdDevText);
+            const allocatedBytes = parseMemoryToBytes(allocatedText);
+            const allocatedNativeMemoryBytes = parseMemoryToBytes(allocatedNativeMemoryText);
+            const gen0Collections = getNumber(gen0Text);
+            const gen1Collections = getNumber(gen1Text);
+            const gen2Collections = getNumber(gen2Text);
 
             if (meanNs !== null) {
                 rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'mean_ns', meanNs, 'ns', runAt, meta, hostColumns));
@@ -404,6 +554,21 @@ function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata) {
             }
             if (stdDevNs !== null) {
                 rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'stddev_ns', stdDevNs, 'ns', runAt, meta, hostColumns));
+            }
+            if (allocatedBytes !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'allocated_bytes', allocatedBytes, 'bytes', runAt, meta, hostColumns));
+            }
+            if (allocatedNativeMemoryBytes !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'allocated_native_memory_bytes', allocatedNativeMemoryBytes, 'bytes', runAt, meta, hostColumns));
+            }
+            if (gen0Collections !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen0_collections_per_1000_ops', gen0Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
+            }
+            if (gen1Collections !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen1_collections_per_1000_ops', gen1Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
+            }
+            if (gen2Collections !== null) {
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen2_collections_per_1000_ops', gen2Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
             }
         }
     }
