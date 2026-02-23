@@ -33,7 +33,8 @@ Options
 
 - -i, --input           The JavaScript file to convert (positional supported)
 - -o, --output          Output folder for the generated IL/assembly (created if missing; defaults to the input file directory)
-- -v, --verbose         Print AST and scope details
+- -v, --verbose         Print compiler diagnostics to the console
+- --diagnostic-file <path>  Write compiler diagnostics to a text file
 - -a, --analyzeunused   Report unused functions/properties/variables
 	--version         Show version information and exit
 
@@ -84,7 +85,7 @@ Notes:
 ## Troubleshooting
 
 - Ensure the .NET 10 SDK/runtime is on PATH: `dotnet --info`
-- Use `-V` to print extra diagnostics.
+- Use `-v` to print diagnostics to the console, or `--diagnostic-file <path>` to capture diagnostics to a file.
 - File an issue with a minimal JS sample if you suspect a bug.
 
 ## Samples

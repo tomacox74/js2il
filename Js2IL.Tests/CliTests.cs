@@ -171,7 +171,7 @@ namespace Js2IL.Tests
             Assert.True(string.IsNullOrWhiteSpace(stdout));
         }
 
-    [Fact]
+        [Fact]
         public void Convert_SimpleJs_ProducesOutputs()
         {
             // Arrange: create simple JS file and output directory
@@ -198,6 +198,36 @@ namespace Js2IL.Tests
                 Assert.True(File.Exists(dllPath), $"Missing output: {dllPath}");
                 Assert.True(File.Exists(runtimeConfig), $"Missing output: {runtimeConfig}");
                 Assert.True(File.Exists(jsRuntime), $"Missing runtime: {jsRuntime}");
+            }
+            finally
+            {
+                try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
+            }
+        }
+
+        [Fact]
+        public void Convert_WithDiagnosticFile_WritesDiagnosticsToFile()
+        {
+            var tempRoot = Path.Combine(Path.GetTempPath(), "js2il_cli_test_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(tempRoot);
+            var jsFile = Path.Combine(tempRoot, "simple.js");
+            File.WriteAllText(jsFile, "\"use strict\";\nconsole.log('x is', 3);");
+            var outDir = Path.Combine(tempRoot, "out");
+            var diagnosticFile = Path.Combine(tempRoot, "diagnostics.log");
+
+            try
+            {
+                var (code, stdout, stderr) = RunOutOfProc(jsFile, "-o", outDir, "--diagnostic-file", diagnosticFile);
+
+                Assert.Equal(0, code);
+                Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
+                Assert.Contains("Compilation succeeded", stdout, StringComparison.OrdinalIgnoreCase);
+                Assert.DoesNotContain("[TwoPhase]", stdout, StringComparison.OrdinalIgnoreCase);
+
+                Assert.True(File.Exists(diagnosticFile), $"Missing diagnostics file: {diagnosticFile}");
+                var diagnostics = File.ReadAllText(diagnosticFile);
+                Assert.Contains("[TwoPhase]", diagnostics, StringComparison.OrdinalIgnoreCase);
+                Assert.Contains("Build the symbol tables", diagnostics, StringComparison.OrdinalIgnoreCase);
             }
             finally
             {

@@ -8,6 +8,7 @@ using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 using Js2IL.Utilities;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -36,8 +37,8 @@ public sealed class TwoPhaseCompilationCoordinator
     /// </summary>
     public const string FunctionsNamespace = "Functions";
 
-    private readonly ILogger _logger;
-    private readonly bool _verbose;
+    private readonly Microsoft.Extensions.Logging.ILogger<TwoPhaseCompilationCoordinator> _diagnosticLogger;
+    private readonly bool _diagnosticsEnabled;
     
     // Registry for storing callable declarations (CallableId-keyed, per design doc)
     // Injected from DI - single instance per compilation
@@ -58,14 +59,14 @@ public sealed class TwoPhaseCompilationCoordinator
     private int? _expectedMethodDefsBeforeAnonymousCallables;
 
     public TwoPhaseCompilationCoordinator(
-        ILogger logger, 
         CompilerOptions compilerOptions,
         CallableRegistry registry,
+        Microsoft.Extensions.Logging.ILogger<TwoPhaseCompilationCoordinator>? diagnosticLogger = null,
         FunctionTypeMetadataRegistry? functionTypeMetadataRegistry = null,
         AnonymousCallableTypeMetadataRegistry? anonymousCallableTypeMetadataRegistry = null)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _verbose = compilerOptions?.Verbose ?? false;
+        _diagnosticLogger = diagnosticLogger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<TwoPhaseCompilationCoordinator>.Instance;
+        _diagnosticsEnabled = compilerOptions?.DiagnosticsEnabled ?? false;
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
         _functionTypeMetadataRegistry = functionTypeMetadataRegistry ?? new FunctionTypeMetadataRegistry();
         _anonymousCallableTypeMetadataRegistry = anonymousCallableTypeMetadataRegistry ?? new AnonymousCallableTypeMetadataRegistry();
@@ -1348,10 +1349,10 @@ public sealed class TwoPhaseCompilationCoordinator
         var plan = CompilationPlanner.ComputePlan(graph);
         LastComputedPlan = plan;
 
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine($"[TwoPhase] Computed dependency plan (SCC stages: {plan.Stages.Count}).");
-            _logger.WriteLine(plan.ToDebugString());
+            _diagnosticLogger.LogInformation("[TwoPhase] Computed dependency plan (SCC stages: {StageCount}).", plan.Stages.Count);
+            _diagnosticLogger.LogInformation("{DependencyPlan}", plan.ToDebugString());
         }
 
         return plan;
@@ -1424,9 +1425,9 @@ public sealed class TwoPhaseCompilationCoordinator
 
         arrowGen.GenerateArrowFunctionMethod(arrowExpr, arrowTypeName);
 
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine($"[TwoPhase] Phase 2: Compiled arrow: {arrowTypeName}");
+            _diagnosticLogger.LogInformation("[TwoPhase] Phase 2: Compiled arrow: {ArrowTypeName}", arrowTypeName);
         }
     }
 
@@ -1506,9 +1507,9 @@ public sealed class TwoPhaseCompilationCoordinator
         _registry.SetDeclaredTokenForAstNode(funcExpr, expected);
         _registry.MarkBodyCompiledForAstNode(funcExpr);
 
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine($"[TwoPhase] Phase 2: Compiled function expression: {funcTypeName}");
+            _diagnosticLogger.LogInformation("[TwoPhase] Phase 2: Compiled function expression: {FunctionTypeName}", funcTypeName);
         }
     }
 
@@ -1550,9 +1551,9 @@ public sealed class TwoPhaseCompilationCoordinator
     /// </summary>
     public void RunPhase1Discovery(SymbolTable symbolTable)
     {
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine("[TwoPhase] Phase 1 Discovery: Starting callable discovery...");
+            _diagnosticLogger.LogInformation("[TwoPhase] Phase 1 Discovery: Starting callable discovery...");
         }
 
         var discovery = new CallableDiscovery(symbolTable);
@@ -1598,20 +1599,24 @@ public sealed class TwoPhaseCompilationCoordinator
             }
         }
 
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
             var stats = discovery.GetStats();
-            _logger.WriteLine($"[TwoPhase] Discovered {stats.TotalCallables} callables:");
-            _logger.WriteLine($"  - Function declarations: {stats.FunctionDeclarations}");
-            _logger.WriteLine($"  - Function expressions: {stats.FunctionExpressions}");
-            _logger.WriteLine($"  - Arrow functions: {stats.ArrowFunctions}");
-            _logger.WriteLine($"  - Class constructors: {stats.ClassConstructors}");
-            _logger.WriteLine($"  - Class methods: {stats.ClassMethods}");
-            _logger.WriteLine($"  - Class static methods: {stats.ClassStaticMethods}");
+            _diagnosticLogger.LogInformation("[TwoPhase] Discovered {TotalCallables} callables:", stats.TotalCallables);
+            _diagnosticLogger.LogInformation("  - Function declarations: {Count}", stats.FunctionDeclarations);
+            _diagnosticLogger.LogInformation("  - Function expressions: {Count}", stats.FunctionExpressions);
+            _diagnosticLogger.LogInformation("  - Arrow functions: {Count}", stats.ArrowFunctions);
+            _diagnosticLogger.LogInformation("  - Class constructors: {Count}", stats.ClassConstructors);
+            _diagnosticLogger.LogInformation("  - Class methods: {Count}", stats.ClassMethods);
+            _diagnosticLogger.LogInformation("  - Class static methods: {Count}", stats.ClassStaticMethods);
             
             foreach (var callable in _discoveredCallables)
             {
-                _logger.WriteLine($"  [{callable.Kind}] {callable.DisplayName} (params: {callable.JsParamCount})");
+                _diagnosticLogger.LogInformation(
+                    "  [{CallableKind}] {DisplayName} (params: {ParameterCount})",
+                    callable.Kind,
+                    callable.DisplayName,
+                    callable.JsParamCount);
             }
         }
     }
@@ -1724,17 +1729,20 @@ public sealed class TwoPhaseCompilationCoordinator
             throw new InvalidOperationException("Phase 1 Discovery must be run before Phase 1 Declaration.");
         }
 
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine("[TwoPhase] Phase 1 Declaration: Creating method tokens...");
+            _diagnosticLogger.LogInformation("[TwoPhase] Phase 1 Declaration: Creating method tokens...");
         }
 
         // Delegate to the existing declaration code.
         declareAction();
 
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine($"[TwoPhase] Phase 1 Declaration complete. Tokens allocated: {_registry.TokensAllocated}/{_registry.Count}.");
+            _diagnosticLogger.LogInformation(
+                "[TwoPhase] Phase 1 Declaration complete. Tokens allocated: {TokensAllocated}/{TokenCount}.",
+                _registry.TokensAllocated,
+                _registry.Count);
         }
     }
     
@@ -1747,9 +1755,9 @@ public sealed class TwoPhaseCompilationCoordinator
     {
         _registry.StrictMode = true;
         
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine("[TwoPhase] Strict mode enabled: expression emission will only lookup, not compile.");
+            _diagnosticLogger.LogInformation("[TwoPhase] Strict mode enabled: expression emission will only lookup, not compile.");
         }
     }
 
@@ -1763,16 +1771,16 @@ public sealed class TwoPhaseCompilationCoordinator
     /// </param>
     public void RunPhase2BodyCompilation(Action compileAction)
     {
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine("[TwoPhase] Phase 2: Compiling callable bodies...");
+            _diagnosticLogger.LogInformation("[TwoPhase] Phase 2: Compiling callable bodies...");
         }
 
         compileAction();
 
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine("[TwoPhase] Phase 2: Body compilation complete.");
+            _diagnosticLogger.LogInformation("[TwoPhase] Phase 2: Body compilation complete.");
         }
     }
 
@@ -1790,9 +1798,9 @@ public sealed class TwoPhaseCompilationCoordinator
         Action? compileAction = null,
         bool skipPhase2 = false)
     {
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine("[TwoPhase] Starting two-phase compilation pipeline...");
+            _diagnosticLogger.LogInformation("[TwoPhase] Starting two-phase compilation pipeline...");
         }
 
         // Phase 1: Discovery
@@ -1807,9 +1815,9 @@ public sealed class TwoPhaseCompilationCoordinator
             RunPhase2BodyCompilation(compileAction);
         }
 
-        if (_verbose)
+        if (_diagnosticsEnabled)
         {
-            _logger.WriteLine("[TwoPhase] Two-phase compilation pipeline complete.");
+            _diagnosticLogger.LogInformation("[TwoPhase] Two-phase compilation pipeline complete.");
         }
     }
 

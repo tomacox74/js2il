@@ -1,17 +1,20 @@
 using System.Reflection.Metadata.Ecma335;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Js2IL.IL;
 using Js2IL.Services.ScopesAbi;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Services.VariableBindings;
 using Js2IL.Services;
 using Js2IL.DebugSymbols;
+using Js2IL.Diagnostics;
  
 namespace Js2IL;
  
 public static class CompilerServices
 {
-    public static ServiceProvider BuildServiceProvider(CompilerOptions options, IFileSystem? fileSystem = null, ILogger? logger = null)
+    public static ServiceProvider BuildServiceProvider(CompilerOptions options, IFileSystem? fileSystem = null, ICompilerOutput? compilerOutput = null)
     {
         var services = new ServiceCollection();
 
@@ -24,18 +27,47 @@ public static class CompilerServices
             services.AddSingleton<IFileSystem, FileSystem>();
         }
 
-        // Logger
-        if (logger != null)
+        // User-facing compiler output stream
+        if (compilerOutput != null)
         {
-            services.AddSingleton(logger);
+            services.AddSingleton<ICompilerOutput>(compilerOutput);
         }
         else
         {
-            services.AddSingleton<ILogger, Logger>();
+            services.AddSingleton<ICompilerOutput, Logger>();
         }
 
         // compiler and compiler options
         services.AddSingleton(options);
+
+        services.AddLogging(builder =>
+        {
+            builder.ClearProviders();
+
+            if (options.Verbose)
+            {
+                builder.AddProvider(new TextWriterLoggerProvider(Console.Out, ownsWriter: false));
+            }
+
+            if (!string.IsNullOrWhiteSpace(options.DiagnosticFilePath))
+            {
+                var diagnosticFilePath = Path.GetFullPath(options.DiagnosticFilePath);
+                var diagnosticDirectory = Path.GetDirectoryName(diagnosticFilePath);
+                if (!string.IsNullOrWhiteSpace(diagnosticDirectory))
+                {
+                    Directory.CreateDirectory(diagnosticDirectory);
+                }
+
+                var writer = new StreamWriter(diagnosticFilePath, append: false, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
+                {
+                    AutoFlush = true
+                };
+                builder.AddProvider(new TextWriterLoggerProvider(writer, ownsWriter: true));
+            }
+
+            builder.SetMinimumLevel(options.DiagnosticsEnabled ? LogLevel.Information : LogLevel.None);
+        });
+
         services.AddSingleton<Compiler>();
 
         // Debug symbol collection (Portable PDB)
