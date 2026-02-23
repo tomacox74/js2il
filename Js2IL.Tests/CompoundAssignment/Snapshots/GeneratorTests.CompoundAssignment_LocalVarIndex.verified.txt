@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2138
+				// Method begins at RVA 0x2148
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2141
+				// Method begins at RVA 0x2151
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x214a
+				// Method begins at RVA 0x215a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -102,12 +102,14 @@
 		{
 			// Method begins at RVA 0x20a4
 			// Header size: 12
-			// Code size: 127 (0x7f)
+			// Code size: 143 (0x8f)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
-				[2] float64
+				[2] int32,
+				[3] object,
+				[4] object
 			)
 
 			IL_0000: ldc.r8 2
@@ -135,28 +137,34 @@
 			IL_0046: ldloc.1
 			IL_0047: conv.i4
 			IL_0048: or
-			IL_0049: conv.r8
-			IL_004a: stloc.2
-			IL_004b: ldarg.0
-			IL_004c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.CompoundAssignment_LocalVarIndex/TestClass::arr
-			IL_0051: ldloc.0
-			IL_0052: ldloc.2
-			IL_0053: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-			IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005d: ldc.i4.1
-			IL_005e: newarr [System.Runtime]System.Object
-			IL_0063: dup
-			IL_0064: ldc.i4.0
-			IL_0065: ldarg.0
-			IL_0066: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.CompoundAssignment_LocalVarIndex/TestClass::arr
-			IL_006b: ldloc.0
-			IL_006c: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-			IL_0071: box [System.Runtime]System.Double
-			IL_0076: stelem.ref
-			IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_007c: pop
-			IL_007d: ldnull
-			IL_007e: ret
+			IL_0049: stloc.2
+			IL_004a: ldloc.0
+			IL_004b: box [System.Runtime]System.Double
+			IL_0050: stloc.3
+			IL_0051: ldloc.2
+			IL_0052: box [System.Runtime]System.Double
+			IL_0057: stloc.s 4
+			IL_0059: ldarg.0
+			IL_005a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.CompoundAssignment_LocalVarIndex/TestClass::arr
+			IL_005f: ldloc.3
+			IL_0060: ldloc.s 4
+			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+			IL_0067: pop
+			IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_006d: ldc.i4.1
+			IL_006e: newarr [System.Runtime]System.Object
+			IL_0073: dup
+			IL_0074: ldc.i4.0
+			IL_0075: ldarg.0
+			IL_0076: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Modules.CompoundAssignment_LocalVarIndex/TestClass::arr
+			IL_007b: ldloc.0
+			IL_007c: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_0081: box [System.Runtime]System.Double
+			IL_0086: stelem.ref
+			IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_008c: pop
+			IL_008d: ldnull
+			IL_008e: ret
 		} // end of method TestClass::test
 
 	} // end of class TestClass
@@ -168,7 +176,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x212f
+			// Method begins at RVA 0x213f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -221,7 +229,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2153
+		// Method begins at RVA 0x2163
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
