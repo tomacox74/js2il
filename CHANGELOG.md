@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - perf: Reduce boxing in object literals (#351). Replace `ExpandoObject` backing store for JavaScript object literals with a new `JsObject` class backed by `Dictionary<string, JsValue>`. The `JsValue` struct stores number and boolean values inline without heap allocation. New typed property setter methods (`SetPropertyNumber`, `SetPropertyBoolean`, `SetPropertyString`) are called from generated IL instead of the generic `SetItem(object, object, object)` overload, eliminating the `box` instruction for numeric/bool/string property values in object literal initialization. Runtime compatibility with all existing `ExpandoObject` consumers is maintained via the `IDictionary<string, object?>` interface. Also fixes `for-in` enumeration and object spread for descriptor-defined properties on the new JsObject type.
+- perf: add flow-sensitive numeric refinement propagation in HIR→LIR lowering to reuse proven unboxed-number temps and reduce redundant `TypeUtilities.ToNumber(object)` calls, with conservative invalidation at assignments/control-flow labels and safe tracking limited to non-captured/non-global bindings (PR #697, fixes #315).
 
 ## v0.8.19 - 2026-02-23
 
