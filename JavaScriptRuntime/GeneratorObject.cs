@@ -16,6 +16,11 @@ namespace JavaScriptRuntime;
 /// </summary>
 public sealed class GeneratorObject
 {
+    // Stable singleton used as %GeneratorPrototype%.constructor.
+    // Per ECMA-262, gen.constructor is the same function object for all generator instances.
+    private static readonly Func<object[], object?[], object?> _generatorFunctionConstructor =
+        static (_, _) => null;
+
     private readonly object _step;
     private readonly object[] _scopes;
     private readonly object?[] _args;
@@ -26,6 +31,11 @@ public sealed class GeneratorObject
         _scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
         _args = args ?? throw new ArgumentNullException(nameof(args));
     }
+
+    /// <summary>
+    /// %GeneratorPrototype%.constructor — stable function object, same for all generator instances.
+    /// </summary>
+    public object constructor => _generatorFunctionConstructor;
 
     private GeneratorScope GetLeafScope()
     {

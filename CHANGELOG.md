@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 - IR/runtime perf: collapse dynamic `+` followed by immediate numeric coercion into `Operators.AddAndToNumber(...)` overloads in assignment/update hot paths, reducing emitted Add→ToNumber roundtrips while preserving JavaScript `+` semantics, mixed double/object no-boxing paths, and numeric-result no-boxing fast paths.
 - CLI/diagnostics: split user-facing compiler output from internal diagnostics, route verbose pipeline traces through `Microsoft.Extensions.Logging`, keep `--verbose` as diagnostics-to-console, and add `--diagnostic-file <path>` for opt-in diagnostics file logging.
+- Runtime/spec: implement `%GeneratorPrototype%[@@toStringTag]` so `Object.prototype.toString.call(gen) === "[object Generator]"`, add `Symbol.toStringTag` as a well-known symbol, implement `Object.prototype.toString` with type-tag dispatch, and expose `%GeneratorPrototype%.constructor` as a stable function object. Upgrades §27.5 Generator Objects from "Supported with Limitations" to "Supported" (closes #576).
 
 ## v0.8.17 - 2026-02-22
 

@@ -224,6 +224,7 @@ namespace JavaScriptRuntime
             {
                 var dict = (IDictionary<string, object?>)exp;
                 dict["hasOwnProperty"] = (Func<object[], object?[], object?>)ObjectPrototypeHasOwnProperty;
+                dict["toString"] = (Func<object[], object?[], object?>)ObjectPrototypeToString;
             }
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
@@ -295,6 +296,38 @@ namespace JavaScriptRuntime
             var t = target.GetType();
             return t.GetProperty(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public) != null
                 || t.GetField(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public) != null;
+        }
+
+        /// <summary>
+        /// Object.prototype.toString() — returns "[object Tag]" per ECMA-262 §20.1.3.6.
+        /// Checks @@toStringTag first; falls back to built-in type tags.
+        /// </summary>
+        private static object? ObjectPrototypeToString(object[] scopes, object?[] args)
+        {
+            var thisVal = RuntimeServices.GetCurrentThis();
+
+            if (thisVal == null) return "[object Undefined]";
+            if (thisVal is JsNull) return "[object Null]";
+
+            // Try @@toStringTag (Symbol.toStringTag) first.
+            var toStringTagSym = Symbol.toStringTag;
+            var tag = JavaScriptRuntime.Object.GetItem(thisVal, toStringTagSym);
+            if (tag is string tagStr)
+            {
+                return $"[object {tagStr}]";
+            }
+
+            // Built-in type tags.
+            if (thisVal is JavaScriptRuntime.Array) return "[object Array]";
+            if (thisVal is string) return "[object String]";
+            if (thisVal is bool) return "[object Boolean]";
+            if (thisVal is double or float or int or long) return "[object Number]";
+            if (thisVal is Delegate) return "[object Function]";
+            if (thisVal is JavaScriptRuntime.RegExp) return "[object RegExp]";
+            if (thisVal is GeneratorObject) return "[object Generator]";
+            if (thisVal is AsyncGeneratorObject) return "[object AsyncGenerator]";
+
+            return "[object Object]";
         }
 
         internal static ServiceContainer? ServiceProvider

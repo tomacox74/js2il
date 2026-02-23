@@ -15,6 +15,7 @@ public sealed class Symbol
     // These are singletons so identity comparisons work as expected.
     private static readonly Symbol _iterator = new Symbol("Symbol.iterator");
     private static readonly Symbol _asyncIterator = new Symbol("Symbol.asyncIterator");
+    private static readonly Symbol _toStringTag = new Symbol("Symbol.toStringTag");
 
     private readonly long _id;
 
@@ -63,6 +64,9 @@ public sealed class Symbol
     // Well-known symbol: Symbol.asyncIterator
     public static Symbol asyncIterator => _asyncIterator;
 
+    // Well-known symbol: Symbol.toStringTag
+    public static Symbol toStringTag => _toStringTag;
+
     // Access well-known symbols via property-read lowering (e.g., Symbol.iterator).
     // Returns null (JS undefined) when the well-known symbol is not supported.
     public static object? GetWellKnown(string name)
@@ -71,6 +75,7 @@ public sealed class Symbol
         {
             "iterator" => iterator,
             "asyncIterator" => asyncIterator,
+            "toStringTag" => toStringTag,
             _ => null
         };
     }
