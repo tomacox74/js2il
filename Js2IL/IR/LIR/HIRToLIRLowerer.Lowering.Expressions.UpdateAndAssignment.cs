@@ -162,6 +162,7 @@ public sealed partial class HIRToLIRLowerer
 
             // Update SSA map for subsequent reads.
             _variableMap[updateBinding] = updatedBoxed;
+            _numericRefinements.Remove(updateBinding);
 
             if (updateExpr.Prefix)
             {
@@ -271,8 +272,7 @@ public sealed partial class HIRToLIRLowerer
         SetTempVariableSlot(storeTemp, slot);
 
         _variableMap[updateBinding] = storeTemp;
-
-        // Update expressions (++/--) are reassignments, so the variable is not single-assignment.
+        _numericRefinements.Remove(updateBinding);
         // Remove it from the single-assignment set to prevent incorrect inlining.
         _methodBodyIR.SingleAssignmentSlots.Remove(slot);
 
@@ -461,10 +461,12 @@ public sealed partial class HIRToLIRLowerer
 
     private TempVariable EnsureNumber(TempVariable tempVar)
     {
+        SyncNumericRefinementStateWithLabels();
         var storage = GetTempStorage(tempVar);
 
         if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
         {
+            _tempBindingOrigin.Remove(tempVar);
             return tempVar;
         }
 
@@ -472,6 +474,10 @@ public sealed partial class HIRToLIRLowerer
         // collapse a just-emitted dynamic '+' followed by ToNumber into one runtime call.
         if (TryRewriteLatestDynamicAddToNumber(tempVar, out var fusedNumberTemp))
         {
+            if (_tempBindingOrigin.Remove(tempVar, out var fusedSourceBinding) && CanTrackNumericRefinement(fusedSourceBinding))
+            {
+                _numericRefinements[fusedSourceBinding] = fusedNumberTemp;
+            }
             return fusedNumberTemp;
         }
 
@@ -479,7 +485,39 @@ public sealed partial class HIRToLIRLowerer
         var numberTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConvertToNumber(EnsureObject(tempVar), numberTempVar));
         DefineTempStorage(numberTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        // Flow-sensitive refinement: if tempVar originated from a variable load, record that the
+        // binding is now proven double so subsequent loads can return the coerced temp directly.
+        if (_tempBindingOrigin.Remove(tempVar, out var sourceBinding) && CanTrackNumericRefinement(sourceBinding))
+        {
+            _numericRefinements[sourceBinding] = numberTempVar;
+        }
+
         return numberTempVar;
+    }
+
+    // Invalidate or update the numeric refinement for a binding after an assignment.
+    // Call this whenever a binding is written so stale refinements cannot be used.
+    // Pass the new value temp so we can carry the refinement forward when the newly
+    // assigned value is itself an unboxed double (e.g. after x = Number(x)).
+    private void InvalidateNumericRefinement(BindingInfo binding, TempVariable newValue)
+    {
+        SyncNumericRefinementStateWithLabels();
+        if (!CanTrackNumericRefinement(binding))
+        {
+            _numericRefinements.Remove(binding);
+            return;
+        }
+
+        var storage = GetTempStorage(newValue);
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+        {
+            _numericRefinements[binding] = newValue;
+        }
+        else
+        {
+            _numericRefinements.Remove(binding);
+        }
     }
 
     private bool TryRewriteLatestDynamicAddToNumber(TempVariable tempVar, out TempVariable numberTempVar)
@@ -576,6 +614,7 @@ public sealed partial class HIRToLIRLowerer
             var boxedValue = EnsureObject(valueToStore);
             lirInstructions.Add(new LIRStoreScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, boxedValue));
             _variableMap[binding] = boxedValue;
+            InvalidateNumericRefinement(binding, valueToStore);
             storedValue = boxedValue;
             return true;
         }
@@ -594,6 +633,7 @@ public sealed partial class HIRToLIRLowerer
                             var boxedValue = EnsureObject(valueToStore);
                             lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, boxedValue));
                             _variableMap[binding] = boxedValue;
+                            InvalidateNumericRefinement(binding, valueToStore);
                             storedValue = boxedValue;
                             return true;
                         }
@@ -613,6 +653,7 @@ public sealed partial class HIRToLIRLowerer
                                 lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, boxedValue));
                             }
                             _variableMap[binding] = boxedValue;
+                            InvalidateNumericRefinement(binding, valueToStore);
                             storedValue = boxedValue;
                             return true;
                         }
@@ -623,6 +664,7 @@ public sealed partial class HIRToLIRLowerer
                         {
                             var boxedValue = EnsureObject(valueToStore);
                             lirInstructions.Add(new LIRStoreParameter(storage.JsParameterIndex, boxedValue));
+                            InvalidateNumericRefinement(binding, valueToStore);
                             storedValue = boxedValue;
                             return true;
                         }
@@ -640,6 +682,7 @@ public sealed partial class HIRToLIRLowerer
         {
             var boxedValue = EnsureObject(valueToStore);
             lirInstructions.Add(new LIRStoreParameter(paramIndex, boxedValue));
+            InvalidateNumericRefinement(binding, valueToStore);
             storedValue = boxedValue;
             return true;
         }
@@ -686,6 +729,7 @@ public sealed partial class HIRToLIRLowerer
         SetTempVariableSlot(storeTemp, slot);
 
         _variableMap[binding] = storeTemp;
+        InvalidateNumericRefinement(binding, storeTemp);
         _methodBodyIR.SingleAssignmentSlots.Remove(slot);
         storedValue = storeTemp;
         return true;
@@ -891,6 +935,7 @@ public sealed partial class HIRToLIRLowerer
             var boxedValue = EnsureObject(valueToStore);
             lirInstructions.Add(new LIRStoreScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, boxedValue));
             _variableMap[binding] = boxedValue;
+            InvalidateNumericRefinement(binding, valueToStore);
             resultTempVar = boxedValue;
             return true;
         }
@@ -911,6 +956,7 @@ public sealed partial class HIRToLIRLowerer
                             lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, boxedValue));
                             // Also update SSA map for subsequent reads
                             _variableMap[binding] = boxedValue;
+                            InvalidateNumericRefinement(binding, valueToStore);
                             resultTempVar = boxedValue;
                             return true;
                         }
@@ -932,6 +978,7 @@ public sealed partial class HIRToLIRLowerer
                             }
                             // Also update SSA map for subsequent reads, mirroring leaf-scope behavior
                             _variableMap[binding] = boxedValue;
+                            InvalidateNumericRefinement(binding, valueToStore);
                             resultTempVar = boxedValue;
                             return true;
                         }
@@ -943,6 +990,7 @@ public sealed partial class HIRToLIRLowerer
                         {
                             var boxedValue = EnsureObject(valueToStore);
                             lirInstructions.Add(new LIRStoreParameter(storage.JsParameterIndex, boxedValue));
+                            InvalidateNumericRefinement(binding, valueToStore);
                             resultTempVar = boxedValue;
                             return true;
                         }
@@ -960,6 +1008,7 @@ public sealed partial class HIRToLIRLowerer
         {
             var boxedValue = EnsureObject(valueToStore);
             lirInstructions.Add(new LIRStoreParameter(paramIndex, boxedValue));
+            InvalidateNumericRefinement(binding, valueToStore);
             resultTempVar = boxedValue;
             return true;
         }
@@ -1006,6 +1055,7 @@ public sealed partial class HIRToLIRLowerer
         SetTempVariableSlot(storeTemp, slot);
 
         _variableMap[binding] = storeTemp;
+        InvalidateNumericRefinement(binding, storeTemp);
         resultTempVar = storeTemp;
 
         // This is a reassignment (not initial declaration), so the variable is not single-assignment.

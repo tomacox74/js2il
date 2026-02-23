@@ -58,6 +58,13 @@ public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable R
 public record LIRGetItemAsNumber(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Gets an item from an object by a string key and converts the result to an unboxed number.
+/// Calls JavaScriptRuntime.Object.GetItemAsNumber(object, string).
+/// Contract: Index is a reference temp typed as string; Result is an unboxed double.
+/// </summary>
+public record LIRGetItemAsNumberString(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Sets an item on an object by index/key (calls JavaScriptRuntime.Object.SetItem).
 /// Returns the assigned value.
 /// </summary>

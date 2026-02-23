@@ -185,6 +185,19 @@ internal static class LIRIntrinsicNormalization
                 continue;
             }
 
+            if (instruction is LIRGetItemAsNumber getItemAsNumber)
+            {
+                if (IsTempStringReference(methodBody, getItemAsNumber.Index))
+                {
+                    methodBody.Instructions[i] = new LIRGetItemAsNumberString(
+                        getItemAsNumber.Object,
+                        getItemAsNumber.Index,
+                        getItemAsNumber.Result);
+                }
+
+                continue;
+            }
+
             if (instruction is LIRSetItem setItem)
             {
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(setItem.Object.Index, out var receiverType))
@@ -387,6 +400,17 @@ internal static class LIRIntrinsicNormalization
 
         var storage = methodBody.TempStorages[temp.Index];
         return storage.Kind == ValueStorageKind.BoxedValue && storage.ClrType == typeof(double);
+    }
+
+    private static bool IsTempStringReference(MethodBodyIR methodBody, TempVariable temp)
+    {
+        if (temp.Index < 0 || temp.Index >= methodBody.TempStorages.Count)
+        {
+            return false;
+        }
+
+        var storage = methodBody.TempStorages[temp.Index];
+        return storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string);
     }
 
     /// <summary>

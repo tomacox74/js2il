@@ -98,7 +98,8 @@ public sealed partial class HIRToLIRLowerer
 
         // Non-captured variable - store into a stable local slot.
         // IMPORTANT: declared locals should never store raw unboxed JsNull into an object-typed IL local.
-        // Use unboxed locals only for proven-stable primitives (double/bool); otherwise box to object.
+        // Use unboxed locals for proven-stable primitives (double/bool), plus const int32 values on the
+        // bitwise fast path; otherwise box to object.
         TempVariable slotValue;
         if ((binding.IsStableType && binding.ClrType == typeof(double))
             || (binding.Kind == BindingKind.Const && initializerProvesUnboxedDouble))

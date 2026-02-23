@@ -86,5 +86,11 @@ namespace Js2IL.Tests.Object
 
         [Fact]
         public Task Object_FromEntries_Basic() { var testName = nameof(Object_FromEntries_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Object_BracketRead_StringKey() { var testName = nameof(Object_BracketRead_StringKey); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Object_BracketWrite_StringKey() { var testName = nameof(Object_BracketWrite_StringKey); return GenerateTest(testName); }
     }
 }

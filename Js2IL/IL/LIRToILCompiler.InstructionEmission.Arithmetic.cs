@@ -417,24 +417,26 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
                 var truthyInputStorage = GetTempStorage(callIsTruthy.Value);
-                EmitLoadTemp(callIsTruthy.Value, ilEncoder, allocation, methodDescriptor);
-
                 if (truthyInputStorage.Kind == ValueStorageKind.UnboxedValue && truthyInputStorage.ClrType == typeof(double))
                 {
+                    EmitLoadTemp(callIsTruthy.Value, ilEncoder, allocation, methodDescriptor);
                     EmitOperatorsIsTruthyDouble(ilEncoder);
                 }
                 else if (truthyInputStorage.Kind == ValueStorageKind.UnboxedValue && truthyInputStorage.ClrType == typeof(bool))
                 {
+                    EmitLoadTemp(callIsTruthy.Value, ilEncoder, allocation, methodDescriptor);
                     EmitOperatorsIsTruthyBool(ilEncoder);
                 }
                 else if (truthyInputStorage.Kind == ValueStorageKind.UnboxedValue && truthyInputStorage.ClrType == typeof(int))
                 {
                     // int32 truthiness: non-zero is truthy. Convert to double then use double path.
+                    EmitLoadTemp(callIsTruthy.Value, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Conv_r8);
                     EmitOperatorsIsTruthyDouble(ilEncoder);
                 }
                 else
                 {
+                    EmitLoadTempAsObject(callIsTruthy.Value, ilEncoder, allocation, methodDescriptor);
                     EmitOperatorsIsTruthyObject(ilEncoder);
                 }
                 EmitStoreTemp(callIsTruthy.Result, ilEncoder, allocation);
