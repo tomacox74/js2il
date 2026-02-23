@@ -52,12 +52,6 @@ public static class CompilerServices
             if (!string.IsNullOrWhiteSpace(options.DiagnosticFilePath))
             {
                 var diagnosticFilePath = Path.GetFullPath(options.DiagnosticFilePath);
-                var diagnosticDirectory = Path.GetDirectoryName(diagnosticFilePath);
-                if (!string.IsNullOrWhiteSpace(diagnosticDirectory))
-                {
-                    Directory.CreateDirectory(diagnosticDirectory);
-                }
-
                 var writer = new StreamWriter(diagnosticFilePath, append: false, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
                 {
                     AutoFlush = true

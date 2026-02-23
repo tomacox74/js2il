@@ -64,7 +64,7 @@ class Program
             // Version handling (PowerArgs default alias is -Version from property name)
             if (parsed.Version)
             {
-                var versionProvider = CompilerServices.BuildServiceProvider(new CompilerOptions());
+                using var versionProvider = CompilerServices.BuildServiceProvider(new CompilerOptions());
                 var versionLogger = versionProvider.GetRequiredService<ICompilerOutput>();
                 var asm = Assembly.GetExecutingAssembly();
                 var name = asm.GetName();
@@ -80,7 +80,7 @@ class Program
                 return;
             }
 
-            var servicesProvider = CompilerServices.BuildServiceProvider(new CompilerOptions
+            using var servicesProvider = CompilerServices.BuildServiceProvider(new CompilerOptions
             {
                 OutputDirectory = parsed.OutputPath,
                 Verbose = parsed.Verbose,
@@ -145,7 +145,7 @@ class Program
         catch (ArgException ex)
         {
             // Args.Parse failed, so we need to create a minimal service provider for logging
-            var errorProvider = CompilerServices.BuildServiceProvider(new CompilerOptions());
+            using var errorProvider = CompilerServices.BuildServiceProvider(new CompilerOptions());
             var errorLogger = errorProvider.GetRequiredService<ICompilerOutput>();
             errorLogger.WriteLineError(ex.Message);
             PrintUsage(errorLogger);
@@ -195,7 +195,7 @@ class Program
                 Directory.CreateDirectory(directory);
             }
 
-            using var _ = new FileStream(fullPath, FileMode.Append, FileAccess.Write, FileShare.Read);
+            using var _ = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.Read);
             normalizedDiagnosticFilePath = fullPath;
             return true;
         }

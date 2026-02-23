@@ -70,7 +70,6 @@ public class Compiler
              
             foreach (var mod in modules._modules.Values)
             {
-                _diagnosticLogger.LogInformation(string.Empty);
                 _diagnosticLogger.LogInformation("Scope Tree Structure:");
                 _diagnosticLogger.LogInformation("Module: {ModulePath}", mod.Path);
                 var symbolTable = mod.SymbolTable!;

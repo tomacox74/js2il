@@ -302,7 +302,6 @@ public class ModuleLoader
 
         if (this._diagnosticsEnabled)
         {
-            _diagnosticLogger.LogInformation(string.Empty);
             _diagnosticLogger.LogInformation("Validating module: {ModulePath}", modulePath);
         }
         var validationResult = _validator.Validate(ast);

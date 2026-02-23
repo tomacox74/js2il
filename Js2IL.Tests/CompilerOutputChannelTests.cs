@@ -25,7 +25,7 @@ public class CompilerOutputChannelTests
                 Verbose = true
             };
 
-            var services = CompilerServices.BuildServiceProvider(options, fileSystem, logger);
+            using var services = CompilerServices.BuildServiceProvider(options, fileSystem, logger);
             var compiler = services.GetRequiredService<Compiler>();
 
             var success = compiler.Compile(inputPath);
