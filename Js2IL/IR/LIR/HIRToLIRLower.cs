@@ -156,6 +156,13 @@ public sealed partial class HIRToLIRLowerer
             }
 
             lirMethod = lowerer._methodBodyIR;
+
+#if DEBUG
+            // Run LIR invariant checks in debug builds to surface lowering bugs early.
+            // Validation is skipped in release builds for performance.
+            Js2IL.IL.LIRBodyValidator.Validate(lirMethod);
+#endif
+
             return true;
         }
 
