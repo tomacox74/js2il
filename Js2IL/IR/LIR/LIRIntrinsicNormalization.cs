@@ -261,22 +261,28 @@ internal static class LIRIntrinsicNormalization
     /// </summary>
     private static void FuseGetItemWithConvertToNumber(MethodBodyIR methodBody)
     {
-        // Build a map from temp index to the single LIRConvertToNumber instruction that consumes it.
-        // If a temp is consumed by more than one instruction, it is not eligible for fusion.
-        var convertToNumberBySource = new Dictionary<int, int>(); // sourceIndex -> instruction index
+        // Maps temp index to the instruction index of the single LIRConvertToNumber that consumes it.
+        // Temps consumed by more than one LIRConvertToNumber are tracked in ineligibleTempIndices.
+        var singleConvertToNumberConsumerByTempIndex = new Dictionary<int, int>();
+        var ineligibleTempIndices = new HashSet<int>();
 
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
             if (methodBody.Instructions[i] is LIRConvertToNumber conv && conv.Source.Index >= 0)
             {
-                if (convertToNumberBySource.ContainsKey(conv.Source.Index))
+                var srcIdx = conv.Source.Index;
+                if (!ineligibleTempIndices.Contains(srcIdx))
                 {
-                    // Used by more than one ConvertToNumber - mark as ineligible
-                    convertToNumberBySource[conv.Source.Index] = -1;
-                }
-                else
-                {
-                    convertToNumberBySource[conv.Source.Index] = i;
+                    if (singleConvertToNumberConsumerByTempIndex.TryGetValue(srcIdx, out _))
+                    {
+                        // Second consumer found - mark as ineligible and remove from eligible map.
+                        ineligibleTempIndices.Add(srcIdx);
+                        singleConvertToNumberConsumerByTempIndex.Remove(srcIdx);
+                    }
+                    else
+                    {
+                        singleConvertToNumberConsumerByTempIndex[srcIdx] = i;
+                    }
                 }
             }
         }
@@ -304,7 +310,7 @@ internal static class LIRIntrinsicNormalization
             }
 
             // Find the single LIRConvertToNumber that consumes this result.
-            if (!convertToNumberBySource.TryGetValue(resultIdx, out var convIdx) || convIdx < 0)
+            if (!singleConvertToNumberConsumerByTempIndex.TryGetValue(resultIdx, out var convIdx))
             {
                 continue;
             }
