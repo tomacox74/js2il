@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22ee
+			// Method begins at RVA 0x22e2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -148,7 +148,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2300
+				// Method begins at RVA 0x22f4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -170,7 +170,7 @@
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x2298
+			// Method begins at RVA 0x228c
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -199,7 +199,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2309
+				// Method begins at RVA 0x22fd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -221,7 +221,7 @@
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x22b0
+			// Method begins at RVA 0x22a4
 			// Header size: 12
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -253,7 +253,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2312
+				// Method begins at RVA 0x2306
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -274,7 +274,7 @@
 				object 'value'
 			) cil managed 
 		{
-			// Method begins at RVA 0x22d4
+			// Method begins at RVA 0x22c8
 			// Header size: 12
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -299,7 +299,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22f7
+			// Method begins at RVA 0x22eb
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -325,14 +325,14 @@
 	{
 		// Method begins at RVA 0x2190
 		// Header size: 12
-		// Code size: 251 (0xfb)
+		// Code size: 238 (0xee)
 		.maxstack 9
 		.locals init (
 			[0] class Modules.CommonJS_Export_NestedObjects_Lib/Scope,
 			[1] object,
 			[2] object,
-			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
-			[4] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Export_NestedObjects_Lib/Scope::.ctor()
@@ -359,70 +359,61 @@
 		IL_0037: stelem.ref
 		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_003d: stloc.2
-		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0043: dup
 		IL_0044: ldstr "add"
 		IL_0049: ldloc.1
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_004f: pop
-		IL_0050: dup
-		IL_0051: ldstr "multiply"
-		IL_0056: ldloc.2
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_005c: pop
-		IL_005d: stloc.3
-		IL_005e: ldnull
-		IL_005f: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19::__js_call__(object, object)
-		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_006a: ldc.i4.1
-		IL_006b: newarr [System.Runtime]System.Object
-		IL_0070: dup
-		IL_0071: ldc.i4.0
-		IL_0072: ldloc.0
-		IL_0073: stelem.ref
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0079: stloc.2
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_007f: dup
-		IL_0080: ldstr "prefix"
-		IL_0085: ldstr "Result: "
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_008f: pop
-		IL_0090: dup
-		IL_0091: ldstr "formatNum"
-		IL_0096: ldloc.2
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_009c: pop
-		IL_009d: stloc.s 4
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00a4: dup
-		IL_00a5: ldstr "name"
-		IL_00aa: ldstr "Calculator"
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00b4: pop
-		IL_00b5: dup
-		IL_00b6: ldstr "version"
-		IL_00bb: ldc.r8 1
-		IL_00c4: box [System.Runtime]System.Double
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00ce: pop
-		IL_00cf: dup
-		IL_00d0: ldstr "math"
-		IL_00d5: ldloc.3
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00db: pop
-		IL_00dc: dup
-		IL_00dd: ldstr "utils"
-		IL_00e2: ldloc.s 4
-		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00e9: pop
-		IL_00ea: stloc.s 4
-		IL_00ec: ldarg.2
-		IL_00ed: ldstr "exports"
-		IL_00f2: ldloc.s 4
-		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00f9: pop
-		IL_00fa: ret
+		IL_004a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_004f: dup
+		IL_0050: ldstr "multiply"
+		IL_0055: ldloc.2
+		IL_0056: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_005b: stloc.3
+		IL_005c: ldnull
+		IL_005d: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19::__js_call__(object, object)
+		IL_0063: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0068: ldc.i4.1
+		IL_0069: newarr [System.Runtime]System.Object
+		IL_006e: dup
+		IL_006f: ldc.i4.0
+		IL_0070: ldloc.0
+		IL_0071: stelem.ref
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0077: stloc.2
+		IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_007d: dup
+		IL_007e: ldstr "prefix"
+		IL_0083: ldstr "Result: "
+		IL_0088: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_008d: dup
+		IL_008e: ldstr "formatNum"
+		IL_0093: ldloc.2
+		IL_0094: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0099: stloc.s 4
+		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00a0: dup
+		IL_00a1: ldstr "name"
+		IL_00a6: ldstr "Calculator"
+		IL_00ab: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00b0: dup
+		IL_00b1: ldstr "version"
+		IL_00b6: ldc.r8 1
+		IL_00bf: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00c4: dup
+		IL_00c5: ldstr "math"
+		IL_00ca: ldloc.3
+		IL_00cb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00d0: dup
+		IL_00d1: ldstr "utils"
+		IL_00d6: ldloc.s 4
+		IL_00d8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00dd: stloc.s 4
+		IL_00df: ldarg.2
+		IL_00e0: ldstr "exports"
+		IL_00e5: ldloc.s 4
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_00ec: pop
+		IL_00ed: ret
 	} // end of method CommonJS_Export_NestedObjects_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_NestedObjects_Lib
@@ -434,7 +425,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x231b
+		// Method begins at RVA 0x230f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -3042,6 +3042,18 @@ namespace JavaScriptRuntime
                 foreach (var kvp in src)
                 {
                     if (excluded.Contains(kvp.Key)) continue;
+                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key)) continue;
+                    dict[kvp.Key] = kvp.Value;
+                }
+                return result;
+            }
+
+            if (obj is IDictionary<string, object?> dictGeneric)
+            {
+                foreach (var kvp in dictGeneric)
+                {
+                    if (excluded.Contains(kvp.Key)) continue;
+                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key)) continue;
                     dict[kvp.Key] = kvp.Value;
                 }
                 return result;
@@ -3053,7 +3065,7 @@ namespace JavaScriptRuntime
                 var type = obj.GetType();
                 foreach (var p in type
                     .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => p.CanRead && !excluded.Contains(p.Name)))
+                    .Where(p => p.CanRead && p.GetIndexParameters().Length == 0 && !excluded.Contains(p.Name)))
                 {
                     dict[p.Name] = p.GetValue(obj);
                 }
@@ -3868,6 +3880,29 @@ namespace JavaScriptRuntime
                 {
                     var dict = (IDictionary<string, object?>)exp;
                     return dict.ContainsKey(name);
+                }
+
+                if (target is IDictionary<string, object?> dictGeneric)
+                {
+                    return dictGeneric.ContainsKey(name);
+                }
+
+                if (target is System.Collections.IDictionary dictObj)
+                {
+                    if (dictObj.Contains(name))
+                    {
+                        return true;
+                    }
+
+                    foreach (var key in dictObj.Keys)
+                    {
+                        if (string.Equals(DotNet2JSConversions.ToString(key), name, StringComparison.Ordinal))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
                 }
 
                 // JS Array (numeric indexes + length)
