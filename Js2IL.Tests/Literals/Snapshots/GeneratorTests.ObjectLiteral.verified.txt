@@ -49,15 +49,15 @@
 
 		IL_0000: newobj instance void Modules.ObjectLiteral/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "name"
 		IL_0011: ldstr "Alice"
-		IL_0016: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_0016: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_001b: dup
 		IL_001c: ldstr "age"
 		IL_0021: ldc.r8 31
-		IL_002a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_002a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_002f: stloc.1
 		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0035: ldstr "x is"

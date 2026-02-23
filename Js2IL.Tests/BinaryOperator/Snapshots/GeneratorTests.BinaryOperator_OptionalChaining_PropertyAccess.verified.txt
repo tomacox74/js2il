@@ -82,11 +82,11 @@
 		IL_0044: stelem.ref
 		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_004a: pop
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0050: dup
 		IL_0051: ldstr "value"
 		IL_0056: ldc.r8 123
-		IL_005f: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_005f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0064: stloc.2
 		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_006a: stloc.3

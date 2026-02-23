@@ -182,11 +182,11 @@
 			IL_0046: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
 			IL_004b: switch (IL_0058, IL_0099)
 
-			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_005d: dup
 			IL_005e: ldstr "value"
 			IL_0063: ldc.r8 42
-			IL_006c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+			IL_006c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
 			IL_0076: stloc.1
 			IL_0077: ldloc.0

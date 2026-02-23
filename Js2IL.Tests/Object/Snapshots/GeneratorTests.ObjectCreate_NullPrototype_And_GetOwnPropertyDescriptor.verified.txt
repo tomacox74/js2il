@@ -100,15 +100,15 @@
 		IL_007e: pop
 		IL_007f: ldloc.1
 		IL_0080: ldstr "x"
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_008a: dup
 		IL_008b: ldstr "value"
 		IL_0090: ldc.r8 1
-		IL_0099: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_0099: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_009e: dup
 		IL_009f: ldstr "enumerable"
 		IL_00a4: ldc.i4.1
-		IL_00a5: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyBoolean(object, string, bool)
+		IL_00a5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
 		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
 		IL_00af: pop
 		IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()

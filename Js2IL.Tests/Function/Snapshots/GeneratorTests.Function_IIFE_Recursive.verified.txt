@@ -26,7 +26,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2220
+					// Method begins at RVA 0x221c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2229
+					// Method begins at RVA 0x2225
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -67,7 +67,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2217
+				// Method begins at RVA 0x2213
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -89,7 +89,7 @@
 				object depth
 			) cil managed 
 		{
-			// Method begins at RVA 0x2160
+			// Method begins at RVA 0x215c
 			// Header size: 12
 			// Code size: 162 (0xa2)
 			.maxstack 8
@@ -168,7 +168,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x220e
+			// Method begins at RVA 0x220a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -194,7 +194,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 258 (0x102)
+		// Code size: 254 (0xfe)
 		.maxstack 18
 		.locals init (
 			[0] class Modules.Function_IIFE_Recursive/Scope,
@@ -216,82 +216,78 @@
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0021: stloc.1
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0027: dup
 		IL_0028: ldstr "name"
 		IL_002d: ldstr "a"
-		IL_0032: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_0032: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_0037: dup
 		IL_0038: ldstr "children"
 		IL_003d: ldc.i4.0
 		IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0048: pop
-		IL_0049: stloc.2
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_004f: dup
-		IL_0050: ldstr "name"
-		IL_0055: ldstr "root"
-		IL_005a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
-		IL_005f: dup
-		IL_0060: ldstr "children"
-		IL_0065: ldc.i4.2
-		IL_0066: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_006b: dup
-		IL_006c: ldloc.2
-		IL_006d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0072: dup
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0078: dup
-		IL_0079: ldstr "name"
-		IL_007e: ldstr "b"
-		IL_0083: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
-		IL_0088: dup
-		IL_0089: ldstr "children"
-		IL_008e: ldc.i4.1
-		IL_008f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0094: dup
-		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_009a: dup
-		IL_009b: ldstr "name"
-		IL_00a0: ldstr "b1"
-		IL_00a5: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
-		IL_00aa: dup
-		IL_00ab: ldstr "children"
-		IL_00b0: ldc.i4.0
-		IL_00b1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00bb: pop
-		IL_00bc: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00c6: pop
-		IL_00c7: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00d1: pop
-		IL_00d2: stloc.2
-		IL_00d3: ldc.i4.2
-		IL_00d4: newarr [System.Runtime]System.Object
+		IL_0043: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0048: stloc.2
+		IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_004e: dup
+		IL_004f: ldstr "name"
+		IL_0054: ldstr "root"
+		IL_0059: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_005e: dup
+		IL_005f: ldstr "children"
+		IL_0064: ldc.i4.2
+		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_006a: dup
+		IL_006b: ldloc.2
+		IL_006c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0071: dup
+		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0077: dup
+		IL_0078: ldstr "name"
+		IL_007d: ldstr "b"
+		IL_0082: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0087: dup
+		IL_0088: ldstr "children"
+		IL_008d: ldc.i4.1
+		IL_008e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0093: dup
+		IL_0094: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0099: dup
+		IL_009a: ldstr "name"
+		IL_009f: ldstr "b1"
+		IL_00a4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00a9: dup
+		IL_00aa: ldstr "children"
+		IL_00af: ldc.i4.0
+		IL_00b0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00b5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00ba: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00bf: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00c4: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00c9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00ce: stloc.2
+		IL_00cf: ldc.i4.2
+		IL_00d0: newarr [System.Runtime]System.Object
+		IL_00d5: dup
+		IL_00d6: ldc.i4.0
+		IL_00d7: ldloc.2
+		IL_00d8: stelem.ref
 		IL_00d9: dup
-		IL_00da: ldc.i4.0
-		IL_00db: ldloc.2
-		IL_00dc: stelem.ref
-		IL_00dd: dup
-		IL_00de: ldc.i4.1
-		IL_00df: ldc.r8 0.0
-		IL_00e8: box [System.Runtime]System.Double
-		IL_00ed: stelem.ref
-		IL_00ee: stloc.3
-		IL_00ef: ldloc.1
-		IL_00f0: ldc.i4.1
-		IL_00f1: newarr [System.Runtime]System.Object
-		IL_00f6: dup
-		IL_00f7: ldc.i4.0
-		IL_00f8: ldnull
-		IL_00f9: stelem.ref
-		IL_00fa: ldloc.3
-		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0100: pop
-		IL_0101: ret
+		IL_00da: ldc.i4.1
+		IL_00db: ldc.r8 0.0
+		IL_00e4: box [System.Runtime]System.Double
+		IL_00e9: stelem.ref
+		IL_00ea: stloc.3
+		IL_00eb: ldloc.1
+		IL_00ec: ldc.i4.1
+		IL_00ed: newarr [System.Runtime]System.Object
+		IL_00f2: dup
+		IL_00f3: ldc.i4.0
+		IL_00f4: ldnull
+		IL_00f5: stelem.ref
+		IL_00f6: ldloc.3
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_00fc: pop
+		IL_00fd: ret
 	} // end of method Function_IIFE_Recursive::__js_module_init__
 
 } // end of class Modules.Function_IIFE_Recursive
@@ -303,7 +299,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2232
+		// Method begins at RVA 0x222e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

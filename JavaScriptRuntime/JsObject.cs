@@ -40,6 +40,10 @@ public sealed class JsObject : IDictionary<string, object?>
     public void SetValue(string key, object? value)
         => GetOrCreateDict()[key] = JsValue.FromObject(value);
 
+    /// <summary>Stores an arbitrary object value (alias used by newer IL emit paths).</summary>
+    public void SetObject(string key, object? value)
+        => SetValue(key, value);
+
     // -------------------------------------------------------------------------
     // Read helpers
     // -------------------------------------------------------------------------

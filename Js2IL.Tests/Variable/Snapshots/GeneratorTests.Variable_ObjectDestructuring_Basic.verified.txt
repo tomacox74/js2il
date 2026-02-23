@@ -54,19 +54,19 @@
 
 		IL_0000: newobj instance void Modules.Variable_ObjectDestructuring_Basic/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "x"
 		IL_0011: ldc.r8 10
-		IL_001a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_001a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_001f: dup
 		IL_0020: ldstr "y"
 		IL_0025: ldc.r8 20
-		IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0033: dup
 		IL_0034: ldstr "name"
 		IL_0039: ldstr "test"
-		IL_003e: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_0043: stloc.1
 		IL_0044: ldloc.1
 		IL_0045: brfalse IL_0055

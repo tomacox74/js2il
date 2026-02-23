@@ -106,7 +106,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 230 (0xe6)
+		// Code size: 229 (0xe5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Proxy_HasTrap_AffectsInOperator/Scope,
@@ -121,11 +121,11 @@
 
 		IL_0000: newobj instance void Modules.Proxy_HasTrap_AffectsInOperator/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "a"
 		IL_0011: ldc.r8 1
-		IL_001a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_001a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_001f: stloc.1
 		IL_0020: ldnull
 		IL_0021: ldftn object Modules.Proxy_HasTrap_AffectsInOperator/FunctionExpression_handler::__js_call__(object, object, object)
@@ -138,70 +138,69 @@
 		IL_0035: stelem.ref
 		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_003b: stloc.s 4
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_003d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0042: dup
 		IL_0043: ldstr "has"
 		IL_0048: ldloc.s 4
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_004f: pop
-		IL_0050: stloc.s 5
-		IL_0052: ldloc.s 5
-		IL_0054: stloc.2
-		IL_0055: ldloc.1
-		IL_0056: ldloc.2
-		IL_0057: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_005c: stloc.s 4
-		IL_005e: ldloc.s 4
-		IL_0060: stloc.3
-		IL_0061: ldstr "a"
-		IL_0066: ldloc.3
-		IL_0067: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-		IL_006c: stloc.s 6
-		IL_006e: ldloc.s 6
-		IL_0070: box [System.Runtime]System.Boolean
-		IL_0075: stloc.s 7
-		IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007c: ldc.i4.1
-		IL_007d: newarr [System.Runtime]System.Object
-		IL_0082: dup
-		IL_0083: ldc.i4.0
-		IL_0084: ldloc.s 7
-		IL_0086: stelem.ref
-		IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_008c: pop
-		IL_008d: ldstr "b"
-		IL_0092: ldloc.3
-		IL_0093: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-		IL_0098: stloc.s 6
-		IL_009a: ldloc.s 6
-		IL_009c: box [System.Runtime]System.Boolean
-		IL_00a1: stloc.s 7
-		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a8: ldc.i4.1
-		IL_00a9: newarr [System.Runtime]System.Object
-		IL_00ae: dup
-		IL_00af: ldc.i4.0
-		IL_00b0: ldloc.s 7
-		IL_00b2: stelem.ref
-		IL_00b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b8: pop
-		IL_00b9: ldstr "c"
-		IL_00be: ldloc.3
-		IL_00bf: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-		IL_00c4: stloc.s 6
-		IL_00c6: ldloc.s 6
-		IL_00c8: box [System.Runtime]System.Boolean
-		IL_00cd: stloc.s 7
-		IL_00cf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d4: ldc.i4.1
-		IL_00d5: newarr [System.Runtime]System.Object
-		IL_00da: dup
-		IL_00db: ldc.i4.0
-		IL_00dc: ldloc.s 7
-		IL_00de: stelem.ref
-		IL_00df: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e4: pop
-		IL_00e5: ret
+		IL_004a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_004f: stloc.s 5
+		IL_0051: ldloc.s 5
+		IL_0053: stloc.2
+		IL_0054: ldloc.1
+		IL_0055: ldloc.2
+		IL_0056: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_005b: stloc.s 4
+		IL_005d: ldloc.s 4
+		IL_005f: stloc.3
+		IL_0060: ldstr "a"
+		IL_0065: ldloc.3
+		IL_0066: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_006b: stloc.s 6
+		IL_006d: ldloc.s 6
+		IL_006f: box [System.Runtime]System.Boolean
+		IL_0074: stloc.s 7
+		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007b: ldc.i4.1
+		IL_007c: newarr [System.Runtime]System.Object
+		IL_0081: dup
+		IL_0082: ldc.i4.0
+		IL_0083: ldloc.s 7
+		IL_0085: stelem.ref
+		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008b: pop
+		IL_008c: ldstr "b"
+		IL_0091: ldloc.3
+		IL_0092: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_0097: stloc.s 6
+		IL_0099: ldloc.s 6
+		IL_009b: box [System.Runtime]System.Boolean
+		IL_00a0: stloc.s 7
+		IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a7: ldc.i4.1
+		IL_00a8: newarr [System.Runtime]System.Object
+		IL_00ad: dup
+		IL_00ae: ldc.i4.0
+		IL_00af: ldloc.s 7
+		IL_00b1: stelem.ref
+		IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00b7: pop
+		IL_00b8: ldstr "c"
+		IL_00bd: ldloc.3
+		IL_00be: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_00c3: stloc.s 6
+		IL_00c5: ldloc.s 6
+		IL_00c7: box [System.Runtime]System.Boolean
+		IL_00cc: stloc.s 7
+		IL_00ce: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d3: ldc.i4.1
+		IL_00d4: newarr [System.Runtime]System.Object
+		IL_00d9: dup
+		IL_00da: ldc.i4.0
+		IL_00db: ldloc.s 7
+		IL_00dd: stelem.ref
+		IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00e3: pop
+		IL_00e4: ret
 	} // end of method Proxy_HasTrap_AffectsInOperator::__js_module_init__
 
 } // end of class Modules.Proxy_HasTrap_AffectsInOperator

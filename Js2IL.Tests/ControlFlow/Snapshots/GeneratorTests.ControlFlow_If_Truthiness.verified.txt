@@ -151,7 +151,7 @@
 		IL_001d: box [System.Runtime]System.Double
 		IL_0022: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_0027: stloc.s 4
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_002e: stloc.s 5
 		IL_0030: ldc.i4.s 10
 		IL_0032: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
@@ -186,11 +186,11 @@
 		IL_0098: ldloc.s 5
 		IL_009a: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_009f: dup
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00a0: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_00a5: dup
 		IL_00a6: ldstr "a"
 		IL_00ab: ldc.r8 1
-		IL_00b4: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_00b4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_00b9: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_00be: stloc.1
 		IL_00bf: ldc.r8 0.0

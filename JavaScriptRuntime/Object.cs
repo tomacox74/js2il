@@ -685,14 +685,10 @@ namespace JavaScriptRuntime
                     Set = setValue
                 };
 
-                // Ensure key presence for ExpandoObject enumeration.
-                if (obj is System.Dynamic.ExpandoObject exp)
+                // Ensure key presence for dictionary-backed object literal enumeration.
+                if (obj is IDictionary<string, object?> dict && !dict.ContainsKey(key))
                 {
-                    var dict = (IDictionary<string, object?>)exp;
-                    if (!dict.ContainsKey(key))
-                    {
-                        dict[key] = null;
-                    }
+                    dict[key] = null;
                 }
 
                 PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
@@ -713,11 +709,10 @@ namespace JavaScriptRuntime
 
             PropertyDescriptorStore.DefineOrUpdate(obj, key, dataDesc);
 
-            // Best-effort backing store update for ExpandoObject.
-            if (obj is System.Dynamic.ExpandoObject exp2)
+            // Best-effort backing store update for dictionary-backed objects.
+            if (obj is IDictionary<string, object?> dict2)
             {
-                var dict = (IDictionary<string, object?>)exp2;
-                dict[key] = value;
+                dict2[key] = value;
             }
 
             return obj;
@@ -3069,6 +3064,7 @@ namespace JavaScriptRuntime
                 foreach (var kvp in src)
                 {
                     if (excluded.Contains(kvp.Key)) continue;
+                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key)) continue;
                     result.SetValue(kvp.Key, kvp.Value);
                 }
                 return result;
@@ -3080,6 +3076,7 @@ namespace JavaScriptRuntime
                 foreach (var kvp in dictGeneric)
                 {
                     if (excluded.Contains(kvp.Key)) continue;
+                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key)) continue;
                     result.SetValue(kvp.Key, kvp.Value);
                 }
                 return result;
@@ -3091,7 +3088,7 @@ namespace JavaScriptRuntime
                 var type = obj.GetType();
                 foreach (var p in type
                     .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => p.CanRead && !excluded.Contains(p.Name) && p.GetIndexParameters().Length == 0))
+                    .Where(p => p.CanRead && p.GetIndexParameters().Length == 0 && !excluded.Contains(p.Name)))
                 {
                     result.SetValue(p.Name, p.GetValue(obj));
                 }
@@ -3958,6 +3955,23 @@ namespace JavaScriptRuntime
                     return dictGeneric.ContainsKey(name);
                 }
 
+                if (target is System.Collections.IDictionary dictObj)
+                {
+                    if (dictObj.Contains(name))
+                    {
+                        return true;
+                    }
+
+                    foreach (var key in dictObj.Keys)
+                    {
+                        if (string.Equals(DotNet2JSConversions.ToString(key), name, StringComparison.Ordinal))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
                 // JS Array (numeric indexes + length)
                 if (target is Array jsArr)
                 {

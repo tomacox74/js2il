@@ -604,11 +604,11 @@
 
 		IL_0000: newobj instance void Modules.Array_PrototypeMethods_ArrayLike_EdgeCases/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "length"
 		IL_0011: ldc.r8 0.0
-		IL_001a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_001a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_001f: stloc.1
 		.try
 		{
@@ -743,15 +743,15 @@
 			IL_0158: leave IL_015d
 		} // end handler
 
-		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_015d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0162: dup
 		IL_0163: ldstr "length"
 		IL_0168: ldc.r8 3
-		IL_0171: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_0171: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0176: dup
 		IL_0177: ldstr "1"
 		IL_017c: ldstr "b"
-		IL_0181: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_0181: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_0186: stloc.s 8
 		IL_0188: ldloc.0
 		IL_0189: ldc.r8 0.0
@@ -939,11 +939,11 @@
 		IL_03c3: stelem.ref
 		IL_03c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_03c9: pop
-		IL_03ca: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_03ca: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_03cf: dup
 		IL_03d0: ldstr "length"
 		IL_03d5: ldc.r8 2
-		IL_03de: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_03de: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_03e3: stloc.s 13
 		.try
 		{
@@ -1102,19 +1102,19 @@
 			IL_0562: leave IL_0567
 		} // end handler
 
-		IL_0567: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0567: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_056c: dup
 		IL_056d: ldstr "0"
 		IL_0572: ldstr "a"
-		IL_0577: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_0577: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_057c: dup
 		IL_057d: ldstr "1"
 		IL_0582: ldstr "b"
-		IL_0587: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_0587: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_058c: dup
 		IL_058d: ldstr "length"
 		IL_0592: ldc.r8 2
-		IL_059b: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_059b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_05a0: stloc.s 20
 		IL_05a2: call class [System.Runtime]System.Func`3<object[], object[], object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Array()
 		IL_05a7: ldstr "prototype"

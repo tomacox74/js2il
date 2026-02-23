@@ -47,11 +47,11 @@
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
-			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_0005: dup
 			IL_0006: ldstr "arguments"
 			IL_000b: ldc.r8 123
-			IL_0014: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+			IL_0014: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 			IL_0019: stloc.0
 			IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_001f: ldc.i4.1

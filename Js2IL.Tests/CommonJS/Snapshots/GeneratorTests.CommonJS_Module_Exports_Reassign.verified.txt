@@ -64,11 +64,11 @@
 		IL_003b: pop
 		IL_003c: ldarg.2
 		IL_003d: ldstr "exports"
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0047: dup
 		IL_0048: ldstr "newObject"
 		IL_004d: ldstr "reassigned module.exports"
-		IL_0052: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_0052: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
 		IL_005c: pop
 		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()

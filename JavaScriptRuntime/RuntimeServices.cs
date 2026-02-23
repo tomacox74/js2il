@@ -151,7 +151,7 @@ public class RuntimeServices
     /// Creates the backing object for a JavaScript object literal.
     /// Returns a <see cref="JsObject"/> that stores numeric and boolean values without boxing.
     /// </summary>
-    public static object CreateObjectLiteral()
+    public static JsObject CreateObjectLiteral()
     {
         return new JsObject();
     }

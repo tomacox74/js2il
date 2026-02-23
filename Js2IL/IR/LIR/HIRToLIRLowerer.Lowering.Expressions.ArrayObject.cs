@@ -106,9 +106,6 @@ public sealed partial class HIRToLIRLowerer
                     return false;
                 }
 
-                // Do not force-box the value; typed temps are passed directly so that the IL
-                // emitter can use void-returning typed setters (SetPropertyNumber/Boolean/String)
-                // and avoid a 'box' instruction for numeric/bool/string properties.
                 properties.Add(new ObjectProperty(prop.Key, valueTemp));
             }
 

@@ -38,7 +38,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x20fe
+			// Method begins at RVA 0x20fd
 			// Header size: 1
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -185,7 +185,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 162 (0xa2)
+		// Code size: 161 (0xa1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Scope,
@@ -212,46 +212,45 @@
 		IL_0025: stloc.s 4
 		IL_0027: ldloc.s 4
 		IL_0029: stloc.1
-		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_002f: dup
 		IL_0030: ldstr "x"
 		IL_0035: ldc.r8 9
-		IL_003e: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0043: dup
 		IL_0044: ldstr "getX"
 		IL_0049: ldloc.1
 		IL_004a: ldstr "getX"
 		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0059: pop
-		IL_005a: stloc.2
-		IL_005b: ldloc.1
-		IL_005c: ldstr "getX"
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0066: stloc.s 5
-		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006d: ldc.i4.1
-		IL_006e: newarr [System.Runtime]System.Object
-		IL_0073: dup
-		IL_0074: ldc.i4.0
-		IL_0075: ldloc.s 5
-		IL_0077: stelem.ref
-		IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007d: pop
-		IL_007e: ldloc.2
-		IL_007f: ldstr "getX"
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0089: stloc.s 5
-		IL_008b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0090: ldc.i4.1
-		IL_0091: newarr [System.Runtime]System.Object
-		IL_0096: dup
-		IL_0097: ldc.i4.0
-		IL_0098: ldloc.s 5
-		IL_009a: stelem.ref
-		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a0: pop
-		IL_00a1: ret
+		IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0059: stloc.2
+		IL_005a: ldloc.1
+		IL_005b: ldstr "getX"
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0065: stloc.s 5
+		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006c: ldc.i4.1
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: dup
+		IL_0073: ldc.i4.0
+		IL_0074: ldloc.s 5
+		IL_0076: stelem.ref
+		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007c: pop
+		IL_007d: ldloc.2
+		IL_007e: ldstr "getX"
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0088: stloc.s 5
+		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008f: ldc.i4.1
+		IL_0090: newarr [System.Runtime]System.Object
+		IL_0095: dup
+		IL_0096: ldc.i4.0
+		IL_0097: ldloc.s 5
+		IL_0099: stelem.ref
+		IL_009a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_009f: pop
+		IL_00a0: ret
 	} // end of method ArrowFunction_LexicalThis_ConstructorAssigned::__js_module_init__
 
 } // end of class Modules.ArrowFunction_LexicalThis_ConstructorAssigned

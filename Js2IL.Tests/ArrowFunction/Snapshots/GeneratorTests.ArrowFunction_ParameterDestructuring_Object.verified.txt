@@ -311,15 +311,15 @@
 		IL_0033: stloc.s 4
 		IL_0035: ldloc.1
 		IL_0036: ldloc.s 4
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0038: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_003d: dup
 		IL_003e: ldstr "a"
 		IL_0043: ldc.r8 1
-		IL_004c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_004c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0051: dup
 		IL_0052: ldstr "b"
 		IL_0057: ldc.r8 2
-		IL_0060: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_0060: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
 		IL_006a: pop
 		IL_006b: ldnull
@@ -345,11 +345,11 @@
 		IL_0098: stloc.s 4
 		IL_009a: ldloc.2
 		IL_009b: ldloc.s 4
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_00a2: dup
 		IL_00a3: ldstr "host"
 		IL_00a8: ldstr "example.com"
-		IL_00ad: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_00ad: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
 		IL_00b7: pop
 		IL_00b8: ldc.i4.1
@@ -361,19 +361,19 @@
 		IL_00c2: stloc.s 4
 		IL_00c4: ldloc.2
 		IL_00c5: ldloc.s 4
-		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_00cc: dup
 		IL_00cd: ldstr "host"
 		IL_00d2: ldstr "api.test.com"
-		IL_00d7: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_00d7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_00dc: dup
 		IL_00dd: ldstr "port"
 		IL_00e2: ldc.r8 3000
-		IL_00eb: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_00eb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_00f0: dup
 		IL_00f1: ldstr "secure"
 		IL_00f6: ldc.i4.1
-		IL_00f7: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyBoolean(object, string, bool)
+		IL_00f7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
 		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
 		IL_0101: pop
 		IL_0102: ldc.i4.1
@@ -385,7 +385,7 @@
 		IL_010c: stloc.s 4
 		IL_010e: ldloc.2
 		IL_010f: ldloc.s 4
-		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0111: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
 		IL_011b: pop
 		IL_011c: ret
