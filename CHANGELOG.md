@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.18 - 2026-02-23
+
 - IR/runtime perf: collapse dynamic `+` followed by immediate numeric coercion into `Operators.AddAndToNumber(...)` overloads in assignment/update hot paths, reducing emitted Add→ToNumber roundtrips while preserving JavaScript `+` semantics, mixed double/object no-boxing paths, and numeric-result no-boxing fast paths.
 - CLI/diagnostics: split user-facing compiler output from internal diagnostics, route verbose pipeline traces through `Microsoft.Extensions.Logging`, keep `--verbose` as diagnostics-to-console, and add `--diagnostic-file <path>` for opt-in diagnostics file logging.
 
