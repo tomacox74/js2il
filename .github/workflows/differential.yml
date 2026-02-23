@@ -1,0 +1,72 @@
+name: Differential Tests
+
+# Bounded differential test suite – Node.js vs JS2IL
+#
+# PR gate  : runs the small fixed corpus on every push / PR to master.
+# Nightly  : runs corpus + 50 generated programs (deterministic seed).
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+  schedule:
+    # Nightly at 02:00 UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: "RNG seed for generated programs"
+        required: false
+        default: "42"
+      generate:
+        description: "Number of generated programs (0 = corpus only)"
+        required: false
+        default: "0"
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+jobs:
+  differential:
+    name: Differential (Node vs JS2IL)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build JS2IL (Release)
+        run: dotnet build Js2IL/Js2IL.csproj --no-restore -c Release
+
+      - name: Run differential tests – fixed corpus (PR gate)
+        if: github.event_name != 'schedule' && github.event_name != 'workflow_dispatch'
+        run: |
+          node scripts/differential-test/run.js \
+            --timeout 30 \
+            --verbose
+
+      - name: Run differential tests – corpus + generated (nightly / manual)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          SEED="${{ github.event.inputs.seed || '42' }}"
+          GENERATE="${{ github.event.inputs.generate || '50' }}"
+          node scripts/differential-test/run.js \
+            --timeout 30 \
+            --seed "$SEED" \
+            --generate "$GENERATE" \
+            --verbose
