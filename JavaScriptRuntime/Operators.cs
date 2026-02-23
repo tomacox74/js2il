@@ -983,11 +983,10 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                // For generic objects (ExpandoObject, dynamic objects)
-                if (target is System.Dynamic.ExpandoObject expando)
+                // For generic objects (ExpandoObject, JsObject, IDictionary-backed objects)
+                if (target is System.Collections.Generic.IDictionary<string, object?> dictGeneric)
                 {
-                    var dict2 = (System.Collections.Generic.IDictionary<string, object?>)expando;
-                    return dict2.ContainsKey(name);
+                    return dictGeneric.ContainsKey(name);
                 }
 
                 // Fallback: check using reflection (not cached - see performance note above)

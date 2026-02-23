@@ -587,19 +587,55 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(createObjectLiteral);
 
-                    // For each property: dup, ldstr key, load value, call Object.SetItem(obj, key, value), pop
+                    // Use typed void-returning setters when the value type is known to avoid 'box'.
+                    var setPropertyNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.SetPropertyNumber),
+                        parameterTypes: new[] { typeof(object), typeof(string), typeof(double) });
+                    var setPropertyBooleanMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.SetPropertyBoolean),
+                        parameterTypes: new[] { typeof(object), typeof(string), typeof(bool) });
+                    var setPropertyStringMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.SetPropertyString),
+                        parameterTypes: new[] { typeof(object), typeof(string), typeof(string) });
                     var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.SetItem),
                         parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
+
                     foreach (var prop in newJsObject.Properties)
                     {
+                        var valueStorage = GetTempStorage(prop.Value);
                         ilEncoder.OpCode(ILOpCode.Dup);
                         ilEncoder.Ldstr(_metadataBuilder, prop.Key);
-                        EmitLoadTempAsObject(prop.Value, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(setItemMethod);
-                        ilEncoder.OpCode(ILOpCode.Pop);
+
+                        if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
+                        {
+                            EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(setPropertyNumberMethod);
+                        }
+                        else if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(bool))
+                        {
+                            EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(setPropertyBooleanMethod);
+                        }
+                        else if (valueStorage.Kind == ValueStorageKind.Reference && valueStorage.ClrType == typeof(string))
+                        {
+                            EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(setPropertyStringMethod);
+                        }
+                        else
+                        {
+                            EmitLoadTempAsObject(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(setItemMethod);
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                        }
                     }
                     // Object reference stays on stack
                 }

@@ -106,19 +106,21 @@ public sealed partial class HIRToLIRLowerer
                     return false;
                 }
 
-                var boxedValue = EnsureObject(valueTemp);
-                properties.Add(new ObjectProperty(prop.Key, boxedValue));
+                // Do not force-box the value; typed temps are passed directly so that the IL
+                // emitter can use void-returning typed setters (SetPropertyNumber/Boolean/String)
+                // and avoid a 'box' instruction for numeric/bool/string properties.
+                properties.Add(new ObjectProperty(prop.Key, valueTemp));
             }
 
             _methodBodyIR.Instructions.Add(new LIRNewJsObject(properties, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(System.Dynamic.ExpandoObject)));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.JsObject)));
             return true;
         }
 
         // Create an empty object first, then apply members in source evaluation order.
         // This preserves side-effect order for computed keys and spread members.
         _methodBodyIR.Instructions.Add(new LIRNewJsObject(new List<ObjectProperty>(), resultTempVar));
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(System.Dynamic.ExpandoObject)));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.JsObject)));
 
         foreach (var member in objectExpr.Members)
         {

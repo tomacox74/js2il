@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20a5
+			// Method begins at RVA 0x209e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 73 (0x49)
+		// Code size: 66 (0x42)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral/Scope,
-			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.ObjectLiteral/Scope::.ctor()
@@ -53,21 +53,18 @@
 		IL_000b: dup
 		IL_000c: ldstr "name"
 		IL_0011: ldstr "Alice"
-		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_001b: pop
-		IL_001c: dup
-		IL_001d: ldstr "age"
-		IL_0022: ldc.r8 31
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0035: pop
-		IL_0036: stloc.1
-		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003c: ldstr "x is"
-		IL_0041: ldloc.1
-		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0047: pop
-		IL_0048: ret
+		IL_0016: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_001b: dup
+		IL_001c: ldstr "age"
+		IL_0021: ldc.r8 31
+		IL_002a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_002f: stloc.1
+		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0035: ldstr "x is"
+		IL_003a: ldloc.1
+		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0040: pop
+		IL_0041: ret
 	} // end of method ObjectLiteral::__js_module_init__
 
 } // end of class Modules.ObjectLiteral
@@ -79,7 +76,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ae
+		// Method begins at RVA 0x20a7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

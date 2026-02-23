@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2159
+			// Method begins at RVA 0x2141
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216b
+				// Method begins at RVA 0x2153
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2162
+			// Method begins at RVA 0x214a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,11 +82,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 253 (0xfd)
+		// Code size: 229 (0xe5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectDefineProperty_Enumerable_ForIn/Scope,
-			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] object,
 			[4] object,
@@ -105,86 +105,78 @@
 		IL_0017: dup
 		IL_0018: ldstr "value"
 		IL_001d: ldc.r8 1
-		IL_0026: box [System.Runtime]System.Double
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0030: pop
-		IL_0031: dup
-		IL_0032: ldstr "enumerable"
-		IL_0037: ldc.i4.0
-		IL_0038: box [System.Runtime]System.Boolean
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0042: pop
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-		IL_0048: pop
-		IL_0049: ldloc.1
-		IL_004a: ldstr "b"
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0054: dup
-		IL_0055: ldstr "value"
-		IL_005a: ldc.r8 2
-		IL_0063: box [System.Runtime]System.Double
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0026: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_002b: dup
+		IL_002c: ldstr "enumerable"
+		IL_0031: ldc.i4.0
+		IL_0032: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyBoolean(object, string, bool)
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_003c: pop
+		IL_003d: ldloc.1
+		IL_003e: ldstr "b"
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0048: dup
+		IL_0049: ldstr "value"
+		IL_004e: ldc.r8 2
+		IL_0057: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_005c: dup
+		IL_005d: ldstr "enumerable"
+		IL_0062: ldc.i4.1
+		IL_0063: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyBoolean(object, string, bool)
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
 		IL_006d: pop
-		IL_006e: dup
-		IL_006f: ldstr "enumerable"
-		IL_0074: ldc.i4.1
-		IL_0075: box [System.Runtime]System.Boolean
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_007f: pop
-		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-		IL_0085: pop
-		IL_0086: ldc.i4.0
-		IL_0087: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_008c: stloc.2
-		IL_008d: ldloc.1
-		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
-		IL_0093: stloc.3
-		// loop start (head: IL_0094)
-			IL_0094: ldloc.3
-			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-			IL_009a: stloc.s 5
-			IL_009c: ldloc.s 5
-			IL_009e: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-			IL_00a3: stloc.s 6
-			IL_00a5: ldloc.s 6
-			IL_00a7: brtrue IL_00d0
+		IL_006e: ldc.i4.0
+		IL_006f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0074: stloc.2
+		IL_0075: ldloc.1
+		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+		IL_007b: stloc.3
+		// loop start (head: IL_007c)
+			IL_007c: ldloc.3
+			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_0082: stloc.s 5
+			IL_0084: ldloc.s 5
+			IL_0086: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_008b: stloc.s 6
+			IL_008d: ldloc.s 6
+			IL_008f: brtrue IL_00b8
 
-			IL_00ac: ldloc.s 5
-			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-			IL_00b3: stloc.s 5
-			IL_00b5: ldloc.s 5
-			IL_00b7: stloc.s 4
-			IL_00b9: ldloc.2
-			IL_00ba: ldc.i4.1
-			IL_00bb: newarr [System.Runtime]System.Object
-			IL_00c0: dup
-			IL_00c1: ldc.i4.0
-			IL_00c2: ldloc.s 4
-			IL_00c4: stelem.ref
-			IL_00c5: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
-			IL_00ca: pop
-			IL_00cb: br IL_0094
+			IL_0094: ldloc.s 5
+			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_009b: stloc.s 5
+			IL_009d: ldloc.s 5
+			IL_009f: stloc.s 4
+			IL_00a1: ldloc.2
+			IL_00a2: ldc.i4.1
+			IL_00a3: newarr [System.Runtime]System.Object
+			IL_00a8: dup
+			IL_00a9: ldc.i4.0
+			IL_00aa: ldloc.s 4
+			IL_00ac: stelem.ref
+			IL_00ad: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_00b2: pop
+			IL_00b3: br IL_007c
 		// end loop
 
-		IL_00d0: ldloc.2
-		IL_00d1: ldc.i4.1
-		IL_00d2: newarr [System.Runtime]System.Object
-		IL_00d7: dup
-		IL_00d8: ldc.i4.0
-		IL_00d9: ldstr ","
-		IL_00de: stelem.ref
-		IL_00df: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00e4: stloc.s 7
-		IL_00e6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00eb: ldc.i4.1
-		IL_00ec: newarr [System.Runtime]System.Object
-		IL_00f1: dup
-		IL_00f2: ldc.i4.0
-		IL_00f3: ldloc.s 7
-		IL_00f5: stelem.ref
-		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00fb: pop
-		IL_00fc: ret
+		IL_00b8: ldloc.2
+		IL_00b9: ldc.i4.1
+		IL_00ba: newarr [System.Runtime]System.Object
+		IL_00bf: dup
+		IL_00c0: ldc.i4.0
+		IL_00c1: ldstr ","
+		IL_00c6: stelem.ref
+		IL_00c7: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00cc: stloc.s 7
+		IL_00ce: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d3: ldc.i4.1
+		IL_00d4: newarr [System.Runtime]System.Object
+		IL_00d9: dup
+		IL_00da: ldc.i4.0
+		IL_00db: ldloc.s 7
+		IL_00dd: stelem.ref
+		IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00e3: pop
+		IL_00e4: ret
 	} // end of method ObjectDefineProperty_Enumerable_ForIn::__js_module_init__
 
 } // end of class Modules.ObjectDefineProperty_Enumerable_ForIn
@@ -196,7 +188,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2174
+		// Method begins at RVA 0x215c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

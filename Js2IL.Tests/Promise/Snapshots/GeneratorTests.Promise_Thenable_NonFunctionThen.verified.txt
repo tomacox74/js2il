@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f3
+				// Method begins at RVA 0x20ef
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 				object 'value'
 			) cil managed 
 		{
-			// Method begins at RVA 0x20b8
+			// Method begins at RVA 0x20b4
 			// Header size: 12
 			// Code size: 38 (0x26)
 			.maxstack 8
@@ -79,7 +79,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ea
+			// Method begins at RVA 0x20e6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -105,11 +105,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 92 (0x5c)
+		// Code size: 86 (0x56)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Thenable_NonFunctionThen/Scope,
-			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] object,
 			[3] object
 		)
@@ -120,31 +120,29 @@
 		IL_000b: dup
 		IL_000c: ldstr "then"
 		IL_0011: ldc.r8 123
-		IL_001a: box [System.Runtime]System.Double
-		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0024: pop
-		IL_0025: stloc.1
-		IL_0026: ldloc.1
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_002c: stloc.2
-		IL_002d: ldnull
-		IL_002e: ldftn object Modules.Promise_Thenable_NonFunctionThen/ArrowFunction_L5C27::__js_call__(object, object)
-		IL_0034: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0039: ldc.i4.1
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: dup
-		IL_0040: ldc.i4.0
-		IL_0041: ldloc.0
-		IL_0042: stelem.ref
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_004d: stloc.3
-		IL_004e: ldloc.2
-		IL_004f: ldstr "then"
-		IL_0054: ldloc.3
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_005a: pop
-		IL_005b: ret
+		IL_001a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_001f: stloc.1
+		IL_0020: ldloc.1
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_0026: stloc.2
+		IL_0027: ldnull
+		IL_0028: ldftn object Modules.Promise_Thenable_NonFunctionThen/ArrowFunction_L5C27::__js_call__(object, object)
+		IL_002e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0033: ldc.i4.1
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: dup
+		IL_003a: ldc.i4.0
+		IL_003b: ldloc.0
+		IL_003c: stelem.ref
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0047: stloc.3
+		IL_0048: ldloc.2
+		IL_0049: ldstr "then"
+		IL_004e: ldloc.3
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0054: pop
+		IL_0055: ret
 	} // end of method Promise_Thenable_NonFunctionThen::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_NonFunctionThen
@@ -156,7 +154,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fc
+		// Method begins at RVA 0x20f8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

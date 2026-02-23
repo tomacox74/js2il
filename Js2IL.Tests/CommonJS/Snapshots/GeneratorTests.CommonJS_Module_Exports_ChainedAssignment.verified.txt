@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2142
+			// Method begins at RVA 0x213e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -93,7 +93,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2154
+				// Method begins at RVA 0x2150
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -114,7 +114,7 @@
 				object name
 			) cil managed 
 		{
-			// Method begins at RVA 0x2128
+			// Method begins at RVA 0x2124
 			// Header size: 12
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -139,7 +139,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x214b
+			// Method begins at RVA 0x2147
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -165,12 +165,12 @@
 	{
 		// Method begins at RVA 0x20b0
 		// Header size: 12
-		// Code size: 107 (0x6b)
+		// Code size: 101 (0x65)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Exports_ChainedAssignment_Lib/Scope,
 			[1] object,
-			[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Module_Exports_ChainedAssignment_Lib/Scope::.ctor()
@@ -190,26 +190,24 @@
 		IL_0027: dup
 		IL_0028: ldstr "answer"
 		IL_002d: ldc.r8 42
-		IL_0036: box [System.Runtime]System.Double
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0040: pop
-		IL_0041: dup
-		IL_0042: ldstr "greet"
-		IL_0047: ldloc.1
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_004d: pop
-		IL_004e: stloc.2
-		IL_004f: ldarg.2
-		IL_0050: ldstr "exports"
-		IL_0055: ldloc.2
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_005b: pop
-		IL_005c: ldarg.2
-		IL_005d: ldstr "exports"
-		IL_0062: ldloc.2
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0068: starg.s exports
-		IL_006a: ret
+		IL_0036: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_003b: dup
+		IL_003c: ldstr "greet"
+		IL_0041: ldloc.1
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0047: pop
+		IL_0048: stloc.2
+		IL_0049: ldarg.2
+		IL_004a: ldstr "exports"
+		IL_004f: ldloc.2
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0055: pop
+		IL_0056: ldarg.2
+		IL_0057: ldstr "exports"
+		IL_005c: ldloc.2
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0062: starg.s exports
+		IL_0064: ret
 	} // end of method CommonJS_Module_Exports_ChainedAssignment_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_ChainedAssignment_Lib
@@ -221,7 +219,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215d
+		// Method begins at RVA 0x2159
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

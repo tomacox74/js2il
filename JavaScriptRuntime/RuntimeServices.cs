@@ -149,11 +149,11 @@ public class RuntimeServices
 
     /// <summary>
     /// Creates the backing object for a JavaScript object literal.
-    /// Kept in the runtime so generated IL can avoid directly referencing BCL dynamic types.
+    /// Returns a <see cref="JsObject"/> that stores numeric and boolean values without boxing.
     /// </summary>
     public static object CreateObjectLiteral()
     {
-        return new System.Dynamic.ExpandoObject();
+        return new JsObject();
     }
 
     /// <summary>

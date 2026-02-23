@@ -82,7 +82,7 @@ internal sealed partial class LIRToILCompiler
                         return true;
                     }
 
-                    // Emit: call RuntimeServices.CreateObjectLiteral() -> object
+                    // Emit: call RuntimeServices.CreateObjectLiteral() -> JsObject (as object)
                     var createObjectLiteral = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.RuntimeServices),
                         nameof(JavaScriptRuntime.RuntimeServices.CreateObjectLiteral),
@@ -90,20 +90,66 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(createObjectLiteral);
 
-                    // For each property: dup, ldstr key, load value, call Object.SetItem(obj, key, value), pop
-                    // (avoids emitting IDictionary<string, object>.set_Item calls, which have been fragile under some runtimes)
+                    // For each property, choose the most specific typed setter to avoid 'box' instructions.
+                    // - UnboxedValue + double  -> SetPropertyNumber(object, string, double)  (void)
+                    // - UnboxedValue + bool    -> SetPropertyBoolean(object, string, bool)   (void)
+                    // - Reference  + string   -> SetPropertyString(object, string, string?)  (void)
+                    // - Otherwise             -> SetItem(object, object, object)             (object, pop)
+                    var setPropertyNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.SetPropertyNumber),
+                        parameterTypes: new[] { typeof(object), typeof(string), typeof(double) });
+                    var setPropertyBooleanMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.SetPropertyBoolean),
+                        parameterTypes: new[] { typeof(object), typeof(string), typeof(bool) });
+                    var setPropertyStringMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.SetPropertyString),
+                        parameterTypes: new[] { typeof(object), typeof(string), typeof(string) });
                     var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.SetItem),
                         parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
+
                     foreach (var prop in newJsObject.Properties)
                     {
+                        var valueStorage = GetTempStorage(prop.Value);
                         ilEncoder.OpCode(ILOpCode.Dup);
                         ilEncoder.Ldstr(_metadataBuilder, prop.Key);
-                        EmitLoadTempAsObject(prop.Value, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(setItemMethod);
-                        ilEncoder.OpCode(ILOpCode.Pop);
+
+                        if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
+                        {
+                            // Fast path: emit unboxed double directly - no 'box' instruction
+                            EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(setPropertyNumberMethod);
+                            // SetPropertyNumber returns void - no pop needed
+                        }
+                        else if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(bool))
+                        {
+                            // Fast path: emit unboxed bool directly - no 'box' instruction
+                            EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(setPropertyBooleanMethod);
+                            // SetPropertyBoolean returns void - no pop needed
+                        }
+                        else if (valueStorage.Kind == ValueStorageKind.Reference && valueStorage.ClrType == typeof(string))
+                        {
+                            // Fast path: emit string reference directly - no boxing
+                            EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(setPropertyStringMethod);
+                            // SetPropertyString returns void - no pop needed
+                        }
+                        else
+                        {
+                            // General path: box value as object, call SetItem, pop return value
+                            EmitLoadTempAsObject(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(setItemMethod);
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                        }
                     }
 
                     EmitStoreTemp(newJsObject.Result, ilEncoder, allocation);

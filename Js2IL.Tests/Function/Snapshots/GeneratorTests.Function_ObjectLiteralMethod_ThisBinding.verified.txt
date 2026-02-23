@@ -92,13 +92,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 120 (0x78)
+		// Code size: 119 (0x77)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ObjectLiteralMethod_ThisBinding/Scope,
-			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] object,
-			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.Function_ObjectLiteralMethod_ThisBinding/Scope::.ctor()
@@ -118,32 +118,31 @@
 		IL_0027: dup
 		IL_0028: ldstr "prefix"
 		IL_002d: ldstr "Result: "
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0037: pop
-		IL_0038: dup
-		IL_0039: ldstr "format"
-		IL_003e: ldloc.2
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0044: pop
-		IL_0045: stloc.3
-		IL_0046: ldloc.3
-		IL_0047: stloc.1
-		IL_0048: ldloc.1
-		IL_0049: ldstr "format"
-		IL_004e: ldc.r8 42
-		IL_0057: box [System.Runtime]System.Double
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0061: stloc.2
-		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0067: ldc.i4.1
-		IL_0068: newarr [System.Runtime]System.Object
-		IL_006d: dup
-		IL_006e: ldc.i4.0
-		IL_006f: ldloc.2
-		IL_0070: stelem.ref
-		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0076: pop
-		IL_0077: ret
+		IL_0032: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyString(object, string, string)
+		IL_0037: dup
+		IL_0038: ldstr "format"
+		IL_003d: ldloc.2
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0043: pop
+		IL_0044: stloc.3
+		IL_0045: ldloc.3
+		IL_0046: stloc.1
+		IL_0047: ldloc.1
+		IL_0048: ldstr "format"
+		IL_004d: ldc.r8 42
+		IL_0056: box [System.Runtime]System.Double
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0060: stloc.2
+		IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0066: ldc.i4.1
+		IL_0067: newarr [System.Runtime]System.Object
+		IL_006c: dup
+		IL_006d: ldc.i4.0
+		IL_006e: ldloc.2
+		IL_006f: stelem.ref
+		IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0075: pop
+		IL_0076: ret
 	} // end of method Function_ObjectLiteralMethod_ThisBinding::__js_module_init__
 
 } // end of class Modules.Function_ObjectLiteralMethod_ThisBinding

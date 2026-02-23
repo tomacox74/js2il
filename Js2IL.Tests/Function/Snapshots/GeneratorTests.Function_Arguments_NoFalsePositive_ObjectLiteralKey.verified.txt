@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f6
+				// Method begins at RVA 0x20f0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,33 +41,31 @@
 		{
 			// Method begins at RVA 0x20a0
 			// Header size: 12
-			// Code size: 65 (0x41)
+			// Code size: 59 (0x3b)
 			.maxstack 8
 			.locals init (
-				[0] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 			IL_0005: dup
 			IL_0006: ldstr "arguments"
 			IL_000b: ldc.r8 123
-			IL_0014: box [System.Runtime]System.Double
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-			IL_001e: pop
-			IL_001f: stloc.0
-			IL_0020: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0025: ldc.i4.1
-			IL_0026: newarr [System.Runtime]System.Object
-			IL_002b: dup
-			IL_002c: ldc.i4.0
-			IL_002d: ldloc.0
-			IL_002e: ldstr "arguments"
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0038: stelem.ref
-			IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_003e: pop
-			IL_003f: ldnull
-			IL_0040: ret
+			IL_0014: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+			IL_0019: stloc.0
+			IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001f: ldc.i4.1
+			IL_0020: newarr [System.Runtime]System.Object
+			IL_0025: dup
+			IL_0026: ldc.i4.0
+			IL_0027: ldloc.0
+			IL_0028: ldstr "arguments"
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0032: stelem.ref
+			IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0038: pop
+			IL_0039: ldnull
+			IL_003a: ret
 		} // end of method f::__js_call__
 
 	} // end of class f
@@ -85,7 +83,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ed
+			// Method begins at RVA 0x20e7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -158,7 +156,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ff
+		// Method begins at RVA 0x20f9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

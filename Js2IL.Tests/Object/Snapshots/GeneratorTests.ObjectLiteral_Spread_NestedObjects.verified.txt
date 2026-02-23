@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2110
+			// Method begins at RVA 0x2104
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 180 (0xb4)
+		// Code size: 168 (0xa8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_Spread_NestedObjects/Scope,
-			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
-			[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
-			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.ObjectLiteral_Spread_NestedObjects/Scope::.ctor()
@@ -55,56 +55,52 @@
 		IL_000b: dup
 		IL_000c: ldstr "x"
 		IL_0011: ldc.r8 1
-		IL_001a: box [System.Runtime]System.Double
-		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0024: pop
-		IL_0025: dup
-		IL_0026: ldstr "y"
-		IL_002b: ldc.r8 2
-		IL_0034: box [System.Runtime]System.Double
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_003e: pop
-		IL_003f: stloc.1
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0045: stloc.3
-		IL_0046: ldloc.3
-		IL_0047: ldloc.1
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SpreadInto(object, object)
-		IL_004d: pop
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0053: dup
-		IL_0054: ldstr "nested"
-		IL_0059: ldloc.3
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_005f: pop
-		IL_0060: stloc.2
-		IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0066: ldc.i4.1
-		IL_0067: newarr [System.Runtime]System.Object
-		IL_006c: dup
-		IL_006d: ldc.i4.0
-		IL_006e: ldloc.2
-		IL_006f: ldstr "nested"
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0079: ldstr "x"
-		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0083: stelem.ref
-		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0089: pop
-		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008f: ldc.i4.1
-		IL_0090: newarr [System.Runtime]System.Object
-		IL_0095: dup
-		IL_0096: ldc.i4.0
-		IL_0097: ldloc.2
-		IL_0098: ldstr "nested"
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00a2: ldstr "y"
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00ac: stelem.ref
-		IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b2: pop
-		IL_00b3: ret
+		IL_001a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_001f: dup
+		IL_0020: ldstr "y"
+		IL_0025: ldc.r8 2
+		IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.Object::SetPropertyNumber(object, string, float64)
+		IL_0033: stloc.1
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0039: stloc.3
+		IL_003a: ldloc.3
+		IL_003b: ldloc.1
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SpreadInto(object, object)
+		IL_0041: pop
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0047: dup
+		IL_0048: ldstr "nested"
+		IL_004d: ldloc.3
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0053: pop
+		IL_0054: stloc.2
+		IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005a: ldc.i4.1
+		IL_005b: newarr [System.Runtime]System.Object
+		IL_0060: dup
+		IL_0061: ldc.i4.0
+		IL_0062: ldloc.2
+		IL_0063: ldstr "nested"
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_006d: ldstr "x"
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0077: stelem.ref
+		IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007d: pop
+		IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0083: ldc.i4.1
+		IL_0084: newarr [System.Runtime]System.Object
+		IL_0089: dup
+		IL_008a: ldc.i4.0
+		IL_008b: ldloc.2
+		IL_008c: ldstr "nested"
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0096: ldstr "y"
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00a0: stelem.ref
+		IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00a6: pop
+		IL_00a7: ret
 	} // end of method ObjectLiteral_Spread_NestedObjects::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_Spread_NestedObjects
@@ -116,7 +112,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2119
+		// Method begins at RVA 0x210d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

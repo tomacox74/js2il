@@ -197,6 +197,30 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
                 .ToList();
         }
 
+        // JsObject: union of backing-dict keys and descriptor-store keys.
+        // defineProperty'd properties live only in the descriptor store, not in the backing dict.
+        if (target is JsObject jsObj)
+        {
+            var result = new List<string>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            // Descriptor-defined keys first (preserves definition order for defineProperty).
+            foreach (var k in PropertyDescriptorStore.GetOwnKeys(target))
+            {
+                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, k) && seen.Add(k))
+                    result.Add(k);
+            }
+
+            // Backing dictionary keys (direct assignments).
+            foreach (var k in jsObj.GetOwnPropertyNames())
+            {
+                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, k) && seen.Add(k))
+                    result.Add(k);
+            }
+
+            return result;
+        }
+
         // JS Array: enumerate indices
         if (target is JavaScriptRuntime.Array jsArr)
         {
@@ -288,6 +312,16 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         {
             var dict = (IDictionary<string, object?>)exp;
             return dict.ContainsKey(key) && PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, key);
+        }
+
+        // JsObject: a key is "present" if it's in the backing dict OR the descriptor store.
+        if (target is JsObject jsObjTarget)
+        {
+            bool presentInDescriptor = PropertyDescriptorStore.TryGetOwn(target, key, out _);
+            bool presentInBacking = jsObjTarget.ContainsKey(key);
+            if (!presentInDescriptor && !presentInBacking)
+                return false;
+            return PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, key);
         }
 
         // JS Array
