@@ -192,12 +192,13 @@ public sealed partial class HIRToLIRLowerer
 
             case Acornima.Operator.UnsignedRightShiftAssignment:
                 {
+                    // >>> always produces a ToUint32 result (0..4294967295); use double to avoid losing values >= 2^31.
                     bool leftIsNumeric = (leftType == typeof(double) || leftType == typeof(int)) && GetTempStorage(currentValue).Kind == ValueStorageKind.UnboxedValue;
                     bool rightIsNumeric = (rightType == typeof(double) || rightType == typeof(int)) && GetTempStorage(rhsValue).Kind == ValueStorageKind.UnboxedValue;
                     if (!leftIsNumeric) { currentValue = EnsureNumber(currentValue); }
                     if (!rightIsNumeric) { rhsValue = EnsureNumber(rhsValue); }
                     _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(currentValue, rhsValue, result));
-                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                     return true;
                 }
 

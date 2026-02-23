@@ -398,12 +398,14 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(rightShift.Result, ilEncoder, allocation);
                 break;
 
-            // Unsigned right shift: convert to int32, shr_un (result stays int32)
+            // Unsigned right shift: int32->uint32 reinterpret, shr_un, then back to double (ToUint32 semantics)
             case LIRUnsignedRightShift unsignedRightShift:
                 if (!IsMaterialized(unsignedRightShift.Result, allocation)) break;
                 EmitLoadTempAsInt32ForBitwise(unsignedRightShift.Left, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_u4);  // Reinterpret as uint32 so shr_un treats high bit as data
                 EmitLoadTempAsInt32ForBitwise(unsignedRightShift.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Shr_un);
+                ilEncoder.OpCode(ILOpCode.Conv_r_un); // Convert uint32 result to double
                 EmitStoreTemp(unsignedRightShift.Result, ilEncoder, allocation);
                 break;
 

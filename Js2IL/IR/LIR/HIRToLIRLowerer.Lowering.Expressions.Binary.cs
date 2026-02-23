@@ -524,12 +524,14 @@ public sealed partial class HIRToLIRLowerer
 
         if (binaryExpr.Operator == Acornima.Operator.UnsignedRightShift)
         {
+            // >>> always produces a ToUint32 result (0..4294967295), so we must use double to avoid
+            // losing values >= 2^31 (e.g. -1 >>> 0 = 4294967295 which overflows int32).
             var leftIsNumeric = leftStorage.Kind == ValueStorageKind.UnboxedValue && (leftType == typeof(double) || leftType == typeof(int));
             var rightIsNumeric = rightStorage.Kind == ValueStorageKind.UnboxedValue && (rightType == typeof(double) || rightType == typeof(int));
             if (leftIsNumeric && rightIsNumeric)
             {
                 _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
             }
 
@@ -538,7 +540,7 @@ public sealed partial class HIRToLIRLowerer
                 var leftForOp = leftIsNumeric ? leftTempVar : EnsureNumber(leftTempVar);
                 var rightForOp = rightIsNumeric ? rightTempVar : EnsureNumber(rightTempVar);
                 _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftForOp, rightForOp, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
             }
 
