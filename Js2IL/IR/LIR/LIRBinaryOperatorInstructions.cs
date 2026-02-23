@@ -30,6 +30,11 @@ public record LIRAddDynamicDoubleObject(TempVariable LeftDouble, TempVariable Ri
 public record LIRAddDynamicObjectDouble(TempVariable LeftObject, TempVariable RightDouble, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Dynamic addition followed by immediate ToNumber coercion via Operators.AddAndToNumber.
+/// </summary>
+public record LIRAddAndToNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Subtraction of two double values using native IL sub instruction.
 /// </summary>
 public record LIRSubNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;

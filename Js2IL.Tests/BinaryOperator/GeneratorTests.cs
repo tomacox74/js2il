@@ -14,6 +14,9 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_AddNumberNumber() { var testName = nameof(BinaryOperator_AddNumberNumber); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_AddDynamicThenToNumber_StringPreserved() { var testName = nameof(BinaryOperator_AddDynamicThenToNumber_StringPreserved); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_AddObjectObject() { var testName = nameof(BinaryOperator_AddObjectObject); return GenerateTest(testName); }
 
         [Fact]

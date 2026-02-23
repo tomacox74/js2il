@@ -55,6 +55,16 @@ internal sealed partial class LIRToILCompiler
                 EmitOperatorsAddObjectDouble(ilEncoder);
                 EmitStoreTemp(addDynamicObjectDouble.Result, ilEncoder, allocation);
                 break;
+            case LIRAddAndToNumber addAndToNumber:
+                if (!IsMaterialized(addAndToNumber.Result, allocation))
+                {
+                    // Stackify will re-emit this fused Add+ToNumber inline at the single use site.
+                    break;
+                }
+
+                TryEmitStackValueInstruction(addAndToNumber, ilEncoder, allocation, methodDescriptor);
+                EmitStoreTemp(addAndToNumber.Result, ilEncoder, allocation);
+                break;
             case LIRSubNumber subNumber:
                 if (!IsMaterialized(subNumber.Result, allocation))
                 {
