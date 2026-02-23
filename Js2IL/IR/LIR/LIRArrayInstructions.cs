@@ -98,9 +98,11 @@ public record LIRSetInt32ArrayElement(TempVariable Receiver, TempVariable Index,
 public readonly record struct ObjectProperty(string Key, TempVariable Value);
 
 /// <summary>
-/// Creates and initializes a JavaScript object (ExpandoObject) with the given properties.
-/// IL emitter: newobj ExpandoObject, [dup, ldstr key, ldtemp value, callvirt IDictionary.set_Item]*.
+/// Creates and initializes a JavaScript object (<see cref="JavaScriptRuntime.JsObject"/>) with the given properties.
+/// IL emitter: call RuntimeServices.CreateObjectLiteral(), [dup, ldstr key, load value, call SetProperty*]*.
+/// For numeric/bool/string values the IL emitter uses void typed-setter overloads
+/// (SetPropertyNumber/SetPropertyBoolean/SetPropertyString) to avoid 'box' instructions.
 /// </summary>
-/// <param name="Properties">The list of property key-value pairs.</param>
+/// <param name="Properties">The list of property key-value pairs (values may be unboxed typed temps).</param>
 /// <param name="Result">The temp variable to store the created object.</param>
 public record LIRNewJsObject(IReadOnlyList<ObjectProperty> Properties, TempVariable Result) : LIRInstruction;
