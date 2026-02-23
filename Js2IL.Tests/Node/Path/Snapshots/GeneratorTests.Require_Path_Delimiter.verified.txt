@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x20e6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,80 +40,71 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 152 (0x98)
+		// Code size: 138 (0x8a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Delimiter/Scope,
 			[1] object,
-			[2] object[],
-			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[5] bool,
+			[2] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] bool,
+			[5] object,
 			[6] object,
 			[7] object,
-			[8] object,
-			[9] object
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_Delimiter/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.i4.1
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
-		IL_000e: ldnull
-		IL_000f: stelem.ref
-		IL_0010: stloc.2
-		IL_0011: ldarg.1
+		IL_0006: ldarg.1
+		IL_0007: ldstr "path"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.2
 		IL_0012: ldloc.2
-		IL_0013: ldstr "path"
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_001d: stloc.3
-		IL_001e: ldloc.3
-		IL_001f: stloc.1
-		IL_0020: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0025: stloc.s 4
-		IL_0027: ldloc.1
-		IL_0028: ldstr "delimiter"
-		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0032: ldstr ":"
-		IL_0037: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_003c: stloc.s 5
-		IL_003e: ldloc.s 5
-		IL_0040: box [System.Runtime]System.Boolean
-		IL_0045: stloc.s 6
-		IL_0047: ldloc.s 6
-		IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_004e: stloc.s 5
-		IL_0050: ldloc.s 5
-		IL_0052: brtrue IL_0080
+		IL_0013: stloc.1
+		IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0019: stloc.3
+		IL_001a: ldloc.1
+		IL_001b: ldstr "delimiter"
+		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0025: ldstr ":"
+		IL_002a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_002f: stloc.s 4
+		IL_0031: ldloc.s 4
+		IL_0033: box [System.Runtime]System.Boolean
+		IL_0038: stloc.s 5
+		IL_003a: ldloc.s 5
+		IL_003c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0041: stloc.s 4
+		IL_0043: ldloc.s 4
+		IL_0045: brtrue IL_0073
 
-		IL_0057: ldloc.1
-		IL_0058: ldstr "delimiter"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0062: ldstr ";"
-		IL_0067: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_006c: stloc.s 5
-		IL_006e: ldloc.s 5
-		IL_0070: box [System.Runtime]System.Boolean
-		IL_0075: stloc.s 7
-		IL_0077: ldloc.s 7
-		IL_0079: stloc.s 9
-		IL_007b: br IL_0084
+		IL_004a: ldloc.1
+		IL_004b: ldstr "delimiter"
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0055: ldstr ";"
+		IL_005a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_005f: stloc.s 4
+		IL_0061: ldloc.s 4
+		IL_0063: box [System.Runtime]System.Boolean
+		IL_0068: stloc.s 6
+		IL_006a: ldloc.s 6
+		IL_006c: stloc.s 8
+		IL_006e: br IL_0077
 
-		IL_0080: ldloc.s 6
-		IL_0082: stloc.s 9
+		IL_0073: ldloc.s 5
+		IL_0075: stloc.s 8
 
-		IL_0084: ldloc.s 4
-		IL_0086: ldc.i4.1
-		IL_0087: newarr [System.Runtime]System.Object
-		IL_008c: dup
-		IL_008d: ldc.i4.0
-		IL_008e: ldloc.s 9
-		IL_0090: stelem.ref
-		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0096: pop
-		IL_0097: ret
+		IL_0077: ldloc.3
+		IL_0078: ldc.i4.1
+		IL_0079: newarr [System.Runtime]System.Object
+		IL_007e: dup
+		IL_007f: ldc.i4.0
+		IL_0080: ldloc.s 8
+		IL_0082: stelem.ref
+		IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0088: pop
+		IL_0089: ret
 	} // end of method Require_Path_Delimiter::__js_module_init__
 
 } // end of class Modules.Require_Path_Delimiter
@@ -125,7 +116,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fd
+		// Method begins at RVA 0x20ef
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

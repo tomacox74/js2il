@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22ae
+				// Method begins at RVA 0x229e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x2248
+			// Method begins at RVA 0x2238
 			// Header size: 12
 			// Code size: 24 (0x18)
 			.maxstack 8
@@ -76,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22b7
+				// Method begins at RVA 0x22a7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -100,7 +100,7 @@
 				object c
 			) cil managed 
 		{
-			// Method begins at RVA 0x226c
+			// Method begins at RVA 0x225c
 			// Header size: 12
 			// Code size: 45 (0x2d)
 			.maxstack 8
@@ -148,7 +148,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22a5
+			// Method begins at RVA 0x2295
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -174,177 +174,168 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 490 (0x1ea)
+		// Code size: 476 (0x1dc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Events_EventEmitter_Emit_Args/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object[],
-			[5] object
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Events_EventEmitter_Emit_Args/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.i4.1
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
-		IL_000e: ldnull
-		IL_000f: stelem.ref
-		IL_0010: stloc.s 4
-		IL_0012: ldarg.1
+		IL_0006: ldarg.1
+		IL_0007: ldstr "node:events"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.s 4
 		IL_0013: ldloc.s 4
-		IL_0015: ldstr "node:events"
-		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_001f: stloc.s 5
-		IL_0021: ldloc.s 5
-		IL_0023: stloc.1
-		IL_0024: ldloc.1
-		IL_0025: ldstr "EventEmitter"
-		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_002f: stloc.2
-		IL_0030: ldloc.2
-		IL_0031: ldc.i4.0
-		IL_0032: newarr [System.Runtime]System.Object
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_003c: stloc.s 5
-		IL_003e: ldloc.s 5
-		IL_0040: stloc.3
-		IL_0041: ldloc.0
-		IL_0042: ldc.r8 0.0
-		IL_004b: box [System.Runtime]System.Double
-		IL_0050: stfld object Modules.Events_EventEmitter_Emit_Args/Scope::sum
-		IL_0055: ldloc.0
-		IL_0056: ldc.r8 0.0
-		IL_005f: box [System.Runtime]System.Double
-		IL_0064: stfld object Modules.Events_EventEmitter_Emit_Args/Scope::product
-		IL_0069: ldnull
-		IL_006a: ldftn object Modules.Events_EventEmitter_Emit_Args/FunctionExpression_L10C18::__js_call__(object[], object, object, object)
-		IL_0070: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
-		IL_0075: ldc.i4.1
-		IL_0076: newarr [System.Runtime]System.Object
-		IL_007b: dup
-		IL_007c: ldc.i4.0
-		IL_007d: ldloc.0
-		IL_007e: stelem.ref
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0084: stloc.s 5
-		IL_0086: ldloc.3
-		IL_0087: ldstr "on"
-		IL_008c: ldstr "sum"
-		IL_0091: ldloc.s 5
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0098: pop
-		IL_0099: ldnull
-		IL_009a: ldftn object Modules.Events_EventEmitter_Emit_Args/FunctionExpression_L14C22::__js_call__(object[], object, object, object, object)
-		IL_00a0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::.ctor(object, native int)
-		IL_00a5: ldc.i4.1
-		IL_00a6: newarr [System.Runtime]System.Object
-		IL_00ab: dup
-		IL_00ac: ldc.i4.0
-		IL_00ad: ldloc.0
-		IL_00ae: stelem.ref
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_00b4: stloc.s 5
-		IL_00b6: ldloc.3
-		IL_00b7: ldstr "on"
-		IL_00bc: ldstr "product"
-		IL_00c1: ldloc.s 5
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00c8: pop
-		IL_00c9: ldloc.3
-		IL_00ca: ldstr "emit"
-		IL_00cf: ldstr "sum"
-		IL_00d4: ldc.r8 2
+		IL_0015: stloc.1
+		IL_0016: ldloc.1
+		IL_0017: ldstr "EventEmitter"
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0021: stloc.2
+		IL_0022: ldloc.2
+		IL_0023: ldc.i4.0
+		IL_0024: newarr [System.Runtime]System.Object
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_002e: stloc.s 4
+		IL_0030: ldloc.s 4
+		IL_0032: stloc.3
+		IL_0033: ldloc.0
+		IL_0034: ldc.r8 0.0
+		IL_003d: box [System.Runtime]System.Double
+		IL_0042: stfld object Modules.Events_EventEmitter_Emit_Args/Scope::sum
+		IL_0047: ldloc.0
+		IL_0048: ldc.r8 0.0
+		IL_0051: box [System.Runtime]System.Double
+		IL_0056: stfld object Modules.Events_EventEmitter_Emit_Args/Scope::product
+		IL_005b: ldnull
+		IL_005c: ldftn object Modules.Events_EventEmitter_Emit_Args/FunctionExpression_L10C18::__js_call__(object[], object, object, object)
+		IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_0067: ldc.i4.1
+		IL_0068: newarr [System.Runtime]System.Object
+		IL_006d: dup
+		IL_006e: ldc.i4.0
+		IL_006f: ldloc.0
+		IL_0070: stelem.ref
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0076: stloc.s 4
+		IL_0078: ldloc.3
+		IL_0079: ldstr "on"
+		IL_007e: ldstr "sum"
+		IL_0083: ldloc.s 4
+		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_008a: pop
+		IL_008b: ldnull
+		IL_008c: ldftn object Modules.Events_EventEmitter_Emit_Args/FunctionExpression_L14C22::__js_call__(object[], object, object, object, object)
+		IL_0092: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc3::.ctor(object, native int)
+		IL_0097: ldc.i4.1
+		IL_0098: newarr [System.Runtime]System.Object
+		IL_009d: dup
+		IL_009e: ldc.i4.0
+		IL_009f: ldloc.0
+		IL_00a0: stelem.ref
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_00a6: stloc.s 4
+		IL_00a8: ldloc.3
+		IL_00a9: ldstr "on"
+		IL_00ae: ldstr "product"
+		IL_00b3: ldloc.s 4
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00ba: pop
+		IL_00bb: ldloc.3
+		IL_00bc: ldstr "emit"
+		IL_00c1: ldstr "sum"
+		IL_00c6: ldc.r8 2
+		IL_00cf: box [System.Runtime]System.Double
+		IL_00d4: ldc.r8 5
 		IL_00dd: box [System.Runtime]System.Double
-		IL_00e2: ldc.r8 5
-		IL_00eb: box [System.Runtime]System.Double
-		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_00f5: stloc.s 5
-		IL_00f7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00fc: ldc.i4.1
-		IL_00fd: newarr [System.Runtime]System.Object
-		IL_0102: dup
-		IL_0103: ldc.i4.0
-		IL_0104: ldloc.s 5
-		IL_0106: stelem.ref
-		IL_0107: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_010c: pop
-		IL_010d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0112: ldc.i4.1
-		IL_0113: newarr [System.Runtime]System.Object
-		IL_0118: dup
-		IL_0119: ldc.i4.0
-		IL_011a: ldloc.0
-		IL_011b: ldfld object Modules.Events_EventEmitter_Emit_Args/Scope::sum
-		IL_0120: stelem.ref
-		IL_0121: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0126: pop
-		IL_0127: ldloc.3
-		IL_0128: ldstr "emit"
-		IL_012d: ldc.i4.4
-		IL_012e: newarr [System.Runtime]System.Object
-		IL_0133: dup
-		IL_0134: ldc.i4.0
-		IL_0135: ldstr "product"
-		IL_013a: stelem.ref
-		IL_013b: dup
-		IL_013c: ldc.i4.1
-		IL_013d: ldc.r8 2
-		IL_0146: box [System.Runtime]System.Double
-		IL_014b: stelem.ref
-		IL_014c: dup
-		IL_014d: ldc.i4.2
-		IL_014e: ldc.r8 3
-		IL_0157: box [System.Runtime]System.Double
-		IL_015c: stelem.ref
-		IL_015d: dup
-		IL_015e: ldc.i4.3
-		IL_015f: ldc.r8 4
-		IL_0168: box [System.Runtime]System.Double
-		IL_016d: stelem.ref
-		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0173: stloc.s 5
-		IL_0175: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_017a: ldc.i4.1
-		IL_017b: newarr [System.Runtime]System.Object
-		IL_0180: dup
-		IL_0181: ldc.i4.0
-		IL_0182: ldloc.s 5
-		IL_0184: stelem.ref
-		IL_0185: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_018a: pop
-		IL_018b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0190: ldc.i4.1
-		IL_0191: newarr [System.Runtime]System.Object
-		IL_0196: dup
-		IL_0197: ldc.i4.0
-		IL_0198: ldloc.0
-		IL_0199: ldfld object Modules.Events_EventEmitter_Emit_Args/Scope::product
-		IL_019e: stelem.ref
-		IL_019f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_01a4: pop
-		IL_01a5: ldloc.3
-		IL_01a6: ldstr "emit"
-		IL_01ab: ldstr "missing"
-		IL_01b0: ldc.r8 1
+		IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_00e7: stloc.s 4
+		IL_00e9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ee: ldc.i4.1
+		IL_00ef: newarr [System.Runtime]System.Object
+		IL_00f4: dup
+		IL_00f5: ldc.i4.0
+		IL_00f6: ldloc.s 4
+		IL_00f8: stelem.ref
+		IL_00f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00fe: pop
+		IL_00ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0104: ldc.i4.1
+		IL_0105: newarr [System.Runtime]System.Object
+		IL_010a: dup
+		IL_010b: ldc.i4.0
+		IL_010c: ldloc.0
+		IL_010d: ldfld object Modules.Events_EventEmitter_Emit_Args/Scope::sum
+		IL_0112: stelem.ref
+		IL_0113: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0118: pop
+		IL_0119: ldloc.3
+		IL_011a: ldstr "emit"
+		IL_011f: ldc.i4.4
+		IL_0120: newarr [System.Runtime]System.Object
+		IL_0125: dup
+		IL_0126: ldc.i4.0
+		IL_0127: ldstr "product"
+		IL_012c: stelem.ref
+		IL_012d: dup
+		IL_012e: ldc.i4.1
+		IL_012f: ldc.r8 2
+		IL_0138: box [System.Runtime]System.Double
+		IL_013d: stelem.ref
+		IL_013e: dup
+		IL_013f: ldc.i4.2
+		IL_0140: ldc.r8 3
+		IL_0149: box [System.Runtime]System.Double
+		IL_014e: stelem.ref
+		IL_014f: dup
+		IL_0150: ldc.i4.3
+		IL_0151: ldc.r8 4
+		IL_015a: box [System.Runtime]System.Double
+		IL_015f: stelem.ref
+		IL_0160: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0165: stloc.s 4
+		IL_0167: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_016c: ldc.i4.1
+		IL_016d: newarr [System.Runtime]System.Object
+		IL_0172: dup
+		IL_0173: ldc.i4.0
+		IL_0174: ldloc.s 4
+		IL_0176: stelem.ref
+		IL_0177: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_017c: pop
+		IL_017d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0182: ldc.i4.1
+		IL_0183: newarr [System.Runtime]System.Object
+		IL_0188: dup
+		IL_0189: ldc.i4.0
+		IL_018a: ldloc.0
+		IL_018b: ldfld object Modules.Events_EventEmitter_Emit_Args/Scope::product
+		IL_0190: stelem.ref
+		IL_0191: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0196: pop
+		IL_0197: ldloc.3
+		IL_0198: ldstr "emit"
+		IL_019d: ldstr "missing"
+		IL_01a2: ldc.r8 1
+		IL_01ab: box [System.Runtime]System.Double
+		IL_01b0: ldc.r8 2
 		IL_01b9: box [System.Runtime]System.Double
-		IL_01be: ldc.r8 2
-		IL_01c7: box [System.Runtime]System.Double
-		IL_01cc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_01d1: stloc.s 5
-		IL_01d3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01d8: ldc.i4.1
-		IL_01d9: newarr [System.Runtime]System.Object
-		IL_01de: dup
-		IL_01df: ldc.i4.0
-		IL_01e0: ldloc.s 5
-		IL_01e2: stelem.ref
-		IL_01e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_01e8: pop
-		IL_01e9: ret
+		IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_01c3: stloc.s 4
+		IL_01c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01ca: ldc.i4.1
+		IL_01cb: newarr [System.Runtime]System.Object
+		IL_01d0: dup
+		IL_01d1: ldc.i4.0
+		IL_01d2: ldloc.s 4
+		IL_01d4: stelem.ref
+		IL_01d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_01da: pop
+		IL_01db: ret
 	} // end of method Events_EventEmitter_Emit_Args::__js_module_init__
 
 } // end of class Modules.Events_EventEmitter_Emit_Args
@@ -356,7 +347,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22c0
+		// Method begins at RVA 0x22b0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

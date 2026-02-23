@@ -87,4 +87,91 @@ public sealed class LIRIntrinsicNormalizationTests
         Assert.Equal(ValueStorageKind.UnboxedValue, body.TempStorages[result.Index].Kind);
         Assert.Equal(typeof(double), body.TempStorages[result.Index].ClrType);
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void Normalize_Rewrites_AritySpecificRequireCalls_To_LIRCallRequire(int arity)
+    {
+        var body = new MethodBodyIR();
+        var requireValue = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.CommonJS.RequireDelegate)));
+        var scopes = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        var a0 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var a1 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var a2 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        body.Instructions.Add(new LIRBuildScopesArray(System.Array.Empty<ScopeSlotSource>(), scopes));
+        body.Instructions.Add(arity switch
+        {
+            0 => new LIRCallFunctionValue0(requireValue, scopes, result),
+            1 => new LIRCallFunctionValue1(requireValue, scopes, a0, result),
+            2 => new LIRCallFunctionValue2(requireValue, scopes, a0, a1, result),
+            3 => new LIRCallFunctionValue3(requireValue, scopes, a0, a1, a2, result),
+            _ => throw new ArgumentOutOfRangeException(nameof(arity))
+        });
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry: null);
+
+        Assert.DoesNotContain(body.Instructions, static ins => ins is LIRBuildScopesArray);
+        var requireCall = Assert.IsType<LIRCallRequire>(body.Instructions[body.Instructions.Count - 1]);
+        Assert.Equal(requireValue, requireCall.RequireValue);
+        Assert.Equal(result, requireCall.Result);
+
+        if (arity == 0)
+        {
+            Assert.Equal(2, body.Instructions.Count);
+            var undefined = Assert.IsType<LIRConstUndefined>(body.Instructions[0]);
+            Assert.Equal(undefined.Result, requireCall.ModuleId);
+        }
+        else
+        {
+            Assert.Single(body.Instructions);
+            Assert.Equal(a0, requireCall.ModuleId);
+        }
+    }
+
+    [Fact]
+    public void Normalize_Rewrites_ArrayBasedRequireCalls_To_LIRCallRequire()
+    {
+        var body = new MethodBodyIR();
+        var requireValue = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.CommonJS.RequireDelegate)));
+        var scopes = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        var a0 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var a1 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var argsArray = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        var result = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        body.Instructions.Add(new LIRBuildScopesArray(System.Array.Empty<ScopeSlotSource>(), scopes));
+        body.Instructions.Add(new LIRBuildArray(new[] { a0, a1 }, argsArray));
+        body.Instructions.Add(new LIRCallFunctionValue(requireValue, scopes, argsArray, result));
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry: null);
+
+        Assert.Single(body.Instructions);
+        var requireCall = Assert.IsType<LIRCallRequire>(body.Instructions[0]);
+        Assert.Equal(requireValue, requireCall.RequireValue);
+        Assert.Equal(a0, requireCall.ModuleId);
+        Assert.Equal(result, requireCall.Result);
+    }
+
+    [Fact]
+    public void Normalize_DoesNotRewrite_AritySpecificCall_WhenCalleeIsNotRequireDelegate()
+    {
+        var body = new MethodBodyIR();
+        var callee = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var scopes = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        var a0 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var result = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        body.Instructions.Add(new LIRBuildScopesArray(System.Array.Empty<ScopeSlotSource>(), scopes));
+        body.Instructions.Add(new LIRCallFunctionValue1(callee, scopes, a0, result));
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry: null);
+
+        Assert.IsType<LIRBuildScopesArray>(body.Instructions[0]);
+        Assert.IsType<LIRCallFunctionValue1>(body.Instructions[1]);
+    }
 }
