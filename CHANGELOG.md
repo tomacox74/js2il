@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 - perf: Reduce boxing in object literals (#351). Replace `ExpandoObject` backing store for JavaScript object literals with a new `JsObject` class backed by `Dictionary<string, JsValue>`. The `JsValue` struct stores number and boolean values inline without heap allocation. New typed property setter methods (`SetPropertyNumber`, `SetPropertyBoolean`, `SetPropertyString`) are called from generated IL instead of the generic `SetItem(object, object, object)` overload, eliminating the `box` instruction for numeric/bool/string property values in object literal initialization. Runtime compatibility with all existing `ExpandoObject` consumers is maintained via the `IDictionary<string, object?>` interface. Also fixes `for-in` enumeration and object spread for descriptor-defined properties on the new JsObject type.
 - perf: add `LIRCoercionCSE` to eliminate repeated `ToNumber`/`ToBoolean`/`IsTruthy` coercions for unchanged primitive (`double`/`bool`) temps within a basic block, reducing redundant runtime coercion calls while preserving object side-effect semantics (PR #701, fixes #350).
+- perf: keep bitwise hot-path intermediates as unboxed `int32` through LIR/IL lowering, add typed `Int32Array` element access (`get_ItemInt`/`set_ItemInt`), and reduce `conv.*` churn in Prime BitArray-style loops while preserving JS `>>>` semantics (PR #700, fixes #349).
 
 ## v0.8.19 - 2026-02-23
 
