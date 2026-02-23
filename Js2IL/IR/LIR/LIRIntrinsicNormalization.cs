@@ -15,6 +15,7 @@ internal static class LIRIntrinsicNormalization
     {
         // Normalize intrinsic call patterns that don't require ClassRegistry.
         NormalizeCommonJsRequireCalls(methodBody);
+        NormalizeIntrinsicCallArityExpansion(methodBody);
 
         if (classRegistry == null)
         {
@@ -280,6 +281,80 @@ internal static class LIRIntrinsicNormalization
 
         var storage = methodBody.TempStorages[temp.Index];
         return storage.Kind == ValueStorageKind.BoxedValue && storage.ClrType == typeof(double);
+    }
+
+    /// <summary>
+    /// Rewrites <see cref="LIRCallIntrinsic"/> instructions whose argument array is a provably-small
+    /// <see cref="LIRBuildArray"/> (≤3 elements) to <see cref="LIRCallInstanceMethod"/> with explicit
+    /// element temps.  This lets the IL emitter select arity-specific method overloads (e.g.,
+    /// <c>Console.log(a0, a1)</c>) instead of the variadic <c>object[]</c> form, and removes the
+    /// type-dispatch peephole that previously lived in <c>LIRToILCompiler</c>.
+    /// </summary>
+    private static void NormalizeIntrinsicCallArityExpansion(MethodBodyIR methodBody)
+    {
+        // Index build-array definitions by their result temp so we can look them up from a call site.
+        var buildArrays = new Dictionary<int, (int DefIndex, IReadOnlyList<TempVariable> Elements)>();
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is LIRBuildArray buildArray && buildArray.Result.Index >= 0)
+            {
+                buildArrays[buildArray.Result.Index] = (i, buildArray.Elements);
+            }
+        }
+
+        if (buildArrays.Count == 0)
+        {
+            return;
+        }
+
+        var indicesToRemove = new HashSet<int>();
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is not LIRCallIntrinsic callIntrinsic)
+            {
+                continue;
+            }
+
+            if (callIntrinsic.ArgumentsArray.Index < 0
+                || !buildArrays.TryGetValue(callIntrinsic.ArgumentsArray.Index, out var buildInfo)
+                || buildInfo.Elements.Count > 3)
+            {
+                continue;
+            }
+
+            // Rewrite to LIRCallInstanceMethod so the IL emitter can use arity-specific overloads
+            // instead of the variadic object[] form.
+            methodBody.Instructions[i] = new LIRCallInstanceMethod(
+                Receiver: callIntrinsic.IntrinsicObject,
+                ReceiverClrType: typeof(JavaScriptRuntime.Console),
+                MethodName: callIntrinsic.Name,
+                Arguments: buildInfo.Elements,
+                Result: callIntrinsic.Result);
+
+            // If the args array temp is used only by its build instruction and this call, remove the build.
+            if (!IsTempUsedOutside(methodBody, callIntrinsic.ArgumentsArray,
+                    ignoreInstructionIndices: new HashSet<int> { buildInfo.DefIndex, i }))
+            {
+                indicesToRemove.Add(buildInfo.DefIndex);
+            }
+        }
+
+        if (indicesToRemove.Count == 0)
+        {
+            return;
+        }
+
+        var newInstructions = new List<LIRInstruction>(methodBody.Instructions.Count - indicesToRemove.Count);
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (!indicesToRemove.Contains(i))
+            {
+                newInstructions.Add(methodBody.Instructions[i]);
+            }
+        }
+        methodBody.Instructions.Clear();
+        methodBody.Instructions.AddRange(newInstructions);
     }
 
     private static void NormalizeCommonJsRequireCalls(MethodBodyIR methodBody)
