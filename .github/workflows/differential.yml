@@ -3,7 +3,7 @@ name: Differential Tests
 # Bounded differential test suite – Node.js vs JS2IL
 #
 # PR gate  : runs the small fixed corpus on every push / PR to master.
-# Nightly  : runs corpus + 50 generated programs (deterministic seed).
+# Weekly   : runs corpus + 50 generated programs (deterministic seed).
 
 on:
   push:
@@ -11,8 +11,8 @@ on:
   pull_request:
     branches: ["master"]
   schedule:
-    # Nightly at 02:00 UTC
-    - cron: "0 2 * * *"
+    # Weekly on Monday at 02:00 UTC
+    - cron: "0 2 * * 1"
   workflow_dispatch:
     inputs:
       seed:
@@ -33,6 +33,8 @@ jobs:
   differential:
     name: Differential (Node vs JS2IL)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -60,7 +62,7 @@ jobs:
             --timeout 30 \
             --verbose
 
-      - name: Run differential tests – corpus + generated (nightly / manual)
+      - name: Run differential tests – corpus + generated (weekly / manual)
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: |
           SEED="${{ github.event.inputs.seed || '42' }}"
@@ -70,3 +72,34 @@ jobs:
             --seed "$SEED" \
             --generate "$GENERATE" \
             --verbose
+
+  create-issue-on-weekly-failure:
+    name: Open issue on weekly failure
+    runs-on: ubuntu-latest
+    needs: [differential]
+    if: ${{ always() && github.event_name == 'schedule' && needs.differential.result == 'failure' }}
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const title = `Differential weekly run failed (run ${context.runId})`;
+            const body = [
+              'The scheduled weekly differential test workflow failed.',
+              '',
+              `- Workflow run: ${runUrl}`,
+              `- Repository: ${context.repo.owner}/${context.repo.repo}`,
+              `- Branch: ${context.ref}`,
+              '',
+              'Please inspect logs and triage any semantic regression mismatches.'
+            ].join('\n');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body
+            });
