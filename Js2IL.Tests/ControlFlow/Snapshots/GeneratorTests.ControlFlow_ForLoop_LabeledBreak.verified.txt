@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2127
+			// Method begins at RVA 0x212e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2139
+				// Method begins at RVA 0x2140
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -66,7 +66,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2154
+						// Method begins at RVA 0x215b
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -84,7 +84,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x214b
+					// Method begins at RVA 0x2152
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -102,7 +102,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2142
+				// Method begins at RVA 0x2149
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -120,7 +120,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2130
+			// Method begins at RVA 0x2137
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -146,14 +146,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 203 (0xcb)
+		// Code size: 210 (0xd2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_LabeledBreak/Scope,
 			[1] object,
 			[2] object,
 			[3] float64,
-			[4] object
+			[4] bool,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_LabeledBreak/Scope::.ctor()
@@ -168,7 +169,7 @@
 			IL_001c: ldloc.3
 			IL_001d: ldc.r8 3
 			IL_0026: clt
-			IL_0028: brfalse IL_00ca
+			IL_0028: brfalse IL_00d1
 
 			IL_002d: ldc.r8 0.0
 			IL_0036: box [System.Runtime]System.Double
@@ -180,7 +181,7 @@
 				IL_0043: ldloc.3
 				IL_0044: ldc.r8 1
 				IL_004d: clt
-				IL_004f: brfalse IL_00a7
+				IL_004f: brfalse IL_00ae
 
 				IL_0054: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 				IL_0059: ldc.i4.1
@@ -192,44 +193,46 @@
 				IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 				IL_0068: pop
 				IL_0069: ldloc.1
-				IL_006a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_006f: ldc.r8 1
-				IL_0078: ceq
-				IL_007a: brfalse IL_0084
+				IL_006a: ldc.r8 1
+				IL_0073: box [System.Runtime]System.Double
+				IL_0078: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_007d: stloc.s 4
+				IL_007f: ldloc.s 4
+				IL_0081: brfalse IL_008b
 
-				IL_007f: br IL_00ca
+				IL_0086: br IL_00d1
 
-				IL_0084: ldloc.2
-				IL_0085: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_008a: stloc.3
-				IL_008b: ldloc.3
-				IL_008c: ldc.r8 1
-				IL_0095: add
-				IL_0096: stloc.3
-				IL_0097: ldloc.3
-				IL_0098: box [System.Runtime]System.Double
-				IL_009d: stloc.s 4
-				IL_009f: ldloc.s 4
-				IL_00a1: stloc.2
-				IL_00a2: br IL_003c
+				IL_008b: ldloc.2
+				IL_008c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0091: stloc.3
+				IL_0092: ldloc.3
+				IL_0093: ldc.r8 1
+				IL_009c: add
+				IL_009d: stloc.3
+				IL_009e: ldloc.3
+				IL_009f: box [System.Runtime]System.Double
+				IL_00a4: stloc.s 5
+				IL_00a6: ldloc.s 5
+				IL_00a8: stloc.2
+				IL_00a9: br IL_003c
 			// end loop
 
-			IL_00a7: ldloc.1
-			IL_00a8: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00ad: stloc.3
-			IL_00ae: ldloc.3
-			IL_00af: ldc.r8 1
-			IL_00b8: add
-			IL_00b9: stloc.3
-			IL_00ba: ldloc.3
-			IL_00bb: box [System.Runtime]System.Double
-			IL_00c0: stloc.s 4
-			IL_00c2: ldloc.s 4
-			IL_00c4: stloc.1
-			IL_00c5: br IL_0015
+			IL_00ae: ldloc.1
+			IL_00af: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00b4: stloc.3
+			IL_00b5: ldloc.3
+			IL_00b6: ldc.r8 1
+			IL_00bf: add
+			IL_00c0: stloc.3
+			IL_00c1: ldloc.3
+			IL_00c2: box [System.Runtime]System.Double
+			IL_00c7: stloc.s 5
+			IL_00c9: ldloc.s 5
+			IL_00cb: stloc.1
+			IL_00cc: br IL_0015
 		// end loop
 
-		IL_00ca: ret
+		IL_00d1: ret
 	} // end of method ControlFlow_ForLoop_LabeledBreak::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_LabeledBreak
@@ -241,7 +244,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215d
+		// Method begins at RVA 0x2164
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

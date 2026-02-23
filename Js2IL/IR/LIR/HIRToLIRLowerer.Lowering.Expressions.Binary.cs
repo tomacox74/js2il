@@ -672,14 +672,17 @@ public sealed partial class HIRToLIRLowerer
                 return true;
 
             case Acornima.Operator.Equality:
-                // Support both number and boolean equality, with dynamic fallback
-                if (leftType == typeof(double) && rightType == typeof(double))
+                // Support both number and boolean equality, with dynamic fallback.
+                // Require UnboxedValue storage to ensure raw IL ceq is type-safe (consistent with <, >, <=, >=).
+                if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
+                    && leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
-                else if (leftType == typeof(bool) && rightType == typeof(bool))
+                else if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
+                    && leftType == typeof(bool) && rightType == typeof(bool))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareBooleanEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -687,7 +690,7 @@ public sealed partial class HIRToLIRLowerer
                 }
                 else
                 {
-                    // Dynamic equality for unknown types
+                    // Dynamic equality for unknown or boxed types
                     var leftBoxed = EnsureObject(leftTempVar);
                     var rightBoxed = EnsureObject(rightTempVar);
                     _methodBodyIR.Instructions.Add(new LIREqualDynamic(leftBoxed, rightBoxed, resultTempVar));
@@ -696,14 +699,17 @@ public sealed partial class HIRToLIRLowerer
                 }
 
             case Acornima.Operator.StrictEquality:
-                // Support both number and boolean strict equality, with dynamic fallback
-                if (leftType == typeof(double) && rightType == typeof(double))
+                // Support both number and boolean strict equality, with dynamic fallback.
+                // Require UnboxedValue storage to ensure raw IL ceq is type-safe (consistent with <, >, <=, >=).
+                if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
+                    && leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
-                else if (leftType == typeof(bool) && rightType == typeof(bool))
+                else if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
+                    && leftType == typeof(bool) && rightType == typeof(bool))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareBooleanEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -711,7 +717,7 @@ public sealed partial class HIRToLIRLowerer
                 }
                 else
                 {
-                    // Dynamic strict equality for unknown types
+                    // Dynamic strict equality for unknown or boxed types
                     var leftBoxed = EnsureObject(leftTempVar);
                     var rightBoxed = EnsureObject(rightTempVar);
                     _methodBodyIR.Instructions.Add(new LIRStrictEqualDynamic(leftBoxed, rightBoxed, resultTempVar));
@@ -720,14 +726,17 @@ public sealed partial class HIRToLIRLowerer
                 }
 
             case Acornima.Operator.Inequality:
-                // Support both number and boolean inequality, with dynamic fallback
-                if (leftType == typeof(double) && rightType == typeof(double))
+                // Support both number and boolean inequality, with dynamic fallback.
+                // Require UnboxedValue storage to ensure raw IL ceq is type-safe (consistent with <, >, <=, >=).
+                if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
+                    && leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberNotEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
-                else if (leftType == typeof(bool) && rightType == typeof(bool))
+                else if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
+                    && leftType == typeof(bool) && rightType == typeof(bool))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareBooleanNotEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -735,7 +744,7 @@ public sealed partial class HIRToLIRLowerer
                 }
                 else
                 {
-                    // Dynamic inequality for unknown types
+                    // Dynamic inequality for unknown or boxed types
                     var leftBoxed = EnsureObject(leftTempVar);
                     var rightBoxed = EnsureObject(rightTempVar);
                     _methodBodyIR.Instructions.Add(new LIRNotEqualDynamic(leftBoxed, rightBoxed, resultTempVar));
@@ -744,14 +753,17 @@ public sealed partial class HIRToLIRLowerer
                 }
 
             case Acornima.Operator.StrictInequality:
-                // Support both number and boolean strict inequality, with dynamic fallback
-                if (leftType == typeof(double) && rightType == typeof(double))
+                // Support both number and boolean strict inequality, with dynamic fallback.
+                // Require UnboxedValue storage to ensure raw IL ceq is type-safe (consistent with <, >, <=, >=).
+                if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
+                    && leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberNotEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
-                else if (leftType == typeof(bool) && rightType == typeof(bool))
+                else if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
+                    && leftType == typeof(bool) && rightType == typeof(bool))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareBooleanNotEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -759,7 +771,7 @@ public sealed partial class HIRToLIRLowerer
                 }
                 else
                 {
-                    // Dynamic strict inequality for unknown types
+                    // Dynamic strict inequality for unknown or boxed types
                     var leftBoxed = EnsureObject(leftTempVar);
                     var rightBoxed = EnsureObject(rightTempVar);
                     _methodBodyIR.Instructions.Add(new LIRStrictNotEqualDynamic(leftBoxed, rightBoxed, resultTempVar));
