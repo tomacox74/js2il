@@ -1497,18 +1497,18 @@ namespace JavaScriptRuntime
 
             // Fallback: try the ToPropertyKey string representation.
             return TryParseCanonicalIndexString(propName, out intIndex);
+        }
 
-            static bool TryParseCanonicalIndexString(string s, out int parsed)
+        private static bool TryParseCanonicalIndexString(string s, out int parsed)
+        {
+            parsed = 0;
+            if (string.IsNullOrEmpty(s)) return false;
+            if (!int.TryParse(s, global::System.Globalization.NumberStyles.None, global::System.Globalization.CultureInfo.InvariantCulture, out parsed))
             {
-                parsed = 0;
-                if (string.IsNullOrEmpty(s)) return false;
-                if (!int.TryParse(s, global::System.Globalization.NumberStyles.None, global::System.Globalization.CultureInfo.InvariantCulture, out parsed))
-                {
-                    return false;
-                }
-                if (parsed < 0) return false;
-                return parsed.ToString(global::System.Globalization.CultureInfo.InvariantCulture) == s;
+                return false;
             }
+            if (parsed < 0) return false;
+            return parsed.ToString(global::System.Globalization.CultureInfo.InvariantCulture) == s;
         }
 
         private static bool HasOwnProperty(object target, string name)
@@ -2042,6 +2042,88 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Fast-path overload for string key reads.
+        /// Avoids boxing at the call site when the compiler has proven the key is a string.
+        /// Skips ToPropertyKeyString/Symbol checks and directly tests the canonical index string path.
+        /// </summary>
+        public static object GetItem(object obj, string key)
+        {
+            // Proxy get trap: treat item access as property access
+            if (obj is JavaScriptRuntime.Proxy)
+            {
+                return GetProperty(obj, key)!;
+            }
+
+            bool isIndex = TryParseCanonicalIndexString(key, out int intIndex);
+
+            // String: return character at index as a 1-length string
+            if (obj is string str)
+            {
+                if (!isIndex)
+                {
+                    return GetProperty(obj, key)!;
+                }
+                if (intIndex < 0 || intIndex >= str.Length)
+                {
+                    return null!; // undefined
+                }
+                return str[intIndex].ToString();
+            }
+
+            // ExpandoObject (object literal): key is already a string property
+            if (obj is System.Dynamic.ExpandoObject)
+            {
+                return GetProperty(obj, key)!;
+            }
+
+            if (obj is Array array)
+            {
+                if (!isIndex)
+                {
+                    return GetProperty(array, key)!;
+                }
+                // Bounds check: return undefined (null) when OOB to mimic JS behavior
+                if (intIndex < 0 || intIndex >= array.Count)
+                {
+                    return null!; // undefined
+                }
+                return array[intIndex]!;
+            }
+            else if (obj is Int32Array i32)
+            {
+                if (!isIndex)
+                {
+                    return GetProperty(i32, key)!;
+                }
+                // Reads outside bounds return 0 per typed array semantics
+                return i32[(double)intIndex];
+            }
+            else if (obj is JavaScriptRuntime.Node.Buffer buffer)
+            {
+                if (!isIndex)
+                {
+                    return GetProperty(buffer, key)!;
+                }
+                // Reads outside bounds return undefined per Node.js Buffer semantics
+                return buffer[(double)intIndex]!;
+            }
+            else
+            {
+                return GetProperty(obj, key)!;
+            }
+        }
+
+        /// <summary>
+        /// Fast-path overload for string key reads that returns an unboxed number.
+        /// Avoids boxing at the call site when the compiler has proven the key is a string
+        /// and the result is consumed as a number.
+        /// </summary>
+        public static double GetItemAsNumber(object obj, string key)
+        {
+            return TypeUtilities.ToNumber(GetItem(obj, key));
+        }
+
+        /// <summary>
         /// Sets an item on an object by index/key.
         /// Used by codegen for computed member assignment and property assignment.
         /// Returns the assigned value to match JavaScript assignment expression semantics.
@@ -2134,6 +2216,100 @@ namespace JavaScriptRuntime
 
             // Generic object: treat as property assignment (ToPropertyKey -> string)
             return SetProperty(obj, propName, value);
+        }
+
+        /// <summary>
+        /// Fast-path overload for string key writes.
+        /// Avoids boxing at the call site when the compiler has proven the key is a string.
+        /// Skips ToPropertyKeyString/Symbol checks and directly tests the canonical index string path.
+        /// Returns the assigned value to match JavaScript assignment expression semantics.
+        /// </summary>
+        public static object? SetItem(object? obj, string key, object? value)
+        {
+            if (obj is null)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null or undefined");
+            }
+
+            if (obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
+            }
+
+            // Proxy set trap
+            if (obj is JavaScriptRuntime.Proxy)
+            {
+                return SetProperty(obj, key, value);
+            }
+
+            // Strings are immutable in JS; silently ignore and return value.
+            if (obj is string)
+            {
+                return value;
+            }
+
+            bool isIndex = TryParseCanonicalIndexString(key, out int intIndex);
+
+            if (obj is System.Dynamic.ExpandoObject)
+            {
+                return SetProperty(obj, key, value);
+            }
+
+            // JS Array index assignment
+            if (obj is Array array)
+            {
+                if (!isIndex)
+                {
+                    return SetProperty(array, key, value);
+                }
+
+                if (intIndex < array.Count)
+                {
+                    array[intIndex] = value!;
+                    return value;
+                }
+
+                if (intIndex == array.Count)
+                {
+                    array.Add(value);
+                    return value;
+                }
+
+                // Extend with undefined (null) up to the index, then add.
+                while (array.Count < intIndex)
+                {
+                    array.Add(null);
+                }
+                array.Add(value);
+                return value;
+            }
+
+            // Typed arrays: coerce and store when in-bounds
+            if (obj is Int32Array i32)
+            {
+                if (!isIndex)
+                {
+                    return SetProperty(i32, key, value);
+                }
+                // Index/value are numeric for typed arrays; coerce here so Int32Array can remain numeric.
+                i32[(double)intIndex] = JavaScriptRuntime.TypeUtilities.ToNumber(value);
+                return value;
+            }
+
+            // Buffer: coerce and store when in-bounds
+            if (obj is JavaScriptRuntime.Node.Buffer buffer)
+            {
+                if (!isIndex)
+                {
+                    return SetProperty(buffer, key, value);
+                }
+                // Buffer indexer expects numeric value
+                buffer[(double)intIndex] = value;
+                return value;
+            }
+
+            // Generic object: treat as property assignment
+            return SetProperty(obj, key, value);
         }
 
         /// <summary>

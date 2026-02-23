@@ -95,7 +95,7 @@ internal sealed partial class LIRToILCompiler
                     var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.SetItem),
-                        parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
+                        parameterTypes: new[] { typeof(object), typeof(string), typeof(object) });
                     foreach (var prop in newJsObject.Properties)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
