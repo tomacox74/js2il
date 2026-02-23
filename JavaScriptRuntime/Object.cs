@@ -2011,6 +2011,34 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Gets an item from an object and converts the result to a number (double).
+        /// Provides a fast path for Int32Array receivers that avoids boxing the element value.
+        /// For all other receivers, falls back to TypeUtilities.ToNumber(GetItem(obj, index)).
+        /// </summary>
+        public static double GetItemAsNumber(object obj, double index)
+        {
+            if (obj is Int32Array i32)
+            {
+                return i32[index];
+            }
+            return TypeUtilities.ToNumber(GetItem(obj, index));
+        }
+
+        /// <summary>
+        /// Gets an item from an object and converts the result to a number (double).
+        /// Provides a fast path for Int32Array receivers that avoids boxing the element value.
+        /// For all other receivers, falls back to TypeUtilities.ToNumber(GetItem(obj, index)).
+        /// </summary>
+        public static double GetItemAsNumber(object obj, object index)
+        {
+            if (obj is Int32Array i32 && index is double d)
+            {
+                return i32[d];
+            }
+            return TypeUtilities.ToNumber(GetItem(obj, index));
+        }
+
+        /// <summary>
         /// Sets an item on an object by index/key.
         /// Used by codegen for computed member assignment and property assignment.
         /// Returns the assigned value to match JavaScript assignment expression semantics.

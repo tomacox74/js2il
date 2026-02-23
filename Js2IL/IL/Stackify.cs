@@ -475,6 +475,7 @@ internal static class Stackify
             // LIRGetLength and LIRGetItem are pure runtime calls
             case LIRGetLength:
             case LIRGetItem:
+            case LIRGetItemAsNumber:
                 return true;
 
             // Proven Array/Int32Array length gets are side-effect free.
@@ -700,6 +701,10 @@ internal static class Stackify
 
             // LIRGetItem: consumes 2 (object + index), produces 1 value
             case LIRGetItem:
+                return (2, 1);
+
+            // LIRGetItemAsNumber: consumes 2 (object + index), produces 1 unboxed double
+            case LIRGetItemAsNumber:
                 return (2, 1);
 
             // LIRGetJsArrayElement: consumes 2 (receiver + index), produces 1 value

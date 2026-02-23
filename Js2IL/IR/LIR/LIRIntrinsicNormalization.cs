@@ -249,6 +249,100 @@ internal static class LIRIntrinsicNormalization
                 continue;
             }
         }
+
+        FuseGetItemWithConvertToNumber(methodBody);
+    }
+
+    /// <summary>
+    /// Peephole pass: fuses LIRGetItem(obj, index, result) immediately followed by
+    /// LIRConvertToNumber(result, numResult) into a single LIRGetItemAsNumber(obj, index, numResult)
+    /// when the intermediate result temp is used only by that LIRConvertToNumber.
+    /// This avoids boxing the GetItem return value when the consumer expects a number.
+    /// </summary>
+    private static void FuseGetItemWithConvertToNumber(MethodBodyIR methodBody)
+    {
+        // Build a map from temp index to the single LIRConvertToNumber instruction that consumes it.
+        // If a temp is consumed by more than one instruction, it is not eligible for fusion.
+        var convertToNumberBySource = new Dictionary<int, int>(); // sourceIndex -> instruction index
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is LIRConvertToNumber conv && conv.Source.Index >= 0)
+            {
+                if (convertToNumberBySource.ContainsKey(conv.Source.Index))
+                {
+                    // Used by more than one ConvertToNumber - mark as ineligible
+                    convertToNumberBySource[conv.Source.Index] = -1;
+                }
+                else
+                {
+                    convertToNumberBySource[conv.Source.Index] = i;
+                }
+            }
+        }
+
+        var indicesToRemove = new HashSet<int>();
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is not LIRGetItem getItem)
+            {
+                continue;
+            }
+
+            var resultIdx = getItem.Result.Index;
+            if (resultIdx < 0)
+            {
+                continue;
+            }
+
+            // Check that result storage is object (not already an unboxed double from normalization).
+            var resultStorage = methodBody.TempStorages[resultIdx];
+            if (resultStorage.Kind == ValueStorageKind.UnboxedValue)
+            {
+                continue;
+            }
+
+            // Find the single LIRConvertToNumber that consumes this result.
+            if (!convertToNumberBySource.TryGetValue(resultIdx, out var convIdx) || convIdx < 0)
+            {
+                continue;
+            }
+
+            var conv = (LIRConvertToNumber)methodBody.Instructions[convIdx];
+
+            // Verify the result temp is not used by any other instruction (besides the GetItem def and the ConvertToNumber).
+            if (IsTempUsedOutside(methodBody, getItem.Result, new HashSet<int> { i, convIdx }))
+            {
+                continue;
+            }
+
+            // Fuse: replace GetItem with GetItemAsNumber targeting the numResult directly.
+            methodBody.Instructions[i] = new LIRGetItemAsNumber(getItem.Object, getItem.Index, conv.Result);
+            indicesToRemove.Add(convIdx);
+
+            // Update result storage to unboxed double.
+            if (conv.Result.Index >= 0 && conv.Result.Index < methodBody.TempStorages.Count)
+            {
+                methodBody.TempStorages[conv.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+            }
+        }
+
+        if (indicesToRemove.Count == 0)
+        {
+            return;
+        }
+
+        var newInstructions = new List<LIRInstruction>(methodBody.Instructions.Count - indicesToRemove.Count);
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (!indicesToRemove.Contains(i))
+            {
+                newInstructions.Add(methodBody.Instructions[i]);
+            }
+        }
+        methodBody.Instructions.Clear();
+        methodBody.Instructions.AddRange(newInstructions);
     }
 
     private static bool IsZeroArgStringMethodSafeToEarlyBind(string methodName)

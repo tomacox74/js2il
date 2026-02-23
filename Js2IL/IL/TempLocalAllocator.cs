@@ -645,6 +645,10 @@ internal static class TempLocalAllocator
                 yield return getItem.Object;
                 yield return getItem.Index;
                 break;
+            case LIRGetItemAsNumber getItemAsNumber:
+                yield return getItemAsNumber.Object;
+                yield return getItemAsNumber.Index;
+                break;
             case LIRSetItem setItem:
                 yield return setItem.Object;
                 yield return setItem.Index;
@@ -1088,6 +1092,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRGetItem getItem:
                 defined = getItem.Result;
+                return true;
+            case LIRGetItemAsNumber getItemAsNumber:
+                defined = getItemAsNumber.Result;
                 return true;
 
             case LIRSetItem setItem:
