@@ -461,10 +461,12 @@ public sealed partial class HIRToLIRLowerer
 
     private TempVariable EnsureNumber(TempVariable tempVar)
     {
+        SyncNumericRefinementStateWithLabels();
         var storage = GetTempStorage(tempVar);
 
         if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
         {
+            _tempBindingOrigin.Remove(tempVar);
             return tempVar;
         }
 
@@ -472,6 +474,10 @@ public sealed partial class HIRToLIRLowerer
         // collapse a just-emitted dynamic '+' followed by ToNumber into one runtime call.
         if (TryRewriteLatestDynamicAddToNumber(tempVar, out var fusedNumberTemp))
         {
+            if (_tempBindingOrigin.Remove(tempVar, out var fusedSourceBinding) && CanTrackNumericRefinement(fusedSourceBinding))
+            {
+                _numericRefinements[fusedSourceBinding] = fusedNumberTemp;
+            }
             return fusedNumberTemp;
         }
 
@@ -482,7 +488,7 @@ public sealed partial class HIRToLIRLowerer
 
         // Flow-sensitive refinement: if tempVar originated from a variable load, record that the
         // binding is now proven double so subsequent loads can return the coerced temp directly.
-        if (_tempBindingOrigin.TryGetValue(tempVar, out var sourceBinding) && CanTrackNumericRefinement(sourceBinding))
+        if (_tempBindingOrigin.Remove(tempVar, out var sourceBinding) && CanTrackNumericRefinement(sourceBinding))
         {
             _numericRefinements[sourceBinding] = numberTempVar;
         }
@@ -496,6 +502,7 @@ public sealed partial class HIRToLIRLowerer
     // assigned value is itself an unboxed double (e.g. after x = Number(x)).
     private void InvalidateNumericRefinement(BindingInfo binding, TempVariable newValue)
     {
+        SyncNumericRefinementStateWithLabels();
         if (!CanTrackNumericRefinement(binding))
         {
             _numericRefinements.Remove(binding);

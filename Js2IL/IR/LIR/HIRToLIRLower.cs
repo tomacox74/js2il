@@ -45,7 +45,14 @@ public sealed partial class HIRToLIRLowerer
 
     // Reverse map: records which binding a freshly-created load temp originated from so that
     // EnsureNumber can propagate the coercion result back into _numericRefinements.
+    // Entries are consumed on use and cleared at control-flow labels.
     private readonly Dictionary<TempVariable, BindingInfo> _tempBindingOrigin = new Dictionary<TempVariable, BindingInfo>();
+
+    // Incremental scan cursor used to detect labels emitted by any lowering path.
+    // When a new label is observed, numeric refinements/origin mappings are cleared
+    // so refinements remain basic-block scoped even when individual sites do not
+    // explicitly call ClearNumericRefinementsAtLabel().
+    private int _numericRefinementLabelScanIndex;
 
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
@@ -742,6 +749,30 @@ public sealed partial class HIRToLIRLowerer
     private void ClearNumericRefinementsAtLabel()
     {
         _numericRefinements.Clear();
+        _tempBindingOrigin.Clear();
+        _numericRefinementLabelScanIndex = _methodBodyIR.Instructions.Count;
+    }
+
+    // Detect labels appended since the last scan and clear refinements if any were
+    // emitted. This centralizes label-boundary invalidation across all lowering files.
+    private void SyncNumericRefinementStateWithLabels()
+    {
+        var instructions = _methodBodyIR.Instructions;
+        if (_numericRefinementLabelScanIndex >= instructions.Count)
+        {
+            return;
+        }
+
+        for (int i = _numericRefinementLabelScanIndex; i < instructions.Count; i++)
+        {
+            if (instructions[i] is LIRLabel)
+            {
+                ClearNumericRefinementsAtLabel();
+                break;
+            }
+        }
+
+        _numericRefinementLabelScanIndex = instructions.Count;
     }
 
     // Flow-sensitive numeric refinements are only safe for non-captured, non-global bindings.

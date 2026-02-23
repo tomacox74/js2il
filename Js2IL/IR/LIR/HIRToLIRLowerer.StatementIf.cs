@@ -43,8 +43,9 @@ public sealed partial class HIRToLIRLowerer
         // Branch to else if condition is false
         lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, elseLabel));
 
-        // Numeric refinements from before the branch are no longer valid inside the branch
-        // body since either the then- or else-path may be taken at runtime.
+        // Clear refinements conservatively at branch entry; pre-branch refinements are still
+        // valid in each arm, but dropping them here keeps branch-handling behavior uniform and
+        // avoids carrying arm-specific refinements across later join points.
         ClearNumericRefinementsAtLabel();
 
         // Consequent block (then)
