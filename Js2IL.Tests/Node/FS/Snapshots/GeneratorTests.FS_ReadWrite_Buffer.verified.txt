@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21fc
+			// Method begins at RVA 0x21e0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 416 (0x1a0)
+		// Code size: 388 (0x184)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_ReadWrite_Buffer/Scope,
@@ -50,161 +50,144 @@
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
 			[5] object,
 			[6] object,
-			[7] object[],
-			[8] object,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-			[10] bool,
-			[11] object
+			[7] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
+			[9] bool,
+			[10] object
 		)
 
 		IL_0000: newobj instance void Modules.FS_ReadWrite_Buffer/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.i4.1
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
-		IL_000e: ldnull
-		IL_000f: stelem.ref
-		IL_0010: stloc.s 7
-		IL_0012: ldarg.1
+		IL_0006: ldarg.1
+		IL_0007: ldstr "fs"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.s 7
 		IL_0013: ldloc.s 7
-		IL_0015: ldstr "fs"
-		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_001f: stloc.s 8
-		IL_0021: ldloc.s 8
-		IL_0023: stloc.1
-		IL_0024: ldc.i4.1
-		IL_0025: newarr [System.Runtime]System.Object
-		IL_002a: dup
-		IL_002b: ldc.i4.0
-		IL_002c: ldnull
-		IL_002d: stelem.ref
-		IL_002e: stloc.s 7
-		IL_0030: ldarg.1
-		IL_0031: ldloc.s 7
-		IL_0033: ldstr "path"
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_003d: stloc.s 8
-		IL_003f: ldloc.s 8
-		IL_0041: stloc.2
-		IL_0042: ldloc.2
-		IL_0043: ldstr "join"
-		IL_0048: ldarg.s __dirname
-		IL_004a: ldstr "tmp-buffer.bin"
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0054: stloc.s 8
-		IL_0056: ldloc.s 8
-		IL_0058: stloc.3
-		IL_0059: ldc.i4.3
-		IL_005a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_005f: dup
-		IL_0060: ldc.r8 97
-		IL_0069: box [System.Runtime]System.Double
-		IL_006e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0073: dup
-		IL_0074: ldc.r8 98
-		IL_007d: box [System.Runtime]System.Double
-		IL_0082: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0087: dup
-		IL_0088: ldc.r8 99
-		IL_0091: box [System.Runtime]System.Double
-		IL_0096: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_00a0: stloc.s 9
-		IL_00a2: ldloc.s 9
-		IL_00a4: stloc.s 4
-		IL_00a6: ldloc.1
-		IL_00a7: ldstr "writeFileSync"
-		IL_00ac: ldloc.3
-		IL_00ad: ldloc.s 4
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00b4: pop
-		IL_00b5: ldloc.1
-		IL_00b6: ldstr "readFileSync"
-		IL_00bb: ldloc.3
-		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00c1: stloc.s 8
-		IL_00c3: ldloc.s 8
-		IL_00c5: stloc.s 5
-		IL_00c7: ldloc.s 5
-		IL_00c9: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
-		IL_00ce: stloc.s 10
-		IL_00d0: ldloc.s 10
-		IL_00d2: box [System.Runtime]System.Boolean
-		IL_00d7: stloc.s 11
-		IL_00d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00de: ldc.i4.1
-		IL_00df: newarr [System.Runtime]System.Object
-		IL_00e4: dup
-		IL_00e5: ldc.i4.0
-		IL_00e6: ldloc.s 11
-		IL_00e8: stelem.ref
-		IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ee: pop
-		IL_00ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f4: ldc.i4.1
-		IL_00f5: newarr [System.Runtime]System.Object
-		IL_00fa: dup
-		IL_00fb: ldc.i4.0
-		IL_00fc: ldloc.s 5
-		IL_00fe: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0103: box [System.Runtime]System.Double
-		IL_0108: stelem.ref
-		IL_0109: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_010e: pop
-		IL_010f: ldloc.s 5
-		IL_0111: ldstr "toString"
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_011b: stloc.s 8
-		IL_011d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0122: ldc.i4.1
-		IL_0123: newarr [System.Runtime]System.Object
-		IL_0128: dup
-		IL_0129: ldc.i4.0
-		IL_012a: ldloc.s 8
-		IL_012c: stelem.ref
-		IL_012d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0132: pop
-		IL_0133: ldloc.1
-		IL_0134: ldstr "readFileSync"
-		IL_0139: ldloc.3
-		IL_013a: ldstr "utf8"
-		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0144: stloc.s 8
-		IL_0146: ldloc.s 8
-		IL_0148: stloc.s 6
-		IL_014a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_014f: ldc.i4.1
-		IL_0150: newarr [System.Runtime]System.Object
-		IL_0155: dup
-		IL_0156: ldc.i4.0
-		IL_0157: ldloc.s 6
-		IL_0159: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_015e: stelem.ref
-		IL_015f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0164: pop
-		IL_0165: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_016a: ldc.i4.1
-		IL_016b: newarr [System.Runtime]System.Object
-		IL_0170: dup
-		IL_0171: ldc.i4.0
-		IL_0172: ldloc.s 6
-		IL_0174: stelem.ref
-		IL_0175: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_017a: pop
-		IL_017b: ldloc.1
-		IL_017c: ldstr "rmSync"
-		IL_0181: ldloc.3
-		IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0187: dup
-		IL_0188: ldstr "force"
-		IL_018d: ldc.i4.1
-		IL_018e: box [System.Runtime]System.Boolean
-		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0198: pop
-		IL_0199: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_019e: pop
-		IL_019f: ret
+		IL_0015: stloc.1
+		IL_0016: ldarg.1
+		IL_0017: ldstr "path"
+		IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0021: stloc.s 7
+		IL_0023: ldloc.s 7
+		IL_0025: stloc.2
+		IL_0026: ldloc.2
+		IL_0027: ldstr "join"
+		IL_002c: ldarg.s __dirname
+		IL_002e: ldstr "tmp-buffer.bin"
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0038: stloc.s 7
+		IL_003a: ldloc.s 7
+		IL_003c: stloc.3
+		IL_003d: ldc.i4.3
+		IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0043: dup
+		IL_0044: ldc.r8 97
+		IL_004d: box [System.Runtime]System.Double
+		IL_0052: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0057: dup
+		IL_0058: ldc.r8 98
+		IL_0061: box [System.Runtime]System.Double
+		IL_0066: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_006b: dup
+		IL_006c: ldc.r8 99
+		IL_0075: box [System.Runtime]System.Double
+		IL_007a: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_0084: stloc.s 8
+		IL_0086: ldloc.s 8
+		IL_0088: stloc.s 4
+		IL_008a: ldloc.1
+		IL_008b: ldstr "writeFileSync"
+		IL_0090: ldloc.3
+		IL_0091: ldloc.s 4
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0098: pop
+		IL_0099: ldloc.1
+		IL_009a: ldstr "readFileSync"
+		IL_009f: ldloc.3
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a5: stloc.s 7
+		IL_00a7: ldloc.s 7
+		IL_00a9: stloc.s 5
+		IL_00ab: ldloc.s 5
+		IL_00ad: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
+		IL_00b2: stloc.s 9
+		IL_00b4: ldloc.s 9
+		IL_00b6: box [System.Runtime]System.Boolean
+		IL_00bb: stloc.s 10
+		IL_00bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c2: ldc.i4.1
+		IL_00c3: newarr [System.Runtime]System.Object
+		IL_00c8: dup
+		IL_00c9: ldc.i4.0
+		IL_00ca: ldloc.s 10
+		IL_00cc: stelem.ref
+		IL_00cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00d2: pop
+		IL_00d3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d8: ldc.i4.1
+		IL_00d9: newarr [System.Runtime]System.Object
+		IL_00de: dup
+		IL_00df: ldc.i4.0
+		IL_00e0: ldloc.s 5
+		IL_00e2: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_00e7: box [System.Runtime]System.Double
+		IL_00ec: stelem.ref
+		IL_00ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00f2: pop
+		IL_00f3: ldloc.s 5
+		IL_00f5: ldstr "toString"
+		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00ff: stloc.s 7
+		IL_0101: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0106: ldc.i4.1
+		IL_0107: newarr [System.Runtime]System.Object
+		IL_010c: dup
+		IL_010d: ldc.i4.0
+		IL_010e: ldloc.s 7
+		IL_0110: stelem.ref
+		IL_0111: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0116: pop
+		IL_0117: ldloc.1
+		IL_0118: ldstr "readFileSync"
+		IL_011d: ldloc.3
+		IL_011e: ldstr "utf8"
+		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0128: stloc.s 7
+		IL_012a: ldloc.s 7
+		IL_012c: stloc.s 6
+		IL_012e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0133: ldc.i4.1
+		IL_0134: newarr [System.Runtime]System.Object
+		IL_0139: dup
+		IL_013a: ldc.i4.0
+		IL_013b: ldloc.s 6
+		IL_013d: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0142: stelem.ref
+		IL_0143: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0148: pop
+		IL_0149: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_014e: ldc.i4.1
+		IL_014f: newarr [System.Runtime]System.Object
+		IL_0154: dup
+		IL_0155: ldc.i4.0
+		IL_0156: ldloc.s 6
+		IL_0158: stelem.ref
+		IL_0159: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_015e: pop
+		IL_015f: ldloc.1
+		IL_0160: ldstr "rmSync"
+		IL_0165: ldloc.3
+		IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_016b: dup
+		IL_016c: ldstr "force"
+		IL_0171: ldc.i4.1
+		IL_0172: box [System.Runtime]System.Boolean
+		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_017c: pop
+		IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0182: pop
+		IL_0183: ret
 	} // end of method FS_ReadWrite_Buffer::__js_module_init__
 
 } // end of class Modules.FS_ReadWrite_Buffer
@@ -216,7 +199,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2205
+		// Method begins at RVA 0x21e9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

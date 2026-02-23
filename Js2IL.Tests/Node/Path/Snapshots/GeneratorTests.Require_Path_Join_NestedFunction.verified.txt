@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2129
+				// Method begins at RVA 0x2119
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x20e8
 			// Header size: 12
 			// Code size: 28 (0x1c)
 			.maxstack 8
@@ -81,7 +81,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2120
+			// Method begins at RVA 0x2110
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -107,14 +107,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 154 (0x9a)
+		// Code size: 140 (0x8c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Join_NestedFunction/Scope,
 			[1] object,
 			[2] object,
-			[3] object,
-			[4] object[]
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Path_Join_NestedFunction/Scope::.ctor()
@@ -132,53 +131,45 @@
 		IL_0021: stloc.3
 		IL_0022: ldloc.3
 		IL_0023: stloc.1
-		IL_0024: ldc.i4.1
-		IL_0025: newarr [System.Runtime]System.Object
-		IL_002a: dup
-		IL_002b: ldc.i4.0
-		IL_002c: ldnull
-		IL_002d: stelem.ref
-		IL_002e: stloc.s 4
-		IL_0030: ldarg.1
-		IL_0031: ldloc.s 4
-		IL_0033: ldstr "path"
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_003d: stloc.3
-		IL_003e: ldloc.0
-		IL_003f: ldloc.3
-		IL_0040: stfld object Modules.Require_Path_Join_NestedFunction/Scope::path
-		IL_0045: ldnull
-		IL_0046: ldftn object Modules.Require_Path_Join_NestedFunction/joinWrapper::__js_call__(object[], object, object, object)
-		IL_004c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
-		IL_0051: ldc.i4.1
-		IL_0052: newarr [System.Runtime]System.Object
-		IL_0057: dup
-		IL_0058: ldc.i4.0
-		IL_0059: ldloc.0
-		IL_005a: stelem.ref
-		IL_005b: ldnull
-		IL_005c: ldstr "a"
-		IL_0061: ldstr "b"
-		IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::Invoke(object[], object, object, object)
-		IL_006b: stloc.3
-		IL_006c: ldloc.3
-		IL_006d: ldstr "replace"
-		IL_0072: ldstr "\\"
-		IL_0077: ldstr "/"
-		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0081: stloc.3
-		IL_0082: ldloc.3
-		IL_0083: stloc.2
-		IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0089: ldc.i4.1
-		IL_008a: newarr [System.Runtime]System.Object
-		IL_008f: dup
-		IL_0090: ldc.i4.0
-		IL_0091: ldloc.2
-		IL_0092: stelem.ref
-		IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0098: pop
-		IL_0099: ret
+		IL_0024: ldarg.1
+		IL_0025: ldstr "path"
+		IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_002f: stloc.3
+		IL_0030: ldloc.0
+		IL_0031: ldloc.3
+		IL_0032: stfld object Modules.Require_Path_Join_NestedFunction/Scope::path
+		IL_0037: ldnull
+		IL_0038: ldftn object Modules.Require_Path_Join_NestedFunction/joinWrapper::__js_call__(object[], object, object, object)
+		IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::.ctor(object, native int)
+		IL_0043: ldc.i4.1
+		IL_0044: newarr [System.Runtime]System.Object
+		IL_0049: dup
+		IL_004a: ldc.i4.0
+		IL_004b: ldloc.0
+		IL_004c: stelem.ref
+		IL_004d: ldnull
+		IL_004e: ldstr "a"
+		IL_0053: ldstr "b"
+		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc2::Invoke(object[], object, object, object)
+		IL_005d: stloc.3
+		IL_005e: ldloc.3
+		IL_005f: ldstr "replace"
+		IL_0064: ldstr "\\"
+		IL_0069: ldstr "/"
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0073: stloc.3
+		IL_0074: ldloc.3
+		IL_0075: stloc.2
+		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007b: ldc.i4.1
+		IL_007c: newarr [System.Runtime]System.Object
+		IL_0081: dup
+		IL_0082: ldc.i4.0
+		IL_0083: ldloc.2
+		IL_0084: stelem.ref
+		IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008a: pop
+		IL_008b: ret
 	} // end of method Require_Path_Join_NestedFunction::__js_module_init__
 
 } // end of class Modules.Require_Path_Join_NestedFunction
@@ -190,7 +181,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2132
+		// Method begins at RVA 0x2122
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

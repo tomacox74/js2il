@@ -316,34 +316,84 @@ internal static class LIRIntrinsicNormalization
 
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
-            if (methodBody.Instructions[i] is not LIRCallFunctionValue call)
-            {
-                continue;
-            }
-
-            if (call.FunctionValue.Index < 0 || call.FunctionValue.Index >= methodBody.TempStorages.Count)
-            {
-                continue;
-            }
-
-            var calleeStorage = methodBody.TempStorages[call.FunctionValue.Index];
-            if (calleeStorage.Kind != ValueStorageKind.Reference
-                || calleeStorage.ClrType != typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate))
-            {
-                continue;
-            }
-
-            // Extract moduleId = first arg, or undefined when no args.
+            TempVariable requireValueTemp;
+            TempVariable scopesArrayTemp;
             TempVariable moduleIdTemp;
-            if (call.ArgumentsArray.Index >= 0
-                && buildArrays.TryGetValue(call.ArgumentsArray.Index, out var buildInfo))
+            TempVariable callResultTemp;
+
+            switch (methodBody.Instructions[i])
             {
-                if (buildInfo.Elements.Count > 0)
-                {
-                    moduleIdTemp = buildInfo.Elements[0];
-                }
-                else
-                {
+                case LIRCallFunctionValue call:
+                    if (!IsRequireDelegateTemp(methodBody, call.FunctionValue))
+                    {
+                        continue;
+                    }
+
+                    // Extract moduleId = first arg, or undefined when no args.
+                    if (call.ArgumentsArray.Index >= 0
+                        && buildArrays.TryGetValue(call.ArgumentsArray.Index, out var buildInfo))
+                    {
+                        if (buildInfo.Elements.Count > 0)
+                        {
+                            moduleIdTemp = buildInfo.Elements[0];
+                        }
+                        else
+                        {
+                            moduleIdTemp = CreateTemp(methodBody, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                            methodBody.Instructions.Insert(i, new LIRConstUndefined(moduleIdTemp));
+
+                            // We inserted before the call; shift indices and adjust tracked removal indices.
+                            ShiftIndicesAfterInsert(indicesToRemove, i);
+                            ShiftIndicesAfterInsert(buildArrays, i);
+                            ShiftIndicesAfterInsert(buildScopesArrays, i);
+                            ShiftIndicesAfterInsert(convertToObjectDefs, i);
+                            i++; // call moved one slot forward
+                        }
+
+                        // If the args array temp is only used by its build + this call, remove the build.
+                        if (!IsTempUsedOutside(methodBody, call.ArgumentsArray, ignoreInstructionIndices: new HashSet<int> { buildInfo.DefIndex, i }))
+                        {
+                            indicesToRemove.Add(buildInfo.DefIndex);
+
+                            // Also remove dead boxing conversions that existed solely to populate the args array.
+                            // Keep the first element if it becomes the require(moduleId) argument.
+                            for (int argIndex = 1; argIndex < buildInfo.Elements.Count; argIndex++)
+                            {
+                                var elem = buildInfo.Elements[argIndex];
+                                if (elem.Index < 0)
+                                {
+                                    continue;
+                                }
+
+                                if (!convertToObjectDefs.TryGetValue(elem.Index, out var defIndex))
+                                {
+                                    continue;
+                                }
+
+                                if (!IsTempUsedOutside(methodBody, elem, ignoreInstructionIndices: new HashSet<int> { defIndex, buildInfo.DefIndex, i }))
+                                {
+                                    indicesToRemove.Add(defIndex);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Unknown args array provenance; stay conservative.
+                        continue;
+                    }
+
+                    requireValueTemp = call.FunctionValue;
+                    scopesArrayTemp = call.ScopesArray;
+                    callResultTemp = call.Result;
+                    break;
+
+                case LIRCallFunctionValue0 call0:
+                    if (!IsRequireDelegateTemp(methodBody, call0.FunctionValue))
+                    {
+                        continue;
+                    }
+
                     moduleIdTemp = CreateTemp(methodBody, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     methodBody.Instructions.Insert(i, new LIRConstUndefined(moduleIdTemp));
 
@@ -353,54 +403,65 @@ internal static class LIRIntrinsicNormalization
                     ShiftIndicesAfterInsert(buildScopesArrays, i);
                     ShiftIndicesAfterInsert(convertToObjectDefs, i);
                     i++; // call moved one slot forward
-                }
 
-                // If the args array temp is only used by its build + this call, remove the build.
-                if (!IsTempUsedOutside(methodBody, call.ArgumentsArray, ignoreInstructionIndices: new HashSet<int> { buildInfo.DefIndex, i }))
-                {
-                    indicesToRemove.Add(buildInfo.DefIndex);
+                    requireValueTemp = call0.FunctionValue;
+                    scopesArrayTemp = call0.ScopesArray;
+                    callResultTemp = call0.Result;
+                    break;
 
-                    // Also remove dead boxing conversions that existed solely to populate the args array.
-                    // Keep the first element if it becomes the require(moduleId) argument.
-                    for (int argIndex = 1; argIndex < buildInfo.Elements.Count; argIndex++)
+                case LIRCallFunctionValue1 call1:
+                    if (!IsRequireDelegateTemp(methodBody, call1.FunctionValue))
                     {
-                        var elem = buildInfo.Elements[argIndex];
-                        if (elem.Index < 0)
-                        {
-                            continue;
-                        }
-
-                        if (!convertToObjectDefs.TryGetValue(elem.Index, out var defIndex))
-                        {
-                            continue;
-                        }
-
-                        if (!IsTempUsedOutside(methodBody, elem, ignoreInstructionIndices: new HashSet<int> { defIndex, buildInfo.DefIndex, i }))
-                        {
-                            indicesToRemove.Add(defIndex);
-                        }
+                        continue;
                     }
-                }
-            }
-            else
-            {
-                // Unknown args array provenance; stay conservative.
-                continue;
+
+                    requireValueTemp = call1.FunctionValue;
+                    scopesArrayTemp = call1.ScopesArray;
+                    moduleIdTemp = call1.A0;
+                    callResultTemp = call1.Result;
+                    break;
+
+                case LIRCallFunctionValue2 call2:
+                    if (!IsRequireDelegateTemp(methodBody, call2.FunctionValue))
+                    {
+                        continue;
+                    }
+
+                    requireValueTemp = call2.FunctionValue;
+                    scopesArrayTemp = call2.ScopesArray;
+                    moduleIdTemp = call2.A0;
+                    callResultTemp = call2.Result;
+                    break;
+
+                case LIRCallFunctionValue3 call3:
+                    if (!IsRequireDelegateTemp(methodBody, call3.FunctionValue))
+                    {
+                        continue;
+                    }
+
+                    requireValueTemp = call3.FunctionValue;
+                    scopesArrayTemp = call3.ScopesArray;
+                    moduleIdTemp = call3.A0;
+                    callResultTemp = call3.Result;
+                    break;
+
+                default:
+                    continue;
             }
 
             // If the scopes array temp is only used by its build + this call, remove the build.
-            if (call.ScopesArray.Index >= 0
-                && buildScopesArrays.TryGetValue(call.ScopesArray.Index, out var scopesDefIndex)
-                && !IsTempUsedOutside(methodBody, call.ScopesArray, ignoreInstructionIndices: new HashSet<int> { scopesDefIndex, i }))
+            if (scopesArrayTemp.Index >= 0
+                && buildScopesArrays.TryGetValue(scopesArrayTemp.Index, out var scopesDefIndex)
+                && !IsTempUsedOutside(methodBody, scopesArrayTemp, ignoreInstructionIndices: new HashSet<int> { scopesDefIndex, i }))
             {
                 indicesToRemove.Add(scopesDefIndex);
             }
 
-            methodBody.Instructions[i] = new LIRCallRequire(call.FunctionValue, moduleIdTemp, call.Result);
+            methodBody.Instructions[i] = new LIRCallRequire(requireValueTemp, moduleIdTemp, callResultTemp);
 
-            if (call.Result.Index >= 0 && call.Result.Index < methodBody.TempStorages.Count)
+            if (callResultTemp.Index >= 0 && callResultTemp.Index < methodBody.TempStorages.Count)
             {
-                methodBody.TempStorages[call.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+                methodBody.TempStorages[callResultTemp.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(object));
             }
         }
 
@@ -451,6 +512,18 @@ internal static class LIRIntrinsicNormalization
         }
 
         return false;
+    }
+
+    private static bool IsRequireDelegateTemp(MethodBodyIR methodBody, TempVariable callee)
+    {
+        if (callee.Index < 0 || callee.Index >= methodBody.TempStorages.Count)
+        {
+            return false;
+        }
+
+        var calleeStorage = methodBody.TempStorages[callee.Index];
+        return calleeStorage.Kind == ValueStorageKind.Reference
+            && calleeStorage.ClrType == typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate);
     }
 
     private static void ShiftIndicesAfterInsert(HashSet<int> indices, int insertAt)
