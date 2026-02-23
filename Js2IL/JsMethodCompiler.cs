@@ -765,6 +765,10 @@ internal sealed class JsMethodCompiler
         // This keeps LIR->IL focused on IL mechanics rather than type-directed rewrites.
         LIRTypeNormalization.Normalize(lirMethod!, classRegistry);
 
+        // CSE: eliminate redundant coercions (ToNumber/ToBoolean/IsTruthy) within basic blocks
+        // when the source is a known primitive. This avoids repeated helper calls in tight loops.
+        LIRCoercionCSE.Optimize(lirMethod!);
+
         methodBody = lirMethod!;
         return true;
     }

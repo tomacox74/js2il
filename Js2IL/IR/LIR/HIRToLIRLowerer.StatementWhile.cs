@@ -26,6 +26,9 @@ public sealed partial class HIRToLIRLowerer
 
         // Loop start label
         lirInstructions.Add(new LIRLabel(loopStartLabel));
+        // Numeric refinements are invalid at a loop header: values may have changed since the
+        // previous iteration's refinement was established.
+        ClearNumericRefinementsAtLabel();
 
         // Test condition
         if (!TryLowerExpression(whileStmt.Test, out var conditionTemp))
@@ -69,6 +72,7 @@ public sealed partial class HIRToLIRLowerer
 
         // Loop end label
         lirInstructions.Add(new LIRLabel(loopEndLabel));
+        ClearNumericRefinementsAtLabel();
 
         return true;
     }
