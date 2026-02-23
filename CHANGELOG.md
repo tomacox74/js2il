@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- IR/runtime perf: collapse dynamic `+` followed by immediate numeric coercion into `Operators.AddAndToNumber(...)` overloads in assignment/update hot paths, reducing emitted Add→ToNumber roundtrips while preserving JavaScript `+` semantics, mixed double/object no-boxing paths, and numeric-result no-boxing fast paths.
 
 ## v0.8.17 - 2026-02-22
 

@@ -204,6 +204,90 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Performs JavaScript '+' and immediately applies ToNumber to the result.
+        /// Used by compiler hot paths that would otherwise emit Add(...) then ToNumber(...).
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double AddAndToNumber(object? left, object? right)
+        {
+            if (left is double leftDouble)
+            {
+                return AddAndToNumber(leftDouble, right);
+            }
+
+            if (right is double rightDouble)
+            {
+                return AddAndToNumber(left, rightDouble);
+            }
+
+            if (left is string || right is string)
+            {
+                var concatenated = string.Concat(DotNet2JSConversions.ToString(left), DotNet2JSConversions.ToString(right));
+                return TypeUtilities.ToNumber(concatenated);
+            }
+
+            // Preserve JavaScript BigInt '+' error semantics/messages through existing operator helper.
+            if (left is BigInteger || right is BigInteger)
+            {
+                return TypeUtilities.ToNumber(Add(left, right));
+            }
+
+            return TypeUtilities.ToNumber(left) + TypeUtilities.ToNumber(right);
+        }
+
+        /// <summary>
+        /// Performs JavaScript '+' with an unboxed numeric left operand and immediately applies ToNumber.
+        /// Preserves the mixed fast-path without boxing the left operand before Add.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double AddAndToNumber(double left, object? right)
+        {
+            if (right is double rightDouble)
+            {
+                return left + rightDouble;
+            }
+
+            if (right is string)
+            {
+                var concatenated = string.Concat(DotNet2JSConversions.ToString(left), DotNet2JSConversions.ToString(right));
+                return TypeUtilities.ToNumber(concatenated);
+            }
+
+            if (right is BigInteger)
+            {
+                return TypeUtilities.ToNumber(Add(left, right));
+            }
+
+            return left + TypeUtilities.ToNumber(right);
+        }
+
+        /// <summary>
+        /// Performs JavaScript '+' with an unboxed numeric right operand and immediately applies ToNumber.
+        /// Preserves the mixed fast-path without boxing the right operand before Add.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double AddAndToNumber(object? left, double right)
+        {
+            if (left is double leftDouble)
+            {
+                return leftDouble + right;
+            }
+
+            if (left is string)
+            {
+                var concatenated = string.Concat(DotNet2JSConversions.ToString(left), DotNet2JSConversions.ToString(right));
+                return TypeUtilities.ToNumber(concatenated);
+            }
+
+            if (left is BigInteger)
+            {
+                return TypeUtilities.ToNumber(Add(left, right));
+            }
+
+            return TypeUtilities.ToNumber(left) + right;
+        }
+
+        /// <summary>
         /// Implements JavaScript '-' semantics. Both operands are coerced to numbers; result is a double (may be NaN).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

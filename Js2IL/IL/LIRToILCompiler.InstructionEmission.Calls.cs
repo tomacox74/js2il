@@ -830,6 +830,12 @@ internal sealed partial class LIRToILCompiler
                         break;
                     }
 
+                    if (TryEmitOperatorsAddAndToNumber(callRuntimeServices, ilEncoder, allocation, methodDescriptor))
+                    {
+                        EmitStoreTemp(callRuntimeServices.Result, ilEncoder, allocation);
+                        break;
+                    }
+
                     // Emit call to JavaScriptRuntime.RuntimeServices static method
                     var runtimeServicesType = typeof(JavaScriptRuntime.RuntimeServices);
                     

@@ -468,11 +468,58 @@ public sealed partial class HIRToLIRLowerer
             return tempVar;
         }
 
+        // Fast path for common numeric hot loops:
+        // collapse a just-emitted dynamic '+' followed by ToNumber into one runtime call.
+        if (TryRewriteLatestDynamicAddToNumber(tempVar, out var fusedNumberTemp))
+        {
+            return fusedNumberTemp;
+        }
+
         // Dynamic numeric coercion: object -> double via runtime helper.
         var numberTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConvertToNumber(EnsureObject(tempVar), numberTempVar));
         DefineTempStorage(numberTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
         return numberTempVar;
+    }
+
+    private bool TryRewriteLatestDynamicAddToNumber(TempVariable tempVar, out TempVariable numberTempVar)
+    {
+        numberTempVar = default;
+
+        if (_methodBodyIR.Instructions.Count == 0)
+        {
+            return false;
+        }
+
+        var lastIndex = _methodBodyIR.Instructions.Count - 1;
+        var lastInstruction = _methodBodyIR.Instructions[lastIndex];
+
+        TempVariable left;
+        TempVariable right;
+        switch (lastInstruction)
+        {
+            case LIRAddDynamic addDynamic when addDynamic.Result == tempVar:
+                left = addDynamic.Left;
+                right = addDynamic.Right;
+                break;
+            case LIRAddDynamicDoubleObject addDynamicDoubleObject when addDynamicDoubleObject.Result == tempVar:
+                left = addDynamicDoubleObject.LeftDouble;
+                right = addDynamicDoubleObject.RightObject;
+                break;
+            case LIRAddDynamicObjectDouble addDynamicObjectDouble when addDynamicObjectDouble.Result == tempVar:
+                left = addDynamicObjectDouble.LeftObject;
+                right = addDynamicObjectDouble.RightDouble;
+                break;
+            default:
+                return false;
+        }
+
+        _methodBodyIR.Instructions.RemoveAt(lastIndex);
+
+        numberTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRAddAndToNumber(left, right, numberTempVar));
+        DefineTempStorage(numberTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        return true;
     }
 
     private TempVariable EnsureBoolean(TempVariable tempVar)

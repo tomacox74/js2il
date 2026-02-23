@@ -1,5 +1,6 @@
 using Js2IL.IR;
 using Js2IL.Services.ILGenerators;
+using System;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
@@ -169,6 +170,68 @@ internal sealed partial class LIRToILCompiler
             new[] { typeof(object), typeof(object) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsAddAndToNumber(
+        TempVariable left,
+        TempVariable right,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        static bool IsUnboxedDouble(ValueStorage storage)
+            => storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double);
+
+        var leftStorage = GetTempStorage(left);
+        var rightStorage = GetTempStorage(right);
+
+        Type[] paramTypes;
+        if (IsUnboxedDouble(leftStorage) && !IsUnboxedDouble(rightStorage))
+        {
+            EmitLoadTempAsDouble(left, ilEncoder, allocation, methodDescriptor);
+            EmitLoadTempAsObject(right, ilEncoder, allocation, methodDescriptor);
+            paramTypes = new[] { typeof(double), typeof(object) };
+        }
+        else if (!IsUnboxedDouble(leftStorage) && IsUnboxedDouble(rightStorage))
+        {
+            EmitLoadTempAsObject(left, ilEncoder, allocation, methodDescriptor);
+            EmitLoadTempAsDouble(right, ilEncoder, allocation, methodDescriptor);
+            paramTypes = new[] { typeof(object), typeof(double) };
+        }
+        else
+        {
+            EmitLoadTempAsObject(left, ilEncoder, allocation, methodDescriptor);
+            EmitLoadTempAsObject(right, ilEncoder, allocation, methodDescriptor);
+            paramTypes = new[] { typeof(object), typeof(object) };
+        }
+
+        ilEncoder.OpCode(ILOpCode.Call);
+        var methodRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.Operators),
+            nameof(JavaScriptRuntime.Operators.AddAndToNumber),
+            paramTypes);
+        ilEncoder.Token(methodRef);
+    }
+
+    private bool TryEmitOperatorsAddAndToNumber(
+        LIRCallRuntimeServicesStatic instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (!string.Equals(instruction.MethodName, nameof(JavaScriptRuntime.Operators.AddAndToNumber), System.StringComparison.Ordinal)
+            || instruction.Arguments.Count != 2)
+        {
+            return false;
+        }
+
+        EmitOperatorsAddAndToNumber(
+            instruction.Arguments[0],
+            instruction.Arguments[1],
+            ilEncoder,
+            allocation,
+            methodDescriptor);
+        return true;
     }
 
     #endregion

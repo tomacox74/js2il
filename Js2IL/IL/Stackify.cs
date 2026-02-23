@@ -748,6 +748,7 @@ internal static class Stackify
             case LIRAddDynamic:
             case LIRAddDynamicDoubleObject:
             case LIRAddDynamicObjectDouble:
+            case LIRAddAndToNumber:
             case LIRSubNumber:
             case LIRMulNumber:
             case LIRMulDynamic:

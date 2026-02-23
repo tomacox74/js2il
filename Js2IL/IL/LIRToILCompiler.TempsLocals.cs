@@ -410,6 +410,9 @@ internal sealed partial class LIRToILCompiler
                 EmitLoadTempAsDouble(addDynamicObjectDouble.RightDouble, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsAddObjectDouble(ilEncoder);
                 break;
+            case LIRAddAndToNumber addAndToNumber:
+                EmitOperatorsAddAndToNumber(addAndToNumber.Left, addAndToNumber.Right, ilEncoder, allocation, methodDescriptor);
+                break;
             case LIRBinaryDynamicOperator binaryDynamic:
                 EmitLoadTemp(binaryDynamic.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(binaryDynamic.Right, ilEncoder, allocation, methodDescriptor);
@@ -1497,6 +1500,11 @@ internal sealed partial class LIRToILCompiler
                 ilEncoder.LoadArgument(ilArgIndex);
                 return true;
             case LIRCallRuntimeServicesStatic callRuntimeServices:
+                if (TryEmitOperatorsAddAndToNumber(callRuntimeServices, ilEncoder, allocation, methodDescriptor))
+                {
+                    return true;
+                }
+
                 foreach (var arg in callRuntimeServices.Arguments)
                 {
                     EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
@@ -1599,6 +1607,10 @@ internal sealed partial class LIRToILCompiler
                 EmitLoadTemp(concatStrings.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(concatStrings.Right, ilEncoder, allocation, methodDescriptor);
                 EmitStringConcat(ilEncoder);
+                return true;
+
+            case LIRAddAndToNumber addAndToNumber:
+                EmitOperatorsAddAndToNumber(addAndToNumber.Left, addAndToNumber.Right, ilEncoder, allocation, methodDescriptor);
                 return true;
 
             case LIRAddNumber addNumber:

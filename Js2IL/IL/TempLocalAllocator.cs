@@ -219,6 +219,10 @@ internal static class TempLocalAllocator
                 yield return addDynObjectDouble.LeftObject;
                 yield return addDynObjectDouble.RightDouble;
                 break;
+            case LIRAddAndToNumber addAndToNumber:
+                yield return addAndToNumber.Left;
+                yield return addAndToNumber.Right;
+                break;
             case LIRSubNumber sub:
                 yield return sub.Left;
                 yield return sub.Right;
@@ -765,6 +769,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRAddDynamicObjectDouble addDynObjectDouble:
                 defined = addDynObjectDouble.Result;
+                return true;
+            case LIRAddAndToNumber addAndToNumber:
+                defined = addAndToNumber.Result;
                 return true;
             case LIRSubNumber sub:
                 defined = sub.Result;
