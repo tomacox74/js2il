@@ -63,9 +63,11 @@ function normalizeRuntime(raw) {
     const text = String(raw ?? '').toLowerCase();
     if (text.includes('node')) return 'node';
     if (text.includes('yantra')) return 'yantrajs';
-    if (text.includes('jint') && text.includes('prepare')) return 'jint-prepare';
     if (text.includes('jint') && text.includes('prepared')) return 'jint-execute-prepared';
+    if (text.includes('jint') && text.includes('prepare')) return 'jint-prepare';
     if (text.includes('jint')) return 'jint';
+    if (text.includes('js2il') && text.includes('execute') && text.includes('pre-compiled')) return 'js2il-execute';
+    if (text.includes('js2il') && text.includes('execute') && text.includes('precompiled')) return 'js2il-execute';
     if (text.includes('js2il') && text.includes('compile') && text.includes('execute')) return 'js2il-total';
     if (text.includes('js2il') && text.includes('compile')) return 'js2il-compile';
     if (text.includes('js2il') && text.includes('execute')) return 'js2il-execute';
