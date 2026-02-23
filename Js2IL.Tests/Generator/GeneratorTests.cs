@@ -58,5 +58,11 @@ namespace Js2IL.Tests.Generator
 
         [Fact]
         public Task Generator_TryCatchFinally_ReturnWhileSuspended() { var testName = nameof(Generator_TryCatchFinally_ReturnWhileSuspended); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Generator_Prototype_ToStringTag() { var testName = nameof(Generator_Prototype_ToStringTag); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Generator_Prototype_Constructor() { var testName = nameof(Generator_Prototype_Constructor); return GenerateTest(testName); }
     }
 }

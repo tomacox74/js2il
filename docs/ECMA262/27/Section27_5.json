@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "27.5",
   "title": "Generator Objects",
-  "status": "Supported with Limitations",
+  "status": "Supported",
   "specUrl": "https://tc39.es/ecma262/#sec-generator-objects",
   "parent": {
     "clause": "27"
@@ -13,13 +13,13 @@
     {
       "clause": "27.5.1",
       "title": "The %GeneratorPrototype% Object",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-generator-prototype"
     },
     {
       "clause": "27.5.1.1",
       "title": "%GeneratorPrototype%.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generator.prototype.constructor"
     },
     {
@@ -43,7 +43,7 @@
     {
       "clause": "27.5.1.5",
       "title": "%GeneratorPrototype% [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-generator.prototype-%symbol.tostringtag%"
     },
     {
@@ -102,7 +102,7 @@
     },
     {
       "clause": "27.5.3.8",
-      "title": "CreateIteratorFromClosure ( closure , generatorBrand , generatorPrototype [ , extraSlots ] )",
+      "title": "CreateIteratorFromClosure ( closure , generatorBody , generatorBrand , generatorPrototype [ , extraSlots ] )",
       "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createiteratorfromclosure"
     }
@@ -112,7 +112,7 @@
       {
         "clause": "27.5.1",
         "feature": "Generator objects support next/return/throw, yield*/iterator delegation, and unwinding through try/catch/finally (including while suspended at yield) on return/throw",
-        "status": "Supported with Limitations",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-generator-objects",
         "testScripts": [
           "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js",
@@ -126,8 +126,25 @@
           "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js",
           "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js",
           "Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js"
-        ],
-        "notes": "`throw()` and `return()` route through `try/catch/finally` blocks (including while suspended at `yield`). Limitations: spec-shaped prototype properties like `constructor` and `Symbol.toStringTag` are not currently exposed."
+        ]
+      },
+      {
+        "clause": "27.5.1.1",
+        "feature": "%GeneratorPrototype%.constructor — stable function object, same for all generator instances",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-generator.prototype.constructor",
+        "testScripts": [
+          "Js2IL.Tests/Generator/JavaScript/Generator_Prototype_Constructor.js"
+        ]
+      },
+      {
+        "clause": "27.5.1.5",
+        "feature": "%GeneratorPrototype%[@@toStringTag] — Object.prototype.toString.call(gen) returns \"[object Generator]\"",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-generator.prototype-%symbol.tostringtag%",
+        "testScripts": [
+          "Js2IL.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js"
+        ]
       }
     ]
   }
