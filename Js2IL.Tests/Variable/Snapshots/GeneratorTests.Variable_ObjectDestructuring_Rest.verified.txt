@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2140
+			// Method begins at RVA 0x212e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,82 +40,76 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 228 (0xe4)
+		// Code size: 210 (0xd2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ObjectDestructuring_Rest/Scope,
-			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] object,
 			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_ObjectDestructuring_Rest/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "a"
 		IL_0011: ldc.r8 1
-		IL_001a: box [System.Runtime]System.Double
-		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0024: pop
-		IL_0025: dup
-		IL_0026: ldstr "b"
-		IL_002b: ldc.r8 2
-		IL_0034: box [System.Runtime]System.Double
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_003e: pop
-		IL_003f: dup
-		IL_0040: ldstr "c"
-		IL_0045: ldc.r8 3
-		IL_004e: box [System.Runtime]System.Double
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0058: pop
-		IL_0059: stloc.1
-		IL_005a: ldloc.1
-		IL_005b: brfalse IL_006b
+		IL_001a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_001f: dup
+		IL_0020: ldstr "b"
+		IL_0025: ldc.r8 2
+		IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0033: dup
+		IL_0034: ldstr "c"
+		IL_0039: ldc.r8 3
+		IL_0042: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0047: stloc.1
+		IL_0048: ldloc.1
+		IL_0049: brfalse IL_0059
 
-		IL_0060: ldloc.1
-		IL_0061: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0066: brfalse IL_007b
+		IL_004e: ldloc.1
+		IL_004f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0054: brfalse IL_0069
 
-		IL_006b: ldloc.1
-		IL_006c: ldstr "obj"
-		IL_0071: ldstr "a"
-		IL_0076: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_0059: ldloc.1
+		IL_005a: ldstr "obj"
+		IL_005f: ldstr "a"
+		IL_0064: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_007b: ldloc.1
-		IL_007c: ldstr "a"
-		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0086: stloc.2
-		IL_0087: ldloc.1
-		IL_0088: ldc.i4.1
-		IL_0089: newarr [System.Runtime]System.Object
-		IL_008e: dup
-		IL_008f: ldc.i4.0
-		IL_0090: ldstr "a"
-		IL_0095: stelem.ref
-		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::Rest(object, object[])
-		IL_009b: stloc.3
-		IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a1: ldstr "a="
-		IL_00a6: ldloc.2
-		IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00ac: pop
-		IL_00ad: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b2: ldstr "rest.b="
-		IL_00b7: ldloc.3
-		IL_00b8: ldstr "b"
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00c7: pop
-		IL_00c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cd: ldstr "rest.c="
-		IL_00d2: ldloc.3
-		IL_00d3: ldstr "c"
-		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00e2: pop
-		IL_00e3: ret
+		IL_0069: ldloc.1
+		IL_006a: ldstr "a"
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0074: stloc.2
+		IL_0075: ldloc.1
+		IL_0076: ldc.i4.1
+		IL_0077: newarr [System.Runtime]System.Object
+		IL_007c: dup
+		IL_007d: ldc.i4.0
+		IL_007e: ldstr "a"
+		IL_0083: stelem.ref
+		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::Rest(object, object[])
+		IL_0089: stloc.3
+		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008f: ldstr "a="
+		IL_0094: ldloc.2
+		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_009a: pop
+		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a0: ldstr "rest.b="
+		IL_00a5: ldloc.3
+		IL_00a6: ldstr "b"
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00b5: pop
+		IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bb: ldstr "rest.c="
+		IL_00c0: ldloc.3
+		IL_00c1: ldstr "c"
+		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00cb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00d0: pop
+		IL_00d1: ret
 	} // end of method Variable_ObjectDestructuring_Rest::__js_module_init__
 
 } // end of class Modules.Variable_ObjectDestructuring_Rest
@@ -127,7 +121,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2149
+		// Method begins at RVA 0x2137
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

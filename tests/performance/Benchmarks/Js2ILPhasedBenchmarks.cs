@@ -37,25 +37,16 @@ public class Js2ILPhasedBenchmarks
         // Load all benchmark scripts
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
         
-        var scriptFiles = new[]
-        {
-            "minimal.js",
-            "evaluation.js",
-            "evaluation-modern.js",
-            "stopwatch.js",
-            "array-stress.js"
-        };
+        var scriptFiles = Directory.GetFiles(scriptsDir, "*.js")
+            .OrderBy(path => path, StringComparer.Ordinal);
 
-        foreach (var scriptFile in scriptFiles)
+        foreach (var scriptPath in scriptFiles)
         {
-            var path = Path.Combine(scriptsDir, scriptFile);
-            if (File.Exists(path))
-            {
-                var scriptName = Path.GetFileNameWithoutExtension(scriptFile);
-                var scriptContent = File.ReadAllText(path);
-                _scripts[scriptName] = scriptContent;
-                _jintPreparedScripts[scriptName] = Engine.PrepareScript(scriptContent, scriptFile);
-            }
+            var scriptFile = Path.GetFileName(scriptPath);
+            var scriptName = Path.GetFileNameWithoutExtension(scriptFile);
+            var scriptContent = File.ReadAllText(scriptPath);
+            _scripts[scriptName] = scriptContent;
+            _jintPreparedScripts[scriptName] = Engine.PrepareScript(scriptContent, scriptFile);
         }
 
         // Create temp directory for compiled outputs

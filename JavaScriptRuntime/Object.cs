@@ -346,6 +346,10 @@ namespace JavaScriptRuntime
                 {
                     AddKey(keys, seen, k);
                 }
+                // Skip CLR reflection for dictionary-backed objects: their own properties
+                // are already captured above. Falling through to reflection would expose
+                // the CLR interface properties (Keys, Values, Count, ...) as JS properties.
+                return new JavaScriptRuntime.Array(keys);
             }
 
             if (obj is System.Collections.IDictionary dictObj)
@@ -362,6 +366,7 @@ namespace JavaScriptRuntime
                 {
                     AddKey(keys, seen, k);
                 }
+                return new JavaScriptRuntime.Array(keys);
             }
 
             // Reflection fallback for host objects.
@@ -680,14 +685,10 @@ namespace JavaScriptRuntime
                     Set = setValue
                 };
 
-                // Ensure key presence for ExpandoObject enumeration.
-                if (obj is System.Dynamic.ExpandoObject exp)
+                // Ensure key presence for dictionary-backed object literal enumeration.
+                if (obj is IDictionary<string, object?> dict && !dict.ContainsKey(key))
                 {
-                    var dict = (IDictionary<string, object?>)exp;
-                    if (!dict.ContainsKey(key))
-                    {
-                        dict[key] = null;
-                    }
+                    dict[key] = null;
                 }
 
                 PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
@@ -708,11 +709,10 @@ namespace JavaScriptRuntime
 
             PropertyDescriptorStore.DefineOrUpdate(obj, key, dataDesc);
 
-            // Best-effort backing store update for ExpandoObject.
-            if (obj is System.Dynamic.ExpandoObject exp2)
+            // Best-effort backing store update for dictionary-backed objects.
+            if (obj is IDictionary<string, object?> dict2)
             {
-                var dict = (IDictionary<string, object?>)exp2;
-                dict[key] = value;
+                dict2[key] = value;
             }
 
             return obj;
@@ -2880,13 +2880,13 @@ namespace JavaScriptRuntime
                 throw new ArgumentNullException(nameof(target));
             }
 
-            // Fast-path: object literals are ExpandoObject targets. For object spread, we want
+            // Fast-path: object literals are JsObject or ExpandoObject targets. For object spread, we want
             // CreateDataProperty semantics (define/overwrite an own data property) and must not
             // route through prototype setters.
             IDictionary<string, object?>? targetExpandoDict = null;
-            if (target is System.Dynamic.ExpandoObject targetExpando)
+            if (target is JsObject || target is System.Dynamic.ExpandoObject)
             {
-                targetExpandoDict = (IDictionary<string, object?>)targetExpando;
+                targetExpandoDict = (IDictionary<string, object?>)target;
             }
 
             static void SetOwn(IDictionary<string, object?>? expandoDict, object targetObj, string key, object? value)
@@ -2910,6 +2910,17 @@ namespace JavaScriptRuntime
             // Per object spread semantics: null/undefined are skipped.
             if (source is null || source is JsNull)
             {
+                return target;
+            }
+
+            // JsObject: enumerate all own enumerable properties (backing dict + descriptor store).
+            if (source is JsObject jsObjSource)
+            {
+                var srcSeen = new HashSet<string>(StringComparer.Ordinal);
+                EnumerateOwnEnumerableProperties(jsObjSource, srcSeen, (key, value) =>
+                {
+                    SetOwn(targetExpandoDict, target, key, value);
+                });
                 return target;
             }
 
@@ -3018,7 +3029,7 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Object rest helper used by destructuring: { a, ...rest }.
-        /// Returns a new ExpandoObject with enumerable keys copied excluding the provided keys.
+        /// Returns a new JsObject with enumerable keys copied excluding the provided keys.
         /// </summary>
         public static object Rest(object? obj, object[] excludedKeys)
         {
@@ -3033,8 +3044,19 @@ namespace JavaScriptRuntime
                 excluded.Add(DotNet2JSConversions.ToString(k));
             }
 
-            var result = new System.Dynamic.ExpandoObject();
-            var dict = (IDictionary<string, object?>)result;
+            var result = new JsObject();
+
+            if (obj is JsObject jsObjSrc)
+            {
+                // Enumerate own enumerable properties (descriptor store + backing dict).
+                var seen = new HashSet<string>(StringComparer.Ordinal);
+                EnumerateOwnEnumerableProperties(jsObjSrc, seen, (key, value) =>
+                {
+                    if (!excluded.Contains(key))
+                        result.SetValue(key, value);
+                });
+                return result;
+            }
 
             if (obj is System.Dynamic.ExpandoObject exp)
             {
@@ -3042,7 +3064,20 @@ namespace JavaScriptRuntime
                 foreach (var kvp in src)
                 {
                     if (excluded.Contains(kvp.Key)) continue;
-                    dict[kvp.Key] = kvp.Value;
+                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key)) continue;
+                    result.SetValue(kvp.Key, kvp.Value);
+                }
+                return result;
+            }
+
+            // IDictionary<string, object?> fallback
+            if (obj is IDictionary<string, object?> dictGeneric)
+            {
+                foreach (var kvp in dictGeneric)
+                {
+                    if (excluded.Contains(kvp.Key)) continue;
+                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key)) continue;
+                    result.SetValue(kvp.Key, kvp.Value);
                 }
                 return result;
             }
@@ -3053,16 +3088,16 @@ namespace JavaScriptRuntime
                 var type = obj.GetType();
                 foreach (var p in type
                     .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => p.CanRead && !excluded.Contains(p.Name)))
+                    .Where(p => p.CanRead && p.GetIndexParameters().Length == 0 && !excluded.Contains(p.Name)))
                 {
-                    dict[p.Name] = p.GetValue(obj);
+                    result.SetValue(p.Name, p.GetValue(obj));
                 }
 
                 foreach (var f in type
                     .GetFields(BindingFlags.Instance | BindingFlags.Public)
                     .Where(f => !excluded.Contains(f.Name)))
                 {
-                    dict[f.Name] = f.GetValue(obj);
+                    result.SetValue(f.Name, f.GetValue(obj));
                 }
             }
             catch (AmbiguousMatchException)
@@ -3446,6 +3481,50 @@ namespace JavaScriptRuntime
             }
 
             return TryGetInheritedPropertyValue(obj, name, out var inherited) ? inherited : null;
+        }
+
+        /// <summary>
+        /// Sets a numeric property on a JavaScript object without boxing the double value.
+        /// Called from generated IL during object literal initialization.
+        /// For <see cref="JsObject"/> receivers the value is stored unboxed.
+        /// Falls back to the general <see cref="SetProperty"/> for other receiver types.
+        /// </summary>
+        public static void SetPropertyNumber(object? obj, string key, double value)
+        {
+            if (obj is JsObject jsObj)
+            {
+                jsObj.SetNumber(key, value);
+                return;
+            }
+            SetProperty(obj!, key, value);
+        }
+
+        /// <summary>
+        /// Sets a boolean property on a JavaScript object without boxing the bool value.
+        /// Called from generated IL during object literal initialization.
+        /// </summary>
+        public static void SetPropertyBoolean(object? obj, string key, bool value)
+        {
+            if (obj is JsObject jsObj)
+            {
+                jsObj.SetBoolean(key, value);
+                return;
+            }
+            SetProperty(obj!, key, value);
+        }
+
+        /// <summary>
+        /// Sets a string property on a JavaScript object.
+        /// Called from generated IL during object literal initialization.
+        /// </summary>
+        public static void SetPropertyString(object? obj, string key, string? value)
+        {
+            if (obj is JsObject jsObj)
+            {
+                jsObj.SetString(key, value);
+                return;
+            }
+            SetProperty(obj!, key, value);
         }
 
         /// <summary>
@@ -3870,6 +3949,29 @@ namespace JavaScriptRuntime
                     return dict.ContainsKey(name);
                 }
 
+                // IDictionary<string, object?> (includes JsObject)
+                if (target is IDictionary<string, object?> dictGeneric)
+                {
+                    return dictGeneric.ContainsKey(name);
+                }
+
+                if (target is System.Collections.IDictionary dictObj)
+                {
+                    if (dictObj.Contains(name))
+                    {
+                        return true;
+                    }
+
+                    foreach (var key in dictObj.Keys)
+                    {
+                        if (string.Equals(DotNet2JSConversions.ToString(key), name, StringComparison.Ordinal))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
                 // JS Array (numeric indexes + length)
                 if (target is Array jsArr)
                 {

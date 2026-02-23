@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219c
+			// Method begins at RVA 0x218a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 320 (0x140)
+		// Code size: 302 (0x12e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Types_IsArray/Scope,
 			[1] object,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] string,
 			[5] object
 		)
@@ -74,77 +74,71 @@
 		IL_004e: box [System.Runtime]System.Double
 		IL_0053: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_0058: stloc.2
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_005e: dup
 		IL_005f: ldstr "0"
 		IL_0064: ldc.r8 1
-		IL_006d: box [System.Runtime]System.Double
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0077: pop
-		IL_0078: dup
-		IL_0079: ldstr "1"
-		IL_007e: ldc.r8 2
-		IL_0087: box [System.Runtime]System.Double
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0091: pop
-		IL_0092: dup
-		IL_0093: ldstr "length"
-		IL_0098: ldc.r8 2
-		IL_00a1: box [System.Runtime]System.Double
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00ab: pop
-		IL_00ac: stloc.3
-		IL_00ad: ldstr "hello"
-		IL_00b2: stloc.s 4
-		IL_00b4: ldloc.1
-		IL_00b5: ldstr "types"
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00bf: ldstr "isArray"
-		IL_00c4: ldloc.2
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ca: stloc.s 5
-		IL_00cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d1: ldc.i4.1
-		IL_00d2: newarr [System.Runtime]System.Object
-		IL_00d7: dup
-		IL_00d8: ldc.i4.0
-		IL_00d9: ldloc.s 5
-		IL_00db: stelem.ref
-		IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e1: pop
-		IL_00e2: ldloc.1
-		IL_00e3: ldstr "types"
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00ed: ldstr "isArray"
-		IL_00f2: ldloc.3
-		IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00f8: stloc.s 5
-		IL_00fa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ff: ldc.i4.1
-		IL_0100: newarr [System.Runtime]System.Object
-		IL_0105: dup
-		IL_0106: ldc.i4.0
-		IL_0107: ldloc.s 5
-		IL_0109: stelem.ref
-		IL_010a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_010f: pop
-		IL_0110: ldloc.1
-		IL_0111: ldstr "types"
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_011b: ldstr "isArray"
-		IL_0120: ldloc.s 4
-		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0127: stloc.s 5
-		IL_0129: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_012e: ldc.i4.1
-		IL_012f: newarr [System.Runtime]System.Object
-		IL_0134: dup
-		IL_0135: ldc.i4.0
-		IL_0136: ldloc.s 5
-		IL_0138: stelem.ref
-		IL_0139: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_013e: pop
-		IL_013f: ret
+		IL_006d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0072: dup
+		IL_0073: ldstr "1"
+		IL_0078: ldc.r8 2
+		IL_0081: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0086: dup
+		IL_0087: ldstr "length"
+		IL_008c: ldc.r8 2
+		IL_0095: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_009a: stloc.3
+		IL_009b: ldstr "hello"
+		IL_00a0: stloc.s 4
+		IL_00a2: ldloc.1
+		IL_00a3: ldstr "types"
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00ad: ldstr "isArray"
+		IL_00b2: ldloc.2
+		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b8: stloc.s 5
+		IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bf: ldc.i4.1
+		IL_00c0: newarr [System.Runtime]System.Object
+		IL_00c5: dup
+		IL_00c6: ldc.i4.0
+		IL_00c7: ldloc.s 5
+		IL_00c9: stelem.ref
+		IL_00ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00cf: pop
+		IL_00d0: ldloc.1
+		IL_00d1: ldstr "types"
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00db: ldstr "isArray"
+		IL_00e0: ldloc.3
+		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e6: stloc.s 5
+		IL_00e8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ed: ldc.i4.1
+		IL_00ee: newarr [System.Runtime]System.Object
+		IL_00f3: dup
+		IL_00f4: ldc.i4.0
+		IL_00f5: ldloc.s 5
+		IL_00f7: stelem.ref
+		IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00fd: pop
+		IL_00fe: ldloc.1
+		IL_00ff: ldstr "types"
+		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0109: ldstr "isArray"
+		IL_010e: ldloc.s 4
+		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0115: stloc.s 5
+		IL_0117: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_011c: ldc.i4.1
+		IL_011d: newarr [System.Runtime]System.Object
+		IL_0122: dup
+		IL_0123: ldc.i4.0
+		IL_0124: ldloc.s 5
+		IL_0126: stelem.ref
+		IL_0127: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_012c: pop
+		IL_012d: ret
 	} // end of method Require_Util_Types_IsArray::__js_module_init__
 
 } // end of class Modules.Require_Util_Types_IsArray
@@ -156,7 +150,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a5
+		// Method begins at RVA 0x2193
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -39,9 +39,9 @@ Benchmarks/
 
 ## Benchmark Scenarios
 
-### Phase 1 Scenarios (Current)
+### Core Scenarios
 
-Additional imported scenarios from Jint are available in `Scenarios/` for future use (with targeted js2il-compatibility shims where needed, e.g. strict preamble + dromaeo harness helpers).
+Benchmark runners discover all `Scenarios/*.js` files at runtime (currently 19). The list below highlights the core scenarios.
 
 1. **minimal.js** - Simple arithmetic (`1 + 1 === 2`)
    - Purpose: Baseline minimal execution overhead

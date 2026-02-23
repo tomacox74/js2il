@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2169
+			// Method begins at RVA 0x2157
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x217b
+				// Method begins at RVA 0x2169
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -66,7 +66,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2196
+						// Method begins at RVA 0x2184
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -84,7 +84,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x218d
+					// Method begins at RVA 0x217b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -102,7 +102,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2184
+				// Method begins at RVA 0x2172
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -120,7 +120,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2172
+			// Method begins at RVA 0x2160
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -146,11 +146,11 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 269 (0x10d)
+		// Code size: 251 (0xfb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForIn_LabeledBreak/Scope,
-			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] object,
 			[3] object,
 			[4] object,
@@ -162,93 +162,87 @@
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForIn_LabeledBreak/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "a"
 		IL_0011: ldc.r8 1
-		IL_001a: box [System.Runtime]System.Double
-		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0024: pop
-		IL_0025: dup
-		IL_0026: ldstr "b"
-		IL_002b: ldc.r8 2
-		IL_0034: box [System.Runtime]System.Double
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_003e: pop
-		IL_003f: dup
-		IL_0040: ldstr "c"
-		IL_0045: ldc.r8 3
-		IL_004e: box [System.Runtime]System.Double
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0058: pop
-		IL_0059: stloc.1
-		IL_005a: ldloc.1
-		IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
-		IL_0060: stloc.2
-		// loop start (head: IL_0061)
-			IL_0061: ldloc.2
-			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-			IL_0067: stloc.s 5
-			IL_0069: ldloc.s 5
-			IL_006b: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-			IL_0070: stloc.s 6
-			IL_0072: ldloc.s 6
-			IL_0074: brtrue IL_010c
+		IL_001a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_001f: dup
+		IL_0020: ldstr "b"
+		IL_0025: ldc.r8 2
+		IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0033: dup
+		IL_0034: ldstr "c"
+		IL_0039: ldc.r8 3
+		IL_0042: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0047: stloc.1
+		IL_0048: ldloc.1
+		IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+		IL_004e: stloc.2
+		// loop start (head: IL_004f)
+			IL_004f: ldloc.2
+			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_0055: stloc.s 5
+			IL_0057: ldloc.s 5
+			IL_0059: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_005e: stloc.s 6
+			IL_0060: ldloc.s 6
+			IL_0062: brtrue IL_00fa
 
-			IL_0079: ldloc.s 5
-			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-			IL_0080: stloc.s 5
-			IL_0082: ldloc.s 5
-			IL_0084: stloc.3
-			IL_0085: ldc.r8 0.0
-			IL_008e: box [System.Runtime]System.Double
-			IL_0093: stloc.s 4
-			// loop start (head: IL_0095)
-				IL_0095: ldloc.s 4
-				IL_0097: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_009c: stloc.s 7
-				IL_009e: ldloc.s 7
-				IL_00a0: ldc.r8 1
-				IL_00a9: clt
-				IL_00ab: brfalse IL_0107
+			IL_0067: ldloc.s 5
+			IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_006e: stloc.s 5
+			IL_0070: ldloc.s 5
+			IL_0072: stloc.3
+			IL_0073: ldc.r8 0.0
+			IL_007c: box [System.Runtime]System.Double
+			IL_0081: stloc.s 4
+			// loop start (head: IL_0083)
+				IL_0083: ldloc.s 4
+				IL_0085: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_008a: stloc.s 7
+				IL_008c: ldloc.s 7
+				IL_008e: ldc.r8 1
+				IL_0097: clt
+				IL_0099: brfalse IL_00f5
 
-				IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00b5: ldc.i4.1
-				IL_00b6: newarr [System.Runtime]System.Object
-				IL_00bb: dup
-				IL_00bc: ldc.i4.0
-				IL_00bd: ldloc.3
-				IL_00be: stelem.ref
-				IL_00bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_00c4: pop
-				IL_00c5: ldloc.3
-				IL_00c6: ldstr "b"
-				IL_00cb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_00d0: stloc.s 6
-				IL_00d2: ldloc.s 6
-				IL_00d4: brfalse IL_00de
+				IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00a3: ldc.i4.1
+				IL_00a4: newarr [System.Runtime]System.Object
+				IL_00a9: dup
+				IL_00aa: ldc.i4.0
+				IL_00ab: ldloc.3
+				IL_00ac: stelem.ref
+				IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_00b2: pop
+				IL_00b3: ldloc.3
+				IL_00b4: ldstr "b"
+				IL_00b9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_00be: stloc.s 6
+				IL_00c0: ldloc.s 6
+				IL_00c2: brfalse IL_00cc
 
-				IL_00d9: br IL_010c
+				IL_00c7: br IL_00fa
 
-				IL_00de: ldloc.s 4
-				IL_00e0: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_00e5: stloc.s 7
-				IL_00e7: ldloc.s 7
-				IL_00e9: ldc.r8 1
-				IL_00f2: add
-				IL_00f3: stloc.s 7
-				IL_00f5: ldloc.s 7
-				IL_00f7: box [System.Runtime]System.Double
-				IL_00fc: stloc.s 8
-				IL_00fe: ldloc.s 8
-				IL_0100: stloc.s 4
-				IL_0102: br IL_0095
+				IL_00cc: ldloc.s 4
+				IL_00ce: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_00d3: stloc.s 7
+				IL_00d5: ldloc.s 7
+				IL_00d7: ldc.r8 1
+				IL_00e0: add
+				IL_00e1: stloc.s 7
+				IL_00e3: ldloc.s 7
+				IL_00e5: box [System.Runtime]System.Double
+				IL_00ea: stloc.s 8
+				IL_00ec: ldloc.s 8
+				IL_00ee: stloc.s 4
+				IL_00f0: br IL_0083
 			// end loop
 
-			IL_0107: br IL_0061
+			IL_00f5: br IL_004f
 		// end loop
 
-		IL_010c: ret
+		IL_00fa: ret
 	} // end of method ControlFlow_ForIn_LabeledBreak::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForIn_LabeledBreak
@@ -260,7 +254,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219f
+		// Method begins at RVA 0x218d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

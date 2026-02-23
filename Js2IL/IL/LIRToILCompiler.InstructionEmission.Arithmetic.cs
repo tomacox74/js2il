@@ -409,7 +409,8 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(unsignedRightShift.Result, ilEncoder, allocation);
                 break;
 
-            // Call Operators.IsTruthy
+            // Call Operators.IsTruthy for values that remain in the generic LIRCallIsTruthy form.
+            // double/bool may still flow here from earlier passes and int32 appears in bitwise hot paths.
             case LIRCallIsTruthy callIsTruthy:
                 if (!IsMaterialized(callIsTruthy.Result, allocation))
                 {
@@ -437,6 +438,28 @@ internal sealed partial class LIRToILCompiler
                     EmitOperatorsIsTruthyObject(ilEncoder);
                 }
                 EmitStoreTemp(callIsTruthy.Result, ilEncoder, allocation);
+                break;
+
+            // Call Operators.IsTruthy(double) - emitted after LIRTypeNormalization specializes a proven double operand.
+            case LIRCallIsTruthyDouble callIsTruthyDouble:
+                if (!IsMaterialized(callIsTruthyDouble.Result, allocation))
+                {
+                    break;
+                }
+                EmitLoadTemp(callIsTruthyDouble.Value, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsIsTruthyDouble(ilEncoder);
+                EmitStoreTemp(callIsTruthyDouble.Result, ilEncoder, allocation);
+                break;
+
+            // Call Operators.IsTruthy(bool) - emitted after LIRTypeNormalization specializes a proven bool operand.
+            case LIRCallIsTruthyBool callIsTruthyBool:
+                if (!IsMaterialized(callIsTruthyBool.Result, allocation))
+                {
+                    break;
+                }
+                EmitLoadTemp(callIsTruthyBool.Value, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsIsTruthyBool(ilEncoder);
+                EmitStoreTemp(callIsTruthyBool.Result, ilEncoder, allocation);
                 break;
 
             default:
