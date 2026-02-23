@@ -1,0 +1,111 @@
+# Canary smoke tests – nightly expanded set
+#
+# Runs the full canary corpus (including slower and more complex scripts) on
+# a nightly schedule.  Every script is compiled from the latest master source
+# and executed under a strict per-run timeout.
+#
+# Acceptance criteria (same as PR gate, expanded scope):
+#   * Every canary compiles without error.
+#   * Every canary executes within the timeout and exits 0.
+#   * Every canary stdout contains its expected CANARY: marker.
+#
+# Adding a new canary: see tests/canary/README.md.
+
+name: canary-nightly
+
+on:
+  schedule:
+    # 02:00 UTC every day
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  canary:
+    name: Canary smoke (nightly)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build (Release)
+        run: dotnet build --no-restore -c Release
+
+      - name: Locate built Js2IL.dll
+        id: js2il
+        run: |
+          dll=$(find Js2IL/bin/Release -name 'Js2IL.dll' | head -n1)
+          echo "dll=$dll" >> "$GITHUB_OUTPUT"
+          echo "Found: $dll"
+
+      # -----------------------------------------------------------------------
+      # Full canary corpus
+      # -----------------------------------------------------------------------
+
+      - name: Canary – hello-world
+        run: |
+          pwsh scripts/run-canary.ps1 \
+            -CanaryScript tests/canary/corpus/hello-world.js \
+            -ExpectedMarker 'CANARY:hello-world:ok' \
+            -Js2ILPath '${{ steps.js2il.outputs.dll }}' \
+            -TimeoutSec 30
+
+      - name: Canary – closures
+        run: |
+          pwsh scripts/run-canary.ps1 \
+            -CanaryScript tests/canary/corpus/closures.js \
+            -ExpectedMarker 'CANARY:closures:ok' \
+            -Js2ILPath '${{ steps.js2il.outputs.dll }}' \
+            -TimeoutSec 30
+
+      - name: Canary – classes
+        run: |
+          pwsh scripts/run-canary.ps1 \
+            -CanaryScript tests/canary/corpus/classes.js \
+            -ExpectedMarker 'CANARY:classes:ok' \
+            -Js2ILPath '${{ steps.js2il.outputs.dll }}' \
+            -TimeoutSec 30
+
+      - name: Canary – array-methods
+        run: |
+          pwsh scripts/run-canary.ps1 \
+            -CanaryScript tests/canary/corpus/array-methods.js \
+            -ExpectedMarker 'CANARY:array-methods:ok' \
+            -Js2ILPath '${{ steps.js2il.outputs.dll }}' \
+            -TimeoutSec 30
+
+      - name: Canary – prime-mini
+        run: |
+          pwsh scripts/run-canary.ps1 \
+            -CanaryScript tests/canary/corpus/prime-mini.js \
+            -ExpectedMarker 'CANARY:prime-mini:ok' \
+            -Js2ILPath '${{ steps.js2il.outputs.dll }}' \
+            -TimeoutSec 30
+
+      # -----------------------------------------------------------------------
+      # Upload artefacts on failure for actionable investigation
+      # -----------------------------------------------------------------------
+
+      - name: Upload canary artefacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canary-nightly-artefacts-${{ github.run_id }}
+          path: /tmp/js2il-canary-*
+          retention-days: 14
+          if-no-files-found: ignore
