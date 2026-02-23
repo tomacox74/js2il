@@ -258,6 +258,18 @@ public sealed partial class HIRToLIRLowerer
 
         var boxedObject = EnsureObject(objectTemp);
         var indexStorage = GetTempStorage(indexTemp);
+        var receiverStorage = GetTempStorage(boxedObject);
+        bool receiverIsInt32Array = receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array);
+        bool indexIsInt32 = indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(int);
+
+        // Fast path: Int32Array + int32 index -> use int-typed overload, result is int32
+        if (receiverIsInt32Array && indexIsInt32)
+        {
+            _methodBodyIR.Instructions.Add(new LIRGetInt32ArrayElementInt(boxedObject, indexTemp, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
+            return true;
+        }
+
         TempVariable indexForGet = indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double)
             ? indexTemp
             : EnsureObject(indexTemp);
@@ -267,9 +279,7 @@ public sealed partial class HIRToLIRLowerer
         // lower the result as an unboxed double. This allows IL emission to use the typed
         // `Int32Array.get_Item(double)` fast-path without boxing, and only box later if
         // `EnsureObject` is required by usage.
-        var receiverStorage = GetTempStorage(boxedObject);
-        if (receiverStorage.Kind == ValueStorageKind.Reference
-            && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array)
+        if (receiverIsInt32Array
             && indexStorage.Kind == ValueStorageKind.UnboxedValue
             && indexStorage.ClrType == typeof(double))
         {

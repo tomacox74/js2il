@@ -91,6 +91,19 @@ public record LIRGetInt32ArrayElement(TempVariable Receiver, TempVariable Index,
 public record LIRSetInt32ArrayElement(TempVariable Receiver, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Gets an element from a proven JavaScriptRuntime.Int32Array using an int32 index.
+/// Contract: Receiver is a proven Int32Array; Index is an unboxed int32; Result is an unboxed int32.
+/// </summary>
+public record LIRGetInt32ArrayElementInt(TempVariable Receiver, TempVariable Index, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Sets an element on a proven JavaScriptRuntime.Int32Array using int32 index and value.
+/// Contract: Receiver is a proven Int32Array; Index and Value are unboxed int32.
+/// Result (if materialized) is the assigned value as an unboxed int32.
+/// </summary>
+public record LIRSetInt32ArrayElementInt(TempVariable Receiver, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Represents a property key-value pair for object literal construction.
 /// </summary>
 /// <param name="Key">The property key string.</param>

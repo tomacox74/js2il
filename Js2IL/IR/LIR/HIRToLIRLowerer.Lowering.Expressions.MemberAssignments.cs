@@ -219,6 +219,22 @@ public sealed partial class HIRToLIRLowerer
 
         var indexStorage = GetTempStorage(indexTemp);
         var valueStorage = GetTempStorage(valueToStore);
+        var objStorageForSet = GetTempStorage(objTemp);
+
+        // Fast path: Int32Array + int32 index + int32 value -> use int-typed overload
+        bool objIsInt32Array = objStorageForSet.Kind == ValueStorageKind.Reference && objStorageForSet.ClrType == typeof(JavaScriptRuntime.Int32Array);
+        bool indexIsInt32ForSet = indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(int);
+        bool valueIsInt32ForSet = valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(int);
+
+        if (objIsInt32Array && indexIsInt32ForSet && valueIsInt32ForSet)
+        {
+            var setResult2 = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRSetInt32ArrayElementInt(objTemp, indexTemp, valueToStore, setResult2));
+            DefineTempStorage(setResult2, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
+            resultTempVar = setResult2;
+            return true;
+        }
+
         bool canUseNumericSetItem =
             indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
             valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double);

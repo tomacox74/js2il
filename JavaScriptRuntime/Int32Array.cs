@@ -113,6 +113,20 @@ namespace JavaScriptRuntime
             }
         }
 
+        // Int-typed overloads for hot bitwise code paths.
+        // These avoid double<->int conversions when the index and value are proven int32.
+        public int get_ItemInt(int index)
+        {
+            if ((uint)index >= (uint)_buffer.Length) return 0;
+            return _buffer[index];
+        }
+
+        public void set_ItemInt(int index, int value)
+        {
+            if ((uint)index >= (uint)_buffer.Length) return;
+            _buffer[index] = value;
+        }
+
         // Int32Array.prototype.set(source[, offset])
         public object set(object[]? args)
         {

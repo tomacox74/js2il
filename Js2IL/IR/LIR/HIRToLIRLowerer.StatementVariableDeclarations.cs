@@ -41,6 +41,10 @@ public sealed partial class HIRToLIRLowerer
             && GetTempStorage(value).Kind == ValueStorageKind.UnboxedValue
             && GetTempStorage(value).ClrType == typeof(bool);
 
+        bool initializerProvesUnboxedInt32 = exprStmt.Initializer != null
+            && GetTempStorage(value).Kind == ValueStorageKind.UnboxedValue
+            && GetTempStorage(value).ClrType == typeof(int);
+
         // Per-iteration environments: if this binding lives in an active materialized scope instance
         // (e.g., `for (let/const ...)` loop-head scope), store directly into that scope field.
         if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
@@ -105,6 +109,10 @@ public sealed partial class HIRToLIRLowerer
             || (binding.Kind == BindingKind.Const && initializerProvesUnboxedBool))
         {
             slotValue = EnsureBoolean(value);
+        }
+        else if (binding.Kind == BindingKind.Const && initializerProvesUnboxedInt32)
+        {
+            slotValue = value; // keep as int32
         }
         else
         {

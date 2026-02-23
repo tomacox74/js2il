@@ -80,6 +80,12 @@ internal sealed partial class LIRToILCompiler
             return;
         }
 
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(int))
+        {
+            typeEncoder.Int32();
+            return;
+        }
+
         if (allowUnboxedJsNull && storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(JavaScriptRuntime.JsNull))
         {
             var typeRef = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull));
@@ -1725,6 +1731,10 @@ internal sealed partial class LIRToILCompiler
             {
                 ilEncoder.Token(_bclReferences.BooleanType);
             }
+            else if (storage.ClrType == typeof(int))
+            {
+                ilEncoder.Token(_bclReferences.Int32Type);
+            }
             else if (storage.ClrType == typeof(JavaScriptRuntime.JsNull))
             {
                 ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
@@ -1748,6 +1758,14 @@ internal sealed partial class LIRToILCompiler
         if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
         {
             EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        // int32 to double: use conv.r8
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(int))
+        {
+            EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Conv_r8);
             return;
         }
 
@@ -1778,6 +1796,19 @@ internal sealed partial class LIRToILCompiler
             if (sourceStorage.ClrType == typeof(double))
             {
                 EmitLoadTemp(source, ilEncoder, allocation, methodDescriptor);
+                var toBooleanDoubleMref = _memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.TypeUtilities),
+                    nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
+                    parameterTypes: new[] { typeof(double) });
+                ilEncoder.OpCode(ILOpCode.Call);
+                ilEncoder.Token(toBooleanDoubleMref);
+                return;
+            }
+
+            if (sourceStorage.ClrType == typeof(int))
+            {
+                EmitLoadTemp(source, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
                 var toBooleanDoubleMref = _memberRefRegistry.GetOrAddMethod(
                     typeof(JavaScriptRuntime.TypeUtilities),
                     nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),

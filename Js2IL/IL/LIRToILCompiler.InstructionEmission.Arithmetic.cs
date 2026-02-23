@@ -353,70 +353,57 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(expNumber.Result, ilEncoder, allocation);
                 break;
 
-            // Bitwise AND: convert to int32, and, convert back to double
+            // Bitwise AND: convert to int32, and (result stays int32)
             case LIRBitwiseAnd bitwiseAnd:
-                EmitLoadTempAsNumber(bitwiseAnd.Left, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
-                EmitLoadTempAsNumber(bitwiseAnd.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                if (!IsMaterialized(bitwiseAnd.Result, allocation)) break;
+                EmitLoadTempAsInt32ForBitwise(bitwiseAnd.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsInt32ForBitwise(bitwiseAnd.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.And);
-                ilEncoder.OpCode(ILOpCode.Conv_r8);
                 EmitStoreTemp(bitwiseAnd.Result, ilEncoder, allocation);
                 break;
 
-            // Bitwise OR: convert to int32, or, convert back to double
+            // Bitwise OR: convert to int32, or (result stays int32)
             case LIRBitwiseOr bitwiseOr:
-                EmitLoadTempAsNumber(bitwiseOr.Left, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
-                EmitLoadTempAsNumber(bitwiseOr.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                if (!IsMaterialized(bitwiseOr.Result, allocation)) break;
+                EmitLoadTempAsInt32ForBitwise(bitwiseOr.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsInt32ForBitwise(bitwiseOr.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Or);
-                ilEncoder.OpCode(ILOpCode.Conv_r8);
                 EmitStoreTemp(bitwiseOr.Result, ilEncoder, allocation);
                 break;
 
-            // Bitwise XOR: convert to int32, xor, convert back to double
+            // Bitwise XOR: convert to int32, xor (result stays int32)
             case LIRBitwiseXor bitwiseXor:
-                EmitLoadTempAsNumber(bitwiseXor.Left, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
-                EmitLoadTempAsNumber(bitwiseXor.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                if (!IsMaterialized(bitwiseXor.Result, allocation)) break;
+                EmitLoadTempAsInt32ForBitwise(bitwiseXor.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsInt32ForBitwise(bitwiseXor.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Xor);
-                ilEncoder.OpCode(ILOpCode.Conv_r8);
                 EmitStoreTemp(bitwiseXor.Result, ilEncoder, allocation);
                 break;
 
-            // Left shift: convert to int32, shift, convert back to double
+            // Left shift: convert to int32, shift (result stays int32)
             case LIRLeftShift leftShift:
-                EmitLoadTempAsNumber(leftShift.Left, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
-                EmitLoadTempAsNumber(leftShift.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                if (!IsMaterialized(leftShift.Result, allocation)) break;
+                EmitLoadTempAsInt32ForBitwise(leftShift.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsInt32ForBitwise(leftShift.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Shl);
-                ilEncoder.OpCode(ILOpCode.Conv_r8);
                 EmitStoreTemp(leftShift.Result, ilEncoder, allocation);
                 break;
 
-            // Right shift (signed): convert to int32, shift, convert back to double
+            // Right shift (signed): convert to int32, shift (result stays int32)
             case LIRRightShift rightShift:
-                EmitLoadTempAsNumber(rightShift.Left, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
-                EmitLoadTempAsNumber(rightShift.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                if (!IsMaterialized(rightShift.Result, allocation)) break;
+                EmitLoadTempAsInt32ForBitwise(rightShift.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsInt32ForBitwise(rightShift.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Shr);
-                ilEncoder.OpCode(ILOpCode.Conv_r8);
                 EmitStoreTemp(rightShift.Result, ilEncoder, allocation);
                 break;
 
-            // Unsigned right shift: convert to int32 (to preserve negative values), reinterpret as uint32, shift, convert back to double
+            // Unsigned right shift: convert to int32, shr_un (result stays int32)
             case LIRUnsignedRightShift unsignedRightShift:
-                EmitLoadTempAsNumber(unsignedRightShift.Left, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);  // Convert to int32 first (handles negatives)
-                ilEncoder.OpCode(ILOpCode.Conv_u4);  // Then reinterpret as uint32 (no value change, just type)
-                EmitLoadTempAsNumber(unsignedRightShift.Right, ilEncoder, allocation, methodDescriptor);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                if (!IsMaterialized(unsignedRightShift.Result, allocation)) break;
+                EmitLoadTempAsInt32ForBitwise(unsignedRightShift.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsInt32ForBitwise(unsignedRightShift.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Shr_un);
-                ilEncoder.OpCode(ILOpCode.Conv_r_un); // Convert unsigned to double
                 EmitStoreTemp(unsignedRightShift.Result, ilEncoder, allocation);
                 break;
 
@@ -437,6 +424,12 @@ internal sealed partial class LIRToILCompiler
                 {
                     EmitOperatorsIsTruthyBool(ilEncoder);
                 }
+                else if (truthyInputStorage.Kind == ValueStorageKind.UnboxedValue && truthyInputStorage.ClrType == typeof(int))
+                {
+                    // int32 truthiness: non-zero is truthy. Convert to double then use double path.
+                    ilEncoder.OpCode(ILOpCode.Conv_r8);
+                    EmitOperatorsIsTruthyDouble(ilEncoder);
+                }
                 else
                 {
                     EmitOperatorsIsTruthyObject(ilEncoder);
@@ -449,5 +442,24 @@ internal sealed partial class LIRToILCompiler
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Loads a temp value as int32 for use in bitwise operations.
+    /// - If already int32: load directly (no conversion needed)
+    /// - If double: load as double, then conv.i4
+    /// - Otherwise: convert to double via ToNumber, then conv.i4
+    /// </summary>
+    private void EmitLoadTempAsInt32ForBitwise(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
+    {
+        var storage = GetTempStorage(temp);
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(int))
+        {
+            EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
+            return; // Already int32
+        }
+        // Convert to int32 via double intermediate
+        EmitLoadTempAsNumber(temp, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.OpCode(ILOpCode.Conv_i4);
     }
 }

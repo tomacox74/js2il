@@ -368,21 +368,21 @@ public sealed partial class HIRToLIRLowerer
         // Handle bitwise operators
         if (binaryExpr.Operator == Acornima.Operator.BitwiseAnd)
         {
-            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
-            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
-            if (leftIsUnboxedDouble && rightIsUnboxedDouble)
+            var leftIsNumeric = leftStorage.Kind == ValueStorageKind.UnboxedValue && (leftType == typeof(double) || leftType == typeof(int));
+            var rightIsNumeric = rightStorage.Kind == ValueStorageKind.UnboxedValue && (rightType == typeof(double) || rightType == typeof(int));
+            if (leftIsNumeric && rightIsNumeric)
             {
                 _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
             if (canUseLegacyNumericFallback)
             {
-                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
-                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
-                _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(leftNumber, rightNumber, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                var leftForOp = leftIsNumeric ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightForOp = rightIsNumeric ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(leftForOp, rightForOp, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
@@ -399,21 +399,21 @@ public sealed partial class HIRToLIRLowerer
 
         if (binaryExpr.Operator == Acornima.Operator.BitwiseOr)
         {
-            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
-            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
-            if (leftIsUnboxedDouble && rightIsUnboxedDouble)
+            var leftIsNumeric = leftStorage.Kind == ValueStorageKind.UnboxedValue && (leftType == typeof(double) || leftType == typeof(int));
+            var rightIsNumeric = rightStorage.Kind == ValueStorageKind.UnboxedValue && (rightType == typeof(double) || rightType == typeof(int));
+            if (leftIsNumeric && rightIsNumeric)
             {
                 _methodBodyIR.Instructions.Add(new LIRBitwiseOr(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
             if (canUseLegacyNumericFallback)
             {
-                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
-                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
-                _methodBodyIR.Instructions.Add(new LIRBitwiseOr(leftNumber, rightNumber, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                var leftForOp = leftIsNumeric ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightForOp = rightIsNumeric ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRBitwiseOr(leftForOp, rightForOp, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
@@ -430,21 +430,21 @@ public sealed partial class HIRToLIRLowerer
 
         if (binaryExpr.Operator == Acornima.Operator.BitwiseXor)
         {
-            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
-            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
-            if (leftIsUnboxedDouble && rightIsUnboxedDouble)
+            var leftIsNumeric = leftStorage.Kind == ValueStorageKind.UnboxedValue && (leftType == typeof(double) || leftType == typeof(int));
+            var rightIsNumeric = rightStorage.Kind == ValueStorageKind.UnboxedValue && (rightType == typeof(double) || rightType == typeof(int));
+            if (leftIsNumeric && rightIsNumeric)
             {
                 _methodBodyIR.Instructions.Add(new LIRBitwiseXor(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
             if (canUseLegacyNumericFallback)
             {
-                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
-                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
-                _methodBodyIR.Instructions.Add(new LIRBitwiseXor(leftNumber, rightNumber, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                var leftForOp = leftIsNumeric ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightForOp = rightIsNumeric ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRBitwiseXor(leftForOp, rightForOp, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
@@ -462,21 +462,21 @@ public sealed partial class HIRToLIRLowerer
         // Handle shift operators
         if (binaryExpr.Operator == Acornima.Operator.LeftShift)
         {
-            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
-            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
-            if (leftIsUnboxedDouble && rightIsUnboxedDouble)
+            var leftIsNumeric = leftStorage.Kind == ValueStorageKind.UnboxedValue && (leftType == typeof(double) || leftType == typeof(int));
+            var rightIsNumeric = rightStorage.Kind == ValueStorageKind.UnboxedValue && (rightType == typeof(double) || rightType == typeof(int));
+            if (leftIsNumeric && rightIsNumeric)
             {
                 _methodBodyIR.Instructions.Add(new LIRLeftShift(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
             if (canUseLegacyNumericFallback)
             {
-                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
-                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
-                _methodBodyIR.Instructions.Add(new LIRLeftShift(leftNumber, rightNumber, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                var leftForOp = leftIsNumeric ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightForOp = rightIsNumeric ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRLeftShift(leftForOp, rightForOp, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
@@ -493,21 +493,21 @@ public sealed partial class HIRToLIRLowerer
 
         if (binaryExpr.Operator == Acornima.Operator.RightShift)
         {
-            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
-            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
-            if (leftIsUnboxedDouble && rightIsUnboxedDouble)
+            var leftIsNumeric = leftStorage.Kind == ValueStorageKind.UnboxedValue && (leftType == typeof(double) || leftType == typeof(int));
+            var rightIsNumeric = rightStorage.Kind == ValueStorageKind.UnboxedValue && (rightType == typeof(double) || rightType == typeof(int));
+            if (leftIsNumeric && rightIsNumeric)
             {
                 _methodBodyIR.Instructions.Add(new LIRRightShift(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
             if (canUseLegacyNumericFallback)
             {
-                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
-                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
-                _methodBodyIR.Instructions.Add(new LIRRightShift(leftNumber, rightNumber, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                var leftForOp = leftIsNumeric ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightForOp = rightIsNumeric ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRRightShift(leftForOp, rightForOp, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
@@ -524,21 +524,21 @@ public sealed partial class HIRToLIRLowerer
 
         if (binaryExpr.Operator == Acornima.Operator.UnsignedRightShift)
         {
-            var leftIsUnboxedDouble = leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
-            var rightIsUnboxedDouble = rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
-            if (leftIsUnboxedDouble && rightIsUnboxedDouble)
+            var leftIsNumeric = leftStorage.Kind == ValueStorageKind.UnboxedValue && (leftType == typeof(double) || leftType == typeof(int));
+            var rightIsNumeric = rightStorage.Kind == ValueStorageKind.UnboxedValue && (rightType == typeof(double) || rightType == typeof(int));
+            if (leftIsNumeric && rightIsNumeric)
             {
                 _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
             if (canUseLegacyNumericFallback)
             {
-                var leftNumber = leftIsUnboxedDouble ? leftTempVar : EnsureNumber(leftTempVar);
-                var rightNumber = rightIsUnboxedDouble ? rightTempVar : EnsureNumber(rightTempVar);
-                _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftNumber, rightNumber, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                var leftForOp = leftIsNumeric ? leftTempVar : EnsureNumber(leftTempVar);
+                var rightForOp = rightIsNumeric ? rightTempVar : EnsureNumber(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftForOp, rightForOp, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                 return true;
             }
 
@@ -569,7 +569,7 @@ public sealed partial class HIRToLIRLowerer
         {
             case Acornima.Operator.LessThan:
                 if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
-                    && leftType == typeof(double) && rightType == typeof(double))
+                    && (leftType == typeof(double) || leftType == typeof(int)) && (rightType == typeof(double) || rightType == typeof(int)))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberLessThan(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -595,7 +595,7 @@ public sealed partial class HIRToLIRLowerer
 
             case Acornima.Operator.GreaterThan:
                 if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
-                    && leftType == typeof(double) && rightType == typeof(double))
+                    && (leftType == typeof(double) || leftType == typeof(int)) && (rightType == typeof(double) || rightType == typeof(int)))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThan(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -621,7 +621,7 @@ public sealed partial class HIRToLIRLowerer
 
             case Acornima.Operator.LessThanOrEqual:
                 if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
-                    && leftType == typeof(double) && rightType == typeof(double))
+                    && (leftType == typeof(double) || leftType == typeof(int)) && (rightType == typeof(double) || rightType == typeof(int)))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberLessThanOrEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -647,7 +647,7 @@ public sealed partial class HIRToLIRLowerer
 
             case Acornima.Operator.GreaterThanOrEqual:
                 if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
-                    && leftType == typeof(double) && rightType == typeof(double))
+                    && (leftType == typeof(double) || leftType == typeof(int)) && (rightType == typeof(double) || rightType == typeof(int)))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThanOrEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -675,7 +675,7 @@ public sealed partial class HIRToLIRLowerer
                 // Support both number and boolean equality, with dynamic fallback.
                 // Require UnboxedValue storage to ensure raw IL ceq is type-safe (consistent with <, >, <=, >=).
                 if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
-                    && leftType == typeof(double) && rightType == typeof(double))
+                    && (leftType == typeof(double) || leftType == typeof(int)) && (rightType == typeof(double) || rightType == typeof(int)))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -702,7 +702,7 @@ public sealed partial class HIRToLIRLowerer
                 // Support both number and boolean strict equality, with dynamic fallback.
                 // Require UnboxedValue storage to ensure raw IL ceq is type-safe (consistent with <, >, <=, >=).
                 if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
-                    && leftType == typeof(double) && rightType == typeof(double))
+                    && (leftType == typeof(double) || leftType == typeof(int)) && (rightType == typeof(double) || rightType == typeof(int)))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -729,7 +729,7 @@ public sealed partial class HIRToLIRLowerer
                 // Support both number and boolean inequality, with dynamic fallback.
                 // Require UnboxedValue storage to ensure raw IL ceq is type-safe (consistent with <, >, <=, >=).
                 if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
-                    && leftType == typeof(double) && rightType == typeof(double))
+                    && (leftType == typeof(double) || leftType == typeof(int)) && (rightType == typeof(double) || rightType == typeof(int)))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberNotEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -756,7 +756,7 @@ public sealed partial class HIRToLIRLowerer
                 // Support both number and boolean strict inequality, with dynamic fallback.
                 // Require UnboxedValue storage to ensure raw IL ceq is type-safe (consistent with <, >, <=, >=).
                 if (leftStorage.Kind == ValueStorageKind.UnboxedValue && rightStorage.Kind == ValueStorageKind.UnboxedValue
-                    && leftType == typeof(double) && rightType == typeof(double))
+                    && (leftType == typeof(double) || leftType == typeof(int)) && (rightType == typeof(double) || rightType == typeof(int)))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberNotEqual(leftTempVar, rightTempVar, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));

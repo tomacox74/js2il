@@ -136,88 +136,70 @@ public sealed partial class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.BitwiseAndAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    EnsureNumericOperands();
-                }
-                if (leftType == typeof(double) && rightType == typeof(double))
-                {
+                    bool leftIsNumeric = (leftType == typeof(double) || leftType == typeof(int)) && GetTempStorage(currentValue).Kind == ValueStorageKind.UnboxedValue;
+                    bool rightIsNumeric = (rightType == typeof(double) || rightType == typeof(int)) && GetTempStorage(rhsValue).Kind == ValueStorageKind.UnboxedValue;
+                    if (!leftIsNumeric) { currentValue = EnsureNumber(currentValue); }
+                    if (!rightIsNumeric) { rhsValue = EnsureNumber(rhsValue); }
                     _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(currentValue, rhsValue, result));
-                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                     return true;
                 }
-                // Bitwise AND requires numeric types
-                return false;
 
             case Acornima.Operator.BitwiseOrAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    EnsureNumericOperands();
-                }
-                if (leftType == typeof(double) && rightType == typeof(double))
-                {
+                    bool leftIsNumeric = (leftType == typeof(double) || leftType == typeof(int)) && GetTempStorage(currentValue).Kind == ValueStorageKind.UnboxedValue;
+                    bool rightIsNumeric = (rightType == typeof(double) || rightType == typeof(int)) && GetTempStorage(rhsValue).Kind == ValueStorageKind.UnboxedValue;
+                    if (!leftIsNumeric) { currentValue = EnsureNumber(currentValue); }
+                    if (!rightIsNumeric) { rhsValue = EnsureNumber(rhsValue); }
                     _methodBodyIR.Instructions.Add(new LIRBitwiseOr(currentValue, rhsValue, result));
-                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                     return true;
                 }
-                // Bitwise OR requires numeric types
-                return false;
 
             case Acornima.Operator.BitwiseXorAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    EnsureNumericOperands();
-                }
-                if (leftType == typeof(double) && rightType == typeof(double))
-                {
+                    bool leftIsNumeric = (leftType == typeof(double) || leftType == typeof(int)) && GetTempStorage(currentValue).Kind == ValueStorageKind.UnboxedValue;
+                    bool rightIsNumeric = (rightType == typeof(double) || rightType == typeof(int)) && GetTempStorage(rhsValue).Kind == ValueStorageKind.UnboxedValue;
+                    if (!leftIsNumeric) { currentValue = EnsureNumber(currentValue); }
+                    if (!rightIsNumeric) { rhsValue = EnsureNumber(rhsValue); }
                     _methodBodyIR.Instructions.Add(new LIRBitwiseXor(currentValue, rhsValue, result));
-                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                     return true;
                 }
-                // Bitwise XOR requires numeric types
-                return false;
 
             case Acornima.Operator.LeftShiftAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    EnsureNumericOperands();
-                }
-                if (leftType == typeof(double) && rightType == typeof(double))
-                {
+                    bool leftIsNumeric = (leftType == typeof(double) || leftType == typeof(int)) && GetTempStorage(currentValue).Kind == ValueStorageKind.UnboxedValue;
+                    bool rightIsNumeric = (rightType == typeof(double) || rightType == typeof(int)) && GetTempStorage(rhsValue).Kind == ValueStorageKind.UnboxedValue;
+                    if (!leftIsNumeric) { currentValue = EnsureNumber(currentValue); }
+                    if (!rightIsNumeric) { rhsValue = EnsureNumber(rhsValue); }
                     _methodBodyIR.Instructions.Add(new LIRLeftShift(currentValue, rhsValue, result));
-                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                     return true;
                 }
-                // Left shift requires numeric types
-                return false;
 
             case Acornima.Operator.RightShiftAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    EnsureNumericOperands();
-                }
-                if (leftType == typeof(double) && rightType == typeof(double))
-                {
+                    bool leftIsNumeric = (leftType == typeof(double) || leftType == typeof(int)) && GetTempStorage(currentValue).Kind == ValueStorageKind.UnboxedValue;
+                    bool rightIsNumeric = (rightType == typeof(double) || rightType == typeof(int)) && GetTempStorage(rhsValue).Kind == ValueStorageKind.UnboxedValue;
+                    if (!leftIsNumeric) { currentValue = EnsureNumber(currentValue); }
+                    if (!rightIsNumeric) { rhsValue = EnsureNumber(rhsValue); }
                     _methodBodyIR.Instructions.Add(new LIRRightShift(currentValue, rhsValue, result));
-                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                     return true;
                 }
-                // Right shift requires numeric types
-                return false;
 
             case Acornima.Operator.UnsignedRightShiftAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    EnsureNumericOperands();
-                }
-                if (leftType == typeof(double) && rightType == typeof(double))
-                {
+                    bool leftIsNumeric = (leftType == typeof(double) || leftType == typeof(int)) && GetTempStorage(currentValue).Kind == ValueStorageKind.UnboxedValue;
+                    bool rightIsNumeric = (rightType == typeof(double) || rightType == typeof(int)) && GetTempStorage(rhsValue).Kind == ValueStorageKind.UnboxedValue;
+                    if (!leftIsNumeric) { currentValue = EnsureNumber(currentValue); }
+                    if (!rightIsNumeric) { rhsValue = EnsureNumber(rhsValue); }
                     _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(currentValue, rhsValue, result));
-                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(int)));
                     return true;
                 }
-                // Unsigned right shift requires numeric types
-                return false;
 
             default:
                 return false;

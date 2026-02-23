@@ -365,6 +365,14 @@ internal sealed partial class LIRToILCompiler
             return;
         }
 
+        // int32 to double: conv.r8
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(int))
+        {
+            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Conv_r8);
+            return;
+        }
+
         // Fast-path: boxed double -> unbox.any double (avoid ToNumber runtime call)
         if (storage.Kind == ValueStorageKind.BoxedValue && storage.ClrType == typeof(double))
         {

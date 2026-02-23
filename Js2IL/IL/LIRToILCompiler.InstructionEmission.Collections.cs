@@ -344,6 +344,75 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRGetInt32ArrayElementInt getI32Int:
+                {
+                    if (!IsMaterialized(getI32Int.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    // Load receiver as Int32Array (cast only if needed)
+                    var receiverStorageI32Int = GetTempStorage(getI32Int.Receiver);
+                    if (receiverStorageI32Int.Kind == ValueStorageKind.Reference && receiverStorageI32Int.ClrType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        EmitLoadTemp(getI32Int.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getI32Int.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
+                    }
+
+                    // Index is int32 - load directly
+                    EmitLoadTemp(getI32Int.Index, ilEncoder, allocation, methodDescriptor);
+
+                    var int32ArrayGetterInt = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Int32Array),
+                        "get_ItemInt",
+                        parameterTypes: new[] { typeof(int) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(int32ArrayGetterInt);
+
+                    EmitStoreTemp(getI32Int.Result, ilEncoder, allocation);
+                    break;
+                }
+
+            case LIRSetInt32ArrayElementInt setI32Int:
+                {
+                    // Load receiver as Int32Array (cast only if needed)
+                    var receiverStorageSetI32Int = GetTempStorage(setI32Int.Receiver);
+                    if (receiverStorageSetI32Int.Kind == ValueStorageKind.Reference && receiverStorageSetI32Int.ClrType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        EmitLoadTemp(setI32Int.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setI32Int.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
+                    }
+
+                    EmitLoadTemp(setI32Int.Index, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(setI32Int.Value, ilEncoder, allocation, methodDescriptor);
+
+                    var int32ArraySetterInt = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Int32Array),
+                        "set_ItemInt",
+                        parameterTypes: new[] { typeof(int), typeof(int) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(int32ArraySetterInt);
+
+                    // If the assignment expression result is used, return the assigned value.
+                    if (IsMaterialized(setI32Int.Result, allocation))
+                    {
+                        EmitLoadTemp(setI32Int.Value, ilEncoder, allocation, methodDescriptor);
+                        EmitStoreTemp(setI32Int.Result, ilEncoder, allocation);
+                    }
+
+                    break;
+                }
+
             case LIRSetJsArrayElement setArray:
                 {
                     // Load receiver as Array (cast only if needed)
