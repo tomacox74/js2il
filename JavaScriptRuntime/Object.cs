@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -2008,6 +2009,36 @@ namespace JavaScriptRuntime
                 var propName = ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
+        }
+
+        /// <summary>
+        /// Gets an item from an object and converts the result to a number (double).
+        /// Provides a fast path for Int32Array receivers that avoids boxing the element value.
+        /// For all other receivers, falls back to TypeUtilities.ToNumber(GetItem(obj, index)).
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double GetItemAsNumber(object obj, double index)
+        {
+            if (obj is Int32Array i32)
+            {
+                return i32[index];
+            }
+            return TypeUtilities.ToNumber(GetItem(obj, index));
+        }
+
+        /// <summary>
+        /// Gets an item from an object and converts the result to a number (double).
+        /// Provides a fast path for Int32Array receivers that avoids boxing the element value.
+        /// For all other receivers, falls back to TypeUtilities.ToNumber(GetItem(obj, index)).
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double GetItemAsNumber(object obj, object index)
+        {
+            if (obj is Int32Array i32 && index is double d)
+            {
+                return i32[d];
+            }
+            return TypeUtilities.ToNumber(GetItem(obj, index));
         }
 
         /// <summary>

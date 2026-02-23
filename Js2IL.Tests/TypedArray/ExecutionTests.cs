@@ -47,5 +47,8 @@ namespace Js2IL.Tests.TypedArray
 
         [Fact]
         public Task Int32Array_Wrapping_Semantics() { var testName = nameof(Int32Array_Wrapping_Semantics); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Int32Array_GetItemAsNumber_NumericContext() { var testName = nameof(Int32Array_GetItemAsNumber_NumericContext); return ExecutionTest(testName); }
     }
 }

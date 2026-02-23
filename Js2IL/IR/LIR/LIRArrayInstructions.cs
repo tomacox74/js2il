@@ -50,6 +50,14 @@ public record LIRGetInt32ArrayLength(TempVariable Receiver, TempVariable Result)
 public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Gets an item from an object by index and converts the result to an unboxed number.
+/// Calls JavaScriptRuntime.Object.GetItemAsNumber for a direct double result, avoiding boxing.
+/// Fast path for Int32Array receivers; fallback to ToNumber(GetItem(...)) for all others.
+/// Contract: Result is an unboxed double.
+/// </summary>
+public record LIRGetItemAsNumber(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Sets an item on an object by index/key (calls JavaScriptRuntime.Object.SetItem).
 /// Returns the assigned value.
 /// </summary>

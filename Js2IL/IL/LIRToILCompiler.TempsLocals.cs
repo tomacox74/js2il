@@ -718,6 +718,36 @@ internal sealed partial class LIRToILCompiler
                 }
                 break;
 
+            case LIRGetItemAsNumber getItemAsNumber:
+                {
+                    var indexStorage = GetTempStorage(getItemAsNumber.Index);
+                    if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
+                    {
+                        // Emit inline: call float64 JavaScriptRuntime.Object.GetItemAsNumber(object, double)
+                        EmitLoadTempAsObject(getItemAsNumber.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(getItemAsNumber.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItemAsNumber),
+                            parameterTypes: new[] { typeof(object), typeof(double) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemAsNumberMethod);
+                    }
+                    else
+                    {
+                        // Emit inline: call float64 JavaScriptRuntime.Object.GetItemAsNumber(object, object)
+                        EmitLoadTempAsObject(getItemAsNumber.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(getItemAsNumber.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItemAsNumber),
+                            parameterTypes: new[] { typeof(object), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemAsNumberMethod);
+                    }
+                }
+                break;
+
             case LIRGetJsArrayElement getArray:
                 {
                     // Inline: receiver, index, callvirt Array.get_Item(double)
