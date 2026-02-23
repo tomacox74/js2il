@@ -460,7 +460,7 @@ internal static class Stackify
                 }
                 return true;
 
-            // LIRNewJsObject creates an ExpandoObject and initializes properties inline.
+            // LIRNewJsObject creates a JsObject and initializes properties inline.
             // Safe to inline if all property value temps can be emitted inline.
             case LIRNewJsObject newJsObject:
                 foreach (var valueIdx in newJsObject.Properties.Select(p => p.Value.Index))
@@ -682,7 +682,7 @@ internal static class Stackify
             case LIRNewJsArray newJsArray:
                 return (newJsArray.Elements.Count, 1);
 
-            // LIRNewJsObject: consumes N property value temps, produces 1 ExpandoObject reference
+            // LIRNewJsObject: consumes N property value temps, produces 1 JsObject reference
             // The dup pattern keeps object on stack internally, net effect is: pop N, push 1
             case LIRNewJsObject newJsObject:
                 return (newJsObject.Properties.Count, 1);
@@ -794,6 +794,8 @@ internal static class Stackify
             case LIRBitwiseNotNumber:
             case LIRBitwiseNotDynamic:
             case LIRCallIsTruthy:
+            case LIRCallIsTruthyDouble:
+            case LIRCallIsTruthyBool:
             case LIRCopyTemp:
                 return (1, 1);
 

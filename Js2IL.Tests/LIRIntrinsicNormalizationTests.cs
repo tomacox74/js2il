@@ -176,6 +176,54 @@ public sealed class LIRIntrinsicNormalizationTests
     }
 
     [Fact]
+    public void Normalize_Rewrites_CallIntrinsic_ToCallInstanceMethod_WhenArgsFromSmallBuildArray()
+    {
+        var body = new MethodBodyIR();
+        var consoleObj = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var a0 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var argsArray = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        var result = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        body.Instructions.Add(new LIRBuildArray(new[] { a0 }, argsArray));
+        body.Instructions.Add(new LIRCallIntrinsic(consoleObj, "log", argsArray, result));
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry: null);
+
+        // LIRBuildArray should be removed since it's only used by the call.
+        Assert.Single(body.Instructions);
+        var instanceCall = Assert.IsType<LIRCallInstanceMethod>(body.Instructions[0]);
+        Assert.Equal(consoleObj, instanceCall.Receiver);
+        Assert.Equal(typeof(JavaScriptRuntime.Console), instanceCall.ReceiverClrType);
+        Assert.Equal("log", instanceCall.MethodName);
+        Assert.Equal(result, instanceCall.Result);
+        Assert.Single(instanceCall.Arguments);
+        Assert.Equal(a0, instanceCall.Arguments[0]);
+    }
+
+    [Fact]
+    public void Normalize_DoesNotRewrite_CallIntrinsic_WhenArgsArrayHasMoreThanThreeElements()
+    {
+        var body = new MethodBodyIR();
+        var consoleObj = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var a0 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var a1 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var a2 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var a3 = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var argsArray = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        var result = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        body.Instructions.Add(new LIRBuildArray(new[] { a0, a1, a2, a3 }, argsArray));
+        body.Instructions.Add(new LIRCallIntrinsic(consoleObj, "log", argsArray, result));
+
+        LIRIntrinsicNormalization.Normalize(body, classRegistry: null);
+
+        // Should remain unchanged (4 args exceeds the arity-expansion limit of 3).
+        Assert.Equal(2, body.Instructions.Count);
+        Assert.IsType<LIRBuildArray>(body.Instructions[0]);
+        Assert.IsType<LIRCallIntrinsic>(body.Instructions[1]);
+    }
+
+    [Fact]
     public void Normalize_Fuses_GetItem_And_ConvertToNumber_Into_GetItemAsNumber_WhenResultUsedOnlyByConvert()
     {
         var classRegistry = new ClassRegistry();
