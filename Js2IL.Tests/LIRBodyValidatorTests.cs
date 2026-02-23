@@ -175,6 +175,51 @@ public class LIRBodyValidatorTests
     }
 
     [Fact]
+    public void Validate_NumericLowering_PassesWhenCompareBooleanOperandsAreUnboxedBooleans()
+    {
+        var body = new MethodBodyIR();
+
+        var left = new TempVariable(0);
+        var right = new TempVariable(1);
+        var result = new TempVariable(2);
+
+        body.Temps.AddRange(new[] { left, right, result });
+        body.TempStorages.Add(new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        body.TempStorages.Add(new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        body.TempStorages.Add(new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        body.TempVariableSlots.AddRange(new[] { -1, -1, -1 });
+
+        body.Instructions.Add(new LIRConstBoolean(true, left));
+        body.Instructions.Add(new LIRConstBoolean(false, right));
+        body.Instructions.Add(new LIRCompareBooleanEqual(left, right, result));
+
+        LIRBodyValidator.Validate(body);
+    }
+
+    [Fact]
+    public void Validate_NumericLowering_ThrowsWhenCompareBooleanOperandIsNotUnboxedBoolean()
+    {
+        var body = new MethodBodyIR();
+
+        var left = new TempVariable(0);
+        var right = new TempVariable(1);
+        var result = new TempVariable(2);
+
+        body.Temps.AddRange(new[] { left, right, result });
+        body.TempStorages.Add(new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+        body.TempStorages.Add(new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        body.TempStorages.Add(new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        body.TempVariableSlots.AddRange(new[] { -1, -1, -1 });
+
+        body.Instructions.Add(new LIRConstBoolean(false, right));
+        body.Instructions.Add(new LIRCompareBooleanNotEqual(left, right, result));
+
+        var ex = Assert.Throws<InvalidOperationException>(() => LIRBodyValidator.Validate(body));
+        Assert.Contains("numeric lowering invariant violated", ex.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("LIRCompareBooleanNotEqual", ex.Message);
+    }
+
+    [Fact]
     public void Validate_NumericLowering_PassesForNegateNumberWithUnboxedDouble()
     {
         var body = new MethodBodyIR();

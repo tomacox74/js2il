@@ -146,6 +146,14 @@ internal static class LIRBodyValidator
                     AssertUnboxedDouble(methodBody, op.Left, i, nameof(LIRCompareNumberNotEqual), "Left");
                     AssertUnboxedDouble(methodBody, op.Right, i, nameof(LIRCompareNumberNotEqual), "Right");
                     break;
+                case LIRCompareBooleanEqual op:
+                    AssertUnboxedBoolean(methodBody, op.Left, i, nameof(LIRCompareBooleanEqual), "Left");
+                    AssertUnboxedBoolean(methodBody, op.Right, i, nameof(LIRCompareBooleanEqual), "Right");
+                    break;
+                case LIRCompareBooleanNotEqual op:
+                    AssertUnboxedBoolean(methodBody, op.Left, i, nameof(LIRCompareBooleanNotEqual), "Left");
+                    AssertUnboxedBoolean(methodBody, op.Right, i, nameof(LIRCompareBooleanNotEqual), "Right");
+                    break;
             }
         }
     }
@@ -168,6 +176,25 @@ internal static class LIRBodyValidator
             $"operand '{operandName}' (temp {temp.Index}) must be a proven unboxed double, " +
             $"but has storage Kind={storage.Kind}, ClrType={storage.ClrType?.Name ?? "null"}. " +
             "Pass the operand through EnsureNumber() before using it in a native numeric instruction.");
+    }
+
+    private static void AssertUnboxedBoolean(
+        MethodBodyIR methodBody,
+        TempVariable temp,
+        int instrIndex,
+        string instrType,
+        string operandName)
+    {
+        var storage = GetTempStorage(methodBody, temp);
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"LIR numeric lowering invariant violated at instruction #{instrIndex} ({instrType}): " +
+            $"operand '{operandName}' (temp {temp.Index}) must be a proven unboxed boolean, " +
+            $"but has storage Kind={storage.Kind}, ClrType={storage.ClrType?.Name ?? "null"}.");
     }
 
     // -----------------------------------------------------------------------
