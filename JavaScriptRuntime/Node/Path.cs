@@ -276,7 +276,7 @@ namespace JavaScriptRuntime.Node
 
             try
             {
-                var value = JavaScriptRuntime.Object.GetItem(pathObject, propertyName);
+                var value = JavaScriptRuntime.ObjectRuntime.GetItem(pathObject, propertyName);
                 if (value is null || value is JsNull)
                 {
                     return string.Empty;

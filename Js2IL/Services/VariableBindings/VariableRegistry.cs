@@ -81,12 +81,15 @@ namespace Js2IL.Services.VariableBindings
             _scopeMetadata.RegisterField(scopeName, variableName, fieldHandle);
             if (!fieldHandle.IsNil)
             {
-                // Emit typed fields for stable inferred primitives; everything else remains object.
+                // Emit typed fields for stable inferred primitive/reference fast paths; everything else remains object.
                 // Keep this in sync with TypeGenerator's field signature emission.
                 var declaredFieldType = typeof(object);
                 if (isStableType && clrType != null)
                 {
-                    if (clrType == typeof(double) || clrType == typeof(bool) || clrType == typeof(string))
+                    if (clrType == typeof(double)
+                        || clrType == typeof(bool)
+                        || clrType == typeof(string)
+                        || clrType == typeof(JavaScriptRuntime.Array))
                     {
                         declaredFieldType = clrType;
                     }

@@ -944,7 +944,7 @@ namespace JavaScriptRuntime
                 // Convert property to string key (minimal; symbols not yet surfaced here)
                 var proxyPropName = DotNet2JSConversions.ToString(property);
 
-                var hasTrap = JavaScriptRuntime.Object.GetProperty(proxy.Handler, "has");
+                var hasTrap = JavaScriptRuntime.ObjectRuntime.GetProperty(proxy.Handler, "has");
                 if (hasTrap is not null && hasTrap is not JsNull)
                 {
                     var prev = RuntimeServices.SetCurrentThis(proxy.Handler);
@@ -1085,7 +1085,7 @@ namespace JavaScriptRuntime
             }
 
             // Spec: let proto = ctor.prototype; if proto is not an object, throw.
-            var proto = JavaScriptRuntime.Object.GetItem(ctor, "prototype");
+            var proto = JavaScriptRuntime.ObjectRuntime.GetItem(ctor, "prototype");
             if (proto is null || proto is JsNull || proto is string || proto.GetType().IsValueType)
             {
                 throw new TypeError("Function has non-object prototype in instanceof check");
