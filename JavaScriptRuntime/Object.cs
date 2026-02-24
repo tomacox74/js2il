@@ -445,7 +445,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Object prototype may only be an Object or null");
             }
 
-            var obj = new System.Dynamic.ExpandoObject();
+            var obj = new JsObject();
 
             // Explicitly set [[Prototype]] (including null-proto via JsNull).
             PrototypeChain.SetPrototype(obj, prototype);
@@ -789,7 +789,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var result = new System.Dynamic.ExpandoObject();
+            var result = new JsObject();
             var dict = (IDictionary<string, object?>)result;
 
             // Get iterator for the iterable
@@ -1038,7 +1038,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var result = new System.Dynamic.ExpandoObject();
+            var result = new JsObject();
             if (getOwnPropertyNames(obj) is JavaScriptRuntime.Array names)
             {
                 foreach (var key in names)
@@ -1338,7 +1338,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Object.groupBy callback must be a function");
             }
 
-            var result = new System.Dynamic.ExpandoObject();
+            var result = new JsObject();
             var dict = (IDictionary<string, object?>)result;
             var iterator = GetIterator(items);
             var index = 0;
@@ -2540,8 +2540,8 @@ namespace JavaScriptRuntime
 
         private static object CreateDescriptorObject(JsPropertyDescriptor desc)
         {
-            var exp = new System.Dynamic.ExpandoObject();
-            var dict = (IDictionary<string, object?>)exp;
+            var result = new JsObject();
+            var dict = (IDictionary<string, object?>)result;
 
             dict["enumerable"] = desc.Enumerable;
             dict["configurable"] = desc.Configurable;
@@ -2557,7 +2557,7 @@ namespace JavaScriptRuntime
                 dict["writable"] = desc.Writable;
             }
 
-            return exp;
+            return result;
         }
 
         private static bool TryGetOwnPropertyValue(object target, string propName, out object? value)
@@ -2606,7 +2606,7 @@ namespace JavaScriptRuntime
             // We model this lazily so existing tests that don't touch it don't pay for allocation.
             if (target is Delegate del && string.Equals(propName, "prototype", StringComparison.Ordinal))
             {
-                var protoObj = new System.Dynamic.ExpandoObject();
+                var protoObj = new JsObject();
                 PropertyDescriptorStore.DefineOrUpdate(del, "prototype", new JsPropertyDescriptor
                 {
                     Kind = JsPropertyDescriptorKind.Data,

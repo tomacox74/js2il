@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- runtime/object-model: consolidate plain-object materialization onto `JsObject` across `Object.create`, `Object.fromEntries`, `Object.groupBy`, descriptor-object creation, and lazy function `prototype` allocation; add `ObjectRuntime` as the descriptive runtime surface alias and migrate runtime call sites to it while preserving compatibility with existing `JavaScriptRuntime.Object` intrinsic references.
 - runtime/spec/docs: complete ECMA-262 §20.1 (Object Objects) clause coverage with new `Object.*` APIs (`groupBy`, `hasOwn`, `getOwnPropertyDescriptors`, `getOwnPropertySymbols`, integrity methods), `Object.prototype.*` additions (constructor/isPrototypeOf/propertyIsEnumerable/toLocaleString/toString/valueOf and legacy accessor helpers), centralized Object intrinsic surface wiring in `JavaScriptRuntime.Object`, new Object execution/generator tests, and updated `docs/ECMA262/20/Section20_1.{json,md}` support tracking.
 
 ## v0.8.20 - 2026-02-24

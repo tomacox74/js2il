@@ -188,23 +188,13 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
 
     private static List<string> GetOwnEnumerableKeysSingleTarget(object target)
     {
-        // ExpandoObject (object literal)
-        if (target is ExpandoObject exp)
-        {
-            var dict = (IDictionary<string, object?>)exp;
-            return dict.Keys
-                .Where(k => PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, k))
-                .ToList();
-        }
-
-        // JsObject: union of backing-dict keys and descriptor-store keys.
-        // defineProperty'd properties live only in the descriptor store, not in the backing dict.
-        if (target is JsObject jsObj)
+        // Dictionary-backed plain objects (JsObject/ExpandoObject): union descriptor keys and backing keys.
+        if (target is IDictionary<string, object?> dictGeneric)
         {
             var result = new List<string>();
             var seen = new HashSet<string>(StringComparer.Ordinal);
 
-            // Descriptor-defined keys first (preserves definition order for defineProperty).
+            // Descriptor-defined keys first (preserves definition order for defineProperty-like writes).
             foreach (var k in PropertyDescriptorStore.GetOwnKeys(target))
             {
                 if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, k) && seen.Add(k))
@@ -212,7 +202,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             }
 
             // Backing dictionary keys (direct assignments).
-            foreach (var k in jsObj.GetOwnPropertyNames())
+            foreach (var k in dictGeneric.Keys)
             {
                 if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, k) && seen.Add(k))
                     result.Add(k);
@@ -252,14 +242,6 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
                 keys.Add(i.ToString());
             }
             return keys;
-        }
-
-        // IDictionary<string, object?>: enumerate keys
-        if (target is IDictionary<string, object?> dictGeneric)
-        {
-            return dictGeneric.Keys
-                .Where(k => PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, k))
-                .ToList();
         }
 
         // IDictionary: enumerate keys (stringified)
@@ -307,18 +289,12 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
 
     private static bool IsEnumerableAndPresent(object target, string key)
     {
-        // ExpandoObject
-        if (target is ExpandoObject exp)
-        {
-            var dict = (IDictionary<string, object?>)exp;
-            return dict.ContainsKey(key) && PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, key);
-        }
-
-        // JsObject: a key is "present" if it's in the backing dict OR the descriptor store.
-        if (target is JsObject jsObjTarget)
+        // Dictionary-backed plain objects (JsObject/ExpandoObject): key is present if in backing dict
+        // or descriptor store, and enumerable in descriptor semantics.
+        if (target is IDictionary<string, object?> dictGeneric)
         {
             bool presentInDescriptor = PropertyDescriptorStore.TryGetOwn(target, key, out _);
-            bool presentInBacking = jsObjTarget.ContainsKey(key);
+            bool presentInBacking = dictGeneric.ContainsKey(key);
             if (!presentInDescriptor && !presentInBacking)
                 return false;
             return PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, key);
@@ -352,11 +328,6 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
                 return false;
             }
             return idx < s.Length;
-        }
-
-        if (target is IDictionary<string, object?> dictGeneric)
-        {
-            return dictGeneric.ContainsKey(key) && PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, key);
         }
 
         // IDictionary: re-check by stringifying current keys.

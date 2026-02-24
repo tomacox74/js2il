@@ -53,39 +53,9 @@ namespace JavaScriptRuntime
                 return string.Join(",", items);
             }
 
-            if (value is ExpandoObject expandObject)
+            if (value is IDictionary<string, object?> dictObject)
             {
-                return FormatObject((IDictionary<string, object?>)expandObject);
-            }
-
-            if (value is JsObject jsObject)
-            {
-                // Check for custom toString method
-                if (jsObject.TryGetValue("toString", out var toStringMethod) && toStringMethod is Delegate toStringDelegate)
-                {
-                    try
-                    {
-                        var result = toStringDelegate.DynamicInvoke(new object[] { System.Array.Empty<object>() });
-                        if (result != null)
-                        {
-                            return ToString(result);
-                        }
-                    }
-                    catch
-                    {
-                        // Fall through to default behavior
-                    }
-                }
-
-                // Default object representation
-                string propertyValues = string.Join(", ", jsObject.GetOwnProperties()
-                    .Select(kvp =>
-                    {
-                        var propVal = kvp.Value is string ? $"'{kvp.Value}'" : ToString(kvp.Value);
-                        return $"{kvp.Key}: {propVal}";
-                    }));
-
-                return string.Format("{{ {0} }}", propertyValues);
+                return FormatObject(dictObject);
             }
 
             // Numbers: normalize to JS-like string forms using invariant culture and exact tokens

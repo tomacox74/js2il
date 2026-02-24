@@ -85,7 +85,7 @@ namespace JavaScriptRuntime
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
-            JavaScriptRuntime.Object.Construct(value);
+            JavaScriptRuntime.ObjectRuntime.Construct(value);
 
         // Placeholder Error constructor value.
         // Exposed so libraries can reference `Error` and access `Error.prototype`.
@@ -94,12 +94,12 @@ namespace JavaScriptRuntime
             throw new NotSupportedException("The Error constructor is not supported as a callable value yet.");
 
         // Minimal Error.prototype object. Libraries may attach properties here.
-        private static readonly object _errorPrototypeValue = new ExpandoObject();
+        private static readonly object _errorPrototypeValue = new JsObject();
 
         // Minimal Object.prototype object used for descriptor/prototype-heavy libraries.
         // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
         // opt into prototype semantics as needed.
-        private static readonly object _objectPrototypeValue = new ExpandoObject();
+        private static readonly object _objectPrototypeValue = new JsObject();
 
         static GlobalThis()
         {
@@ -123,8 +123,8 @@ namespace JavaScriptRuntime
                 Value = JavaScriptRuntime.Array.Prototype
             });
 
-            // Centralized Object constructor/prototype wiring lives in JavaScriptRuntime.Object.
-            JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
+            // Centralized Object constructor/prototype wiring lives in JavaScriptRuntime.ObjectRuntime.
+            JavaScriptRuntime.ObjectRuntime.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
             PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "prototype", new JsPropertyDescriptor

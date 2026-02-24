@@ -64,7 +64,7 @@ internal sealed class JsDynamicValueProxy : DynamicObject
     {
         try
         {
-            result = _runtime.Invoke(() => JavaScriptRuntime.Object.GetItem(_target, binder.Name));
+            result = _runtime.Invoke(() => JavaScriptRuntime.ObjectRuntime.GetItem(_target, binder.Name));
             result = Wrap(_runtime, result);
             return true;
         }
@@ -81,7 +81,7 @@ internal sealed class JsDynamicValueProxy : DynamicObject
         try
         {
             var unwrapped = NormalizeArg(value);
-            _ = _runtime.Invoke(() => JavaScriptRuntime.Object.SetItem(_target, binder.Name, unwrapped));
+            _ = _runtime.Invoke(() => JavaScriptRuntime.ObjectRuntime.SetItem(_target, binder.Name, unwrapped));
             return true;
         }
         catch (Exception ex)
@@ -121,7 +121,7 @@ internal sealed class JsDynamicValueProxy : DynamicObject
         try
         {
             var normalizedArgs = NormalizeArgs(args);
-            result = _runtime.Invoke(() => JavaScriptRuntime.Object.CallMember(_target, binder.Name, normalizedArgs));
+            result = _runtime.Invoke(() => JavaScriptRuntime.ObjectRuntime.CallMember(_target, binder.Name, normalizedArgs));
             result = Wrap(_runtime, result);
             return true;
         }
