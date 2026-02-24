@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- benchmarks/perf: fix `Js2ILPhasedBenchmarks` scenario keying to use plain script names (matching BenchmarkDotNet `ScriptName`) so phased runs no longer hit dictionary `KeyNotFoundException` and produce `NA`-only results.
 
 ## v0.8.21 - 2026-02-24
 

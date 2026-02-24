@@ -47,7 +47,7 @@ public class Js2ILPhasedBenchmarks
             var scriptPath = scriptFiles[i];
             var scriptFile = Path.GetFileName(scriptPath);
             var scriptName = Path.GetFileNameWithoutExtension(scriptFile);
-            var scenarioKey = $"{i + 1:D2}-{scriptName}";
+            var scenarioKey = scriptName;
             var scriptContent = File.ReadAllText(scriptPath);
             _scripts[scenarioKey] = scriptContent;
             _scenarioKeyToScriptName[scenarioKey] = scriptName;
