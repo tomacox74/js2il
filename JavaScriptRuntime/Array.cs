@@ -38,6 +38,11 @@ namespace JavaScriptRuntime
                 return jsArray.push();
             }
 
+            if (args.Length == 1)
+            {
+                return jsArray.push(args[0]);
+            }
+
             var converted = new object[args.Length];
             for (int i = 0; i < args.Length; i++)
             {
@@ -1681,6 +1686,15 @@ namespace JavaScriptRuntime
                 }
             }
             catch { return defaultValue; }
+        }
+
+        /// <summary>
+        /// JavaScript Array.push(...items): appends items to the end and returns the new length.
+        /// </summary>
+        public double push(object? item)
+        {
+            this.Add(item);
+            return (double)this.Count;
         }
 
         /// <summary>
