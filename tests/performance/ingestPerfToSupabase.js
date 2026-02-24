@@ -35,6 +35,8 @@ const HOST_COLUMN_KEYS = [
     'github_image_version'
 ];
 
+const UPSERT_CONFLICT_KEYS = ['run_id', 'run_attempt', 'source', 'scenario', 'runtime', 'metric'];
+
 const HTML_ENTITY_MAP = {
     '&#39;': "'",
     '&quot;': '"',
@@ -185,6 +187,20 @@ function compactObject(obj) {
     return Object.fromEntries(
         Object.entries(obj).filter(([, value]) => value !== null && value !== undefined && value !== '')
     );
+}
+
+function buildUpsertConflictKey(row) {
+    return UPSERT_CONFLICT_KEYS
+        .map(key => String(row?.[key] ?? ''))
+        .join('||');
+}
+
+function dedupeRowsForUpsert(rows) {
+    const byKey = new Map();
+    for (const row of rows) {
+        byKey.set(buildUpsertConflictKey(row), row);
+    }
+    return Array.from(byKey.values());
 }
 
 function getHostMetadata() {
@@ -585,7 +601,7 @@ async function upsertRows(rows) {
         return false;
     }
 
-    const url = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/perf_results?on_conflict=run_id,run_attempt,source,scenario,runtime,metric`;
+    const url = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/perf_results?on_conflict=${UPSERT_CONFLICT_KEYS.join(',')}`;
     const chunkSize = 500;
 
     const uploadChunked = async (rowsToUpload) => {
@@ -664,13 +680,18 @@ async function main() {
         return;
     }
 
-    const uploaded = await upsertRows(rows);
+    const dedupedRows = dedupeRowsForUpsert(rows);
+    if (dedupedRows.length !== rows.length) {
+        console.log(`Deduplicated ${rows.length - dedupedRows.length} rows with identical upsert keys before upload.`);
+    }
+
+    const uploaded = await upsertRows(dedupedRows);
     if (!uploaded) {
-        console.log(`Prepared ${rows.length} rows from '${source}' (upload skipped).`);
+        console.log(`Prepared ${dedupedRows.length} rows from '${source}' (upload skipped).`);
         return;
     }
 
-    console.log(`Ingested ${rows.length} rows to Supabase from '${source}'.`);
+    console.log(`Ingested ${dedupedRows.length} rows to Supabase from '${source}'.`);
 }
 
 main().catch(error => {

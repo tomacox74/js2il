@@ -92,5 +92,35 @@ namespace Js2IL.Tests.Object
 
         [Fact]
         public Task Object_BracketWrite_StringKey() { var testName = nameof(Object_BracketWrite_StringKey); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_DefineProperties_Basic() { var testName = nameof(Object_DefineProperties_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_GetOwnPropertyDescriptors_Basic() { var testName = nameof(Object_GetOwnPropertyDescriptors_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_GetOwnPropertySymbols_Basic() { var testName = nameof(Object_GetOwnPropertySymbols_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_GroupBy_Basic() { var testName = nameof(Object_GroupBy_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_HasOwn_Basic() { var testName = nameof(Object_HasOwn_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Integrity_FreezeSeal_PreventExtensions() { var testName = nameof(Object_Integrity_FreezeSeal_PreventExtensions); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Prototype_Constructor_IsPrototypeOf() { var testName = nameof(Object_Prototype_Constructor_IsPrototypeOf); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Prototype_LegacyAccessors() { var testName = nameof(Object_Prototype_LegacyAccessors); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf() { var testName = nameof(Object_Prototype_PropertyIsEnumerable_ToLocaleString_ValueOf); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Prototype_ToString_Basic() { var testName = nameof(Object_Prototype_ToString_Basic); return ExecutionTest(testName); }
     }
 }

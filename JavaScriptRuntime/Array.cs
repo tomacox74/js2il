@@ -113,9 +113,9 @@ namespace JavaScriptRuntime
                 k = 0;
                 for (int i = 0; i < length; i++)
                 {
-                    if (JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
                     {
-                        accumulator = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                        accumulator = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
                         k = i + 1;
                         found = true;
                         break;
@@ -130,11 +130,11 @@ namespace JavaScriptRuntime
 
             for (int i = k; i < length; i++)
             {
-                if (!JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
                 {
                     continue;
                 }
-                var current = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                var current = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
                 accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
                 {
                     accumulator,
@@ -209,9 +209,9 @@ namespace JavaScriptRuntime
                 k = length - 1;
                 for (int i = length - 1; i >= 0; i--)
                 {
-                    if (JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
                     {
-                        accumulator = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                        accumulator = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
                         k = i - 1;
                         found = true;
                         break;
@@ -226,11 +226,11 @@ namespace JavaScriptRuntime
 
             for (int i = k; i >= 0; i--)
             {
-                if (!JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
                 {
                     continue;
                 }
-                var current = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                var current = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
                 accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
                 {
                     accumulator,
@@ -319,7 +319,7 @@ namespace JavaScriptRuntime
 
             for (int i = k; i < length; i++)
             {
-                var element = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                var element = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
                 if (JavaScriptRuntime.Operators.StrictEqual(element, searchElement))
                 {
                     return (double)i;
@@ -331,7 +331,7 @@ namespace JavaScriptRuntime
 
         private static int ToArrayLikeLength(object receiver)
         {
-            var lenValue = JavaScriptRuntime.Object.GetProperty(receiver, "length");
+            var lenValue = JavaScriptRuntime.ObjectRuntime.GetProperty(receiver, "length");
             double d;
             try { d = TypeUtilities.ToNumber(lenValue); }
             catch { d = 0d; }
@@ -353,7 +353,7 @@ namespace JavaScriptRuntime
         }
 
         // Numeric indexer overload to support compiler intrinsics.
-        // Semantics intentionally match JavaScriptRuntime.Object.GetItem/SetItem for Array + numeric index:
+        // Semantics intentionally match JavaScriptRuntime.ObjectRuntime.GetItem/SetItem for Array + numeric index:
         // - Out-of-bounds reads return undefined (null)
         // - Writes extend the array with undefined (null)
         // - Negative indices behave like properties (currently ignored for host safety)
@@ -384,7 +384,7 @@ namespace JavaScriptRuntime
 
                 if (intIndex < 0)
                 {
-                    JavaScriptRuntime.Object.SetProperty(
+                    JavaScriptRuntime.ObjectRuntime.SetProperty(
                         this,
                         intIndex.ToString(CultureInfo.InvariantCulture),
                         value);
@@ -1748,7 +1748,7 @@ namespace JavaScriptRuntime
             // Spec-aligned behavior: array spread consumes the iterator protocol.
             // This supports strings, typed arrays, user-defined iterables via Symbol.iterator,
             // and falls back to .NET IEnumerable when available.
-            var iterator = JavaScriptRuntime.Object.GetIterator(source);
+            var iterator = JavaScriptRuntime.ObjectRuntime.GetIterator(source);
             while (true)
             {
                 var step = iterator.Next();

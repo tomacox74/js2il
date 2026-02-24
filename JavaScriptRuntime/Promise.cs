@@ -633,7 +633,7 @@ public sealed class Promise
         object? thenProp;
         try
         {
-            thenProp = JavaScriptRuntime.Object.GetProperty(value, "then");
+            thenProp = JavaScriptRuntime.ObjectRuntime.GetProperty(value, "then");
         }
         catch (Exception ex)
         {
@@ -721,7 +721,7 @@ public sealed class Promise
         object? thenProp;
         try
         {
-            thenProp = JavaScriptRuntime.Object.GetProperty(cleanupResult, "then");
+            thenProp = JavaScriptRuntime.ObjectRuntime.GetProperty(cleanupResult, "then");
         }
         catch (Exception ex)
         {

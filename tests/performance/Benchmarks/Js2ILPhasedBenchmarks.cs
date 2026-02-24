@@ -24,6 +24,7 @@ namespace Benchmarks;
 public class Js2ILPhasedBenchmarks
 {
     private readonly Dictionary<string, string> _scripts = new();
+    private readonly Dictionary<string, string> _scenarioKeyToScriptName = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Prepared<Script>> _jintPreparedScripts = new();
     private readonly Dictionary<string, AssemblyLoadContext> _compiledLoadContexts = new();
     private readonly Dictionary<string, Assembly> _compiledAssemblies = new();
@@ -38,15 +39,19 @@ public class Js2ILPhasedBenchmarks
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
         
         var scriptFiles = Directory.GetFiles(scriptsDir, "*.js")
-            .OrderBy(path => path, StringComparer.Ordinal);
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
 
-        foreach (var scriptPath in scriptFiles)
+        for (int i = 0; i < scriptFiles.Length; i++)
         {
+            var scriptPath = scriptFiles[i];
             var scriptFile = Path.GetFileName(scriptPath);
             var scriptName = Path.GetFileNameWithoutExtension(scriptFile);
+            var scenarioKey = $"{i + 1:D2}-{scriptName}";
             var scriptContent = File.ReadAllText(scriptPath);
-            _scripts[scriptName] = scriptContent;
-            _jintPreparedScripts[scriptName] = Engine.PrepareScript(scriptContent, scriptFile);
+            _scripts[scenarioKey] = scriptContent;
+            _scenarioKeyToScriptName[scenarioKey] = scriptName;
+            _jintPreparedScripts[scenarioKey] = Engine.PrepareScript(scriptContent, scriptFile);
         }
 
         // Create temp directory for compiled outputs
@@ -56,8 +61,9 @@ public class Js2ILPhasedBenchmarks
         // Pre-compile all scripts for execution-only benchmarks
         foreach (var kvp in _scripts)
         {
-            var scriptName = kvp.Key;
+            var scenarioKey = kvp.Key;
             var scriptContent = kvp.Value;
+            var scriptName = ResolveScriptName(scenarioKey);
             var tempScriptFile = Path.Combine(_tempDir, $"{scriptName}.js");
             try
             {
@@ -71,7 +77,7 @@ public class Js2ILPhasedBenchmarks
                 var compiler = serviceProvider.GetRequiredService<Compiler>();
                 if (!compiler.Compile(tempScriptFile, scriptName))
                 {
-                    _js2IlCompileFailures[scriptName] = "js2il compilation failed for this scenario";
+                    _js2IlCompileFailures[scenarioKey] = "js2il compilation failed for this scenario";
                     continue;
                 }
 
@@ -80,7 +86,7 @@ public class Js2ILPhasedBenchmarks
                 var dllPath = Path.Combine(outputPath, $"{scriptName}.dll");
                 if (!File.Exists(dllPath))
                 {
-                    _js2IlCompileFailures[scriptName] = $"compiled assembly not found: {dllPath}";
+                    _js2IlCompileFailures[scenarioKey] = $"compiled assembly not found: {dllPath}";
                     continue;
                 }
 
@@ -91,13 +97,13 @@ public class Js2ILPhasedBenchmarks
                     $"js2il-bench-{scriptName}-{Guid.NewGuid():N}");
                 var assembly = loadContext.LoadFromAssemblyPath(fullDllPath);
 
-                _compiledLoadContexts[scriptName] = loadContext;
-                _compiledAssemblies[scriptName] = assembly;
-                _compiledModuleIds[scriptName] = ResolveModuleId(assembly, scriptName);
+                _compiledLoadContexts[scenarioKey] = loadContext;
+                _compiledAssemblies[scenarioKey] = assembly;
+                _compiledModuleIds[scenarioKey] = ResolveModuleId(assembly, scriptName);
             }
             catch (Exception ex)
             {
-                _js2IlCompileFailures[scriptName] = $"setup failed: {ex.Message}";
+                _js2IlCompileFailures[scenarioKey] = $"setup failed: {ex.Message}";
             }
         }
     }
@@ -114,6 +120,7 @@ public class Js2ILPhasedBenchmarks
         _compiledAssemblies.Clear();
         _compiledModuleIds.Clear();
         _js2IlCompileFailures.Clear();
+        _scenarioKeyToScriptName.Clear();
         _jintPreparedScripts.Clear();
 
         GC.Collect();
@@ -170,6 +177,7 @@ public class Js2ILPhasedBenchmarks
         }
 
         var script = _scripts[ScriptName];
+        var resolvedScriptName = ResolveScriptName(ScriptName);
         var tempScriptFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.js");
         var tempOutputDir = Path.Combine(Path.GetTempPath(), $"js2il-compile-{Guid.NewGuid()}");
 
@@ -181,7 +189,7 @@ public class Js2ILPhasedBenchmarks
             var options = new CompilerOptions { OutputDirectory = tempOutputDir };
             var serviceProvider = CompilerServices.BuildServiceProvider(options);
             var compiler = serviceProvider.GetRequiredService<Compiler>();
-            compiler.Compile(tempScriptFile, ScriptName);
+            compiler.Compile(tempScriptFile, resolvedScriptName);
         }
         finally
         {
@@ -216,7 +224,8 @@ public class Js2ILPhasedBenchmarks
     public void Jint_Prepare()
     {
         var script = _scripts[ScriptName];
-        _ = Engine.PrepareScript(script, $"{ScriptName}.js");
+        var resolvedScriptName = ResolveScriptName(ScriptName);
+        _ = Engine.PrepareScript(script, $"{resolvedScriptName}.js");
     }
 
     [Benchmark(Description = "Jint execute (prepared)")]
@@ -224,6 +233,13 @@ public class Js2ILPhasedBenchmarks
     {
         var engine = new Engine(options => options.Strict());
         engine.Execute(_jintPreparedScripts[ScriptName]);
+    }
+
+    private string ResolveScriptName(string scenarioKey)
+    {
+        return _scenarioKeyToScriptName.TryGetValue(scenarioKey, out var scriptName)
+            ? scriptName
+            : scenarioKey;
     }
 
     private static string ResolveModuleId(Assembly assembly, string fallback)

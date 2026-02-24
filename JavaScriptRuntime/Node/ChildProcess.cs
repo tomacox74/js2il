@@ -217,7 +217,7 @@ namespace JavaScriptRuntime.Node
                     if (dict.TryGetValue(name, out var val)) return val;
                 }
 
-                return JavaScriptRuntime.Object.GetProperty(options, name);
+                return JavaScriptRuntime.ObjectRuntime.GetProperty(options, name);
             }
             catch
             {
