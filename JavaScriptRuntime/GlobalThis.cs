@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
 using System.Linq.Expressions;
 using JavaScriptRuntime.DependencyInjection;
 
@@ -86,31 +85,7 @@ namespace JavaScriptRuntime
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
-            JavaScriptRuntime.Object.Construct(value);
-
-        private static readonly Func<object[], object?, object> _objectGetOwnPropertyNamesValue = static (_, value) =>
-            JavaScriptRuntime.Object.getOwnPropertyNames(value!);
-
-        private static readonly Func<object[], object?, object> _objectKeysValue = static (_, value) =>
-            JavaScriptRuntime.Object.keys(value!);
-
-        private static readonly Func<object[], object?, object> _objectValuesValue = static (_, value) =>
-            JavaScriptRuntime.Object.values(value!);
-
-        private static readonly Func<object[], object?, object> _objectEntriesValue = static (_, value) =>
-            JavaScriptRuntime.Object.entries(value!);
-
-        private static readonly Func<object[], object?[], object> _objectAssignValue = static (_, args) =>
-        {
-            var target = (args == null || args.Length == 0) ? null : args[0];
-            var sources = (args != null && args.Length > 1)
-                ? args.Skip(1).ToArray()
-                : System.Array.Empty<object?>();
-            return JavaScriptRuntime.Object.assign(target!, sources);
-        };
-
-        private static readonly Func<object[], object?, object> _objectFromEntriesValue = static (_, iterable) =>
-            JavaScriptRuntime.Object.fromEntries(iterable!);
+            JavaScriptRuntime.ObjectRuntime.Construct(value);
 
         private static readonly Func<object[], object?[], object?> _errorConstructorValue = static (_, args) =>
         {
@@ -127,12 +102,12 @@ namespace JavaScriptRuntime
             arg is JavaScriptRuntime.Error;
 
         // Minimal Error.prototype object. Libraries may attach properties here.
-        private static readonly object _errorPrototypeValue = new ExpandoObject();
+        private static readonly object _errorPrototypeValue = new JsObject();
 
         // Minimal Object.prototype object used for descriptor/prototype-heavy libraries.
         // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
         // opt into prototype semantics as needed.
-        private static readonly object _objectPrototypeValue = new ExpandoObject();
+        private static readonly object _objectPrototypeValue = new JsObject();
 
         static GlobalThis()
         {
@@ -156,84 +131,8 @@ namespace JavaScriptRuntime
                 Value = JavaScriptRuntime.Array.Prototype
             });
 
-            // Provide Object.prototype for patterns like `Object.create(Object.prototype, ...)`.
-            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "prototype", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _objectPrototypeValue
-            });
-
-            // Provide Object.getOwnPropertyNames
-            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "getOwnPropertyNames", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _objectGetOwnPropertyNamesValue
-            });
-
-            // Provide Object.keys
-            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "keys", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _objectKeysValue
-            });
-
-            // Provide Object.values
-            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "values", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _objectValuesValue
-            });
-
-            // Provide Object.entries
-            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "entries", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _objectEntriesValue
-            });
-
-            // Provide Object.assign
-            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "assign", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _objectAssignValue
-            });
-
-            // Provide Object.fromEntries
-            PropertyDescriptorStore.DefineOrUpdate(_objectConstructorValue, "fromEntries", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _objectFromEntriesValue
-            });
-
-            // Provide Object.prototype.hasOwnProperty for descriptor-heavy libraries.
-            // This is frequently used via: Object.prototype.hasOwnProperty.call(obj, prop).
-            if (_objectPrototypeValue is ExpandoObject exp)
-            {
-                var dict = (IDictionary<string, object?>)exp;
-                dict["hasOwnProperty"] = (Func<object[], object?[], object?>)ObjectPrototypeHasOwnProperty;
-                dict["toString"] = (Func<object[], object?[], object?>)ObjectPrototypeToString;
-            }
+            // Centralized Object constructor/prototype wiring lives in JavaScriptRuntime.ObjectRuntime.
+            JavaScriptRuntime.ObjectRuntime.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
             PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "prototype", new JsPropertyDescriptor
@@ -378,7 +277,6 @@ namespace JavaScriptRuntime
             if (string.IsNullOrEmpty(message)) return name;
             return $"{name}: {message}";
         }
-
         internal static ServiceContainer? ServiceProvider
         {
             get => _serviceProvider.Value;

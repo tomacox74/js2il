@@ -4,10 +4,26 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.22 - 2026-02-24
+
+- benchmarks/perf: fix `Js2ILPhasedBenchmarks` scenario keying to use plain script names (matching BenchmarkDotNet `ScriptName`) so phased runs no longer hit dictionary `KeyNotFoundException` and produce `NA`-only results.
+
+## v0.8.21 - 2026-02-24
+
+- perf(array): add a single-item `JavaScriptRuntime.Array::push(object)` overload and update typed instance-call lowering to prefer it for arity-1 `push(...)` calls, eliminating per-call `object[]` allocations in the common path; refresh affected generator snapshots.
+- perf/type-inference/tests: infer stable captured `let` array bindings across closure writes (e.g., `ret` in `dromaeo-object-array-modern`) as `JavaScriptRuntime.Array` so generated scope fields are array-typed instead of `object` in hot paths; add `Compile_Performance_Dromaeo_Object_Array_Modern` integration generator coverage using the original benchmark script as an embedded resource and refresh affected generator snapshots.
+- runtime/object-model: consolidate plain-object materialization onto `JsObject` across `Object.create`, `Object.fromEntries`, `Object.groupBy`, descriptor-object creation, and lazy function `prototype` allocation; add `ObjectRuntime` as the descriptive runtime surface alias and migrate runtime call sites to it while preserving compatibility with existing `JavaScriptRuntime.Object` intrinsic references.
+- runtime/spec/docs: complete ECMA-262 §20.1 (Object Objects) clause coverage with new `Object.*` APIs (`groupBy`, `hasOwn`, `getOwnPropertyDescriptors`, `getOwnPropertySymbols`, integrity methods), `Object.prototype.*` additions (constructor/isPrototypeOf/propertyIsEnumerable/toLocaleString/toString/valueOf and legacy accessor helpers), centralized Object intrinsic surface wiring in `JavaScriptRuntime.Object`, new Object execution/generator tests, and updated `docs/ECMA262/20/Section20_1.{json,md}` support tracking.
+
+## v0.8.20 - 2026-02-24
+
 - perf: Reduce boxing in object literals (#351). Replace `ExpandoObject` backing store for JavaScript object literals with a new `JsObject` class backed by `Dictionary<string, JsValue>`. The `JsValue` struct stores number and boolean values inline without heap allocation. New typed property setter methods (`SetPropertyNumber`, `SetPropertyBoolean`, `SetPropertyString`) are called from generated IL instead of the generic `SetItem(object, object, object)` overload, eliminating the `box` instruction for numeric/bool/string property values in object literal initialization. Runtime compatibility with all existing `ExpandoObject` consumers is maintained via the `IDictionary<string, object?>` interface. Also fixes `for-in` enumeration and object spread for descriptor-defined properties on the new JsObject type.
 - perf: optimize bracket reads/writes for proven string keys by adding string-specific runtime overload paths (`Object.GetItem(object, string)`, `SetItem(object, string, object)`, `GetItemAsNumber(object, string)`), plus string-specialized LIR normalization/emission to reduce key-normalization overhead in hot property-access paths (PR #696, fixes #310).
 - perf: add flow-sensitive numeric refinement propagation in HIR→LIR lowering to reuse proven unboxed-number temps and reduce redundant `TypeUtilities.ToNumber(object)` calls, with conservative invalidation at assignments/control-flow labels and safe tracking limited to non-captured/non-global bindings (PR #697, fixes #315).
 - runtime/spec: expand ECMA-262 §20.5 Error Objects coverage with callable global `Error(...)`, `Error.isError(arg)`, and baseline `Error.prototype` surface (`constructor`, `name`, `message`, `toString`) plus execution/generator coverage and updated section tracking docs.
+- docs(ecma262): mark §20.1 `Object.is` as supported and link existing execution/generator coverage in `docs/ECMA262/20/Section20_1.{json,md}`.
 
 ## v0.8.19 - 2026-02-23
 

@@ -154,7 +154,7 @@ namespace JavaScriptRuntime
 
             // Default proto: ctor.prototype when it is an object or null; otherwise undefined.
             // If undefined/non-object, we intentionally skip prototype assignment (minimal behavior).
-            var proto = JavaScriptRuntime.Object.GetItem(constructor, "prototype");
+            var proto = JavaScriptRuntime.ObjectRuntime.GetItem(constructor, "prototype");
             if (proto is JsNull || TypeUtilities.IsConstructorReturnOverride(proto))
             {
                 PrototypeChain.SetPrototype(instance, proto);

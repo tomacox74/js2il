@@ -358,7 +358,15 @@ public partial class SymbolTableBuilder
         foreach (var binding in scope.Bindings.Values)
         {
             if (binding.IsCaptured && binding.Kind != BindingKind.Const)
+            {
+                if (TryInferStableCapturedBindingClrType(scope, binding, proposedClrTypes, out var capturedType)
+                    && capturedType != null)
+                {
+                    proposedClrTypes[binding.Name] = capturedType;
+                }
+
                 continue;
+            }
 
             if (binding.DeclarationNode is VariableDeclarator variableDeclarator)
             {
@@ -444,6 +452,130 @@ public partial class SymbolTableBuilder
         {
             InferVariableClrTypesRecursively(childScope);
         }
+    }
+
+    private bool TryInferStableCapturedBindingClrType(
+        Scope declaringScope,
+        BindingInfo binding,
+        Dictionary<string, Type> proposedClrTypes,
+        out Type? inferredType)
+    {
+        inferredType = null;
+
+        if (!binding.IsCaptured || binding.Kind == BindingKind.Const)
+        {
+            return false;
+        }
+
+        if (binding.DeclarationNode is not VariableDeclarator declarator || declarator.Init == null)
+        {
+            return false;
+        }
+
+        var initializerType = InferExpressionClrType(declarator.Init, declaringScope, proposedClrTypes);
+        if (initializerType == null || initializerType.IsValueType)
+        {
+            return false;
+        }
+
+        if (!AreCapturedBindingWritesCompatible(declaringScope, binding, initializerType, proposedClrTypes))
+        {
+            return false;
+        }
+
+        inferredType = initializerType;
+        return true;
+    }
+
+    private bool AreCapturedBindingWritesCompatible(
+        Scope scope,
+        BindingInfo targetBinding,
+        Type expectedType,
+        Dictionary<string, Type> proposedClrTypes)
+    {
+        bool isCompatible = true;
+
+        void WalkScope(Scope currentScope)
+        {
+            if (!isCompatible)
+            {
+                return;
+            }
+
+            // If this scope resolves the name to a different binding (shadowing), this subtree cannot
+            // write to the captured binding we are validating.
+            if (!ReferenceEquals(TryResolveBinding(currentScope, targetBinding.Name), targetBinding))
+            {
+                return;
+            }
+
+            bool IsChildScopeRoot(Node node)
+            {
+                foreach (var childScope in currentScope.Children)
+                {
+                    if (ReferenceEquals(childScope.AstNode, node))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            void WalkNode(Node? node)
+            {
+                if (node == null || !isCompatible)
+                {
+                    return;
+                }
+
+                // Nested scope roots are validated in their own scope context.
+                if (!ReferenceEquals(node, currentScope.AstNode) && IsChildScopeRoot(node))
+                {
+                    return;
+                }
+
+                if (node is AssignmentExpression assignExpr
+                    && assignExpr.Left is Identifier id
+                    && ReferenceEquals(TryResolveBinding(currentScope, id.Name), targetBinding))
+                {
+                    if (assignExpr.Operator != Operator.Assignment)
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+
+                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                    if (rightType != expectedType)
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+                }
+                else if (node is UpdateExpression updateExpr
+                    && updateExpr.Argument is Identifier updateId
+                    && ReferenceEquals(TryResolveBinding(currentScope, updateId.Name), targetBinding))
+                {
+                    isCompatible = false;
+                    return;
+                }
+
+                foreach (var child in node.ChildNodes)
+                {
+                    WalkNode(child);
+                }
+            }
+
+            WalkNode(currentScope.AstNode);
+
+            foreach (var childScope in currentScope.Children)
+            {
+                WalkScope(childScope);
+            }
+        }
+
+        WalkScope(scope);
+        return isCompatible;
     }
 
     private void InferClassInstanceFieldClrTypesRecursively(Scope scope)

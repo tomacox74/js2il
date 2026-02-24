@@ -1,0 +1,132 @@
+﻿// IL code: Object_HasOwn_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Object_HasOwn_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20f8
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 156 (0x9c)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Object_HasOwn_Basic/Scope,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[2] object,
+			[3] object,
+			[4] bool,
+			[5] object
+		)
+
+		IL_0000: newobj instance void Modules.Object_HasOwn_Basic/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_000b: dup
+		IL_000c: ldstr "p"
+		IL_0011: ldc.r8 1
+		IL_001a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_001f: stloc.1
+		IL_0020: ldloc.1
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::create(object)
+		IL_0026: stloc.3
+		IL_0027: ldloc.3
+		IL_0028: stloc.2
+		IL_0029: ldloc.2
+		IL_002a: ldstr "own"
+		IL_002f: ldc.r8 2
+		IL_0038: box [System.Runtime]System.Double
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
+		IL_0042: pop
+		IL_0043: ldloc.2
+		IL_0044: ldstr "own"
+		IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
+		IL_004e: stloc.s 4
+		IL_0050: ldloc.s 4
+		IL_0052: box [System.Runtime]System.Boolean
+		IL_0057: stloc.s 5
+		IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005e: ldc.i4.1
+		IL_005f: newarr [System.Runtime]System.Object
+		IL_0064: dup
+		IL_0065: ldc.i4.0
+		IL_0066: ldloc.s 5
+		IL_0068: stelem.ref
+		IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006e: pop
+		IL_006f: ldloc.2
+		IL_0070: ldstr "p"
+		IL_0075: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
+		IL_007a: stloc.s 4
+		IL_007c: ldloc.s 4
+		IL_007e: box [System.Runtime]System.Boolean
+		IL_0083: stloc.s 5
+		IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008a: ldc.i4.1
+		IL_008b: newarr [System.Runtime]System.Object
+		IL_0090: dup
+		IL_0091: ldc.i4.0
+		IL_0092: ldloc.s 5
+		IL_0094: stelem.ref
+		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_009a: pop
+		IL_009b: ret
+	} // end of method Object_HasOwn_Basic::__js_module_init__
+
+} // end of class Modules.Object_HasOwn_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2101
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Object_HasOwn_Basic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
