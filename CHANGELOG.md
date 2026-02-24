@@ -7,6 +7,7 @@ All notable changes to this project are documented here.
 - perf: Reduce boxing in object literals (#351). Replace `ExpandoObject` backing store for JavaScript object literals with a new `JsObject` class backed by `Dictionary<string, JsValue>`. The `JsValue` struct stores number and boolean values inline without heap allocation. New typed property setter methods (`SetPropertyNumber`, `SetPropertyBoolean`, `SetPropertyString`) are called from generated IL instead of the generic `SetItem(object, object, object)` overload, eliminating the `box` instruction for numeric/bool/string property values in object literal initialization. Runtime compatibility with all existing `ExpandoObject` consumers is maintained via the `IDictionary<string, object?>` interface. Also fixes `for-in` enumeration and object spread for descriptor-defined properties on the new JsObject type.
 - perf: optimize bracket reads/writes for proven string keys by adding string-specific runtime overload paths (`Object.GetItem(object, string)`, `SetItem(object, string, object)`, `GetItemAsNumber(object, string)`), plus string-specialized LIR normalization/emission to reduce key-normalization overhead in hot property-access paths (PR #696, fixes #310).
 - perf: add flow-sensitive numeric refinement propagation in HIR→LIR lowering to reuse proven unboxed-number temps and reduce redundant `TypeUtilities.ToNumber(object)` calls, with conservative invalidation at assignments/control-flow labels and safe tracking limited to non-captured/non-global bindings (PR #697, fixes #315).
+- runtime/spec: expand ECMA-262 §20.4 Symbol Objects coverage with global registry APIs (`Symbol.for`, `Symbol.keyFor`), full well-known symbol constructor properties, and Symbol prototype basics (`description`, `toString`, `valueOf`) plus execution/generator test coverage.
 
 ## v0.8.19 - 2026-02-23
 
@@ -1086,4 +1087,3 @@ CI/NuGet
 ## v0.1.0-preview.3 - 2025-07-18
 
 - Initial preview release.
-
