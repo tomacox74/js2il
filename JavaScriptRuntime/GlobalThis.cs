@@ -112,11 +112,19 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, object> _objectFromEntriesValue = static (_, iterable) =>
             JavaScriptRuntime.Object.fromEntries(iterable!);
 
-        // Placeholder Error constructor value.
-        // Exposed so libraries can reference `Error` and access `Error.prototype`.
-        // Calling it as a constructor/function is not implemented yet.
-        private static readonly Func<object[], object?[], object?> _errorConstructorValue = static (_, __) =>
-            throw new NotSupportedException("The Error constructor is not supported as a callable value yet.");
+        private static readonly Func<object[], object?[], object?> _errorConstructorValue = static (_, args) =>
+        {
+            string? message = null;
+            if (args != null && args.Length > 0 && args[0] is not null && args[0] is not JsNull)
+            {
+                message = DotNet2JSConversions.ToString(args[0]);
+            }
+
+            return new JavaScriptRuntime.Error(message);
+        };
+
+        private static readonly Func<object[], object?, object> _errorIsErrorValue = static (_, arg) =>
+            arg is JavaScriptRuntime.Error;
 
         // Minimal Error.prototype object. Libraries may attach properties here.
         private static readonly object _errorPrototypeValue = new ExpandoObject();
@@ -237,6 +245,24 @@ namespace JavaScriptRuntime
                 Value = _errorPrototypeValue
             });
 
+            PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "isError", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _errorIsErrorValue
+            });
+
+            if (_errorPrototypeValue is ExpandoObject errorPrototypeExpando)
+            {
+                var errorPrototypeDict = (IDictionary<string, object?>)errorPrototypeExpando;
+                errorPrototypeDict["constructor"] = _errorConstructorValue;
+                errorPrototypeDict["message"] = string.Empty;
+                errorPrototypeDict["name"] = "Error";
+                errorPrototypeDict["toString"] = (Func<object[], object?[], object?>)ErrorPrototypeToString;
+            }
+
             // Provide String.fromCharCode for parsers/libraries.
             PropertyDescriptorStore.DefineOrUpdate(_stringFunctionValue, "fromCharCode", new JsPropertyDescriptor
             {
@@ -328,6 +354,29 @@ namespace JavaScriptRuntime
             if (thisVal is AsyncGeneratorObject) return "[object AsyncGenerator]";
 
             return "[object Object]";
+        }
+
+        private static object? ErrorPrototypeToString(object[] scopes, object?[] args)
+        {
+            var thisVal = RuntimeServices.GetCurrentThis();
+            if (thisVal is null || thisVal is JsNull)
+            {
+                throw new TypeError("Error.prototype.toString called on null or undefined");
+            }
+
+            var nameValue = JavaScriptRuntime.Object.GetItem(thisVal, "name");
+            var messageValue = JavaScriptRuntime.Object.GetItem(thisVal, "message");
+
+            var name = (nameValue is null || nameValue is JsNull)
+                ? "Error"
+                : DotNet2JSConversions.ToString(nameValue);
+            var message = (messageValue is null || messageValue is JsNull)
+                ? string.Empty
+                : DotNet2JSConversions.ToString(messageValue);
+
+            if (string.IsNullOrEmpty(name)) return message;
+            if (string.IsNullOrEmpty(message)) return name;
+            return $"{name}: {message}";
         }
 
         internal static ServiceContainer? ServiceProvider
