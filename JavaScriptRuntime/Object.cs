@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -189,10 +191,194 @@ namespace JavaScriptRuntime
             return TypeUtilities.IsConstructorReturnOverride(value);
         }
 
+        private sealed class ObjectIntegrityState
+        {
+            public bool Extensible = true;
+            public bool Sealed;
+            public bool Frozen;
+        }
+
+        private static readonly ConditionalWeakTable<object, ObjectIntegrityState> _integrityStates = new();
+        private static readonly ConcurrentDictionary<string, Symbol> _encodedSymbolKeys = new(StringComparer.Ordinal);
+
+        private static ObjectIntegrityState GetIntegrityState(object target) => _integrityStates.GetOrCreateValue(target);
+
+        private static bool IsExtensibleInternal(object target)
+        {
+            return !_integrityStates.TryGetValue(target, out var state) || state.Extensible;
+        }
+
+        private static bool IsEncodedSymbolKey(string? key)
+        {
+            return !string.IsNullOrEmpty(key) && _encodedSymbolKeys.ContainsKey(key);
+        }
+
+        private static bool TryDecodeEncodedSymbolKey(string? key, [NotNullWhen(true)] out Symbol? symbol)
+        {
+            if (!string.IsNullOrEmpty(key) && _encodedSymbolKeys.TryGetValue(key, out var mapped))
+            {
+                symbol = mapped;
+                return true;
+            }
+
+            symbol = null;
+            return false;
+        }
+
         /// <summary>
         /// Implements <c>Object.is(value1, value2)</c> via SameValue semantics.
         /// </summary>
         public static bool @is(object? value1, object? value2) => Operators.SameValue(value1, value2);
+
+        private static readonly Func<object[], object?, object> _objectGetOwnPropertyNamesValue = static (_, value) =>
+            getOwnPropertyNames(value!);
+        private static readonly Func<object[], object?, object> _objectKeysValue = static (_, value) =>
+            keys(value!);
+        private static readonly Func<object[], object?, object> _objectValuesValue = static (_, value) =>
+            values(value!);
+        private static readonly Func<object[], object?, object> _objectEntriesValue = static (_, value) =>
+            entries(value!);
+        private static readonly Func<object[], object?[], object> _objectAssignValue = static (_, args) =>
+        {
+            var target = (args == null || args.Length == 0) ? null : args[0];
+            var sources = (args != null && args.Length > 1)
+                ? args.Skip(1).ToArray()
+                : System.Array.Empty<object?>();
+            return assign(target!, sources);
+        };
+        private static readonly Func<object[], object?, object> _objectFromEntriesValue = static (_, iterable) =>
+            fromEntries(iterable!);
+        private static readonly Func<object[], object?[], object> _objectCreateValue = static (_, args) =>
+        {
+            var prototype = (args != null && args.Length > 0) ? args[0] : null;
+            var properties = (args != null && args.Length > 1) ? args[1] : null;
+            return create(prototype, properties);
+        };
+        private static readonly Func<object[], object?[], object> _objectDefinePropertyValue = static (_, args) =>
+        {
+            var target = (args != null && args.Length > 0) ? args[0] : null;
+            var prop = (args != null && args.Length > 1) ? args[1] : null;
+            var attributes = (args != null && args.Length > 2) ? args[2] : null;
+            return defineProperty(target!, prop, attributes);
+        };
+        private static readonly Func<object[], object?[], object> _objectDefinePropertiesValue = static (_, args) =>
+        {
+            var target = (args != null && args.Length > 0) ? args[0] : null;
+            var properties = (args != null && args.Length > 1) ? args[1] : null;
+            return defineProperties(target!, properties);
+        };
+        private static readonly Func<object[], object?[], object> _objectGetOwnPropertyDescriptorValue = static (_, args) =>
+        {
+            var target = (args != null && args.Length > 0) ? args[0] : null;
+            var prop = (args != null && args.Length > 1) ? args[1] : null;
+            return getOwnPropertyDescriptor(target!, prop)!;
+        };
+        private static readonly Func<object[], object?, object> _objectGetOwnPropertyDescriptorsValue = static (_, value) =>
+            getOwnPropertyDescriptors(value!);
+        private static readonly Func<object[], object?, object> _objectGetOwnPropertySymbolsValue = static (_, value) =>
+            getOwnPropertySymbols(value!);
+        private static readonly Func<object[], object?, object> _objectGetPrototypeOfValue = static (_, value) =>
+            getPrototypeOf(value!)!;
+        private static readonly Func<object[], object?[], object> _objectSetPrototypeOfValue = static (_, args) =>
+        {
+            var target = (args != null && args.Length > 0) ? args[0] : null;
+            var prototype = (args != null && args.Length > 1) ? args[1] : null;
+            return setPrototypeOf(target!, prototype);
+        };
+        private static readonly Func<object[], object?[], object> _objectHasOwnValue = static (_, args) =>
+        {
+            var target = (args != null && args.Length > 0) ? args[0] : null;
+            var prop = (args != null && args.Length > 1) ? args[1] : null;
+            return hasOwn(target!, prop);
+        };
+        private static readonly Func<object[], object?[], object> _objectIsValue = static (_, args) =>
+        {
+            var value1 = (args != null && args.Length > 0) ? args[0] : null;
+            var value2 = (args != null && args.Length > 1) ? args[1] : null;
+            return @is(value1, value2);
+        };
+        private static readonly Func<object[], object?, object> _objectPreventExtensionsValue = static (_, value) =>
+            preventExtensions(value!);
+        private static readonly Func<object[], object?, object> _objectIsExtensibleValue = static (_, value) =>
+            isExtensible(value!);
+        private static readonly Func<object[], object?, object> _objectSealValue = static (_, value) =>
+            seal(value!);
+        private static readonly Func<object[], object?, object> _objectFreezeValue = static (_, value) =>
+            freeze(value!);
+        private static readonly Func<object[], object?, object> _objectIsSealedValue = static (_, value) =>
+            isSealed(value!);
+        private static readonly Func<object[], object?, object> _objectIsFrozenValue = static (_, value) =>
+            isFrozen(value!);
+        private static readonly Func<object[], object?[], object> _objectGroupByValue = static (_, args) =>
+        {
+            var items = (args != null && args.Length > 0) ? args[0] : null;
+            var callback = (args != null && args.Length > 1) ? args[1] : null;
+            return groupBy(items!, callback!);
+        };
+
+        private static readonly Func<object[], object?[], object?> _objectPrototypeHasOwnPropertyValue = PrototypeHasOwnProperty;
+        private static readonly Func<object[], object?[], object?> _objectPrototypeIsPrototypeOfValue = PrototypeIsPrototypeOf;
+        private static readonly Func<object[], object?[], object?> _objectPrototypePropertyIsEnumerableValue = PrototypePropertyIsEnumerable;
+        private static readonly Func<object[], object?[], object?> _objectPrototypeToLocaleStringValue = PrototypeToLocaleString;
+        private static readonly Func<object[], object?[], object?> _objectPrototypeToStringValue = PrototypeToString;
+        private static readonly Func<object[], object?[], object?> _objectPrototypeValueOfValue = PrototypeValueOf;
+        private static readonly Func<object[], object?[], object?> _objectPrototypeDefineGetterValue = PrototypeDefineGetter;
+        private static readonly Func<object[], object?[], object?> _objectPrototypeDefineSetterValue = PrototypeDefineSetter;
+        private static readonly Func<object[], object?[], object?> _objectPrototypeLookupGetterValue = PrototypeLookupGetter;
+        private static readonly Func<object[], object?[], object?> _objectPrototypeLookupSetterValue = PrototypeLookupSetter;
+
+        private static void DefineBuiltinDataProperty(object target, string name, object? value, bool enumerable = false, bool configurable = true, bool writable = true)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = enumerable,
+                Configurable = configurable,
+                Writable = writable,
+                Value = value
+            });
+        }
+
+        public static void ConfigureIntrinsicSurface(object objectConstructorValue, object objectPrototypeValue)
+        {
+            DefineBuiltinDataProperty(objectConstructorValue, "prototype", objectPrototypeValue, enumerable: false, configurable: true, writable: true);
+
+            DefineBuiltinDataProperty(objectConstructorValue, "assign", _objectAssignValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "create", _objectCreateValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "defineProperties", _objectDefinePropertiesValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "defineProperty", _objectDefinePropertyValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "entries", _objectEntriesValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "freeze", _objectFreezeValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "fromEntries", _objectFromEntriesValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertyDescriptor", _objectGetOwnPropertyDescriptorValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertyDescriptors", _objectGetOwnPropertyDescriptorsValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertyNames", _objectGetOwnPropertyNamesValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertySymbols", _objectGetOwnPropertySymbolsValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "getPrototypeOf", _objectGetPrototypeOfValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "groupBy", _objectGroupByValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "hasOwn", _objectHasOwnValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "is", _objectIsValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "isExtensible", _objectIsExtensibleValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "isFrozen", _objectIsFrozenValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "isSealed", _objectIsSealedValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "keys", _objectKeysValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "preventExtensions", _objectPreventExtensionsValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "seal", _objectSealValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "setPrototypeOf", _objectSetPrototypeOfValue);
+            DefineBuiltinDataProperty(objectConstructorValue, "values", _objectValuesValue);
+
+            DefineBuiltinDataProperty(objectPrototypeValue, "constructor", objectConstructorValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectPrototypeValue, "hasOwnProperty", _objectPrototypeHasOwnPropertyValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectPrototypeValue, "isPrototypeOf", _objectPrototypeIsPrototypeOfValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectPrototypeValue, "propertyIsEnumerable", _objectPrototypePropertyIsEnumerableValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectPrototypeValue, "toLocaleString", _objectPrototypeToLocaleStringValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectPrototypeValue, "toString", _objectPrototypeToStringValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectPrototypeValue, "valueOf", _objectPrototypeValueOfValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectPrototypeValue, "__defineGetter__", _objectPrototypeDefineGetterValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectPrototypeValue, "__defineSetter__", _objectPrototypeDefineSetterValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectPrototypeValue, "__lookupGetter__", _objectPrototypeLookupGetterValue, enumerable: false, configurable: true, writable: true);
+            DefineBuiltinDataProperty(objectPrototypeValue, "__lookupSetter__", _objectPrototypeLookupSetterValue, enumerable: false, configurable: true, writable: true);
+        }
 
         /// <summary>
         /// Minimal implementation of <c>Object.getPrototypeOf(obj)</c>.
@@ -316,6 +502,11 @@ namespace JavaScriptRuntime
             static void AddKey(List<string> keys, HashSet<string> seen, string? key)
             {
                 if (string.IsNullOrEmpty(key))
+                {
+                    return;
+                }
+
+                if (IsEncodedSymbolKey(key))
                 {
                     return;
                 }
@@ -455,10 +646,15 @@ namespace JavaScriptRuntime
             return new JavaScriptRuntime.Array(entries);
         }
 
-        private static void EnumerateOwnEnumerableProperties(object obj, ISet<string> seen, Action<string, object?> processProperty)
+        private static void EnumerateOwnEnumerableProperties(object obj, ISet<string> seen, Action<string, object?> processProperty, bool includeEncodedSymbolKeys = false)
         {
             foreach (var k in PropertyDescriptorStore.GetOwnKeys(obj))
             {
+                if (!includeEncodedSymbolKeys && IsEncodedSymbolKey(k))
+                {
+                    continue;
+                }
+
                 if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
                 {
                     continue;
@@ -481,6 +677,11 @@ namespace JavaScriptRuntime
                 var dict = (IDictionary<string, object?>)exp;
                 foreach (var kvp in dict)
                 {
+                    if (!includeEncodedSymbolKeys && IsEncodedSymbolKey(kvp.Key))
+                    {
+                        continue;
+                    }
+
                     if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, kvp.Key) && seen.Add(kvp.Key))
                     {
                         processProperty(kvp.Key, kvp.Value);
@@ -494,6 +695,11 @@ namespace JavaScriptRuntime
             {
                 foreach (var kvp in dictGeneric)
                 {
+                    if (!includeEncodedSymbolKeys && IsEncodedSymbolKey(kvp.Key))
+                    {
+                        continue;
+                    }
+
                     if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key) && seen.Add(kvp.Key))
                     {
                         processProperty(kvp.Key, kvp.Value);
@@ -514,6 +720,11 @@ namespace JavaScriptRuntime
                 sortedKeys.Sort(StringComparer.Ordinal);
                 foreach (var k in sortedKeys)
                 {
+                    if (!includeEncodedSymbolKeys && IsEncodedSymbolKey(k))
+                    {
+                        continue;
+                    }
+
                     if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k) && seen.Add(k))
                     {
                         processProperty(k, dictObj[k]);
@@ -660,6 +871,13 @@ namespace JavaScriptRuntime
 
             var key = ToPropertyKeyString(prop);
 
+            if (!IsExtensibleInternal(obj) && !HasOwnProperty(obj, key))
+            {
+                throw new TypeError("Cannot define property on non-extensible object");
+            }
+
+            var hasExistingDescriptor = PropertyDescriptorStore.TryGetOwn(obj, key, out var existingDescriptor);
+
             // Determine descriptor kind.
             // Prefer the resolved get/set values; this is robust even when the attribute object
             // is not a plain ExpandoObject.
@@ -673,6 +891,54 @@ namespace JavaScriptRuntime
             // In ECMAScript, absent boolean fields default to false.
             bool enumerable = HasOwnProperty(attributes, "enumerable") && TypeUtilities.ToBoolean(GetProperty(attributes, "enumerable"));
             bool configurable = HasOwnProperty(attributes, "configurable") && TypeUtilities.ToBoolean(GetProperty(attributes, "configurable"));
+            bool writable = HasOwnProperty(attributes, "writable") && TypeUtilities.ToBoolean(GetProperty(attributes, "writable"));
+            var value = HasOwnProperty(attributes, "value") ? GetProperty(attributes, "value") : null;
+
+            if (hasExistingDescriptor && !existingDescriptor.Configurable)
+            {
+                if (configurable)
+                {
+                    throw new TypeError("Cannot redefine non-configurable property");
+                }
+
+                if (HasOwnProperty(attributes, "enumerable") && enumerable != existingDescriptor.Enumerable)
+                {
+                    throw new TypeError("Cannot redefine non-configurable property");
+                }
+
+                if (existingDescriptor.Kind != (isAccessor ? JsPropertyDescriptorKind.Accessor : JsPropertyDescriptorKind.Data))
+                {
+                    throw new TypeError("Cannot redefine non-configurable property");
+                }
+
+                if (existingDescriptor.Kind == JsPropertyDescriptorKind.Data)
+                {
+                    if (!existingDescriptor.Writable)
+                    {
+                        if (HasOwnProperty(attributes, "writable") && writable)
+                        {
+                            throw new TypeError("Cannot redefine non-configurable property");
+                        }
+
+                        if (HasOwnProperty(attributes, "value") && !Operators.SameValue(existingDescriptor.Value, value))
+                        {
+                            throw new TypeError("Cannot redefine non-configurable property");
+                        }
+                    }
+                }
+                else
+                {
+                    if (HasOwnProperty(attributes, "get") && !ReferenceEquals(existingDescriptor.Get, getValue))
+                    {
+                        throw new TypeError("Cannot redefine non-configurable property");
+                    }
+
+                    if (HasOwnProperty(attributes, "set") && !ReferenceEquals(existingDescriptor.Set, setValue))
+                    {
+                        throw new TypeError("Cannot redefine non-configurable property");
+                    }
+                }
+            }
 
             if (isAccessor)
             {
@@ -694,9 +960,6 @@ namespace JavaScriptRuntime
                 PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
                 return obj;
             }
-
-            bool writable = HasOwnProperty(attributes, "writable") && TypeUtilities.ToBoolean(GetProperty(attributes, "writable"));
-            var value = HasOwnProperty(attributes, "value") ? GetProperty(attributes, "value") : null;
 
             var dataDesc = new JsPropertyDescriptor
             {
@@ -755,6 +1018,653 @@ namespace JavaScriptRuntime
             }
 
             return obj;
+        }
+
+        public static bool hasOwn(object obj, object? prop)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var key = ToPropertyKeyString(prop);
+            return HasOwnProperty(obj, key);
+        }
+
+        public static object getOwnPropertyDescriptors(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var result = new System.Dynamic.ExpandoObject();
+            if (getOwnPropertyNames(obj) is JavaScriptRuntime.Array names)
+            {
+                foreach (var key in names)
+                {
+                    var descriptor = getOwnPropertyDescriptor(obj, key);
+                    if (descriptor is not null)
+                    {
+                        SetItem(result, key!, descriptor);
+                    }
+                }
+            }
+
+            if (getOwnPropertySymbols(obj) is JavaScriptRuntime.Array symbols)
+            {
+                foreach (var sym in symbols)
+                {
+                    var descriptor = getOwnPropertyDescriptor(obj, sym);
+                    if (descriptor is not null)
+                    {
+                        SetItem(result, sym!, descriptor);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static object getOwnPropertySymbols(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var symbols = new List<object?>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (var key in GetOwnKeysForIntegrity(obj))
+            {
+                if (!seen.Add(key))
+                {
+                    continue;
+                }
+
+                if (TryDecodeEncodedSymbolKey(key, out var symbol))
+                {
+                    symbols.Add(symbol);
+                }
+            }
+
+            return new JavaScriptRuntime.Array(symbols);
+        }
+
+        private static bool IsPrimitiveObjectOperationTarget(object obj)
+        {
+            return obj is string || obj is Symbol || obj.GetType().IsValueType;
+        }
+
+        private static IEnumerable<string> GetOwnKeysForIntegrity(object obj)
+        {
+            var keys = new List<string>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            static void AddKey(List<string> keys, HashSet<string> seen, string? key)
+            {
+                if (string.IsNullOrEmpty(key))
+                {
+                    return;
+                }
+
+                if (seen.Add(key))
+                {
+                    keys.Add(key);
+                }
+            }
+
+            foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
+            {
+                AddKey(keys, seen, key);
+            }
+
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                foreach (var key in dict.Keys)
+                {
+                    AddKey(keys, seen, key);
+                }
+            }
+
+            if (obj is IDictionary<string, object?> dictGeneric)
+            {
+                foreach (var key in dictGeneric.Keys)
+                {
+                    AddKey(keys, seen, key);
+                }
+            }
+
+            if (obj is System.Collections.IDictionary dictObj)
+            {
+                foreach (var key in dictObj.Keys)
+                {
+                    AddKey(keys, seen, DotNet2JSConversions.ToString(key));
+                }
+            }
+
+            return keys;
+        }
+
+        private static void EnsureIntegrityDescriptorsForExistingOwnProperties(object obj)
+        {
+            foreach (var key in GetOwnKeysForIntegrity(obj))
+            {
+                if (PropertyDescriptorStore.TryGetOwn(obj, key, out _))
+                {
+                    continue;
+                }
+
+                _ = TryGetOwnPropertyValue(obj, key, out var value);
+                PropertyDescriptorStore.DefineOrUpdate(obj, key, new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = true,
+                    Configurable = true,
+                    Writable = true,
+                    Value = value
+                });
+            }
+        }
+
+        public static object preventExtensions(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (IsPrimitiveObjectOperationTarget(obj))
+            {
+                return obj;
+            }
+
+            GetIntegrityState(obj).Extensible = false;
+            return obj;
+        }
+
+        public static bool isExtensible(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (IsPrimitiveObjectOperationTarget(obj))
+            {
+                return false;
+            }
+
+            return IsExtensibleInternal(obj);
+        }
+
+        public static object seal(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (IsPrimitiveObjectOperationTarget(obj))
+            {
+                return obj;
+            }
+
+            EnsureIntegrityDescriptorsForExistingOwnProperties(obj);
+            foreach (var key in GetOwnKeysForIntegrity(obj))
+            {
+                if (!PropertyDescriptorStore.TryGetOwn(obj, key, out var desc))
+                {
+                    continue;
+                }
+
+                desc.Configurable = false;
+                PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
+            }
+
+            var state = GetIntegrityState(obj);
+            state.Extensible = false;
+            state.Sealed = true;
+            return obj;
+        }
+
+        public static object freeze(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (IsPrimitiveObjectOperationTarget(obj))
+            {
+                return obj;
+            }
+
+            EnsureIntegrityDescriptorsForExistingOwnProperties(obj);
+            foreach (var key in GetOwnKeysForIntegrity(obj))
+            {
+                if (!PropertyDescriptorStore.TryGetOwn(obj, key, out var desc))
+                {
+                    continue;
+                }
+
+                desc.Configurable = false;
+                if (desc.Kind == JsPropertyDescriptorKind.Data)
+                {
+                    desc.Writable = false;
+                }
+                PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
+            }
+
+            var state = GetIntegrityState(obj);
+            state.Extensible = false;
+            state.Sealed = true;
+            state.Frozen = true;
+            return obj;
+        }
+
+        public static bool isSealed(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (IsPrimitiveObjectOperationTarget(obj))
+            {
+                return true;
+            }
+
+            if (IsExtensibleInternal(obj))
+            {
+                return false;
+            }
+
+            foreach (var key in GetOwnKeysForIntegrity(obj))
+            {
+                if (!PropertyDescriptorStore.TryGetOwn(obj, key, out var desc) || desc.Configurable)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool isFrozen(object obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (IsPrimitiveObjectOperationTarget(obj))
+            {
+                return true;
+            }
+
+            if (!isSealed(obj))
+            {
+                return false;
+            }
+
+            foreach (var key in GetOwnKeysForIntegrity(obj))
+            {
+                if (!PropertyDescriptorStore.TryGetOwn(obj, key, out var desc))
+                {
+                    return false;
+                }
+
+                if (desc.Kind == JsPropertyDescriptorKind.Data && desc.Writable)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static object groupBy(object items, object callback)
+        {
+            if (items is null || items is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (callback is null || callback is JsNull || callback is not Delegate)
+            {
+                throw new TypeError("Object.groupBy callback must be a function");
+            }
+
+            var result = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)result;
+            var iterator = GetIterator(items);
+            var index = 0;
+            try
+            {
+                while (true)
+                {
+                    var step = IteratorNext(iterator);
+                    if (IteratorResultDone(step))
+                    {
+                        break;
+                    }
+
+                    var value = IteratorResultValue(step);
+                    var keyValue = InvokeCallable(callback, null!, new object?[] { value, (double)index });
+                    var key = ToPropertyKeyString(keyValue);
+
+                    if (!dict.TryGetValue(key, out var bucketObj) || bucketObj is not JavaScriptRuntime.Array bucket)
+                    {
+                        bucket = new JavaScriptRuntime.Array();
+                        dict[key] = bucket;
+                    }
+
+                    bucket.Add(value);
+                    index++;
+                }
+            }
+            finally
+            {
+                IteratorClose(iterator);
+            }
+
+            return result;
+        }
+
+        private static object GetCurrentThisObjectOrThrow()
+        {
+            var target = RuntimeServices.GetCurrentThis();
+            if (target is null || target is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            return target;
+        }
+
+        private static object? PrototypeHasOwnProperty(object[] scopes, object?[] args)
+        {
+            var target = GetCurrentThisObjectOrThrow();
+            var prop = args != null && args.Length > 0 ? args[0] : null;
+            return hasOwn(target, prop);
+        }
+
+        private static object? PrototypeIsPrototypeOf(object[] scopes, object?[] args)
+        {
+            var prototypeCandidate = GetCurrentThisObjectOrThrow();
+            var value = args != null && args.Length > 0 ? args[0] : null;
+
+            if (value is null || value is JsNull || !IsObjectLikeForPrototype(value))
+            {
+                return false;
+            }
+
+            if (!PrototypeChain.Enabled)
+            {
+                return false;
+            }
+
+            var current = value;
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+            while (PrototypeChain.TryGetPrototype(current, out var proto) && proto is not null && proto is not JsNull)
+            {
+                if (!visited.Add(proto))
+                {
+                    return false;
+                }
+
+                if (ReferenceEquals(proto, prototypeCandidate))
+                {
+                    return true;
+                }
+
+                if (!IsObjectLikeForPrototype(proto))
+                {
+                    return false;
+                }
+
+                current = proto;
+            }
+
+            return false;
+        }
+
+        private static object? PrototypePropertyIsEnumerable(object[] scopes, object?[] args)
+        {
+            var target = GetCurrentThisObjectOrThrow();
+            var prop = args != null && args.Length > 0 ? args[0] : null;
+            var key = ToPropertyKeyString(prop);
+
+            if (PropertyDescriptorStore.TryGetOwn(target, key, out var descriptor))
+            {
+                return descriptor.Enumerable;
+            }
+
+            if (target is ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                return dict.ContainsKey(key);
+            }
+
+            if (target is IDictionary<string, object?> dictGeneric)
+            {
+                return dictGeneric.ContainsKey(key);
+            }
+
+            if (target is System.Collections.IDictionary dictObj)
+            {
+                if (dictObj.Contains(key)) return true;
+                foreach (var existingKey in dictObj.Keys)
+                {
+                    if (string.Equals(DotNet2JSConversions.ToString(existingKey), key, StringComparison.Ordinal))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            var type = target.GetType();
+            return type.GetProperty(key, BindingFlags.Instance | BindingFlags.Public) != null
+                || type.GetField(key, BindingFlags.Instance | BindingFlags.Public) != null;
+        }
+
+        private static object? PrototypeToLocaleString(object[] scopes, object?[] args)
+        {
+            _ = GetCurrentThisObjectOrThrow();
+            return PrototypeToString(scopes, args);
+        }
+
+        private static object? PrototypeToString(object[] scopes, object?[] args)
+        {
+            var thisVal = RuntimeServices.GetCurrentThis();
+
+            if (thisVal == null) return "[object Undefined]";
+            if (thisVal is JsNull) return "[object Null]";
+
+            // Try @@toStringTag (Symbol.toStringTag) first.
+            var toStringTagSym = Symbol.toStringTag;
+            var tag = GetItem(thisVal, toStringTagSym);
+            if (tag is string tagStr)
+            {
+                return $"[object {tagStr}]";
+            }
+
+            // Built-in type tags.
+            if (thisVal is JavaScriptRuntime.Array) return "[object Array]";
+            if (thisVal is string) return "[object String]";
+            if (thisVal is bool) return "[object Boolean]";
+            if (thisVal is double or float or int or long) return "[object Number]";
+            if (thisVal is Delegate) return "[object Function]";
+            if (thisVal is JavaScriptRuntime.RegExp) return "[object RegExp]";
+            if (thisVal is GeneratorObject) return "[object Generator]";
+            if (thisVal is AsyncGeneratorObject) return "[object AsyncGenerator]";
+
+            return "[object Object]";
+        }
+
+        private static object? PrototypeValueOf(object[] scopes, object?[] args)
+        {
+            return GetCurrentThisObjectOrThrow();
+        }
+
+        private static object? PrototypeDefineGetter(object[] scopes, object?[] args)
+        {
+            var target = GetCurrentThisObjectOrThrow();
+            var prop = args != null && args.Length > 0 ? args[0] : null;
+            var getter = args != null && args.Length > 1 ? args[1] : null;
+            if (getter is null || getter is JsNull || getter is not Delegate)
+            {
+                throw new TypeError("Getter must be a function");
+            }
+
+            var key = ToPropertyKeyString(prop);
+            var enumerable = true;
+            var configurable = true;
+            object? setter = null;
+
+            if (PropertyDescriptorStore.TryGetOwn(target, key, out var existing))
+            {
+                enumerable = existing.Enumerable;
+                configurable = existing.Configurable;
+                if (existing.Kind == JsPropertyDescriptorKind.Accessor)
+                {
+                    setter = existing.Set;
+                }
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = enumerable,
+                Configurable = configurable,
+                Get = getter,
+                Set = setter
+            });
+
+            if (target is IDictionary<string, object?> dict && !dict.ContainsKey(key))
+            {
+                dict[key] = null;
+            }
+
+            return null;
+        }
+
+        private static object? PrototypeDefineSetter(object[] scopes, object?[] args)
+        {
+            var target = GetCurrentThisObjectOrThrow();
+            var prop = args != null && args.Length > 0 ? args[0] : null;
+            var setter = args != null && args.Length > 1 ? args[1] : null;
+            if (setter is null || setter is JsNull || setter is not Delegate)
+            {
+                throw new TypeError("Setter must be a function");
+            }
+
+            var key = ToPropertyKeyString(prop);
+            var enumerable = true;
+            var configurable = true;
+            object? getter = null;
+
+            if (PropertyDescriptorStore.TryGetOwn(target, key, out var existing))
+            {
+                enumerable = existing.Enumerable;
+                configurable = existing.Configurable;
+                if (existing.Kind == JsPropertyDescriptorKind.Accessor)
+                {
+                    getter = existing.Get;
+                }
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = enumerable,
+                Configurable = configurable,
+                Get = getter,
+                Set = setter
+            });
+
+            if (target is IDictionary<string, object?> dict && !dict.ContainsKey(key))
+            {
+                dict[key] = null;
+            }
+
+            return null;
+        }
+
+        private static object? PrototypeLookupGetter(object[] scopes, object?[] args)
+        {
+            var target = GetCurrentThisObjectOrThrow();
+            var prop = args != null && args.Length > 0 ? args[0] : null;
+            var key = ToPropertyKeyString(prop);
+
+            if (PropertyDescriptorStore.TryGetOwn(target, key, out var own) && own.Kind == JsPropertyDescriptorKind.Accessor)
+            {
+                return own.Get;
+            }
+
+            if (!PrototypeChain.Enabled)
+            {
+                return null;
+            }
+
+            var current = target;
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance) { current };
+            while (PrototypeChain.TryGetPrototype(current, out var proto) && proto is not null && proto is not JsNull)
+            {
+                if (!visited.Add(proto))
+                {
+                    break;
+                }
+
+                if (PropertyDescriptorStore.TryGetOwn(proto, key, out var descriptor) && descriptor.Kind == JsPropertyDescriptorKind.Accessor)
+                {
+                    return descriptor.Get;
+                }
+
+                current = proto;
+            }
+
+            return null;
+        }
+
+        private static object? PrototypeLookupSetter(object[] scopes, object?[] args)
+        {
+            var target = GetCurrentThisObjectOrThrow();
+            var prop = args != null && args.Length > 0 ? args[0] : null;
+            var key = ToPropertyKeyString(prop);
+
+            if (PropertyDescriptorStore.TryGetOwn(target, key, out var own) && own.Kind == JsPropertyDescriptorKind.Accessor)
+            {
+                return own.Set;
+            }
+
+            if (!PrototypeChain.Enabled)
+            {
+                return null;
+            }
+
+            var current = target;
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance) { current };
+            while (PrototypeChain.TryGetPrototype(current, out var proto) && proto is not null && proto is not JsNull)
+            {
+                if (!visited.Add(proto))
+                {
+                    break;
+                }
+
+                if (PropertyDescriptorStore.TryGetOwn(proto, key, out var descriptor) && descriptor.Kind == JsPropertyDescriptorKind.Accessor)
+                {
+                    return descriptor.Set;
+                }
+
+                current = proto;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -1448,7 +2358,9 @@ namespace JavaScriptRuntime
                 // NOTE: We don't yet model true ECMAScript symbol-keyed properties.
                 // We encode Symbol keys to a stable internal string so computed
                 // properties like obj[Symbol.iterator] can round-trip.
-                return sym.DebugId;
+                var encoded = sym.DebugId;
+                _encodedSymbolKeys.TryAdd(encoded, sym);
+                return encoded;
             }
 
             return DotNet2JSConversions.ToString(key);
@@ -3096,7 +4008,7 @@ namespace JavaScriptRuntime
                 EnumerateOwnEnumerableProperties(jsObjSource, srcSeen, (key, value) =>
                 {
                     SetOwn(targetExpandoDict, target, key, value);
-                });
+                }, includeEncodedSymbolKeys: true);
                 return target;
             }
 
@@ -3230,7 +4142,7 @@ namespace JavaScriptRuntime
                 {
                     if (!excluded.Contains(key))
                         result.SetValue(key, value);
-                });
+                }, includeEncodedSymbolKeys: true);
                 return result;
             }
 
@@ -3484,6 +4396,12 @@ namespace JavaScriptRuntime
 
             var key = DotNet2JSConversions.ToString(propName);
 
+            if (PropertyDescriptorStore.TryGetOwn(receiver, key, out var ownDescriptor)
+                && !ownDescriptor.Configurable)
+            {
+                return false;
+            }
+
             if (receiver is System.Dynamic.ExpandoObject exp)
             {
                 var dict = (IDictionary<string, object?>)exp;
@@ -3736,6 +4654,17 @@ namespace JavaScriptRuntime
                 {
                     PrototypeChain.SetPrototype(obj, value);
                 }
+                return value;
+            }
+
+            var hasOwn = HasOwnProperty(obj, name);
+            if (!hasOwn && TryInvokePrototypeSetter(obj, name, value))
+            {
+                return value;
+            }
+
+            if (!hasOwn && !IsExtensibleInternal(obj))
+            {
                 return value;
             }
 
