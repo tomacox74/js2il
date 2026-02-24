@@ -210,7 +210,7 @@ namespace JavaScriptRuntime.CommonJS
             // Many scripts and tools rely on this to detect the entry module.
             if (_mainModule != null)
             {
-                JavaScriptRuntime.Object.SetProperty(moduleRequire, "main", _mainModule);
+                JavaScriptRuntime.ObjectRuntime.SetProperty(moduleRequire, "main", _mainModule);
             }
 
             RuntimeServices.RegisterModuleRequire(canonicalId, moduleRequire);

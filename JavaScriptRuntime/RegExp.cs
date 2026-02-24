@@ -179,8 +179,8 @@ namespace JavaScriptRuntime
             }
 
             // JS exec result carries .index and .input.
-            JavaScriptRuntime.Object.SetProperty(result, "index", (double)match.Index);
-            JavaScriptRuntime.Object.SetProperty(result, "input", s);
+            JavaScriptRuntime.ObjectRuntime.SetProperty(result, "index", (double)match.Index);
+            JavaScriptRuntime.ObjectRuntime.SetProperty(result, "input", s);
             return result;
         }
         

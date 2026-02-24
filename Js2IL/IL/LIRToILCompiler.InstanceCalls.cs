@@ -26,8 +26,22 @@ internal sealed partial class LIRToILCompiler
 
         var argCount = instruction.Arguments.Count;
 
+        System.Reflection.MethodInfo? chosen = null;
+
+        // Fast-path: route Array.push(singleArg) to the single-item overload to avoid object[] allocation.
+        if (receiverType == typeof(JavaScriptRuntime.Array)
+            && argCount == 1
+            && string.Equals(instruction.MethodName, nameof(JavaScriptRuntime.Array.push), StringComparison.OrdinalIgnoreCase))
+        {
+            chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object);
+            });
+        }
+
         // Prefer exact-arity overload first (supports arity-specific optimizations)
-        var chosen = methods.FirstOrDefault(mi =>
+        chosen ??= methods.FirstOrDefault(mi =>
         {
             var ps = mi.GetParameters();
             // Match on exact parameter count where all parameters are object-assignable
@@ -120,7 +134,20 @@ internal sealed partial class LIRToILCompiler
 
         var argCount = instruction.Arguments.Count;
 
-        var chosen = methods.FirstOrDefault(mi =>
+        System.Reflection.MethodInfo? chosen = null;
+
+        if (receiverType == typeof(JavaScriptRuntime.Array)
+            && argCount == 1
+            && string.Equals(instruction.MethodName, nameof(JavaScriptRuntime.Array.push), StringComparison.OrdinalIgnoreCase))
+        {
+            chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object);
+            });
+        }
+
+        chosen ??= methods.FirstOrDefault(mi =>
         {
             var ps = mi.GetParameters();
             return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);

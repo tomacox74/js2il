@@ -205,6 +205,80 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_CapturedLetArray_WithClosureWrites_IsStableArray()
+    {
+        var code = @"
+                let ret = [];
+                function test(fn) { fn(); }
+
+                test(() => {
+                    ret = [];
+                    ret = new Array(8);
+                });
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var binding = symbolTable.GetBindingInfo("ret");
+        Assert.NotNull(binding);
+        Assert.Equal(BindingKind.Let, binding!.Kind);
+        Assert.True(binding.IsCaptured);
+        Assert.True(binding.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_CapturedLetArray_WithConflictingClosureWrite_IsNotStable()
+    {
+        var code = @"
+                let ret = [];
+                function test(fn) { fn(); }
+
+                test(() => {
+                    ret = 1;
+                });
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var binding = symbolTable.GetBindingInfo("ret");
+        Assert.NotNull(binding);
+        Assert.Equal(BindingKind.Let, binding!.Kind);
+        Assert.True(binding.IsCaptured);
+        Assert.False(binding.IsStableType);
+        Assert.Null(binding.ClrType);
+    }
+
+    [Fact]
+    public void Compiler_CapturedLetArray_EmitsTypedArrayScopeField()
+    {
+        var source = @"
+                'use strict';
+                let ret = [];
+                function test(fn) { fn(); }
+
+                test(() => {
+                    for (let i = 0; i < 4; i++) {
+                        ret = [];
+                        ret[i] = i;
+                    }
+                });
+            ";
+
+        var outputDir = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "CapturedLetArray", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(outputDir);
+
+        var compiled = TestCompiler.Compile(
+            testName: "CapturedLetArray",
+            testCategory: "SymbolTable",
+            outputDirectory: outputDir,
+            getJavaScriptAndSourcePath: _ => (source, null),
+            additionalScripts: null);
+
+        var il = Utilities.AssemblyToText.ConvertToText(compiled.AssemblyPath);
+        Assert.Contains("JavaScriptRuntime.Array 'ret'", il);
+        Assert.DoesNotContain("object 'ret'", il);
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_ClassInstanceFields_Primitives()
     {
         var code = @"

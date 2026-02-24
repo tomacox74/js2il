@@ -58,7 +58,7 @@ namespace JavaScriptRuntime.Node
                 }
                 else if (options != null)
                 {
-                    var val = JavaScriptRuntime.Object.GetProperty(options, "withFileTypes");
+                    var val = JavaScriptRuntime.ObjectRuntime.GetProperty(options, "withFileTypes");
                     withFileTypes = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
                 }
             }
@@ -134,7 +134,7 @@ namespace JavaScriptRuntime.Node
                     }
                     else if (options != null)
                     {
-                        var val = JavaScriptRuntime.Object.GetProperty(options, "recursive");
+                        var val = JavaScriptRuntime.ObjectRuntime.GetProperty(options, "recursive");
                         recursive = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
                     }
                 }

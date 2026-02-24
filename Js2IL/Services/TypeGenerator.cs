@@ -220,6 +220,12 @@ namespace Js2IL.Services
                     {
                         fieldTypeEncoder.String();
                     }
+                    else if (binding.ClrType == typeof(JavaScriptRuntime.Array))
+                    {
+                        fieldTypeEncoder.Type(
+                            _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)),
+                            isValueType: false);
+                    }
                     else
                     {
                         fieldTypeEncoder.Object();
