@@ -126,7 +126,7 @@
     {
       "clause": "20.1.2.15",
       "title": "Object.is ( value1 , value2 )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-object.is"
     },
     {
@@ -452,6 +452,16 @@
           "Js2IL.Tests/Object/JavaScript/Object_FromEntries_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.Object.fromEntries. Creates an object from an iterable of [key, value] pairs using GetIterator. Supports array-like entries. Symbol keys and full iterator protocol edge cases are not implemented."
+      },
+      {
+        "clause": "20.1.2.15",
+        "feature": "Object.is",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-object.is",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_Is_SameValue.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.is using Operators.SameValue, including NaN identity and +0/-0 distinction."
       }
     ]
   }
