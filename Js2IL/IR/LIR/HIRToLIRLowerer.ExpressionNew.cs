@@ -105,7 +105,7 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        // PL3.3f: Boolean/Number constructor sugar
+        // PL3.3f: Boolean constructor object semantics
         if (string.Equals(ctorName, "Boolean", StringComparison.Ordinal))
         {
             if (newExpr.Arguments.Count > 1)
@@ -113,25 +113,19 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            TempVariable source;
-            if (newExpr.Arguments.Count == 0)
+            resultTempVar = CreateTempVariable();
+            var argTemps = new List<TempVariable>(newExpr.Arguments.Count);
+            foreach (var arg in newExpr.Arguments)
             {
-                source = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRConstUndefined(source));
-                DefineTempStorage(source, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-            }
-            else
-            {
-                if (!TryLowerExpression(newExpr.Arguments[0], out var argTemp))
+                if (!TryLowerExpression(arg, out var argTemp))
                 {
                     return false;
                 }
-                source = EnsureObject(argTemp);
+                argTemps.Add(EnsureObject(argTemp));
             }
 
-            resultTempVar = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConvertToBoolean(source, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRNewIntrinsicObject("Boolean", argTemps, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
 

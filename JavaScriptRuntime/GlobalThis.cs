@@ -34,6 +34,19 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, bool> _booleanFunctionValue = static (_, value) =>
             JavaScriptRuntime.TypeUtilities.ToBoolean(value);
 
+        private static readonly Func<object[], object?[]?, object?> _booleanPrototypeToStringValue = static (_, __) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            var booleanValue = JavaScriptRuntime.Boolean.ThisBooleanValue(thisValue);
+            return booleanValue ? "true" : "false";
+        };
+
+        private static readonly Func<object[], object?[]?, object?> _booleanPrototypeValueOfValue = static (_, __) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            return JavaScriptRuntime.Boolean.ThisBooleanValue(thisValue);
+        };
+
         private static readonly Func<object[], object?, string> _stringFunctionValue = static (_, value) =>
             JavaScriptRuntime.DotNet2JSConversions.ToString(value);
 
@@ -125,6 +138,7 @@ namespace JavaScriptRuntime
         // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
         // opt into prototype semantics as needed.
         private static readonly object _objectPrototypeValue = new ExpandoObject();
+        private static readonly object _booleanPrototypeValue = new ExpandoObject();
 
         static GlobalThis()
         {
@@ -146,6 +160,14 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = JavaScriptRuntime.Array.Prototype
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = _booleanPrototypeValue
             });
 
             // Provide Object.prototype for patterns like `Object.create(Object.prototype, ...)`.
@@ -236,6 +258,14 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _errorPrototypeValue
             });
+
+            if (_booleanPrototypeValue is ExpandoObject booleanPrototypeExpando)
+            {
+                var dict = (IDictionary<string, object?>)booleanPrototypeExpando;
+                dict["constructor"] = _booleanFunctionValue;
+                dict["toString"] = _booleanPrototypeToStringValue;
+                dict["valueOf"] = _booleanPrototypeValueOfValue;
+            }
 
             // Provide String.fromCharCode for parsers/libraries.
             PropertyDescriptorStore.DefineOrUpdate(_stringFunctionValue, "fromCharCode", new JsPropertyDescriptor
