@@ -31,7 +31,7 @@
 | 20.1.2.12 | Object.getPrototypeOf ( O ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object.getprototypeof) |
 | 20.1.2.13 | Object.groupBy ( items , callback ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.groupby) |
 | 20.1.2.14 | Object.hasOwn ( O , P ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.hasown) |
-| 20.1.2.15 | Object.is ( value1 , value2 ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.is) |
+| 20.1.2.15 | Object.is ( value1 , value2 ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.is) |
 | 20.1.2.16 | Object.isExtensible ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.isextensible) |
 | 20.1.2.17 | Object.isFrozen ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.isfrozen) |
 | 20.1.2.18 | Object.isSealed ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-object.issealed) |
@@ -122,6 +122,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Object.getPrototypeOf | Supported with Limitations | [`PrototypeChain_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js) | Implemented in JavaScriptRuntime.Object.getPrototypeOf using an opt-in side-table prototype store (JavaScriptRuntime.PrototypeChain). This does not currently model default Object.prototype; if no prototype has been explicitly assigned, this returns undefined (null). |
+
+### 20.1.2.15 ([tc39.es](https://tc39.es/ecma262/#sec-object.is))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Object.is | Supported | [`Object_Is_SameValue.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Is_SameValue.js) | Implemented in JavaScriptRuntime.Object.is using Operators.SameValue, including NaN identity and +0/-0 distinction. |
 
 ### 20.1.2.19 ([tc39.es](https://tc39.es/ecma262/#sec-object.keys))
 
