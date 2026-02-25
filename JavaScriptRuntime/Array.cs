@@ -30,19 +30,19 @@ namespace JavaScriptRuntime
         private int DenseCount => _items.Count;
         private int LogicalCount => _logicalLength > DenseCount ? _logicalLength : DenseCount;
 
-        private void EnsureDenseStorage()
+        private void EnsureDenseStorage(int minCount)
         {
-            if (_items.Count >= _logicalLength)
+            if (_items.Count >= minCount)
             {
                 return;
             }
 
-            if (_logicalLength > _items.Capacity)
+            if (minCount > _items.Capacity)
             {
-                _items.Capacity = _logicalLength;
+                _items.Capacity = minCount;
             }
 
-            while (_items.Count < _logicalLength)
+            while (_items.Count < minCount)
             {
                 _items.Add(null);
             }
@@ -422,71 +422,63 @@ namespace JavaScriptRuntime
                     _logicalLength = index + 1;
                 }
 
-                EnsureDenseStorage();
-
-                if (index == _items.Count)
-                {
-                    _items.Add(value);
-                }
-                else
-                {
-                    _items[index] = value;
-                }
+                EnsureDenseStorage(index + 1);
+                _items[index] = value;
             }
         }
 
         public void Add(object? item)
         {
-            EnsureDenseStorage();
+            EnsureDenseStorage(_logicalLength);
             _items.Add(item);
             _logicalLength = _items.Count;
         }
 
         public void AddRange(IEnumerable<object?> collection)
         {
-            EnsureDenseStorage();
+            EnsureDenseStorage(_logicalLength);
             _items.AddRange(collection);
             _logicalLength = _items.Count;
         }
 
         public void Insert(int index, object? item)
         {
-            EnsureDenseStorage();
+            EnsureDenseStorage(Count);
             _items.Insert(index, item);
             _logicalLength = _items.Count;
         }
 
         public void InsertRange(int index, IEnumerable<object?> collection)
         {
-            EnsureDenseStorage();
+            EnsureDenseStorage(Count);
             _items.InsertRange(index, collection);
             _logicalLength = _items.Count;
         }
 
         public void RemoveAt(int index)
         {
-            EnsureDenseStorage();
+            EnsureDenseStorage(Count);
             _items.RemoveAt(index);
             _logicalLength = _items.Count;
         }
 
         public void RemoveRange(int index, int count)
         {
-            EnsureDenseStorage();
+            EnsureDenseStorage(Count);
             _items.RemoveRange(index, count);
             _logicalLength = _items.Count;
         }
 
         public void Reverse()
         {
-            EnsureDenseStorage();
+            EnsureDenseStorage(Count);
             _items.Reverse();
             _logicalLength = _items.Count;
         }
 
         public void Sort(Comparison<object?> comparison)
         {
-            EnsureDenseStorage();
+            EnsureDenseStorage(Count);
             _items.Sort(comparison);
             _logicalLength = _items.Count;
         }

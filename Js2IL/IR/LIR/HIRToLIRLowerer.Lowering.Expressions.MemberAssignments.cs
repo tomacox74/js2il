@@ -101,11 +101,11 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var propertyValueStorage = GetTempStorage(valueToStore);
-        bool canUseStringNumericSetItem =
+        bool canUseStringKeyDoubleValueSetItem =
             propertyValueStorage.Kind == ValueStorageKind.UnboxedValue &&
             propertyValueStorage.ClrType == typeof(double);
 
-        if (!canUseStringNumericSetItem)
+        if (!canUseStringKeyDoubleValueSetItem)
         {
             valueToStore = EnsureObject(valueToStore);
         }
@@ -230,7 +230,7 @@ public sealed partial class HIRToLIRLowerer
         bool canUseNumericSetItem =
             indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
             valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double);
-        bool canUseStringNumericSetItem =
+        bool canUseStringKeyDoubleValueSetItem =
             indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string) &&
             valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double);
 
@@ -245,7 +245,7 @@ public sealed partial class HIRToLIRLowerer
             indexForSet = boxedIndex.Value;
         }
 
-        if (!canUseNumericSetItem && !canUseStringNumericSetItem)
+        if (!canUseNumericSetItem && !canUseStringKeyDoubleValueSetItem)
         {
             valueToStore = EnsureObject(valueToStore);
         }

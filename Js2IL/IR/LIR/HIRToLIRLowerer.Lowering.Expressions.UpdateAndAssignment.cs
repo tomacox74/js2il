@@ -421,7 +421,7 @@ public sealed partial class HIRToLIRLowerer
         // Use typed SetItem when possible (avoids boxing updatedNumber for the store).
         var indexStorage = GetTempStorage(indexTemp);
         bool canUseNumericSetItem = indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double);
-        bool canUseStringNumericSetItem = indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string);
+        bool canUseStringKeyDoubleValueSetItem = indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string);
 
         TempVariable indexForSet;
         if (canUseNumericSetItem)
@@ -436,7 +436,7 @@ public sealed partial class HIRToLIRLowerer
 
         TempVariable valueForSet;
         TempVariable updatedBoxed;
-        if (canUseNumericSetItem || canUseStringNumericSetItem)
+        if (canUseNumericSetItem || canUseStringKeyDoubleValueSetItem)
         {
             valueForSet = updatedNumber;
             updatedBoxed = EnsureObject(updatedNumber);
