@@ -3272,6 +3272,104 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Fast-path overload for string key writes with numeric values.
+        /// Avoids boxing at the call site when the compiler has an unboxed double.
+        /// Returns the assigned value to match JavaScript assignment expression semantics.
+        /// </summary>
+        public static object? SetItem(object? obj, string key, double value)
+        {
+            if (obj is null)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null or undefined");
+            }
+
+            if (obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
+            }
+
+            // Proxy set trap
+            if (obj is JavaScriptRuntime.Proxy)
+            {
+                return SetProperty(obj, key, value);
+            }
+
+            // Strings are immutable in JS; silently ignore and return value.
+            if (obj is string)
+            {
+                return value;
+            }
+
+            bool isIndex = TryParseCanonicalIndexString(key, out int intIndex);
+
+            if (obj is System.Dynamic.ExpandoObject)
+            {
+                return SetProperty(obj, key, value);
+            }
+
+            // JS Array index assignment
+            if (obj is Array array)
+            {
+                if (!isIndex)
+                {
+                    // Common hot path in benchmarks: ret.length = i
+                    if (string.Equals(key, "length", StringComparison.Ordinal))
+                    {
+                        array.length = value;
+                        return value;
+                    }
+
+                    return SetProperty(array, key, value);
+                }
+
+                if (intIndex < array.Count)
+                {
+                    array[intIndex] = value;
+                    return value;
+                }
+
+                if (intIndex == array.Count)
+                {
+                    array.Add(value);
+                    return value;
+                }
+
+                // Extend with undefined (null) up to the index, then add.
+                while (array.Count < intIndex)
+                {
+                    array.Add(null);
+                }
+                array.Add(value);
+                return value;
+            }
+
+            // Typed arrays: value is already numeric.
+            if (obj is Int32Array i32)
+            {
+                if (!isIndex)
+                {
+                    return SetProperty(i32, key, value);
+                }
+                i32[(double)intIndex] = value;
+                return value;
+            }
+
+            // Buffer: value is already numeric.
+            if (obj is JavaScriptRuntime.Node.Buffer buffer)
+            {
+                if (!isIndex)
+                {
+                    return SetProperty(buffer, key, value);
+                }
+                buffer[(double)intIndex] = value;
+                return value;
+            }
+
+            // Generic object: treat as property assignment
+            return SetProperty(obj, key, value);
+        }
+
+        /// <summary>
         /// Gets an iterator for for..of using the iterator protocol.
         /// Supports:
         ///  - Arrays, strings, Int32Array

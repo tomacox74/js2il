@@ -60,8 +60,8 @@ internal sealed partial class LIRToILCompiler
 
                     // For each element: dup, load element value (boxed), callvirt Add
                     var addMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(System.Collections.Generic.List<object>),
-                        nameof(System.Collections.Generic.List<object>.Add));
+                        typeof(JavaScriptRuntime.Array),
+                        nameof(JavaScriptRuntime.Array.Add));
                     for (int i = 0; i < newJsArray.Elements.Count; i++)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);

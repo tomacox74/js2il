@@ -337,10 +337,11 @@ public sealed partial class HIRToLIRLowerer
         }
         DefineTempStorage(updatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
+        var valueForSet = updatedNumber;
         var updatedBoxed = EnsureObject(updatedNumber);
 
         var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, updatedBoxed, setResult));
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, valueForSet, setResult));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
         if (prefix)
@@ -417,9 +418,10 @@ public sealed partial class HIRToLIRLowerer
         }
         DefineTempStorage(updatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
-        // Use numeric SetItem when possible (avoids boxing updatedNumber for the store).
+        // Use typed SetItem when possible (avoids boxing updatedNumber for the store).
         var indexStorage = GetTempStorage(indexTemp);
         bool canUseNumericSetItem = indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double);
+        bool canUseStringKeyDoubleValueSetItem = indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string);
 
         TempVariable indexForSet;
         if (canUseNumericSetItem)
@@ -434,7 +436,7 @@ public sealed partial class HIRToLIRLowerer
 
         TempVariable valueForSet;
         TempVariable updatedBoxed;
-        if (canUseNumericSetItem)
+        if (canUseNumericSetItem || canUseStringKeyDoubleValueSetItem)
         {
             valueForSet = updatedNumber;
             updatedBoxed = EnsureObject(updatedNumber);

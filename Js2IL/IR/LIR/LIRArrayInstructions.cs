@@ -71,6 +71,13 @@ public record LIRGetItemAsNumberString(TempVariable Object, TempVariable Index, 
 public record LIRSetItem(TempVariable Object, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Sets the length on a proven JavaScriptRuntime.Array.
+/// Contract: Receiver is a proven Array; Value is the assigned RHS value.
+/// Result (if materialized) is the assigned value.
+/// </summary>
+public record LIRSetJsArrayLength(TempVariable Receiver, TempVariable Value, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Gets an element from a proven JavaScriptRuntime.Array by numeric index.
 /// Contract: Receiver is a proven Array; Index is an unboxed double.
 /// Result is an object (or may be coerced to a number by the IL emitter when the temp expects an unboxed double).

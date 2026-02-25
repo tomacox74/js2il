@@ -44,4 +44,16 @@ public sealed class TempLocalAllocatorTests
         Assert.True(TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined));
         Assert.Equal(3, defined.Index);
     }
+
+    [Fact]
+    public void TryGetDefinedTemp_Recognizes_LIRSetJsArrayLength_Result()
+    {
+        var instruction = new LIRSetJsArrayLength(
+            Receiver: new TempVariable(0),
+            Value: new TempVariable(1),
+            Result: new TempVariable(2));
+
+        Assert.True(TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined));
+        Assert.Equal(2, defined.Index);
+    }
 }

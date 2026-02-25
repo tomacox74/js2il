@@ -565,8 +565,8 @@ internal sealed partial class LIRToILCompiler
 
                     // For each element: dup, load element value, callvirt Add
                     var addMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(System.Collections.Generic.List<object>),
-                        nameof(System.Collections.Generic.List<object>.Add));
+                        typeof(JavaScriptRuntime.Array),
+                        nameof(JavaScriptRuntime.Array.Add));
                     for (int i = 0; i < newJsArray.Elements.Count; i++)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
@@ -656,7 +656,7 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     var getCountMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(System.Collections.Generic.List<object>),
+                        typeof(JavaScriptRuntime.Array),
                         "get_Count",
                         parameterTypes: Type.EmptyTypes);
                     ilEncoder.OpCode(ILOpCode.Callvirt);
@@ -1504,6 +1504,42 @@ internal sealed partial class LIRToILCompiler
                             parameterTypes: new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(toNumberMref);
+                    }
+
+                    break;
+                }
+
+            case LIRSetJsArrayLength setArrayLength:
+                {
+                    // Inline the assignment-expression result of setting Array.length.
+                    var receiverStorage = GetTempStorage(setArrayLength.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
+                    {
+                        EmitLoadTemp(setArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
+                    }
+
+                    EmitLoadTempAsDouble(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
+                    var arrayLengthSetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Array),
+                        "set_length",
+                        parameterTypes: new[] { typeof(double) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(arrayLengthSetter);
+
+                    var resultStorage = GetTempStorage(temp);
+                    if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                    {
+                        EmitLoadTempAsDouble(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
                     }
 
                     break;

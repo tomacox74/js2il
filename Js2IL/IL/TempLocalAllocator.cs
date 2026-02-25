@@ -660,6 +660,10 @@ internal static class TempLocalAllocator
                 yield return setItem.Index;
                 yield return setItem.Value;
                 break;
+            case LIRSetJsArrayLength setJsArrayLength:
+                yield return setJsArrayLength.Receiver;
+                yield return setJsArrayLength.Value;
+                break;
             case LIRGetJsArrayElement getJsArray:
                 yield return getJsArray.Receiver;
                 yield return getJsArray.Index;
@@ -1111,6 +1115,10 @@ internal static class TempLocalAllocator
 
             case LIRSetItem setItem:
                 defined = setItem.Result;
+                return true;
+
+            case LIRSetJsArrayLength setJsArrayLength:
+                defined = setJsArrayLength.Result;
                 return true;
 
             case LIRSetJsArrayElement setJsArray:
