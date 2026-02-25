@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2179
+				// Method begins at RVA 0x215d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2182
+				// Method begins at RVA 0x2166
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -87,7 +87,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218b
+				// Method begins at RVA 0x216f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -111,7 +111,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x219d
+					// Method begins at RVA 0x2181
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -131,7 +131,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21a6
+					// Method begins at RVA 0x218a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -149,7 +149,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2194
+				// Method begins at RVA 0x2178
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -169,7 +169,7 @@
 		{
 			// Method begins at RVA 0x2078
 			// Header size: 12
-			// Code size: 219 (0xdb)
+			// Code size: 192 (0xc0)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Exception,
@@ -200,77 +200,62 @@
 				IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
 				IL_0033: pop
 				IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0039: ldc.i4.1
-				IL_003a: newarr [System.Runtime]System.Object
-				IL_003f: dup
-				IL_0040: ldc.i4.0
-				IL_0041: ldstr "no-throw"
-				IL_0046: stelem.ref
-				IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_004c: pop
-				IL_004d: leave IL_00a7
+				IL_0039: ldstr "no-throw"
+				IL_003e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0043: pop
+				IL_0044: leave IL_0095
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0052: stloc.0
-				IL_0053: ldloc.0
-				IL_0054: dup
-				IL_0055: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_005a: dup
-				IL_005b: brtrue IL_0071
+				IL_0049: stloc.0
+				IL_004a: ldloc.0
+				IL_004b: dup
+				IL_004c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0051: dup
+				IL_0052: brtrue IL_0068
 
-				IL_0060: pop
-				IL_0061: dup
-				IL_0062: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0067: dup
-				IL_0068: brtrue IL_007d
+				IL_0057: pop
+				IL_0058: dup
+				IL_0059: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_005e: dup
+				IL_005f: brtrue IL_0074
 
-				IL_006d: pop
-				IL_006e: pop
-				IL_006f: rethrow
+				IL_0064: pop
+				IL_0065: pop
+				IL_0066: rethrow
 
-				IL_0071: pop
-				IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0077: stloc.1
-				IL_0078: br IL_007f
+				IL_0068: pop
+				IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_006e: stloc.1
+				IL_006f: br IL_0076
 
-				IL_007d: pop
-				IL_007e: stloc.1
+				IL_0074: pop
+				IL_0075: stloc.1
 
-				IL_007f: ldloc.1
-				IL_0080: stloc.3
-				IL_0081: ldloc.3
-				IL_0082: stloc.2
-				IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0088: ldc.i4.1
-				IL_0089: newarr [System.Runtime]System.Object
-				IL_008e: dup
-				IL_008f: ldc.i4.0
-				IL_0090: ldloc.2
-				IL_0091: ldstr "name"
-				IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
-				IL_009b: stelem.ref
-				IL_009c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_00a1: pop
-				IL_00a2: leave IL_00a7
+				IL_0076: ldloc.1
+				IL_0077: stloc.3
+				IL_0078: ldloc.3
+				IL_0079: stloc.2
+				IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_007f: ldloc.2
+				IL_0080: ldstr "name"
+				IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+				IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_008f: pop
+				IL_0090: leave IL_0095
 			} // end handler
 
-			IL_00a7: ldarg.0
-			IL_00a8: ldc.r8 5
-			IL_00b1: box [System.Runtime]System.Double
-			IL_00b6: call instance void Modules.Classes_Inheritance_ThisBeforeSuper_Throws/B::.ctor(object)
-			IL_00bb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00c0: ldc.i4.1
-			IL_00c1: newarr [System.Runtime]System.Object
-			IL_00c6: dup
-			IL_00c7: ldc.i4.0
-			IL_00c8: ldarg.0
-			IL_00c9: ldstr "x"
-			IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
-			IL_00d3: stelem.ref
-			IL_00d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00d9: pop
-			IL_00da: ret
+			IL_0095: ldarg.0
+			IL_0096: ldc.r8 5
+			IL_009f: box [System.Runtime]System.Double
+			IL_00a4: call instance void Modules.Classes_Inheritance_ThisBeforeSuper_Throws/B::.ctor(object)
+			IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00ae: ldarg.0
+			IL_00af: ldstr "x"
+			IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+			IL_00b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00be: pop
+			IL_00bf: ret
 		} // end of method D::.ctor
 
 	} // end of class D
@@ -282,7 +267,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2170
+			// Method begins at RVA 0x2154
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -330,7 +315,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21af
+		// Method begins at RVA 0x2193
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
