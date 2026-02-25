@@ -113,7 +113,7 @@ namespace JavaScriptRuntime
         // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
         // opt into prototype semantics as needed.
         private static readonly object _objectPrototypeValue = new JsObject();
-        private static readonly object _booleanPrototypeValue = new ExpandoObject();
+        private static readonly object _booleanPrototypeValue = new JavaScriptRuntime.Boolean(false);
 
         static GlobalThis()
         {
@@ -158,13 +158,30 @@ namespace JavaScriptRuntime
                 Value = _errorPrototypeValue
             });
 
-            if (_booleanPrototypeValue is ExpandoObject booleanPrototypeExpando)
+            PropertyDescriptorStore.DefineOrUpdate(_booleanPrototypeValue, "constructor", new JsPropertyDescriptor
             {
-                var dict = (IDictionary<string, object?>)booleanPrototypeExpando;
-                dict["constructor"] = _booleanFunctionValue;
-                dict["toString"] = _booleanPrototypeToStringValue;
-                dict["valueOf"] = _booleanPrototypeValueOfValue;
-            }
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _booleanFunctionValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_booleanPrototypeValue, "toString", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _booleanPrototypeToStringValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_booleanPrototypeValue, "valueOf", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _booleanPrototypeValueOfValue
+            });
 
             // Provide String.fromCharCode for parsers/libraries.
             PropertyDescriptorStore.DefineOrUpdate(_stringFunctionValue, "fromCharCode", new JsPropertyDescriptor
