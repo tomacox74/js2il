@@ -125,7 +125,7 @@ internal sealed partial class LIRToILCompiler
     {
         var namedMethods = receiverType
             .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
-            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal))
             .ToList();
 
         var methods = namedMethods.Where(mi => mi.DeclaringType == receiverType).ToList();

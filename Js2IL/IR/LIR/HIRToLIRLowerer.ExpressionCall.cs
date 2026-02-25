@@ -1065,7 +1065,7 @@ public sealed partial class HIRToLIRLowerer
     {
         var allMethods = receiverType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
         var methods = allMethods
-            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal))
             .ToList();
 
         // Prefer JS-style variadic methods taking object[] args.
