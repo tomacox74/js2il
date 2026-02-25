@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 
 namespace JavaScriptRuntime
@@ -36,6 +37,18 @@ namespace JavaScriptRuntime
             nameof(InvokeWithArgsWithThis),
             BindingFlags.NonPublic | BindingFlags.Static)
             ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeWithArgsWithThis(...).");
+
+        private sealed class BoundDelegateMetadata
+        {
+            public BoundDelegateMetadata(Delegate target)
+            {
+                Target = target;
+            }
+
+            public Delegate Target { get; }
+        }
+
+        private static readonly ConditionalWeakTable<Delegate, BoundDelegateMetadata> _boundDelegates = new();
 
         private static T InvokeWithThis<T>(object? boundThis, Func<T> invoke)
         {
@@ -361,7 +374,9 @@ namespace JavaScriptRuntime
                 body = Expression.Convert(invokeWithArgsCall, invoke.ReturnType);
             }
 
-            return Expression.Lambda(delegateType, body, lambdaParameters).Compile();
+            var boundDelegate = Expression.Lambda(delegateType, body, lambdaParameters).Compile();
+            _boundDelegates.Add(boundDelegate, new BoundDelegateMetadata(target));
+            return boundDelegate;
         }
 
         // Bind a function delegate (object-typed) to a fixed scopes array AND a fixed set of JS arguments.
@@ -409,6 +424,18 @@ namespace JavaScriptRuntime
 
             var lexicalNewTarget = RuntimeServices.GetCurrentNewTarget();
             return CreateBoundDelegate(del, boundScopes, boundThis, captureLexicalNewTarget: true, lexicalNewTarget);
+        }
+
+        internal static bool TryGetBoundTarget(Delegate boundDelegate, out Delegate target)
+        {
+            if (_boundDelegates.TryGetValue(boundDelegate, out var metadata))
+            {
+                target = metadata.Target;
+                return true;
+            }
+
+            target = null!;
+            return false;
         }
 
         private static object InvokeWithArgsCore(object target, object[] scopes, object? newTarget, object?[] args)

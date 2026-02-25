@@ -1862,6 +1862,11 @@ namespace JavaScriptRuntime
                         : System.Array.Empty<object?>();
                     return JavaScriptRuntime.Function.Bind(del, boundThis, boundArgs);
                 }
+
+                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.ToSourceString(del);
+                }
             }
 
             // 1) String-like receiver -> direct fast-path helpers for parser-heavy operations.
@@ -1992,6 +1997,10 @@ namespace JavaScriptRuntime
                 {
                     return JavaScriptRuntime.Function.Bind(del, null, System.Array.Empty<object?>());
                 }
+                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.ToSourceString(del);
+                }
             }
 
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
@@ -2027,6 +2036,10 @@ namespace JavaScriptRuntime
                 if (string.Equals(methodName, "bind", StringComparison.Ordinal))
                 {
                     return JavaScriptRuntime.Function.Bind(del, a0, System.Array.Empty<object?>());
+                }
+                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.ToSourceString(del);
                 }
             }
 
@@ -2064,6 +2077,10 @@ namespace JavaScriptRuntime
                 {
                     return JavaScriptRuntime.Function.Bind(del, a0, new object?[] { a1 });
                 }
+                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.ToSourceString(del);
+                }
             }
 
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
@@ -2099,6 +2116,10 @@ namespace JavaScriptRuntime
                 if (string.Equals(methodName, "bind", StringComparison.Ordinal))
                 {
                     return JavaScriptRuntime.Function.Bind(del, a0, new object?[] { a1, a2 });
+                }
+                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
+                {
+                    return JavaScriptRuntime.Function.ToSourceString(del);
                 }
             }
 
@@ -2618,10 +2639,22 @@ namespace JavaScriptRuntime
             // Delegate-backed functions behave like JS Function objects and must have a default
             // `.prototype` property (used heavily by real-world libraries like domino).
             // We model this lazily so existing tests that don't touch it don't pay for allocation.
-            if (target is Delegate del && string.Equals(propName, "prototype", StringComparison.Ordinal))
+            if (target is Delegate del && string.Equals(propName, "length", StringComparison.Ordinal))
+            {
+                value = JavaScriptRuntime.Function.GetLength(del);
+                return true;
+            }
+
+            if (target is Delegate delName && string.Equals(propName, "name", StringComparison.Ordinal))
+            {
+                value = JavaScriptRuntime.Function.GetName(delName);
+                return true;
+            }
+
+            if (target is Delegate delPrototype && string.Equals(propName, "prototype", StringComparison.Ordinal))
             {
                 var protoObj = new JsObject();
-                PropertyDescriptorStore.DefineOrUpdate(del, "prototype", new JsPropertyDescriptor
+                PropertyDescriptorStore.DefineOrUpdate(delPrototype, "prototype", new JsPropertyDescriptor
                 {
                     Kind = JsPropertyDescriptorKind.Data,
                     Enumerable = false,
@@ -2636,7 +2669,7 @@ namespace JavaScriptRuntime
                     Enumerable = false,
                     Configurable = true,
                     Writable = true,
-                    Value = del
+                    Value = delPrototype
                 });
 
                 value = protoObj;
@@ -4545,6 +4578,8 @@ namespace JavaScriptRuntime
         {
             switch (obj)
             {
+                case Delegate del:
+                    return JavaScriptRuntime.Function.GetLength(del);
                 case Array arr:
                     return arr.length;
                 case Int32Array i32:

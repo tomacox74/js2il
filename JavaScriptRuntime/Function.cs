@@ -22,6 +22,8 @@ namespace JavaScriptRuntime
             var dict = (IDictionary<string, object?>)exp;
             dict["apply"] = (Func<object[], object?[], object?>)PrototypeApply;
             dict["call"] = (Func<object[], object?[], object?>)PrototypeCall;
+            dict["bind"] = (Func<object[], object?[], object?>)PrototypeBind;
+            dict["toString"] = (Func<object[], object?[], object?>)PrototypeToString;
             return exp;
         }
 
@@ -52,6 +54,33 @@ namespace JavaScriptRuntime
                 : System.Array.Empty<object?>();
 
             return Call(del, thisArg, callArgs);
+        }
+
+        private static object? PrototypeBind(object[] scopes, object?[]? args)
+        {
+            var target = RuntimeServices.GetCurrentThis();
+            if (target is not Delegate del)
+            {
+                throw new TypeError("Function.prototype.bind called on non-function");
+            }
+
+            var thisArg = args != null && args.Length > 0 ? args[0] : null;
+            var boundArgs = args != null && args.Length > 1
+                ? args.Skip(1).ToArray()
+                : System.Array.Empty<object?>();
+
+            return Bind(del, thisArg, boundArgs);
+        }
+
+        private static object? PrototypeToString(object[] scopes, object?[]? args)
+        {
+            var target = RuntimeServices.GetCurrentThis();
+            if (target is not Delegate del)
+            {
+                throw new TypeError("Function.prototype.toString called on non-function");
+            }
+
+            return ToSourceString(del);
         }
 
         public static object? Apply(Delegate target, object? thisArg, object? argArray)
@@ -170,6 +199,84 @@ namespace JavaScriptRuntime
             {
                 RuntimeServices.SetCurrentThis(previousThis);
             }
+        }
+
+        private static Delegate ResolveFunctionTarget(Delegate target)
+        {
+            var current = target;
+            while (Closure.TryGetBoundTarget(current, out var original))
+            {
+                current = original;
+            }
+
+            return current;
+        }
+
+        private static bool IsJs2IlFunctionDelegate(Type delegateType)
+        {
+            if (JsFuncDelegates.IsJsFuncDelegateType(delegateType))
+            {
+                return true;
+            }
+
+            return delegateType.Name.StartsWith("JsFunc", StringComparison.Ordinal);
+        }
+
+        public static double GetLength(Delegate target)
+        {
+            if (target is null) throw new ArgumentNullException(nameof(target));
+            var resolvedTarget = ResolveFunctionTarget(target);
+            var ps = resolvedTarget.Method.GetParameters();
+
+            // JS-compiled functions use JsFunc* delegates and always include an implicit
+            // newTarget parameter (plus scopes for captured closures).
+            if (IsJs2IlFunctionDelegate(resolvedTarget.GetType()))
+            {
+                var implicitParams = 1; // newTarget
+                if (ps.Length > 0 && ps[0].ParameterType == typeof(object[]))
+                {
+                    implicitParams++; // scopes
+                }
+
+                return global::System.Math.Max(0, ps.Length - implicitParams);
+            }
+
+            if (ps.Length == 2
+                && ps[0].ParameterType == typeof(object[])
+                && ps[1].ParameterType == typeof(object[]))
+            {
+                return 0;
+            }
+
+            var start = (ps.Length > 0 && ps[0].ParameterType == typeof(object[])) ? 1 : 0;
+            return global::System.Math.Max(0, ps.Length - start);
+        }
+
+        public static string GetName(Delegate target)
+        {
+            if (target is null) throw new ArgumentNullException(nameof(target));
+            var resolvedTarget = ResolveFunctionTarget(target);
+            var name = resolvedTarget.Method.Name;
+
+            if (string.Equals(name, "__js_call__", StringComparison.Ordinal))
+            {
+                var declaringTypeName = resolvedTarget.Method.DeclaringType?.Name;
+                if (!string.IsNullOrEmpty(declaringTypeName) && !declaringTypeName.StartsWith("<", StringComparison.Ordinal))
+                {
+                    return declaringTypeName;
+                }
+            }
+
+            return string.IsNullOrEmpty(name) ? string.Empty : name;
+        }
+
+        public static string ToSourceString(Delegate target)
+        {
+            if (target is null) throw new ArgumentNullException(nameof(target));
+            var name = GetName(target);
+            return string.IsNullOrEmpty(name)
+                ? "function () { [native code] }"
+                : $"function {name}() {{ [native code] }}";
         }
     }
 }

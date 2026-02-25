@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- runtime/spec/docs: expand ECMA-262 §20.2 (Function Objects) coverage with `Function.prototype.bind`/`toString` wiring on the intrinsic prototype object, `Function.prototype.constructor` exposure, delegate-backed function `length`/`name` properties, focused execution+generator coverage, and updated `docs/ECMA262/20/Section20_2.{json,md}` support tracking.
 - commonjs/lowering: emit safe injected module-scope `require` fields as strongly typed `JavaScriptRuntime.CommonJS.RequireDelegate` and preserve typed reads so `require("...")` lowers to direct `RequireDelegate::Invoke` instead of late-bound `Closure.InvokeWithArgs*`; updated affected Node FS generator snapshots.
 
 ## v0.8.22 - 2026-02-24
