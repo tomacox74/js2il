@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - benchmarks/workflows: enforce BenchmarkDotNet JSON output by annotating benchmark suites with `JsonExporterAttribute.FullCompressed`, so release/workflow ingestion reliably uses JSON artifacts (preserving full script-name fidelity instead of markdown-abbreviated labels).
+- perf(array)/codegen: internalize `JavaScriptRuntime.Array` storage (composition over `List<object?>` inheritance), add/retain array fast paths (including `ToArray()` compatibility for spread/apply call paths), and lower proven array operations (including `arr.length = value`) to early-bound calls to reduce late-bound runtime dispatch in hot paths.
 
 ## v0.8.23 - 2026-02-25
 
