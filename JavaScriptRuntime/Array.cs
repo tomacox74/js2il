@@ -497,6 +497,17 @@ namespace JavaScriptRuntime
             _logicalLength = 0;
         }
 
+        public object?[] ToArray()
+        {
+            var result = new object?[Count];
+            for (int i = 0; i < Count; i++)
+            {
+                result[i] = this[i];
+            }
+
+            return result;
+        }
+
         public IEnumerator<object?> GetEnumerator()
         {
             for (int i = 0; i < Count; i++)
