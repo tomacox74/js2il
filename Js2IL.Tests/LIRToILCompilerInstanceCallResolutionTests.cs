@@ -18,6 +18,17 @@ public class LIRToILCompilerInstanceCallResolutionTests
         public double indexOf(object[]? args) => 42;
     }
 
+    private sealed class PascalCaseOnlyFixture
+    {
+        public object Log(object[] args) => args.Length;
+    }
+
+    private sealed class MixedCaseFixture
+    {
+        public object log(object[] args) => args.Length;
+        public object Log(object[] args) => args.Length;
+    }
+
     [Fact]
     public void ResolveTypedInstanceMethodOverload_PrefersExactObjectOverload_ForArrayPushArity1()
     {
@@ -60,5 +71,24 @@ public class LIRToILCompilerInstanceCallResolutionTests
         Assert.NotNull(chosen);
         Assert.Equal(typeof(InheritedConflictFixture), chosen!.DeclaringType);
         Assert.Equal(typeof(object[]), chosen.GetParameters()[0].ParameterType);
+    }
+
+    [Fact]
+    public void ResolveTypedInstanceMethodOverload_UsesCaseInsensitiveFallback_WhenExactCaseMissing()
+    {
+        var chosen = LIRToILCompiler.ResolveTypedInstanceMethodOverload(typeof(PascalCaseOnlyFixture), "log", argCount: 4);
+
+        Assert.NotNull(chosen);
+        Assert.Equal("Log", chosen!.Name);
+        Assert.Equal(typeof(object[]), chosen.GetParameters()[0].ParameterType);
+    }
+
+    [Fact]
+    public void ResolveTypedInstanceMethodOverload_PrefersExactCase_OverCaseInsensitiveFallback()
+    {
+        var chosen = LIRToILCompiler.ResolveTypedInstanceMethodOverload(typeof(MixedCaseFixture), "log", argCount: 4);
+
+        Assert.NotNull(chosen);
+        Assert.Equal("log", chosen!.Name);
     }
 }
