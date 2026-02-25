@@ -352,6 +352,11 @@ public sealed partial class HIRToLIRLowerer
 
                 static ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
                 {
+                    if (IsSafeInjectedCommonJsRequireParameter(b))
+                    {
+                        return new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate));
+                    }
+
                     // Propagate unboxed primitives for stable inferred types. This matches the current
                     // typed-scope-field support in TypeGenerator/VariableRegistry.
                     if (b.IsStableType)

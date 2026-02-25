@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2245
+				// Method begins at RVA 0x21f5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -39,83 +39,62 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2178
+			// Method begins at RVA 0x2144
 			// Header size: 12
-			// Code size: 154 (0x9a)
+			// Code size: 126 (0x7e)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object[],
-				[2] object,
-				[3] object
+				[1] object,
+				[2] object
 			)
 
-			IL_0000: ldc.i4.1
-			IL_0001: newarr [System.Runtime]System.Object
-			IL_0006: dup
-			IL_0007: ldc.i4.0
-			IL_0008: ldarg.0
-			IL_0009: ldc.i4.0
-			IL_000a: ldelem.ref
-			IL_000b: stelem.ref
-			IL_000c: stloc.1
-			IL_000d: ldarg.0
-			IL_000e: ldc.i4.0
-			IL_000f: ldelem.ref
-			IL_0010: castclass Modules.FSPromises_WriteFile_Utf8/Scope
-			IL_0015: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::require
-			IL_001a: ldloc.1
-			IL_001b: ldstr "fs"
-			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.FSPromises_WriteFile_Utf8/Scope
+			IL_0008: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+			IL_000d: ldstr "fs"
+			IL_0012: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+			IL_0017: stloc.1
+			IL_0018: ldarg.0
+			IL_0019: ldc.i4.0
+			IL_001a: ldelem.ref
+			IL_001b: castclass Modules.FSPromises_WriteFile_Utf8/Scope
+			IL_0020: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
 			IL_0025: stloc.2
-			IL_0026: ldarg.0
-			IL_0027: ldc.i4.0
-			IL_0028: ldelem.ref
-			IL_0029: castclass Modules.FSPromises_WriteFile_Utf8/Scope
-			IL_002e: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-			IL_0033: stloc.3
-			IL_0034: ldloc.2
-			IL_0035: ldstr "readFileSync"
-			IL_003a: ldloc.3
-			IL_003b: ldstr "utf8"
-			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0045: stloc.3
-			IL_0046: ldloc.3
-			IL_0047: stloc.0
-			IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004d: ldstr "Written content:"
-			IL_0052: ldloc.0
-			IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0058: pop
-			IL_0059: ldc.i4.1
-			IL_005a: newarr [System.Runtime]System.Object
-			IL_005f: dup
-			IL_0060: ldc.i4.0
-			IL_0061: ldarg.0
-			IL_0062: ldc.i4.0
-			IL_0063: ldelem.ref
-			IL_0064: stelem.ref
-			IL_0065: stloc.1
-			IL_0066: ldarg.0
-			IL_0067: ldc.i4.0
-			IL_0068: ldelem.ref
-			IL_0069: castclass Modules.FSPromises_WriteFile_Utf8/Scope
-			IL_006e: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::require
-			IL_0073: ldloc.1
-			IL_0074: ldstr "fs"
-			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-			IL_007e: stloc.3
-			IL_007f: ldloc.3
-			IL_0080: ldstr "rmSync"
-			IL_0085: ldarg.0
-			IL_0086: ldc.i4.0
-			IL_0087: ldelem.ref
-			IL_0088: castclass Modules.FSPromises_WriteFile_Utf8/Scope
-			IL_008d: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-			IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0097: pop
-			IL_0098: ldnull
-			IL_0099: ret
+			IL_0026: ldloc.1
+			IL_0027: ldstr "readFileSync"
+			IL_002c: ldloc.2
+			IL_002d: ldstr "utf8"
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0037: stloc.2
+			IL_0038: ldloc.2
+			IL_0039: stloc.0
+			IL_003a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003f: ldstr "Written content:"
+			IL_0044: ldloc.0
+			IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_004a: pop
+			IL_004b: ldarg.0
+			IL_004c: ldc.i4.0
+			IL_004d: ldelem.ref
+			IL_004e: castclass Modules.FSPromises_WriteFile_Utf8/Scope
+			IL_0053: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+			IL_0058: ldstr "fs"
+			IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+			IL_0062: stloc.2
+			IL_0063: ldloc.2
+			IL_0064: ldstr "rmSync"
+			IL_0069: ldarg.0
+			IL_006a: ldc.i4.0
+			IL_006b: ldelem.ref
+			IL_006c: castclass Modules.FSPromises_WriteFile_Utf8/Scope
+			IL_0071: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
+			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_007b: pop
+			IL_007c: ldnull
+			IL_007d: ret
 		} // end of method ArrowFunction_L7C63::__js_call__
 
 	} // end of class ArrowFunction_L7C63
@@ -138,7 +117,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x224e
+				// Method begins at RVA 0x21fe
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -159,7 +138,7 @@
 				object err
 			) cil managed 
 		{
-			// Method begins at RVA 0x221e
+			// Method begins at RVA 0x21ce
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -186,14 +165,14 @@
 			46 69 6c 65 3d 7b 74 65 73 74 46 69 6c 65 7d 00 00
 		)
 		// Fields
-		.field public object require
+		.field public class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require
 		.field public object testFile
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x223c
+			// Method begins at RVA 0x21ec
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -219,91 +198,83 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 284 (0x11c)
+		// Code size: 232 (0xe8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FSPromises_WriteFile_Utf8/Scope,
 			[1] object,
 			[2] object,
-			[3] object[],
-			[4] object,
-			[5] object
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.FSPromises_WriteFile_Utf8/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Modules.FSPromises_WriteFile_Utf8/Scope::require
-		IL_000d: ldc.i4.1
-		IL_000e: newarr [System.Runtime]System.Object
-		IL_0013: dup
-		IL_0014: ldc.i4.0
-		IL_0015: ldnull
-		IL_0016: stelem.ref
-		IL_0017: stloc.3
-		IL_0018: ldloc.0
-		IL_0019: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::require
+		IL_0008: stfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+		IL_000d: ldloc.0
+		IL_000e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+		IL_0013: ldstr "fs/promises"
+		IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_001d: stloc.3
 		IL_001e: ldloc.3
-		IL_001f: ldstr "fs/promises"
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_0029: stloc.s 4
-		IL_002b: ldloc.s 4
-		IL_002d: stloc.1
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldnull
-		IL_0037: stelem.ref
-		IL_0038: stloc.3
-		IL_0039: ldloc.0
-		IL_003a: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::require
-		IL_003f: ldloc.3
-		IL_0040: ldstr "path"
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_004a: stloc.s 4
-		IL_004c: ldloc.s 4
-		IL_004e: stloc.2
-		IL_004f: ldc.i4.1
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: ldnull
-		IL_0058: stelem.ref
-		IL_0059: stloc.3
-		IL_005a: ldloc.0
-		IL_005b: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::require
-		IL_0060: ldloc.3
-		IL_0061: ldstr "os"
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_006b: stloc.s 4
-		IL_006d: ldloc.s 4
-		IL_006f: ldstr "tmpdir"
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0079: stloc.s 4
-		IL_007b: ldloc.2
-		IL_007c: ldstr "join"
-		IL_0081: ldloc.s 4
-		IL_0083: ldstr "test-writefile.txt"
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_008d: stloc.s 4
-		IL_008f: ldloc.0
-		IL_0090: ldloc.s 4
-		IL_0092: stfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-		IL_0097: ldloc.0
-		IL_0098: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-		IL_009d: stloc.s 4
-		IL_009f: ldloc.1
-		IL_00a0: ldstr "writeFile"
-		IL_00a5: ldloc.s 4
-		IL_00a7: ldstr "Written by fs/promises"
-		IL_00ac: ldstr "utf8"
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_001f: stloc.1
+		IL_0020: ldloc.0
+		IL_0021: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+		IL_0026: ldstr "path"
+		IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0030: stloc.3
+		IL_0031: ldloc.3
+		IL_0032: stloc.2
+		IL_0033: ldloc.0
+		IL_0034: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+		IL_0039: ldstr "os"
+		IL_003e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0043: stloc.3
+		IL_0044: ldloc.3
+		IL_0045: ldstr "tmpdir"
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_004f: stloc.3
+		IL_0050: ldloc.2
+		IL_0051: ldstr "join"
+		IL_0056: ldloc.3
+		IL_0057: ldstr "test-writefile.txt"
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0061: stloc.3
+		IL_0062: ldloc.0
+		IL_0063: ldloc.3
+		IL_0064: stfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
+		IL_0069: ldloc.0
+		IL_006a: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
+		IL_006f: stloc.3
+		IL_0070: ldloc.1
+		IL_0071: ldstr "writeFile"
+		IL_0076: ldloc.3
+		IL_0077: ldstr "Written by fs/promises"
+		IL_007c: ldstr "utf8"
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_0086: stloc.3
+		IL_0087: ldnull
+		IL_0088: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L7C63::__js_call__(object[], object)
+		IL_008e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+		IL_0093: ldc.i4.1
+		IL_0094: newarr [System.Runtime]System.Object
+		IL_0099: dup
+		IL_009a: ldc.i4.0
+		IL_009b: ldloc.0
+		IL_009c: stelem.ref
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00a7: stloc.s 4
+		IL_00a9: ldloc.3
+		IL_00aa: ldstr "then"
+		IL_00af: ldloc.s 4
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_00b6: stloc.s 4
 		IL_00b8: ldnull
-		IL_00b9: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L7C63::__js_call__(object[], object)
-		IL_00bf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+		IL_00b9: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L11C10::__js_call__(object, object)
+		IL_00bf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_00c4: ldc.i4.1
 		IL_00c5: newarr [System.Runtime]System.Object
 		IL_00ca: dup
@@ -312,30 +283,13 @@
 		IL_00cd: stelem.ref
 		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00d8: stloc.s 5
-		IL_00da: ldloc.s 4
-		IL_00dc: ldstr "then"
-		IL_00e1: ldloc.s 5
-		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00e8: stloc.s 5
-		IL_00ea: ldnull
-		IL_00eb: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L11C10::__js_call__(object, object)
-		IL_00f1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00f6: ldc.i4.1
-		IL_00f7: newarr [System.Runtime]System.Object
-		IL_00fc: dup
-		IL_00fd: ldc.i4.0
-		IL_00fe: ldloc.0
-		IL_00ff: stelem.ref
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_010a: stloc.s 4
-		IL_010c: ldloc.s 5
-		IL_010e: ldstr "catch"
-		IL_0113: ldloc.s 4
-		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_011a: pop
-		IL_011b: ret
+		IL_00d8: stloc.3
+		IL_00d9: ldloc.s 4
+		IL_00db: ldstr "catch"
+		IL_00e0: ldloc.3
+		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e6: pop
+		IL_00e7: ret
 	} // end of method FSPromises_WriteFile_Utf8::__js_module_init__
 
 } // end of class Modules.FSPromises_WriteFile_Utf8
@@ -347,7 +301,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2257
+		// Method begins at RVA 0x2207
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -93,6 +93,36 @@ namespace Js2IL.Services
 
         private static string GetRegistryScopeName(Scope scope) => ScopeNaming.GetRegistryScopeName(scope);
 
+        private static bool IsSafeInjectedCommonJsRequireBinding(Scope scope, BindingInfo binding)
+        {
+            return string.Equals(binding.Name, "require", StringComparison.Ordinal)
+                && scope.Kind == ScopeKind.Global
+                && scope.Parameters.Contains("require")
+                && ReferenceEquals(binding.DeclarationNode, scope.AstNode)
+                && !binding.HasWrite;
+        }
+
+        private static Type GetDeclaredScopeFieldClrType(Scope scope, BindingInfo binding)
+        {
+            if (IsSafeInjectedCommonJsRequireBinding(scope, binding))
+            {
+                return typeof(JavaScriptRuntime.CommonJS.RequireDelegate);
+            }
+
+            if (binding.IsStableType && binding.ClrType != null)
+            {
+                if (binding.ClrType == typeof(double)
+                    || binding.ClrType == typeof(bool)
+                    || binding.ClrType == typeof(string)
+                    || binding.ClrType == typeof(JavaScriptRuntime.Array))
+                {
+                    return binding.ClrType;
+                }
+            }
+
+            return typeof(object);
+        }
+
         private static string GetClrTypeNameForScope(Scope scope)
         {
             // If the symbol table authored an explicit CLR type name for a *function scope* and it
@@ -145,8 +175,7 @@ namespace Js2IL.Services
             return scope.Name;
         }
 
-
-    private void CreateTypeFields(Scope scope, TypeBuilder typeBuilder)
+        private void CreateTypeFields(Scope scope, TypeBuilder typeBuilder)
         {
             var scopeKey = GetRegistryScopeName(scope);
             
@@ -198,38 +227,31 @@ namespace Js2IL.Services
                     continue;
                 }
 
-                // Create field signature (all variables are object type for now)
+                var declaredFieldClrType = GetDeclaredScopeFieldClrType(scope, binding);
+
+                // Create field signature.
                 var fieldSignature = new BlobBuilder();
                 var fieldTypeEncoder = new BlobEncoder(fieldSignature)
                     .Field()
                     .Type();
 
-                // Conservative first step: emit typed fields for stable inferred primitives.
-                // Everything else remains System.Object for conservative semantics.
-                if (binding.IsStableType)
+                if (declaredFieldClrType == typeof(double))
                 {
-                    if (binding.ClrType == typeof(double))
-                    {
-                        fieldTypeEncoder.Double();
-                    }
-                    else if (binding.ClrType == typeof(bool))
-                    {
-                        fieldTypeEncoder.Boolean();
-                    }
-                    else if (binding.ClrType == typeof(string))
-                    {
-                        fieldTypeEncoder.String();
-                    }
-                    else if (binding.ClrType == typeof(JavaScriptRuntime.Array))
-                    {
-                        fieldTypeEncoder.Type(
-                            _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)),
-                            isValueType: false);
-                    }
-                    else
-                    {
-                        fieldTypeEncoder.Object();
-                    }
+                    fieldTypeEncoder.Double();
+                }
+                else if (declaredFieldClrType == typeof(bool))
+                {
+                    fieldTypeEncoder.Boolean();
+                }
+                else if (declaredFieldClrType == typeof(string))
+                {
+                    fieldTypeEncoder.String();
+                }
+                else if (declaredFieldClrType != typeof(object))
+                {
+                    fieldTypeEncoder.Type(
+                        _bclReferences.TypeReferenceRegistry.GetOrAdd(declaredFieldClrType),
+                        isValueType: false);
                 }
                 else
                 {
@@ -685,6 +707,7 @@ namespace Js2IL.Services
                             $"TypeGenerator field mapping missing for '{variableName}' in scope '{registryName}'.");
                     }
 
+                    var declaredFieldClrType = GetDeclaredScopeFieldClrType(scope, bindingInfo);
                     _variableRegistry.AddVariable(
                         registryName,  // Use registry name (qualified for class members, simple for functions)
                         variableName,
@@ -693,7 +716,8 @@ namespace Js2IL.Services
                         scopeTypeHandle,
                         bindingInfo.Kind,
                         bindingInfo.ClrType,
-                        bindingInfo.IsStableType
+                        bindingInfo.IsStableType,
+                        declaredFieldClrType
                     );
                 }
                 else

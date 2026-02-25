@@ -1063,24 +1063,44 @@ public sealed partial class HIRToLIRLowerer
 
     private static Type ResolveTypedInstanceCallReturnClrType(Type receiverType, string methodName, int argCount)
     {
-        var allMethods = receiverType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-        var methods = allMethods
-            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+        var allMethods = receiverType
+            .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
             .ToList();
 
-        // Prefer JS-style variadic methods taking object[] args.
-        var chosen = methods.FirstOrDefault(mi =>
-        {
-            var ps = mi.GetParameters();
-            return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
-        });
+        var methods = allMethods
+            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal))
+            .ToList();
 
-        // Else: exact arity match with object parameters.
-        chosen ??= methods.FirstOrDefault(mi =>
+        if (methods.Count == 0)
         {
-            var ps = mi.GetParameters();
-            return ps.Length == argCount && ps.All(p => p.ParameterType == typeof(object));
-        });
+            methods = allMethods
+                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
+        var preferredMethods = methods.Where(mi => mi.DeclaringType == receiverType).ToList();
+        if (preferredMethods.Count > 0)
+        {
+            methods = preferredMethods;
+        }
+
+        var chosen = methods
+            .Select(mi => new { Method = mi, Parameters = mi.GetParameters() })
+            .Where(static x =>
+                (x.Parameters.Length == 1 && x.Parameters[0].ParameterType == typeof(object[]))
+                || x.Parameters.All(p => p.ParameterType == typeof(object)))
+            .Select(x => new
+            {
+                x.Method,
+                x.Parameters,
+                IsVariadicFallback = x.Parameters.Length == 1 && x.Parameters[0].ParameterType == typeof(object[])
+            })
+            .Where(x => x.IsVariadicFallback || x.Parameters.Length == argCount)
+            .OrderBy(x => x.IsVariadicFallback ? 1 : 0)
+            .ThenBy(x => x.Parameters.Length)
+            .ThenBy(x => x.Method.ToString(), StringComparer.Ordinal)
+            .Select(x => x.Method)
+            .FirstOrDefault();
 
         return chosen?.ReturnType ?? typeof(object);
     }

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f3
+			// Method begins at RVA 0x20d8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 151 (0x97)
+		// Code size: 124 (0x7c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.UnaryOperator_UnaryNegation_CoercesToNumber/Scope,
@@ -56,55 +56,40 @@
 		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnaryMinus(object)
 		IL_0010: stloc.1
 		IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0016: ldc.i4.1
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldloc.1
-		IL_001f: stelem.ref
-		IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0025: pop
-		IL_0026: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002b: stloc.2
-		IL_002c: ldstr "2"
-		IL_0031: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0036: stloc.3
-		IL_0037: ldloc.3
-		IL_0038: brtrue IL_0052
+		IL_0016: ldloc.1
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_001c: pop
+		IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0022: stloc.2
+		IL_0023: ldstr "2"
+		IL_0028: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_002d: stloc.3
+		IL_002e: ldloc.3
+		IL_002f: brtrue IL_0049
 
-		IL_003d: ldc.r8 1
-		IL_0046: box [System.Runtime]System.Double
-		IL_004b: stloc.s 4
-		IL_004d: br IL_0059
+		IL_0034: ldc.r8 1
+		IL_003d: box [System.Runtime]System.Double
+		IL_0042: stloc.s 4
+		IL_0044: br IL_0050
 
-		IL_0052: ldstr "2"
+		IL_0049: ldstr "2"
+		IL_004e: stloc.s 4
+
+		IL_0050: ldloc.s 4
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnaryMinus(object)
 		IL_0057: stloc.s 4
-
-		IL_0059: ldloc.s 4
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnaryMinus(object)
-		IL_0060: stloc.s 4
-		IL_0062: ldloc.2
-		IL_0063: ldc.i4.1
-		IL_0064: newarr [System.Runtime]System.Object
-		IL_0069: dup
-		IL_006a: ldc.i4.0
-		IL_006b: ldloc.s 4
-		IL_006d: stelem.ref
-		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0073: pop
-		IL_0074: ldstr "3"
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnaryMinus(object)
-		IL_007e: stloc.s 4
-		IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0085: ldc.i4.1
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: dup
-		IL_008c: ldc.i4.0
-		IL_008d: ldloc.s 4
-		IL_008f: stelem.ref
-		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0095: pop
-		IL_0096: ret
+		IL_0059: ldloc.2
+		IL_005a: ldloc.s 4
+		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0061: pop
+		IL_0062: ldstr "3"
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::UnaryMinus(object)
+		IL_006c: stloc.s 4
+		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0073: ldloc.s 4
+		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007a: pop
+		IL_007b: ret
 	} // end of method UnaryOperator_UnaryNegation_CoercesToNumber::__js_module_init__
 
 } // end of class Modules.UnaryOperator_UnaryNegation_CoercesToNumber
@@ -116,7 +101,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fc
+		// Method begins at RVA 0x20e1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

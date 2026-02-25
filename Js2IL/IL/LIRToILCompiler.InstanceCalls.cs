@@ -15,49 +15,9 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        // Resolve the instance method using heuristics aligned with intrinsic static calls.
-        // Prefer exact arity match with object parameters, else object[] signature (variadic JS-style).
         var receiverType = instruction.ReceiverClrType;
-
-        var allMethods = receiverType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-        var methods = allMethods
-            .Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-
         var argCount = instruction.Arguments.Count;
-
-        System.Reflection.MethodInfo? chosen = null;
-
-        // Fast-path: route Array.push(singleArg) to the single-item overload to avoid object[] allocation.
-        if (receiverType == typeof(JavaScriptRuntime.Array)
-            && argCount == 1
-            && string.Equals(instruction.MethodName, nameof(JavaScriptRuntime.Array.push), StringComparison.OrdinalIgnoreCase))
-        {
-            chosen = methods.FirstOrDefault(mi =>
-            {
-                var ps = mi.GetParameters();
-                return ps.Length == 1 && ps[0].ParameterType == typeof(object);
-            });
-        }
-
-        // Prefer exact-arity overload first (supports arity-specific optimizations)
-        chosen ??= methods.FirstOrDefault(mi =>
-        {
-            var ps = mi.GetParameters();
-            // Match on exact parameter count where all parameters are object-assignable
-            // (nullability is compile-time only, so object? appears as object at runtime)
-            return ps.Length == argCount && ps.All(p => typeof(object).IsAssignableFrom(p.ParameterType) || p.ParameterType == typeof(object));
-        });
-
-        // Fall back to params array if no exact match
-        if (chosen == null)
-        {
-            chosen = methods.FirstOrDefault(mi =>
-            {
-                var ps = mi.GetParameters();
-                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
-            });
-        }
+        var chosen = ResolveTypedInstanceMethodOverload(receiverType, instruction.MethodName, argCount);
 
         if (chosen == null)
         {
@@ -126,41 +86,8 @@ internal sealed partial class LIRToILCompiler
         MethodDescriptor methodDescriptor)
     {
         var receiverType = instruction.ReceiverClrType;
-
-        var allMethods = receiverType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-        var methods = allMethods
-            .Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-
         var argCount = instruction.Arguments.Count;
-
-        System.Reflection.MethodInfo? chosen = null;
-
-        if (receiverType == typeof(JavaScriptRuntime.Array)
-            && argCount == 1
-            && string.Equals(instruction.MethodName, nameof(JavaScriptRuntime.Array.push), StringComparison.OrdinalIgnoreCase))
-        {
-            chosen = methods.FirstOrDefault(mi =>
-            {
-                var ps = mi.GetParameters();
-                return ps.Length == 1 && ps[0].ParameterType == typeof(object);
-            });
-        }
-
-        chosen ??= methods.FirstOrDefault(mi =>
-        {
-            var ps = mi.GetParameters();
-            return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
-        });
-
-        if (chosen == null)
-        {
-            chosen = methods.FirstOrDefault(mi =>
-            {
-                var ps = mi.GetParameters();
-                return ps.Length == argCount && ps.All(p => p.ParameterType == typeof(object));
-            });
-        }
+        var chosen = ResolveTypedInstanceMethodOverload(receiverType, instruction.MethodName, argCount);
 
         if (chosen == null)
         {
@@ -189,6 +116,53 @@ internal sealed partial class LIRToILCompiler
         var methodRef = _memberRefRegistry.GetOrAddMethod(receiverType, chosen.Name, paramTypes);
         ilEncoder.OpCode(ILOpCode.Callvirt);
         ilEncoder.Token(methodRef);
+    }
+
+    internal static System.Reflection.MethodInfo? ResolveTypedInstanceMethodOverload(
+        Type receiverType,
+        string methodName,
+        int argCount)
+    {
+        var allMethods = receiverType
+            .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+            .ToList();
+
+        var namedMethods = allMethods
+            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal))
+            .ToList();
+
+        // Prefer exact JS casing, but keep a case-insensitive fallback for CLR surfaces
+        // that only expose PascalCase method names.
+        if (namedMethods.Count == 0)
+        {
+            namedMethods = allMethods
+                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
+        var methods = namedMethods.Where(mi => mi.DeclaringType == receiverType).ToList();
+        if (methods.Count == 0)
+        {
+            methods = namedMethods;
+        }
+
+        return methods
+            .Select(mi => new { Method = mi, Parameters = mi.GetParameters() })
+            .Where(static x =>
+                (x.Parameters.Length == 1 && x.Parameters[0].ParameterType == typeof(object[]))
+                || x.Parameters.All(p => p.ParameterType == typeof(object)))
+            .Select(x => new
+            {
+                x.Method,
+                x.Parameters,
+                IsVariadicFallback = x.Parameters.Length == 1 && x.Parameters[0].ParameterType == typeof(object[])
+            })
+            .Where(x => x.IsVariadicFallback || x.Parameters.Length == argCount)
+            .OrderBy(x => x.IsVariadicFallback ? 1 : 0)
+            .ThenBy(x => x.Parameters.Length)
+            .ThenBy(x => x.Method.ToString(), StringComparer.Ordinal)
+            .Select(x => x.Method)
+            .FirstOrDefault();
     }
 
     private void EmitObjectArrayFromTemps(

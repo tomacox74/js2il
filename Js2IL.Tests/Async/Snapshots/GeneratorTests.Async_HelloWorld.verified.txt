@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f5
+				// Method begins at RVA 0x20da
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -39,22 +39,17 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x20d0
+			// Method begins at RVA 0x20be
 			// Header size: 1
-			// Code size: 27 (0x1b)
+			// Code size: 18 (0x12)
 			.maxstack 8
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldc.i4.1
-			IL_0006: newarr [System.Runtime]System.Object
-			IL_000b: dup
-			IL_000c: ldc.i4.0
-			IL_000d: ldstr "Hello, World!"
-			IL_0012: stelem.ref
-			IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0018: pop
-			IL_0019: ldnull
-			IL_001a: ret
+			IL_0005: ldstr "Hello, World!"
+			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_000f: pop
+			IL_0010: ldnull
+			IL_0011: ret
 		} // end of method helloWorld::__js_call__
 
 	} // end of class helloWorld
@@ -74,7 +69,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ec
+			// Method begins at RVA 0x20d1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -100,7 +95,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 116 (0x74)
+		// Code size: 98 (0x62)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_HelloWorld/Scope,
@@ -124,36 +119,26 @@
 		IL_0022: ldloc.2
 		IL_0023: stloc.1
 		IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0029: ldc.i4.1
-		IL_002a: newarr [System.Runtime]System.Object
-		IL_002f: dup
-		IL_0030: ldc.i4.0
-		IL_0031: ldstr "Before calling async function"
-		IL_0036: stelem.ref
-		IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003c: pop
-		IL_003d: ldnull
-		IL_003e: ldftn object Modules.Async_HelloWorld/helloWorld::__js_call__(object[], object)
-		IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-		IL_0049: ldc.i4.1
-		IL_004a: newarr [System.Runtime]System.Object
-		IL_004f: dup
-		IL_0050: ldc.i4.0
-		IL_0051: ldloc.0
-		IL_0052: stelem.ref
-		IL_0053: ldnull
-		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
-		IL_0059: pop
-		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005f: ldc.i4.1
-		IL_0060: newarr [System.Runtime]System.Object
-		IL_0065: dup
-		IL_0066: ldc.i4.0
-		IL_0067: ldstr "After calling async function"
-		IL_006c: stelem.ref
-		IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0072: pop
-		IL_0073: ret
+		IL_0029: ldstr "Before calling async function"
+		IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0033: pop
+		IL_0034: ldnull
+		IL_0035: ldftn object Modules.Async_HelloWorld/helloWorld::__js_call__(object[], object)
+		IL_003b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+		IL_0040: ldc.i4.1
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldloc.0
+		IL_0049: stelem.ref
+		IL_004a: ldnull
+		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::Invoke(object[], object)
+		IL_0050: pop
+		IL_0051: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0056: ldstr "After calling async function"
+		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0060: pop
+		IL_0061: ret
 	} // end of method Async_HelloWorld::__js_module_init__
 
 } // end of class Modules.Async_HelloWorld
@@ -165,7 +150,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fe
+		// Method begins at RVA 0x20e3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
