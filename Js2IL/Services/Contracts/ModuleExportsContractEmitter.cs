@@ -292,7 +292,7 @@ internal sealed class ModuleExportsContractEmitter
                     ensureClassInstanceInterface: null,
                     classFields: stableFields,
                     symbolTable: symbolTable,
-                    scopeLookupNode: md);
+                    scopeLookupNode: fn);
                 EmitInterfaceMethod(typeBuilder, method);
             }
         }
