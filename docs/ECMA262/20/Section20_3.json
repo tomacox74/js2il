@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "20.3",
   "title": "Boolean Objects",
-  "status": "Incomplete",
+  "status": "Supported",
   "specUrl": "https://tc39.es/ecma262/#sec-boolean-objects",
   "parent": {
     "clause": "20"
@@ -12,61 +12,61 @@
     {
       "clause": "20.3.1",
       "title": "The Boolean Constructor",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-boolean-constructor"
     },
     {
       "clause": "20.3.1.1",
       "title": "Boolean ( value )",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-boolean-constructor-boolean-value"
     },
     {
       "clause": "20.3.2",
       "title": "Properties of the Boolean Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-boolean-constructor"
     },
     {
       "clause": "20.3.2.1",
       "title": "Boolean.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-boolean.prototype"
     },
     {
       "clause": "20.3.3",
       "title": "Properties of the Boolean Prototype Object",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-boolean-prototype-object"
     },
     {
       "clause": "20.3.3.1",
       "title": "Boolean.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-boolean.prototype.constructor"
     },
     {
       "clause": "20.3.3.2",
       "title": "Boolean.prototype.toString ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-boolean.prototype.tostring"
     },
     {
       "clause": "20.3.3.3",
       "title": "Boolean.prototype.valueOf ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-boolean.prototype.valueof"
     },
     {
       "clause": "20.3.3.3.1",
       "title": "ThisBooleanValue ( value )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-thisbooleanvalue"
     },
     {
       "clause": "20.3.4",
       "title": "Properties of Boolean Instances",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-boolean-instances"
     }
   ],
@@ -75,22 +75,32 @@
       {
         "clause": "20.3.1.1",
         "feature": "Boolean(value) (callable primitive conversion)",
-        "status": "Supported with Limitations",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-boolean-constructor-boolean-value",
         "testScripts": [
           "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js"
         ],
-        "notes": "Lowered by the compiler to truthiness conversion (JavaScriptRuntime.TypeUtilities.ToBoolean). Limitations: some runtime-only types (e.g. BigInt/BigInteger) are currently treated as always truthy."
+        "notes": "Lowered by the compiler to truthiness conversion (JavaScriptRuntime.TypeUtilities.ToBoolean)."
       },
       {
         "clause": "20.3.1.1",
         "feature": "new Boolean(value)",
-        "status": "Supported with Limitations",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-boolean-constructor-boolean-value",
         "testScripts": [
           "Js2IL.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js"
         ],
-        "notes": "Implemented as compiler sugar that returns a primitive boolean. This does not create a Boolean wrapper object, so behavior differs from spec in cases where object/primitive distinction matters (e.g. truthiness, prototype methods)."
+        "notes": "Constructs a Boolean wrapper object with `Boolean.prototype` semantics."
+      },
+      {
+        "clause": "20.3.3",
+        "feature": "Boolean.prototype constructor/toString/valueOf",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-boolean-prototype-object",
+        "testScripts": [
+          "Js2IL.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js"
+        ],
+        "notes": "Implements `Boolean.prototype.constructor`, `Boolean.prototype.toString()`, `Boolean.prototype.valueOf()`, and `ThisBooleanValue` behavior for primitives and Boolean wrapper instances."
       }
     ]
   }

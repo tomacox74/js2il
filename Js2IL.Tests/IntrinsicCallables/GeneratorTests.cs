@@ -115,6 +115,18 @@ namespace Js2IL.Tests.IntrinsicCallables
             return GenerateTest(nameof(IntrinsicCallables_Symbol_Callable_Basic));
         }
 
+
+        [Fact]
+        public Task IntrinsicCallables_Symbol_Registry_WellKnown()
+        {
+            return GenerateTest(nameof(IntrinsicCallables_Symbol_Registry_WellKnown));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_Symbol_Prototype_Basic()
+        {
+            return GenerateTest(nameof(IntrinsicCallables_Symbol_Prototype_Basic));
+        }
         [Fact]
         public Task IntrinsicCallables_BigInt_Callable_Basic()
         {

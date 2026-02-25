@@ -23,6 +23,8 @@ _Nothing yet._
 - perf: optimize bracket reads/writes for proven string keys by adding string-specific runtime overload paths (`Object.GetItem(object, string)`, `SetItem(object, string, object)`, `GetItemAsNumber(object, string)`), plus string-specialized LIR normalization/emission to reduce key-normalization overhead in hot property-access paths (PR #696, fixes #310).
 - perf: add flow-sensitive numeric refinement propagation in HIR→LIR lowering to reuse proven unboxed-number temps and reduce redundant `TypeUtilities.ToNumber(object)` calls, with conservative invalidation at assignments/control-flow labels and safe tracking limited to non-captured/non-global bindings (PR #697, fixes #315).
 - runtime/spec: expand ECMA-262 §20.5 Error Objects coverage with callable global `Error(...)`, `Error.isError(arg)`, and baseline `Error.prototype` surface (`constructor`, `name`, `message`, `toString`) plus execution/generator coverage and updated section tracking docs.
+- Runtime/spec: complete ECMA-262 §20.3 Boolean Objects support by implementing Boolean wrapper construction for `new Boolean(value)`, `Boolean.prototype` wiring (`constructor`, `toString`, `valueOf`), and `ThisBooleanValue` semantics for primitive and wrapper receivers.
+- runtime/spec: expand ECMA-262 §20.4 Symbol Objects coverage with global registry APIs (`Symbol.for`, `Symbol.keyFor`), full well-known symbol constructor properties, and Symbol prototype basics (`description`, `toString`, `valueOf`) plus execution/generator test coverage.
 - docs(ecma262): mark §20.1 `Object.is` as supported and link existing execution/generator coverage in `docs/ECMA262/20/Section20_1.{json,md}`.
 
 ## v0.8.19 - 2026-02-23
