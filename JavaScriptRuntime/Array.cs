@@ -10,9 +10,11 @@ using System.Globalization;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
-    public class Array : List<object?>
+    public class Array : IEnumerable<object?>
     {
         internal static readonly ExpandoObject Prototype = CreatePrototype();
+        private readonly List<object?> _items;
+        private int _logicalLength;
 
         private static ExpandoObject CreatePrototype()
         {
@@ -23,6 +25,27 @@ namespace JavaScriptRuntime
             dict["reduceRight"] = (Func<object[], object?[], object?>)PrototypeReduceRight;
             dict["indexOf"] = (Func<object[], object?[], object?>)PrototypeIndexOf;
             return exp;
+        }
+
+        private int DenseCount => _items.Count;
+        private int LogicalCount => _logicalLength > DenseCount ? _logicalLength : DenseCount;
+
+        private void EnsureDenseStorage()
+        {
+            if (_items.Count >= _logicalLength)
+            {
+                return;
+            }
+
+            if (_logicalLength > _items.Capacity)
+            {
+                _items.Capacity = _logicalLength;
+            }
+
+            while (_items.Count < _logicalLength)
+            {
+                _items.Add(null);
+            }
         }
 
         private static object PrototypePush(object[] scopes, object?[]? args)
@@ -347,15 +370,142 @@ namespace JavaScriptRuntime
             return (int)d;
         }
 
-        public Array() : base()
+        public Array()
         {
+            _items = new List<object?>();
+            _logicalLength = 0;
         }
-        public Array(int capacity) : base(capacity)
+        public Array(int capacity)
         {
+            _items = new List<object?>(capacity);
+            _logicalLength = 0;
         }
-        public Array(System.Collections.IEnumerable collection) : base(collection.Cast<object?>())
+        public Array(System.Collections.IEnumerable collection)
         {
+            _items = collection.Cast<object?>().ToList();
+            _logicalLength = _items.Count;
         }
+
+        public int Count => LogicalCount;
+
+        public object? this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+
+                if (index >= _items.Count)
+                {
+                    return null;
+                }
+
+                return _items[index];
+            }
+            set
+            {
+                if (index < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+
+                if (index < _items.Count)
+                {
+                    _items[index] = value;
+                    return;
+                }
+
+                if (index >= _logicalLength)
+                {
+                    _logicalLength = index + 1;
+                }
+
+                EnsureDenseStorage();
+
+                if (index == _items.Count)
+                {
+                    _items.Add(value);
+                }
+                else
+                {
+                    _items[index] = value;
+                }
+            }
+        }
+
+        public void Add(object? item)
+        {
+            EnsureDenseStorage();
+            _items.Add(item);
+            _logicalLength = _items.Count;
+        }
+
+        public void AddRange(IEnumerable<object?> collection)
+        {
+            EnsureDenseStorage();
+            _items.AddRange(collection);
+            _logicalLength = _items.Count;
+        }
+
+        public void Insert(int index, object? item)
+        {
+            EnsureDenseStorage();
+            _items.Insert(index, item);
+            _logicalLength = _items.Count;
+        }
+
+        public void InsertRange(int index, IEnumerable<object?> collection)
+        {
+            EnsureDenseStorage();
+            _items.InsertRange(index, collection);
+            _logicalLength = _items.Count;
+        }
+
+        public void RemoveAt(int index)
+        {
+            EnsureDenseStorage();
+            _items.RemoveAt(index);
+            _logicalLength = _items.Count;
+        }
+
+        public void RemoveRange(int index, int count)
+        {
+            EnsureDenseStorage();
+            _items.RemoveRange(index, count);
+            _logicalLength = _items.Count;
+        }
+
+        public void Reverse()
+        {
+            EnsureDenseStorage();
+            _items.Reverse();
+            _logicalLength = _items.Count;
+        }
+
+        public void Sort(Comparison<object?> comparison)
+        {
+            EnsureDenseStorage();
+            _items.Sort(comparison);
+            _logicalLength = _items.Count;
+        }
+
+        public void Clear()
+        {
+            _items.Clear();
+            _logicalLength = 0;
+        }
+
+        public IEnumerator<object?> GetEnumerator()
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                yield return this[i];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         // Numeric indexer overload to support compiler intrinsics.
         // Semantics intentionally match JavaScriptRuntime.ObjectRuntime.GetItem/SetItem for Array + numeric index:
@@ -372,7 +522,7 @@ namespace JavaScriptRuntime
                     return null; // undefined
                 }
 
-                return base[intIndex];
+                return this[intIndex];
             }
             set
             {
@@ -398,7 +548,7 @@ namespace JavaScriptRuntime
 
                 if (intIndex < Count)
                 {
-                    base[intIndex] = value;
+                    this[intIndex] = value;
                     return;
                 }
 
@@ -458,10 +608,7 @@ namespace JavaScriptRuntime
                     var len = (int)d;
 
                     var result = new Array();
-                    for (int i = 0; i < len; i++)
-                    {
-                        result.Add(null);
-                    }
+                    result._logicalLength = len;
                     return result;
                 }
 
@@ -483,10 +630,11 @@ namespace JavaScriptRuntime
             this.Clear();
 
             // Preserve JS semantics: length is Count, and missing elements are represented as null (undefined).
-            if (constructed.Count > 0)
+            if (constructed.DenseCount > 0)
             {
                 this.AddRange(constructed);
             }
+            _logicalLength = constructed.Count;
         }
 
         public static Array Empty => new Array();
@@ -598,14 +746,15 @@ namespace JavaScriptRuntime
 
                 if (newLen < this.Count)
                 {
-                    this.RemoveRange(newLen, this.Count - newLen);
+                    if (newLen < _items.Count)
+                    {
+                        _items.RemoveRange(newLen, _items.Count - newLen);
+                    }
+                    _logicalLength = newLen;
                     return;
                 }
 
-                while (this.Count < newLen)
-                {
-                    this.Add(null);
-                }
+                _logicalLength = newLen;
             }
         }
 
@@ -1617,6 +1766,15 @@ namespace JavaScriptRuntime
             return splice(new object[] { start, deleteCount });
         }
 
+        /// <summary>
+        /// Overload with start, deleteCount and one inserted item.
+        /// Avoids params-array packing at common three-argument call sites.
+        /// </summary>
+        public Array splice(object start, object deleteCount, object item1)
+        {
+            return splice(new object[] { start, deleteCount, item1 });
+        }
+
         private static int ToInt(object value, int defaultValue)
         {
             try
@@ -1808,6 +1966,12 @@ namespace JavaScriptRuntime
 
         public double unshift()
         {
+            return (double)this.Count;
+        }
+
+        public double unshift(object item1)
+        {
+            this.Insert(0, item1);
             return (double)this.Count;
         }
 

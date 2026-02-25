@@ -205,6 +205,16 @@ internal static class LIRIntrinsicNormalization
                     continue;
                 }
 
+                // Array length set (string key "length").
+                if (receiverType == typeof(JavaScriptRuntime.Array)
+                    && knownConstStrings.TryGetValue(setItem.Index.Index, out var setItemKey)
+                    && string.Equals(setItemKey, "length", StringComparison.Ordinal))
+                {
+                    // Rewrite: SetItem(array, "length", value, result) -> SetJsArrayLength(array, value, result)
+                    methodBody.Instructions[i] = new LIRSetJsArrayLength(setItem.Object, setItem.Value, setItem.Result);
+                    continue;
+                }
+
                 // Array element set (numeric index).
                 if (receiverType == typeof(JavaScriptRuntime.Array)
                     && IsUnboxedDouble(methodBody, setItem.Index))

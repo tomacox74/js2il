@@ -496,6 +496,10 @@ internal static class Stackify
             case LIRSetInt32ArrayElement:
                 return false;
 
+            // Proven Array length set mutates the array and must never be re-emitted.
+            case LIRSetJsArrayLength:
+                return false;
+
             // Proven Array element set mutates the array and must never be re-emitted.
             case LIRSetJsArrayElement:
                 return false;
@@ -719,6 +723,11 @@ internal static class Stackify
             // (its SSA result is materialized into a local when needed).
             case LIRSetInt32ArrayElement:
                 return (3, 0);
+
+            // LIRSetJsArrayLength: consumes receiver + value; side effects, no net value left on stack
+            // (its SSA result is materialized into a local when needed).
+            case LIRSetJsArrayLength:
+                return (2, 0);
 
             // LIRSetJsArrayElement: consumes receiver + index + value; side effects, no net value left on stack
             // (its SSA result is materialized into a local when needed).
