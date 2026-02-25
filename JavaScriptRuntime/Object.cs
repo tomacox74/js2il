@@ -1884,6 +1884,20 @@ namespace JavaScriptRuntime
                     : JavaScriptRuntime.BigInt.ToString(bigInt);
             }
 
+            // Boolean primitive helper dispatch.
+            if (receiver is bool booleanReceiver)
+            {
+                if (string.Equals(methodName, "toString", StringComparison.Ordinal))
+                {
+                    return booleanReceiver ? "true" : "false";
+                }
+
+                if (string.Equals(methodName, "valueOf", StringComparison.Ordinal))
+                {
+                    return booleanReceiver;
+                }
+            }
+
             // 2) JavaScriptRuntime.Array -> instance methods
             if (receiver is Array jsArray)
             {
