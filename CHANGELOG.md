@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- commonjs/lowering: emit safe injected module-scope `require` fields as strongly typed `JavaScriptRuntime.CommonJS.RequireDelegate` and preserve typed reads so `require("...")` lowers to direct `RequireDelegate::Invoke` instead of late-bound `Closure.InvokeWithArgs*`; updated affected Node FS generator snapshots.
 
 ## v0.8.22 - 2026-02-24
 
