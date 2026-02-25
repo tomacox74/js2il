@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/spec/docs: expand ECMA-262 §20.2 (Function Objects) coverage with `Function.prototype.bind`/`toString` wiring on the intrinsic prototype object, `Function.prototype.constructor` exposure, delegate-backed function `length`/`name` properties, focused execution+generator coverage, and updated `docs/ECMA262/20/Section20_2.{json,md}` support tracking.
 
 ## v0.8.22 - 2026-02-24
 

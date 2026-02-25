@@ -145,6 +145,18 @@ namespace Js2IL.Tests.Function
         public Task Function_Prototype_ObjectCreate_ObjectPrototype() { var testName = nameof(Function_Prototype_ObjectCreate_ObjectPrototype); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_Prototype_Bind_PropertyExists() { var testName = nameof(Function_Prototype_Bind_PropertyExists); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Prototype_Constructor_ReferencesFunction() { var testName = nameof(Function_Prototype_Constructor_ReferencesFunction); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Prototype_ToString_Basic() { var testName = nameof(Function_Prototype_ToString_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Instance_Length_Name_Basic() { var testName = nameof(Function_Instance_Length_Name_Basic); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_MaxParameters_16() { var testName = nameof(Function_MaxParameters_16); return GenerateTest(testName); }
 
         [Fact]

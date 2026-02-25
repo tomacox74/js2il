@@ -114,6 +114,14 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = JavaScriptRuntime.Function.Prototype
             });
+            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.Function.Prototype, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _functionConstructorValue
+            });
             PropertyDescriptorStore.DefineOrUpdate(_arrayConstructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
