@@ -11,6 +11,7 @@ public sealed class Symbol
 {
     private static long _nextId;
     private static readonly Dictionary<string, Symbol> _globalRegistry = new(StringComparer.Ordinal);
+    private static readonly Dictionary<Symbol, string> _globalRegistryReverse = new();
     private static readonly object _registryLock = new();
 
     // Well-known symbols used by core language features.
@@ -128,6 +129,7 @@ public sealed class Symbol
 
             var created = new Symbol(registryKey);
             _globalRegistry[registryKey] = created;
+            _globalRegistryReverse[created] = registryKey;
             return created;
         }
     }
@@ -142,15 +144,7 @@ public sealed class Symbol
 
         lock (_registryLock)
         {
-            foreach (var entry in _globalRegistry)
-            {
-                if (ReferenceEquals(entry.Value, symbol))
-                {
-                    return entry.Key;
-                }
-            }
-
-            return null;
+            return _globalRegistryReverse.TryGetValue(symbol, out var key) ? key : null;
         }
     }
 

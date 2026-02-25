@@ -54,7 +54,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Symbol([description]) callable (basic) | Supported with Limitations | [`IntrinsicCallables_Symbol_Callable_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Callable_Basic.js) | Supports callable invocation with 0/1 arguments, unique symbol instances, and typeof === 'symbol'. Does not implement the full Symbol registry or well-known symbols. |
+| Symbol([description]) callable (basic) | Supported with Limitations | [`IntrinsicCallables_Symbol_Callable_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Callable_Basic.js) | Supports callable invocation with 0/1 arguments, unique symbol instances, and typeof === 'symbol'. Registry APIs and well-known symbols are documented in separate support entries. |
 
 ### 20.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-symbol-constructor))
 
