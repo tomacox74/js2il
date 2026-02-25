@@ -201,10 +201,45 @@ namespace JavaScriptRuntime
             }
         }
 
+        private static Delegate ResolveFunctionTarget(Delegate target)
+        {
+            var current = target;
+            while (Closure.TryGetBoundTarget(current, out var original))
+            {
+                current = original;
+            }
+
+            return current;
+        }
+
+        private static bool IsJs2IlFunctionDelegate(Type delegateType)
+        {
+            if (JsFuncDelegates.IsJsFuncDelegateType(delegateType))
+            {
+                return true;
+            }
+
+            return delegateType.Name.StartsWith("JsFunc", StringComparison.Ordinal);
+        }
+
         public static double GetLength(Delegate target)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
-            var ps = target.Method.GetParameters();
+            var resolvedTarget = ResolveFunctionTarget(target);
+            var ps = resolvedTarget.Method.GetParameters();
+
+            // JS-compiled functions use JsFunc* delegates and always include an implicit
+            // newTarget parameter (plus scopes for captured closures).
+            if (IsJs2IlFunctionDelegate(resolvedTarget.GetType()))
+            {
+                var implicitParams = 1; // newTarget
+                if (ps.Length > 0 && ps[0].ParameterType == typeof(object[]))
+                {
+                    implicitParams++; // scopes
+                }
+
+                return global::System.Math.Max(0, ps.Length - implicitParams);
+            }
 
             if (ps.Length == 2
                 && ps[0].ParameterType == typeof(object[])
@@ -220,7 +255,18 @@ namespace JavaScriptRuntime
         public static string GetName(Delegate target)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
-            var name = target.Method.Name;
+            var resolvedTarget = ResolveFunctionTarget(target);
+            var name = resolvedTarget.Method.Name;
+
+            if (string.Equals(name, "__js_call__", StringComparison.Ordinal))
+            {
+                var declaringTypeName = resolvedTarget.Method.DeclaringType?.Name;
+                if (!string.IsNullOrEmpty(declaringTypeName) && !declaringTypeName.StartsWith("<", StringComparison.Ordinal))
+                {
+                    return declaringTypeName;
+                }
+            }
+
             return string.IsNullOrEmpty(name) ? string.Empty : name;
         }
 

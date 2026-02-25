@@ -5,6 +5,6 @@ function add3(a, b, c) {
 }
 
 console.log(typeof add3.length);
-console.log(add3.length >= 0);
+console.log(add3.length === 3);
 console.log(typeof add3.name);
-console.log(add3.name.length > 0);
+console.log(add3.name === "add3");

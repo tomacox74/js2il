@@ -4578,6 +4578,8 @@ namespace JavaScriptRuntime
         {
             switch (obj)
             {
+                case Delegate del:
+                    return JavaScriptRuntime.Function.GetLength(del);
                 case Array arr:
                     return arr.length;
                 case Int32Array i32:
