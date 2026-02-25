@@ -1,6 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Order;
 using System.Reflection;
 using System.Runtime.Loader;
@@ -21,6 +22,7 @@ namespace Benchmarks;
 [RankColumn]
 [Orderer(SummaryOrderPolicy.FastestToSlowest)]
 [HideColumns("Error", "Gen0", "Gen1", "Gen2")]
+[JsonExporterAttribute.FullCompressed]
 public class Js2ILPhasedBenchmarks
 {
     private readonly Dictionary<string, string> _scripts = new();
