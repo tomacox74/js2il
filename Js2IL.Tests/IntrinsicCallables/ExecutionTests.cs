@@ -56,6 +56,12 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_Error_ConstructorSurface()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_Error_ConstructorSurface));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Object_Callable_ReturnsObject()
         {
             return ExecutionTest(nameof(IntrinsicCallables_Object_Callable_ReturnsObject));
