@@ -59,13 +59,19 @@ jobs:
           elif [ "$BENCHMARK_MODE" = "all" ]; then
             MODE_ARG="--all"
           fi
-          
-          FILTER_ARG=""
-          if [ "$BENCHMARK_FILTER" != "*" ]; then
-            FILTER_ARG="--filter $BENCHMARK_FILTER"
+
+          DOTNET_ARGS=()
+          if [ -n "$MODE_ARG" ]; then
+            DOTNET_ARGS+=("$MODE_ARG")
           fi
-          
-          dotnet run -c Release -- $MODE_ARG $FILTER_ARG --exporters json
+          DOTNET_ARGS+=(--filter "$BENCHMARK_FILTER" --exporters json)
+
+          dotnet run -c Release -- "${DOTNET_ARGS[@]}"
+
+          if [ ! -d "BenchmarkDotNet.Artifacts/results" ] || ! compgen -G "BenchmarkDotNet.Artifacts/results/*.json" > /dev/null; then
+            echo "BenchmarkDotNet produced no result artifacts; failing workflow."
+            exit 1
+          fi
 
       - name: Ingest Benchmark Results to Supabase
         if: always()
