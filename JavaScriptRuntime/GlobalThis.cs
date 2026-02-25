@@ -153,14 +153,38 @@ namespace JavaScriptRuntime
                 Value = _errorIsErrorValue
             });
 
-            if (_errorPrototypeValue is ExpandoObject errorPrototypeExpando)
+            PropertyDescriptorStore.DefineOrUpdate(_errorPrototypeValue, "constructor", new JsPropertyDescriptor
             {
-                var errorPrototypeDict = (IDictionary<string, object?>)errorPrototypeExpando;
-                errorPrototypeDict["constructor"] = _errorConstructorValue;
-                errorPrototypeDict["message"] = string.Empty;
-                errorPrototypeDict["name"] = "Error";
-                errorPrototypeDict["toString"] = (Func<object[], object?[], object?>)ErrorPrototypeToString;
-            }
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _errorConstructorValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_errorPrototypeValue, "message", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = string.Empty
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_errorPrototypeValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = "Error"
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_errorPrototypeValue, "toString", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = (Func<object[], object?[], object?>)ErrorPrototypeToString
+            });
 
             // Provide String.fromCharCode for parsers/libraries.
             PropertyDescriptorStore.DefineOrUpdate(_stringFunctionValue, "fromCharCode", new JsPropertyDescriptor
