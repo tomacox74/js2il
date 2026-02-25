@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- benchmarks/workflows: enforce BenchmarkDotNet JSON output by annotating benchmark suites with `JsonExporterAttribute.FullCompressed`, so release/workflow ingestion reliably uses JSON artifacts (preserving full script-name fidelity instead of markdown-abbreviated labels).
 
 ## v0.8.23 - 2026-02-25
 

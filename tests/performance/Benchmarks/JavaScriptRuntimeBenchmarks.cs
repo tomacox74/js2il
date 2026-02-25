@@ -1,6 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Order;
 using Benchmarks.Runtimes;
 
@@ -14,6 +15,7 @@ namespace Benchmarks;
 [Orderer(SummaryOrderPolicy.FastestToSlowest)]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByParams)]
 [HideColumns("Error", "Gen0", "Gen1", "Gen2")]
+[JsonExporterAttribute.FullCompressed]
 public class JavaScriptRuntimeBenchmarks
 {
     private readonly Dictionary<string, string> _scripts = new();
