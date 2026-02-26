@@ -1273,9 +1273,7 @@ public partial class SymbolTableBuilder
                         {
                             var calleeScope = FindScopeByAstNodeRecursive(root, calleeBinding.DeclarationNode);
                             var stableReturn = calleeScope?.StableReturnClrType;
-                            if (stableReturn == typeof(double)
-                                || stableReturn == typeof(bool)
-                                || stableReturn == typeof(JavaScriptRuntime.Array))
+                            if (stableReturn == typeof(JavaScriptRuntime.Array))
                             {
                                 return stableReturn;
                             }
