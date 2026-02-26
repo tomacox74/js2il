@@ -488,11 +488,9 @@ internal sealed partial class LIRToILCompiler
             bodyAttributes |= MethodBodyAttributes.InitLocals;
         }
 
-        // Default maxstack of 8 matches MethodBodyStreamEncoder's safe default and is
-        // sufficient for many simple methods, but js2il emits inline array/object construction
-        // (e.g. building object[] argument arrays containing object literals) that can exceed 8.
-        // We estimate maxstack using LIR patterns and (when temps are not materialized) account
-        // for the peak stack usage of inline temp emission.
+        // Baseline maxstack matches MethodBodyStreamEncoder's safe default.
+        // The estimator below raises this for known deep patterns (inline literals,
+        // fixed-arity member calls, inlined parent-scope field loads, etc.).
         int maxStack = 8;
 
         // Build a quick map from temp -> defining instruction so we can estimate inlined temp emission.
@@ -558,6 +556,13 @@ internal sealed partial class LIRToILCompiler
                     // Inline length get: receiver
                     LIRGetLength getLength => EstimateTempConstructionPeak(getLength.Object),
 
+                    // Parent-scope load emits: scopesArray + index + ldelem_ref + cast + ldfld
+                    // which peaks at 2 stack items during index load.
+                    LIRLoadParentScopeField => 2,
+
+                    // Scope-temp load emits: scopeInstance + cast + ldfld.
+                    LIRLoadScopeField loadScopeField => EstimateTempConstructionPeak(loadScopeField.ScopeInstance),
+
                     // Leaf scope/global loads/constants/etc.
                     LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull or LIRGetIntrinsicGlobal or LIRLoadParameter or LIRLoadThis
                         => 1,
@@ -616,7 +621,36 @@ internal sealed partial class LIRToILCompiler
                 LIRCallFunctionValue callValue => 2 + EstimateTempLoadPeak(callValue.ArgumentsArray),
 
                 // Member call via runtime dispatch: receiver + methodName + argsArray (argsArray may be inlined)
-                LIRCallMember callMember => 2 + EstimateTempLoadPeak(callMember.ArgumentsArray),
+                LIRCallMember callMember => Math.Max(
+                    EstimateTempLoadPeak(callMember.Receiver),
+                    2 + EstimateTempLoadPeak(callMember.ArgumentsArray)),
+
+                // Fixed-arity member helpers load receiver + methodName + args directly.
+                // Account for inline peaks while earlier operands remain on the stack.
+                LIRCallMember0 callMember0 => Math.Max(
+                    EstimateTempLoadPeak(callMember0.Receiver),
+                    2),
+                LIRCallMember1 callMember1 => new[]
+                {
+                    EstimateTempLoadPeak(callMember1.Receiver),
+                    2 + EstimateTempLoadPeak(callMember1.A0),
+                    3
+                }.Max(),
+                LIRCallMember2 callMember2 => new[]
+                {
+                    EstimateTempLoadPeak(callMember2.Receiver),
+                    2 + EstimateTempLoadPeak(callMember2.A0),
+                    3 + EstimateTempLoadPeak(callMember2.A1),
+                    4
+                }.Max(),
+                LIRCallMember3 callMember3 => new[]
+                {
+                    EstimateTempLoadPeak(callMember3.Receiver),
+                    2 + EstimateTempLoadPeak(callMember3.A0),
+                    3 + EstimateTempLoadPeak(callMember3.A1),
+                    4 + EstimateTempLoadPeak(callMember3.A2),
+                    5
+                }.Max(),
 
                 // Known CLR instance method calls: receiver + args (no padding)
                 LIRCallInstanceMethod callInstance => 1 + callInstance.Arguments.Count,
