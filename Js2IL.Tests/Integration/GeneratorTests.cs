@@ -23,6 +23,9 @@ namespace Js2IL.Tests.Integration
         public Task Compile_Performance_Dromaeo_Object_Array_Modern() => GenerateTest(nameof(Compile_Performance_Dromaeo_Object_Array_Modern));
 
         [Fact]
+        public Task Compile_Performance_Dromaeo_Object_Regexp() => GenerateTest(nameof(Compile_Performance_Dromaeo_Object_Regexp));
+
+        [Fact]
         public Task Compile_Performance_PrimeJavaScript() => GenerateTest(nameof(Compile_Performance_PrimeJavaScript));
     }
 }
