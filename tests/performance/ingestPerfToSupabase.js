@@ -80,7 +80,42 @@ function normalizeRuntime(raw) {
 function parseScriptNameFromDisplay(displayInfo) {
     const text = String(displayInfo ?? '');
     const match = text.match(/ScriptName\s*[:=]\s*([A-Za-z0-9._-]+)/i);
-    return match ? slugify(match[1]) : null;
+    if (!match) return null;
+    const candidate = match[1];
+    if (candidate.includes('...')) return null;
+    return slugify(candidate);
+}
+
+function parseScriptNameFromFullName(fullName) {
+    const text = String(fullName ?? '');
+    const quoted = text.match(/ScriptName\s*:\s*"([^"]+)"/i);
+    if (quoted) {
+        return slugify(quoted[1]);
+    }
+
+    const unquoted = text.match(/ScriptName\s*:\s*([^)]+)/i);
+    return unquoted ? slugify(unquoted[1]) : null;
+}
+
+function parseScriptNameFromParameters(parameters) {
+    if (parameters === null || parameters === undefined) return null;
+
+    if (typeof parameters === 'string') {
+        const match = parameters.match(/(?:^|,\s*)ScriptName\s*=\s*([^,\]]+)/i);
+        if (!match) return null;
+        const candidate = decodeHtmlEntities(match[1]).trim();
+        if (!candidate || candidate.includes('...')) return null;
+        return slugify(candidate.replace(/^"(.*)"$/, '$1'));
+    }
+
+    if (typeof parameters === 'object') {
+        const candidate = parameters.ScriptName ?? parameters.scriptName;
+        if (candidate) {
+            return slugify(candidate);
+        }
+    }
+
+    return null;
 }
 
 function parseDurationToNs(value) {
@@ -365,8 +400,12 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata) {
 
         for (const benchmark of benchmarks) {
             const params = benchmark.Parameters ?? benchmark.parameters ?? benchmark.Params ?? {};
-            const displayInfo = benchmark.DisplayInfo ?? benchmark.displayInfo ?? benchmark.FullName ?? benchmark.fullName ?? '';
-            const scenario = params.ScriptName ?? params.scriptName ?? parseScriptNameFromDisplay(displayInfo) ?? 'unknown';
+            const fullName = benchmark.FullName ?? benchmark.fullName ?? '';
+            const displayInfo = benchmark.DisplayInfo ?? benchmark.displayInfo ?? fullName ?? '';
+            const scenario = parseScriptNameFromParameters(params)
+                ?? parseScriptNameFromFullName(fullName)
+                ?? parseScriptNameFromDisplay(displayInfo)
+                ?? 'unknown';
             const runtimeRaw = benchmark.Description
                 ?? benchmark.description
                 ?? benchmark.MethodTitle

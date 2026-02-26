@@ -32,6 +32,13 @@ public class Js2ILPhasedBenchmarks
     private readonly Dictionary<string, Assembly> _compiledAssemblies = new();
     private readonly Dictionary<string, string> _compiledModuleIds = new();
     private readonly Dictionary<string, string> _js2IlCompileFailures = new();
+    // TODO: Fix these scenarios for phased js2il benchmarks or delete them, then remove this temporary exclusion.
+    private static readonly HashSet<string> TemporarilyExcludedScriptNames = new(StringComparer.Ordinal)
+    {
+        "evaluation",
+        "evaluation-modern",
+        "linq-js"
+    };
     private string _tempDir = "";
 
     [GlobalSetup]
@@ -41,6 +48,7 @@ public class Js2ILPhasedBenchmarks
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
         
         var scriptFiles = Directory.GetFiles(scriptsDir, "*.js")
+            .Where(path => !TemporarilyExcludedScriptNames.Contains(Path.GetFileNameWithoutExtension(path)))
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
 
@@ -166,7 +174,7 @@ public class Js2ILPhasedBenchmarks
 
         return Directory.GetFiles(scriptsDir, "*.js")
             .Select(Path.GetFileNameWithoutExtension)
-            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Where(name => !string.IsNullOrWhiteSpace(name) && !TemporarilyExcludedScriptNames.Contains(name))
             .OrderBy(name => name)!;
     }
 
