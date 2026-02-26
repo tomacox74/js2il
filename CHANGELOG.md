@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - benchmarks/phased: temporarily exclude `evaluation`, `evaluation-modern`, and `linq-js` from `Js2ILPhasedBenchmarks` scenario discovery while those scenarios are investigated for fix-or-remove follow-up.
+- perf/type-inference: infer stable `JavaScriptRuntime.Array` returns for eligible non-class callables (including `generateTestStrings` in `dromaeo-object-regexp`), propagate that type through captured-binding writes/call-site inference, and unlock additional early-bound array field/index/member access patterns in generated IL (fixes #751).
 
 ## v0.8.24 - 2026-02-25
 

@@ -468,6 +468,43 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_DromaeoGenerateTestStrings_ReturnType_IsArray()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "generateTestStrings", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), functionScope!.StableReturnClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_DromaeoGenerateTestStrings_PropagatesArrayToTmp()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var tmpBinding = symbolTable.GetBindingInfo("tmp");
+        Assert.NotNull(tmpBinding);
+        Assert.True(tmpBinding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), tmpBinding.ClrType);
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_StableReturnIsThis_PrimeJavaScript_RunSieve()
     {
         const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
