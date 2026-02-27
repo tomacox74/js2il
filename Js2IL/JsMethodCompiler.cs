@@ -414,6 +414,22 @@ internal sealed class JsMethodCompiler
         var dummyTypeName = $"<TwoPhaseDummy_M{MetadataTokens.GetRowNumber(expectedMethodDef)}>";
         var dummyType = new TypeBuilder(_metadataBuilder, "", dummyTypeName);
 
+        Type? inferredReturnClrType = null;
+        if (scope.Kind == ScopeKind.Function)
+        {
+            if (scope.Parent?.Kind == ScopeKind.Class)
+            {
+                inferredReturnClrType = scope.StableReturnClrType;
+            }
+            else if (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array)
+                || scope.StableReturnClrType == typeof(string))
+            {
+                // Keep non-class callable ABI object-typed by default, but allow stable Array/string
+                // returns so generated signatures can expose specialized return types where proven.
+                inferredReturnClrType = scope.StableReturnClrType;
+            }
+        }
+
         var methodDescriptor = new MethodDescriptor(ilMethodName, dummyType, parameters)
         {
             IsStatic = !isInstanceMethod,
@@ -424,11 +440,7 @@ internal sealed class JsMethodCompiler
                 ? typeof(void)
                 : (lirMethod.IsGenerator
                     ? typeof(object)
-                    : (((scope.Kind == ScopeKind.Function
-                            && (scope.Parent?.Kind == ScopeKind.Class || scope.StableReturnClrType == typeof(string)))
-                            ? scope.StableReturnClrType
-                            : null)
-                        ?? typeof(object))),
+                    : (inferredReturnClrType ?? typeof(object))),
             ReturnTypeHandle = default,
             ScopesFieldHandle = scopesFieldHandle,
             IsConstructor = callableKind == ScopesCallableKind.Constructor,
@@ -517,9 +529,12 @@ internal sealed class JsMethodCompiler
             typeBuilder,
             parameters);
 
-        if (scope.StableReturnClrType == typeof(string))
+        if (scope.Kind == ScopeKind.Function
+            && scope.Parent?.Kind != ScopeKind.Class
+            && (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array)
+                || scope.StableReturnClrType == typeof(string)))
         {
-            methodDescriptor.ReturnClrType = typeof(string);
+            methodDescriptor.ReturnClrType = scope.StableReturnClrType;
         }
 
         if (node is Acornima.Ast.MethodDefinition methodDef)
@@ -578,9 +593,12 @@ internal sealed class JsMethodCompiler
             arrowTypeBuilder,
             parameters);
 
-        if (scope.StableReturnClrType == typeof(string))
+        if (scope.Kind == ScopeKind.Function
+            && scope.Parent?.Kind != ScopeKind.Class
+            && (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array)
+                || scope.StableReturnClrType == typeof(string)))
         {
-            methodDescriptor.ReturnClrType = typeof(string);
+            methodDescriptor.ReturnClrType = scope.StableReturnClrType;
         }
 
         var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);

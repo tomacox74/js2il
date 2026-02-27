@@ -162,7 +162,29 @@ internal sealed partial class LIRToILCompiler
                     }
                     else
                     {
-                        EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                        // For reference-typed CLR return signatures (e.g., JavaScriptRuntime.Array),
+                        // cast only when the return temp is not already known to be assignable.
+                        // This keeps IL valid while avoiding redundant castclass instructions.
+                        var returnStorage = GetTempStorage(lirReturn.ReturnValue);
+                        var needsTypedReferenceReturnCast =
+                            methodDescriptor.ReturnTypeHandle.IsNil
+                            && methodDescriptor.ReturnClrType != typeof(object)
+                            && !methodDescriptor.ReturnClrType.IsValueType
+                            && !(
+                                returnStorage.Kind == ValueStorageKind.Reference
+                                && returnStorage.ClrType is Type tempClrType
+                                && methodDescriptor.ReturnClrType.IsAssignableFrom(tempClrType));
+
+                        if (needsTypedReferenceReturnCast)
+                        {
+                            EmitLoadTempAsObject(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Castclass);
+                            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(methodDescriptor.ReturnClrType));
+                        }
+                        else
+                        {
+                            EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                        }
                     }
                 }
                 ilEncoder.OpCode(ILOpCode.Ret);
