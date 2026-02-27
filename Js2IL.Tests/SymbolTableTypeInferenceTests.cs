@@ -37,6 +37,8 @@ public class SymbolTableTypeInferenceTests
     [InlineData(typeof(JavaScriptRuntime.Array), "new Array()")]
     [InlineData(typeof(JavaScriptRuntime.Array), "Array.of(1, 2)")]
     [InlineData(typeof(JavaScriptRuntime.Array), "Array.from([1, 2])")]
+    [InlineData(typeof(JavaScriptRuntime.RegExp), "/a/")]
+    [InlineData(typeof(JavaScriptRuntime.RegExp), "new RegExp('a', 'g')")]
     [InlineData(null, "")]
     [InlineData(typeof(double), "1 + 2")]
     [InlineData(typeof(string), "'1' + '2'")]
@@ -488,6 +490,29 @@ public class SymbolTableTypeInferenceTests
 
         Assert.NotNull(methodScope);
         Assert.True(methodScope!.StableReturnIsThis);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_DromaeoObjectRegexp_GenerateTestStrings_T_IsString()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "generateTestStrings", StringComparison.Ordinal)
+            && s.AstNode is FunctionDeclaration);
+
+        Assert.NotNull(functionScope);
+        Assert.True(functionScope!.Bindings.TryGetValue("t", out var tBinding));
+        Assert.True(tBinding.IsStableType);
+        Assert.Equal(typeof(string), tBinding.ClrType);
     }
 
     [Fact]

@@ -424,7 +424,8 @@ internal sealed class JsMethodCompiler
                 ? typeof(void)
                 : (lirMethod.IsGenerator
                     ? typeof(object)
-                    : (((scope.Kind == ScopeKind.Function && scope.Parent?.Kind == ScopeKind.Class)
+                    : (((scope.Kind == ScopeKind.Function
+                            && (scope.Parent?.Kind == ScopeKind.Class || scope.StableReturnClrType == typeof(string)))
                             ? scope.StableReturnClrType
                             : null)
                         ?? typeof(object))),
@@ -516,6 +517,11 @@ internal sealed class JsMethodCompiler
             typeBuilder,
             parameters);
 
+        if (scope.StableReturnClrType == typeof(string))
+        {
+            methodDescriptor.ReturnClrType = typeof(string);
+        }
+
         if (node is Acornima.Ast.MethodDefinition methodDef)
         {
             methodDescriptor.IsStatic = methodDef.Static;
@@ -571,6 +577,11 @@ internal sealed class JsMethodCompiler
             methodName,
             arrowTypeBuilder,
             parameters);
+
+        if (scope.StableReturnClrType == typeof(string))
+        {
+            methodDescriptor.ReturnClrType = typeof(string);
+        }
 
         var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 

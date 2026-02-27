@@ -271,10 +271,23 @@ public partial class SymbolTableBuilder
         }
 
         // Only allow a small, well-understood value-like primitive set.
-        // (String return typing needs additional lowering guarantees; keep it disabled for now.)
         if (inferred == typeof(double) || inferred == typeof(bool))
         {
             return inferred;
+        }
+
+        // Allow string return typing for stable String.fromCharCode(...) call sites.
+        // This keeps string-return ABI specialization targeted and predictable.
+        if (inferred == typeof(string)
+            && onlyReturn.Argument is CallExpression returnCall
+            && returnCall.Callee is MemberExpression returnMember
+            && !returnMember.Computed
+            && returnMember.Object is Identifier returnObject
+            && returnMember.Property is Identifier returnProperty
+            && string.Equals(returnObject.Name, "String", StringComparison.Ordinal)
+            && string.Equals(returnProperty.Name, "fromCharCode", StringComparison.Ordinal))
+        {
+            return typeof(string);
         }
 
         return null;
@@ -436,6 +449,34 @@ public partial class SymbolTableBuilder
             }
         }
 
+        // For uninitialized uncaptured bindings, also consider assignments in nested blocks/scopes.
+        // This mirrors the captured-binding write analysis but is limited to reference types.
+        foreach (var uninitializedBindingName in unitializedClrTypes.ToArray())
+        {
+            if (!scope.Bindings.TryGetValue(uninitializedBindingName, out var binding))
+            {
+                continue;
+            }
+
+            if (binding.IsCaptured && binding.Kind != BindingKind.Const)
+            {
+                continue;
+            }
+
+            var assignedType = TryInferCapturedBindingReferenceTypeFromWrites(scope, binding, proposedClrTypes);
+            if (assignedType == null || assignedType.IsValueType)
+            {
+                continue;
+            }
+
+            if (!AreCapturedBindingWritesCompatible(scope, binding, assignedType, proposedClrTypes))
+            {
+                continue;
+            }
+
+            proposedClrTypes[uninitializedBindingName] = assignedType;
+        }
+
         foreach (var kvp in proposedClrTypes)
         {
             var binding = scope.Bindings[kvp.Key];
@@ -467,9 +508,26 @@ public partial class SymbolTableBuilder
             return false;
         }
 
-        if (binding.DeclarationNode is not VariableDeclarator declarator || declarator.Init == null)
+        if (binding.DeclarationNode is not VariableDeclarator declarator)
         {
             return false;
+        }
+
+        if (declarator.Init == null)
+        {
+            var assignedType = TryInferCapturedBindingReferenceTypeFromWrites(declaringScope, binding, proposedClrTypes);
+            if (assignedType == null)
+            {
+                return false;
+            }
+
+            if (!AreCapturedBindingWritesCompatible(declaringScope, binding, assignedType, proposedClrTypes))
+            {
+                return false;
+            }
+
+            inferredType = assignedType;
+            return true;
         }
 
         var initializerType = InferExpressionClrType(declarator.Init, declaringScope, proposedClrTypes);
@@ -485,6 +543,79 @@ public partial class SymbolTableBuilder
 
         inferredType = initializerType;
         return true;
+    }
+
+    private Type? TryInferCapturedBindingReferenceTypeFromWrites(
+        Scope scope,
+        BindingInfo targetBinding,
+        Dictionary<string, Type> proposedClrTypes)
+    {
+        Type? candidate = null;
+
+        void WalkScope(Scope currentScope)
+        {
+            // If this scope resolves the name to a different binding (shadowing), this subtree cannot
+            // write to the captured binding we are validating.
+            if (!ReferenceEquals(TryResolveBinding(currentScope, targetBinding.Name), targetBinding))
+            {
+                return;
+            }
+
+            bool IsChildScopeRoot(Node node)
+            {
+                foreach (var childScope in currentScope.Children)
+                {
+                    if (ReferenceEquals(childScope.AstNode, node))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            void WalkNode(Node? node)
+            {
+                if (node == null)
+                {
+                    return;
+                }
+
+                // Nested scope roots are traversed in their own scope context.
+                if (!ReferenceEquals(node, currentScope.AstNode) && IsChildScopeRoot(node))
+                {
+                    return;
+                }
+
+                if (candidate == null
+                    && node is AssignmentExpression assignExpr
+                    && assignExpr.Left is Identifier id
+                    && assignExpr.Operator == Operator.Assignment
+                    && ReferenceEquals(TryResolveBinding(currentScope, id.Name), targetBinding))
+                {
+                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                    if (rightType != null && !rightType.IsValueType)
+                    {
+                        candidate = rightType;
+                    }
+                }
+
+                foreach (var child in node.ChildNodes)
+                {
+                    WalkNode(child);
+                }
+            }
+
+            WalkNode(currentScope.AstNode);
+
+            foreach (var childScope in currentScope.Children)
+            {
+                WalkScope(childScope);
+            }
+        }
+
+        WalkScope(scope);
+        return candidate;
     }
 
     private bool AreCapturedBindingWritesCompatible(
@@ -742,6 +873,8 @@ public partial class SymbolTableBuilder
                     return typeof(bool);
                 case NullLiteral:
                     return typeof(JavaScriptRuntime.JsNull);
+                case Literal regexLiteral when regexLiteral.Raw != null && regexLiteral.Raw.TrimStart().StartsWith("/", StringComparison.Ordinal):
+                    return typeof(JavaScriptRuntime.RegExp);
                 case MemberExpression me when me.Object is ThisExpression && !me.Computed:
                 {
                     var name = me.Property switch
@@ -981,6 +1114,25 @@ public partial class SymbolTableBuilder
             return current;
         }
 
+        static Scope? FindScopeByAstNode(Scope scopeNode, Node astNode)
+        {
+            if (ReferenceEquals(scopeNode.AstNode, astNode))
+            {
+                return scopeNode;
+            }
+
+            foreach (var child in scopeNode.Children)
+            {
+                var found = FindScopeByAstNode(child, astNode);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
         static Scope? FindClassScopeRecursive(Scope scope, string className)
         {
             if (scope.Kind == ScopeKind.Class && string.Equals(scope.Name, className, StringComparison.Ordinal))
@@ -1034,6 +1186,8 @@ public partial class SymbolTableBuilder
             case NullLiteral:
                 // Treat JavaScript `null` as a distinct known value.
                 return typeof(JavaScriptRuntime.JsNull);
+            case Literal regexLiteral when regexLiteral.Raw != null && regexLiteral.Raw.TrimStart().StartsWith("/", StringComparison.Ordinal):
+                return typeof(JavaScriptRuntime.RegExp);
             case ArrayExpression:
                 // Array literals always compile to the runtime Array implementation.
                 return typeof(JavaScriptRuntime.Array);
@@ -1119,6 +1273,22 @@ public partial class SymbolTableBuilder
                     return typeof(double);
                 }
 
+                // Calls to function declarations with stable inferred primitive return types.
+                if (ce.Callee is Identifier functionId && scope != null)
+                {
+                    var resolvedBinding = TryResolveBinding(scope, functionId.Name);
+                    if (resolvedBinding?.DeclarationNode is FunctionDeclaration functionDecl)
+                    {
+                        var root = FindRootScope(scope);
+                        var functionScope = root != null ? FindScopeByAstNode(root, functionDecl) : null;
+                        var stableReturnType = functionScope?.StableReturnClrType;
+                        if (stableReturnType == typeof(double) || stableReturnType == typeof(bool) || stableReturnType == typeof(string))
+                        {
+                            return stableReturnType;
+                        }
+                    }
+                }
+
                 // this.<field>.<method>(...) where <field> is a user-class instance
                 // and the method has a stable inferred primitive return type.
                 if (ce.Callee is MemberExpression userMethodMe
@@ -1172,6 +1342,18 @@ public partial class SymbolTableBuilder
                             return typeof(bool);
                         }
                     }
+                }
+
+                // String.fromCharCode(...)
+                if (ce.Callee is MemberExpression stringMe
+                    && !stringMe.Computed
+                    && stringMe.Object is Identifier stringId
+                    && string.Equals(stringId.Name, "String", StringComparison.Ordinal)
+                    && stringMe.Property is Identifier stringMethodId
+                    && string.Equals(stringMethodId.Name, "fromCharCode", StringComparison.Ordinal)
+                    && !IsIdentifierShadowed(scope, "String"))
+                {
+                    return typeof(string);
                 }
 
                 // Array instance methods - use reflection to get return type

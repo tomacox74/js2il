@@ -114,7 +114,8 @@ namespace Js2IL.Services
                 if (binding.ClrType == typeof(double)
                     || binding.ClrType == typeof(bool)
                     || binding.ClrType == typeof(string)
-                    || binding.ClrType == typeof(JavaScriptRuntime.Array))
+                    || binding.ClrType == typeof(JavaScriptRuntime.Array)
+                    || binding.ClrType == typeof(JavaScriptRuntime.RegExp))
                 {
                     return binding.ClrType;
                 }

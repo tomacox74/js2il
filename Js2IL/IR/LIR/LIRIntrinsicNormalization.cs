@@ -50,6 +50,9 @@ internal static class LIRIntrinsicNormalization
         foreach (var instruction in methodBody.Instructions.Where(static ins =>
             ins is LIRConstString
             || ins is LIRLoadUserClassInstanceField
+            || ins is LIRLoadScopeField
+            || ins is LIRLoadLeafScopeField
+            || ins is LIRLoadParentScopeField
             || ins is LIRCopyTemp))
         {
             switch (instruction)
@@ -76,6 +79,30 @@ internal static class LIRIntrinsicNormalization
                         {
                             knownSpecializedReceiverClrTypes[loadInstanceField.Result.Index] = fieldClrType;
                         }
+                    }
+                    break;
+
+                case LIRLoadScopeField loadScopeField:
+                    if (loadScopeField.Result.Index >= 0
+                        && IsSpecializedReceiverClrType(loadScopeField.Binding.ClrType))
+                    {
+                        knownSpecializedReceiverClrTypes[loadScopeField.Result.Index] = loadScopeField.Binding.ClrType!;
+                    }
+                    break;
+
+                case LIRLoadLeafScopeField loadLeafScopeField:
+                    if (loadLeafScopeField.Result.Index >= 0
+                        && IsSpecializedReceiverClrType(loadLeafScopeField.Binding.ClrType))
+                    {
+                        knownSpecializedReceiverClrTypes[loadLeafScopeField.Result.Index] = loadLeafScopeField.Binding.ClrType!;
+                    }
+                    break;
+
+                case LIRLoadParentScopeField loadParentScopeField:
+                    if (loadParentScopeField.Result.Index >= 0
+                        && IsSpecializedReceiverClrType(loadParentScopeField.Binding.ClrType))
+                    {
+                        knownSpecializedReceiverClrTypes[loadParentScopeField.Result.Index] = loadParentScopeField.Binding.ClrType!;
                     }
                     break;
 
@@ -116,6 +143,13 @@ internal static class LIRIntrinsicNormalization
                 if (receiverType == typeof(JavaScriptRuntime.Int32Array))
                 {
                     methodBody.Instructions[i] = new LIRGetInt32ArrayLength(getLength.Object, getLength.Result);
+                    methodBody.TempStorages[getLength.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                    continue;
+                }
+
+                if (receiverType == typeof(string))
+                {
+                    methodBody.Instructions[i] = new LIRGetStringLength(getLength.Object, getLength.Result);
                     methodBody.TempStorages[getLength.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
                     continue;
                 }
@@ -268,6 +302,66 @@ internal static class LIRIntrinsicNormalization
                     // We intentionally only early-bind zero-arg methods that return string,
                     // so result storage can remain strongly typed as string.
                     methodBody.TempStorages[callMember0.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
+                }
+
+                continue;
+            }
+
+            if (instruction is LIRCallMember1 callMember1)
+            {
+                if (knownSpecializedReceiverClrTypes.TryGetValue(callMember1.Receiver.Index, out var stringReceiverType)
+                    && stringReceiverType == typeof(string)
+                    && string.Equals(callMember1.MethodName, "substring", StringComparison.Ordinal))
+                {
+                    methodBody.Instructions[i] = new LIRCallIntrinsicStatic(
+                        IntrinsicName: "String",
+                        MethodName: callMember1.MethodName,
+                        Arguments: new[] { callMember1.Receiver, callMember1.A0 },
+                        Result: callMember1.Result);
+
+                    if (callMember1.Result.Index >= 0)
+                    {
+                        methodBody.TempStorages[callMember1.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
+                    }
+
+                    continue;
+                }
+
+                if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember1.Receiver.Index, out var receiverType)
+                    || receiverType != typeof(JavaScriptRuntime.RegExp)
+                    || !string.Equals(callMember1.MethodName, "test", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                methodBody.Instructions[i] = new LIRCallInstanceMethod(
+                    Receiver: callMember1.Receiver,
+                    ReceiverClrType: typeof(JavaScriptRuntime.RegExp),
+                    MethodName: callMember1.MethodName,
+                    Arguments: new[] { callMember1.A0 },
+                    Result: callMember1.Result);
+
+                continue;
+            }
+
+            if (instruction is LIRCallMember2 callMember2)
+            {
+                if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember2.Receiver.Index, out var receiverType)
+                    || receiverType != typeof(string)
+                    || !string.Equals(callMember2.MethodName, "substring", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                methodBody.Instructions[i] = new LIRCallIntrinsicStatic(
+                    IntrinsicName: "String",
+                    MethodName: callMember2.MethodName,
+                    Arguments: new[] { callMember2.Receiver, callMember2.A0, callMember2.A1 },
+                    Result: callMember2.Result);
+
+                if (callMember2.Result.Index >= 0)
+                {
+                    methodBody.TempStorages[callMember2.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
                 }
 
                 continue;
@@ -832,5 +926,14 @@ internal static class LIRIntrinsicNormalization
         return classRegistry.TryGetFieldClrType(registryClassName, fieldName, out var t2)
             ? t2
             : typeof(object);
+    }
+
+    private static bool IsSpecializedReceiverClrType(Type? clrType)
+    {
+        return clrType != null
+            && clrType != typeof(object)
+            && !clrType.IsValueType
+            && (clrType == typeof(string)
+                || clrType.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true);
     }
 }
