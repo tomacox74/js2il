@@ -30,7 +30,7 @@ internal sealed partial class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
-    private static void EmitReturnType(ReturnTypeEncoder returnType, Type clrReturnType, EntityHandle returnTypeHandle = default)
+    private void EmitReturnType(ReturnTypeEncoder returnType, Type clrReturnType, EntityHandle returnTypeHandle = default)
     {
         if (!returnTypeHandle.IsNil)
         {
@@ -53,6 +53,13 @@ internal sealed partial class LIRToILCompiler
         if (clrReturnType == typeof(string))
         {
             returnType.Type().String();
+            return;
+        }
+
+        if (clrReturnType != typeof(object) && !clrReturnType.IsValueType)
+        {
+            var typeRef = _typeReferenceRegistry.GetOrAdd(clrReturnType);
+            returnType.Type().Type(typeRef, isValueType: false);
             return;
         }
 
