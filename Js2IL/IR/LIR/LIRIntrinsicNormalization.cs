@@ -279,13 +279,9 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember0 callMember0)
             {
-                // Intentionally limited to zero-arg member calls for now.
-                // Multi-arg string members frequently require runtime coercions
-                // (e.g., string conversion of searchString) that are currently
-                // centralized in runtime dispatch and should stay behaviorally identical.
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember0.Receiver.Index, out var receiverType)
                     || receiverType != typeof(string)
-                    || !IsZeroArgStringMethodSafeToEarlyBind(callMember0.MethodName))
+                    || !TryResolveSafeStringIntrinsicReturnClrType(callMember0.MethodName, argCount: 0, out var returnClrType))
                 {
                     continue;
                 }
@@ -298,10 +294,7 @@ internal static class LIRIntrinsicNormalization
 
                 if (callMember0.Result.Index >= 0)
                 {
-                    // Keep this in sync with IsZeroArgStringMethodSafeToEarlyBind.
-                    // We intentionally only early-bind zero-arg methods that return string,
-                    // so result storage can remain strongly typed as string.
-                    methodBody.TempStorages[callMember0.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
+                    ApplyResolvedIntrinsicReturnStorage(methodBody, callMember0.Result, returnClrType);
                 }
 
                 continue;
@@ -311,7 +304,7 @@ internal static class LIRIntrinsicNormalization
             {
                 if (knownSpecializedReceiverClrTypes.TryGetValue(callMember1.Receiver.Index, out var stringReceiverType)
                     && stringReceiverType == typeof(string)
-                    && string.Equals(callMember1.MethodName, "substring", StringComparison.Ordinal))
+                    && TryResolveSafeStringIntrinsicReturnClrType(callMember1.MethodName, argCount: 1, out var stringReturnClrType))
                 {
                     methodBody.Instructions[i] = new LIRCallIntrinsicStatic(
                         IntrinsicName: "String",
@@ -321,7 +314,7 @@ internal static class LIRIntrinsicNormalization
 
                     if (callMember1.Result.Index >= 0)
                     {
-                        methodBody.TempStorages[callMember1.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
+                        ApplyResolvedIntrinsicReturnStorage(methodBody, callMember1.Result, stringReturnClrType);
                     }
 
                     continue;
@@ -348,7 +341,7 @@ internal static class LIRIntrinsicNormalization
             {
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember2.Receiver.Index, out var receiverType)
                     || receiverType != typeof(string)
-                    || !string.Equals(callMember2.MethodName, "substring", StringComparison.Ordinal))
+                    || !TryResolveSafeStringIntrinsicReturnClrType(callMember2.MethodName, argCount: 2, out var returnClrType))
                 {
                     continue;
                 }
@@ -361,7 +354,7 @@ internal static class LIRIntrinsicNormalization
 
                 if (callMember2.Result.Index >= 0)
                 {
-                    methodBody.TempStorages[callMember2.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
+                    ApplyResolvedIntrinsicReturnStorage(methodBody, callMember2.Result, returnClrType);
                 }
 
                 continue;
@@ -475,19 +468,100 @@ internal static class LIRIntrinsicNormalization
         methodBody.Instructions.AddRange(newInstructions);
     }
 
-    private static bool IsZeroArgStringMethodSafeToEarlyBind(string methodName)
+    private static bool TryResolveSafeStringIntrinsicReturnClrType(string methodName, int argCount, out Type returnClrType)
     {
-        return methodName switch
+        returnClrType = null!;
+
+        if (!IsStringMethodEligibleForEarlyBind(methodName, argCount))
         {
-            "trim" => true,
-            "trimStart" => true,
-            "trimLeft" => true,
-            "trimEnd" => true,
-            "trimRight" => true,
-            "toLowerCase" => true,
-            "toUpperCase" => true,
+            return false;
+        }
+
+        // We only early-bind signatures where:
+        // - receiver is the first `string` parameter, and
+        // - all JS arguments are accepted as `object`.
+        // This preserves runtime coercion semantics handled in JavaScriptRuntime.String.
+        var safe = typeof(JavaScriptRuntime.String)
+            .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+            .Where(mi =>
+            {
+                var ps = mi.GetParameters();
+                if (ps.Length != argCount + 1)
+                {
+                    return false;
+                }
+
+                if (ps[0].ParameterType != typeof(string))
+                {
+                    return false;
+                }
+
+                for (int i = 1; i < ps.Length; i++)
+                {
+                    if (ps[i].ParameterType != typeof(object))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            })
+            .OrderBy(mi => mi.ToString(), StringComparer.Ordinal)
+            .FirstOrDefault();
+
+        if (safe == null)
+        {
+            return false;
+        }
+
+        returnClrType = safe.ReturnType;
+        return true;
+    }
+
+    private static bool IsStringMethodEligibleForEarlyBind(string methodName, int argCount)
+    {
+        return argCount switch
+        {
+            0 => methodName is "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase",
+            1 => methodName is "substring" or "split" or "match",
+            2 => methodName is "substring" or "replace" or "split",
             _ => false
         };
+    }
+
+    private static void ApplyResolvedIntrinsicReturnStorage(MethodBodyIR methodBody, TempVariable result, Type returnClrType)
+    {
+        if (result.Index < 0 || result.Index >= methodBody.TempStorages.Count)
+        {
+            return;
+        }
+
+        if (returnClrType == typeof(bool))
+        {
+            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+            return;
+        }
+
+        if (returnClrType == typeof(double))
+        {
+            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+            return;
+        }
+
+        if (returnClrType == typeof(string))
+        {
+            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
+            return;
+        }
+
+        if (returnClrType == typeof(JavaScriptRuntime.Array))
+        {
+            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array));
+            return;
+        }
+
+        methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(object));
     }
 
     private static bool IsNumericDouble(MethodBodyIR methodBody, TempVariable temp)

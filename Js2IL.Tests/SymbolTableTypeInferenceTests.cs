@@ -553,6 +553,138 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_DromaeoObjectRegexp_TestStrings_ElementType_IsString()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var binding = symbolTable.GetBindingInfo("testStrings");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+        Assert.Equal(typeof(string), binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_DromaeoObjectRegexp_Tmp_ElementType_IsString()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var binding = symbolTable.GetBindingInfo("tmp");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+        Assert.Equal(typeof(string), binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_ArrayElementType_MixedWrites_IsNotStable()
+    {
+        var source = @"
+                var foo = [];
+                foo[0] = '1';
+                foo[1] = 1.1;
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var binding = symbolTable.GetBindingInfo("foo");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+        Assert.Null(binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_ArrayElementType_AliasedMixedWrite_IsNotStable()
+    {
+        var source = @"
+                var foo = [];
+                foo[0] = 'a';
+                foo[1] = 'b';
+                var foo2 = foo;
+                foo2[0] = 0.0;
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var binding = symbolTable.GetBindingInfo("foo");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+        Assert.Null(binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_ArrayElementType_AliasedConsistentWrite_RemainsStableString()
+    {
+        var source = @"
+                var foo = [];
+                foo[0] = 'a';
+                var foo2 = foo;
+                foo2[1] = 'b';
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var binding = symbolTable.GetBindingInfo("foo");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+        Assert.Equal(typeof(string), binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_StableElementClrType_Guard_RequiresStableArrayBinding()
+    {
+        var symbolTable = BuildSymbolTable("var x = 1;");
+        var binding = symbolTable.GetBindingInfo("x");
+        Assert.NotNull(binding);
+
+        binding!.IsStableType = true;
+        binding.ClrType = typeof(string);
+        binding.StableElementClrType = typeof(string);
+        Assert.Null(binding.StableElementClrType);
+
+        binding.ClrType = typeof(JavaScriptRuntime.Array);
+        binding.StableElementClrType = typeof(string);
+        Assert.Equal(typeof(string), binding.StableElementClrType);
+
+        binding.IsStableType = false;
+        Assert.Null(binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_StableReturnArrayElementClrType_Guard_RequiresArrayReturn()
+    {
+        var symbolTable = BuildSymbolTable("function f() { return 1; }");
+        var scope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "f", StringComparison.Ordinal));
+        Assert.NotNull(scope);
+
+        scope!.StableReturnClrType = typeof(string);
+        scope.StableReturnArrayElementClrType = typeof(string);
+        Assert.Null(scope.StableReturnArrayElementClrType);
+
+        scope.StableReturnClrType = typeof(JavaScriptRuntime.Array);
+        scope.StableReturnArrayElementClrType = typeof(string);
+        Assert.Equal(typeof(string), scope.StableReturnArrayElementClrType);
+
+        scope.StableReturnClrType = typeof(double);
+        Assert.Null(scope.StableReturnArrayElementClrType);
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_PrimeJavaScript_RunSieve_InfersQIsNumber()
     {
         const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";

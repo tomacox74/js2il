@@ -786,6 +786,12 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.Token(toNumberMref);
                         }
                     }
+
+                    if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_bclReferences.StringType);
+                    }
                 }
                 break;
 
@@ -867,6 +873,12 @@ internal sealed partial class LIRToILCompiler
                             parameterTypes: new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(toNumberMref);
+                    }
+
+                    if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_bclReferences.StringType);
                     }
 
                     break;

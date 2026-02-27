@@ -289,12 +289,26 @@ public sealed partial class HIRToLIRLowerer
         // `Int32Array.get_Item(double)` fast-path without boxing, and only box later if
         // `EnsureObject` is required by usage.
         var receiverStorage = GetTempStorage(boxedObject);
+        Type? stableArrayElementClrType = null;
+        if (indexStorage.Kind == ValueStorageKind.UnboxedValue
+            && indexStorage.ClrType == typeof(double)
+            && indexAccessExpr.Object is HIRVariableExpression receiverVarExpr
+            && receiverVarExpr.Name.BindingInfo.IsStableType
+            && receiverVarExpr.Name.BindingInfo.ClrType == typeof(JavaScriptRuntime.Array))
+        {
+            stableArrayElementClrType = receiverVarExpr.Name.BindingInfo.StableElementClrType;
+        }
+
         if (receiverStorage.Kind == ValueStorageKind.Reference
             && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array)
             && indexStorage.Kind == ValueStorageKind.UnboxedValue
             && indexStorage.ClrType == typeof(double))
         {
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        }
+        else if (stableArrayElementClrType == typeof(string))
+        {
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
         }
         else
         {
