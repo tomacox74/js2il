@@ -296,24 +296,27 @@ namespace JavaScriptRuntime.Node
         {
             try
             {
-                await using var source = new FileStream(
-                    sourcePath,
-                    FileMode.Open,
-                    FileAccess.Read,
-                    FileShare.Read,
-                    bufferSize: 81920,
-                    options: FileOptions.Asynchronous);
+                {
+                    await using var source = new FileStream(
+                        sourcePath,
+                        FileMode.Open,
+                        FileAccess.Read,
+                        FileShare.Read,
+                        bufferSize: 81920,
+                        options: FileOptions.Asynchronous);
 
-                await using var destination = new FileStream(
-                    destinationPath,
-                    FileMode.Create,
-                    FileAccess.Write,
-                    FileShare.None,
-                    bufferSize: 81920,
-                    options: FileOptions.Asynchronous);
+                    await using var destination = new FileStream(
+                        destinationPath,
+                        FileMode.Create,
+                        FileAccess.Write,
+                        FileShare.None,
+                        bufferSize: 81920,
+                        options: FileOptions.Asynchronous);
 
-                await source.CopyToAsync(destination).ConfigureAwait(false);
-                await destination.FlushAsync().ConfigureAwait(false);
+                    await source.CopyToAsync(destination).ConfigureAwait(false);
+                    await destination.FlushAsync().ConfigureAwait(false);
+                }
+
                 _ioScheduler.EndIo(promiseWithResolvers, null, isError: false);
             }
             catch (Exception ex)

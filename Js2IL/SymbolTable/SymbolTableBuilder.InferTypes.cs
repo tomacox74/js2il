@@ -108,6 +108,8 @@ public partial class SymbolTableBuilder
 
     private Type? InferStableReturnClrTypeFromBlockBody(Scope callableScope, Node functionBoundaryNode, BlockStatement body)
     {
+        bool canInferStableArrayReturn = callableScope.Parent?.Kind != ScopeKind.Class;
+
         // Bail out on try/finally/catch: return epilogues in lowering are currently object-typed.
         bool hasTry = false;
         var returns = new List<ReturnStatement>();
@@ -163,6 +165,24 @@ public partial class SymbolTableBuilder
         {
             callableScope.StableReturnIsThis = true;
             return null;
+        }
+
+        // Multi-return array inference (non-class callables only):
+        // require a final top-level return and all observed returns to resolve to Array.
+        if (returns.Count > 1
+            && canInferStableArrayReturn
+            && body.Body.Count > 0
+            && body.Body.Last() is ReturnStatement lastTopLevelReturn
+            && lastTopLevelReturn.Argument != null)
+        {
+            var finalType = InferExpressionClrType(lastTopLevelReturn.Argument, callableScope);
+            if (finalType == typeof(JavaScriptRuntime.Array)
+                && returns.All(r =>
+                    r.Argument != null
+                    && InferExpressionClrType(r.Argument, callableScope) == typeof(JavaScriptRuntime.Array)))
+            {
+                return typeof(JavaScriptRuntime.Array);
+            }
         }
 
         // Require exactly one return statement.
@@ -273,6 +293,11 @@ public partial class SymbolTableBuilder
         // Only allow a small, well-understood value-like primitive set.
         // (String return typing needs additional lowering guarantees; keep it disabled for now.)
         if (inferred == typeof(double) || inferred == typeof(bool))
+        {
+            return inferred;
+        }
+
+        if (canInferStableArrayReturn && inferred == typeof(JavaScriptRuntime.Array))
         {
             return inferred;
         }
@@ -467,9 +492,15 @@ public partial class SymbolTableBuilder
             return false;
         }
 
-        if (binding.DeclarationNode is not VariableDeclarator declarator || declarator.Init == null)
+        if (binding.DeclarationNode is not VariableDeclarator declarator)
         {
             return false;
+        }
+
+        if (declarator.Init == null)
+        {
+            inferredType = InferCapturedBindingReferenceTypeFromWrites(declaringScope, binding, proposedClrTypes);
+            return inferredType != null;
         }
 
         var initializerType = InferExpressionClrType(declarator.Init, declaringScope, proposedClrTypes);
@@ -485,6 +516,111 @@ public partial class SymbolTableBuilder
 
         inferredType = initializerType;
         return true;
+    }
+
+    private Type? InferCapturedBindingReferenceTypeFromWrites(
+        Scope scope,
+        BindingInfo targetBinding,
+        Dictionary<string, Type> proposedClrTypes)
+    {
+        Type? inferred = null;
+        bool sawWrite = false;
+        bool isCompatible = true;
+
+        void WalkScope(Scope currentScope)
+        {
+            if (!isCompatible)
+            {
+                return;
+            }
+
+            // If this scope resolves the name to a different binding (shadowing), this subtree cannot
+            // write to the captured binding we are validating.
+            if (!ReferenceEquals(TryResolveBinding(currentScope, targetBinding.Name), targetBinding))
+            {
+                return;
+            }
+
+            bool IsChildScopeRoot(Node node)
+            {
+                foreach (var childScope in currentScope.Children)
+                {
+                    if (ReferenceEquals(childScope.AstNode, node))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            void WalkNode(Node? node)
+            {
+                if (node == null || !isCompatible)
+                {
+                    return;
+                }
+
+                // Nested scope roots are validated in their own scope context.
+                if (!ReferenceEquals(node, currentScope.AstNode) && IsChildScopeRoot(node))
+                {
+                    return;
+                }
+
+                if (node is AssignmentExpression assignExpr
+                    && assignExpr.Left is Identifier id
+                    && ReferenceEquals(TryResolveBinding(currentScope, id.Name), targetBinding))
+                {
+                    if (assignExpr.Operator != Operator.Assignment)
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+
+                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                    if (rightType == null || rightType.IsValueType)
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+
+                    sawWrite = true;
+                    if (inferred == null)
+                    {
+                        inferred = rightType;
+                        return;
+                    }
+
+                    if (inferred != rightType)
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+                }
+                else if (node is UpdateExpression updateExpr
+                    && updateExpr.Argument is Identifier updateId
+                    && ReferenceEquals(TryResolveBinding(currentScope, updateId.Name), targetBinding))
+                {
+                    isCompatible = false;
+                    return;
+                }
+
+                foreach (var child in node.ChildNodes)
+                {
+                    WalkNode(child);
+                }
+            }
+
+            WalkNode(currentScope.AstNode);
+
+            foreach (var childScope in currentScope.Children)
+            {
+                WalkScope(childScope);
+            }
+        }
+
+        WalkScope(scope);
+        return isCompatible && sawWrite ? inferred : null;
     }
 
     private bool AreCapturedBindingWritesCompatible(
@@ -1000,6 +1136,25 @@ public partial class SymbolTableBuilder
             return null;
         }
 
+        static Scope? FindScopeByAstNodeRecursive(Scope scope, Node astNode)
+        {
+            if (ReferenceEquals(scope.AstNode, astNode))
+            {
+                return scope;
+            }
+
+            foreach (var child in scope.Children)
+            {
+                var found = FindScopeByAstNodeRecursive(child, astNode);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
         switch (expr)
         {
             case Identifier id:
@@ -1106,6 +1261,26 @@ public partial class SymbolTableBuilder
             }
             case CallExpression ce:
             {
+                // Direct call to a known function declaration/expression binding.
+                // If the callee has a stable inferred return type, propagate it to this expression.
+                if (ce.Callee is Identifier calleeId && scope != null)
+                {
+                    var calleeBinding = TryResolveBinding(scope, calleeId.Name);
+                    if (calleeBinding?.Kind == BindingKind.Function && calleeBinding.DeclarationNode != null)
+                    {
+                        var root = FindRootScope(scope);
+                        if (root != null)
+                        {
+                            var calleeScope = FindScopeByAstNodeRecursive(root, calleeBinding.DeclarationNode);
+                            var stableReturn = calleeScope?.StableReturnClrType;
+                            if (stableReturn == typeof(JavaScriptRuntime.Array))
+                            {
+                                return stableReturn;
+                            }
+                        }
+                    }
+                }
+
                 // Math.*(...) numeric helpers
                 // (e.g., const q = Math.ceil(Math.sqrt(this.sieveSizeInBits));)
                 if (ce.Callee is MemberExpression mathMe &&
@@ -1197,11 +1372,11 @@ public partial class SymbolTableBuilder
                                 {
                                     return returnType;
                                 }
-                                // For object return types, check if it's Array
-                                else if (returnType == typeof(object) || returnType == receiverType)
+                                // Some array methods (slice/map/filter/concat/...) return Array.
+                                // Preserve that to unlock downstream typed array calls/indexing.
+                                else if (returnType == receiverType)
                                 {
-                                    // Some methods like slice, map return Array but are typed as object
-                                    // We already handle these cases elsewhere, so skip here
+                                    return receiverType;
                                 }
                             }
                         }
