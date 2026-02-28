@@ -555,6 +555,7 @@ internal sealed partial class LIRToILCompiler
 
                     // Inline length get: receiver
                     LIRGetLength getLength => EstimateTempConstructionPeak(getLength.Object),
+                    LIRGetStringLength getStringLength => EstimateTempConstructionPeak(getStringLength.Receiver),
 
                     // Parent-scope load emits: scopesArray + index + ldelem_ref + cast + ldfld
                     // which peaks at 2 stack items during index load.

@@ -2,14 +2,25 @@
 
 JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to native .NET assemblies using System.Reflection.Metadata for direct IL emission. 
 
+## Project goals are sorted by priority
+* JS2IL should be easy to to use for both library authors and end users.  This means good documentation, good error messages, and a good developer experience.  It should be low friction.
+* JS2IL completely conform to the JavaScript language specification (ECMA-262).  Currently we are targeting ES2025.
+* The JS2IL runtime behavior should be completely compatible with Node.js.  Any script that runs in Node.js should compile with run with js2il.
+* The JS2IL compiler and runtime should be NPM compatibale and have the same module resolution rules as node.js.
+* Given that js2il is a true compiler there is a very reasonable expectation that its output should be faster than other solutions. A lot of the performance comparisons are against jint with is a dotnet interpreted solution.
+* it is not expected to ever match node.js performance because that is a project that has had a decade of optimiizations but it should be able to run real world node applications with acceptable performance.
+
+These goals drive choices made.  And their ranking above should be clear. For example if I have a 10x perf inprovement but it breaks compatiblity with node or ECMA 262 it is a non-starter.
+
 ## Architecture Overview
 
-### Compilation Pipeline (5 Phases)
+### Compilation Pipeline (6 Phases)
 1. **Parse**: JavaScript → AST (Acornima parser)
 2. **Validate**: AST validation for supported features (`JavaScriptAstValidator`)
 3. **Symbol Table**: Build scope tree with variable bindings (`SymbolTableBuilder` → `SymbolTable`)
 4. **Type Generation**: Scopes → .NET types with fields (`TypeGenerator` → `VariableRegistry`)
-5. **IL Emission**: AST + metadata → IL bytes (`MainGenerator` orchestrates specialized generators)
+5. **Two-Phase Callable Planning**: `TwoPhaseCompilationCoordinator` runs `CallableDiscovery`, `CallableDependencyCollector`, `CompilationPlanner`, and `CallableRegistry` setup to discover callables, compute dependency order, and predeclare callable tokens.
+6. **Lowering + IL Emission**: `JsMethodCompiler` runs AST → HIR (`HIRBuilder`) → LIR (`HIRToLIRLowerer`), applies LIR normalization/optimization (`LIRIntrinsicNormalization`, `LIRMemberCallNormalization`, `LIRTypeNormalization`, `LIRCoercionCSE`), then emits IL via `LIRToILCompiler` and finalizes preallocated MethodDefs via `MethodDefinitionFinalizer`.
 
 ### Core Concepts
 
@@ -22,20 +33,22 @@ JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to nat
 
 **Strongly-Typed Scope Locals** (recent optimization): Local variables storing scope instances use `TypeDefinitionHandle` for their specific scope class instead of `System.Object`, eliminating `castclass` after `ldloc`. Only cast when loading from parameters or scope arrays.
 
-### Key Services
+### Key Compiler Services
 
-- **TypeGenerator**: Creates .NET types from `SymbolTable`, populates `VariableRegistry` with field handles
-- **MainGenerator**: Orchestrates IL emission for global scope, wires function/class generators
-- **ILMethodGenerator**: Statement-level IL emission (control flow, assignments, declarations)
-- **ILExpressionGenerator**: Expression-level IL emission (operators, calls, member access)
-- **JavaScriptFunctionGenerator**: Emits function declarations/expressions as static methods
-- **JavaScriptArrowFunctionGenerator**: Emits arrow functions (inherits parent `this`)
-- **ClassesGenerator**: Emits ES6 classes (constructors, methods, fields, private fields with name mangling)
-- **BinaryOperators**: Handles all binary operators including scope-aware variable loading
-- **Runtime**: Provides `MemberReferenceHandle` cache for JavaScriptRuntime helper methods
+- **MainGenerator**: Entry-point orchestrator that delegates callable planning/compilation to the two-phase pipeline before module-main compilation.
+- **TwoPhaseCompilationCoordinator**: Coordinates Phase 1 discovery/declaration and Phase 2 planned callable compilation/finalization.
+- **CallableDiscovery + CallableDependencyCollector + CompilationPlanner**: Discover callables, build dependency edges, and compute deterministic SCC/topological stage order.
+- **CallableRegistry**: Canonical `CallableId`-keyed callable signature/token registry with strict lookup mode during body compilation.
+- **ClassesGenerator**: Declares class TypeDefs/fields and two-phase class callable metadata needed for class body compilation.
+- **JavaScriptArrowFunctionGenerator**: Compiles/finalizes arrow callable bodies against preallocated MethodDefs in the two-phase flow.
+- **JsMethodCompiler**: Per-callable compiler that orchestrates AST → HIR → LIR → IL compilation.
+- **HIRBuilder + HIRToLIRLowerer**: Core lowering pipeline from AST semantics into SSA-friendly `MethodBodyIR`.
+- **LIRIntrinsicNormalization / LIRMemberCallNormalization / LIRTypeNormalization / LIRCoercionCSE**: Key LIR rewrite and optimization passes before IL emission.
+- **LIRToILCompiler + MethodDefinitionFinalizer**: Emit IL bodies and finalize deterministic MethodDef rows.
+- **TypeGenerator**: Creates .NET scope types from `SymbolTable` and populates `VariableRegistry` field bindings.
+- **Runtime**: Provides `MemberReferenceHandle` cache for JavaScriptRuntime helper methods.
 
 ### Critical Files
-- `Js2IL/Services/VariableBindings/Variable.cs`: Variable metadata with `GetLocalVariableType()` for typed locals
 - `Js2IL/Services/ILGenerators/MethodBuilder.cs`: `CreateLocalVariableSignature()` - centralizes local sig creation
 - `Js2IL/SymbolTable/`: Scope tree infrastructure with free variable analysis
 - `JavaScriptRuntime/`: Runtime library (Array, Object, Operators, Math, String, Closure helpers)
@@ -225,7 +238,7 @@ All `NotSupportedException` thrown via `ILEmitHelpers.ThrowNotSupported()` with 
 3. Add IL emission in appropriate generator (statement → `ILMethodGenerator`, expression → `ILExpressionGenerator`)
 4. Add execution + generator tests with snapshot
 
-**Debugging IL**: Use `scripts/decompileToIL.js` or inspect `.verified.txt` snapshots. Common issues: stack imbalance (track push/pop), incorrect metadata handles, missing type casts.
+**Debugging IL**: Use `scripts/decompileGeneratorTest.js` or inspect `.verified.txt` snapshots. Common issues: stack imbalance (track push/pop), incorrect metadata handles, missing type casts.
 
 ## External Dependencies
 - **Acornima**: JavaScript parser (ES2025 target)

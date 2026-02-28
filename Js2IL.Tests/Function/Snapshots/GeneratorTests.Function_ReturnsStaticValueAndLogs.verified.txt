@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20d0
+				// Method begins at RVA 0x20e2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x20a7
+			// Method begins at RVA 0x20b9
 			// Header size: 1
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -69,7 +69,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c7
+			// Method begins at RVA 0x20d9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -95,13 +95,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 75 (0x4b)
+		// Code size: 93 (0x5d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ReturnsStaticValueAndLogs/Scope,
 			[1] object,
-			[2] object,
-			[3] object
+			[2] float64,
+			[3] object,
+			[4] float64,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_ReturnsStaticValueAndLogs/Scope::.ctor()
@@ -126,13 +128,19 @@
 		IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
 		IL_0036: stloc.3
 		IL_0037: ldloc.3
-		IL_0038: stloc.2
-		IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003e: ldstr "Output:"
-		IL_0043: ldloc.2
-		IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0049: pop
-		IL_004a: ret
+		IL_0038: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_003d: stloc.s 4
+		IL_003f: ldloc.s 4
+		IL_0041: stloc.2
+		IL_0042: ldloc.2
+		IL_0043: box [System.Runtime]System.Double
+		IL_0048: stloc.s 5
+		IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004f: ldstr "Output:"
+		IL_0054: ldloc.s 5
+		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_005b: pop
+		IL_005c: ret
 	} // end of method Function_ReturnsStaticValueAndLogs::__js_module_init__
 
 } // end of class Modules.Function_ReturnsStaticValueAndLogs
@@ -144,7 +152,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d9
+		// Method begins at RVA 0x20eb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

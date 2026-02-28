@@ -628,15 +628,40 @@ internal sealed partial class LIRToILCompiler
                 }
                 break;
             case LIRGetLength getLength:
-                // Emit inline: call JavaScriptRuntime.Object.GetLength(object)
-                EmitLoadTempAsObject(getLength.Object, ilEncoder, allocation, methodDescriptor);
                 {
+                    // Emit inline: call JavaScriptRuntime.Object.GetLength(object)
+                    EmitLoadTempAsObject(getLength.Object, ilEncoder, allocation, methodDescriptor);
                     var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.GetLength),
                         parameterTypes: new[] { typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(getLengthMethod);
+                }
+                break;
+
+            case LIRGetStringLength getStringLength:
+                {
+                    // Inline: receiver as string, callvirt get_Length, conv.r8
+                    var receiverStorage = GetTempStorage(getStringLength.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(string))
+                    {
+                        EmitLoadTemp(getStringLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getStringLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(string)));
+                    }
+
+                    var getStringLengthMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(string),
+                        "get_Length",
+                        parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getStringLengthMethod);
+                    ilEncoder.OpCode(ILOpCode.Conv_r8);
                 }
                 break;
 
@@ -761,6 +786,12 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.Token(toNumberMref);
                         }
                     }
+
+                    if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_bclReferences.StringType);
+                    }
                 }
                 break;
 
@@ -842,6 +873,12 @@ internal sealed partial class LIRToILCompiler
                             parameterTypes: new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(toNumberMref);
+                    }
+
+                    if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_bclReferences.StringType);
                     }
 
                     break;
