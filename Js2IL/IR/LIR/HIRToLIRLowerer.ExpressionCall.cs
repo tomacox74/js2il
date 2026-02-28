@@ -678,12 +678,7 @@ public sealed partial class HIRToLIRLowerer
                     // Choose the same overload we will emit in IL (see LIRToILCompiler.EmitIntrinsicStaticCall)
                     var argCount = callExpr.Arguments.Count();
 
-                    bool ExactArityMatch(System.Reflection.MethodInfo mi)
-                    {
-                        var ps = mi.GetParameters();
-                        return ps.Length == argCount
-                            && !(ps.Length == 1 && ps[0].ParameterType == typeof(object[]));
-                    }
+                    bool ExactArityMatch(System.Reflection.MethodInfo mi) => mi.GetParameters().Length == argCount;
 
                     bool ParamsArrayMatch(System.Reflection.MethodInfo mi)
                     {
@@ -856,45 +851,6 @@ public sealed partial class HIRToLIRLowerer
         if (!TryLowerExpression(calleePropAccess.Object, out var receiverTempVar))
         {
             return false;
-        }
-
-        // Case 2a.0: Stable string local/member receiver for substring(...) calls.
-        // This avoids late-bound Object.CallMember* dispatch in hot loops (e.g., dromaeo generateTestStrings).
-        if (!hasSpreadArgs
-            && callExpr.Arguments.Length <= 2
-            && string.Equals(calleePropAccess.PropertyName, "substring", StringComparison.Ordinal)
-            && calleePropAccess.Object is HIRVariableExpression receiverVarExpr
-            && receiverVarExpr.Name.BindingInfo.IsStableType
-            && receiverVarExpr.Name.BindingInfo.ClrType == typeof(string))
-        {
-            // Ensure the receiver temp is strongly typed as string for the intrinsic static call signature.
-            if (GetTempStorage(receiverTempVar).Kind != ValueStorageKind.Reference
-                || GetTempStorage(receiverTempVar).ClrType != typeof(string))
-            {
-                var receiverAsString = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRConvertToString(EnsureObject(receiverTempVar), receiverAsString));
-                DefineTempStorage(receiverAsString, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-                receiverTempVar = receiverAsString;
-            }
-
-            var substringArgs = new List<TempVariable>(1 + callExpr.Arguments.Length) { receiverTempVar };
-            foreach (var argExpr in callExpr.Arguments)
-            {
-                if (!TryLowerExpression(argExpr, out var argTemp))
-                {
-                    return false;
-                }
-
-                substringArgs.Add(EnsureObject(argTemp));
-            }
-
-            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-                "String",
-                "substring",
-                substringArgs,
-                resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-            return true;
         }
 
         // Case 2a: Typed Array instance method calls (e.g., arr.join(), arr.push(...)).

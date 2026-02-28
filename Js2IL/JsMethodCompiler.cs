@@ -421,12 +421,11 @@ internal sealed class JsMethodCompiler
             {
                 inferredReturnClrType = scope.StableReturnClrType;
             }
-            else if (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array)
-                || scope.StableReturnClrType == typeof(string))
+            else if (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array))
             {
-                // Keep non-class callable ABI object-typed by default, but allow stable Array/string
-                // returns so generated signatures can expose specialized return types where proven.
-                inferredReturnClrType = scope.StableReturnClrType;
+                // Keep non-class callable ABI object-typed by default, but allow stable Array returns
+                // so generated signatures can expose `JavaScriptRuntime.Array` where proven.
+                inferredReturnClrType = typeof(JavaScriptRuntime.Array);
             }
         }
 
@@ -531,10 +530,9 @@ internal sealed class JsMethodCompiler
 
         if (scope.Kind == ScopeKind.Function
             && scope.Parent?.Kind != ScopeKind.Class
-            && (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array)
-                || scope.StableReturnClrType == typeof(string)))
+            && scope.StableReturnClrType == typeof(JavaScriptRuntime.Array))
         {
-            methodDescriptor.ReturnClrType = scope.StableReturnClrType;
+            methodDescriptor.ReturnClrType = typeof(JavaScriptRuntime.Array);
         }
 
         if (node is Acornima.Ast.MethodDefinition methodDef)
@@ -595,10 +593,9 @@ internal sealed class JsMethodCompiler
 
         if (scope.Kind == ScopeKind.Function
             && scope.Parent?.Kind != ScopeKind.Class
-            && (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array)
-                || scope.StableReturnClrType == typeof(string)))
+            && scope.StableReturnClrType == typeof(JavaScriptRuntime.Array))
         {
-            methodDescriptor.ReturnClrType = scope.StableReturnClrType;
+            methodDescriptor.ReturnClrType = typeof(JavaScriptRuntime.Array);
         }
 
         var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);

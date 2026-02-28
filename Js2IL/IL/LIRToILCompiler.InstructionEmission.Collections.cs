@@ -32,42 +32,7 @@ internal sealed partial class LIRToILCompiler
                         parameterTypes: new[] { typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(getLengthMethod);
-
                     EmitStoreTemp(getLength.Result, ilEncoder, allocation);
-                    break;
-                }
-
-            case LIRGetStringLength getStringLength:
-                {
-                    if (!IsMaterialized(getStringLength.Result, allocation))
-                    {
-                        // Will be emitted inline via EmitLoadTemp when the temp is used.
-                        break;
-                    }
-
-                    // Load receiver as string (cast only if needed)
-                    var receiverStorage = GetTempStorage(getStringLength.Receiver);
-                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(string))
-                    {
-                        EmitLoadTemp(getStringLength.Receiver, ilEncoder, allocation, methodDescriptor);
-                    }
-                    else
-                    {
-                        EmitLoadTempAsObject(getStringLength.Receiver, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(string)));
-                    }
-
-                    // Emit: callvirt int32 System.String::get_Length(); conv.r8
-                    var getStringLengthMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(string),
-                        "get_Length",
-                        parameterTypes: Type.EmptyTypes);
-                    ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(getStringLengthMethod);
-                    ilEncoder.OpCode(ILOpCode.Conv_r8);
-
-                    EmitStoreTemp(getStringLength.Result, ilEncoder, allocation);
                     break;
                 }
 
@@ -275,12 +240,6 @@ internal sealed partial class LIRToILCompiler
                         }
                     }
 
-                    if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
-                    {
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(_bclReferences.StringType);
-                    }
-
                     EmitStoreTemp(getItem.Result, ilEncoder, allocation);
                     break;
                 }
@@ -326,12 +285,6 @@ internal sealed partial class LIRToILCompiler
                             parameterTypes: new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(toNumberMref);
-                    }
-
-                    if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
-                    {
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(_bclReferences.StringType);
                     }
 
                     EmitStoreTemp(getArray.Result, ilEncoder, allocation);

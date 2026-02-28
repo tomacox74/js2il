@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20cd
+			// Method begins at RVA 0x20c3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,12 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 113 (0x71)
+		// Code size: 103 (0x67)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Construct_Length/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_Construct_Length/Scope::.ctor()
@@ -58,25 +58,23 @@
 		IL_001b: stloc.1
 		IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0021: ldloc.1
-		IL_0022: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
+		IL_0022: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 		IL_0027: box [System.Runtime]System.Double
 		IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0031: pop
 		IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0037: ldloc.1
 		IL_0038: ldc.r8 0.0
-		IL_0041: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_0046: box [System.Runtime]System.Double
-		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0050: pop
-		IL_0051: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0056: ldloc.1
-		IL_0057: ldc.r8 2
-		IL_0060: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_0065: box [System.Runtime]System.Double
-		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_006f: pop
-		IL_0070: ret
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004b: pop
+		IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0051: ldloc.1
+		IL_0052: ldc.r8 2
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0065: pop
+		IL_0066: ret
 	} // end of method Int32Array_Construct_Length::__js_module_init__
 
 } // end of class Modules.Int32Array_Construct_Length
@@ -88,7 +86,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d6
+		// Method begins at RVA 0x20cc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -125,15 +125,15 @@ internal sealed partial class LIRToILCompiler
         var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
 
         var argCount = instruction.Arguments.Count;
-        var chosen = methods
-            .Where(mi => mi.GetParameters().Length == argCount)
-            .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
-            .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
-            .FirstOrDefault();
+        var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == argCount);
         if (chosen == null)
         {
             // Try params object[] signature
-            chosen = methods.FirstOrDefault(IsParamsObjectArrayOverload);
+            chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            });
         }
 
         if (chosen == null)
@@ -206,14 +206,14 @@ internal sealed partial class LIRToILCompiler
         var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
 
         var argCount = instruction.Arguments.Count;
-        var chosen = methods
-            .Where(mi => mi.GetParameters().Length == argCount)
-            .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
-            .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
-            .FirstOrDefault();
+        var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == argCount);
         if (chosen == null)
         {
-            chosen = methods.FirstOrDefault(IsParamsObjectArrayOverload);
+            chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            });
         }
 
         if (chosen == null)
@@ -279,14 +279,14 @@ internal sealed partial class LIRToILCompiler
         var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
 
         var argCount = instruction.Arguments.Count;
-        var chosen = methods
-            .Where(mi => mi.GetParameters().Length == argCount)
-            .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
-            .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
-            .FirstOrDefault();
+        var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == argCount);
         if (chosen == null)
         {
-            chosen = methods.FirstOrDefault(IsParamsObjectArrayOverload);
+            chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            });
         }
 
         if (chosen == null)
@@ -327,12 +327,6 @@ internal sealed partial class LIRToILCompiler
         var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
-    }
-
-    private static bool IsParamsObjectArrayOverload(System.Reflection.MethodInfo method)
-    {
-        var ps = method.GetParameters();
-        return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
     }
 
     #endregion

@@ -108,12 +108,6 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
-        public Task String_FromCharCode_Basic()
-        {
-            return ExecutionTest(nameof(String_FromCharCode_Basic));
-        }
-
-        [Fact]
         public Task String_ToLowerCase_ToUpperCase_Basic()
         {
             return ExecutionTest(nameof(String_ToLowerCase_ToUpperCase_Basic));
