@@ -19,6 +19,7 @@ namespace Benchmarks;
 /// This provides detailed timing for AOT compilation vs execution.
 /// </summary>
 [MemoryDiagnoser]
+[Config(typeof(FullParamsConfig))]
 [RankColumn]
 [Orderer(SummaryOrderPolicy.FastestToSlowest)]
 [HideColumns("Error", "Gen0", "Gen1", "Gen2")]

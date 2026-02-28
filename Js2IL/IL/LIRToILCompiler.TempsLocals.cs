@@ -1726,7 +1726,9 @@ internal sealed partial class LIRToILCompiler
                 // reference-typed values (notably `undefined` which is represented as ldnull).
                 // Emitting `ldnull; box <valuetype>` produces invalid IL, so just forward the
                 // reference value as-is.
-                if (GetTempStorage(convertToObject.Source).Kind == ValueStorageKind.Reference)
+                if (GetTempStorage(convertToObject.Source).Kind == ValueStorageKind.Reference
+                    || GetTempStorage(convertToObject.Source).Kind == ValueStorageKind.BoxedValue
+                    || convertToObject.SourceType == typeof(object))
                 {
                     EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
                     return true;
@@ -1742,9 +1744,17 @@ internal sealed partial class LIRToILCompiler
                 {
                     ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
                 }
-                else
+                else if (convertToObject.SourceType == typeof(int))
+                {
+                    ilEncoder.Token(_bclReferences.Int32Type);
+                }
+                else if (convertToObject.SourceType == typeof(double))
                 {
                     ilEncoder.Token(_bclReferences.DoubleType);
+                }
+                else
+                {
+                    throw new NotSupportedException($"Unsupported ConvertToObject source type: {convertToObject.SourceType}");
                 }
                 return true;
 

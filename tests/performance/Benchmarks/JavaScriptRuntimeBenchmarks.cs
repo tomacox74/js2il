@@ -11,6 +11,7 @@ namespace Benchmarks;
 /// Cross-runtime JavaScript benchmark suite comparing Node.js, Jint, and js2il.
 /// </summary>
 [MemoryDiagnoser]
+[Config(typeof(FullParamsConfig))]
 [RankColumn]
 [Orderer(SummaryOrderPolicy.FastestToSlowest)]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByParams)]
