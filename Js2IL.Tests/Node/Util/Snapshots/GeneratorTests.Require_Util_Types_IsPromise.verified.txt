@@ -154,12 +154,13 @@
 		.locals init (
 			[0] class Modules.Require_Util_Types_IsPromise/Scope,
 			[1] object,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] float64,
 			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[7] object
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Util_Types_IsPromise/Scope::.ctor()
@@ -184,8 +185,8 @@
 		IL_0036: stloc.s 5
 		IL_0038: ldloc.s 5
 		IL_003a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
-		IL_003f: stloc.s 5
-		IL_0041: ldloc.s 5
+		IL_003f: stloc.s 6
+		IL_0041: ldloc.s 6
 		IL_0043: stloc.2
 		IL_0044: ldnull
 		IL_0045: ldftn object Modules.Require_Util_Types_IsPromise/ArrowFunction_L7C20::__js_call__(object)
@@ -204,8 +205,8 @@
 		IL_006c: ldstr "then"
 		IL_0071: ldloc.s 5
 		IL_0073: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0078: stloc.s 6
-		IL_007a: ldloc.s 6
+		IL_0078: stloc.s 7
+		IL_007a: ldloc.s 7
 		IL_007c: stloc.3
 		IL_007d: ldc.r8 42
 		IL_0086: stloc.s 4
@@ -237,10 +238,10 @@
 		IL_00dd: stloc.s 5
 		IL_00df: ldloc.s 4
 		IL_00e1: box [System.Runtime]System.Double
-		IL_00e6: stloc.s 7
+		IL_00e6: stloc.s 8
 		IL_00e8: ldloc.s 5
 		IL_00ea: ldstr "isPromise"
-		IL_00ef: ldloc.s 7
+		IL_00ef: ldloc.s 8
 		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_00f6: stloc.s 5
 		IL_00f8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()

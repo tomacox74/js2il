@@ -553,6 +553,55 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Implements String.fromCharCode(codeUnit).
+        /// </summary>
+        public static string FromCharCode(object? codeUnit)
+        {
+            return ToCharCodeUnit(codeUnit).ToString();
+        }
+
+        /// <summary>
+        /// Implements String.fromCharCode(...codeUnits).
+        /// </summary>
+        public static string FromCharCode(object?[]? codeUnits)
+        {
+            if (codeUnits == null || codeUnits.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var chars = new char[codeUnits.Length];
+            for (int i = 0; i < codeUnits.Length; i++)
+            {
+                chars[i] = ToCharCodeUnit(codeUnits[i]);
+            }
+
+            return new string(chars);
+        }
+
+        private static char ToCharCodeUnit(object? codeUnit)
+        {
+            double d;
+            try
+            {
+                d = JavaScriptRuntime.TypeUtilities.ToNumber(codeUnit);
+            }
+            catch
+            {
+                d = 0;
+            }
+
+            if (double.IsNaN(d) || double.IsInfinity(d))
+            {
+                d = 0;
+            }
+
+            // JS: ToUint16
+            uint u16 = (uint)((int)global::System.Math.Truncate(d)) & 0xFFFFu;
+            return (char)u16;
+        }
+
+        /// <summary>
         /// Implements a subset of String.prototype.startsWith(searchString[, position]).
         /// Uses ordinal comparison and basic ToIntegerOrInfinity coercion for position.
         /// </summary>

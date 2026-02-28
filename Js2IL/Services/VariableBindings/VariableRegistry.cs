@@ -88,7 +88,8 @@ namespace Js2IL.Services.VariableBindings
                     if (clrType == typeof(double)
                         || clrType == typeof(bool)
                         || clrType == typeof(string)
-                        || clrType == typeof(JavaScriptRuntime.Array))
+                        || clrType == typeof(JavaScriptRuntime.Array)
+                        || clrType == typeof(JavaScriptRuntime.RegExp))
                     {
                         resolvedDeclaredFieldType = clrType;
                     }
