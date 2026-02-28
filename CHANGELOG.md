@@ -6,6 +6,10 @@ All notable changes to this project are documented here.
 
 - benchmarks/phased: temporarily exclude `evaluation`, `evaluation-modern`, and `linq-js` from `Js2ILPhasedBenchmarks` scenario discovery while those scenarios are investigated for fix-or-remove follow-up.
 - perf/type-inference: infer stable `JavaScriptRuntime.Array` returns for eligible non-class callables (including `generateTestStrings` in `dromaeo-object-regexp`), propagate that type through captured-binding writes/call-site inference, and unlock additional early-bound array field/index/member access patterns in generated IL (fixes #751).
+- compiler/IL/runtime: harden `LIRConvertToObject` emission to use temp-storage type information when boxing and preserve reference/object values without invalid `box`, fixing crashes/invalid casts in tagged-template and typed-reference paths.
+- tests/integration: add `Compile_Performance_Dromaeo_Object_Regexp` integration execution coverage, add `Function_VariableDeclaration_UndefinedInit_TypedReferenceAssignment` execution regression coverage, and refresh affected generator snapshots.
+- benchmarks/tooling: add `scripts/runPhasedBenchmarkScenario.js` for single-scenario phased runs, apply a shared BenchmarkDotNet summary config with max parameter width `200` to phased/runtime benchmark suites, and update BenchmarkDotNet to `0.15.8`.
+- docs/copilot: refresh `.github/copilot-instructions.md` compiler architecture/service guidance and document the recommended local phased benchmark workflow via `node scripts/runPhasedBenchmarkScenario.js <scenario>` (with BenchmarkDotNet docs/source references).
 
 ## v0.8.24 - 2026-02-25
 

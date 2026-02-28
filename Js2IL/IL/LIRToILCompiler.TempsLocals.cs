@@ -1726,9 +1726,21 @@ internal sealed partial class LIRToILCompiler
                 // reference-typed values (notably `undefined` which is represented as ldnull).
                 // Emitting `ldnull; box <valuetype>` produces invalid IL, so just forward the
                 // reference value as-is.
-                if (GetTempStorage(convertToObject.Source).Kind == ValueStorageKind.Reference
-                    || GetTempStorage(convertToObject.Source).Kind == ValueStorageKind.BoxedValue
-                    || convertToObject.SourceType == typeof(object))
+                var convertToObjectSourceStorage = GetTempStorage(convertToObject.Source);
+                if (convertToObjectSourceStorage.Kind == ValueStorageKind.Reference
+                    || convertToObjectSourceStorage.Kind == ValueStorageKind.BoxedValue)
+                {
+                    EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+                    return true;
+                }
+
+                var convertToObjectSourceType = convertToObjectSourceStorage.ClrType;
+                if (convertToObjectSourceType == null && convertToObject.SourceType != typeof(object))
+                {
+                    convertToObjectSourceType = convertToObject.SourceType;
+                }
+
+                if (convertToObjectSourceType == null)
                 {
                     EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
                     return true;
@@ -1736,25 +1748,25 @@ internal sealed partial class LIRToILCompiler
 
                 EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Box);
-                if (convertToObject.SourceType == typeof(bool))
+                if (convertToObjectSourceType == typeof(bool))
                 {
                     ilEncoder.Token(_bclReferences.BooleanType);
                 }
-                else if (convertToObject.SourceType == typeof(JavaScriptRuntime.JsNull))
+                else if (convertToObjectSourceType == typeof(JavaScriptRuntime.JsNull))
                 {
                     ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
                 }
-                else if (convertToObject.SourceType == typeof(int))
+                else if (convertToObjectSourceType == typeof(int))
                 {
                     ilEncoder.Token(_bclReferences.Int32Type);
                 }
-                else if (convertToObject.SourceType == typeof(double))
+                else if (convertToObjectSourceType == typeof(double))
                 {
                     ilEncoder.Token(_bclReferences.DoubleType);
                 }
                 else
                 {
-                    throw new NotSupportedException($"Unsupported ConvertToObject source type: {convertToObject.SourceType}");
+                    throw new NotSupportedException($"Unsupported ConvertToObject source type: {convertToObjectSourceType}");
                 }
                 return true;
 
