@@ -119,13 +119,6 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
-        public Task String_FromCharCode_Basic()
-        {
-            var testName = nameof(String_FromCharCode_Basic);
-            return GenerateTest(testName);
-        }
-
-        [Fact]
         public Task String_ToLowerCase_ToUpperCase_Basic()
         {
             var testName = nameof(String_ToLowerCase_ToUpperCase_Basic);

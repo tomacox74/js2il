@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20b0
+			// Method begins at RVA 0x20ac
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,12 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 84 (0x54)
+		// Code size: 80 (0x50)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Index_Assign/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_Index_Assign/Scope::.ctor()
@@ -59,15 +59,15 @@
 		IL_001c: ldloc.1
 		IL_001d: ldc.r8 1
 		IL_0026: ldc.r8 3
-		IL_002f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0039: ldloc.1
-		IL_003a: ldc.r8 1
-		IL_0043: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_0048: box [System.Runtime]System.Double
-		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0052: pop
-		IL_0053: ret
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
+		IL_0034: pop
+		IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003a: ldloc.1
+		IL_003b: ldc.r8 1
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004e: pop
+		IL_004f: ret
 	} // end of method Int32Array_Index_Assign::__js_module_init__
 
 } // end of class Modules.Int32Array_Index_Assign
@@ -79,7 +79,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b9
+		// Method begins at RVA 0x20b5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

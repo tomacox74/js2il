@@ -100,7 +100,7 @@ internal sealed partial class LIRToILCompiler
                     {
                         EmitLoadTempAsObject(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
 
-                        if (ShouldEmitReferenceNarrowingCastForStore(fieldClrType, storeParentField.Value))
+                        if (fieldClrType != typeof(object) && !fieldClrType.IsValueType)
                         {
                             ilEncoder.OpCode(ILOpCode.Castclass);
                             ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));

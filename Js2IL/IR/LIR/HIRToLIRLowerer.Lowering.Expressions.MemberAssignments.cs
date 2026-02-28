@@ -228,7 +228,8 @@ public sealed partial class HIRToLIRLowerer
         var indexStorage = GetTempStorage(indexTemp);
         var valueStorage = GetTempStorage(valueToStore);
         bool canUseNumericSetItem =
-            indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double);
+            indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
+            valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double);
         bool canUseStringKeyDoubleValueSetItem =
             indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string) &&
             valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double);

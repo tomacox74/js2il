@@ -50,9 +50,6 @@ internal static class LIRIntrinsicNormalization
         foreach (var instruction in methodBody.Instructions.Where(static ins =>
             ins is LIRConstString
             || ins is LIRLoadUserClassInstanceField
-            || ins is LIRLoadScopeField
-            || ins is LIRLoadLeafScopeField
-            || ins is LIRLoadParentScopeField
             || ins is LIRCopyTemp))
         {
             switch (instruction)
@@ -79,30 +76,6 @@ internal static class LIRIntrinsicNormalization
                         {
                             knownSpecializedReceiverClrTypes[loadInstanceField.Result.Index] = fieldClrType;
                         }
-                    }
-                    break;
-
-                case LIRLoadScopeField loadScopeField:
-                    if (loadScopeField.Result.Index >= 0
-                        && IsSpecializedReceiverClrType(loadScopeField.Binding.ClrType))
-                    {
-                        knownSpecializedReceiverClrTypes[loadScopeField.Result.Index] = loadScopeField.Binding.ClrType!;
-                    }
-                    break;
-
-                case LIRLoadLeafScopeField loadLeafScopeField:
-                    if (loadLeafScopeField.Result.Index >= 0
-                        && IsSpecializedReceiverClrType(loadLeafScopeField.Binding.ClrType))
-                    {
-                        knownSpecializedReceiverClrTypes[loadLeafScopeField.Result.Index] = loadLeafScopeField.Binding.ClrType!;
-                    }
-                    break;
-
-                case LIRLoadParentScopeField loadParentScopeField:
-                    if (loadParentScopeField.Result.Index >= 0
-                        && IsSpecializedReceiverClrType(loadParentScopeField.Binding.ClrType))
-                    {
-                        knownSpecializedReceiverClrTypes[loadParentScopeField.Result.Index] = loadParentScopeField.Binding.ClrType!;
                     }
                     break;
 
@@ -143,13 +116,6 @@ internal static class LIRIntrinsicNormalization
                 if (receiverType == typeof(JavaScriptRuntime.Int32Array))
                 {
                     methodBody.Instructions[i] = new LIRGetInt32ArrayLength(getLength.Object, getLength.Result);
-                    methodBody.TempStorages[getLength.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
-                    continue;
-                }
-
-                if (receiverType == typeof(string))
-                {
-                    methodBody.Instructions[i] = new LIRGetStringLength(getLength.Object, getLength.Result);
                     methodBody.TempStorages[getLength.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
                     continue;
                 }
@@ -279,9 +245,13 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember0 callMember0)
             {
+                // Intentionally limited to zero-arg member calls for now.
+                // Multi-arg string members frequently require runtime coercions
+                // (e.g., string conversion of searchString) that are currently
+                // centralized in runtime dispatch and should stay behaviorally identical.
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember0.Receiver.Index, out var receiverType)
                     || receiverType != typeof(string)
-                    || !TryResolveSafeStringIntrinsicReturnClrType(callMember0.MethodName, argCount: 0, out var returnClrType))
+                    || !IsZeroArgStringMethodSafeToEarlyBind(callMember0.MethodName))
                 {
                     continue;
                 }
@@ -294,67 +264,10 @@ internal static class LIRIntrinsicNormalization
 
                 if (callMember0.Result.Index >= 0)
                 {
-                    ApplyResolvedIntrinsicReturnStorage(methodBody, callMember0.Result, returnClrType);
-                }
-
-                continue;
-            }
-
-            if (instruction is LIRCallMember1 callMember1)
-            {
-                if (knownSpecializedReceiverClrTypes.TryGetValue(callMember1.Receiver.Index, out var stringReceiverType)
-                    && stringReceiverType == typeof(string)
-                    && TryResolveSafeStringIntrinsicReturnClrType(callMember1.MethodName, argCount: 1, out var stringReturnClrType))
-                {
-                    methodBody.Instructions[i] = new LIRCallIntrinsicStatic(
-                        IntrinsicName: "String",
-                        MethodName: callMember1.MethodName,
-                        Arguments: new[] { callMember1.Receiver, callMember1.A0 },
-                        Result: callMember1.Result);
-
-                    if (callMember1.Result.Index >= 0)
-                    {
-                        ApplyResolvedIntrinsicReturnStorage(methodBody, callMember1.Result, stringReturnClrType);
-                    }
-
-                    continue;
-                }
-
-                if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember1.Receiver.Index, out var receiverType)
-                    || receiverType != typeof(JavaScriptRuntime.RegExp)
-                    || !string.Equals(callMember1.MethodName, "test", StringComparison.Ordinal))
-                {
-                    continue;
-                }
-
-                methodBody.Instructions[i] = new LIRCallInstanceMethod(
-                    Receiver: callMember1.Receiver,
-                    ReceiverClrType: typeof(JavaScriptRuntime.RegExp),
-                    MethodName: callMember1.MethodName,
-                    Arguments: new[] { callMember1.A0 },
-                    Result: callMember1.Result);
-
-                continue;
-            }
-
-            if (instruction is LIRCallMember2 callMember2)
-            {
-                if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember2.Receiver.Index, out var receiverType)
-                    || receiverType != typeof(string)
-                    || !TryResolveSafeStringIntrinsicReturnClrType(callMember2.MethodName, argCount: 2, out var returnClrType))
-                {
-                    continue;
-                }
-
-                methodBody.Instructions[i] = new LIRCallIntrinsicStatic(
-                    IntrinsicName: "String",
-                    MethodName: callMember2.MethodName,
-                    Arguments: new[] { callMember2.Receiver, callMember2.A0, callMember2.A1 },
-                    Result: callMember2.Result);
-
-                if (callMember2.Result.Index >= 0)
-                {
-                    ApplyResolvedIntrinsicReturnStorage(methodBody, callMember2.Result, returnClrType);
+                    // Keep this in sync with IsZeroArgStringMethodSafeToEarlyBind.
+                    // We intentionally only early-bind zero-arg methods that return string,
+                    // so result storage can remain strongly typed as string.
+                    methodBody.TempStorages[callMember0.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
                 }
 
                 continue;
@@ -468,100 +381,19 @@ internal static class LIRIntrinsicNormalization
         methodBody.Instructions.AddRange(newInstructions);
     }
 
-    private static bool TryResolveSafeStringIntrinsicReturnClrType(string methodName, int argCount, out Type returnClrType)
+    private static bool IsZeroArgStringMethodSafeToEarlyBind(string methodName)
     {
-        returnClrType = null!;
-
-        if (!IsStringMethodEligibleForEarlyBind(methodName, argCount))
+        return methodName switch
         {
-            return false;
-        }
-
-        // We only early-bind signatures where:
-        // - receiver is the first `string` parameter, and
-        // - all JS arguments are accepted as `object`.
-        // This preserves runtime coercion semantics handled in JavaScriptRuntime.String.
-        var safe = typeof(JavaScriptRuntime.String)
-            .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
-            .Where(mi =>
-            {
-                var ps = mi.GetParameters();
-                if (ps.Length != argCount + 1)
-                {
-                    return false;
-                }
-
-                if (ps[0].ParameterType != typeof(string))
-                {
-                    return false;
-                }
-
-                for (int i = 1; i < ps.Length; i++)
-                {
-                    if (ps[i].ParameterType != typeof(object))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            })
-            .OrderBy(mi => mi.ToString(), StringComparer.Ordinal)
-            .FirstOrDefault();
-
-        if (safe == null)
-        {
-            return false;
-        }
-
-        returnClrType = safe.ReturnType;
-        return true;
-    }
-
-    private static bool IsStringMethodEligibleForEarlyBind(string methodName, int argCount)
-    {
-        return argCount switch
-        {
-            0 => methodName is "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase",
-            1 => methodName is "substring" or "split" or "match",
-            2 => methodName is "substring" or "replace" or "split",
+            "trim" => true,
+            "trimStart" => true,
+            "trimLeft" => true,
+            "trimEnd" => true,
+            "trimRight" => true,
+            "toLowerCase" => true,
+            "toUpperCase" => true,
             _ => false
         };
-    }
-
-    private static void ApplyResolvedIntrinsicReturnStorage(MethodBodyIR methodBody, TempVariable result, Type returnClrType)
-    {
-        if (result.Index < 0 || result.Index >= methodBody.TempStorages.Count)
-        {
-            return;
-        }
-
-        if (returnClrType == typeof(bool))
-        {
-            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
-            return;
-        }
-
-        if (returnClrType == typeof(double))
-        {
-            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
-            return;
-        }
-
-        if (returnClrType == typeof(string))
-        {
-            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
-            return;
-        }
-
-        if (returnClrType == typeof(JavaScriptRuntime.Array))
-        {
-            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array));
-            return;
-        }
-
-        methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(object));
     }
 
     private static bool IsNumericDouble(MethodBodyIR methodBody, TempVariable temp)
@@ -1000,14 +832,5 @@ internal static class LIRIntrinsicNormalization
         return classRegistry.TryGetFieldClrType(registryClassName, fieldName, out var t2)
             ? t2
             : typeof(object);
-    }
-
-    private static bool IsSpecializedReceiverClrType(Type? clrType)
-    {
-        return clrType != null
-            && clrType != typeof(object)
-            && !clrType.IsValueType
-            && (clrType == typeof(string)
-                || clrType.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true);
     }
 }

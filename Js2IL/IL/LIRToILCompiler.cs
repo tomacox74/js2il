@@ -309,29 +309,6 @@ internal sealed partial class LIRToILCompiler
         EmitCastOrBoxAfterTypedFieldLoad(fieldClrType, targetStorage, ilEncoder, allowReferenceNarrowingCast: true);
     }
 
-    private bool ShouldEmitReferenceNarrowingCastForStore(Type fieldClrType, TempVariable sourceTemp)
-    {
-        if (fieldClrType == typeof(object) || fieldClrType == typeof(string) || fieldClrType.IsValueType)
-        {
-            return false;
-        }
-
-        var sourceStorage = GetTempStorage(sourceTemp);
-        if (sourceStorage.Kind != ValueStorageKind.Reference)
-        {
-            // EmitLoadTempAsObject will box value-type sources; keep cast for narrowing checks.
-            return true;
-        }
-
-        var sourceClrType = sourceStorage.ClrType ?? typeof(object);
-        if (sourceClrType == typeof(object))
-        {
-            return true;
-        }
-
-        return !fieldClrType.IsAssignableFrom(sourceClrType);
-    }
-
     private static Type GetDeclaredUserClassFieldClrType(
         Js2IL.Services.ClassRegistry classRegistry,
         string registryClassName,

@@ -472,9 +472,8 @@ internal static class Stackify
                 }
                 return true;
 
-            // LIRGetLength/LIRGetStringLength and LIRGetItem are pure runtime calls
+            // LIRGetLength and LIRGetItem are pure runtime calls
             case LIRGetLength:
-            case LIRGetStringLength:
             case LIRGetItem:
             case LIRGetItemAsNumber:
                 return true;
@@ -694,10 +693,6 @@ internal static class Stackify
 
             // LIRGetLength: consumes 1 object, produces 1 double
             case LIRGetLength:
-                return (1, 1);
-
-            // LIRGetStringLength: consumes 1 receiver, produces 1 double
-            case LIRGetStringLength:
                 return (1, 1);
 
             // LIRGetJsArrayLength: consumes 1 receiver, produces 1 double

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2092
+			// Method begins at RVA 0x2097
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 54 (0x36)
+		// Code size: 59 (0x3b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_Replace_Regex_Global/Scope,
 			[1] string,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-			[3] string
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.String_Replace_Regex_Global/Scope::.ctor()
@@ -58,15 +57,16 @@
 		IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
 		IL_001b: stloc.2
 		IL_001c: ldloc.1
-		IL_001d: ldloc.2
-		IL_001e: ldstr "x"
-		IL_0023: call string [JavaScriptRuntime]JavaScriptRuntime.String::Replace(string, object, object)
-		IL_0028: stloc.3
-		IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002e: ldloc.3
-		IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0034: pop
-		IL_0035: ret
+		IL_001d: ldstr "replace"
+		IL_0022: ldloc.2
+		IL_0023: ldstr "x"
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_002d: stloc.2
+		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0033: ldloc.2
+		IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0039: pop
+		IL_003a: ret
 	} // end of method String_Replace_Regex_Global::__js_module_init__
 
 } // end of class Modules.String_Replace_Regex_Global
@@ -78,7 +78,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x209b
+		// Method begins at RVA 0x20a0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
