@@ -116,6 +116,19 @@ js2il input.js output                           # Installed tool
 - Currently manually running the script tests\performance\PrimeJavaScript.js to compare node performance vs js2il performance.
 - Only run all tests if explicitly asked.. its time consuming and all tests will be run for PRs automatically
 
+### Running Phased Benchmarks Locally (Single Scenario)
+- These phased benchmarks use the open-source BenchmarkDotNet project.
+- Documentation: https://benchmarkdotnet.org/
+- Source code: https://github.com/dotnet/BenchmarkDotNet
+- Scenario files are under `tests\performance\Benchmarks\Scenarios\` (for example `dromaeo-object-regexp.js`).
+- Run a phased benchmark for one scenario using the helper script:
+```powershell
+node scripts/runPhasedBenchmarkScenario.js dromaeo-object-regexp
+```
+- Replace `dromaeo-object-regexp` with the scenario filename (with or without `.js`).
+- The script runs: `dotnet run -c Release -- --phased --filter "*<scenario>*"` from `tests\performance\Benchmarks`.
+- Benchmark summaries are written to `tests\performance\Benchmarks\BenchmarkDotNet.Artifacts\results\`.
+
 ### Debugging
 - Use ilspycmd to disassemble generated DLLs to IL for inspection
 - Only run all tests if explicitly asked.. its time consuming and all tests will be run for PRs automatically

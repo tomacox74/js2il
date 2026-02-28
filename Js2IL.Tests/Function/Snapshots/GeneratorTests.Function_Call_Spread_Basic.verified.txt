@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2184
+				// Method begins at RVA 0x2195
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2196
+					// Method begins at RVA 0x21a7
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -67,7 +67,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218d
+				// Method begins at RVA 0x219e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -90,7 +90,7 @@
 		{
 			// Method begins at RVA 0x20fc
 			// Header size: 12
-			// Code size: 115 (0x73)
+			// Code size: 132 (0x84)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Call_Spread_Basic/dump/Scope,
@@ -105,36 +105,41 @@
 			IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0016: ldloc.0
 			IL_0017: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
-			IL_001c: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0021: box [System.Runtime]System.Double
-			IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_002b: pop
-			IL_002c: ldc.r8 0.0
-			IL_0035: stloc.1
-			// loop start (head: IL_0036)
-				IL_0036: ldloc.1
-				IL_0037: ldloc.0
-				IL_0038: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
-				IL_003d: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-				IL_0042: clt
-				IL_0044: brfalse IL_0071
+			IL_001c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0021: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_0026: conv.r8
+			IL_0027: box [System.Runtime]System.Double
+			IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0031: pop
+			IL_0032: ldc.r8 0.0
+			IL_003b: stloc.1
+			// loop start (head: IL_003c)
+				IL_003c: ldloc.1
+				IL_003d: ldloc.0
+				IL_003e: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
+				IL_0043: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+				IL_0048: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+				IL_004d: conv.r8
+				IL_004e: clt
+				IL_0050: brfalse IL_0082
 
-				IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_004e: ldloc.0
-				IL_004f: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
-				IL_0054: ldloc.1
-				IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-				IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_005f: pop
-				IL_0060: ldloc.1
-				IL_0061: ldc.r8 1
-				IL_006a: add
-				IL_006b: stloc.1
-				IL_006c: br IL_0036
+				IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_005a: ldloc.0
+				IL_005b: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
+				IL_0060: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+				IL_0065: ldloc.1
+				IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+				IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0070: pop
+				IL_0071: ldloc.1
+				IL_0072: ldc.r8 1
+				IL_007b: add
+				IL_007c: stloc.1
+				IL_007d: br IL_003c
 			// end loop
 
-			IL_0071: ldnull
-			IL_0072: ret
+			IL_0082: ldnull
+			IL_0083: ret
 		} // end of method dump::__js_call__
 
 	} // end of class dump
@@ -153,7 +158,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217b
+			// Method begins at RVA 0x218c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -253,7 +258,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219f
+		// Method begins at RVA 0x21b0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

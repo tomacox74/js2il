@@ -142,6 +142,9 @@ namespace Js2IL.Tests.Function
         public Task Function_Closure_CapturedBoolean_AssignAndRead() { var testName = nameof(Function_Closure_CapturedBoolean_AssignAndRead); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_VariableDeclaration_UndefinedInit_TypedReferenceAssignment() { var testName = nameof(Function_VariableDeclaration_UndefinedInit_TypedReferenceAssignment); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_Call_Basic() { var testName = nameof(Function_Call_Basic); return ExecutionTest(testName); }
 
         [Fact]

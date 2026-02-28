@@ -628,15 +628,40 @@ internal sealed partial class LIRToILCompiler
                 }
                 break;
             case LIRGetLength getLength:
-                // Emit inline: call JavaScriptRuntime.Object.GetLength(object)
-                EmitLoadTempAsObject(getLength.Object, ilEncoder, allocation, methodDescriptor);
                 {
+                    // Emit inline: call JavaScriptRuntime.Object.GetLength(object)
+                    EmitLoadTempAsObject(getLength.Object, ilEncoder, allocation, methodDescriptor);
                     var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.GetLength),
                         parameterTypes: new[] { typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(getLengthMethod);
+                }
+                break;
+
+            case LIRGetStringLength getStringLength:
+                {
+                    // Inline: receiver as string, callvirt get_Length, conv.r8
+                    var receiverStorage = GetTempStorage(getStringLength.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(string))
+                    {
+                        EmitLoadTemp(getStringLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getStringLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(string)));
+                    }
+
+                    var getStringLengthMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(string),
+                        "get_Length",
+                        parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getStringLengthMethod);
+                    ilEncoder.OpCode(ILOpCode.Conv_r8);
                 }
                 break;
 
@@ -761,6 +786,12 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.Token(toNumberMref);
                         }
                     }
+
+                    if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_bclReferences.StringType);
+                    }
                 }
                 break;
 
@@ -842,6 +873,12 @@ internal sealed partial class LIRToILCompiler
                             parameterTypes: new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(toNumberMref);
+                    }
+
+                    if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_bclReferences.StringType);
                     }
 
                     break;
@@ -1689,7 +1726,21 @@ internal sealed partial class LIRToILCompiler
                 // reference-typed values (notably `undefined` which is represented as ldnull).
                 // Emitting `ldnull; box <valuetype>` produces invalid IL, so just forward the
                 // reference value as-is.
-                if (GetTempStorage(convertToObject.Source).Kind == ValueStorageKind.Reference)
+                var convertToObjectSourceStorage = GetTempStorage(convertToObject.Source);
+                if (convertToObjectSourceStorage.Kind == ValueStorageKind.Reference
+                    || convertToObjectSourceStorage.Kind == ValueStorageKind.BoxedValue)
+                {
+                    EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+                    return true;
+                }
+
+                var convertToObjectSourceType = convertToObjectSourceStorage.ClrType;
+                if (convertToObjectSourceType == null && convertToObject.SourceType != typeof(object))
+                {
+                    convertToObjectSourceType = convertToObject.SourceType;
+                }
+
+                if (convertToObjectSourceType == null)
                 {
                     EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
                     return true;
@@ -1697,17 +1748,25 @@ internal sealed partial class LIRToILCompiler
 
                 EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Box);
-                if (convertToObject.SourceType == typeof(bool))
+                if (convertToObjectSourceType == typeof(bool))
                 {
                     ilEncoder.Token(_bclReferences.BooleanType);
                 }
-                else if (convertToObject.SourceType == typeof(JavaScriptRuntime.JsNull))
+                else if (convertToObjectSourceType == typeof(JavaScriptRuntime.JsNull))
                 {
                     ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
                 }
-                else
+                else if (convertToObjectSourceType == typeof(int))
+                {
+                    ilEncoder.Token(_bclReferences.Int32Type);
+                }
+                else if (convertToObjectSourceType == typeof(double))
                 {
                     ilEncoder.Token(_bclReferences.DoubleType);
+                }
+                else
+                {
+                    throw new NotSupportedException($"Unsupported ConvertToObject source type: {convertToObjectSourceType}");
                 }
                 return true;
 

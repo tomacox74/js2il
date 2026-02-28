@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20df
+				// Method begins at RVA 0x20e5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -47,7 +47,7 @@
 		{
 			// Method begins at RVA 0x20a8
 			// Header size: 12
-			// Code size: 34 (0x22)
+			// Code size: 40 (0x28)
 			.maxstack 8
 			.locals (
 				[0] class Modules.Function_Apply_NullArgArray_TreatedAsEmpty/countArgs/Scope
@@ -60,9 +60,11 @@
 			IL_000c: stfld object Modules.Function_Apply_NullArgArray_TreatedAsEmpty/countArgs/Scope::arguments
 			IL_0011: ldloc.0
 			IL_0012: ldfld object Modules.Function_Apply_NullArgArray_TreatedAsEmpty/countArgs/Scope::arguments
-			IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_001c: box [System.Runtime]System.Double
-			IL_0021: ret
+			IL_0017: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_001c: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_0021: conv.r8
+			IL_0022: box [System.Runtime]System.Double
+			IL_0027: ret
 		} // end of method countArgs::__js_call__
 
 	} // end of class countArgs
@@ -81,7 +83,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d6
+			// Method begins at RVA 0x20dc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -154,7 +156,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e8
+		// Method begins at RVA 0x20ee
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
