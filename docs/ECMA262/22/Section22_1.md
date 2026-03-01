@@ -14,7 +14,7 @@
 |---:|---|---|---|
 | 22.1.1 | The String Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string-constructor) |
 | 22.1.1.1 | String ( value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string-constructor-string-value) |
-| 22.1.2 | Properties of the String Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-string-constructor) |
+| 22.1.2 | Properties of the String Constructor | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-string-constructor) |
 | 22.1.2.1 | String.fromCharCode ( ... codeUnits ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.fromcharcode) |
 | 22.1.2.2 | String.fromCodePoint ( ... codePoints ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.fromcodepoint) |
 | 22.1.2.3 | String.prototype | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype) |
@@ -26,11 +26,11 @@
 | 22.1.3.4 | String.prototype.codePointAt ( pos ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.codepointat) |
 | 22.1.3.5 | String.prototype.concat ( ... args ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.concat) |
 | 22.1.3.6 | String.prototype.constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.constructor) |
-| 22.1.3.7 | String.prototype.endsWith ( searchString [ , endPosition ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.endswith) |
-| 22.1.3.8 | String.prototype.includes ( searchString [ , position ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.includes) |
-| 22.1.3.9 | String.prototype.indexOf ( searchString [ , position ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.indexof) |
+| 22.1.3.7 | String.prototype.endsWith ( searchString [ , endPosition ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.endswith) |
+| 22.1.3.8 | String.prototype.includes ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.includes) |
+| 22.1.3.9 | String.prototype.indexOf ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.indexof) |
 | 22.1.3.10 | String.prototype.isWellFormed ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.iswellformed) |
-| 22.1.3.11 | String.prototype.lastIndexOf ( searchString [ , position ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.lastindexof) |
+| 22.1.3.11 | String.prototype.lastIndexOf ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.lastindexof) |
 | 22.1.3.12 | String.prototype.localeCompare ( that [ , reserved1 [ , reserved2 ] ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.localecompare) |
 | 22.1.3.13 | String.prototype.match ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.match) |
 | 22.1.3.14 | String.prototype.matchAll ( regexp ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.matchall) |
@@ -40,14 +40,14 @@
 | 22.1.3.17.1 | StringPaddingBuiltinsImpl ( O , maxLength , fillString , placement ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-stringpaddingbuiltinsimpl) |
 | 22.1.3.17.2 | StringPad ( S , maxLength , fillString , placement ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-stringpad) |
 | 22.1.3.17.3 | ToZeroPaddedDecimalString ( n , minLength ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-tozeropaddeddecimalstring) |
-| 22.1.3.18 | String.prototype.repeat ( count ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.repeat) |
+| 22.1.3.18 | String.prototype.repeat ( count ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.repeat) |
 | 22.1.3.19 | String.prototype.replace ( searchValue , replaceValue ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replace) |
 | 22.1.3.19.1 | GetSubstitution ( matched , str , position , captures , namedCaptures , replacementTemplate ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-getsubstitution) |
 | 22.1.3.20 | String.prototype.replaceAll ( searchValue , replaceValue ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replaceall) |
 | 22.1.3.21 | String.prototype.search ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.search) |
-| 22.1.3.22 | String.prototype.slice ( start , end ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice) |
-| 22.1.3.23 | String.prototype.split ( separator , limit ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.split) |
-| 22.1.3.24 | String.prototype.startsWith ( searchString [ , position ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.startswith) |
+| 22.1.3.22 | String.prototype.slice ( start , end ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice) |
+| 22.1.3.23 | String.prototype.split ( separator , limit ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.split) |
+| 22.1.3.24 | String.prototype.startsWith ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.startswith) |
 | 22.1.3.25 | String.prototype.substring ( start , end ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.substring) |
 | 22.1.3.26 | String.prototype.toLocaleLowerCase ( [ reserved1 [ , reserved2 ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocalelowercase) |
 | 22.1.3.27 | String.prototype.toLocaleUpperCase ( [ reserved1 [ , reserved2 ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocaleuppercase) |
@@ -55,10 +55,10 @@
 | 22.1.3.29 | String.prototype.toString ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tostring) |
 | 22.1.3.30 | String.prototype.toUpperCase ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.touppercase) |
 | 22.1.3.31 | String.prototype.toWellFormed ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.towellformed) |
-| 22.1.3.32 | String.prototype.trim ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trim) |
+| 22.1.3.32 | String.prototype.trim ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trim) |
 | 22.1.3.32.1 | TrimString ( string , where ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-trimstring) |
-| 22.1.3.33 | String.prototype.trimEnd ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimend) |
-| 22.1.3.34 | String.prototype.trimStart ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimstart) |
+| 22.1.3.33 | String.prototype.trimEnd ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimend) |
+| 22.1.3.34 | String.prototype.trimStart ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimstart) |
 | 22.1.3.35 | String.prototype.valueOf ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.valueof) |
 | 22.1.3.35.1 | ThisStringValue ( value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-thisstringvalue) |
 | 22.1.3.36 | String.prototype [ %Symbol.iterator% ] ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype-%symbol.iterator%) |
@@ -89,19 +89,19 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.endsWith | Supported |  | Implemented in JavaScriptRuntime.String and wired via IL generator for definite string receivers. Supports optional end position. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.) |
+| String.prototype.endsWith | Supported with Limitations | [`Require_Path_Parse_And_Format.js`](../../../Js2IL.Tests/Node/Path/JavaScript/Require_Path_Parse_And_Format.js) | Routed via JavaScriptRuntime.Object string member-call fast paths to JavaScriptRuntime.String.EndsWith with optional endPosition argument. Known differences vs spec: does not reject RegExp searchString, and when called with zero arguments the fast path uses an empty string instead of ToString(undefined). |
 
 ### 22.1.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.includes))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.includes | Supported |  | Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.) |
+| String.prototype.includes | Supported with Limitations | [`String_MemberCall_FastPath_CommonMethods.js`](../../../Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js)<br>[`FSPromises_Realpath.js`](../../../Js2IL.Tests/Node/FS/JavaScript/FSPromises_Realpath.js) | Routed via JavaScriptRuntime.Object string member-call fast paths to JavaScriptRuntime.String.Includes. Known differences vs spec: does not reject RegExp searchString, and when called with zero arguments the fast path uses an empty string instead of ToString(undefined). |
 
 ### 22.1.3.9 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.indexof))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.indexOf | Supported |  | Implemented in JavaScriptRuntime.String.IndexOf and routed via Object.CallMember for definite string receivers. Supports optional position argument. |
+| String.prototype.indexOf | Supported with Limitations | [`String_MemberCall_FastPath_CommonMethods.js`](../../../Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js)<br>[`Function_Prototype_ToString_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js) | Implemented in JavaScriptRuntime.String.IndexOf and routed via JavaScriptRuntime.Object string member-call fast paths. Known differences vs spec: when called with zero arguments the fast path searches for an empty string instead of ToString(undefined). |
 
 ### 22.1.3.12 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.localecompare))
 
@@ -143,13 +143,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.split | Supported | [`String_Split_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_Split_Basic.js) | Supports string and regular-expression separators and optional limit. Implemented via JavaScriptRuntime.String.Split and returned as JavaScriptRuntime.Array. Separator omitted or undefined returns [input]. Empty string separator splits into individual UTF-16 code units. |
+| String.prototype.split | Supported with Limitations | [`String_Split_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_Split_Basic.js) | Implemented via JavaScriptRuntime.String.Split and returned as JavaScriptRuntime.Array. Separator omitted or undefined returns [input]. Empty string separator splits into individual UTF-16 code units. RegExp separator behavior is incomplete: JavaScriptRuntime.RegExp is currently coerced to string rather than treated as a regex separator, and @@split hooks are not implemented. |
 
 ### 22.1.3.24 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.startswith))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.startsWith | Supported | [`String_StartsWith_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js) | Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed). |
+| String.prototype.startsWith | Supported with Limitations | [`String_StartsWith_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js)<br>[`String_StartsWith_NestedParam.js`](../../../Js2IL.Tests/String/JavaScript/String_StartsWith_NestedParam.js) | Routed via JavaScriptRuntime.Object string member-call fast paths to JavaScriptRuntime.String.StartsWith. Known differences vs spec: does not reject RegExp searchString, and when called with zero arguments the fast path uses an empty string instead of ToString(undefined). |
 
 ### 22.1.3.25 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.substring))
 
@@ -173,17 +173,17 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.trim | Supported with Limitations |  | Implemented in JavaScriptRuntime.String.Trim using CLR whitespace trimming. Full ECMAScript whitespace set matching is not exhaustively validated. |
+| String.prototype.trim | Supported with Limitations | [`String_MemberCall_FastPath_CommonMethods.js`](../../../Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js) | Implemented in JavaScriptRuntime.String.Trim via TrimEcma (explicit ECMAScript whitespace set). Not exhaustively validated against all edge-case observable behaviors (e.g., exotic receivers / property attributes). |
 
 ### 22.1.3.33 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimend))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.trimEnd | Supported with Limitations |  | Implemented in JavaScriptRuntime.String.TrimEnd (and TrimRight alias) using CLR whitespace trimming. |
+| String.prototype.trimEnd | Supported with Limitations | [`String_MemberCall_FastPath_CommonMethods.js`](../../../Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js) | Implemented in JavaScriptRuntime.String.TrimEnd (and TrimRight alias) via TrimEndEcma (explicit ECMAScript whitespace set). |
 
 ### 22.1.3.34 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimstart))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.trimStart | Supported with Limitations |  | Implemented in JavaScriptRuntime.String.TrimStart (and TrimLeft alias) using CLR whitespace trimming. |
+| String.prototype.trimStart | Supported with Limitations | [`String_MemberCall_FastPath_CommonMethods.js`](../../../Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js) | Implemented in JavaScriptRuntime.String.TrimStart (and TrimLeft alias) via TrimStartEcma (explicit ECMAScript whitespace set). |
 
