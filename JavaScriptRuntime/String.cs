@@ -451,6 +451,11 @@ namespace JavaScriptRuntime
         ///  - Otherwise returns the result of RegExp.exec (Array with groups/index/input) or null.
         ///  - Non-RegExp values are coerced to string and treated as a RegExp pattern.
         /// </summary>
+        public static object Match(string input)
+        {
+            return Match(input, null);
+        }
+
         public static object Match(string input, object? regexp)
         {
             input ??= string.Empty;
@@ -503,6 +508,32 @@ namespace JavaScriptRuntime
 
             re.lastIndex = 0;
             return result.Count == 0 ? JsNull.Null : result;
+        }
+
+        /// <summary>
+        /// Implements String.prototype.search(regexp).
+        /// Returns the zero-based index of the first match, or -1 when no match is found.
+        /// </summary>
+        public static double Search(string input)
+        {
+            return Search(input, null);
+        }
+
+        public static double Search(string input, object? regexp)
+        {
+            input ??= string.Empty;
+
+            if (regexp is JavaScriptRuntime.RegExp re)
+            {
+                var match = re.Regex.Match(input);
+                return match.Success ? match.Index : -1d;
+            }
+
+            // Per JS semantics, non-RegExp arguments are converted and treated as a regex pattern.
+            var pattern = DotNet2JSConversions.ToString(regexp);
+            var regex = new Regex(pattern);
+            var first = regex.Match(input);
+            return first.Success ? first.Index : -1d;
         }
 
         /// <summary>
@@ -975,6 +1006,11 @@ namespace JavaScriptRuntime
         /// Supports string or regular expression separators and optional limit.
         /// Returns a JavaScriptRuntime.Array of strings.
         /// </summary>
+        public static JavaScriptRuntime.Array Split(string input)
+        {
+            return Split(input, null, null);
+        }
+
         public static JavaScriptRuntime.Array Split(string input, object? separatorOrPattern)
         {
             return Split(input, separatorOrPattern, null);

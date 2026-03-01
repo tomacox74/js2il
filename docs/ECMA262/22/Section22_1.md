@@ -44,7 +44,7 @@
 | 22.1.3.19 | String.prototype.replace ( searchValue , replaceValue ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replace) |
 | 22.1.3.19.1 | GetSubstitution ( matched , str , position , captures , namedCaptures , replacementTemplate ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-getsubstitution) |
 | 22.1.3.20 | String.prototype.replaceAll ( searchValue , replaceValue ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replaceall) |
-| 22.1.3.21 | String.prototype.search ( regexp ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.search) |
+| 22.1.3.21 | String.prototype.search ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.search) |
 | 22.1.3.22 | String.prototype.slice ( start , end ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice) |
 | 22.1.3.23 | String.prototype.split ( separator , limit ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.split) |
 | 22.1.3.24 | String.prototype.startsWith ( searchString [ , position ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.startswith) |
@@ -126,6 +126,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | String.prototype.replace (regex literal, string replacement) | Supported with Limitations | [`String_Replace_Regex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js) | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. |
+
+### 22.1.3.21 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.search))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| String.prototype.search | Supported with Limitations | [`String_Search_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_Search_Basic.js) | Implemented via JavaScriptRuntime.String.Search for string and RegExp inputs and routed through string member-call fast paths when receiver typing is stable. Symbol.search customization and full RegExp @@search protocol hooks are not implemented. |
 
 ### 22.1.3.22 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice))
 

@@ -56,6 +56,13 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Search_Basic()
+        {
+            var testName = nameof(String_Search_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_RegExp_Exec_LastIndex_Global()
         {
             var testName = nameof(String_RegExp_Exec_LastIndex_Global);

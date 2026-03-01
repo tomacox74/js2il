@@ -2354,6 +2354,12 @@ namespace JavaScriptRuntime
 
                     break;
 
+                case "search":
+                    result = argCount <= 0
+                        ? JavaScriptRuntime.String.Search(input, null)
+                        : JavaScriptRuntime.String.Search(input, a0);
+                    return true;
+
                 case "localeCompare":
                     if (argCount <= 0)
                     {
