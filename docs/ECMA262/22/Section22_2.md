@@ -12,7 +12,7 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 22.2.1 | Patterns | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-patterns) |
+| 22.2.1 | Patterns | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-patterns) |
 | 22.2.1.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-patterns-static-semantics-early-errors) |
 | 22.2.1.2 | Static Semantics: CountLeftCapturingParensWithin ( node ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-countleftcapturingparenswithin) |
 | 22.2.1.3 | Static Semantics: CountLeftCapturingParensBefore ( node ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-countleftcapturingparensbefore) |
@@ -59,8 +59,8 @@
 | 22.2.3.2 | RegExpAlloc ( newTarget ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexpalloc) |
 | 22.2.3.3 | RegExpInitialize ( obj , pattern , flags ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexpinitialize) |
 | 22.2.3.4 | Static Semantics: ParsePattern ( patternText , u , v ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-parsepattern) |
-| 22.2.4 | The RegExp Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp-constructor) |
-| 22.2.4.1 | RegExp ( pattern , flags ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp-pattern-flags) |
+| 22.2.4 | The RegExp Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp-constructor) |
+| 22.2.4.1 | RegExp ( pattern , flags ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-regexp-pattern-flags) |
 | 22.2.5 | Properties of the RegExp Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-regexp-constructor) |
 | 22.2.5.1 | RegExp.escape ( S ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp.escape) |
 | 22.2.5.1.1 | EncodeForRegExpEscape ( cp ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-encodeforregexpescape) |
@@ -97,7 +97,7 @@
 | 22.2.7.6 | GetMatchString ( S , match ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-getmatchstring) |
 | 22.2.7.7 | GetMatchIndexPair ( S , match ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-getmatchindexpair) |
 | 22.2.7.8 | MakeMatchIndicesIndexPairArray ( S , indices , groupNames , hasGroups ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-makematchindicesindexpairarray) |
-| 22.2.8 | Properties of RegExp Instances | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-regexp-instances) |
+| 22.2.8 | Properties of RegExp Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-regexp-instances) |
 | 22.2.8.1 | lastIndex | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-lastindex) |
 | 22.2.9 | RegExp String Iterator Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-regexp-string-iterator-objects) |
 | 22.2.9.1 | CreateRegExpStringIterator ( R , S , global , fullUnicode ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-createregexpstringiterator) |
@@ -109,6 +109,12 @@
 ## Support
 
 Feature-level support tracking with test script references.
+
+### 22.2.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-regexp-pattern-flags))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| RegExp ( pattern , flags ) | Supported with Limitations | [`IntrinsicCallables_RegExp_Callable_CreatesRegex.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js)<br>[`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js)<br>[`IntrinsicCallables_RegExp_ToString_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js) | Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). This is a minimal subset backed by .NET Regex; only 'g', 'i', and 'm' flags are currently functional. RegExp is not yet representable as a normal first-class function value (e.g., RegExp.prototype / passing RegExp around as a value are not supported). |
 
 ### 22.2.6.2 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.exec))
 
