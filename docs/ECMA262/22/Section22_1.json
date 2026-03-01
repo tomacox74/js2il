@@ -96,19 +96,19 @@
     {
       "clause": "22.1.3.7",
       "title": "String.prototype.endsWith ( searchString [ , endPosition ] )",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.endswith"
     },
     {
       "clause": "22.1.3.8",
       "title": "String.prototype.includes ( searchString [ , position ] )",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.includes"
     },
     {
       "clause": "22.1.3.9",
       "title": "String.prototype.indexOf ( searchString [ , position ] )",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.indexof"
     },
     {
@@ -216,13 +216,13 @@
     {
       "clause": "22.1.3.23",
       "title": "String.prototype.split ( separator , limit )",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.split"
     },
     {
       "clause": "22.1.3.24",
       "title": "String.prototype.startsWith ( searchString [ , position ] )",
-      "status": "Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.startswith"
     },
     {
@@ -362,36 +362,44 @@
       {
         "clause": "22.1.3.24",
         "feature": "String.prototype.startsWith",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.startswith",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js"
+          "Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js",
+          "Js2IL.Tests/String/JavaScript/String_StartsWith_NestedParam.js"
         ],
-        "notes": "Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed)."
+        "notes": "Routed via JavaScriptRuntime.Object string member-call fast paths to JavaScriptRuntime.String.StartsWith. Known differences vs spec: does not reject RegExp searchString, and when called with zero arguments the fast path uses an empty string instead of ToString(undefined)."
       },
       {
         "clause": "22.1.3.8",
         "feature": "String.prototype.includes",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.includes",
-        "notes": "Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.)"
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js",
+          "Js2IL.Tests/Node/FS/JavaScript/FSPromises_Realpath.js"
+        ],
+        "notes": "Routed via JavaScriptRuntime.Object string member-call fast paths to JavaScriptRuntime.String.Includes. Known differences vs spec: does not reject RegExp searchString, and when called with zero arguments the fast path uses an empty string instead of ToString(undefined)."
       },
       {
         "clause": "22.1.3.7",
         "feature": "String.prototype.endsWith",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.endswith",
-        "notes": "Implemented in JavaScriptRuntime.String and wired via IL generator for definite string receivers. Supports optional end position. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.)"
+        "testScripts": [
+          "Js2IL.Tests/Node/Path/JavaScript/Require_Path_Parse_And_Format.js"
+        ],
+        "notes": "Routed via JavaScriptRuntime.Object string member-call fast paths to JavaScriptRuntime.String.EndsWith with optional endPosition argument. Known differences vs spec: does not reject RegExp searchString, and when called with zero arguments the fast path uses an empty string instead of ToString(undefined)."
       },
       {
         "clause": "22.1.3.23",
         "feature": "String.prototype.split",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.split",
         "testScripts": [
           "Js2IL.Tests/String/JavaScript/String_Split_Basic.js"
         ],
-        "notes": "Supports string and regular-expression separators and optional limit. Implemented via JavaScriptRuntime.String.Split and returned as JavaScriptRuntime.Array. Separator omitted or undefined returns [input]. Empty string separator splits into individual UTF-16 code units."
+        "notes": "Implemented via JavaScriptRuntime.String.Split and returned as JavaScriptRuntime.Array. Separator omitted or undefined returns [input]. Empty string separator splits into individual UTF-16 code units. RegExp separator behavior is incomplete: JavaScriptRuntime.RegExp is currently coerced to string rather than treated as a regex separator, and @@split hooks are not implemented."
       },
       {
         "clause": "22.1.3.19",
@@ -467,9 +475,13 @@
       {
         "clause": "22.1.3.9",
         "feature": "String.prototype.indexOf",
-        "status": "Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.indexof",
-        "notes": "Implemented in JavaScriptRuntime.String.IndexOf and routed via Object.CallMember for definite string receivers. Supports optional position argument."
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.IndexOf and routed via JavaScriptRuntime.Object string member-call fast paths. Known differences vs spec: when called with zero arguments the fast path searches for an empty string instead of ToString(undefined)."
       },
       {
         "clause": "22.1.3.22",
@@ -490,21 +502,30 @@
         "feature": "String.prototype.trim",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.trim",
-        "notes": "Implemented in JavaScriptRuntime.String.Trim using CLR whitespace trimming. Full ECMAScript whitespace set matching is not exhaustively validated."
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.Trim via TrimEcma (explicit ECMAScript whitespace set). Not exhaustively validated against all edge-case observable behaviors (e.g., exotic receivers / property attributes)."
       },
       {
         "clause": "22.1.3.33",
         "feature": "String.prototype.trimEnd",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.trimend",
-        "notes": "Implemented in JavaScriptRuntime.String.TrimEnd (and TrimRight alias) using CLR whitespace trimming."
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.TrimEnd (and TrimRight alias) via TrimEndEcma (explicit ECMAScript whitespace set)."
       },
       {
         "clause": "22.1.3.34",
         "feature": "String.prototype.trimStart",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.trimstart",
-        "notes": "Implemented in JavaScriptRuntime.String.TrimStart (and TrimLeft alias) using CLR whitespace trimming."
+        "testScripts": [
+          "Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.String.TrimStart (and TrimLeft alias) via TrimStartEcma (explicit ECMAScript whitespace set)."
       },
       {
         "clause": "22.1.3.21",
