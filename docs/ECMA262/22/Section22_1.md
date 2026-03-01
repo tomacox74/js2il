@@ -14,7 +14,7 @@
 |---:|---|---|---|
 | 22.1.1 | The String Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string-constructor) |
 | 22.1.1.1 | String ( value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string-constructor-string-value) |
-| 22.1.2 | Properties of the String Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-string-constructor) |
+| 22.1.2 | Properties of the String Constructor | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-string-constructor) |
 | 22.1.2.1 | String.fromCharCode ( ... codeUnits ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.fromcharcode) |
 | 22.1.2.2 | String.fromCodePoint ( ... codePoints ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.fromcodepoint) |
 | 22.1.2.3 | String.prototype | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype) |
@@ -28,9 +28,9 @@
 | 22.1.3.6 | String.prototype.constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.constructor) |
 | 22.1.3.7 | String.prototype.endsWith ( searchString [ , endPosition ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.endswith) |
 | 22.1.3.8 | String.prototype.includes ( searchString [ , position ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.includes) |
-| 22.1.3.9 | String.prototype.indexOf ( searchString [ , position ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.indexof) |
+| 22.1.3.9 | String.prototype.indexOf ( searchString [ , position ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.indexof) |
 | 22.1.3.10 | String.prototype.isWellFormed ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.iswellformed) |
-| 22.1.3.11 | String.prototype.lastIndexOf ( searchString [ , position ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.lastindexof) |
+| 22.1.3.11 | String.prototype.lastIndexOf ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.lastindexof) |
 | 22.1.3.12 | String.prototype.localeCompare ( that [ , reserved1 [ , reserved2 ] ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.localecompare) |
 | 22.1.3.13 | String.prototype.match ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.match) |
 | 22.1.3.14 | String.prototype.matchAll ( regexp ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.matchall) |
@@ -40,12 +40,12 @@
 | 22.1.3.17.1 | StringPaddingBuiltinsImpl ( O , maxLength , fillString , placement ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-stringpaddingbuiltinsimpl) |
 | 22.1.3.17.2 | StringPad ( S , maxLength , fillString , placement ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-stringpad) |
 | 22.1.3.17.3 | ToZeroPaddedDecimalString ( n , minLength ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-tozeropaddeddecimalstring) |
-| 22.1.3.18 | String.prototype.repeat ( count ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.repeat) |
+| 22.1.3.18 | String.prototype.repeat ( count ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.repeat) |
 | 22.1.3.19 | String.prototype.replace ( searchValue , replaceValue ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replace) |
 | 22.1.3.19.1 | GetSubstitution ( matched , str , position , captures , namedCaptures , replacementTemplate ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-getsubstitution) |
 | 22.1.3.20 | String.prototype.replaceAll ( searchValue , replaceValue ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replaceall) |
 | 22.1.3.21 | String.prototype.search ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.search) |
-| 22.1.3.22 | String.prototype.slice ( start , end ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice) |
+| 22.1.3.22 | String.prototype.slice ( start , end ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice) |
 | 22.1.3.23 | String.prototype.split ( separator , limit ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.split) |
 | 22.1.3.24 | String.prototype.startsWith ( searchString [ , position ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.startswith) |
 | 22.1.3.25 | String.prototype.substring ( start , end ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.substring) |
@@ -55,10 +55,10 @@
 | 22.1.3.29 | String.prototype.toString ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tostring) |
 | 22.1.3.30 | String.prototype.toUpperCase ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.touppercase) |
 | 22.1.3.31 | String.prototype.toWellFormed ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.towellformed) |
-| 22.1.3.32 | String.prototype.trim ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trim) |
+| 22.1.3.32 | String.prototype.trim ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trim) |
 | 22.1.3.32.1 | TrimString ( string , where ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-trimstring) |
-| 22.1.3.33 | String.prototype.trimEnd ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimend) |
-| 22.1.3.34 | String.prototype.trimStart ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimstart) |
+| 22.1.3.33 | String.prototype.trimEnd ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimend) |
+| 22.1.3.34 | String.prototype.trimStart ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimstart) |
 | 22.1.3.35 | String.prototype.valueOf ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.valueof) |
 | 22.1.3.35.1 | ThisStringValue ( value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-thisstringvalue) |
 | 22.1.3.36 | String.prototype [ %Symbol.iterator% ] ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype-%symbol.iterator%) |
