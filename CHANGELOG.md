@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- perf/runtime/spec: add `String.prototype.search` support (`JavaScriptRuntime.String.Search`) and route string member-call normalization to early-bind safe `search`/zero-arg `match`/`split` calls to direct `JavaScriptRuntime.String::*` intrinsic calls, reducing fallback `Object.CallMember*` dispatch in regexp-heavy string paths (closes #749).
 
 ## v0.8.25 - 2026-03-01
 

@@ -52,6 +52,12 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Search_Basic()
+        {
+            return ExecutionTest(nameof(String_Search_Basic));
+        }
+
+        [Fact]
         public Task String_RegExp_Exec_LastIndex_Global()
         {
             return ExecutionTest(nameof(String_RegExp_Exec_LastIndex_Global));

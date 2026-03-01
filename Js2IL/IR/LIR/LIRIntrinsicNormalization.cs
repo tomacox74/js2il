@@ -597,8 +597,8 @@ internal static class LIRIntrinsicNormalization
     {
         return argCount switch
         {
-            0 => methodName is "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase",
-            1 => methodName is "substring" or "split" or "match",
+            0 => methodName is "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase" or "split" or "match" or "search",
+            1 => methodName is "substring" or "split" or "match" or "search",
             2 => methodName is "substring" or "replace" or "split",
             _ => false
         };
