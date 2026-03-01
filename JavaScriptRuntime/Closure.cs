@@ -113,6 +113,58 @@ namespace JavaScriptRuntime
             {
                 object? Arg(int i) => i < args.Length ? args[i] : null;
 
+                if (isJsFuncDelegate)
+                {
+                    if (hasScopes)
+                    {
+                        switch (fixedJsParamCount)
+                        {
+                            case 0:
+                                if (target is JsFunc0 jsf0) return jsf0(scopes, newTarget)!;
+                                break;
+                            case 1:
+                                if (target is JsFunc1 jsf1) return jsf1(scopes, newTarget, Arg(0))!;
+                                break;
+                            case 2:
+                                if (target is JsFunc2 jsf2) return jsf2(scopes, newTarget, Arg(0), Arg(1))!;
+                                break;
+                            case 3:
+                                if (target is JsFunc3 jsf3) return jsf3(scopes, newTarget, Arg(0), Arg(1), Arg(2))!;
+                                break;
+                            case 4:
+                                if (target is JsFunc4 jsf4) return jsf4(scopes, newTarget, Arg(0), Arg(1), Arg(2), Arg(3))!;
+                                break;
+                            case 5:
+                                if (target is JsFunc5 jsf5) return jsf5(scopes, newTarget, Arg(0), Arg(1), Arg(2), Arg(3), Arg(4))!;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (fixedJsParamCount)
+                        {
+                            case 0:
+                                if (target is JsFuncNoScopes0 jsf0) return jsf0(newTarget)!;
+                                break;
+                            case 1:
+                                if (target is JsFuncNoScopes1 jsf1) return jsf1(newTarget, Arg(0))!;
+                                break;
+                            case 2:
+                                if (target is JsFuncNoScopes2 jsf2) return jsf2(newTarget, Arg(0), Arg(1))!;
+                                break;
+                            case 3:
+                                if (target is JsFuncNoScopes3 jsf3) return jsf3(newTarget, Arg(0), Arg(1), Arg(2))!;
+                                break;
+                            case 4:
+                                if (target is JsFuncNoScopes4 jsf4) return jsf4(newTarget, Arg(0), Arg(1), Arg(2), Arg(3))!;
+                                break;
+                            case 5:
+                                if (target is JsFuncNoScopes5 jsf5) return jsf5(newTarget, Arg(0), Arg(1), Arg(2), Arg(3), Arg(4))!;
+                                break;
+                        }
+                    }
+                }
+
                 if (hasScopes)
                 {
                     switch (fixedJsParamCount)
@@ -506,6 +558,7 @@ namespace JavaScriptRuntime
                 {
                     // Try fast-path typed invocation first
                     if (del is JsFunc0 f0) return f0(scopes, null)!;
+                    if (del is JsFuncNoScopes0 f0NoScopes) return f0NoScopes(null)!;
                     if (del is Action<object[]> a0) { a0(scopes); return null!; }
                     
                     // Fall back to reflection-based invocation
@@ -539,6 +592,7 @@ namespace JavaScriptRuntime
                 {
                     // Try fast-path typed invocation first
                     if (del is JsFunc1 f1) return f1(scopes, null, a0!)!;
+                    if (del is JsFuncNoScopes1 f1NoScopes) return f1NoScopes(null, a0)!;
                     if (del is Action<object[], object> a1) { a1(scopes, a0!); return null!; }
                     
                     // Fall back to reflection-based invocation
@@ -572,6 +626,7 @@ namespace JavaScriptRuntime
                 {
                     // Try fast-path typed invocation first
                     if (del is JsFunc2 f2) return f2(scopes, null, a0!, a1!)!;
+                    if (del is JsFuncNoScopes2 f2NoScopes) return f2NoScopes(null, a0, a1)!;
                     if (del is Action<object[], object, object> a2) { a2(scopes, a0!, a1!); return null!; }
                     
                     // Fall back to reflection-based invocation
@@ -605,6 +660,7 @@ namespace JavaScriptRuntime
                 {
                     // Try fast-path typed invocation first
                     if (del is JsFunc3 f3) return f3(scopes, null, a0!, a1!, a2!)!;
+                    if (del is JsFuncNoScopes3 f3NoScopes) return f3NoScopes(null, a0, a1, a2)!;
                     if (del is Action<object[], object, object, object> a3) { a3(scopes, a0!, a1!, a2!); return null!; }
                     
                     // Fall back to reflection-based invocation

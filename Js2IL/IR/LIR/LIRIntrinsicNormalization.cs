@@ -1,6 +1,8 @@
 using Js2IL.IL;
 using Js2IL.Services;
+using Js2IL.Services.TwoPhaseCompilation;
 using System.Linq;
+using System.Reflection.Metadata;
 
 namespace Js2IL.IR;
 
@@ -11,8 +13,10 @@ namespace Js2IL.IR;
 /// </summary>
 internal static class LIRIntrinsicNormalization
 {
-    public static void Normalize(MethodBodyIR methodBody, ClassRegistry? classRegistry)
+    public static void Normalize(MethodBodyIR methodBody, ClassRegistry? classRegistry, ICallableDeclarationReader? callableReader = null)
     {
+        NormalizeDirectDeclaredFunctionCalls(methodBody, callableReader);
+
         // Normalize intrinsic call patterns that don't require ClassRegistry.
         NormalizeCommonJsRequireCalls(methodBody);
         NormalizeIntrinsicCallArityExpansion(methodBody);
@@ -362,6 +366,76 @@ internal static class LIRIntrinsicNormalization
         }
 
         FuseGetItemWithConvertToNumber(methodBody);
+    }
+
+    private static void NormalizeDirectDeclaredFunctionCalls(MethodBodyIR methodBody, ICallableDeclarationReader? callableReader)
+    {
+        if (callableReader == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is not LIRCallFunction callFunction || callFunction.CallableId is not { } callableId)
+            {
+                continue;
+            }
+
+            // Preserve semantic paths that require full runtime argument context.
+            if (callableId.NeedsArgumentsObject || callableId.HasRestParameters)
+            {
+                continue;
+            }
+
+            if (!callableReader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+            {
+                continue;
+            }
+
+            bool requiresScopes = callableReader.GetSignature(callableId)?.RequiresScopesParameter ?? true;
+            int jsParamCount = callableId.JsParamCount;
+            int argsToPass = Math.Min(callFunction.Arguments.Count, jsParamCount);
+
+            var declaredArgs = new List<TempVariable>((requiresScopes ? 1 : 0) + 1 + jsParamCount);
+            var prelude = new List<LIRInstruction>(1 + Math.Max(0, jsParamCount - argsToPass));
+
+            if (requiresScopes)
+            {
+                declaredArgs.Add(callFunction.ScopesArray);
+            }
+
+            // Normal function call path: new.target is undefined (modeled as null).
+            var newTargetTemp = CreateTemp(methodBody, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            prelude.Add(new LIRConstUndefined(newTargetTemp));
+            declaredArgs.Add(newTargetTemp);
+
+            for (int argIndex = 0; argIndex < argsToPass; argIndex++)
+            {
+                declaredArgs.Add(callFunction.Arguments[argIndex]);
+            }
+
+            // Pad missing args with undefined to preserve JS call semantics.
+            for (int argIndex = argsToPass; argIndex < jsParamCount; argIndex++)
+            {
+                var undefinedArgTemp = CreateTemp(methodBody, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                prelude.Add(new LIRConstUndefined(undefinedArgTemp));
+                declaredArgs.Add(undefinedArgTemp);
+            }
+
+            if (prelude.Count > 0)
+            {
+                methodBody.Instructions.InsertRange(i, prelude);
+                i += prelude.Count;
+            }
+
+            methodBody.Instructions[i] = new LIRCallDeclaredCallable(callableId, declaredArgs, callFunction.Result);
+
+            if (callFunction.Result.Index >= 0 && callFunction.Result.Index < methodBody.TempStorages.Count)
+            {
+                methodBody.TempStorages[callFunction.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+            }
+        }
     }
 
     /// <summary>

@@ -284,8 +284,8 @@ public record LIRCallDeclaredCallable(CallableId CallableId, IReadOnlyList<TempV
 public record LIRCreateBoundArrowFunction(CallableId CallableId, TempVariable ScopesArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
-/// Creates a JS callable value (delegate) for a FunctionExpression and binds it to a scopes array.
-/// Emits: ldnull, ldftn <method>, newobj Func&lt;...&gt;::.ctor, ldloc/ldarg scopesArray, call Closure.Bind(object, object[])
+/// Creates a JS callable value (delegate) for a FunctionExpression.
+/// Emits a JsFuncNoScopesN delegate; when scopes are required, scopes are closed as delegate target.
 /// </summary>
 public record LIRCreateBoundFunctionExpression(CallableId CallableId, TempVariable ScopesArray, TempVariable Result) : LIRInstruction;
 

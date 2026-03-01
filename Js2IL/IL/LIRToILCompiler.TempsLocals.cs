@@ -1400,18 +1400,21 @@ internal sealed partial class LIRToILCompiler
                         requiresScopes = signature.RequiresScopesParameter;
                     }
 
-                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    // Create a JsFuncNoScopesN delegate.
+                    // - requiresScopes: close over scopes as delegate target (binds first static arg object[] scopes)
+                    // - no scopes: regular static delegate target = null
+                    if (requiresScopes)
+                    {
+                        EmitLoadTemp(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
-
-                    // Bind delegate to scopes array: Closure.Bind(object, object[])
-                    EmitLoadTemp(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
-                    ilEncoder.Token(bindRef);
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes: false));
                     // Result stays on stack
                     break;
                 }

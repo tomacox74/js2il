@@ -784,7 +784,8 @@ internal sealed class JsMethodCompiler
 
         // Normalize intrinsic-specific patterns (e.g., Int32Array element access) into explicit LIR instructions.
         // This keeps the LIR->IL compiler simpler and avoids fragile late pattern-matching.
-        LIRIntrinsicNormalization.Normalize(lirMethod!, classRegistry);
+        var callableReader = _serviceProvider.GetService<ICallableDeclarationReader>();
+        LIRIntrinsicNormalization.Normalize(lirMethod!, classRegistry, callableReader);
 
         // Normalize generic member calls into explicit early-bound typed member call instructions when provably safe.
         // This keeps the LIR->IL compiler focused on IL mechanics rather than type-directed rewrites.
