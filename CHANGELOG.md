@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- perf/call-lowering: reduce `Closure.Bind` churn by emitting closed `JsFuncNoScopesN` delegates for non-arrow function values and normalize safe `LIRCallFunction` sites into direct `LIRCallDeclaredCallable` dispatch (preserving `arguments`/rest-sensitive paths), plus runtime `Closure` no-scopes invoke fast paths and refreshed generator snapshots (closes #750).
 - benchmarks/phased: temporarily exclude `evaluation`, `evaluation-modern`, and `linq-js` from `Js2ILPhasedBenchmarks` scenario discovery while those scenarios are investigated for fix-or-remove follow-up.
 - perf/type-inference: infer stable `JavaScriptRuntime.Array` returns for eligible non-class callables (including `generateTestStrings` in `dromaeo-object-regexp`), propagate that type through captured-binding writes/call-site inference, and unlock additional early-bound array field/index/member access patterns in generated IL (fixes #751).
 - compiler/IL/runtime: harden `LIRConvertToObject` emission to use temp-storage type information when boxing and preserve reference/object values without invalid `box`, fixing crashes/invalid casts in tagged-template and typed-reference paths.

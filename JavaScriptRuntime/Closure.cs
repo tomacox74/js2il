@@ -78,6 +78,70 @@ namespace JavaScriptRuntime
             return InvokeWithThis(boundThis, () => InvokeDelegateWithArgs(target, scopes, args, newTarget));
         }
 
+        private static bool TryInvokeTypedJsFuncDelegate(
+            Delegate target,
+            bool hasScopes,
+            int fixedJsParamCount,
+            object[] scopes,
+            object?[] args,
+            object? newTarget,
+            out object? result)
+        {
+            object? Arg(int i) => i < args.Length ? args[i] : null;
+
+            if (hasScopes)
+            {
+                switch (fixedJsParamCount)
+                {
+                    case 0:
+                        if (target is JsFunc0 jsf0) { result = jsf0(scopes, newTarget)!; return true; }
+                        break;
+                    case 1:
+                        if (target is JsFunc1 jsf1) { result = jsf1(scopes, newTarget, Arg(0))!; return true; }
+                        break;
+                    case 2:
+                        if (target is JsFunc2 jsf2) { result = jsf2(scopes, newTarget, Arg(0), Arg(1))!; return true; }
+                        break;
+                    case 3:
+                        if (target is JsFunc3 jsf3) { result = jsf3(scopes, newTarget, Arg(0), Arg(1), Arg(2))!; return true; }
+                        break;
+                    case 4:
+                        if (target is JsFunc4 jsf4) { result = jsf4(scopes, newTarget, Arg(0), Arg(1), Arg(2), Arg(3))!; return true; }
+                        break;
+                    case 5:
+                        if (target is JsFunc5 jsf5) { result = jsf5(scopes, newTarget, Arg(0), Arg(1), Arg(2), Arg(3), Arg(4))!; return true; }
+                        break;
+                }
+            }
+            else
+            {
+                switch (fixedJsParamCount)
+                {
+                    case 0:
+                        if (target is JsFuncNoScopes0 jsf0) { result = jsf0(newTarget)!; return true; }
+                        break;
+                    case 1:
+                        if (target is JsFuncNoScopes1 jsf1) { result = jsf1(newTarget, Arg(0))!; return true; }
+                        break;
+                    case 2:
+                        if (target is JsFuncNoScopes2 jsf2) { result = jsf2(newTarget, Arg(0), Arg(1))!; return true; }
+                        break;
+                    case 3:
+                        if (target is JsFuncNoScopes3 jsf3) { result = jsf3(newTarget, Arg(0), Arg(1), Arg(2))!; return true; }
+                        break;
+                    case 4:
+                        if (target is JsFuncNoScopes4 jsf4) { result = jsf4(newTarget, Arg(0), Arg(1), Arg(2), Arg(3))!; return true; }
+                        break;
+                    case 5:
+                        if (target is JsFuncNoScopes5 jsf5) { result = jsf5(newTarget, Arg(0), Arg(1), Arg(2), Arg(3), Arg(4))!; return true; }
+                        break;
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
         private static object InvokeDelegateWithArgs(Delegate target, object[] scopes, object?[] args, object? newTarget)
         {
             var invoke = target.GetType().GetMethod("Invoke")
@@ -112,6 +176,12 @@ namespace JavaScriptRuntime
             if (!hasParamsArray)
             {
                 object? Arg(int i) => i < args.Length ? args[i] : null;
+
+                if (isJsFuncDelegate
+                    && TryInvokeTypedJsFuncDelegate(target, hasScopes, fixedJsParamCount, scopes, args, newTarget, out var typedJsFuncResult))
+                {
+                    return typedJsFuncResult!;
+                }
 
                 if (hasScopes)
                 {
@@ -485,7 +555,7 @@ namespace JavaScriptRuntime
             return InvokeWithArgsCore(target, scopes, newTarget, args);
         }
 
-        // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
+        // Arity-specific overloads to avoid object[] allocations for common cases (0-5 args).
         // These directly invoke the delegate without allocating an args array.
 
         public static object InvokeWithArgs0(object target, object[] scopes)
@@ -506,6 +576,7 @@ namespace JavaScriptRuntime
                 {
                     // Try fast-path typed invocation first
                     if (del is JsFunc0 f0) return f0(scopes, null)!;
+                    if (del is JsFuncNoScopes0 f0NoScopes) return f0NoScopes(null)!;
                     if (del is Action<object[]> a0) { a0(scopes); return null!; }
                     
                     // Fall back to reflection-based invocation
@@ -539,6 +610,7 @@ namespace JavaScriptRuntime
                 {
                     // Try fast-path typed invocation first
                     if (del is JsFunc1 f1) return f1(scopes, null, a0!)!;
+                    if (del is JsFuncNoScopes1 f1NoScopes) return f1NoScopes(null, a0)!;
                     if (del is Action<object[], object> a1) { a1(scopes, a0!); return null!; }
                     
                     // Fall back to reflection-based invocation
@@ -572,6 +644,7 @@ namespace JavaScriptRuntime
                 {
                     // Try fast-path typed invocation first
                     if (del is JsFunc2 f2) return f2(scopes, null, a0!, a1!)!;
+                    if (del is JsFuncNoScopes2 f2NoScopes) return f2NoScopes(null, a0, a1)!;
                     if (del is Action<object[], object, object> a2) { a2(scopes, a0!, a1!); return null!; }
                     
                     // Fall back to reflection-based invocation
@@ -605,10 +678,79 @@ namespace JavaScriptRuntime
                 {
                     // Try fast-path typed invocation first
                     if (del is JsFunc3 f3) return f3(scopes, null, a0!, a1!, a2!)!;
+                    if (del is JsFuncNoScopes3 f3NoScopes) return f3NoScopes(null, a0, a1, a2)!;
                     if (del is Action<object[], object, object, object> a3) { a3(scopes, a0!, a1!, a2!); return null!; }
                     
                     // Fall back to reflection-based invocation
                     return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1, a2 }, newTarget: null);
+                }
+
+                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            }
+        }
+
+        public static object InvokeWithArgs4(object target, object[] scopes, object? a0, object? a1, object? a2, object? a3)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+
+            var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1, a2, a3 });
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
+            try
+            {
+                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+                {
+                    return require(a0)!;
+                }
+
+                if (target is Delegate del)
+                {
+                    // Try fast-path typed invocation first
+                    if (del is JsFunc4 f4) return f4(scopes, null, a0!, a1!, a2!, a3!)!;
+                    if (del is JsFuncNoScopes4 f4NoScopes) return f4NoScopes(null, a0, a1, a2, a3)!;
+                    if (del is Action<object[], object, object, object, object> a4) { a4(scopes, a0!, a1!, a2!, a3!); return null!; }
+
+                    // Fall back to reflection-based invocation
+                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1, a2, a3 }, newTarget: null);
+                }
+
+                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentArguments(previousArgs);
+                RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+            }
+        }
+
+        public static object InvokeWithArgs5(object target, object[] scopes, object? a0, object? a1, object? a2, object? a3, object? a4)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+
+            var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1, a2, a3, a4 });
+            var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
+            try
+            {
+                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+                {
+                    return require(a0)!;
+                }
+
+                if (target is Delegate del)
+                {
+                    // Try fast-path typed invocation first
+                    if (del is JsFunc5 f5) return f5(scopes, null, a0!, a1!, a2!, a3!, a4!)!;
+                    if (del is JsFuncNoScopes5 f5NoScopes) return f5NoScopes(null, a0, a1, a2, a3, a4)!;
+                    if (del is Action<object[], object, object, object, object, object> a5) { a5(scopes, a0!, a1!, a2!, a3!, a4!); return null!; }
+
+                    // Fall back to reflection-based invocation
+                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1, a2, a3, a4 }, newTarget: null);
                 }
 
                 throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
