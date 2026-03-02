@@ -14,7 +14,7 @@
 
 | Rank | Backlog item | Primary spec areas | Current status signal |
 |---:|---|---|---|
-| 1 | ES Modules: `import`/`export`, module linking/evaluation | 16.x, 9.1.1.5, 9.1.2.6 | Not Yet Supported / rejected in validator |
+| 1 | ES Modules: spec-accurate module records/linking/evaluation (beyond current `import`/`export` lowering) | 16.2.1.x, 16.2.1.5-16.2.1.7 | Supported with Limitations (static import/export rewritten to CommonJS `require`; no real module records / live bindings) |
 | 2 | ArrayBuffer/DataView-backed typed array semantics | 23.2.5.1.3 and related typed-array AOs | Not Yet Supported |
 | 3 | Full `%TypedArray%` surface (constructors + prototype methods) | 23.2.x | Incomplete |
 | 4 | RegExp parity for modern behavior (`u`/`y`/`d`/`v`, symbol methods) | 22.2.6+, 22.2.7+ | Incomplete |
@@ -22,17 +22,17 @@
 | 6 | Object integrity APIs (`preventExtensions`, `seal`, `freeze`, `is*`) | 20.1.2.6, 20.1.2.16-22 | Not Yet Supported |
 | 7 | Function constructor and dynamic function creation (`new Function`) | 20.2.1.x | Not Yet Supported |
 | 8 | Symbol ecosystem completeness (symbol-keyed property introspection + well-known-symbol parity) | 20.1.2.11, 20.4.x, symbol-driven APIs | Incomplete / Not Yet Supported |
-| 9 | Array iterator method surface (`entries`, `keys`, `values`, `Array.prototype[Symbol.iterator]`) | 23.1.3.5, 23.1.3.19, 23.1.3.38, 23.1.3.40 | Not Yet Supported |
+| 9 | Array iterator method surface (`entries`, `keys`, `values`, `Array.prototype[Symbol.iterator]`) | 23.1.3.5, 23.1.3.19, 23.1.3.38, 23.1.3.40 | Partially supported (for..of works via runtime iterator protocol; prototype methods not exposed) |
 | 10 | WeakRef/FinalizationRegistry processing model and cleanup jobs | 9.9-9.13 | Not Yet Supported |
 
 ## Issue-ready Backlog Stubs
 
-## Issue 1: Implement ES Module Pipeline (import/export)
+## Issue 1: Close ES Module Semantics Gaps (beyond current import/export lowering)
 - Suggested labels: `enhancement`, `ecma262`, `modules`, `priority-p0`, `tracking-issues`
 - Minimum acceptance:
-  - Parse and validate `import`/`export` syntax
-  - Implement module environment records and module evaluation order
-  - Add execution + generator tests for import/export flows
+  - Keep supporting `import`/`export` syntax (currently lowered to CommonJS `require` + export getters)
+  - Add spec-aligned module record/linking/evaluation semantics (or an equivalent implementation strategy) to enable live bindings and cyclic ESM graphs
+  - Add execution + generator tests that cover: live binding behavior, circular dependencies, and export namespace objects
 
 ## Issue 2: Implement ArrayBuffer/DataView-backed TypedArray Semantics
 - Suggested labels: `enhancement`, `ecma262`, `typedarray`, `priority-p0`, `tracking-issues`
