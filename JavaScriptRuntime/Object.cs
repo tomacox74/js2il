@@ -2212,7 +2212,15 @@ namespace JavaScriptRuntime
                 invokeArgs[pi] = ps[pi].ParameterType == typeof(bool) ? (object)false : null;
             }
 
-            return chosen.Invoke(null, invokeArgs);
+            try
+            {
+                return chosen.Invoke(null, invokeArgs);
+            }
+            catch (TargetInvocationException tie) when (tie.InnerException != null)
+            {
+                ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
+                throw; // unreachable
+            }
         }
 
         // Keep this switch intentionally limited to hot-path members.

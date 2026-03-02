@@ -160,5 +160,11 @@ namespace Js2IL.Tests.String
         {
             return ExecutionTest(nameof(String_MemberCall_FastPath_CommonMethods));
         }
+
+        [Fact]
+        public Task String_Repeat_Basic()
+        {
+            return ExecutionTest(nameof(String_Repeat_Basic));
+        }
     }
 }

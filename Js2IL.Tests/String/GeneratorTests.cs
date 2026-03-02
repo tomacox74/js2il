@@ -179,5 +179,12 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_MemberCall_FastPath_CommonMethods);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_Repeat_Basic()
+        {
+            var testName = nameof(String_Repeat_Basic);
+            return GenerateTest(testName);
+        }
     }
 }
