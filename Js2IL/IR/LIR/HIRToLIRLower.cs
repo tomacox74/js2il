@@ -453,6 +453,18 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
                 return true;
             }
+            // Fast-path: if the caller already has a global-only scopes argument, pass it through
+            // rather than allocating a new 1-element scopes array at the call site.
+            if (globalSlotSource.Source == ScopeInstanceSource.ScopesArgument
+                && globalSlotSource.SourceIndex == 0
+                && _environmentLayout?.Abi.ScopesSource == ScopesSource.Argument
+                && _environmentLayout.ScopeChain.Slots.Count == 1
+                && string.Equals(_environmentLayout.ScopeChain.Slots[0].ScopeName, globalSlot.ScopeName, StringComparison.Ordinal))
+            {
+                _methodBodyIR.Instructions.Add(new LIRLoadScopesArgument(resultTemp));
+                return true;
+            }
+
             _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
             return true;
         }
@@ -574,6 +586,18 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource, leafSlotSource }, resultTemp));
                 return true;
             }
+        }
+
+        // Fast-path: if the caller already has a global-only scopes argument, pass it through
+        // rather than allocating a new 1-element scopes array at the call site.
+        if (globalSlotSource.Source == ScopeInstanceSource.ScopesArgument
+            && globalSlotSource.SourceIndex == 0
+            && _environmentLayout?.Abi.ScopesSource == ScopesSource.Argument
+            && _environmentLayout.ScopeChain.Slots.Count == 1
+            && string.Equals(_environmentLayout.ScopeChain.Slots[0].ScopeName, moduleName, StringComparison.Ordinal))
+        {
+            _methodBodyIR.Instructions.Add(new LIRLoadScopesArgument(resultTemp));
+            return true;
         }
 
         _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
