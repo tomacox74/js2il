@@ -2141,13 +2141,10 @@ internal sealed partial class LIRToILCompiler
     /// </summary>
     private void EmitEmptyScopesArray(InstructionEncoder ilEncoder)
     {
-        ilEncoder.LoadConstantI4(1);
-        ilEncoder.OpCode(ILOpCode.Newarr);
-        ilEncoder.Token(_bclReferences.ObjectType);
-        ilEncoder.OpCode(ILOpCode.Dup);
-        ilEncoder.LoadConstantI4(0);
-        ilEncoder.OpCode(ILOpCode.Ldnull);
-        ilEncoder.OpCode(ILOpCode.Stelem_ref);
+        // Reuse a singleton array instead of allocating a new 1-element array each time.
+        var emptyScopesField = _memberRefRegistry.GetOrAddField(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.EmptyScopes));
+        ilEncoder.OpCode(ILOpCode.Ldsfld);
+        ilEncoder.Token(emptyScopesField);
     }
 
     /// <summary>

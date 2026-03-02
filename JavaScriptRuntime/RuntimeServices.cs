@@ -14,6 +14,9 @@ public class RuntimeServices
     private static readonly ConcurrentDictionary<string, ExpandoObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
 
+    // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
+    public static readonly object[] EmptyScopes = new object[1];
+
     public static object? GetCurrentThis()
     {
         return _currentThis.Value;

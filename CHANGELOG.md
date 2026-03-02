@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 - perf/runtime/spec: add `String.prototype.search` support (`JavaScriptRuntime.String.Search`) and route string member-call normalization to early-bind safe `search`/zero-arg `match`/`split` calls to direct `JavaScriptRuntime.String::*` intrinsic calls, reducing fallback `Object.CallMember*` dispatch in regexp-heavy string paths (closes #749).
 - perf(prime): avoid redundant global-only scopes array allocations by passing through the existing scopes argument at safe call sites.
+- perf(prime): reduce allocation churn at no-scopes call sites by reusing a singleton empty-scopes array and pooling small fixed-arity argument arrays in `Closure.InvokeWithArgs*` fast paths.
 
 ## v0.8.25 - 2026-03-01
 
