@@ -60,5 +60,11 @@ namespace Js2IL.Tests.Math
         {
             return ExecutionTest(nameof(Math_Sign_ZeroVariants));
         }
+
+        [Fact]
+        public Task Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes()
+        {
+            return ExecutionTest(nameof(Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes));
+        }
     }
 }
