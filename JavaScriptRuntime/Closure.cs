@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -556,54 +555,8 @@ namespace JavaScriptRuntime
             return InvokeWithArgsCore(target, scopes, newTarget, args);
         }
 
-        // Arity-specific overloads to avoid object[] allocations for common cases (0-5 args).
-        // These directly invoke the delegate without allocating an args array.
-
-        private static class InlineArgumentsArrayPool
-        {
-            [ThreadStatic] private static Stack<object?[]>? _len1;
-            [ThreadStatic] private static Stack<object?[]>? _len2;
-            [ThreadStatic] private static Stack<object?[]>? _len3;
-            [ThreadStatic] private static Stack<object?[]>? _len4;
-            [ThreadStatic] private static Stack<object?[]>? _len5;
-
-            private static Stack<object?[]> Get(ref Stack<object?[]>? stack)
-            {
-                return stack ??= new Stack<object?[]>(4);
-            }
-
-            private static object?[] RentFrom(ref Stack<object?[]>? stack, int length)
-            {
-                var s = Get(ref stack);
-                return s.Count != 0 ? s.Pop() : new object?[length];
-            }
-
-            public static object?[] Rent(int length)
-            {
-                return length switch
-                {
-                    1 => RentFrom(ref _len1, 1),
-                    2 => RentFrom(ref _len2, 2),
-                    3 => RentFrom(ref _len3, 3),
-                    4 => RentFrom(ref _len4, 4),
-                    5 => RentFrom(ref _len5, 5),
-                    _ => new object?[length]
-                };
-            }
-
-            public static void Return(object?[] args)
-            {
-                System.Array.Clear(args, 0, args.Length);
-                switch (args.Length)
-                {
-                    case 1: Get(ref _len1).Push(args); break;
-                    case 2: Get(ref _len2).Push(args); break;
-                    case 3: Get(ref _len3).Push(args); break;
-                    case 4: Get(ref _len4).Push(args); break;
-                    case 5: Get(ref _len5).Push(args); break;
-                }
-            }
-        }
+        // Arity-specific overloads for common cases (0-5 args).
+        // These directly invoke the delegate while also setting RuntimeServices.CurrentArguments.
 
         public static object InvokeWithArgs0(object target, object[] scopes)
         {
@@ -644,9 +597,7 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            var args = InlineArgumentsArrayPool.Rent(1);
-            args[0] = a0;
-
+            var args = new object?[] { a0 };
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -673,7 +624,6 @@ namespace JavaScriptRuntime
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                InlineArgumentsArrayPool.Return(args);
             }
         }
 
@@ -682,10 +632,7 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            var args = InlineArgumentsArrayPool.Rent(2);
-            args[0] = a0;
-            args[1] = a1;
-
+            var args = new object?[] { a0, a1 };
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -712,7 +659,6 @@ namespace JavaScriptRuntime
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                InlineArgumentsArrayPool.Return(args);
             }
         }
 
@@ -721,11 +667,7 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            var args = InlineArgumentsArrayPool.Rent(3);
-            args[0] = a0;
-            args[1] = a1;
-            args[2] = a2;
-
+            var args = new object?[] { a0, a1, a2 };
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -752,7 +694,6 @@ namespace JavaScriptRuntime
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                InlineArgumentsArrayPool.Return(args);
             }
         }
 
@@ -761,12 +702,7 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            var args = InlineArgumentsArrayPool.Rent(4);
-            args[0] = a0;
-            args[1] = a1;
-            args[2] = a2;
-            args[3] = a3;
-
+            var args = new object?[] { a0, a1, a2, a3 };
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -793,7 +729,6 @@ namespace JavaScriptRuntime
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                InlineArgumentsArrayPool.Return(args);
             }
         }
 
@@ -802,13 +737,7 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            var args = InlineArgumentsArrayPool.Rent(5);
-            args[0] = a0;
-            args[1] = a1;
-            args[2] = a2;
-            args[3] = a3;
-            args[4] = a4;
-
+            var args = new object?[] { a0, a1, a2, a3, a4 };
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -835,7 +764,6 @@ namespace JavaScriptRuntime
             {
                 RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
-                InlineArgumentsArrayPool.Return(args);
             }
         }
 

@@ -15,7 +15,18 @@ public class RuntimeServices
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
 
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
+    // NOTE: Consumers must treat scopes arrays as immutable.
     public static readonly object[] EmptyScopes = new object[1];
+
+#if DEBUG
+    public static void AssertEmptyScopesUnmodified()
+    {
+        if (EmptyScopes[0] != null)
+        {
+            throw new InvalidOperationException("RuntimeServices.EmptyScopes was mutated (expected [0] == null).");
+        }
+    }
+#endif
 
     public static object? GetCurrentThis()
     {
