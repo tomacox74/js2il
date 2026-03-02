@@ -32,5 +32,8 @@ namespace Js2IL.Tests.Math
 
         [Fact]
         public Task Math_Sign_ZeroVariants() { var testName = nameof(Math_Sign_ZeroVariants); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes() { var testName = nameof(Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes); return GenerateTest(testName); }
     }
 }
