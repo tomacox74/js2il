@@ -723,8 +723,9 @@ This replaces the role of the legacy `FunctionRegistry` (which is string-keyed a
   - Looks up callee's scope from symbol table
   - Builds callee's `EnvironmentLayout` to get its `ScopeChainLayout`
   - Maps each slot to a source in the caller's context via `TryMapScopeSlotToSource`
+  - May pass through an existing *global-only* scopes argument when it is provably ABI-equivalent (avoids allocating a redundant 1-element array)
 - Extended `LIRToILCompiler` to emit proper scopes array construction:
-  - For empty layouts: creates 1-element array with null (ABI compatibility)
+  - For empty layouts: loads `RuntimeServices.EmptyScopes` (shared 1-element array with null; ABI compatibility). Callers must treat scopes arrays as immutable.
   - For non-empty layouts: creates array of proper size, populates each slot from its source
   - Added `EmitLoadScopeInstance` helper for loading from leaf local, scopes argument, or this._scopes
 - Updated `Stackify` and `TempLocalAllocator` to handle the new `LIRBuildScopesArray` instruction
