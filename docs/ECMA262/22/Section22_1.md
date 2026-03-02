@@ -233,7 +233,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.repeat | Supported with Limitations |  | Implemented in JavaScriptRuntime.String.Repeat with RangeError for negative / non-finite counts and a guard against extremely large outputs. |
+| String.prototype.repeat | Supported with Limitations | [`String_Repeat_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_Repeat_Basic.js) | Implemented in JavaScriptRuntime.String.Repeat with RangeError for negative / non-finite counts and a guard against extremely large outputs. |
 
 ### 22.1.3.19 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replace))
 
@@ -263,7 +263,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.slice | Supported with Limitations |  | Implemented in JavaScriptRuntime.String.Slice with best-effort ToIntegerOrInfinity-style coercion and negative index handling. Edge-case observable behaviors are not exhaustively validated. |
+| String.prototype.slice | Supported with Limitations | [`String_MemberCall_FastPath_CommonMethods.js`](../../../Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js) | Implemented in JavaScriptRuntime.String.Slice with best-effort ToIntegerOrInfinity-style coercion and negative index handling. Edge-case observable behaviors are not exhaustively validated. |
 
 ### 22.1.3.23 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.split))
 
