@@ -1,5 +1,6 @@
-# ECMA-262 Top Missing Features Backlog (2026-02-21)
+# ECMA-262 Top Missing Features Backlog
 
+> **Last Updated**: 2026-03-02  
 > Purpose: capture the highest-value unsupported/incomplete ECMA-262 features to drive issue creation and execution planning.
 > Source basis: current `docs/ECMA262/**/Section*.json` + subsection markdown status, plus runtime/validator behavior checks.
 

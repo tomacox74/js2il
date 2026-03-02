@@ -183,7 +183,7 @@ Feature PRs are not ready to merge until docs are synchronized:
 
 - **[TriageScoreboard.md](./TriageScoreboard.md)**: Active prioritization and weekly execution board
 - **[NodeGapPopularityBacklog_2026-02-17.md](./NodeGapPopularityBacklog_2026-02-17.md)**: Persisted holistic gap analysis + popularity-weighted Node backlog snapshot
-- **[ECMA262TopMissingBacklog_2026-02-21.md](./ECMA262TopMissingBacklog_2026-02-21.md)**: Top 10 unsupported/incomplete ECMA-262 features ranked for tracking issue creation
+- **[ECMA262TopMissingBacklog.md](./ECMA262TopMissingBacklog.md)**: Top 10 unsupported/incomplete ECMA-262 features ranked for tracking issue creation
 - **[FeatureImplementationRoadmap.md](../FeatureImplementationRoadmap.md)**: Complete technical roadmap
 - **[ECMA262FeaturePriority.md](../ECMA262FeaturePriority.md)**: Executive summary
 - **[ECMA262FeatureStatus.md](../ECMA262FeatureStatus.md)**: Quick reference
