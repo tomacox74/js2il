@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x228e
+				// Method begins at RVA 0x228a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -39,7 +39,7 @@
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2264
+			// Method begins at RVA 0x2260
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -61,7 +61,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2273
+			// Method begins at RVA 0x226f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -89,7 +89,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2285
+				// Method begins at RVA 0x2281
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -110,7 +110,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x227c
+			// Method begins at RVA 0x2278
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -134,7 +134,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22a0
+				// Method begins at RVA 0x229c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -152,7 +152,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2297
+			// Method begins at RVA 0x2293
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -178,7 +178,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 490 (0x1ea)
+		// Code size: 485 (0x1e5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_Let_Destructuring_PerIterationBinding/Scope,
@@ -346,7 +346,7 @@
 				IL_017c: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
 				IL_0181: stloc.s 13
 				IL_0183: ldloc.s 13
-				IL_0185: brtrue IL_01cb
+				IL_0185: brtrue IL_01c6
 
 				IL_018a: ldloc.s 12
 				IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
@@ -354,45 +354,40 @@
 				IL_0193: ldloc.s 12
 				IL_0195: stloc.s 9
 				IL_0197: ldloc.s 9
-				IL_0199: ldc.i4.1
-				IL_019a: newarr [System.Runtime]System.Object
-				IL_019f: dup
-				IL_01a0: ldc.i4.0
-				IL_01a1: ldnull
-				IL_01a2: stelem.ref
-				IL_01a3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
-				IL_01a8: stloc.s 12
-				IL_01aa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_01af: ldloc.s 12
-				IL_01b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_01b6: pop
-				IL_01b7: br IL_0171
+				IL_0199: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+				IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+				IL_01a3: stloc.s 12
+				IL_01a5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_01aa: ldloc.s 12
+				IL_01ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_01b1: pop
+				IL_01b2: br IL_0171
 			// end loop
-			IL_01bc: ldloc.s 6
-			IL_01be: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
-			IL_01c3: ldc.i4.1
-			IL_01c4: stloc.s 8
-			IL_01c6: leave IL_01e9
+			IL_01b7: ldloc.s 6
+			IL_01b9: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+			IL_01be: ldc.i4.1
+			IL_01bf: stloc.s 8
+			IL_01c1: leave IL_01e4
 
-			IL_01cb: ldc.i4.1
-			IL_01cc: stloc.s 7
-			IL_01ce: leave IL_01e9
+			IL_01c6: ldc.i4.1
+			IL_01c7: stloc.s 7
+			IL_01c9: leave IL_01e4
 		} // end .try
 		finally
 		{
-			IL_01d3: ldloc.s 7
-			IL_01d5: brtrue IL_01e8
+			IL_01ce: ldloc.s 7
+			IL_01d0: brtrue IL_01e3
 
-			IL_01da: ldloc.s 8
-			IL_01dc: brtrue IL_01e8
+			IL_01d5: ldloc.s 8
+			IL_01d7: brtrue IL_01e3
 
-			IL_01e1: ldloc.s 6
-			IL_01e3: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+			IL_01dc: ldloc.s 6
+			IL_01de: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
 
-			IL_01e8: endfinally
+			IL_01e3: endfinally
 		} // end handler
 
-		IL_01e9: ret
+		IL_01e4: ret
 	} // end of method ControlFlow_ForOf_Let_Destructuring_PerIterationBinding::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_Let_Destructuring_PerIterationBinding
@@ -404,7 +399,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22a9
+		// Method begins at RVA 0x22a5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

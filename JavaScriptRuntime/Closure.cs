@@ -555,8 +555,8 @@ namespace JavaScriptRuntime
             return InvokeWithArgsCore(target, scopes, newTarget, args);
         }
 
-        // Arity-specific overloads to avoid object[] allocations for common cases (0-5 args).
-        // These directly invoke the delegate without allocating an args array.
+        // Arity-specific overloads for common cases (0-5 args).
+        // These directly invoke the delegate while also setting RuntimeServices.CurrentArguments.
 
         public static object InvokeWithArgs0(object target, object[] scopes)
         {
@@ -597,7 +597,8 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0 });
+            var args = new object?[] { a0 };
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -612,9 +613,9 @@ namespace JavaScriptRuntime
                     if (del is JsFunc1 f1) return f1(scopes, null, a0!)!;
                     if (del is JsFuncNoScopes1 f1NoScopes) return f1NoScopes(null, a0)!;
                     if (del is Action<object[], object> a1) { a1(scopes, a0!); return null!; }
-                    
+
                     // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0 }, newTarget: null);
+                    return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
                 }
 
                 throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
@@ -631,7 +632,8 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1 });
+            var args = new object?[] { a0, a1 };
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -646,9 +648,9 @@ namespace JavaScriptRuntime
                     if (del is JsFunc2 f2) return f2(scopes, null, a0!, a1!)!;
                     if (del is JsFuncNoScopes2 f2NoScopes) return f2NoScopes(null, a0, a1)!;
                     if (del is Action<object[], object, object> a2) { a2(scopes, a0!, a1!); return null!; }
-                    
+
                     // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1 }, newTarget: null);
+                    return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
                 }
 
                 throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
@@ -665,7 +667,8 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1, a2 });
+            var args = new object?[] { a0, a1, a2 };
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -680,9 +683,9 @@ namespace JavaScriptRuntime
                     if (del is JsFunc3 f3) return f3(scopes, null, a0!, a1!, a2!)!;
                     if (del is JsFuncNoScopes3 f3NoScopes) return f3NoScopes(null, a0, a1, a2)!;
                     if (del is Action<object[], object, object, object> a3) { a3(scopes, a0!, a1!, a2!); return null!; }
-                    
+
                     // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1, a2 }, newTarget: null);
+                    return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
                 }
 
                 throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
@@ -699,7 +702,8 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1, a2, a3 });
+            var args = new object?[] { a0, a1, a2, a3 };
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -716,7 +720,7 @@ namespace JavaScriptRuntime
                     if (del is Action<object[], object, object, object, object> a4) { a4(scopes, a0!, a1!, a2!, a3!); return null!; }
 
                     // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1, a2, a3 }, newTarget: null);
+                    return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
                 }
 
                 throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
@@ -733,7 +737,8 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            var previousArgs = RuntimeServices.SetCurrentArguments(new object?[] { a0, a1, a2, a3, a4 });
+            var args = new object?[] { a0, a1, a2, a3, a4 };
+            var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -750,7 +755,7 @@ namespace JavaScriptRuntime
                     if (del is Action<object[], object, object, object, object, object> a5) { a5(scopes, a0!, a1!, a2!, a3!, a4!); return null!; }
 
                     // Fall back to reflection-based invocation
-                    return InvokeDelegateWithArgs(del, scopes, new object?[] { a0, a1, a2, a3, a4 }, newTarget: null);
+                    return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
                 }
 
                 throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");

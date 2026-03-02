@@ -1,28 +1,19 @@
 # Captured Variables: Scopes ABI Facade (Design)
 
-This document is a **spec/design for the target (“ideal”) scopes ABI** that both the legacy compiler and the IR pipeline should converge on.
+This document is a **spec/design for the target (“ideal”) scopes ABI** used by JS2IL.
 
 - The **ABI Contract (Authoritative)** section is normative.
-- Any sections labeled **migration** or **compatibility** exist only to constrain incremental rollout.
+- Any sections labeled **compatibility** exist only to constrain incremental rollout.
 
 ## Background (non-normative)
 
-JS2IL historically compiled **AST → IL** directly. Closures and captured variables were supported via a **scope-as-class** model:
+JS2IL compiles JavaScript using a **AST → HIR → LIR → IL** lowering pipeline. Closures and captured variables are implemented via a **scope-as-class** model:
 
 - Every JavaScript scope becomes a generated .NET reference type ("scope class").
 - Captured bindings (and other field-backed bindings like hoisted function declarations) become **instance fields** on the scope class.
 - Nested functions access parent scopes via an `object[] scopes` chain.
 
-JS2IL is migrating to a **AST → HIR → LIR → IL** pipeline to improve correctness (proper analysis, fewer ad-hoc emission decisions) and reduce bugs.
-
-A key adoption blocker is **captured variables / closure environments**. This document proposes a **clean ABI facade** that:
-
-- Fully specifies the runtime calling convention for closure environments (the **ABI**).
-- Provides a small set of data structures and lowering rules so both:
-  - legacy emitters and
-  - the new IR pipeline
-
-can interoperate during migration **without sharing** `VariableRegistry` / `Variables` / `Variable`.
+This document specifies the runtime calling convention for closure environments (the **ABI**) and the core data structures / lowering rules for materializing scope chains and accessing captured bindings.
 
 ## Goals
 
@@ -30,8 +21,7 @@ can interoperate during migration **without sharing** `VariableRegistry` / `Vari
 - Provide an IR-friendly abstraction to lower `BindingInfo` loads/stores into:
   - IL locals, or
   - `ldfld/stfld` on scope instances.
-- Enable **legacy ↔ IR interop** while both pipelines generate code.
-- Avoid leaking legacy DTO designs (Issue 152 class family) into IR lowering.
+
 
 ## Non-goals
 
@@ -51,7 +41,7 @@ can interoperate during migration **without sharing** `VariableRegistry` / `Vari
 
 ## Current alignment (non-normative)
 
-This design intentionally aligns with the existing conventions so migration does not break, but the contract below is written in terms of the **ideal ABI**.
+This design intentionally aligns with current conventions, but the contract below is written in terms of the **ideal ABI**.
 
 ### Method signature encoding
 
@@ -723,8 +713,9 @@ This replaces the role of the legacy `FunctionRegistry` (which is string-keyed a
   - Looks up callee's scope from symbol table
   - Builds callee's `EnvironmentLayout` to get its `ScopeChainLayout`
   - Maps each slot to a source in the caller's context via `TryMapScopeSlotToSource`
+  - May pass through an existing *global-only* scopes argument when it is provably ABI-equivalent (avoids allocating a redundant 1-element array)
 - Extended `LIRToILCompiler` to emit proper scopes array construction:
-  - For empty layouts: creates 1-element array with null (ABI compatibility)
+  - For empty layouts: loads `RuntimeServices.EmptyScopes` (shared 1-element array with null; ABI compatibility). Callers must treat scopes arrays as immutable.
   - For non-empty layouts: creates array of proper size, populates each slot from its source
   - Added `EmitLoadScopeInstance` helper for loading from leaf local, scopes argument, or this._scopes
 - Updated `Stackify` and `TempLocalAllocator` to handle the new `LIRBuildScopesArray` instruction
