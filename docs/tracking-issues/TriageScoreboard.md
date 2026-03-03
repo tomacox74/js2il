@@ -8,7 +8,7 @@ This file is the working source of truth for implementation prioritization.
 
 ## Session Context Snapshots
 
-- [NodeGapPopularityBacklog_2026-02-17.md](./NodeGapPopularityBacklog_2026-02-17.md): Holistic missing-functionality analysis with popularity-weighted priority ranking.
+- [NodeGapPopularityBacklog.md](./NodeGapPopularityBacklog.md): Holistic missing-functionality analysis with popularity-weighted priority ranking.
 - [ECMA262TopMissingBacklog.md](./ECMA262TopMissingBacklog.md): Top 10 unsupported/incomplete ECMA-262 features prioritized for issue creation.
 
 ## Capacity Split
