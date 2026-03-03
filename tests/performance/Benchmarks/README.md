@@ -94,6 +94,20 @@ Benchmarks js2il compile and execute phases separately, alongside Jint prepare a
 dotnet run -c Release -- --phased
 ```
 
+#### Optional: Include Tsonic in phased runs
+If you have the `tsonic` CLI installed, you can include a Tsonic (TypeScript → C#) lane in the phased scenario catalog:
+
+```powershell
+npm install -g tsonic
+# requires .NET 10 and Node.js (see tsonic docs for Node version requirements)
+
+dotnet run -c Release -- --phased --tsonic
+```
+
+Notes:
+- The benchmark runner wraps each `Scenarios/*.js` file into a generated `App.ts` with `// @ts-nocheck`.
+- This is for performance comparison only; it is not intended to validate JS compatibility/correctness for Tsonic.
+
 #### All Benchmarks
 Runs both cross-runtime comparison and phased benchmarks:
 
