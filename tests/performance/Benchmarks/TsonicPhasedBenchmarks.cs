@@ -376,8 +376,16 @@ public class TsonicPhasedBenchmarks
 
         var text = File.ReadAllText(creationJsPath);
         const string marker = "JS2IL_WINDOWS_PATH_WORKAROUND";
+
+        // If we've already patched the file, still fix up any older (incorrect) regex variant.
         if (text.Contains(marker, StringComparison.Ordinal))
         {
+            var fixedText = text.Replace("replace(/\\\\\\\\/g, \"/\")", "replace(/\\\\/g, \"/\")", StringComparison.Ordinal);
+            if (!string.Equals(fixedText, text, StringComparison.Ordinal))
+            {
+                File.WriteAllText(creationJsPath, fixedText);
+            }
+
             return;
         }
 
@@ -389,10 +397,10 @@ public class TsonicPhasedBenchmarks
 
         var newBlock =
             "        .filter((sf) => {\n" +
-            "          // " + marker + ": @tsonic/frontend does a Windows path compare using path.resolve() output\\n" +
-            "          // (\\\\ separators) against TypeScript sf.fileName (normalized to /).\\n" +
+            "          // " + marker + ": @tsonic/frontend does a Windows path compare using path.resolve() output\n" +
+            "          // (\\\\ separators) against TypeScript sf.fileName (normalized to /).\n" +
             "          if (sf.isDeclarationFile) return false;\n" +
-            "          const norm = (p) => p.replace(/\\\\\\\\/g, \"/\").toLowerCase();\n" +
+            "          const norm = (p) => p.replace(/\\\\/g, \"/\").toLowerCase();\n" +
             "          const sfName = norm(sf.fileName);\n" +
             "          return absolutePaths.some((p) => norm(p) === sfName);\n" +
             "        });";
