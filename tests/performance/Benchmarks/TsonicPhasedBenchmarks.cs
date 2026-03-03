@@ -19,13 +19,23 @@ namespace Benchmarks;
 [Orderer(SummaryOrderPolicy.FastestToSlowest)]
 [HideColumns("Error", "Gen0", "Gen1", "Gen2")]
 [JsonExporterAttribute.FullCompressed]
-public sealed class TsonicPhasedBenchmarks
+public class TsonicPhasedBenchmarks
 {
-    private readonly Dictionary<string, string> _scripts = new();
-    private readonly Dictionary<string, string> _scenarioKeyToScriptName = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, ScenarioLoadContext> _compiledLoadContexts = new();
-    private readonly Dictionary<string, Action> _compiledEntrypoints = new();
-    private readonly Dictionary<string, string> _tsonicCompileFailures = new();
+    private static readonly Dictionary<string, string> Scripts = new();
+    private static readonly Dictionary<string, string> ScenarioKeyToScriptName = new(StringComparer.Ordinal);
+
+    private static readonly object WorkspaceInitLock = new();
+    private static bool WorkspaceInitialized;
+    private static string WorkspaceTempDir = "";
+    private static string WorkspaceDir = "";
+    private static string ProjectDir = "";
+    private static string AppTsPath = "";
+    private static string GeneratedDir = "";
+    private static string WorkspaceTsonicCommand = "";
+
+    private ScenarioLoadContext? _compiledLoadContext;
+    private Action? _compiledEntrypoint;
+    private string? _compileFailure;
 
     // Keep this in sync with Js2ILPhasedBenchmarks until those scenarios are fixed.
     private static readonly HashSet<string> TemporarilyExcludedScriptNames = new(StringComparer.Ordinal)
@@ -40,91 +50,62 @@ public sealed class TsonicPhasedBenchmarks
     private string _projectDir = "";
     private string _appTsPath = "";
     private string _generatedDir = "";
+    private string _tsonicCommand = "tsonic";
 
-    [GlobalSetup]
-    public void Setup()
+    [GlobalSetup(Target = nameof(Tsonic_Generate))]
+    public void SetupGenerate()
     {
-        EnsureTsonicAvailable();
+        SetupCommon(precompileForExecuteOnly: false);
+    }
 
-        // Load all benchmark scripts
-        var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
+    [GlobalSetup(Target = nameof(Tsonic_ExecuteOnly))]
+    public void SetupExecuteOnly()
+    {
+        SetupCommon(precompileForExecuteOnly: true);
+    }
 
-        var scriptFiles = Directory.GetFiles(scriptsDir, "*.js")
-            .Where(path => !TemporarilyExcludedScriptNames.Contains(Path.GetFileNameWithoutExtension(path)))
-            .OrderBy(path => path, StringComparer.Ordinal)
-            .ToArray();
+    private void SetupCommon(bool precompileForExecuteOnly)
+    {
+        EnsureWorkspaceInitialized();
 
-        for (int i = 0; i < scriptFiles.Length; i++)
+        _workspaceDir = WorkspaceDir;
+        _projectDir = ProjectDir;
+        _appTsPath = AppTsPath;
+        _generatedDir = GeneratedDir;
+        _tsonicCommand = WorkspaceTsonicCommand;
+
+        _compileFailure = null;
+        _compiledEntrypoint = null;
+        _compiledLoadContext = null;
+
+        if (precompileForExecuteOnly)
         {
-            var scriptPath = scriptFiles[i];
-            var scriptFile = Path.GetFileName(scriptPath);
-            var scriptName = Path.GetFileNameWithoutExtension(scriptFile);
-            var scenarioKey = scriptName;
-            var scriptContent = File.ReadAllText(scriptPath);
-            _scripts[scenarioKey] = scriptContent;
-            _scenarioKeyToScriptName[scenarioKey] = scriptName;
-        }
+            _tempDir = Path.Combine(Path.GetTempPath(), $"js2il-benchmarks-tsonic-case-{Guid.NewGuid()}");
+            Directory.CreateDirectory(_tempDir);
 
-        // Workspace lives under temp to avoid contaminating the repo with generated output.
-        _tempDir = Path.Combine(Path.GetTempPath(), $"js2il-benchmarks-tsonic-{Guid.NewGuid()}");
-        _workspaceDir = Path.Combine(_tempDir, "tsonic-workspace");
-        Directory.CreateDirectory(_workspaceDir);
-
-        RunProcessOrThrow("tsonic", "init --skip-types -q", _workspaceDir);
-
-        // Resolve the created project directory (init creates a default project under packages/).
-        var packagesDir = Path.Combine(_workspaceDir, "packages");
-        if (!Directory.Exists(packagesDir))
-        {
-            throw new InvalidOperationException($"tsonic init did not create a packages/ folder under '{_workspaceDir}'.");
-        }
-
-        var projectDirs = Directory.GetDirectories(packagesDir)
-            .OrderBy(d => d, StringComparer.Ordinal)
-            .ToArray();
-
-        if (projectDirs.Length == 0)
-        {
-            throw new InvalidOperationException($"tsonic init did not create a default project under '{packagesDir}'.");
-        }
-
-        _projectDir = projectDirs[0];
-        _appTsPath = Path.Combine(_projectDir, "src", "App.ts");
-        _generatedDir = Path.Combine(_projectDir, "generated");
-
-        // Pre-generate + build managed assemblies for execution-only benchmarks.
-        foreach (var kvp in _scripts)
-        {
-            var scenarioKey = kvp.Key;
             try
             {
-                PrecompileScenario(scenarioKey);
+                PrecompileScenario(ScriptName);
             }
             catch (Exception ex)
             {
-                _tsonicCompileFailures[scenarioKey] = ex.Message;
+                _compileFailure = ex.Message;
             }
         }
     }
 
-    [GlobalCleanup]
-    public void Cleanup()
+    [GlobalCleanup(Target = nameof(Tsonic_ExecuteOnly))]
+    public void CleanupExecuteOnly()
     {
-        foreach (var loadContext in _compiledLoadContexts.Values)
-        {
-            loadContext.Unload();
-        }
-
-        _compiledLoadContexts.Clear();
-        _compiledEntrypoints.Clear();
-        _tsonicCompileFailures.Clear();
-        _scenarioKeyToScriptName.Clear();
+        _compiledLoadContext?.Unload();
+        _compiledLoadContext = null;
+        _compiledEntrypoint = null;
 
         GC.Collect();
         GC.WaitForPendingFinalizers();
         GC.Collect();
 
-        if (Directory.Exists(_tempDir))
+        if (!string.IsNullOrWhiteSpace(_tempDir) && Directory.Exists(_tempDir))
         {
             try
             {
@@ -142,17 +123,6 @@ public sealed class TsonicPhasedBenchmarks
 
     public IEnumerable<string> ScriptNames()
     {
-        if (_scripts.Count > 0)
-        {
-            var names = _scripts.Keys.AsEnumerable();
-            if (_tsonicCompileFailures.Count > 0)
-            {
-                names = names.Where(name => !_tsonicCompileFailures.ContainsKey(name));
-            }
-
-            return names.OrderBy(name => name, StringComparer.Ordinal);
-        }
-
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
         if (!Directory.Exists(scriptsDir))
         {
@@ -168,31 +138,38 @@ public sealed class TsonicPhasedBenchmarks
     [Benchmark(Description = "tsonic generate")]
     public void Tsonic_Generate()
     {
-        if (_tsonicCompileFailures.TryGetValue(ScriptName, out _))
+        if (_compileFailure != null)
         {
             return;
         }
 
-        WriteAppTsForScenario(ScriptName);
-        RunProcessOrThrow("tsonic", "generate src\\App.ts -q", _projectDir);
+        try
+        {
+            WriteAppTsForScenario(ScriptName);
+            RunProcessOrThrow(_tsonicCommand, "generate src\\App.ts -q", _projectDir);
+        }
+        catch (Exception ex)
+        {
+            _compileFailure ??= ex.Message;
+        }
     }
 
     [Benchmark(Description = "tsonic execute (pre-compiled)")]
     public void Tsonic_ExecuteOnly()
     {
-        if (_tsonicCompileFailures.TryGetValue(ScriptName, out _))
+        if (_compileFailure != null || _compiledEntrypoint == null)
         {
             return;
         }
 
-        _compiledEntrypoints[ScriptName]();
+        _compiledEntrypoint();
     }
 
     private void PrecompileScenario(string scenarioKey)
     {
         WriteAppTsForScenario(scenarioKey);
 
-        RunProcessOrThrow("tsonic", "generate src\\App.ts -q", _projectDir);
+        RunProcessOrThrow(_tsonicCommand, "generate src\\App.ts -q", _projectDir);
         RunProcessOrThrow("dotnet", "build -c Release -v q", _generatedDir);
 
         var buildOutputDir = Path.Combine(_generatedDir, "bin", "Release", "net10.0");
@@ -229,13 +206,13 @@ public sealed class TsonicPhasedBenchmarks
             throw new InvalidOperationException($"compiled assembly has no EntryPoint: {fullMainAssemblyPath}");
         }
 
-        _compiledLoadContexts[scenarioKey] = loadContext;
-        _compiledEntrypoints[scenarioKey] = CreateEntrypointInvoker(entryPoint);
+        _compiledLoadContext = loadContext;
+        _compiledEntrypoint = CreateEntrypointInvoker(entryPoint);
     }
 
     private void WriteAppTsForScenario(string scenarioKey)
     {
-        var script = _scripts[scenarioKey];
+        var script = Scripts[scenarioKey];
 
         var sb = new StringBuilder();
         sb.AppendLine("// @ts-nocheck");
@@ -253,23 +230,218 @@ public sealed class TsonicPhasedBenchmarks
 
     private string ResolveScriptName(string scenarioKey)
     {
-        return _scenarioKeyToScriptName.TryGetValue(scenarioKey, out var scriptName)
+        return ScenarioKeyToScriptName.TryGetValue(scenarioKey, out var scriptName)
             ? scriptName
             : scenarioKey;
     }
 
-    private static void EnsureTsonicAvailable()
+    private static void EnsureWorkspaceInitialized()
+    {
+        if (WorkspaceInitialized)
+        {
+            return;
+        }
+
+        lock (WorkspaceInitLock)
+        {
+            if (WorkspaceInitialized)
+            {
+                return;
+            }
+
+            // NOTE: BenchmarkDotNet executes each benchmark in its own process. To avoid paying `tsonic init`
+            // + `npm install` for every case, we keep a persistent workspace cache under %TEMP%.
+            WorkspaceTempDir = Path.Combine(Path.GetTempPath(), "js2il-benchmarks-tsonic-cache");
+            WorkspaceDir = Path.Combine(WorkspaceTempDir, "tsonic-workspace");
+
+            var bootstrapTsonic = ResolveTsonicCommand();
+            var readyMarkerPath = Path.Combine(WorkspaceDir, ".js2il-tsonic-ready");
+
+            using (var initMutex = new System.Threading.Mutex(false, "JS2IL_TSONIC_WORKSPACE_CACHE_INIT"))
+            {
+                initMutex.WaitOne();
+                try
+                {
+                    if (!File.Exists(readyMarkerPath))
+                    {
+                        if (Directory.Exists(WorkspaceDir))
+                        {
+                            Directory.Delete(WorkspaceDir, recursive: true);
+                        }
+
+                        Directory.CreateDirectory(WorkspaceDir);
+
+                        // Use --skip-types because 'tsonic init' currently can fail while trying to npm install.
+                        // We explicitly install the required @tsonic/* packages below.
+                        RunProcessOrThrow(bootstrapTsonic, "init --skip-types -q", WorkspaceDir);
+                        InstallWorkspacePackages(WorkspaceDir);
+                        ApplyTsonicWindowsFrontendPathWorkaround(WorkspaceDir);
+
+                        File.WriteAllText(readyMarkerPath, "ready");
+                    }
+                }
+                finally
+                {
+                    initMutex.ReleaseMutex();
+                }
+            }
+
+            // Always attempt to patch on Windows (cheap + idempotent).
+            ApplyTsonicWindowsFrontendPathWorkaround(WorkspaceDir);
+
+            var localTsonic = Path.Combine(
+                WorkspaceDir,
+                "node_modules",
+                ".bin",
+                OperatingSystem.IsWindows() ? "tsonic.cmd" : "tsonic");
+            WorkspaceTsonicCommand = File.Exists(localTsonic) ? localTsonic : bootstrapTsonic;
+
+            // Resolve the created project directory (init creates a default project under packages/).
+            var packagesDir = Path.Combine(WorkspaceDir, "packages");
+            if (!Directory.Exists(packagesDir))
+            {
+                throw new InvalidOperationException($"tsonic init did not create a packages/ folder under '{WorkspaceDir}'.");
+            }
+
+            var projectDirs = Directory.GetDirectories(packagesDir)
+                .OrderBy(d => d, StringComparer.Ordinal)
+                .ToArray();
+
+            if (projectDirs.Length == 0)
+            {
+                throw new InvalidOperationException($"tsonic init did not create a default project under '{packagesDir}'.");
+            }
+
+            ProjectDir = projectDirs[0];
+            AppTsPath = Path.Combine(ProjectDir, "src", "App.ts");
+            GeneratedDir = Path.Combine(ProjectDir, "generated");
+
+            LoadBenchmarkScripts();
+
+            WorkspaceInitialized = true;
+        }
+    }
+
+    private static void LoadBenchmarkScripts()
+    {
+        if (Scripts.Count > 0)
+        {
+            return;
+        }
+
+        var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
+        var scriptFiles = Directory.GetFiles(scriptsDir, "*.js")
+            .Where(path => !TemporarilyExcludedScriptNames.Contains(Path.GetFileNameWithoutExtension(path)))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        for (int i = 0; i < scriptFiles.Length; i++)
+        {
+            var scriptPath = scriptFiles[i];
+            var scriptName = Path.GetFileNameWithoutExtension(scriptPath);
+            Scripts[scriptName] = File.ReadAllText(scriptPath);
+            ScenarioKeyToScriptName[scriptName] = scriptName;
+        }
+    }
+
+    private static void InstallWorkspacePackages(string workspaceDir)
+    {
+        // NOTE: These packages are required for type stubs and CLR bindings. tsonic does not currently
+        // ship them as dependencies of the CLI itself.
+        const string packages = "tsonic@0.0.63 @tsonic/core@10.0.35 @tsonic/dotnet@10.0.35 @tsonic/globals@10.0.35";
+        const string args = "install -D " + packages + " --legacy-peer-deps --silent --no-audit --no-fund";
+
+        if (OperatingSystem.IsWindows())
+        {
+            RunProcessOrThrow("cmd.exe", "/c npm " + args, workspaceDir);
+        }
+        else
+        {
+            RunProcessOrThrow("npm", args, workspaceDir);
+        }
+    }
+
+    private static void ApplyTsonicWindowsFrontendPathWorkaround(string workspaceDir)
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        var creationJsPath = Path.Combine(workspaceDir, "node_modules", "@tsonic", "frontend", "dist", "program", "creation.js");
+        if (!File.Exists(creationJsPath))
+        {
+            return;
+        }
+
+        var text = File.ReadAllText(creationJsPath);
+        const string marker = "JS2IL_WINDOWS_PATH_WORKAROUND";
+        if (text.Contains(marker, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        const string oldLine = "        .filter((sf) => !sf.isDeclarationFile && absolutePaths.includes(sf.fileName));";
+        if (!text.Contains(oldLine, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        var newBlock =
+            "        .filter((sf) => {\n" +
+            "          // " + marker + ": @tsonic/frontend does a Windows path compare using path.resolve() output\\n" +
+            "          // (\\\\ separators) against TypeScript sf.fileName (normalized to /).\\n" +
+            "          if (sf.isDeclarationFile) return false;\n" +
+            "          const norm = (p) => p.replace(/\\\\\\\\/g, \"/\").toLowerCase();\n" +
+            "          const sfName = norm(sf.fileName);\n" +
+            "          return absolutePaths.some((p) => norm(p) === sfName);\n" +
+            "        });";
+
+        text = text.Replace(oldLine, newBlock, StringComparison.Ordinal);
+        File.WriteAllText(creationJsPath, text);
+    }
+
+    private static string ResolveTsonicCommand()
+    {
+        // BenchmarkDotNet runs in separate processes; relying on PATH alone is brittle on Windows.
+        if (CanRunTool("tsonic"))
+        {
+            return "tsonic";
+        }
+
+        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        var userNpmBin = Path.Combine(appData, "npm");
+        var candidates = new[]
+        {
+            Path.Combine(userNpmBin, "tsonic.cmd"),
+            Path.Combine(userNpmBin, "tsonic.exe"),
+            Path.Combine(userNpmBin, "tsonic.bat")
+        };
+
+        foreach (var candidate in candidates)
+        {
+            if (File.Exists(candidate) && CanRunTool(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        throw new InvalidOperationException(
+            "tsonic CLI not found or not runnable. Install it with: npm install -g tsonic\n" +
+            "Then rerun the benchmarks with: dotnet run -c Release -- --phased --tsonic\n" +
+            $"Tried: tsonic, {string.Join(", ", candidates)}");
+    }
+
+    private static bool CanRunTool(string command)
     {
         try
         {
-            RunProcessOrThrow("tsonic", "--version", Environment.CurrentDirectory);
+            RunProcessOrThrow(command, "--version", Environment.CurrentDirectory);
+            return true;
         }
-        catch (Exception ex)
+        catch
         {
-            throw new InvalidOperationException(
-                "tsonic CLI not found or not runnable. Install it with: npm install -g tsonic\n" +
-                "Then rerun the benchmarks with: dotnet run -c Release -- --phased --tsonic\n" +
-                ex.Message);
+            return false;
         }
     }
 
@@ -316,22 +488,40 @@ public sealed class TsonicPhasedBenchmarks
             CreateNoWindow = true
         };
 
-        using var process = Process.Start(psi);
-        if (process == null)
+        var stdout = new StringBuilder();
+        var stderr = new StringBuilder();
+
+        using var process = new Process { StartInfo = psi };
+        process.OutputDataReceived += (_, e) =>
+        {
+            if (e.Data != null)
+            {
+                stdout.AppendLine(e.Data);
+            }
+        };
+        process.ErrorDataReceived += (_, e) =>
+        {
+            if (e.Data != null)
+            {
+                stderr.AppendLine(e.Data);
+            }
+        };
+
+        if (!process.Start())
         {
             throw new InvalidOperationException($"failed to start process: {fileName}");
         }
 
-        var stdout = process.StandardOutput.ReadToEnd();
-        var stderr = process.StandardError.ReadToEnd();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
         process.WaitForExit();
 
         if (process.ExitCode != 0)
         {
             throw new InvalidOperationException(
                 $"command failed (exit {process.ExitCode}): {fileName} {arguments}\n" +
-                stdout +
-                (string.IsNullOrWhiteSpace(stderr) ? "" : "\n" + stderr));
+                stdout.ToString() +
+                (stderr.Length == 0 ? "" : "\n" + stderr));
         }
     }
 

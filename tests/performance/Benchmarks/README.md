@@ -106,6 +106,8 @@ dotnet run -c Release -- --phased --tsonic
 
 Notes:
 - The benchmark runner wraps each `Scenarios/*.js` file into a generated `App.ts` with `// @ts-nocheck`.
+- The first run creates a persistent cache under `%TEMP%\js2il-benchmarks-tsonic-cache\tsonic-workspace` and installs the required `@tsonic/*` packages there (subsequent benchmark processes reuse it).
+- On Windows, the runner applies a small `@tsonic/frontend` patch to work around a path normalization bug in tsonic 0.0.63.
 - This is for performance comparison only; it is not intended to validate JS compatibility/correctness for Tsonic.
 
 #### All Benchmarks
