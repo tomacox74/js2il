@@ -31,9 +31,9 @@
 
 | Rank | Backlog item | Primary Node area | Current status signal |
 |---:|---|---|---|
-| 1 | [Expand CommonJS `require()` resolution (`node_modules`, `package.json` `main`/`exports`)](https://github.com/tomacox74/js2il/issues/783) | CommonJS loader | In review (PR #798) |
+| 1 | [Expand CommonJS `require()` resolution (`node_modules`, `package.json` `main`/`exports`)](https://github.com/tomacox74/js2il/issues/783) | CommonJS loader | Merged (PR #798) |
 | 2 | [Expand `path` module parity (normalize/parse/format/extname/isAbsolute, posix/win32)](https://github.com/tomacox74/js2il/issues/784) | `path` | Merged (PR #797) |
-| 3 | [Expand `fs` module parity (callbacks, buffers, mkdir/copyFile/readFile/writeFile)](https://github.com/tomacox74/js2il/issues/785) | `fs` | Partial |
+| 3 | [Expand `fs` module parity (callbacks, buffers, mkdir/copyFile/readFile/writeFile)](https://github.com/tomacox74/js2il/issues/785) | `fs` | In progress (callbacks + tests) |
 | 4 | [Expand `stream` module (Duplex/Transform/PassThrough + basic backpressure)](https://github.com/tomacox74/js2il/issues/786) | `stream` | Partial |
 | 5 | [Expand `util` essentials (format, inspect parity, util.types breadth)](https://github.com/tomacox74/js2il/issues/787) | `util` | Partial |
 | 6 | [Expand `child_process` beyond sync (spawn/exec/execFile, stdio pipes)](https://github.com/tomacox74/js2il/issues/788) | `child_process` | Partial |
@@ -46,7 +46,7 @@
 
 ## Issue 1: Expand CommonJS `require()` Resolution ([#783](https://github.com/tomacox74/js2il/issues/783))
 - Suggested labels: `enhancement`, `modules`, `commonjs`, `priority:high`
-- Status: implemented in PR #798 (awaiting review/merge): https://github.com/tomacox74/js2il/pull/798
+- Status: merged (PR #798): https://github.com/tomacox74/js2il/pull/798
 - Minimum acceptance:
   - `require('pkg')` resolves via `node_modules` discovery and `package.json` (`main` + minimal `exports` subset)
   - Deterministic caching and Node-like diagnostics for missing packages
@@ -59,6 +59,8 @@
 
 ## Issue 3: Expand `fs` Module Parity ([#785](https://github.com/tomacox74/js2il/issues/785))
 - Suggested labels: `enhancement`, `modules`, `priority:high`
+- Status: in progress — callback-style async APIs + execution coverage landed (PR TBD)
+  - `readFile`, `writeFile`, `copyFile`, `readdir`, `mkdir`, `stat`, `rm`, `access`, `realpath`
 - Minimum acceptance:
   - Buffer + callback baselines for read/write workflows
   - Tests + docs updates for newly supported APIs
