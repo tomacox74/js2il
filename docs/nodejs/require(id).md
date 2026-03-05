@@ -15,7 +15,7 @@
 
 ## Notes
 
-Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require). Does not implement node_modules/package.json resolution (future plan: use package.json main/exports and module-type detection to support npm packages directly).
+Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Also supports compile-time resolution of npm packages via node_modules discovery and package.json main plus a minimal exports subset ('.', './subpath', and './*' patterns with require/node/default conditions). Runtime require does not probe the file system; packages must be discovered at compile time. Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require).
 
 ## Tests
 
@@ -31,3 +31,4 @@ Supports requiring implemented Node core modules (e.g., fs/path) and compiled lo
 - `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Require` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
 - `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Paths` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
 - `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_ParentChildren` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
+- `Js2IL.Tests.CommonJS.NodeModulesExecutionTests.CommonJS_Require_NodeModules_PackageJson_Exports_And_NestedDependency` (`Js2IL.Tests/CommonJS/NodeModulesExecutionTests.cs`)
