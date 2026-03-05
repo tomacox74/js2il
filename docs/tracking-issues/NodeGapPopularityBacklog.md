@@ -17,8 +17,8 @@
 
 - Node docs track **10 modules** (8 currently `partial`, 2 `completed`) and **14 globals** (**14 `supported`**, **0 `partial`**).
 - Major blockers currently documented:
-  - `require(id)` is marked **supported** but still limited to implemented core modules + compiled local modules (no `node_modules` / `package.json` resolution)
-  - no ESM `import.meta.url`
+  - CommonJS `require(id)` supports compile-time `node_modules` package resolution via `package.json` `main` and a minimal `exports` subset, but the runtime does not probe the filesystem (packages must be discovered at compile time).
+  - ESM `import.meta.url` is not implemented.
 
 ## Ranking Criteria
 
@@ -31,8 +31,8 @@
 
 | Rank | Backlog item | Primary Node area | Current status signal |
 |---:|---|---|---|
-| 1 | [Expand CommonJS `require()` resolution (`node_modules`, `package.json` `main`/`exports`)](https://github.com/tomacox74/js2il/issues/783) | CommonJS loader | Supported with Limitations |
-| 2 | [Expand `path` module parity (normalize/parse/format/extname/isAbsolute, posix/win32)](https://github.com/tomacox74/js2il/issues/784) | `path` | In review (PR #797) |
+| 1 | [Expand CommonJS `require()` resolution (`node_modules`, `package.json` `main`/`exports`)](https://github.com/tomacox74/js2il/issues/783) | CommonJS loader | In review (PR #798) |
+| 2 | [Expand `path` module parity (normalize/parse/format/extname/isAbsolute, posix/win32)](https://github.com/tomacox74/js2il/issues/784) | `path` | Merged (PR #797) |
 | 3 | [Expand `fs` module parity (callbacks, buffers, mkdir/copyFile/readFile/writeFile)](https://github.com/tomacox74/js2il/issues/785) | `fs` | Partial |
 | 4 | [Expand `stream` module (Duplex/Transform/PassThrough + basic backpressure)](https://github.com/tomacox74/js2il/issues/786) | `stream` | Partial |
 | 5 | [Expand `util` essentials (format, inspect parity, util.types breadth)](https://github.com/tomacox74/js2il/issues/787) | `util` | Partial |
@@ -46,8 +46,9 @@
 
 ## Issue 1: Expand CommonJS `require()` Resolution ([#783](https://github.com/tomacox74/js2il/issues/783))
 - Suggested labels: `enhancement`, `modules`, `commonjs`, `priority:high`
+- Status: implemented in PR #798 (awaiting review/merge): https://github.com/tomacox74/js2il/pull/798
 - Minimum acceptance:
-  - `require('pkg')` resolves via `node_modules` discovery and `package.json` `main`
+  - `require('pkg')` resolves via `node_modules` discovery and `package.json` (`main` + minimal `exports` subset)
   - Deterministic caching and Node-like diagnostics for missing packages
 
 ## Issue 2: Expand `path` Module Parity ([#784](https://github.com/tomacox74/js2il/issues/784))
