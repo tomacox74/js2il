@@ -274,6 +274,8 @@ namespace JavaScriptRuntime.Node
             return baseName;
         }
 
+        // NOTE: VariantPath currently duplicates some of the outer Path surface to keep variant semantics isolated.
+        // TODO: Consider delegating the host Path implementation to VariantPath to avoid duplication.
         private sealed class VariantPath
         {
             public static readonly VariantPath Posix = new VariantPath(isWin32: false);
@@ -288,7 +290,7 @@ namespace JavaScriptRuntime.Node
             {
                 _isWin32 = isWin32;
                 _sep = isWin32 ? '\\' : '/';
-                _altSep = isWin32 ? '/' : '\\';
+                _altSep = isWin32 ? '/' : _sep; // POSIX treats '\\' as a valid filename character.
                 _delimiter = isWin32 ? ";" : ":";
             }
 
@@ -536,6 +538,10 @@ namespace JavaScriptRuntime.Node
 
                 var (root, _, _) = SplitRoot(p);
                 var dir = dirname(p);
+                if (dir == "." && p.IndexOf(_sep) < 0)
+                {
+                    dir = string.Empty;
+                }
                 var baseName = GetFileName(p);
                 var ext = extname(p);
                 var name = baseName;
@@ -616,7 +622,12 @@ namespace JavaScriptRuntime.Node
                     return string.Empty;
                 }
 
-                // For our variant objects, we accept both separators but always output the variant separator.
+                if (_altSep == _sep)
+                {
+                    return path;
+                }
+
+                // For the win32 variant, accept both separators but always output the variant separator.
                 return path.Replace(_altSep, _sep);
             }
 
@@ -645,7 +656,8 @@ namespace JavaScriptRuntime.Node
 
             private bool IsAbsoluteInternal(string path)
             {
-                var p = NormalizeSeparators(path?.Trim() ?? string.Empty);
+                // Node.js does not trim whitespace before absolute checks.
+                var p = NormalizeSeparators(path ?? string.Empty);
                 if (p.Length == 0)
                 {
                     return false;

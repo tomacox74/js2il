@@ -17,3 +17,8 @@ console.log(path.posix.isAbsolute('/tmp') === true);
 console.log(path.posix.isAbsolute('tmp') === false);
 console.log(path.win32.isAbsolute('C:\\tmp') === true);
 console.log(path.win32.isAbsolute('tmp') === false);
+
+console.log(path.posix.normalize('a\\b') === 'a\\b');
+console.log(path.posix.isAbsolute(' /tmp') === false);
+console.log(path.posix.parse('file.txt').dir === '');
+console.log(path.win32.parse('file.txt').dir === '');
