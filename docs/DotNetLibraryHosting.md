@@ -1,5 +1,9 @@
 # Hosting Compiled JavaScript as a .NET Library (design)
 
+> **Looking for the user guide?** Start here: [`docs/hosting/Index.md`](hosting/Index.md)
+>
+> This document is kept as an implementation-oriented design/reference.
+
 This document describes a proposed hosting mode where a compiled assembly can be consumed as a **.NET library**, and JavaScript `module.exports` is surfaced to C# as **strongly typed** APIs.
 
 This is a design document and is intentionally implementation-oriented; it is not an ECMA-262 specification.
