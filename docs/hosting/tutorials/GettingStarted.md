@@ -31,7 +31,11 @@ module.exports = {
 ## 2) Compile it with js2il
 
 ```powershell
+# Default (no debug symbols)
 js2il .\math.js .\out
+
+# Optional: emit Portable PDB debug symbols (.pdb) for stepping and better stack traces
+js2il .\math.js .\out --pdb
 ```
 
 This produces (at minimum):
@@ -39,6 +43,10 @@ This produces (at minimum):
 - `out\math.dll` (compiled module assembly)
 - `out\math.runtimeconfig.json`
 - `out\JavaScriptRuntime.dll`
+
+If you pass `--pdb`, it also produces:
+
+- `out\math.pdb`
 
 ## 3) Create a host console app
 

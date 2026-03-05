@@ -49,5 +49,6 @@ catch (JsInvocationException ex)
 
 ## Debugging tips
 
+- If you want source file/line information when debugging hosted code, compile your module with `--pdb` and keep the generated `.pdb` next to the compiled `.dll`.
 - If you need to understand what module ids exist in an assembly, use `JsEngine.GetModuleIds(assembly)`.
 - If you see `JsContractProjectionException`, confirm your contract matches the JS exports shape.
