@@ -1,6 +1,6 @@
 # Node Gap Popularity Backlog
 
-> **Last Updated**: 2026-03-03  
+> **Last Updated**: 2026-03-05  
 > Purpose: Persist a holistic, popularity-weighted view of missing functionality so triage context is not lost between sessions.
 > Scope: Node.js compatibility first, with adjacent ECMA impacts called out where they block common Node workloads.
 
@@ -32,7 +32,7 @@
 | Rank | Backlog item | Primary Node area | Current status signal |
 |---:|---|---|---|
 | 1 | [Expand CommonJS `require()` resolution (`node_modules`, `package.json` `main`/`exports`)](https://github.com/tomacox74/js2il/issues/783) | CommonJS loader | Supported with Limitations |
-| 2 | [Expand `path` module parity (normalize/parse/format/extname/isAbsolute, posix/win32)](https://github.com/tomacox74/js2il/issues/784) | `path` | Partial |
+| 2 | [Expand `path` module parity (normalize/parse/format/extname/isAbsolute, posix/win32)](https://github.com/tomacox74/js2il/issues/784) | `path` | In review (PR #797) |
 | 3 | [Expand `fs` module parity (callbacks, buffers, mkdir/copyFile/readFile/writeFile)](https://github.com/tomacox74/js2il/issues/785) | `fs` | Partial |
 | 4 | [Expand `stream` module (Duplex/Transform/PassThrough + basic backpressure)](https://github.com/tomacox74/js2il/issues/786) | `stream` | Partial |
 | 5 | [Expand `util` essentials (format, inspect parity, util.types breadth)](https://github.com/tomacox74/js2il/issues/787) | `util` | Partial |
