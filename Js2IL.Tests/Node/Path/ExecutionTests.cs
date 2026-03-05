@@ -103,5 +103,9 @@ namespace Js2IL.Tests.Node.Path
                 {
                     s.AddScrubber(sb => sb.Replace('\\', '/'));
                 });
+
+        [Fact]
+        public Task Require_Path_Posix_Win32_Basics()
+            => ExecutionTest(nameof(Require_Path_Posix_Win32_Basics));
     }
 }
