@@ -18,15 +18,9 @@ internal static class Program
 
             if (Environment.GetEnvironmentVariable("JS2IL_DOMINO_LISTMODULES") == "1")
             {
-                var ids = asm
-                    .GetCustomAttributes<JsCompiledModuleAttribute>()
-                    .Select(a => a.ModuleId)
-                    .Where(s => !string.IsNullOrWhiteSpace(s))
-                    .Distinct(StringComparer.Ordinal)
-                    .Order(StringComparer.Ordinal)
-                    .ToArray();
+                var ids = JsEngine.GetModuleIds(asm);
 
-                Console.WriteLine($"manifest.count={ids.Length}");
+                Console.WriteLine($"manifest.count={ids.Count}");
                 Console.WriteLine($"manifest.has.@mixmark-io/domino={ids.Contains("@mixmark-io/domino", StringComparer.Ordinal)}");
                 Console.WriteLine($"manifest.has.@mixmark-io/domino/lib/index={ids.Contains("@mixmark-io/domino/lib/index", StringComparer.Ordinal)}");
                 Console.WriteLine($"manifest.has.index={ids.Contains("index", StringComparer.Ordinal)}");

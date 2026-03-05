@@ -8,6 +8,7 @@ This directory contains the .NET hosting surface for running JS2IL-compiled Java
 - `JsRuntimeInstance`: hosts a single runtime instance on a dedicated thread and serializes all JS execution onto that thread.
 - `JsExportsProxy`: `DispatchProxy` implementation that marshals interface calls to the owning runtime thread and maps them to CommonJS exports.
 
-## Design
+## Documentation
 
-See the design doc: [DotNetLibraryHosting.md](../../docs/DotNetLibraryHosting.md)
+- User guide: [`docs/hosting/Index.md`](../../docs/hosting/Index.md)
+- Design doc (implementation reference): [`docs/DotNetLibraryHosting.md`](../../docs/DotNetLibraryHosting.md)
