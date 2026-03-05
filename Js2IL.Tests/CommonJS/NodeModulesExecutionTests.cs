@@ -49,7 +49,7 @@ public class NodeModulesExecutionTests
 
         File.WriteAllText(
             Path.Combine(pkgRoot, "package.json"),
-            "{\"name\":\"pkg\",\"main\":\"lib/index.js\",\"exports\":{\".\":\"./lib/index.js\",\"./feature\":\"./feature.js\"}}"
+            "{\"name\":\"pkg\",\"main\":\"lib/index.js\",\"exports\":{\".\":\"./lib/index.js\",\"./feature\":\"./dist/feature.js\"}}"
         );
 
         File.WriteAllText(
@@ -60,8 +60,9 @@ public class NodeModulesExecutionTests
             "module.exports = { name: 'pkg', execCount: globalThis.__pkgExecCount, depValue: dep.value };\n"
         );
 
+        Directory.CreateDirectory(Path.Combine(pkgRoot, "dist"));
         File.WriteAllText(
-            Path.Combine(pkgRoot, "feature.js"),
+            Path.Combine(pkgRoot, "dist", "feature.js"),
             "\"use strict\";\n" +
             "module.exports = 'feature-value';\n"
         );
@@ -84,28 +85,32 @@ public class NodeModulesExecutionTests
             EmitPdb = true
         };
 
-        var testLogger = new TestLogger();
-        using var serviceProvider = CompilerServices.BuildServiceProvider(options, fileSystem: new FileSystem(), compilerOutput: testLogger);
-        var compiler = serviceProvider.GetRequiredService<Compiler>();
-
-        if (!compiler.Compile(entryPath))
+        try
         {
-            var details = string.IsNullOrWhiteSpace(testLogger.Errors) ? string.Empty : "\nErrors:\n" + testLogger.Errors;
-            var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings) ? string.Empty : "\nWarnings:\n" + testLogger.Warnings;
-            throw new InvalidOperationException("Compilation failed." + details + warnings);
-        }
+            var testLogger = new TestLogger();
+            using var serviceProvider = CompilerServices.BuildServiceProvider(options, fileSystem: new FileSystem(), compilerOutput: testLogger);
+            var compiler = serviceProvider.GetRequiredService<Compiler>();
 
-        var assemblyPath = Path.Combine(outputDir, "main.dll");
-        if (!File.Exists(assemblyPath))
+            if (!compiler.Compile(entryPath))
+            {
+                var details = string.IsNullOrWhiteSpace(testLogger.Errors) ? string.Empty : "\nErrors:\n" + testLogger.Errors;
+                var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings) ? string.Empty : "\nWarnings:\n" + testLogger.Warnings;
+                throw new InvalidOperationException("Compilation failed." + details + warnings);
+            }
+
+            var assemblyName = Path.GetFileNameWithoutExtension(entryPath) + ".dll";
+            var assemblyPath = Path.Combine(outputDir, assemblyName);
+            if (!File.Exists(assemblyPath))
+            {
+                throw new InvalidOperationException($"Expected compiled assembly not found at '{assemblyPath}'.");
+            }
+
+            return ExecuteGeneratedAssembly(assemblyPath);
+        }
+        finally
         {
-            throw new InvalidOperationException($"Expected compiled assembly not found at '{assemblyPath}'.");
+            try { Directory.Delete(root, recursive: true); } catch { /* ignore cleanup errors */ }
         }
-
-        var output = ExecuteGeneratedAssembly(assemblyPath);
-
-        try { Directory.Delete(root, recursive: true); } catch { /* ignore cleanup errors */ }
-
-        return output;
     }
 
     private static string ExecuteGeneratedAssembly(string assemblyPath, int timeoutMs = 30000)
