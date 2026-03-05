@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- Node/path: add `path.posix` and `path.win32` variant APIs (fixes #784).
 
 ## v0.8.26 - 2026-03-02
 
