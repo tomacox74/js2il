@@ -3,55 +3,54 @@ using System.Collections.Generic;
 
 namespace JavaScriptRuntime.Node
 {
-    public class Readable : EventEmitter
+    public class Duplex : Writable
     {
-        private readonly Queue<object?> _buffer = new();
-        private bool _ended = false;
-        private bool _endEmitted = false;
+        private readonly Queue<object?> _readBuffer = new();
+        private bool _readEnded = false;
+        private bool _readEndEmitted = false;
         private int _pipePauseCount = 0;
 
-        public bool readable => !_ended;
+        public bool readable => !_readEnded;
 
         // Constructor for subclassing
-        public Readable() { }
+        public Duplex() { }
 
-        // Push data into the internal buffer
         public bool push(object? chunk)
         {
-            if (_ended)
+            if (_readEnded)
             {
                 throw new Error("Cannot push after EOF");
             }
 
             if (chunk == null || chunk is JsNull)
             {
-                _ended = true;
+                _readEnded = true;
                 EmitEndIfReady();
                 return false;
             }
 
             if (_pipePauseCount > 0 || listenerCount("data") == 0)
             {
-                _buffer.Enqueue(chunk);
+                _readBuffer.Enqueue(chunk);
             }
             else
             {
                 emit("data", chunk);
             }
+
             return true;
         }
 
-        // Read data from the stream
         public object? read()
         {
-            if (_buffer.Count > 0)
+            if (_readBuffer.Count > 0)
             {
-                var value = _buffer.Dequeue();
+                var value = _readBuffer.Dequeue();
                 EmitEndIfReady();
                 return value;
             }
 
-            if (_ended)
+            if (_readEnded)
             {
                 EmitEndIfReady();
                 return null;
@@ -66,7 +65,6 @@ namespace JavaScriptRuntime.Node
             return read();
         }
 
-        // Pipe this readable stream to a writable stream
         public Writable pipe(object? destination)
         {
             if (destination is not Writable writable)
@@ -122,9 +120,9 @@ namespace JavaScriptRuntime.Node
 
             void FlushBuffered()
             {
-                while (!paused && _buffer.Count > 0)
+                while (!paused && _readBuffer.Count > 0)
                 {
-                    var chunk = _buffer.Dequeue();
+                    var chunk = _readBuffer.Dequeue();
                     var canContinue = writable.write(chunk);
                     if (!canContinue)
                     {
@@ -201,14 +199,13 @@ namespace JavaScriptRuntime.Node
 
         private void EmitEndIfReady()
         {
-            if (_ended && !_endEmitted && _buffer.Count == 0)
+            if (_readEnded && !_readEndEmitted && _readBuffer.Count == 0)
             {
-                _endEmitted = true;
+                _readEndEmitted = true;
                 emit("end");
             }
         }
 
-        // Helper to simulate reading process
         protected void _read()
         {
             // To be overridden by subclasses

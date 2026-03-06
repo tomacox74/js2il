@@ -105,6 +105,7 @@ JavaScriptRuntime assembly version exposed by JS2IL runtime. JS2IL-specific exte
 
 **Tests:**
 - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+
 ### env
 
 Returns a cached snapshot object of host environment variables as string values for the current runtime instance. Values are exposed as-is from the host process environment.
@@ -125,6 +126,7 @@ Returns the current working directory of the Node.js process.
 
 **Tests:**
 - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+
 ### nextTick(callback, ...args)
 
 Queues a callback into a dedicated nextTick queue with priority over Promise microtasks and immediates at callback checkpoints.
