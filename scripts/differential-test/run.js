@@ -126,7 +126,7 @@ function compileWithJs2IL(jsFile, outDir, js2il, timeoutMs) {
     } else {
         // dotnet run
         cmd  = 'dotnet';
-        args = ['run', '--project', js2il.path, '--no-build', '--', jsFile, '-o', compileOutDir];
+        args = ['run', '--project', js2il.path, '--', jsFile, '-o', compileOutDir];
     }
 
     const t0 = Date.now();
@@ -318,6 +318,21 @@ function printResult(r, verbose) {
     switch (r.status) {
         case 'pass':
             console.log(c('green', `  PASS  ${r.label}`));
+            if (verbose) {
+                const nodeOk = r.nodeResult && r.nodeResult.exitCode === 0 && !r.nodeResult.timedOut;
+                const js2ilOk = r.js2ilResult && r.js2ilResult.exitCode === 0 && !r.js2ilResult.timedOut;
+                if (nodeOk && js2ilOk) {
+                    const stdout = normaliseOutput(r.nodeResult.stdout);
+                    if (stdout) {
+                        stdout.split('\n').forEach(l => console.log(c('gray', `         ${l}`)));
+                    } else {
+                        console.log(c('gray', '         (no output)'));
+                    }
+                } else {
+                    const nodeErr = extractJsError(r.nodeResult?.stderr || '') || '(unknown error)';
+                    console.log(c('gray', `         matched error: ${nodeErr}`));
+                }
+            }
             break;
         case 'compile-error':
             console.log(c('yellow', `  SKIP  ${r.label}  (compile error)`));

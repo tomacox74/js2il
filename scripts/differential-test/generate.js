@@ -160,7 +160,7 @@ function templateLogicalChain(rng) {
     const b = rng.int(1, 10);  // non-zero (truthy)
     const c = rng.int(1, 10);
 
-    const orResult  = a || b;   // should be b since a is 0
+    const orResult  = a || b;   // a if truthy, otherwise b
     const andResult = b && c;   // should be c
     const nullish   = (a === 0 ? null : a) ?? b;  // null ?? b = b
 

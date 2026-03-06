@@ -75,20 +75,62 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const title = `Differential weekly run failed (run ${context.runId})`;
+            const { owner, repo } = context.repo;
+            const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
+            const title = 'Differential weekly run failed';
+            const label = 'differential-weekly-failure';
             const body = [
               'The scheduled weekly differential test workflow failed.',
               '',
               `- Workflow run: ${runUrl}`,
-              `- Repository: ${context.repo.owner}/${context.repo.repo}`,
+              `- Repository: ${owner}/${repo}`,
               `- Branch: ${context.ref}`,
               '',
               'Please inspect logs and triage any semantic regression mismatches.'
             ].join('\n');
+
+            // Best-effort: ensure the tracking label exists (ignore failures)
+            try {
+              const labels = await github.paginate(github.rest.issues.listLabelsForRepo, { owner, repo, per_page: 100 });
+              if (!labels.some(l => l.name === label)) {
+                await github.rest.issues.createLabel({
+                  owner,
+                  repo,
+                  name: label,
+                  color: 'B60205',
+                  description: 'Automated issues for Differential Tests weekly failures'
+                });
+              }
+            } catch (e) {
+              core.info(`Could not ensure label '${label}': ${e.message}`);
+            }
+
+            // Dedup: prefer commenting on an existing open tracking issue
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: 'open',
+              labels: label,
+              per_page: 100
+            });
+
+            const existing = openIssues.find(issue => issue.title === title);
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: existing.number,
+                body: `Another scheduled differential workflow run has failed: ${runUrl}`
+              });
+              return;
+            }
+
+            // No existing open issue: create a new one
             await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner,
+              repo,
               title,
-              body
+              body,
+              labels: [label]
             });
