@@ -63,7 +63,7 @@
       "name": "readFileSync(path[, options])",
       "kind": "function",
       "status": "supported",
-      "notes": "Text-only, returns UTF-8 string. Buffer is not implemented. Recognizes string encoding option 'utf8'/'utf-8'.",
+      "notes": "Returns Buffer by default, or string when encoding option is 'utf8'/'utf-8'. Supports 'utf8' encoding option.",
       "docs": "https://nodejs.org/api/fs.html#fsreadfilesyncpath-options",
       "tests": [
         {
@@ -71,7 +71,15 @@
           "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
         },
         {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadWrite_Buffer",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
           "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Utf8",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Buffer",
           "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
         }
       ]
@@ -110,7 +118,7 @@
       "name": "writeFileSync(path, data[, options])",
       "kind": "function",
       "status": "supported",
-      "notes": "Text-only, accepts stringifiable data. Writes UTF-8. Recognizes string encoding option 'utf8'/'utf-8'.",
+      "notes": "Writes data to a file, creating or overwriting it. Supports Buffer, byte array, or string content. Supports 'utf8' encoding option.",
       "docs": "https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options",
       "tests": [
         {
@@ -118,8 +126,150 @@
           "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
         },
         {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadWrite_Buffer",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
           "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Utf8",
           "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_ReadWrite_Buffer",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "promises",
+      "kind": "property",
+      "status": "supported",
+      "notes": "Exposes the fs.promises API surface (see module: fs/promises). Note: method calls work, but reading methods as delegate-valued properties may not reflect Node behavior yet.",
+      "docs": "https://nodejs.org/api/fs.html#fspromisesapi",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Promises_Property",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "readFile(path[, options], callback)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Callback-style async readFile; returns Buffer by default, or string when encoding option is 'utf8'/'utf-8'.",
+      "docs": "https://nodejs.org/api/fs.html#fsreadfilepath-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadFile_Callback_Utf8",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadFile_Callback_MissingFile_ENOENT",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "writeFile(file, data[, options], callback)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Callback-style async writeFile; supports Buffer, byte array, or string content. Supports 'utf8' encoding option.",
+      "docs": "https://nodejs.org/api/fs.html#fswritefilefile-data-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_WriteFile_Callback_Utf8",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "copyFile(src, dest[, mode], callback)",
+      "kind": "function",
+      "status": "partial",
+      "notes": "Callback-style async copyFile; mode is accepted but not enforced.",
+      "docs": "https://nodejs.org/api/fs.html#fscopyfilesrc-dest-mode-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_CopyFile_Callback",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "readdir(path[, options], callback)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Callback-style async readdir; supports options.withFileTypes.",
+      "docs": "https://nodejs.org/api/fs.html#fsreaddirpath-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Readdir_Callback_Names",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "mkdir(path[, options], callback)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Callback-style async mkdir; supports options.recursive.",
+      "docs": "https://nodejs.org/api/fs.html#fsmkdirpath-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Mkdir_Callback_Recursive",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "stat(path, callback)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Callback-style async stat; returns a minimal Stats-like object supporting size.",
+      "docs": "https://nodejs.org/api/fs.html#fsstatpath-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Stat_Callback_FileSize",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "rm(path[, options], callback)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Callback-style async rm; supports options.force to ignore errors.",
+      "docs": "https://nodejs.org/api/fs.html#fsrmpath-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Rm_Callback_Removes_File",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "access(path[, mode], callback)",
+      "kind": "function",
+      "status": "partial",
+      "notes": "Callback-style async access; mode is accepted but not enforced.",
+      "docs": "https://nodejs.org/api/fs.html#fsaccesspath-mode-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Access_Callback",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "realpath(path[, options], callback)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Callback-style async realpath; returns absolute path using Path.GetFullPath().",
+      "docs": "https://nodejs.org/api/fs.html#fsrealpathpath-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Realpath_Callback",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
         }
       ]
     }
