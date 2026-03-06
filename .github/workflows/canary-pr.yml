@@ -1,0 +1,96 @@
+# Canary smoke tests – PR gate
+#
+# Runs a small, bounded set of representative scripts through the full
+# compile → execute → validate pipeline on every push/PR.  Each script
+# is compiled from the current source (not a published NuGet package) and
+# executed under a strict per-run timeout so the job can never hang.
+#
+# Acceptance criteria
+#   * Every canary compiles without error.
+#   * Every canary executes within the timeout and exits 0.
+#   * Every canary stdout contains its expected CANARY: marker.
+#
+# Adding a new PR-gate canary: see tests/canary/README.md.
+
+name: canary-pr
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  canary:
+    name: Canary smoke (PR gate)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build (Release)
+        run: dotnet build --no-restore -c Release
+
+      - name: Locate built Js2IL.dll
+        id: js2il
+        run: |
+          dll=$(find Js2IL/bin/Release -name 'Js2IL.dll' | head -n1)
+          echo "dll=$dll" >> "$GITHUB_OUTPUT"
+          echo "Found: $dll"
+
+      # -----------------------------------------------------------------------
+      # PR-gate canary set (3 scripts: fast, standalone, no module deps)
+      # -----------------------------------------------------------------------
+
+      - name: Canary – hello-world
+        run: |
+          pwsh scripts/run-canary.ps1 \
+            -CanaryScript tests/canary/corpus/hello-world.js \
+            -ExpectedMarker 'CANARY:hello-world:ok' \
+            -Js2ILPath '${{ steps.js2il.outputs.dll }}' \
+            -TimeoutSec 30
+
+      - name: Canary – closures
+        run: |
+          pwsh scripts/run-canary.ps1 \
+            -CanaryScript tests/canary/corpus/closures.js \
+            -ExpectedMarker 'CANARY:closures:ok' \
+            -Js2ILPath '${{ steps.js2il.outputs.dll }}' \
+            -TimeoutSec 30
+
+      - name: Canary – classes
+        run: |
+          pwsh scripts/run-canary.ps1 \
+            -CanaryScript tests/canary/corpus/classes.js \
+            -ExpectedMarker 'CANARY:classes:ok' \
+            -Js2ILPath '${{ steps.js2il.outputs.dll }}' \
+            -TimeoutSec 30
+
+      # -----------------------------------------------------------------------
+      # Upload artefacts on failure for actionable investigation
+      # -----------------------------------------------------------------------
+
+      - name: Upload canary artefacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canary-pr-artefacts-${{ github.run_id }}
+          path: /tmp/js2il-canary-*
+          retention-days: 7
+          if-no-files-found: ignore
