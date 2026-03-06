@@ -42,5 +42,19 @@ namespace Js2IL.Tests.Import
             var testName = nameof(Import_ExportStarFrom);
             return ExecutionTest(testName);
         }
+
+        [Fact]
+        public Task Import_LiveBindings_Named()
+        {
+            var testName = nameof(Import_LiveBindings_Named);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Import_LiveBindings_Cycle()
+        {
+            var testName = nameof(Import_LiveBindings_Cycle);
+            return ExecutionTest(testName);
+        }
     }
 }
