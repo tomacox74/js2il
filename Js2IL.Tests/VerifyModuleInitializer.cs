@@ -8,6 +8,8 @@ public static class VerifyModuleInitializer
     [ModuleInitializer]
     public static void Init()
     {
-        VerifierSettings.OmitContentFromException();
+        // Temporarily allow Verify to include diff content in CI logs.
+        // This helps diagnose cross-platform snapshot differences.
+        //VerifierSettings.OmitContentFromException();
     }
 }
