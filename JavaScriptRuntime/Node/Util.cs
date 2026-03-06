@@ -174,17 +174,11 @@ namespace JavaScriptRuntime.Node
             _ = colors;
 
             // Custom inspector: obj[util.inspect.custom](depth, options, inspect)
-            if (value != null && value is not JsNull)
+            // Note: only attempt custom-inspect lookup for reference types (JS objects/functions).
+            // Swallowing exceptions here would hide proxy/getter failures; Node propagates those.
+            if (value != null && value is not JsNull && value is not string && !value.GetType().IsValueType)
             {
-                object? customInspector;
-                try
-                {
-                    customInspector = Object.GetItem(value, _inspectCustomSymbol);
-                }
-                catch
-                {
-                    customInspector = null;
-                }
+                var customInspector = Object.GetItem(value, _inspectCustomSymbol);
 
                 if (customInspector is Delegate del)
                 {
@@ -243,12 +237,17 @@ namespace JavaScriptRuntime.Node
                 }
 
                 bool consumes = next is 's' or 'd' or 'i' or 'f' or 'j' or 'o' or 'O';
-                object? arg = argIndex < args.Length ? args[argIndex] : null;
 
-                if (consumes && argIndex < args.Length)
+                // Node.js: if a consuming specifier has no corresponding argument,
+                // leave the "%<specifier>" text intact and do not consume.
+                if (consumes && argIndex >= args.Length)
                 {
-                    argIndex++;
+                    sb.Append('%').Append(next);
+                    i++;
+                    continue;
                 }
+
+                object? arg = consumes ? args[argIndex++] : null;
 
                 switch (next)
                 {
@@ -350,8 +349,20 @@ namespace JavaScriptRuntime.Node
 
             if (value is double || value is float || value is int || value is long || value is short || value is byte || value is decimal)
             {
-                // Keep formatting stable; JSON uses JS number syntax for our subset.
-                return DotNet2JSConversions.ToString(TypeUtilities.ToNumber(value));
+                // JSON.stringify semantics: non-finite numbers become null; -0 becomes 0.
+                var num = TypeUtilities.ToNumber(value);
+                if (double.IsNaN(num) || double.IsInfinity(num))
+                {
+                    return "null";
+                }
+
+                // Detect -0: numeric value is 0 but sign bit is set.
+                if (System.BitConverter.DoubleToInt64Bits(num) == unchecked((long)0x8000000000000000))
+                {
+                    return "0";
+                }
+
+                return DotNet2JSConversions.ToString(num);
             }
 
             if (value is JavaScriptRuntime.Array arr)
