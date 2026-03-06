@@ -8,9 +8,50 @@ namespace JavaScriptRuntime.Node
     public sealed class Util
     {
         private readonly object _types;
+        private readonly Symbol _inspectCustomSymbol;
+        private readonly Delegate _inspectFunction;
 
         public Util()
         {
+            _inspectCustomSymbol = (Symbol)Symbol.@for("nodejs.util.inspect.custom");
+
+            // Expose util.inspect as a delegate-valued property so util.inspect.custom is observable.
+            _inspectFunction = new Func<object[], object?[], object?>((scopes, args) =>
+            {
+                var value = args.Length > 0 ? args[0] : null;
+                var options = args.Length > 1 ? args[1] : null;
+                return inspect(value, options);
+            });
+
+            PropertyDescriptorStore.DefineOrUpdate(this, "inspect", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = true,
+                Configurable = true,
+                Writable = true,
+                Value = _inspectFunction
+            });
+
+            // Node.js: util.inspect.custom === Symbol.for('nodejs.util.inspect.custom')
+            PropertyDescriptorStore.DefineOrUpdate(_inspectFunction, "custom", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = true,
+                Configurable = true,
+                Writable = true,
+                Value = _inspectCustomSymbol
+            });
+
+            // Expose util.format as a function-valued property.
+            PropertyDescriptorStore.DefineOrUpdate(this, "format", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = true,
+                Configurable = true,
+                Writable = true,
+                Value = new Func<object[], object?[], object?>((scopes, args) => format(args))
+            });
+
             _types = CreateTypesObject();
         }
 
@@ -132,7 +173,235 @@ namespace JavaScriptRuntime.Node
             _ = showHidden;
             _ = colors;
 
-            return InspectValue(value, depth, 0, new HashSet<object>());
+            // Custom inspector: obj[util.inspect.custom](depth, options, inspect)
+            // Note: only attempt custom-inspect lookup for reference types (JS objects/functions).
+            // Swallowing exceptions here would hide proxy/getter failures; Node propagates those.
+            if (value != null && value is not JsNull && value is not string && !value.GetType().IsValueType)
+            {
+                var customInspector = Object.GetItem(value, _inspectCustomSymbol);
+
+                if (customInspector is Delegate del)
+                {
+                    var previousThis = RuntimeServices.SetCurrentThis(value);
+                    try
+                    {
+                        var result = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), (double)depth, options ?? (object)JsNull.Null, _inspectFunction);
+                        if (result is string s)
+                        {
+                            return s;
+                        }
+
+                        return InspectValue(result, depth, 0, new HashSet<object>(ReferenceEqualityComparer.Instance));
+                    }
+                    finally
+                    {
+                        RuntimeServices.SetCurrentThis(previousThis);
+                    }
+                }
+            }
+
+            return InspectValue(value, depth, 0, new HashSet<object>(ReferenceEqualityComparer.Instance));
+        }
+
+        public string format(params object?[] args)
+        {
+            if (args == null || args.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            // Node.js: if first arg is not a string, join inspected args with spaces.
+            if (args[0] is not string fmt)
+            {
+                return string.Join(" ", args.Select(a => InspectForFormat(a)));
+            }
+
+            var sb = new System.Text.StringBuilder(fmt.Length + 32);
+            int argIndex = 1;
+
+            for (int i = 0; i < fmt.Length; i++)
+            {
+                var ch = fmt[i];
+                if (ch != '%' || i == fmt.Length - 1)
+                {
+                    sb.Append(ch);
+                    continue;
+                }
+
+                var next = fmt[i + 1];
+                if (next == '%')
+                {
+                    sb.Append('%');
+                    i++;
+                    continue;
+                }
+
+                bool consumes = next is 's' or 'd' or 'i' or 'f' or 'j' or 'o' or 'O';
+
+                // Node.js: if a consuming specifier has no corresponding argument,
+                // leave the "%<specifier>" text intact and do not consume.
+                if (consumes && argIndex >= args.Length)
+                {
+                    sb.Append('%').Append(next);
+                    i++;
+                    continue;
+                }
+
+                object? arg = consumes ? args[argIndex++] : null;
+
+                switch (next)
+                {
+                    case 's':
+                        sb.Append(DotNet2JSConversions.ToString(arg));
+                        i++;
+                        break;
+                    case 'd':
+                    case 'i':
+                        sb.Append(DotNet2JSConversions.ToString(TypeUtilities.ToNumber(arg)));
+                        i++;
+                        break;
+                    case 'f':
+                        sb.Append(DotNet2JSConversions.ToString(TypeUtilities.ToNumber(arg)));
+                        i++;
+                        break;
+                    case 'j':
+                        sb.Append(FormatJson(arg));
+                        i++;
+                        break;
+                    case 'o':
+                    case 'O':
+                        sb.Append(inspect(arg));
+                        i++;
+                        break;
+                    default:
+                        // Unknown specifier: do not consume an argument.
+                        sb.Append('%').Append(next);
+                        i++;
+                        break;
+                }
+            }
+
+            // Trailing args are appended with spaces; objects are inspected.
+            for (int i = argIndex; i < args.Length; i++)
+            {
+                sb.Append(' ');
+                sb.Append(InspectForFormat(args[i]));
+            }
+
+            return sb.ToString();
+        }
+
+        private string InspectForFormat(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                return DotNet2JSConversions.ToString(value);
+            }
+
+            if (value is string s)
+            {
+                return s;
+            }
+
+            if (value is bool || value is double || value is float || value is int || value is long || value is short || value is byte || value is decimal || value is System.Numerics.BigInteger)
+            {
+                return DotNet2JSConversions.ToString(value);
+            }
+
+            return inspect(value);
+        }
+
+        private static string FormatJson(object? value)
+        {
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+            try
+            {
+                return FormatJsonValue(value, visited);
+            }
+            catch (InvalidOperationException)
+            {
+                return "[Circular]";
+            }
+        }
+
+        private static string FormatJsonValue(object? value, HashSet<object> visited)
+        {
+            if (value is null)
+            {
+                // JSON.stringify(undefined) returns undefined; util.format('%j', undefined) prints undefined.
+                return "undefined";
+            }
+
+            if (value is JsNull)
+            {
+                return "null";
+            }
+
+            if (value is bool b)
+            {
+                return b ? "true" : "false";
+            }
+
+            if (value is string s)
+            {
+                return System.Text.Json.JsonSerializer.Serialize(s);
+            }
+
+            if (value is double || value is float || value is int || value is long || value is short || value is byte || value is decimal)
+            {
+                // JSON.stringify semantics: non-finite numbers become null; -0 becomes 0.
+                var num = TypeUtilities.ToNumber(value);
+                if (double.IsNaN(num) || double.IsInfinity(num))
+                {
+                    return "null";
+                }
+
+                // Detect -0: numeric value is 0 but sign bit is set.
+                if (System.BitConverter.DoubleToInt64Bits(num) == unchecked((long)0x8000000000000000))
+                {
+                    return "0";
+                }
+
+                return DotNet2JSConversions.ToString(num);
+            }
+
+            if (value is JavaScriptRuntime.Array arr)
+            {
+                if (!visited.Add(arr))
+                {
+                    throw new InvalidOperationException("Converting circular structure to JSON");
+                }
+
+                var len = arr.length is double dl ? (int)dl : 0;
+                var items = new List<string>(len);
+                for (int i = 0; i < len; i++)
+                {
+                    items.Add(FormatJsonValue(arr[(double)i], visited));
+                }
+
+                visited.Remove(arr);
+                return "[" + string.Join(",", items) + "]";
+            }
+
+            if (value is IDictionary<string, object?> dict)
+            {
+                if (!visited.Add(dict))
+                {
+                    throw new InvalidOperationException("Converting circular structure to JSON");
+                }
+
+                var props = new List<string>();
+                foreach (var kvp in dict)
+                {
+                    props.Add(System.Text.Json.JsonSerializer.Serialize(kvp.Key) + ":" + FormatJsonValue(kvp.Value, visited));
+                }
+
+                visited.Remove(dict);
+                return "{" + string.Join(",", props) + "}";
+            }
+
+            // Best-effort fallback
+            return System.Text.Json.JsonSerializer.Serialize(DotNet2JSConversions.ToString(value));
         }
 
         private static object CreateTypesObject()
@@ -145,7 +414,7 @@ namespace JavaScriptRuntime.Node
             dict["isError"] = new Func<object?, bool>(v => v is Error || v is Exception);
             dict["isFunction"] = new Func<object?, bool>(v => v is Delegate);
             dict["isPromise"] = new Func<object?, bool>(v => v is Promise);
-            dict["isRegExp"] = new Func<object?, bool>(v => v is System.Text.RegularExpressions.Regex);
+            dict["isRegExp"] = new Func<object?, bool>(v => v is System.Text.RegularExpressions.Regex || v is JavaScriptRuntime.RegExp);
             dict["isString"] = new Func<object?, bool>(v => v is string);
             dict["isNumber"] = new Func<object?, bool>(v => v is double || v is float || v is int || v is long || v is short || v is byte || v is decimal);
             dict["isBoolean"] = new Func<object?, bool>(v => v is bool);
@@ -155,6 +424,12 @@ namespace JavaScriptRuntime.Node
             dict["isBigInt"] = new Func<object?, bool>(v => v is System.Numerics.BigInteger);
             dict["isSymbol"] = new Func<object?, bool>(v => v is Symbol);
             dict["isAsyncFunction"] = new Func<object?, bool>(v => v is Delegate d && d.Method.GetCustomAttributes(typeof(System.Runtime.CompilerServices.AsyncStateMachineAttribute), false).Length > 0);
+
+            // Expanded for #787 (runtime-backed checks only)
+            dict["isMap"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Map);
+            dict["isSet"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Set);
+            dict["isProxy"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Proxy);
+            dict["isTypedArray"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Int32Array || v is JavaScriptRuntime.Node.Buffer);
 
             return typesObj;
         }

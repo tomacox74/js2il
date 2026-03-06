@@ -23,6 +23,7 @@ Provides essential utility functions for promisifying callbacks, prototype inher
 | --- | ---- | ------ | ---- |
 | promisify(callback) | function | supported | [docs](https://nodejs.org/api/util.html#utilpromisifyoriginal) |
 | inherits(constructor, superConstructor) | function | supported | [docs](https://nodejs.org/api/util.html#utilinheritsconstructor-superconstructor) |
+| format(format[, ...args]) | function | supported | [docs](https://nodejs.org/api/util.html#utilformatformat-args) |
 | types | property | partial | [docs](https://nodejs.org/api/util.html#utiltypes) |
 | inspect(value[, options]) | function | partial | [docs](https://nodejs.org/api/util.html#utilinspectobject-options) |
 
@@ -46,24 +47,36 @@ Sets up prototype chain inheritance between constructor functions. This is a leg
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Inherits_Basic` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inherits_Basic` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 
+### format(format[, ...args])
+
+Formats a string using placeholders like %s, %d/%i, %f, %j, %o/%O, and %% and appends any extra arguments separated by spaces.
+
+**Tests:**
+- `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Format_Basic` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Format_Basic` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
+
 ### types
 
-Provides type-checking functions. Supported checks: isArray, isDate, isError, isFunction, isPromise, isRegExp, isString, isNumber, isBoolean, isUndefined, isNull, isObject, isBigInt, isSymbol, isAsyncFunction. Additional Node.js type checks (typed arrays, shared buffers, etc.) are not yet implemented.
+Provides type-checking functions. Supported checks: isArray, isDate, isError, isFunction, isPromise, isRegExp, isString, isNumber, isBoolean, isUndefined, isNull, isObject, isBigInt, isSymbol, isAsyncFunction, isMap, isSet, isProxy, isTypedArray. Additional Node.js type checks (ArrayBuffer/DataView/most TypedArray flavors, shared buffers, etc.) are not yet implemented.
 
 **Tests:**
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Types_IsPromise` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Types_IsArray` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Types_IsFunction` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Types_Expanded` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_IsPromise` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_IsArray` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_IsFunction` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_Expanded` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 
 ### inspect(value[, options])
 
-Provides basic object inspection for debugging. Supports depth limiting and handles circular references. Options supported: depth, showHidden, colors (parsed but colors not applied to output). Does not implement full Node.js inspect formatting or custom inspect symbols.
+Provides basic object inspection for debugging. Supports depth limiting and handles circular references. Options supported: depth, showHidden, colors (parsed but colors not applied to output). Supports Node's custom inspect hook via util.inspect.custom (Symbol.for('nodejs.util.inspect.custom')).
 
 **Tests:**
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Inspect_Basic` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Inspect_Object` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Inspect_Custom` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inspect_Basic` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inspect_Object` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inspect_Custom` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)

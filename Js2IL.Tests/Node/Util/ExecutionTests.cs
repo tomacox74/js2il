@@ -37,5 +37,17 @@ namespace Js2IL.Tests.Node.Util
         [Fact]
         public Task Require_Util_Inspect_Object()
             => ExecutionTest(nameof(Require_Util_Inspect_Object));
+
+        [Fact]
+        public Task Require_Util_Format_Basic()
+            => ExecutionTest(nameof(Require_Util_Format_Basic));
+
+        [Fact]
+        public Task Require_Util_Inspect_Custom()
+            => ExecutionTest(nameof(Require_Util_Inspect_Custom));
+
+        [Fact]
+        public Task Require_Util_Types_Expanded()
+            => ExecutionTest(nameof(Require_Util_Types_Expanded));
     }
 }
