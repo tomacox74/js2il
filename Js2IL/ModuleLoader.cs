@@ -3,6 +3,7 @@ using Js2IL.Services;
 using Js2IL.Validation;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace Js2IL;
@@ -328,28 +329,742 @@ public class ModuleLoader
 function __js2il_esm_default(mod) {
     return (mod != null && Object.prototype.hasOwnProperty.call(mod, ""default"")) ? mod.default : mod;
 }
+function __js2il_esm_get(mod, name) {
+    return mod[name];
+}
 function __js2il_esm_namespace(mod) {
     if (mod != null && mod.__esModule === true) {
         return mod;
     }
-    var ns = { default: mod };
-    ns[""module.exports""] = mod;
-    if (mod != null && (typeof mod === ""object"" || typeof mod === ""function"")) {
-        for (var key in mod) {
-            if (!Object.prototype.hasOwnProperty.call(mod, key)) {
-                continue;
-            }
-            if (key !== ""default"" && key !== ""module.exports"" && key !== ""__esModule"") {
-                ns[key] = mod[key];
-            }
-        }
+
+    if (mod == null || (typeof mod !== ""object"" && typeof mod !== ""function"")) {
+        return { default: mod, ""module.exports"": mod };
     }
+
+    if (Object.prototype.hasOwnProperty.call(mod, ""__js2il_esm_namespace"")) {
+        return mod.__js2il_esm_namespace;
+    }
+
+    var ns = {};
+    Object.defineProperty(ns, ""default"", { enumerable: true, configurable: true, get: function () { return mod; } });
+    Object.defineProperty(ns, ""module.exports"", { enumerable: true, configurable: true, get: function () { return mod; } });
+
+    for (var key in mod) {
+        if (!Object.prototype.hasOwnProperty.call(mod, key)) {
+            continue;
+        }
+        if (key === ""default"" || key === ""module.exports"" || key === ""__esModule"" || key === ""__js2il_esm_namespace"") {
+            continue;
+        }
+        (function (k) {
+            Object.defineProperty(ns, k, { enumerable: true, configurable: true, get: function () { return mod[k]; } });
+        })(key);
+    }
+
+    try {
+        Object.defineProperty(mod, ""__js2il_esm_namespace"", { value: ns, enumerable: false, configurable: false, writable: false });
+    } catch (e) {
+        // ignore caching failures (non-extensible exports)
+    }
+
     return ns;
 }
 function __js2il_esm_export(name, getter) {
     __js2il_esm_mark();
     Object.defineProperty(exports, name, { enumerable: true, configurable: true, get: getter });
 }";
+
+    private readonly struct TextEdit
+    {
+        public int Start { get; }
+        public int End { get; }
+        public string Replacement { get; }
+
+        public TextEdit(int start, int end, string replacement)
+        {
+            Start = start;
+            End = end;
+            Replacement = replacement;
+        }
+    }
+
+    private static string ApplyTextEdits(string source, List<TextEdit> edits)
+    {
+        if (edits.Count == 0)
+        {
+            return source;
+        }
+
+        edits.Sort(static (a, b) =>
+        {
+            var c = b.Start.CompareTo(a.Start);
+            if (c != 0) return c;
+            return b.End.CompareTo(a.End);
+        });
+
+        var sb = new StringBuilder(source);
+        foreach (var edit in edits)
+        {
+            sb.Remove(edit.Start, edit.End - edit.Start);
+            sb.Insert(edit.Start, edit.Replacement);
+        }
+        return sb.ToString();
+    }
+
+    private static string CreateExportGetterLine(string exportName, string valueExpression)
+    {
+        return $"__js2il_esm_export(\"{EscapeJsString(exportName)}\", function() {{ return {valueExpression}; }});";
+    }
+
+    private static void AppendImportPrelude(
+        ImportDeclaration importDeclaration,
+        string source,
+        ref int tempCounter,
+        List<string> importPrelude,
+        Dictionary<string, string> importedBindings)
+    {
+        if (importDeclaration.Attributes.Count > 0)
+        {
+            throw new NotSupportedException("Import attributes are not yet supported");
+        }
+
+        var importSourceLiteral = GetNodeSource(source, importDeclaration.Source);
+        if (importDeclaration.Specifiers.Count == 0)
+        {
+            importPrelude.Add($"require({importSourceLiteral});");
+            return;
+        }
+
+        var moduleTemp = $"__js2il_esm_mod_{tempCounter++}";
+        importPrelude.Add($"var {moduleTemp} = require({importSourceLiteral});");
+
+        foreach (var specifier in importDeclaration.Specifiers)
+        {
+            switch (specifier)
+            {
+                case ImportDefaultSpecifier defaultSpecifier:
+                    if (defaultSpecifier.Local is not Identifier defaultLocal)
+                    {
+                        throw new NotSupportedException("Default import local binding must be an identifier");
+                    }
+                    importedBindings[defaultLocal.Name] = $"__js2il_esm_default({moduleTemp})";
+                    break;
+
+                case ImportNamespaceSpecifier namespaceSpecifier:
+                    if (namespaceSpecifier.Local is not Identifier namespaceLocal)
+                    {
+                        throw new NotSupportedException("Namespace import local binding must be an identifier");
+                    }
+                    importPrelude.Add($"var {namespaceLocal.Name} = __js2il_esm_namespace({moduleTemp});");
+                    break;
+
+                case ImportSpecifier importSpecifier:
+                    if (importSpecifier.Local is not Identifier importLocal)
+                    {
+                        throw new NotSupportedException("Named import local binding must be an identifier");
+                    }
+                    var importedName = GetExpressionName(importSpecifier.Imported);
+                    importedBindings[importLocal.Name] = $"__js2il_esm_get({moduleTemp}, \"{EscapeJsString(importedName)}\")";
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Unsupported import specifier form '{specifier.TypeText}'");
+            }
+        }
+    }
+
+    private static bool TryRewriteImportedBindingReferences(
+        string source,
+        Acornima.Ast.Program ast,
+        IReadOnlyDictionary<string, string> importedBindings,
+        out string rewritten,
+        out string? error)
+    {
+        rewritten = source;
+        error = null;
+
+        if (importedBindings.Count == 0)
+        {
+            return true;
+        }
+
+        var edits = new List<TextEdit>();
+
+        var scopes = new ScopeStack();
+        scopes.PushFunctionScope();
+
+        bool ShouldRewrite(Identifier id)
+        {
+            if (!importedBindings.ContainsKey(id.Name))
+            {
+                return false;
+            }
+            return !scopes.IsDeclared(id.Name);
+        }
+
+        void RewriteIdentifier(Identifier id)
+        {
+            if (!importedBindings.TryGetValue(id.Name, out var replacement))
+            {
+                return;
+            }
+            if (scopes.IsDeclared(id.Name))
+            {
+                return;
+            }
+            edits.Add(new TextEdit(id.Start, id.End, replacement));
+        }
+
+        void ErrorIfImportWrite(Identifier id)
+        {
+            if (!importedBindings.ContainsKey(id.Name) || scopes.IsDeclared(id.Name))
+            {
+                return;
+            }
+
+            throw new NotSupportedException($"Cannot assign to import binding '{id.Name}'");
+        }
+
+        void ErrorIfImportWritePattern(Node pattern)
+        {
+            var names = new List<string>();
+            CollectBindingNames(pattern, names);
+            foreach (var name in names)
+            {
+                if (importedBindings.ContainsKey(name) && !scopes.IsDeclared(name))
+                {
+                    throw new NotSupportedException($"Cannot assign to import binding '{name}'");
+                }
+            }
+        }
+
+        void DeclarePattern(Node pattern, bool isVarKind)
+        {
+            var names = new List<string>();
+            CollectBindingNames(pattern, names);
+            if (names.Count == 0)
+            {
+                return;
+            }
+
+            if (isVarKind)
+            {
+                scopes.DeclareVar(names);
+            }
+            else
+            {
+                scopes.DeclareLexical(names);
+            }
+        }
+
+        void VisitPattern(Node? pattern)
+        {
+            switch (pattern)
+            {
+                case null:
+                    return;
+
+                case AssignmentPattern ap:
+                    VisitPattern(ap.Left);
+                    VisitExpression(ap.Right);
+                    return;
+
+                case RestElement re:
+                    VisitPattern(re.Argument);
+                    return;
+
+                case ArrayPattern arr:
+                    foreach (var el in arr.Elements)
+                    {
+                        VisitPattern(el);
+                    }
+                    return;
+
+                case ObjectPattern obj:
+                    foreach (var prop in obj.Properties)
+                    {
+                        switch (prop)
+                        {
+                            case Property p:
+                                if (p.Computed)
+                                {
+                                    VisitExpression(p.Key);
+                                }
+                                VisitPattern(p.Value);
+                                break;
+                            case RestElement r:
+                                VisitPattern(r.Argument);
+                                break;
+                        }
+                    }
+                    return;
+            }
+        }
+
+        void VisitStatement(Statement? statement)
+        {
+            switch (statement)
+            {
+                case null:
+                    return;
+
+                case BlockStatement block:
+                    scopes.PushBlockScope();
+                    foreach (var s in block.Body)
+                    {
+                        VisitStatement(s);
+                    }
+                    scopes.Pop();
+                    return;
+
+                case ExpressionStatement es:
+                    VisitExpression(es.Expression);
+                    return;
+
+                case VariableDeclaration vd:
+                    {
+                        var isVarKind = vd.Kind == VariableDeclarationKind.Var;
+
+                        // Declare names first (shadowing affects defaults/initializers).
+                        foreach (var decl in vd.Declarations)
+                        {
+                            DeclarePattern(decl.Id, isVarKind);
+                        }
+
+                        foreach (var decl in vd.Declarations)
+                        {
+                            VisitPattern(decl.Id);
+                            VisitExpression(decl.Init);
+                        }
+                        return;
+                    }
+
+                case FunctionDeclaration fd:
+                    if (fd.Id != null)
+                    {
+                        scopes.DeclareLexical([fd.Id.Name]);
+                    }
+                    scopes.PushFunctionScope();
+                    foreach (var p in fd.Params)
+                    {
+                        DeclarePattern(p, isVarKind: false);
+                    }
+                    foreach (var p in fd.Params)
+                    {
+                        VisitPattern(p);
+                    }
+                    VisitStatement(fd.Body);
+                    scopes.Pop();
+                    return;
+
+                case ReturnStatement rs:
+                    VisitExpression(rs.Argument);
+                    return;
+
+                case IfStatement ifs:
+                    VisitExpression(ifs.Test);
+                    VisitStatement(ifs.Consequent);
+                    VisitStatement(ifs.Alternate);
+                    return;
+
+                case WhileStatement ws:
+                    VisitExpression(ws.Test);
+                    VisitStatement(ws.Body);
+                    return;
+
+                case DoWhileStatement dws:
+                    VisitStatement(dws.Body);
+                    VisitExpression(dws.Test);
+                    return;
+
+                case ForStatement fs:
+                    if (fs.Init is VariableDeclaration vdecl)
+                    {
+                        VisitStatement(vdecl);
+                    }
+                    else
+                    {
+                        VisitExpression(fs.Init);
+                    }
+                    VisitExpression(fs.Test);
+                    VisitExpression(fs.Update);
+                    VisitStatement(fs.Body);
+                    return;
+
+                case ForInStatement fis:
+                    if (fis.Left is VariableDeclaration lvd)
+                    {
+                        VisitStatement(lvd);
+                    }
+                    else if (fis.Left is Identifier lid)
+                    {
+                        ErrorIfImportWrite(lid);
+                    }
+                    else if (fis.Left is ArrayPattern or ObjectPattern or AssignmentPattern or RestElement)
+                    {
+                        ErrorIfImportWritePattern(fis.Left);
+                        VisitPattern(fis.Left);
+                    }
+                    else
+                    {
+                        VisitExpression(fis.Left);
+                    }
+                    VisitExpression(fis.Right);
+                    VisitStatement(fis.Body);
+                    return;
+
+                case ForOfStatement fos:
+                    if (fos.Left is VariableDeclaration lvd2)
+                    {
+                        VisitStatement(lvd2);
+                    }
+                    else if (fos.Left is Identifier lid2)
+                    {
+                        ErrorIfImportWrite(lid2);
+                    }
+                    else if (fos.Left is ArrayPattern or ObjectPattern or AssignmentPattern or RestElement)
+                    {
+                        ErrorIfImportWritePattern(fos.Left);
+                        VisitPattern(fos.Left);
+                    }
+                    else
+                    {
+                        VisitExpression(fos.Left);
+                    }
+                    VisitExpression(fos.Right);
+                    VisitStatement(fos.Body);
+                    return;
+
+                case SwitchStatement ss:
+                    VisitExpression(ss.Discriminant);
+                    scopes.PushBlockScope();
+                    foreach (var c in ss.Cases)
+                    {
+                        VisitExpression(c.Test);
+                        foreach (var cs in c.Consequent)
+                        {
+                            VisitStatement(cs);
+                        }
+                    }
+                    scopes.Pop();
+                    return;
+
+                case TryStatement ts:
+                    VisitStatement(ts.Block);
+                    if (ts.Handler != null)
+                    {
+                        scopes.PushBlockScope();
+                        if (ts.Handler.Param != null)
+                        {
+                            DeclarePattern(ts.Handler.Param, isVarKind: false);
+                            VisitPattern(ts.Handler.Param);
+                        }
+                        VisitStatement(ts.Handler.Body);
+                        scopes.Pop();
+                    }
+                    VisitStatement(ts.Finalizer);
+                    return;
+
+                case ThrowStatement th:
+                    VisitExpression(th.Argument);
+                    return;
+
+                case LabeledStatement ls:
+                    VisitStatement(ls.Body);
+                    return;
+
+                case BreakStatement:
+                case ContinueStatement:
+                case EmptyStatement:
+                case DebuggerStatement:
+                    return;
+
+                case ClassDeclaration cd:
+                    if (cd.Id != null)
+                    {
+                        scopes.DeclareLexical([cd.Id.Name]);
+                    }
+                    VisitExpression(cd.SuperClass);
+                    VisitClassBody(cd.Body);
+                    return;
+
+                default:
+                    // Best-effort: still walk any expressions we know about.
+                    return;
+            }
+        }
+
+        void VisitClassBody(ClassBody body)
+        {
+            foreach (var element in body.Body)
+            {
+                switch (element)
+                {
+                    case MethodDefinition md:
+                        if (md.Computed)
+                        {
+                            VisitExpression(md.Key);
+                        }
+                        VisitExpression(md.Value);
+                        break;
+
+                    case PropertyDefinition pd:
+                        if (pd.Computed)
+                        {
+                            VisitExpression(pd.Key);
+                        }
+                        VisitExpression(pd.Value);
+                        break;
+                }
+            }
+        }
+
+        void VisitExpression(Node? expression)
+        {
+            switch (expression)
+            {
+                case null:
+                    return;
+
+                case Identifier id:
+                    RewriteIdentifier(id);
+                    return;
+
+                case Literal:
+                case ThisExpression:
+                case Super:
+                    return;
+
+                case MemberExpression me:
+                    VisitExpression(me.Object);
+                    if (me.Computed)
+                    {
+                        VisitExpression(me.Property);
+                    }
+                    return;
+
+                case CallExpression ce:
+                    VisitExpression(ce.Callee);
+                    foreach (var arg in ce.Arguments)
+                    {
+                        VisitExpression(arg);
+                    }
+                    return;
+
+                case NewExpression ne:
+                    VisitExpression(ne.Callee);
+                    foreach (var arg in ne.Arguments)
+                    {
+                        VisitExpression(arg);
+                    }
+                    return;
+
+                case UpdateExpression up:
+                    if (up.Argument is Identifier uid)
+                    {
+                        ErrorIfImportWrite(uid);
+                    }
+                    VisitExpression(up.Argument);
+                    return;
+
+                case UnaryExpression ue:
+                    if (string.Equals(ue.Operator.ToString(), "delete", StringComparison.OrdinalIgnoreCase)
+                        && ue.Argument is Identifier did
+                        && ShouldRewrite(did))
+                    {
+                        throw new NotSupportedException($"Cannot delete import binding '{did.Name}'");
+                    }
+                    VisitExpression(ue.Argument);
+                    return;
+
+                case BinaryExpression be:
+                    VisitExpression(be.Left);
+                    VisitExpression(be.Right);
+                    return;
+
+                case AssignmentExpression ae:
+                    if (ae.Left is Identifier aid)
+                    {
+                        ErrorIfImportWrite(aid);
+                        VisitExpression(ae.Left);
+                    }
+                    else if (ae.Left is ArrayPattern or ObjectPattern or AssignmentPattern or RestElement)
+                    {
+                        ErrorIfImportWritePattern(ae.Left);
+                        VisitPattern(ae.Left);
+                    }
+                    else
+                    {
+                        VisitExpression(ae.Left);
+                    }
+                    VisitExpression(ae.Right);
+                    return;
+
+                case ConditionalExpression ce2:
+                    VisitExpression(ce2.Test);
+                    VisitExpression(ce2.Consequent);
+                    VisitExpression(ce2.Alternate);
+                    return;
+
+                case SequenceExpression se:
+                    foreach (var ex in se.Expressions)
+                    {
+                        VisitExpression(ex);
+                    }
+                    return;
+
+                case ArrayExpression arr:
+                    foreach (var el in arr.Elements)
+                    {
+                        VisitExpression(el);
+                    }
+                    return;
+
+                case ObjectExpression obj:
+                    foreach (var prop in obj.Properties)
+                    {
+                        switch (prop)
+                        {
+                            case Property p when p.Shorthand && p.Key is Identifier sid && p.Value is Identifier vid && sid.Name == vid.Name:
+                                if (ShouldRewrite(vid))
+                                {
+                                    edits.Add(new TextEdit(sid.Start, sid.End, $"{sid.Name}: {importedBindings[sid.Name]}"));
+                                }
+                                break;
+
+                            case Property p:
+                                if (p.Computed)
+                                {
+                                    VisitExpression(p.Key);
+                                }
+                                VisitExpression(p.Value);
+                                break;
+
+                            default:
+                                VisitExpression(prop);
+                                break;
+                        }
+                    }
+                    return;
+
+                case FunctionExpression fe:
+                    scopes.PushFunctionScope();
+                    if (fe.Id != null)
+                    {
+                        scopes.DeclareLexical([fe.Id.Name]);
+                    }
+                    foreach (var p in fe.Params)
+                    {
+                        DeclarePattern(p, isVarKind: false);
+                    }
+                    foreach (var p in fe.Params)
+                    {
+                        VisitPattern(p);
+                    }
+                    VisitStatement(fe.Body);
+                    scopes.Pop();
+                    return;
+
+                case ArrowFunctionExpression afe:
+                    scopes.PushFunctionScope();
+                    foreach (var p in afe.Params)
+                    {
+                        DeclarePattern(p, isVarKind: false);
+                    }
+                    foreach (var p in afe.Params)
+                    {
+                        VisitPattern(p);
+                    }
+                    if (afe.Body is BlockStatement bs)
+                    {
+                        VisitStatement(bs);
+                    }
+                    else
+                    {
+                        VisitExpression(afe.Body);
+                    }
+                    scopes.Pop();
+                    return;
+
+                case ClassExpression ce3:
+                    scopes.PushBlockScope();
+                    if (ce3.Id != null)
+                    {
+                        scopes.DeclareLexical([ce3.Id.Name]);
+                    }
+                    VisitExpression(ce3.SuperClass);
+                    VisitClassBody(ce3.Body);
+                    scopes.Pop();
+                    return;
+            }
+        }
+
+        try
+        {
+            foreach (var statement in ast.Body)
+            {
+                VisitStatement(statement);
+            }
+        }
+        catch (NotSupportedException ex)
+        {
+            error = $"{ex.Message} (line {ast.Location.Start.Line}).";
+            return false;
+        }
+
+        rewritten = ApplyTextEdits(source, edits);
+        return true;
+    }
+
+    private sealed class ScopeStack
+    {
+        private sealed class ScopeFrame
+        {
+            public bool IsFunctionBoundary { get; }
+            public HashSet<string> Names { get; } = new(StringComparer.Ordinal);
+
+            public ScopeFrame(bool isFunctionBoundary)
+            {
+                IsFunctionBoundary = isFunctionBoundary;
+            }
+        }
+
+        private readonly Stack<ScopeFrame> _stack = new();
+
+        public void PushFunctionScope() => _stack.Push(new ScopeFrame(isFunctionBoundary: true));
+        public void PushBlockScope() => _stack.Push(new ScopeFrame(isFunctionBoundary: false));
+        public void Pop() => _stack.Pop();
+
+        public void DeclareLexical(IEnumerable<string> names)
+        {
+            var frame = _stack.Peek();
+            foreach (var name in names)
+            {
+                frame.Names.Add(name);
+            }
+        }
+
+        public void DeclareVar(IEnumerable<string> names)
+        {
+            var functionFrame = _stack.FirstOrDefault(f => f.IsFunctionBoundary) ?? _stack.Peek();
+            foreach (var name in names)
+            {
+                functionFrame.Names.Add(name);
+            }
+        }
+
+        public bool IsDeclared(string name)
+        {
+            foreach (var frame in _stack)
+            {
+                if (frame.Names.Contains(name))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 
     private bool TryRewriteStaticModuleSyntax(string source, Acornima.Ast.Program ast, out string rewrittenSource, out string? error)
     {
@@ -410,28 +1125,125 @@ function __js2il_esm_export(name, getter) {
             }
         }
 
-        var builder = new StringBuilder(source.Length + 512);
-        var cursor = 0;
+        var insertPos = 0;
+        foreach (var statement in ast.Body)
+        {
+            if (IsDirectivePrologueStatement(statement))
+            {
+                insertPos = statement.End;
+                continue;
+            }
+            break;
+        }
+
+        var exportPreludeDeclarations = new List<string>();
+        var exportPrelude = new List<string>();
+        var importPrelude = new List<string>();
+        var importedBindings = new Dictionary<string, string>(StringComparer.Ordinal);
+        var edits = new List<TextEdit>();
         var tempCounter = 0;
         var rewrittenAny = false;
 
         foreach (var statement in ast.Body)
         {
-            if (!TryRewriteTopLevelModuleStatement(statement, source, ref tempCounter, out var rewrittenStatement, out var rewriteError))
+            try
             {
-                if (!string.IsNullOrWhiteSpace(rewriteError))
+                switch (statement)
                 {
-                    error = rewriteError;
-                    return false;
+                    case ImportDeclaration importDeclaration:
+                        rewrittenAny = true;
+                        AppendImportPrelude(importDeclaration, source, ref tempCounter, importPrelude, importedBindings);
+                        edits.Add(new TextEdit(statement.Start, statement.End, string.Empty));
+                        break;
+
+                    case ExportNamedDeclaration exportNamedDeclaration:
+                        rewrittenAny = true;
+                        if (exportNamedDeclaration.Attributes.Count > 0)
+                        {
+                            throw new NotSupportedException("Export attributes are not yet supported");
+                        }
+
+                        if (exportNamedDeclaration.Declaration != null)
+                        {
+                            if (exportNamedDeclaration.Declaration is not Node declarationNode)
+                            {
+                                throw new NotSupportedException("Unsupported export declaration node");
+                            }
+
+                            switch (exportNamedDeclaration.Declaration)
+                            {
+                                case VariableDeclaration variableDeclaration:
+                                    edits.Add(new TextEdit(statement.Start, statement.End, GetNodeSource(source, declarationNode)));
+
+                                    var bindingNames = new List<string>();
+                                    foreach (var variableDeclarator in variableDeclaration.Declarations)
+                                    {
+                                        CollectBindingNames(variableDeclarator.Id, bindingNames);
+                                    }
+
+                                    foreach (var name in bindingNames.Distinct(StringComparer.Ordinal))
+                                    {
+                                        exportPrelude.Add(CreateExportGetterLine(name, name));
+                                    }
+                                    break;
+
+                                case FunctionDeclaration functionDeclaration when functionDeclaration.Id != null:
+                                    edits.Add(new TextEdit(statement.Start, statement.End, GetNodeSource(source, declarationNode)));
+                                    exportPrelude.Add(CreateExportGetterLine(functionDeclaration.Id.Name, functionDeclaration.Id.Name));
+                                    break;
+
+                                case ClassDeclaration:
+                                    // Class declarations are lexical and can trip validation if referenced before declaration; keep inline.
+                                    edits.Add(new TextEdit(statement.Start, statement.End, RewriteExportNamedDeclaration(exportNamedDeclaration, source, ref tempCounter)));
+                                    break;
+
+                                default:
+                                    throw new NotSupportedException("Unsupported export declaration form");
+                            }
+                        }
+                        else if (exportNamedDeclaration.Source == null)
+                        {
+                            // export { local as exported } (keep inline to preserve ordering vs declarations)
+                            edits.Add(new TextEdit(statement.Start, statement.End, RewriteExportNamedDeclaration(exportNamedDeclaration, source, ref tempCounter)));
+                        }
+                        else
+                        {
+                            // Re-export from another module. Keep as a statement rewrite for now.
+                            edits.Add(new TextEdit(statement.Start, statement.End, RewriteExportNamedDeclaration(exportNamedDeclaration, source, ref tempCounter)));
+                        }
+                        break;
+
+                    case ExportDefaultDeclaration exportDefaultDeclaration:
+                        rewrittenAny = true;
+                        switch (exportDefaultDeclaration.Declaration)
+                        {
+                            case FunctionDeclaration functionDeclaration when functionDeclaration.Id != null:
+                                edits.Add(new TextEdit(statement.Start, statement.End, GetNodeSource(source, functionDeclaration)));
+                                exportPrelude.Add(CreateExportGetterLine("default", functionDeclaration.Id.Name));
+                                break;
+
+                            case ClassDeclaration:
+                                // Keep inline to avoid referencing lexical class bindings before declaration.
+                                edits.Add(new TextEdit(statement.Start, statement.End, RewriteExportDefaultDeclaration(exportDefaultDeclaration, source, ref tempCounter)));
+                                break;
+
+                            default:
+                                edits.Add(new TextEdit(statement.Start, statement.End, RewriteExportDefaultDeclaration(exportDefaultDeclaration, source, ref tempCounter)));
+                                break;
+                        }
+                        break;
+
+                    case ExportAllDeclaration exportAllDeclaration:
+                        rewrittenAny = true;
+                        edits.Add(new TextEdit(statement.Start, statement.End, RewriteExportAllDeclaration(exportAllDeclaration, source, ref tempCounter)));
+                        break;
                 }
-                continue;
             }
-
-            rewrittenAny = true;
-            builder.Append(source, cursor, statement.Start - cursor);
-
-            builder.AppendLine(rewrittenStatement);
-            cursor = statement.End;
+            catch (NotSupportedException ex)
+            {
+                error = $"{ex.Message} (line {statement.Location.Start.Line}).";
+                return false;
+            }
         }
 
         if (!rewrittenAny)
@@ -439,7 +1251,45 @@ function __js2il_esm_export(name, getter) {
             return true;
         }
 
-        builder.Append(source, cursor, source.Length - cursor);
+        var preludeBuilder = new StringBuilder();
+        preludeBuilder.AppendLine();
+        foreach (var line in exportPreludeDeclarations)
+        {
+            preludeBuilder.AppendLine(line);
+        }
+        preludeBuilder.AppendLine("__js2il_esm_mark();");
+        foreach (var line in exportPrelude)
+        {
+            preludeBuilder.AppendLine(line);
+        }
+        foreach (var line in importPrelude)
+        {
+            preludeBuilder.AppendLine(line);
+        }
+        preludeBuilder.AppendLine();
+        edits.Add(new TextEdit(insertPos, insertPos, preludeBuilder.ToString()));
+
+        var rewrittenPhase1 = ApplyTextEdits(source, edits);
+
+        Acornima.Ast.Program rewrittenAst;
+        try
+        {
+            rewrittenAst = _parser.ParseJavaScript(rewrittenPhase1, "rewritten.js");
+        }
+        catch (Exception ex)
+        {
+            error = $"Failed to parse rewritten ES module syntax: {ex.Message}";
+            return false;
+        }
+
+        if (!TryRewriteImportedBindingReferences(rewrittenPhase1, rewrittenAst, importedBindings, out var rewrittenPhase2, out var bindError))
+        {
+            error = bindError;
+            return false;
+        }
+
+        var builder = new StringBuilder(rewrittenPhase2.Length + 512);
+        builder.Append(rewrittenPhase2);
         builder.AppendLine();
         builder.AppendLine(EsModuleInteropPrelude);
         rewrittenSource = builder.ToString();
