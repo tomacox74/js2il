@@ -8,6 +8,7 @@ namespace JavaScriptRuntime.Node
         private readonly Queue<object?> _buffer = new();
         private bool _ended = false;
         private bool _endEmitted = false;
+        private int _pipePauseCount = 0;
 
         public bool readable => !_ended;
 
@@ -29,13 +30,13 @@ namespace JavaScriptRuntime.Node
                 return false;
             }
 
-            if (listenerCount("data") > 0)
+            if (_pipePauseCount > 0 || listenerCount("data") == 0)
             {
-                emit("data", chunk);
+                _buffer.Enqueue(chunk);
             }
             else
             {
-                _buffer.Enqueue(chunk);
+                emit("data", chunk);
             }
             return true;
         }
@@ -74,6 +75,7 @@ namespace JavaScriptRuntime.Node
             }
 
             bool paused = false;
+            bool drainAttached = false;
             Func<object[], object?[], object?>? onData = null;
             Func<object[], object?[], object?>? onEnd = null;
             Func<object[], object?[], object?>? onError = null;
@@ -83,27 +85,7 @@ namespace JavaScriptRuntime.Node
             {
                 if (paused) return;
                 paused = true;
-                if (onData != null) off("data", onData);
-            }
-
-            void FlushBuffered()
-            {
-                while (!paused && _buffer.Count > 0)
-                {
-                    var chunk = _buffer.Dequeue();
-                    var canContinue = writable.write(chunk);
-                    if (!canContinue)
-                    {
-                        Pause();
-                        if (onDrain != null)
-                        {
-                            writable.once("drain", onDrain);
-                        }
-                        break;
-                    }
-                }
-
-                EmitEndIfReady();
+                _pipePauseCount++;
             }
 
             void Resume()
@@ -115,12 +97,58 @@ namespace JavaScriptRuntime.Node
                 }
 
                 paused = false;
-                if (onData != null) on("data", onData);
+                if (_pipePauseCount > 0) _pipePauseCount--;
                 FlushBuffered();
+            }
+
+            void Cleanup()
+            {
+                if (onData != null) off("data", onData);
+                if (onEnd != null) off("end", onEnd);
+                if (onError != null) off("error", onError);
+
+                if (drainAttached && onDrain != null)
+                {
+                    drainAttached = false;
+                    writable.off("drain", onDrain);
+                }
+
+                if (paused)
+                {
+                    paused = false;
+                    if (_pipePauseCount > 0) _pipePauseCount--;
+                }
+            }
+
+            void FlushBuffered()
+            {
+                while (!paused && _buffer.Count > 0)
+                {
+                    var chunk = _buffer.Dequeue();
+                    var canContinue = writable.write(chunk);
+                    if (!canContinue)
+                    {
+                        Pause();
+                        if (!drainAttached && onDrain != null)
+                        {
+                            drainAttached = true;
+                            writable.on("drain", onDrain);
+                        }
+                        break;
+                    }
+                }
+
+                EmitEndIfReady();
             }
 
             onDrain = (scopes, args) =>
             {
+                if (drainAttached)
+                {
+                    drainAttached = false;
+                    writable.off("drain", onDrain);
+                }
+
                 Resume();
                 return null;
             };
@@ -133,7 +161,11 @@ namespace JavaScriptRuntime.Node
                     if (!canContinue)
                     {
                         Pause();
-                        writable.once("drain", onDrain);
+                        if (!drainAttached)
+                        {
+                            drainAttached = true;
+                            writable.on("drain", onDrain);
+                        }
                     }
                 }
                 return null;
@@ -141,34 +173,25 @@ namespace JavaScriptRuntime.Node
 
             onEnd = (scopes, args) =>
             {
-                if (onData != null)
-                {
-                    off("data", onData);
-                }
-                if (onError != null)
-                {
-                    off("error", onError);
-                }
+                Cleanup();
                 writable.end();
                 return null;
             };
 
             onError = (scopes, args) =>
             {
-                if (onData != null)
+                var err = args.Length > 0 ? args[0] : null;
+                Cleanup();
+                if (err != null)
                 {
-                    off("data", onData);
-                }
-                if (args.Length > 0)
-                {
-                    writable.emit("error", args[0]);
+                    writable.emit("error", err);
                 }
                 return null;
             };
 
             on("data", onData);
-            once("end", onEnd);
-            once("error", onError);
+            on("end", onEnd);
+            on("error", onError);
 
             // Flush any pre-buffered chunks now that piping has begun.
             FlushBuffered();
