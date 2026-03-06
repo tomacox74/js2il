@@ -33,7 +33,7 @@
 |---:|---|---|---|
 | 1 | [Expand CommonJS `require()` resolution (`node_modules`, `package.json` `main`/`exports`)](https://github.com/tomacox74/js2il/issues/783) | CommonJS loader | Merged (PR #798) |
 | 2 | [Expand `path` module parity (normalize/parse/format/extname/isAbsolute, posix/win32)](https://github.com/tomacox74/js2il/issues/784) | `path` | Merged (PR #797) |
-| 3 | [Expand `fs` module parity (callbacks, buffers, mkdir/copyFile/readFile/writeFile)](https://github.com/tomacox74/js2il/issues/785) | `fs` | In review (PR #800) |
+| 3 | [Expand `fs` module parity (callbacks, buffers, mkdir/copyFile/readFile/writeFile)](https://github.com/tomacox74/js2il/issues/785) | `fs` | Merged (PR #800) |
 | 4 | [Expand `stream` module (Duplex/Transform/PassThrough + basic backpressure)](https://github.com/tomacox74/js2il/issues/786) | `stream` | Partial |
 | 5 | [Expand `util` essentials (format, inspect parity, util.types breadth)](https://github.com/tomacox74/js2il/issues/787) | `util` | Partial |
 | 6 | [Expand `child_process` beyond sync (spawn/exec/execFile, stdio pipes)](https://github.com/tomacox74/js2il/issues/788) | `child_process` | Partial |
@@ -60,7 +60,7 @@
 
 ## Issue 3: Expand `fs` Module Parity ([#785](https://github.com/tomacox74/js2il/issues/785))
 - Suggested labels: `enhancement`, `modules`, `priority:high`
-- Status: in review (PR #800): https://github.com/tomacox74/js2il/pull/800
+- Status: merged (PR #800): https://github.com/tomacox74/js2il/pull/800
   - callback-style async APIs + execution coverage: `readFile`, `writeFile`, `copyFile`, `readdir`, `mkdir`, `stat`, `rm`, `access`, `realpath`
 - Minimum acceptance:
   - Buffer + callback baselines for read/write workflows
