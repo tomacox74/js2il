@@ -56,5 +56,19 @@ namespace Js2IL.Tests.Import
             var testName = nameof(Import_LiveBindings_Cycle);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task Import_Namespace_Esm_Basic()
+        {
+            var testName = nameof(Import_Namespace_Esm_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task Import_Namespace_FromCjs_Stable()
+        {
+            var testName = nameof(Import_Namespace_FromCjs_Stable);
+            return GenerateTest(testName);
+        }
     }
 }

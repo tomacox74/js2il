@@ -336,18 +336,37 @@ function __js2il_esm_namespace(mod) {
     if (mod != null && mod.__esModule === true) {
         return mod;
     }
-    var ns = { default: mod };
-    ns[""module.exports""] = mod;
-    if (mod != null && (typeof mod === ""object"" || typeof mod === ""function"")) {
-        for (var key in mod) {
-            if (!Object.prototype.hasOwnProperty.call(mod, key)) {
-                continue;
-            }
-            if (key !== ""default"" && key !== ""module.exports"" && key !== ""__esModule"") {
-                ns[key] = mod[key];
-            }
-        }
+
+    if (mod == null || (typeof mod !== ""object"" && typeof mod !== ""function"")) {
+        return { default: mod, ""module.exports"": mod };
     }
+
+    if (Object.prototype.hasOwnProperty.call(mod, ""__js2il_esm_namespace"")) {
+        return mod.__js2il_esm_namespace;
+    }
+
+    var ns = {};
+    Object.defineProperty(ns, ""default"", { enumerable: true, configurable: true, get: function () { return mod; } });
+    Object.defineProperty(ns, ""module.exports"", { enumerable: true, configurable: true, get: function () { return mod; } });
+
+    for (var key in mod) {
+        if (!Object.prototype.hasOwnProperty.call(mod, key)) {
+            continue;
+        }
+        if (key === ""default"" || key === ""module.exports"" || key === ""__esModule"" || key === ""__js2il_esm_namespace"") {
+            continue;
+        }
+        (function (k) {
+            Object.defineProperty(ns, k, { enumerable: true, configurable: true, get: function () { return mod[k]; } });
+        })(key);
+    }
+
+    try {
+        Object.defineProperty(mod, ""__js2il_esm_namespace"", { value: ns, enumerable: false, configurable: false, writable: false });
+    } catch (e) {
+        // ignore caching failures (non-extensible exports)
+    }
+
     return ns;
 }
 function __js2il_esm_export(name, getter) {
@@ -504,6 +523,19 @@ function __js2il_esm_export(name, getter) {
             }
 
             throw new NotSupportedException($"Cannot assign to import binding '{id.Name}'");
+        }
+
+        void ErrorIfImportWritePattern(Node pattern)
+        {
+            var names = new List<string>();
+            CollectBindingNames(pattern, names);
+            foreach (var name in names)
+            {
+                if (importedBindings.ContainsKey(name) && !scopes.IsDeclared(name))
+                {
+                    throw new NotSupportedException($"Cannot assign to import binding '{name}'");
+                }
+            }
         }
 
         void DeclarePattern(Node pattern, bool isVarKind)
@@ -668,6 +700,11 @@ function __js2il_esm_export(name, getter) {
                     {
                         ErrorIfImportWrite(lid);
                     }
+                    else if (fis.Left is ArrayPattern or ObjectPattern or AssignmentPattern or RestElement)
+                    {
+                        ErrorIfImportWritePattern(fis.Left);
+                        VisitPattern(fis.Left);
+                    }
                     else
                     {
                         VisitExpression(fis.Left);
@@ -684,6 +721,11 @@ function __js2il_esm_export(name, getter) {
                     else if (fos.Left is Identifier lid2)
                     {
                         ErrorIfImportWrite(lid2);
+                    }
+                    else if (fos.Left is ArrayPattern or ObjectPattern or AssignmentPattern or RestElement)
+                    {
+                        ErrorIfImportWritePattern(fos.Left);
+                        VisitPattern(fos.Left);
                     }
                     else
                     {
@@ -826,6 +868,12 @@ function __js2il_esm_export(name, getter) {
                     return;
 
                 case UnaryExpression ue:
+                    if (string.Equals(ue.Operator.ToString(), "delete", StringComparison.OrdinalIgnoreCase)
+                        && ue.Argument is Identifier did
+                        && ShouldRewrite(did))
+                    {
+                        throw new NotSupportedException($"Cannot delete import binding '{did.Name}'");
+                    }
                     VisitExpression(ue.Argument);
                     return;
 
@@ -838,8 +886,17 @@ function __js2il_esm_export(name, getter) {
                     if (ae.Left is Identifier aid)
                     {
                         ErrorIfImportWrite(aid);
+                        VisitExpression(ae.Left);
                     }
-                    VisitExpression(ae.Left);
+                    else if (ae.Left is ArrayPattern or ObjectPattern or AssignmentPattern or RestElement)
+                    {
+                        ErrorIfImportWritePattern(ae.Left);
+                        VisitPattern(ae.Left);
+                    }
+                    else
+                    {
+                        VisitExpression(ae.Left);
+                    }
                     VisitExpression(ae.Right);
                     return;
 
@@ -1116,41 +1173,17 @@ function __js2il_esm_export(name, getter) {
                             switch (exportNamedDeclaration.Declaration)
                             {
                                 case VariableDeclaration variableDeclaration:
-                                    // For exported let/var declarations, hoist the declaration (without initializer)
-                                    // before installing export getters so validation sees the binding as declared.
-                                    if (variableDeclaration.Kind != VariableDeclarationKind.Const
-                                        && variableDeclaration.Declarations.All(d => d.Id is Identifier))
+                                    edits.Add(new TextEdit(statement.Start, statement.End, GetNodeSource(source, declarationNode)));
+
+                                    var bindingNames = new List<string>();
+                                    foreach (var variableDeclarator in variableDeclaration.Declarations)
                                     {
-                                        var kindKeyword = variableDeclaration.Kind == VariableDeclarationKind.Var ? "var" : "let";
-                                        var names = new List<string>();
-                                        var assignmentBuilder = new StringBuilder();
-
-                                        foreach (var d in variableDeclaration.Declarations)
-                                        {
-                                            var id = (Identifier)d.Id;
-                                            names.Add(id.Name);
-
-                                            if (d.Init != null)
-                                            {
-                                                assignmentBuilder.Append(id.Name)
-                                                    .Append(" = ")
-                                                    .Append(GetNodeSource(source, (Node)d.Init))
-                                                    .AppendLine(";");
-                                            }
-                                        }
-
-                                        foreach (var name in names.Distinct(StringComparer.Ordinal))
-                                        {
-                                            exportPreludeDeclarations.Add($"{kindKeyword} {name};");
-                                            exportPrelude.Add(CreateExportGetterLine(name, name));
-                                        }
-
-                                        edits.Add(new TextEdit(statement.Start, statement.End, assignmentBuilder.ToString()));
+                                        CollectBindingNames(variableDeclarator.Id, bindingNames);
                                     }
-                                    else
+
+                                    foreach (var name in bindingNames.Distinct(StringComparer.Ordinal))
                                     {
-                                        // Fallback: keep the export rewrite inline (getter after declaration).
-                                        edits.Add(new TextEdit(statement.Start, statement.End, RewriteExportNamedDeclaration(exportNamedDeclaration, source, ref tempCounter)));
+                                        exportPrelude.Add(CreateExportGetterLine(name, name));
                                     }
                                     break;
 
