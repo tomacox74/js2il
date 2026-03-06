@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -15,58 +12,34 @@ namespace Js2IL.Tests.ShapeCoverage
         {
         }
 
-        private static void ScrubILSpyVolatileMethodHeader(StringBuilder sb)
-        {
-            // ILSpy includes non-deterministic disassembly metadata like RVA and code size.
-            // Scrub it so generator snapshots are stable across builds and platforms.
-            var text = sb.ToString();
-            var normalized = string.Join("\n",
-                text.Replace("\r\n", "\n")
-                    .Split('\n')
-                    .Where(line =>
-                    {
-                        var trimmed = line.TrimStart();
-                        return !trimmed.StartsWith("// Method begins at RVA ", StringComparison.Ordinal)
-                            && !trimmed.StartsWith("// Code size: ", StringComparison.Ordinal);
-                    }));
-
-            sb.Clear();
-            sb.Append(normalized);
-        }
-
-        private Task GenerateStableIL(string testName) => GenerateTest(testName, settings =>
-        {
-            settings.AddScrubber(ScrubILSpyVolatileMethodHeader);
-        });
-
         // Join materialization - ?:
         [Fact]
-        public Task ShapeCoverage_JoinMaterialization_TernaryFeedsArithmetic() => GenerateStableIL(nameof(ShapeCoverage_JoinMaterialization_TernaryFeedsArithmetic));
+        public Task ShapeCoverage_JoinMaterialization_TernaryFeedsArithmetic() { var testName = nameof(ShapeCoverage_JoinMaterialization_TernaryFeedsArithmetic); return GenerateTest(testName); }
 
         // Join materialization - &&
         [Fact]
-        public Task ShapeCoverage_JoinMaterialization_LogicalAndFeedsArithmetic() => GenerateStableIL(nameof(ShapeCoverage_JoinMaterialization_LogicalAndFeedsArithmetic));
+        public Task ShapeCoverage_JoinMaterialization_LogicalAndFeedsArithmetic() { var testName = nameof(ShapeCoverage_JoinMaterialization_LogicalAndFeedsArithmetic); return GenerateTest(testName); }
 
         // Join materialization - ||
         [Fact]
-        public Task ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic() => GenerateStableIL(nameof(ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic));
+        public Task ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic() { var testName = nameof(ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic); return GenerateTest(testName); }
 
         // Loop-carried variables
         [Fact]
-        public Task ShapeCoverage_LoopCarried_UpdatedEveryIteration() => GenerateStableIL(nameof(ShapeCoverage_LoopCarried_UpdatedEveryIteration));
+        public Task ShapeCoverage_LoopCarried_UpdatedEveryIteration() { var testName = nameof(ShapeCoverage_LoopCarried_UpdatedEveryIteration); return GenerateTest(testName); }
 
         [Fact]
-        public Task ShapeCoverage_LoopCarried_ConditionalUpdateInLoop() => GenerateStableIL(nameof(ShapeCoverage_LoopCarried_ConditionalUpdateInLoop));
+        public Task ShapeCoverage_LoopCarried_ConditionalUpdateInLoop() { var testName = nameof(ShapeCoverage_LoopCarried_ConditionalUpdateInLoop); return GenerateTest(testName); }
 
         // Mixed numeric representations
         [Fact]
-        public Task ShapeCoverage_MixedNumeric_BoxedArithmetic() => GenerateStableIL(nameof(ShapeCoverage_MixedNumeric_BoxedArithmetic));
+        public Task ShapeCoverage_MixedNumeric_BoxedArithmetic() { var testName = nameof(ShapeCoverage_MixedNumeric_BoxedArithmetic); return GenerateTest(testName); }
 
         [Fact]
-        public Task ShapeCoverage_MixedNumeric_RuntimeCoercion() => GenerateStableIL(nameof(ShapeCoverage_MixedNumeric_RuntimeCoercion));
+        public Task ShapeCoverage_MixedNumeric_RuntimeCoercion() { var testName = nameof(ShapeCoverage_MixedNumeric_RuntimeCoercion); return GenerateTest(testName); }
 
         // Combined shapes
         [Fact]
-        public Task ShapeCoverage_Combined_TernaryInsideLoop() => GenerateStableIL(nameof(ShapeCoverage_Combined_TernaryInsideLoop));
+        public Task ShapeCoverage_Combined_TernaryInsideLoop() { var testName = nameof(ShapeCoverage_Combined_TernaryInsideLoop); return GenerateTest(testName); }
     }
 }
