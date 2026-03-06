@@ -35,7 +35,7 @@
 | 2 | [Expand `path` module parity (normalize/parse/format/extname/isAbsolute, posix/win32)](https://github.com/tomacox74/js2il/issues/784) | `path` | Merged (PR #797) |
 | 3 | [Expand `fs` module parity (callbacks, buffers, mkdir/copyFile/readFile/writeFile)](https://github.com/tomacox74/js2il/issues/785) | `fs` | Merged (PR #800) |
 | 4 | [Expand `stream` module (Duplex/Transform/PassThrough + basic backpressure)](https://github.com/tomacox74/js2il/issues/786) | `stream` | In review (PR #803) |
-| 5 | [Expand `util` essentials (format, inspect parity, util.types breadth)](https://github.com/tomacox74/js2il/issues/787) | `util` | Partial |
+| 5 | [Expand `util` essentials (format, inspect parity, util.types breadth)](https://github.com/tomacox74/js2il/issues/787) | `util` | In review (PR #804) |
 | 6 | [Expand `child_process` beyond sync (spawn/exec/execFile, stdio pipes)](https://github.com/tomacox74/js2il/issues/788) | `child_process` | Partial |
 | 7 | [Implement `url`/`querystring` baseline (URL, URLSearchParams, parse/stringify)](https://github.com/tomacox74/js2il/issues/789) | `url`, `querystring` | Not Yet Supported |
 | 8 | [Implement `crypto` minimum practical subset (createHash, randomBytes, webcrypto bridge)](https://github.com/tomacox74/js2il/issues/790) | `crypto` | Not Yet Supported |
@@ -75,6 +75,7 @@
 
 ## Issue 5: Expand `util` Essentials ([#787](https://github.com/tomacox74/js2il/issues/787))
 - Suggested labels: `enhancement`, `modules`, `priority:medium`
+- Status: in review (PR #804): https://github.com/tomacox74/js2il/pull/804
 - Minimum acceptance:
   - `util.format` baseline + improved `inspect` parity in common cases
   - Expand `util.types` checks as runtime support allows
