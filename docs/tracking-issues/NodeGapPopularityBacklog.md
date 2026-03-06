@@ -1,6 +1,6 @@
 # Node Gap Popularity Backlog
 
-> **Last Updated**: 2026-03-05  
+> **Last Updated**: 2026-03-06  
 > Purpose: Persist a holistic, popularity-weighted view of missing functionality so triage context is not lost between sessions.
 > Scope: Node.js compatibility first, with adjacent ECMA impacts called out where they block common Node workloads.
 
@@ -53,6 +53,7 @@
 
 ## Issue 2: Expand `path` Module Parity ([#784](https://github.com/tomacox74/js2il/issues/784))
 - Suggested labels: `enhancement`, `modules`, `priority:high`
+- Status: merged (PR #797): https://github.com/tomacox74/js2il/pull/797
 - Minimum acceptance:
   - Add normalize/parse/format/extname/isAbsolute + basic posix/win32 shape
   - Execution + generator tests for common edge cases
