@@ -120,8 +120,28 @@ namespace JavaScriptRuntime.Node
             }
             catch (Exception ex)
             {
-                scheduler.EndIo(promiseWithResolvers, new Error(ex.Message, ex), isError: true);
+                scheduler.EndIo(promiseWithResolvers, TranslateCopyFileError(sourcePath, destinationPath, ex), isError: true);
             }
+        }
+
+        internal static Error TranslateCopyFileError(string sourcePath, string destinationPath, Exception ex)
+        {
+            if (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                return new Error($"ENOENT: no such file or directory, copyfile '{sourcePath}' -> '{destinationPath}'", ex);
+            }
+
+            if (ex is UnauthorizedAccessException)
+            {
+                return new Error($"EACCES: permission denied, copyfile '{sourcePath}' -> '{destinationPath}'", ex);
+            }
+
+            if (ex is IOException)
+            {
+                return new Error($"EIO: i/o error, copyfile '{sourcePath}' -> '{destinationPath}'", ex);
+            }
+
+            return new Error($"EIO: i/o error, copyfile '{sourcePath}' -> '{destinationPath}'", ex);
         }
 
         internal static Error TranslateReadFileError(string path, Exception ex)

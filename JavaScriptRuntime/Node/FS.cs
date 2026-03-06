@@ -479,10 +479,11 @@ namespace JavaScriptRuntime.Node
             IoScheduler.BeginIo();
 
             var force = FsCommon.GetBooleanOption(options, "force");
+            var recursive = FsCommon.GetBooleanOption(options, "recursive");
 
             try
             {
-                _ = CompleteRmAsync(path, force, promiseWithResolvers);
+                _ = CompleteRmAsync(path, recursive, force, promiseWithResolvers);
                 return null!;
             }
             catch (Exception ex)
@@ -583,7 +584,7 @@ namespace JavaScriptRuntime.Node
         {
             JsFunc1 resolve = (scopes, newTarget, value) =>
             {
-                Closure.InvokeWithArgs(callback, System.Array.Empty<object>(), null, value);
+                Closure.InvokeWithArgs(callback, System.Array.Empty<object>(), JsNull.Null, value);
                 return null;
             };
 
@@ -654,7 +655,7 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private async Task CompleteRmAsync(string path, bool force, PromiseWithResolvers promiseWithResolvers)
+        private async Task CompleteRmAsync(string path, bool recursive, bool force, PromiseWithResolvers promiseWithResolvers)
         {
             try
             {
@@ -668,7 +669,7 @@ namespace JavaScriptRuntime.Node
                         }
                         else if (Directory.Exists(path))
                         {
-                            Directory.Delete(path, recursive: true);
+                            Directory.Delete(path, recursive: recursive);
                         }
                     }
                     catch

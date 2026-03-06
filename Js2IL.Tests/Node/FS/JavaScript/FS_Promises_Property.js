@@ -6,7 +6,8 @@ const os = require('os');
 
 console.log('HasPromises:', !!fs.promises);
 
-const file = path.join(os.tmpdir(), 'js2il-fs-promises-smoke.txt');
+const uniqueSuffix = `${Date.now()}-${Math.floor(Math.random() * 1000000000)}`;
+const file = path.join(os.tmpdir(), `js2il-fs-promises-smoke-${uniqueSuffix}.txt`);
 fs.rmSync(file, { force: true });
 fs.writeFileSync(file, 'x', 'utf8');
 

@@ -4,7 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const base = path.join(os.tmpdir(), 'js2il-mkdir-callback');
+const unique = `${Date.now()}-${Math.floor(Math.random() * 1000000000)}`;
+const base = path.join(os.tmpdir(), `js2il-mkdir-callback-${unique}`);
 const target = path.join(base, 'nested');
 
 fs.rmSync(base, { recursive: true, force: true });
