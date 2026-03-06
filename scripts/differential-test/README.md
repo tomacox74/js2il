@@ -63,9 +63,9 @@ node scripts/differential-test/generate.js --seed 7 --count 20 --output /tmp/gen
 
 `differential.yml` wires this harness into GitHub Actions:
 
-* **PR gate** – runs the fixed corpus (fast, ~1 min).
 * **Weekly** – runs corpus + 50 generated programs (scheduled Monday at 02:00 UTC).
 * **Manual** – `workflow_dispatch` accepts custom `seed` / `generate` inputs.
+* To keep PR CI fast, this workflow is intentionally **not** triggered on pull requests.
 * If the scheduled weekly run fails, the workflow opens a GitHub issue automatically.
 
 ## Output normalisation

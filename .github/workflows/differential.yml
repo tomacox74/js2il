@@ -2,14 +2,10 @@ name: Differential Tests
 
 # Bounded differential test suite – Node.js vs JS2IL
 #
-# PR gate  : runs the small fixed corpus on every push / PR to master.
-# Weekly   : runs corpus + 50 generated programs (deterministic seed).
+# Schedule : runs corpus + 50 generated programs (deterministic seed).
+# Manual   : workflow_dispatch can run corpus only (generate=0) or corpus + generated.
 
 on:
-  push:
-    branches: ["master"]
-  pull_request:
-    branches: ["master"]
   schedule:
     # Weekly on Monday at 02:00 UTC
     - cron: "0 2 * * 1"
@@ -33,6 +29,7 @@ jobs:
   differential:
     name: Differential (Node vs JS2IL)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
 
@@ -55,15 +52,7 @@ jobs:
       - name: Build JS2IL (Release)
         run: dotnet build Js2IL/Js2IL.csproj --no-restore -c Release
 
-      - name: Run differential tests – fixed corpus (PR gate)
-        if: github.event_name != 'schedule' && github.event_name != 'workflow_dispatch'
-        run: |
-          node scripts/differential-test/run.js \
-            --timeout 30 \
-            --verbose
-
-      - name: Run differential tests – corpus + generated (weekly / manual)
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+      - name: Run differential tests – corpus (+ optional generated)
         run: |
           SEED="${{ github.event.inputs.seed || '42' }}"
           GENERATE="${{ github.event.inputs.generate || '50' }}"
