@@ -1,6 +1,6 @@
 # ECMA-262 Top Missing Features Backlog
 
-> **Last Updated**: 2026-03-02  
+> **Last Updated**: 2026-03-06  
 > Purpose: capture the highest-value unsupported/incomplete ECMA-262 features to drive issue creation and execution planning.
 > Source basis: current `docs/ECMA262/**/Section*.json` + subsection markdown status, plus runtime/validator behavior checks.
 
@@ -15,7 +15,7 @@
 
 | Rank | Backlog item | Primary spec areas | Current status signal |
 |---:|---|---|---|
-| 1 | [ES Modules: spec-accurate module records/linking/evaluation (beyond current `import`/`export` lowering)](https://github.com/tomacox74/js2il/issues/772) | 16.2.1.x, 16.2.1.5-16.2.1.7 | Supported with Limitations (static import/export rewritten to CommonJS `require`; no real module records / live bindings) |
+| 1 | [ES Modules: spec-accurate module records/linking/evaluation (beyond current `import`/`export` lowering)](https://github.com/tomacox74/js2il/issues/772) | 16.2.1.x, 16.2.1.5-16.2.1.7 | Supported with Limitations (static import/export rewritten to CommonJS `require`; live import bindings for common forms; still no full module records/linking/evaluation) |
 | 2 | [ArrayBuffer/DataView-backed typed array semantics](https://github.com/tomacox74/js2il/issues/773) | 23.2.5.1.3 and related typed-array AOs | Not Yet Supported |
 | 3 | [Full `%TypedArray%` surface (constructors + prototype methods)](https://github.com/tomacox74/js2il/issues/774) | 23.2.x | Incomplete |
 | 4 | [RegExp parity for modern behavior (`u`/`y`/`d`/`v`, symbol methods)](https://github.com/tomacox74/js2il/issues/775) | 22.2.6+, 22.2.7+ | Incomplete |
@@ -30,6 +30,7 @@
 
 ## Issue 1: Close ES Module Semantics Gaps (beyond current import/export lowering) ([#772](https://github.com/tomacox74/js2il/issues/772))
 - Suggested labels: `enhancement`, `spec:ecma-262`, `modules`, `commonjs`, `priority:high`
+- Progress (partial): live import bindings + cycle coverage added via `Js2IL.Tests/Import/JavaScript/Import_LiveBindings_*`.
 - Minimum acceptance:
   - Keep supporting `import`/`export` syntax (currently lowered to CommonJS `require` + export getters)
   - Add an implementation strategy that enables live bindings and cyclic ESM graphs
