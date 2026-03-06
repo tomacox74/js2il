@@ -1,0 +1,545 @@
+﻿// IL code: Stream_Pipe_Backpressure_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Stream_Pipe_Backpressure_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L11C18
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x232f
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object newTarget,
+				object chunk
+			) cil managed 
+		{
+			// Method begins at RVA 0x21da
+			// Header size: 1
+			// Code size: 22 (0x16)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.Stream_Pipe_Backpressure_Basic/Scope
+			IL_0008: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::written
+			IL_000d: ldarg.2
+			IL_000e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_0013: pop
+			IL_0014: ldnull
+			IL_0015: ret
+		} // end of method FunctionExpression_L11C18::__js_call__
+
+	} // end of class FunctionExpression_L11C18
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L15C21
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2338
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget
+			) cil managed 
+		{
+			// Method begins at RVA 0x21f1
+			// Header size: 1
+			// Code size: 18 (0x12)
+			.maxstack 8
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldstr "drain"
+			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_000f: pop
+			IL_0010: ldnull
+			IL_0011: ret
+		} // end of method FunctionExpression_L15C21::__js_call__
+
+	} // end of class FunctionExpression_L15C21
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L19C22
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2341
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object newTarget
+			) cil managed 
+		{
+			// Method begins at RVA 0x2204
+			// Header size: 12
+			// Code size: 75 (0x4b)
+			.maxstack 8
+			.locals init (
+				[0] string
+			)
+
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldstr "finish"
+			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_000f: pop
+			IL_0010: ldarg.0
+			IL_0011: ldc.i4.0
+			IL_0012: ldelem.ref
+			IL_0013: castclass Modules.Stream_Pipe_Backpressure_Basic/Scope
+			IL_0018: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::written
+			IL_001d: ldc.i4.1
+			IL_001e: newarr [System.Runtime]System.Object
+			IL_0023: dup
+			IL_0024: ldc.i4.0
+			IL_0025: ldstr ","
+			IL_002a: stelem.ref
+			IL_002b: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0030: stloc.0
+			IL_0031: ldstr "written:"
+			IL_0036: ldloc.0
+			IL_0037: call string [System.Runtime]System.String::Concat(string, string)
+			IL_003c: stloc.0
+			IL_003d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0042: ldloc.0
+			IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0048: pop
+			IL_0049: ldnull
+			IL_004a: ret
+		} // end of method FunctionExpression_L19C22::__js_call__
+
+	} // end of class FunctionExpression_L19C22
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L27C21
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested private auto ansi beforefieldinit Block_L29C29
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2353
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L29C29::.ctor
+
+			} // end of class Block_L29C29
+
+			.class nested private auto ansi beforefieldinit Block_L31C9
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x235c
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L31C9::.ctor
+
+			} // end of class Block_L31C9
+
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x234a
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object newTarget
+			) cil managed 
+		{
+			// Method begins at RVA 0x225c
+			// Header size: 12
+			// Code size: 190 (0xbe)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] float64
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.Stream_Pipe_Backpressure_Basic/Scope
+			IL_0008: ldarg.0
+			IL_0009: ldc.i4.0
+			IL_000a: ldelem.ref
+			IL_000b: castclass Modules.Stream_Pipe_Backpressure_Basic/Scope
+			IL_0010: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001a: ldc.r8 1
+			IL_0023: add
+			IL_0024: box [System.Runtime]System.Double
+			IL_0029: stfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_002e: ldarg.0
+			IL_002f: ldc.i4.0
+			IL_0030: ldelem.ref
+			IL_0031: castclass Modules.Stream_Pipe_Backpressure_Basic/Scope
+			IL_0036: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_003b: stloc.0
+			IL_003c: ldarg.0
+			IL_003d: ldc.i4.0
+			IL_003e: ldelem.ref
+			IL_003f: castclass Modules.Stream_Pipe_Backpressure_Basic/Scope
+			IL_0044: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+			IL_0049: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_004e: conv.r8
+			IL_004f: stloc.1
+			IL_0050: ldloc.0
+			IL_0051: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0056: ldloc.1
+			IL_0057: clt
+			IL_0059: brfalse IL_009c
+
+			IL_005e: ldarg.0
+			IL_005f: ldc.i4.0
+			IL_0060: ldelem.ref
+			IL_0061: castclass Modules.Stream_Pipe_Backpressure_Basic/Scope
+			IL_0066: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_006b: stloc.0
+			IL_006c: ldloc.0
+			IL_006d: ldstr "push"
+			IL_0072: ldarg.0
+			IL_0073: ldc.i4.0
+			IL_0074: ldelem.ref
+			IL_0075: castclass Modules.Stream_Pipe_Backpressure_Basic/Scope
+			IL_007a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+			IL_007f: ldarg.0
+			IL_0080: ldc.i4.0
+			IL_0081: ldelem.ref
+			IL_0082: castclass Modules.Stream_Pipe_Backpressure_Basic/Scope
+			IL_0087: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0096: pop
+			IL_0097: br IL_00bc
+
+			IL_009c: ldarg.0
+			IL_009d: ldc.i4.0
+			IL_009e: ldelem.ref
+			IL_009f: castclass Modules.Stream_Pipe_Backpressure_Basic/Scope
+			IL_00a4: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_00a9: stloc.0
+			IL_00aa: ldloc.0
+			IL_00ab: ldstr "push"
+			IL_00b0: ldc.i4.0
+			IL_00b1: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00bb: pop
+
+			IL_00bc: ldnull
+			IL_00bd: ret
+		} // end of method FunctionExpression_L27C21::__js_call__
+
+	} // end of class FunctionExpression_L27C21
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 4c 53 63 6f 70 65 20 72 65 61 64 61 62 6c
+			65 3d 7b 72 65 61 64 61 62 6c 65 7d 2c 20 77 72
+			69 74 74 65 6e 3d 7b 77 72 69 74 74 65 6e 7d 2c
+			20 63 68 75 6e 6b 73 3d 7b 63 68 75 6e 6b 73 7d
+			2c 20 69 6e 64 65 78 3d 7b 69 6e 64 65 78 7d 00 00
+		)
+		// Fields
+		.field public object readable
+		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array written
+		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array chunks
+		.field public object index
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2326
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 382 (0x17e)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Stream_Pipe_Backpressure_Basic/Scope,
+			[1] object,
+			[2] object,
+			[3] object
+		)
+
+		IL_0000: newobj instance void Modules.Stream_Pipe_Backpressure_Basic/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.1
+		IL_0007: ldstr "node:stream"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.3
+		IL_0012: ldloc.3
+		IL_0013: stloc.1
+		IL_0014: ldloc.1
+		IL_0015: ldstr "Readable"
+		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_001f: ldc.i4.0
+		IL_0020: newarr [System.Runtime]System.Object
+		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_002a: stloc.3
+		IL_002b: ldloc.0
+		IL_002c: ldloc.3
+		IL_002d: stfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+		IL_0032: ldloc.1
+		IL_0033: ldstr "Writable"
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_003d: ldc.i4.0
+		IL_003e: newarr [System.Runtime]System.Object
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_0048: stloc.3
+		IL_0049: ldloc.3
+		IL_004a: stloc.2
+		IL_004b: ldloc.2
+		IL_004c: ldstr "highWaterMark"
+		IL_0051: ldc.r8 1
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, float64)
+		IL_005f: pop
+		IL_0060: ldloc.0
+		IL_0061: ldc.i4.0
+		IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0067: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::written
+		IL_006c: ldc.i4.1
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: dup
+		IL_0073: ldc.i4.0
+		IL_0074: ldloc.0
+		IL_0075: stelem.ref
+		IL_0076: ldftn object Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L11C18::__js_call__(object[], object, object)
+		IL_007c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0081: stloc.3
+		IL_0082: ldloc.2
+		IL_0083: ldstr "_write"
+		IL_0088: ldloc.3
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
+		IL_008e: pop
+		IL_008f: ldnull
+		IL_0090: ldftn object Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L15C21::__js_call__(object)
+		IL_0096: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_009b: stloc.3
+		IL_009c: ldloc.2
+		IL_009d: ldstr "on"
+		IL_00a2: ldstr "drain"
+		IL_00a7: ldloc.3
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00ad: pop
+		IL_00ae: ldc.i4.1
+		IL_00af: newarr [System.Runtime]System.Object
+		IL_00b4: dup
+		IL_00b5: ldc.i4.0
+		IL_00b6: ldloc.0
+		IL_00b7: stelem.ref
+		IL_00b8: ldftn object Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L19C22::__js_call__(object[], object)
+		IL_00be: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00c3: stloc.3
+		IL_00c4: ldloc.2
+		IL_00c5: ldstr "on"
+		IL_00ca: ldstr "finish"
+		IL_00cf: ldloc.3
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00d5: pop
+		IL_00d6: ldloc.0
+		IL_00d7: ldc.i4.3
+		IL_00d8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00dd: dup
+		IL_00de: ldstr "a"
+		IL_00e3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00e8: dup
+		IL_00e9: ldstr "b"
+		IL_00ee: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00f3: dup
+		IL_00f4: ldstr "c"
+		IL_00f9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00fe: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+		IL_0103: ldloc.0
+		IL_0104: ldc.r8 0.0
+		IL_010d: box [System.Runtime]System.Double
+		IL_0112: stfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+		IL_0117: ldc.i4.1
+		IL_0118: newarr [System.Runtime]System.Object
+		IL_011d: dup
+		IL_011e: ldc.i4.0
+		IL_011f: ldloc.0
+		IL_0120: stelem.ref
+		IL_0121: ldftn object Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21::__js_call__(object[], object)
+		IL_0127: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_012c: stloc.3
+		IL_012d: ldloc.2
+		IL_012e: ldstr "on"
+		IL_0133: ldstr "drain"
+		IL_0138: ldloc.3
+		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_013e: pop
+		IL_013f: ldloc.0
+		IL_0140: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+		IL_0145: ldstr "pipe"
+		IL_014a: ldloc.2
+		IL_014b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0150: pop
+		IL_0151: ldloc.0
+		IL_0152: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+		IL_0157: stloc.3
+		IL_0158: ldloc.3
+		IL_0159: ldstr "push"
+		IL_015e: ldloc.0
+		IL_015f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+		IL_0164: ldc.r8 0.0
+		IL_016d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_0172: castclass [System.Runtime]System.String
+		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_017c: pop
+		IL_017d: ret
+	} // end of method Stream_Pipe_Backpressure_Basic::__js_module_init__
+
+} // end of class Modules.Stream_Pipe_Backpressure_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2365
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Stream_Pipe_Backpressure_Basic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

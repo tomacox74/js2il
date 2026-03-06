@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 - Node/path: add `path.posix` and `path.win32` variant APIs (fixes #784).
 - Node/fs: add callback-style async APIs (`readFile`, `writeFile`, `copyFile`, `readdir`, `mkdir`, `stat`, `rm`, `access`, `realpath`) with execution coverage (#785).
+- Node/stream: expand baseline with `Duplex`, `Transform`, and `PassThrough` plus basic `pipe()` backpressure (`write()==false` → pause until `drain`) and a minimal `highWaterMark` knob (#786).
 - commonjs/node: document and add execution coverage for compile-time npm package resolution via `node_modules` + `package.json` (`main` and minimal `exports`) (#783).
 
 ## v0.8.26 - 2026-03-02
