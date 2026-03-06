@@ -87,6 +87,7 @@ namespace JavaScriptRuntime
                 case JavaScriptRuntime.Symbol: return "symbol";
             }
             if (value is ExpandoObject) return "object";
+            if (value is JsObject) return "object";
             if (value is Array) return "object";
             // Functions are delegates in our model; detect common delegate base
             if (value is Delegate) return "function";

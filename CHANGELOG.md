@@ -4,7 +4,59 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- Node/path: add `path.posix` and `path.win32` variant APIs (fixes #784).
+- Node/fs: add callback-style async APIs (`readFile`, `writeFile`, `copyFile`, `readdir`, `mkdir`, `stat`, `rm`, `access`, `realpath`) with execution coverage (#785).
+- Node/stream: expand baseline with `Duplex`, `Transform`, and `PassThrough` plus basic `pipe()` backpressure (`write()==false` → pause until `drain`) and a minimal `highWaterMark` knob (#786).
+- Node/util: expand `util` essentials with `util.format`, custom inspect hook support (`util.inspect.custom`), and broader `util.types` checks (#787).
+- spec/esm: improve static import/export lowering with live import bindings and safer cyclic graphs (partial #772).
+- commonjs/node: document and add execution coverage for compile-time npm package resolution via `node_modules` + `package.json` (`main` and minimal `exports`) (#783).
+
+## v0.8.26 - 2026-03-02
+
+- perf/runtime/spec: add `String.prototype.search` support (`JavaScriptRuntime.String.Search`) and route string member-call normalization to early-bind safe `search`/zero-arg `match`/`split` calls to direct `JavaScriptRuntime.String::*` intrinsic calls, reducing fallback `Object.CallMember*` dispatch in regexp-heavy string paths (closes #749).
+- perf(prime): avoid redundant global-only scopes array allocations by passing through the existing scopes argument at safe call sites.
+- perf(prime): reduce allocation churn at no-scopes call sites by reusing a singleton empty-scopes array.
+
+## v0.8.25 - 2026-03-01
+
+- perf/call-lowering: reduce `Closure.Bind` churn by emitting closed `JsFuncNoScopesN` delegates for non-arrow function values and normalize safe `LIRCallFunction` sites into direct `LIRCallDeclaredCallable` dispatch (preserving `arguments`/rest-sensitive paths), plus runtime `Closure` no-scopes invoke fast paths and refreshed generator snapshots (closes #750).
+- benchmarks/phased: temporarily exclude `evaluation`, `evaluation-modern`, and `linq-js` from `Js2ILPhasedBenchmarks` scenario discovery while those scenarios are investigated for fix-or-remove follow-up.
+- perf/type-inference: infer stable `JavaScriptRuntime.Array` returns for eligible non-class callables (including `generateTestStrings` in `dromaeo-object-regexp`), propagate that type through captured-binding writes/call-site inference, and unlock additional early-bound array field/index/member access patterns in generated IL (fixes #751).
+- compiler/IL/runtime: harden `LIRConvertToObject` emission to use temp-storage type information when boxing and preserve reference/object values without invalid `box`, fixing crashes/invalid casts in tagged-template and typed-reference paths.
+- tests/integration: add `Compile_Performance_Dromaeo_Object_Regexp` integration execution coverage, add `Function_VariableDeclaration_UndefinedInit_TypedReferenceAssignment` execution regression coverage, and refresh affected generator snapshots.
+- benchmarks/tooling: add `scripts/runPhasedBenchmarkScenario.js` for single-scenario phased runs, apply a shared BenchmarkDotNet summary config with max parameter width `200` to phased/runtime benchmark suites, and update BenchmarkDotNet to `0.15.8`.
+- docs/copilot: refresh `.github/copilot-instructions.md` compiler architecture/service guidance and document the recommended local phased benchmark workflow via `node scripts/runPhasedBenchmarkScenario.js <scenario>` (with BenchmarkDotNet docs/source references).
+
+## v0.8.24 - 2026-02-25
+
+- benchmarks/workflows: enforce BenchmarkDotNet JSON output by annotating benchmark suites with `JsonExporterAttribute.FullCompressed`, so release/workflow ingestion reliably uses JSON artifacts (preserving full script-name fidelity instead of markdown-abbreviated labels).
+- perf(array)/codegen: internalize `JavaScriptRuntime.Array` storage (composition over `List<object?>` inheritance), add/retain array fast paths (including `ToArray()` compatibility for spread/apply call paths), and lower proven array operations (including `arr.length = value`) to early-bound calls to reduce late-bound runtime dispatch in hot paths.
+
+## v0.8.23 - 2026-02-25
+
+- runtime/spec/docs: expand ECMA-262 §20.2 (Function Objects) coverage with `Function.prototype.bind`/`toString` wiring on the intrinsic prototype object, `Function.prototype.constructor` exposure, delegate-backed function `length`/`name` properties, focused execution+generator coverage, and updated `docs/ECMA262/20/Section20_2.{json,md}` support tracking.
+- commonjs/lowering: emit safe injected module-scope `require` fields as strongly typed `JavaScriptRuntime.CommonJS.RequireDelegate` and preserve typed reads so `require("...")` lowers to direct `RequireDelegate::Invoke` instead of late-bound `Closure.InvokeWithArgs*`; updated affected Node FS generator snapshots.
+
+## v0.8.22 - 2026-02-24
+
+- benchmarks/perf: fix `Js2ILPhasedBenchmarks` scenario keying to use plain script names (matching BenchmarkDotNet `ScriptName`) so phased runs no longer hit dictionary `KeyNotFoundException` and produce `NA`-only results.
+
+## v0.8.21 - 2026-02-24
+
+- perf(array): add a single-item `JavaScriptRuntime.Array::push(object)` overload and update typed instance-call lowering to prefer it for arity-1 `push(...)` calls, eliminating per-call `object[]` allocations in the common path; refresh affected generator snapshots.
+- perf/type-inference/tests: infer stable captured `let` array bindings across closure writes (e.g., `ret` in `dromaeo-object-array-modern`) as `JavaScriptRuntime.Array` so generated scope fields are array-typed instead of `object` in hot paths; add `Compile_Performance_Dromaeo_Object_Array_Modern` integration generator coverage using the original benchmark script as an embedded resource and refresh affected generator snapshots.
+- runtime/object-model: consolidate plain-object materialization onto `JsObject` across `Object.create`, `Object.fromEntries`, `Object.groupBy`, descriptor-object creation, and lazy function `prototype` allocation; add `ObjectRuntime` as the descriptive runtime surface alias and migrate runtime call sites to it while preserving compatibility with existing `JavaScriptRuntime.Object` intrinsic references.
+- runtime/spec/docs: complete ECMA-262 §20.1 (Object Objects) clause coverage with new `Object.*` APIs (`groupBy`, `hasOwn`, `getOwnPropertyDescriptors`, `getOwnPropertySymbols`, integrity methods), `Object.prototype.*` additions (constructor/isPrototypeOf/propertyIsEnumerable/toLocaleString/toString/valueOf and legacy accessor helpers), centralized Object intrinsic surface wiring in `JavaScriptRuntime.Object`, new Object execution/generator tests, and updated `docs/ECMA262/20/Section20_1.{json,md}` support tracking.
+
+## v0.8.20 - 2026-02-24
+
+- perf: Reduce boxing in object literals (#351). Replace `ExpandoObject` backing store for JavaScript object literals with a new `JsObject` class backed by `Dictionary<string, JsValue>`. The `JsValue` struct stores number and boolean values inline without heap allocation. New typed property setter methods (`SetPropertyNumber`, `SetPropertyBoolean`, `SetPropertyString`) are called from generated IL instead of the generic `SetItem(object, object, object)` overload, eliminating the `box` instruction for numeric/bool/string property values in object literal initialization. Runtime compatibility with all existing `ExpandoObject` consumers is maintained via the `IDictionary<string, object?>` interface. Also fixes `for-in` enumeration and object spread for descriptor-defined properties on the new JsObject type.
+- perf: optimize bracket reads/writes for proven string keys by adding string-specific runtime overload paths (`Object.GetItem(object, string)`, `SetItem(object, string, object)`, `GetItemAsNumber(object, string)`), plus string-specialized LIR normalization/emission to reduce key-normalization overhead in hot property-access paths (PR #696, fixes #310).
+- perf: add flow-sensitive numeric refinement propagation in HIR→LIR lowering to reuse proven unboxed-number temps and reduce redundant `TypeUtilities.ToNumber(object)` calls, with conservative invalidation at assignments/control-flow labels and safe tracking limited to non-captured/non-global bindings (PR #697, fixes #315).
+- runtime/spec: expand ECMA-262 §20.5 Error Objects coverage with callable global `Error(...)`, `Error.isError(arg)`, and baseline `Error.prototype` surface (`constructor`, `name`, `message`, `toString`) plus execution/generator coverage and updated section tracking docs.
+- Runtime/spec: complete ECMA-262 §20.3 Boolean Objects support by implementing Boolean wrapper construction for `new Boolean(value)`, `Boolean.prototype` wiring (`constructor`, `toString`, `valueOf`), and `ThisBooleanValue` semantics for primitive and wrapper receivers.
+- runtime/spec: expand ECMA-262 §20.4 Symbol Objects coverage with global registry APIs (`Symbol.for`, `Symbol.keyFor`), full well-known symbol constructor properties, and Symbol prototype basics (`description`, `toString`, `valueOf`) plus execution/generator test coverage.
+- docs(ecma262): mark §20.1 `Object.is` as supported and link existing execution/generator coverage in `docs/ECMA262/20/Section20_1.{json,md}`.
 
 ## v0.8.19 - 2026-02-23
 
@@ -49,7 +101,7 @@ _Nothing yet._
 - Node/path compatibility: added support for `path.extname`, `path.isAbsolute`, `path.normalize`, `path.parse`, `path.format`, `path.sep`, `path.delimiter`, and `path.toNamespacedPath`, and aligned `path.relative(from, to)` same-path behavior with Node (returns empty string).
 - Node tests/docs reorganization: split monolithic Node tests into focused subfolders (`Node/FS`, `Node/Path`, `Node/Process`, `Node/Timers`) with migrated JavaScript fixtures, snapshots, and updated docs references.
 - Node docs synchronization: refreshed `docs/nodejs/*.json` and generated markdown pages to reflect current API coverage and moved test locations.
-- Planning/triage continuity: added `docs/tracking-issues/NodeGapPopularityBacklog_2026-02-17.md`, promoted `docs/tracking-issues/TriageScoreboard.md` as active prioritization source, and linked tracking docs for interruption-safe handoff.
+- Planning/triage continuity: added `docs/tracking-issues/NodeGapPopularityBacklog.md`, promoted `docs/tracking-issues/TriageScoreboard.md` as active prioritization source, and linked tracking docs for interruption-safe handoff.
 
 ## v0.8.13 - 2026-02-16
 
@@ -1084,4 +1136,3 @@ CI/NuGet
 ## v0.1.0-preview.3 - 2025-07-18
 
 - Initial preview release.
-

@@ -460,7 +460,7 @@ internal static class Stackify
                 }
                 return true;
 
-            // LIRNewJsObject creates an ExpandoObject and initializes properties inline.
+            // LIRNewJsObject creates a JsObject and initializes properties inline.
             // Safe to inline if all property value temps can be emitted inline.
             case LIRNewJsObject newJsObject:
                 foreach (var valueIdx in newJsObject.Properties.Select(p => p.Value.Index))
@@ -472,8 +472,9 @@ internal static class Stackify
                 }
                 return true;
 
-            // LIRGetLength and LIRGetItem are pure runtime calls
+            // LIRGetLength/LIRGetStringLength and LIRGetItem are pure runtime calls
             case LIRGetLength:
+            case LIRGetStringLength:
             case LIRGetItem:
             case LIRGetItemAsNumber:
                 return true;
@@ -494,6 +495,10 @@ internal static class Stackify
 
             // Typed intrinsic element set mutates the array and must never be re-emitted.
             case LIRSetInt32ArrayElement:
+                return false;
+
+            // Proven Array length set mutates the array and must never be re-emitted.
+            case LIRSetJsArrayLength:
                 return false;
 
             // Proven Array element set mutates the array and must never be re-emitted.
@@ -682,13 +687,17 @@ internal static class Stackify
             case LIRNewJsArray newJsArray:
                 return (newJsArray.Elements.Count, 1);
 
-            // LIRNewJsObject: consumes N property value temps, produces 1 ExpandoObject reference
+            // LIRNewJsObject: consumes N property value temps, produces 1 JsObject reference
             // The dup pattern keeps object on stack internally, net effect is: pop N, push 1
             case LIRNewJsObject newJsObject:
                 return (newJsObject.Properties.Count, 1);
 
             // LIRGetLength: consumes 1 object, produces 1 double
             case LIRGetLength:
+                return (1, 1);
+
+            // LIRGetStringLength: consumes 1 receiver, produces 1 double
+            case LIRGetStringLength:
                 return (1, 1);
 
             // LIRGetJsArrayLength: consumes 1 receiver, produces 1 double
@@ -719,6 +728,11 @@ internal static class Stackify
             // (its SSA result is materialized into a local when needed).
             case LIRSetInt32ArrayElement:
                 return (3, 0);
+
+            // LIRSetJsArrayLength: consumes receiver + value; side effects, no net value left on stack
+            // (its SSA result is materialized into a local when needed).
+            case LIRSetJsArrayLength:
+                return (2, 0);
 
             // LIRSetJsArrayElement: consumes receiver + index + value; side effects, no net value left on stack
             // (its SSA result is materialized into a local when needed).
@@ -794,6 +808,8 @@ internal static class Stackify
             case LIRBitwiseNotNumber:
             case LIRBitwiseNotDynamic:
             case LIRCallIsTruthy:
+            case LIRCallIsTruthyDouble:
+            case LIRCallIsTruthyBool:
             case LIRCopyTemp:
                 return (1, 1);
 

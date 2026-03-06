@@ -76,35 +76,24 @@ internal static class LIRMemberCallNormalization
 
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
-            if (methodBody.Instructions[i] is not LIRCallMember callMember)
+            if (!TryGetMemberCallSite(
+                    methodBody,
+                    i,
+                    buildArrays,
+                    out var receiver,
+                    out var methodName,
+                    out var arguments,
+                    out var result,
+                    out var buildArrayDefIndex))
             {
                 continue;
             }
 
-            // Only normalize when the args array is a temp created by LIRBuildArray.
-            var argsTempIndex = callMember.ArgumentsArray.Index;
-            if (argsTempIndex < 0)
-            {
-                continue;
-            }
-
-            if (!buildArrays.TryGetValue(argsTempIndex, out var buildInfo))
-            {
-                continue;
-            }
-
-            // Only remove the args array build when the temp is used ONLY by the build itself and this call.
-            // If it flows elsewhere, keep existing semantics.
-            if (IsTempUsedOutside(methodBody, callMember.ArgumentsArray, ignoreInstructionIndices: new HashSet<int> { buildInfo.DefIndex, i }))
-            {
-                continue;
-            }
-
-            var argCount = buildInfo.Elements.Count;
+            var argCount = arguments.Count;
 
             // Resolve a uniquely-defined instance method by name + call-site arity.
             if (!classRegistry.TryResolveUniqueInstanceMethod(
-                    callMember.MethodName,
+                    methodName,
                     argCount,
                     out _,
                     out var receiverTypeHandle,
@@ -124,52 +113,58 @@ internal static class LIRMemberCallNormalization
             bool resultIsReceiverType = !returnTypeHandle.IsNil && returnTypeHandle.Equals(resolvedReceiverEntityHandle);
 
             // Receiver-proven typed case: emit direct early-bound call without runtime-dispatch fallback.
-            if (callMember.Receiver.Index >= 0
-                && knownUserClassReceiverTypeHandles.TryGetValue(callMember.Receiver.Index, out var knownReceiverHandle)
+            if (receiver.Index >= 0
+                && knownUserClassReceiverTypeHandles.TryGetValue(receiver.Index, out var knownReceiverHandle)
                 && knownReceiverHandle.Equals(receiverTypeHandle))
             {
                 methodBody.Instructions[i] = new LIRCallTypedMember(
-                    callMember.Receiver,
+                    receiver,
                     receiverTypeHandle,
                     methodHandle,
                     hasScopesParam,
                     returnClrType,
                     maxParamCount,
-                    buildInfo.Elements,
-                    callMember.Result);
+                    arguments,
+                    result);
 
-                if (resultIsReceiverType && callMember.Result.Index >= 0)
+                if (resultIsReceiverType && result.Index >= 0)
                 {
-                    knownUserClassReceiverTypeHandles[callMember.Result.Index] = resolvedReceiverEntityHandle;
+                    knownUserClassReceiverTypeHandles[result.Index] = resolvedReceiverEntityHandle;
 
                     // Also propagate the proven type handle into the temp's storage so IL emission can avoid
                     // redundant castclass when the result is used as a typed receiver (including stackified temps).
-                    if (callMember.Result.Index < methodBody.TempStorages.Count)
+                    if (result.Index < methodBody.TempStorages.Count)
                     {
-                        methodBody.TempStorages[callMember.Result.Index] = new ValueStorage(
+                        methodBody.TempStorages[result.Index] = new ValueStorage(
                             ValueStorageKind.Reference,
                             typeof(object),
                             resolvedReceiverEntityHandle);
                     }
                 }
 
-                indicesToRemove.Add(buildInfo.DefIndex);
+                if (buildArrayDefIndex >= 0)
+                {
+                    indicesToRemove.Add(buildArrayDefIndex);
+                }
                 continue;
             }
 
             // Otherwise: emit guarded early-bound call with fallback to runtime dispatch.
             methodBody.Instructions[i] = new LIRCallTypedMemberWithFallback(
-                callMember.Receiver,
-                callMember.MethodName,
+                receiver,
+                methodName,
                 receiverTypeHandle,
                 methodHandle,
                 hasScopesParam,
                 returnClrType,
                 maxParamCount,
-                buildInfo.Elements,
-                callMember.Result);
+                arguments,
+                result);
 
-            indicesToRemove.Add(buildInfo.DefIndex);
+            if (buildArrayDefIndex >= 0)
+            {
+                indicesToRemove.Add(buildArrayDefIndex);
+            }
         }
 
         if (indicesToRemove.Count == 0)
@@ -188,6 +183,85 @@ internal static class LIRMemberCallNormalization
         }
         methodBody.Instructions.Clear();
         methodBody.Instructions.AddRange(newInstructions);
+    }
+
+    private static bool TryGetMemberCallSite(
+        MethodBodyIR methodBody,
+        int instructionIndex,
+        Dictionary<int, (int DefIndex, IReadOnlyList<TempVariable> Elements)> buildArrays,
+        out TempVariable receiver,
+        out string methodName,
+        out IReadOnlyList<TempVariable> arguments,
+        out TempVariable result,
+        out int buildArrayDefIndex)
+    {
+        receiver = default;
+        methodName = string.Empty;
+        arguments = Array.Empty<TempVariable>();
+        result = default;
+        buildArrayDefIndex = -1;
+
+        switch (methodBody.Instructions[instructionIndex])
+        {
+            case LIRCallMember callMember:
+                {
+                    // Only normalize when the args array is a temp created by LIRBuildArray.
+                    var argsTempIndex = callMember.ArgumentsArray.Index;
+                    if (argsTempIndex < 0)
+                    {
+                        return false;
+                    }
+
+                    if (!buildArrays.TryGetValue(argsTempIndex, out var buildInfo))
+                    {
+                        return false;
+                    }
+
+                    // Only remove the args array build when the temp is used ONLY by the build itself and this call.
+                    // If it flows elsewhere, keep existing semantics.
+                    if (IsTempUsedOutside(methodBody, callMember.ArgumentsArray, ignoreInstructionIndices: new HashSet<int> { buildInfo.DefIndex, instructionIndex }))
+                    {
+                        return false;
+                    }
+
+                    receiver = callMember.Receiver;
+                    methodName = callMember.MethodName;
+                    arguments = buildInfo.Elements;
+                    result = callMember.Result;
+                    buildArrayDefIndex = buildInfo.DefIndex;
+                    return true;
+                }
+
+            case LIRCallMember0 callMember0:
+                receiver = callMember0.Receiver;
+                methodName = callMember0.MethodName;
+                result = callMember0.Result;
+                return true;
+
+            case LIRCallMember1 callMember1:
+                receiver = callMember1.Receiver;
+                methodName = callMember1.MethodName;
+                arguments = new[] { callMember1.A0 };
+                result = callMember1.Result;
+                return true;
+
+            case LIRCallMember2 callMember2:
+                receiver = callMember2.Receiver;
+                methodName = callMember2.MethodName;
+                arguments = new[] { callMember2.A0, callMember2.A1 };
+                result = callMember2.Result;
+                return true;
+
+            case LIRCallMember3 callMember3:
+                receiver = callMember3.Receiver;
+                methodName = callMember3.MethodName;
+                arguments = new[] { callMember3.A0, callMember3.A1, callMember3.A2 };
+                result = callMember3.Result;
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     private static bool TryGetDeclaredUserClassFieldTypeHandle(

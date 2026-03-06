@@ -10,9 +10,11 @@ using System.Globalization;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
-    public class Array : List<object?>
+    public class Array : IEnumerable<object?>
     {
         internal static readonly ExpandoObject Prototype = CreatePrototype();
+        private readonly List<object?> _items;
+        private int _logicalLength;
 
         private static ExpandoObject CreatePrototype()
         {
@@ -23,6 +25,27 @@ namespace JavaScriptRuntime
             dict["reduceRight"] = (Func<object[], object?[], object?>)PrototypeReduceRight;
             dict["indexOf"] = (Func<object[], object?[], object?>)PrototypeIndexOf;
             return exp;
+        }
+
+        private int DenseCount => _items.Count;
+        private int LogicalCount => _logicalLength > DenseCount ? _logicalLength : DenseCount;
+
+        private void EnsureDenseStorage(int minCount)
+        {
+            if (_items.Count >= minCount)
+            {
+                return;
+            }
+
+            if (minCount > _items.Capacity)
+            {
+                _items.Capacity = minCount;
+            }
+
+            while (_items.Count < minCount)
+            {
+                _items.Add(null);
+            }
         }
 
         private static object PrototypePush(object[] scopes, object?[]? args)
@@ -36,6 +59,11 @@ namespace JavaScriptRuntime
             if (args == null || args.Length == 0)
             {
                 return jsArray.push();
+            }
+
+            if (args.Length == 1)
+            {
+                return jsArray.push(args[0]);
             }
 
             var converted = new object[args.Length];
@@ -113,9 +141,9 @@ namespace JavaScriptRuntime
                 k = 0;
                 for (int i = 0; i < length; i++)
                 {
-                    if (JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
                     {
-                        accumulator = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                        accumulator = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
                         k = i + 1;
                         found = true;
                         break;
@@ -130,11 +158,11 @@ namespace JavaScriptRuntime
 
             for (int i = k; i < length; i++)
             {
-                if (!JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
                 {
                     continue;
                 }
-                var current = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                var current = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
                 accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
                 {
                     accumulator,
@@ -209,9 +237,9 @@ namespace JavaScriptRuntime
                 k = length - 1;
                 for (int i = length - 1; i >= 0; i--)
                 {
-                    if (JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
                     {
-                        accumulator = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                        accumulator = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
                         k = i - 1;
                         found = true;
                         break;
@@ -226,11 +254,11 @@ namespace JavaScriptRuntime
 
             for (int i = k; i >= 0; i--)
             {
-                if (!JavaScriptRuntime.Object.HasPropertyIn((double)i, receiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
                 {
                     continue;
                 }
-                var current = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                var current = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
                 accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
                 {
                     accumulator,
@@ -319,7 +347,7 @@ namespace JavaScriptRuntime
 
             for (int i = k; i < length; i++)
             {
-                var element = JavaScriptRuntime.Object.GetItem(receiver, (double)i);
+                var element = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
                 if (JavaScriptRuntime.Operators.StrictEqual(element, searchElement))
                 {
                     return (double)i;
@@ -331,7 +359,7 @@ namespace JavaScriptRuntime
 
         private static int ToArrayLikeLength(object receiver)
         {
-            var lenValue = JavaScriptRuntime.Object.GetProperty(receiver, "length");
+            var lenValue = JavaScriptRuntime.ObjectRuntime.GetProperty(receiver, "length");
             double d;
             try { d = TypeUtilities.ToNumber(lenValue); }
             catch { d = 0d; }
@@ -342,18 +370,148 @@ namespace JavaScriptRuntime
             return (int)d;
         }
 
-        public Array() : base()
+        public Array()
         {
+            _items = new List<object?>();
+            _logicalLength = 0;
         }
-        public Array(int capacity) : base(capacity)
+        public Array(int capacity)
         {
+            _items = new List<object?>(capacity);
+            _logicalLength = 0;
         }
-        public Array(System.Collections.IEnumerable collection) : base(collection.Cast<object?>())
+        public Array(System.Collections.IEnumerable collection)
         {
+            _items = collection.Cast<object?>().ToList();
+            _logicalLength = _items.Count;
         }
 
+        public int Count => LogicalCount;
+
+        public object? this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+
+                if (index >= _items.Count)
+                {
+                    return null;
+                }
+
+                return _items[index];
+            }
+            set
+            {
+                if (index < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+
+                if (index < _items.Count)
+                {
+                    _items[index] = value;
+                    return;
+                }
+
+                if (index >= _logicalLength)
+                {
+                    _logicalLength = index + 1;
+                }
+
+                EnsureDenseStorage(index + 1);
+                _items[index] = value;
+            }
+        }
+
+        public void Add(object? item)
+        {
+            EnsureDenseStorage(_logicalLength);
+            _items.Add(item);
+            _logicalLength = _items.Count;
+        }
+
+        public void AddRange(IEnumerable<object?> collection)
+        {
+            EnsureDenseStorage(_logicalLength);
+            _items.AddRange(collection);
+            _logicalLength = _items.Count;
+        }
+
+        public void Insert(int index, object? item)
+        {
+            EnsureDenseStorage(Count);
+            _items.Insert(index, item);
+            _logicalLength = _items.Count;
+        }
+
+        public void InsertRange(int index, IEnumerable<object?> collection)
+        {
+            EnsureDenseStorage(Count);
+            _items.InsertRange(index, collection);
+            _logicalLength = _items.Count;
+        }
+
+        public void RemoveAt(int index)
+        {
+            EnsureDenseStorage(Count);
+            _items.RemoveAt(index);
+            _logicalLength = _items.Count;
+        }
+
+        public void RemoveRange(int index, int count)
+        {
+            EnsureDenseStorage(Count);
+            _items.RemoveRange(index, count);
+            _logicalLength = _items.Count;
+        }
+
+        public void Reverse()
+        {
+            EnsureDenseStorage(Count);
+            _items.Reverse();
+            _logicalLength = _items.Count;
+        }
+
+        public void Sort(Comparison<object?> comparison)
+        {
+            EnsureDenseStorage(Count);
+            _items.Sort(comparison);
+            _logicalLength = _items.Count;
+        }
+
+        public void Clear()
+        {
+            _items.Clear();
+            _logicalLength = 0;
+        }
+
+        public object?[] ToArray()
+        {
+            var result = new object?[Count];
+            for (int i = 0; i < Count; i++)
+            {
+                result[i] = this[i];
+            }
+
+            return result;
+        }
+
+        public IEnumerator<object?> GetEnumerator()
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                yield return this[i];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
         // Numeric indexer overload to support compiler intrinsics.
-        // Semantics intentionally match JavaScriptRuntime.Object.GetItem/SetItem for Array + numeric index:
+        // Semantics intentionally match JavaScriptRuntime.ObjectRuntime.GetItem/SetItem for Array + numeric index:
         // - Out-of-bounds reads return undefined (null)
         // - Writes extend the array with undefined (null)
         // - Negative indices behave like properties (currently ignored for host safety)
@@ -367,7 +525,7 @@ namespace JavaScriptRuntime
                     return null; // undefined
                 }
 
-                return base[intIndex];
+                return this[intIndex];
             }
             set
             {
@@ -384,7 +542,7 @@ namespace JavaScriptRuntime
 
                 if (intIndex < 0)
                 {
-                    JavaScriptRuntime.Object.SetProperty(
+                    JavaScriptRuntime.ObjectRuntime.SetProperty(
                         this,
                         intIndex.ToString(CultureInfo.InvariantCulture),
                         value);
@@ -393,7 +551,7 @@ namespace JavaScriptRuntime
 
                 if (intIndex < Count)
                 {
-                    base[intIndex] = value;
+                    this[intIndex] = value;
                     return;
                 }
 
@@ -453,10 +611,7 @@ namespace JavaScriptRuntime
                     var len = (int)d;
 
                     var result = new Array();
-                    for (int i = 0; i < len; i++)
-                    {
-                        result.Add(null);
-                    }
+                    result._logicalLength = len;
                     return result;
                 }
 
@@ -478,10 +633,11 @@ namespace JavaScriptRuntime
             this.Clear();
 
             // Preserve JS semantics: length is Count, and missing elements are represented as null (undefined).
-            if (constructed.Count > 0)
+            if (constructed.DenseCount > 0)
             {
                 this.AddRange(constructed);
             }
+            _logicalLength = constructed.Count;
         }
 
         public static Array Empty => new Array();
@@ -593,14 +749,15 @@ namespace JavaScriptRuntime
 
                 if (newLen < this.Count)
                 {
-                    this.RemoveRange(newLen, this.Count - newLen);
+                    if (newLen < _items.Count)
+                    {
+                        _items.RemoveRange(newLen, _items.Count - newLen);
+                    }
+                    _logicalLength = newLen;
                     return;
                 }
 
-                while (this.Count < newLen)
-                {
-                    this.Add(null);
-                }
+                _logicalLength = newLen;
             }
         }
 
@@ -1612,6 +1769,15 @@ namespace JavaScriptRuntime
             return splice(new object[] { start, deleteCount });
         }
 
+        /// <summary>
+        /// Overload with start, deleteCount and one inserted item.
+        /// Avoids params-array packing at common three-argument call sites.
+        /// </summary>
+        public Array splice(object start, object deleteCount, object item1)
+        {
+            return splice(new object[] { start, deleteCount, item1 });
+        }
+
         private static int ToInt(object value, int defaultValue)
         {
             try
@@ -1686,6 +1852,15 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.push(...items): appends items to the end and returns the new length.
         /// </summary>
+        public double push(object? item)
+        {
+            this.Add(item);
+            return (double)this.Count;
+        }
+
+        /// <summary>
+        /// JavaScript Array.push(...items): appends items to the end and returns the new length.
+        /// </summary>
         public double push(object[]? args)
         {
             if (args != null)
@@ -1748,7 +1923,7 @@ namespace JavaScriptRuntime
             // Spec-aligned behavior: array spread consumes the iterator protocol.
             // This supports strings, typed arrays, user-defined iterables via Symbol.iterator,
             // and falls back to .NET IEnumerable when available.
-            var iterator = JavaScriptRuntime.Object.GetIterator(source);
+            var iterator = JavaScriptRuntime.ObjectRuntime.GetIterator(source);
             while (true)
             {
                 var step = iterator.Next();
@@ -1794,6 +1969,12 @@ namespace JavaScriptRuntime
 
         public double unshift()
         {
+            return (double)this.Count;
+        }
+
+        public double unshift(object item1)
+        {
+            this.Insert(0, item1);
             return (double)this.Count;
         }
 

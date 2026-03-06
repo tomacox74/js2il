@@ -36,6 +36,24 @@ public sealed partial class HIRToLIRLowerer
     // (e.g., per-iteration loop environments).
     private readonly Dictionary<string, TempVariable> _activeScopeTempsByScopeName = new(StringComparer.Ordinal);
 
+    // Flow-sensitive numeric type refinement: maps a binding to the last proven unboxed-double
+    // temp that holds its value.  Used to avoid redundant TypeUtilities.ToNumber calls when the
+    // same variable is used in multiple numeric contexts without any intervening write.
+    // Entries for writable bindings are cleared when the binding is assigned and at every
+    // control-flow label (branch / loop header), keeping the optimisation safe.
+    private readonly Dictionary<BindingInfo, TempVariable> _numericRefinements = new Dictionary<BindingInfo, TempVariable>();
+
+    // Reverse map: records which binding a freshly-created load temp originated from so that
+    // EnsureNumber can propagate the coercion result back into _numericRefinements.
+    // Entries are consumed on use and cleared at control-flow labels.
+    private readonly Dictionary<TempVariable, BindingInfo> _tempBindingOrigin = new Dictionary<TempVariable, BindingInfo>();
+
+    // Incremental scan cursor used to detect labels emitted by any lowering path.
+    // When a new label is observed, numeric refinements/origin mappings are cleared
+    // so refinements remain basic-block scoped even when individual sites do not
+    // explicitly call ClearNumericRefinementsAtLabel().
+    private int _numericRefinementLabelScanIndex;
+
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
 
@@ -435,6 +453,18 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
                 return true;
             }
+            // Fast-path: if the caller already has a global-only scopes argument, pass it through
+            // rather than allocating a new 1-element scopes array at the call site.
+            if (globalSlotSource.Source == ScopeInstanceSource.ScopesArgument
+                && globalSlotSource.SourceIndex == 0
+                && _environmentLayout?.Abi.ScopesSource == ScopesSource.Argument
+                && _environmentLayout.ScopeChain.Slots.Count == 1
+                && string.Equals(_environmentLayout.ScopeChain.Slots[0].ScopeName, globalSlot.ScopeName, StringComparison.Ordinal))
+            {
+                _methodBodyIR.Instructions.Add(new LIRLoadScopesArgument(resultTemp));
+                return true;
+            }
+
             _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
             return true;
         }
@@ -556,6 +586,18 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource, leafSlotSource }, resultTemp));
                 return true;
             }
+        }
+
+        // Fast-path: if the caller already has a global-only scopes argument, pass it through
+        // rather than allocating a new 1-element scopes array at the call site.
+        if (globalSlotSource.Source == ScopeInstanceSource.ScopesArgument
+            && globalSlotSource.SourceIndex == 0
+            && _environmentLayout?.Abi.ScopesSource == ScopesSource.Argument
+            && _environmentLayout.ScopeChain.Slots.Count == 1
+            && string.Equals(_environmentLayout.ScopeChain.Slots[0].ScopeName, moduleName, StringComparison.Ordinal))
+        {
+            _methodBodyIR.Instructions.Add(new LIRLoadScopesArgument(resultTemp));
+            return true;
         }
 
         _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
@@ -722,6 +764,47 @@ public sealed partial class HIRToLIRLowerer
     public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR? lirMethod)
     {
         return TryLower(hirMethod, null, null, out lirMethod);
-    } 
+    }
+
+    // Clear all numeric refinements at a control-flow label (branch / loop header).
+    // Refinements are only valid within a single basic block; once control flow can
+    // arrive from multiple predecessors, a previously cached coercion result may no
+    // longer reflect the current value of the variable, so we must discard them.
+    private void ClearNumericRefinementsAtLabel()
+    {
+        _numericRefinements.Clear();
+        _tempBindingOrigin.Clear();
+        _numericRefinementLabelScanIndex = _methodBodyIR.Instructions.Count;
+    }
+
+    // Detect labels appended since the last scan and clear refinements if any were
+    // emitted. This centralizes label-boundary invalidation across all lowering files.
+    private void SyncNumericRefinementStateWithLabels()
+    {
+        var instructions = _methodBodyIR.Instructions;
+        if (_numericRefinementLabelScanIndex >= instructions.Count)
+        {
+            return;
+        }
+
+        for (int i = _numericRefinementLabelScanIndex; i < instructions.Count; i++)
+        {
+            if (instructions[i] is LIRLabel)
+            {
+                ClearNumericRefinementsAtLabel();
+                break;
+            }
+        }
+
+        _numericRefinementLabelScanIndex = instructions.Count;
+    }
+
+    // Flow-sensitive numeric refinements are only safe for non-captured, non-global bindings.
+    // Captured/global bindings can be read/written through other runtime paths (closures, global object),
+    // which can invalidate local dominance assumptions.
+    private static bool CanTrackNumericRefinement(BindingInfo binding)
+    {
+        return !binding.IsCaptured && binding.Kind != BindingKind.Global;
+    }
 
 }

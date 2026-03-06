@@ -29,11 +29,15 @@ function getAssemblyFileBaseName(testName) {
   return segments.length > 0 ? segments[segments.length - 1] : String(testName);
 }
 
-function tryFindLatestGeneratedAssembly(category, assemblyFileBaseName) {
+function getCandidateCategoryRoots(category) {
   const tempDir = os.tmpdir();
-  const categoryRoot = path.join(tempDir, 'Js2IL.Tests', `${category}.GeneratorTests`);
-  const assemblyFileName = `${assemblyFileBaseName}.dll`;
+  return [
+    path.join(tempDir, 'Js2IL.Tests', `${category}.GeneratorTests`),
+    path.join(tempDir, 'Js2IL.Tests', `${category}.ExecutionTests`),
+  ];
+}
 
+function tryFindLatestGeneratedAssemblyInRoot(categoryRoot, assemblyFileName) {
   if (!fs.existsSync(categoryRoot)) {
     return null;
   }
@@ -57,6 +61,16 @@ function tryFindLatestGeneratedAssembly(category, assemblyFileBaseName) {
   }
 
   return bestPath;
+}
+
+function tryFindLatestGeneratedAssembly(category, assemblyFileBaseName) {
+  const [generatorRoot, executionRoot] = getCandidateCategoryRoots(category);
+  const assemblyFileName = `${assemblyFileBaseName}.dll`;
+  const generated = tryFindLatestGeneratedAssemblyInRoot(generatorRoot, assemblyFileName);
+  if (generated) {
+    return generated;
+  }
+  return tryFindLatestGeneratedAssemblyInRoot(executionRoot, assemblyFileName);
 }
 
 function findProjectRoot(startDir) {
@@ -140,8 +154,9 @@ function main() {
   }
 
   // Step 2: Find the generated assembly
-  // GeneratorTestsBase writes to a per-run GUID directory:
+  // Current test harness can write to either:
   //   %TEMP%/Js2IL.Tests/{Category}.GeneratorTests/{runId}/{assemblyName}.dll
+  //   %TEMP%/Js2IL.Tests/{Category}.ExecutionTests/{runId}/{assemblyName}.dll
   // where assemblyName is the basename of the JS entry file.
   const assemblyFileBaseName = getAssemblyFileBaseName(testName);
   const assemblyPath =
@@ -149,10 +164,12 @@ function main() {
     null;
 
   if (!assemblyPath) {
-    const tempDir = os.tmpdir();
-    const categoryRoot = path.join(tempDir, 'Js2IL.Tests', `${category}.GeneratorTests`);
     console.error(`Assembly not found for category '${category}' and test '${testName}'.`);
-    console.error(`Looked under: ${categoryRoot}`);
+    console.error('Looked under:');
+    const categoryRoots = getCandidateCategoryRoots(category);
+    for (let i = 0; i < categoryRoots.length; i += 1) {
+      console.error(`  - ${categoryRoots[i]}`);
+    }
     console.error('Make sure the test ran successfully and generated the assembly.');
     process.exit(1);
   }

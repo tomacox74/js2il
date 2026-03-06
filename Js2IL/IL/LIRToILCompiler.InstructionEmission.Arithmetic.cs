@@ -420,28 +420,39 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(unsignedRightShift.Result, ilEncoder, allocation);
                 break;
 
-            // Call Operators.IsTruthy
+            // Call Operators.IsTruthy(object) - typed variants are handled by the cases below.
+            // LIRTypeNormalization rewrites double/bool operands to LIRCallIsTruthyDouble/Bool,
+            // so at this point the value is always object-typed.
             case LIRCallIsTruthy callIsTruthy:
                 if (!IsMaterialized(callIsTruthy.Result, allocation))
                 {
                     break;
                 }
-                var truthyInputStorage = GetTempStorage(callIsTruthy.Value);
-                EmitLoadTemp(callIsTruthy.Value, ilEncoder, allocation, methodDescriptor);
-
-                if (truthyInputStorage.Kind == ValueStorageKind.UnboxedValue && truthyInputStorage.ClrType == typeof(double))
-                {
-                    EmitOperatorsIsTruthyDouble(ilEncoder);
-                }
-                else if (truthyInputStorage.Kind == ValueStorageKind.UnboxedValue && truthyInputStorage.ClrType == typeof(bool))
-                {
-                    EmitOperatorsIsTruthyBool(ilEncoder);
-                }
-                else
-                {
-                    EmitOperatorsIsTruthyObject(ilEncoder);
-                }
+                EmitLoadTempAsObject(callIsTruthy.Value, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsIsTruthyObject(ilEncoder);
                 EmitStoreTemp(callIsTruthy.Result, ilEncoder, allocation);
+                break;
+
+            // Call Operators.IsTruthy(double) - emitted after LIRTypeNormalization specializes a proven double operand.
+            case LIRCallIsTruthyDouble callIsTruthyDouble:
+                if (!IsMaterialized(callIsTruthyDouble.Result, allocation))
+                {
+                    break;
+                }
+                EmitLoadTemp(callIsTruthyDouble.Value, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsIsTruthyDouble(ilEncoder);
+                EmitStoreTemp(callIsTruthyDouble.Result, ilEncoder, allocation);
+                break;
+
+            // Call Operators.IsTruthy(bool) - emitted after LIRTypeNormalization specializes a proven bool operand.
+            case LIRCallIsTruthyBool callIsTruthyBool:
+                if (!IsMaterialized(callIsTruthyBool.Result, allocation))
+                {
+                    break;
+                }
+                EmitLoadTemp(callIsTruthyBool.Value, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsIsTruthyBool(ilEncoder);
+                EmitStoreTemp(callIsTruthyBool.Result, ilEncoder, allocation);
                 break;
 
             default:

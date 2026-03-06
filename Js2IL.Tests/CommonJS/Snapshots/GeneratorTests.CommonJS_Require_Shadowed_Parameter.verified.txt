@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2117
+				// Method begins at RVA 0x20ef
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -39,29 +39,24 @@
 				object require
 			) cil managed 
 		{
-			// Method begins at RVA 0x20cc
+			// Method begins at RVA 0x20a8
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 21 (0x15)
 			.maxstack 8
 			.locals init (
 				[0] object[],
 				[1] object
 			)
 
-			IL_0000: ldc.i4.1
-			IL_0001: newarr [System.Runtime]System.Object
-			IL_0006: dup
-			IL_0007: ldc.i4.0
-			IL_0008: ldnull
-			IL_0009: stelem.ref
-			IL_000a: stloc.0
-			IL_000b: ldarg.1
-			IL_000c: ldloc.0
-			IL_000d: ldstr "fs"
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ret
+			IL_0000: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_0005: stloc.0
+			IL_0006: ldarg.1
+			IL_0007: ldloc.0
+			IL_0008: ldstr "fs"
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: ret
 		} // end of method test::__js_call__
 
 	} // end of class test
@@ -84,7 +79,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2120
+				// Method begins at RVA 0x20f8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -105,7 +100,7 @@
 				object id
 			) cil managed 
 		{
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x20cc
 			// Header size: 12
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -137,7 +132,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210e
+			// Method begins at RVA 0x20e6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -163,7 +158,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 111 (0x6f)
+		// Code size: 75 (0x4b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Shadowed_Parameter/Scope,
@@ -176,45 +171,30 @@
 		IL_0006: ldnull
 		IL_0007: ldftn object Modules.CommonJS_Require_Shadowed_Parameter/test::__js_call__(object, object)
 		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.2
-		IL_0022: ldloc.2
-		IL_0023: stloc.1
-		IL_0024: ldnull
-		IL_0025: ldftn object Modules.CommonJS_Require_Shadowed_Parameter/ArrowFunction_L7C18::__js_call__(object, object)
-		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0030: ldc.i4.1
-		IL_0031: newarr [System.Runtime]System.Object
-		IL_0036: dup
-		IL_0037: ldc.i4.0
-		IL_0038: ldloc.0
-		IL_0039: stelem.ref
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0044: stloc.2
-		IL_0045: ldnull
-		IL_0046: ldftn object Modules.CommonJS_Require_Shadowed_Parameter/test::__js_call__(object, object)
-		IL_004c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0051: ldnull
-		IL_0052: ldloc.2
-		IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
-		IL_0058: stloc.2
-		IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005e: ldc.i4.1
-		IL_005f: newarr [System.Runtime]System.Object
-		IL_0064: dup
-		IL_0065: ldc.i4.0
-		IL_0066: ldloc.2
-		IL_0067: stelem.ref
-		IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006d: pop
-		IL_006e: ret
+		IL_0012: stloc.2
+		IL_0013: ldloc.2
+		IL_0014: stloc.1
+		IL_0015: ldnull
+		IL_0016: ldftn object Modules.CommonJS_Require_Shadowed_Parameter/ArrowFunction_L7C18::__js_call__(object, object)
+		IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0021: ldc.i4.1
+		IL_0022: newarr [System.Runtime]System.Object
+		IL_0027: dup
+		IL_0028: ldc.i4.0
+		IL_0029: ldloc.0
+		IL_002a: stelem.ref
+		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0035: stloc.2
+		IL_0036: ldnull
+		IL_0037: ldloc.2
+		IL_0038: call object Modules.CommonJS_Require_Shadowed_Parameter/test::__js_call__(object, object)
+		IL_003d: stloc.2
+		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0043: ldloc.2
+		IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0049: pop
+		IL_004a: ret
 	} // end of method CommonJS_Require_Shadowed_Parameter::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Shadowed_Parameter
@@ -226,7 +206,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2129
+		// Method begins at RVA 0x2101
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -14,6 +14,9 @@ public enum ScopeKind
 
 public class Scope
 {
+    private Type? _stableReturnClrType;
+    private Type? _stableReturnArrayElementClrType;
+
     /// <summary>
     /// The name of the scope (used as the class name in .NET codegen).
     /// </summary>
@@ -41,7 +44,38 @@ public class Scope
     /// Only populated for very conservative cases (currently class methods with a single, top-level return).
     /// When null, the callable returns <see cref="object"/> (JavaScript value) in IL.
     /// </summary>
-    public Type? StableReturnClrType { get; set; }
+    public Type? StableReturnClrType
+    {
+        get => _stableReturnClrType;
+        set
+        {
+            _stableReturnClrType = value;
+            if (_stableReturnClrType != typeof(JavaScriptRuntime.Array))
+            {
+                _stableReturnArrayElementClrType = null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// For callables with a stable <see cref="JavaScriptRuntime.Array"/> return,
+    /// tracks a conservative stable CLR element type for numeric indices.
+    /// Null means unknown or unstable element type.
+    /// </summary>
+    public Type? StableReturnArrayElementClrType
+    {
+        get => _stableReturnArrayElementClrType;
+        set
+        {
+            if (value != null && StableReturnClrType != typeof(JavaScriptRuntime.Array))
+            {
+                _stableReturnArrayElementClrType = null;
+                return;
+            }
+
+            _stableReturnArrayElementClrType = value;
+        }
+    }
 
     /// <summary>
     /// True when this callable is a class instance method and we can conservatively prove

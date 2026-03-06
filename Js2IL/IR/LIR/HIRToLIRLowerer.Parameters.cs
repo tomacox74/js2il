@@ -322,6 +322,10 @@ public sealed partial class HIRToLIRLowerer
 
             // Not-null label
             _methodBodyIR.Instructions.Add(new LIRLabel(notNullLabel));
+            // Refinements established inside the default-value block are only valid for the
+            // code path where the parameter was absent; after the label the parameter may
+            // have been supplied by the caller, so they must be discarded.
+            ClearNumericRefinementsAtLabel();
         }
 
         return true; // All default parameters successfully lowered

@@ -15,18 +15,18 @@
 | 20.2.1 | The Function Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-constructor) |
 | 20.2.1.1 | Function ( ... parameterArgs , bodyArg ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-p1-p2-pn-body) |
 | 20.2.1.1.1 | CreateDynamicFunction ( constructor , newTarget , kind , parameterArgs , bodyArg ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-createdynamicfunction) |
-| 20.2.2 | Properties of the Function Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-function-constructor) |
-| 20.2.2.1 | Function.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype) |
+| 20.2.2 | Properties of the Function Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-function-constructor) |
+| 20.2.2.1 | Function.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype) |
 | 20.2.3 | Properties of the Function Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object) |
 | 20.2.3.1 | Function.prototype.apply ( thisArg , argArray ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.apply) |
 | 20.2.3.2 | Function.prototype.bind ( thisArg , ... args ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.bind) |
 | 20.2.3.3 | Function.prototype.call ( thisArg , ... args ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.call) |
-| 20.2.3.4 | Function.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.constructor) |
-| 20.2.3.5 | Function.prototype.toString ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.tostring) |
+| 20.2.3.4 | Function.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.constructor) |
+| 20.2.3.5 | Function.prototype.toString ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype.tostring) |
 | 20.2.3.6 | Function.prototype [ %Symbol.hasInstance% ] ( V ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype-%symbol.hasinstance%) |
 | 20.2.4 | Function Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-instances) |
-| 20.2.4.1 | length | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-length) |
-| 20.2.4.2 | name | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-name) |
+| 20.2.4.1 | length | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-length) |
+| 20.2.4.2 | name | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-name) |
 | 20.2.4.3 | prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-instances-prototype) |
 | 20.2.5 | HostHasSourceTextAvailable ( func ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-hosthassourcetextavailable) |
 
@@ -44,13 +44,25 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Function.prototype.bind ( thisArg , ... args ) | Supported with Limitations | [`Function_Bind_Basic_PartialApplication.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js)<br>[`Function_Bind_ThisBinding_IgnoresCallReceiver.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js) | Implemented for delegate-backed function values via the runtime member-call dispatcher. Supports binding this and partial application of arguments. Bound functions are modeled as delegates and do not currently implement full spec metadata (length/name/prototype). |
+| Function.prototype.bind ( thisArg , ... args ) | Supported with Limitations | [`Function_Bind_Basic_PartialApplication.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js)<br>[`Function_Bind_ThisBinding_IgnoresCallReceiver.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js)<br>[`Function_Prototype_Bind_PropertyExists.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js) | Implemented for delegate-backed function values via Function.prototype and the runtime member-call dispatcher. Supports binding this and partial application of arguments. Bound functions are modeled as delegates and do not currently implement full spec metadata (length/name/prototype). |
 
 ### 20.2.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-function.prototype.call))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Function.prototype.call ( thisArg , ... args ) | Supported with Limitations | [`Function_Call_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Call_Basic.js) | Implemented for delegate-backed function values via JavaScriptRuntime.Function.Call. Non-delegate callable objects and full CreateListFromArrayLike semantics are not implemented. |
+
+### 20.2.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-function.prototype.constructor))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Function.prototype.constructor references the Function constructor | Supported with Limitations | [`Function_Prototype_Constructor_ReferencesFunction.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_Constructor_ReferencesFunction.js) | Function.prototype exposes a data property named constructor that references the runtime Function constructor value. The Function constructor itself remains unsupported for dynamic source compilation. |
+
+### 20.2.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-function.prototype.tostring))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Function.prototype.toString ( ) returns a function-like source string | Supported with Limitations | [`Function_Prototype_ToString_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js) | Implemented for delegate-backed function values with a native-source style string. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented. |
 
 ### 20.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances))
 
@@ -59,6 +71,18 @@ Feature-level support tracking with test script references.
 | Closures capture and mutate outer variables | Supported with Limitations | [`Function_Closure_MultiLevel_ReadWriteAcrossScopes.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Closure_MultiLevel_ReadWriteAcrossScopes.js) | Closures are implemented via the scope-as-class model (scope instances hold variables as fields). |
 | Function instances are callable (basic invocation) | Supported with Limitations | [`Function_HelloWorld.js`](../../../Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`Function_CallViaVariable_Reassignment.js`](../../../Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js) | JavaScript functions are compiled to CLR delegates and invoked directly (or via a small runtime dispatcher). Function.prototype.apply and Function.prototype.bind are supported for delegate-backed function values; most other Function.prototype APIs are not implemented. |
 | Method calls set dynamic this; arrow functions capture lexical this | Supported with Limitations | [`Function_ObjectLiteralMethod_ThisBinding.js`](../../../Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js)<br>[`ArrowFunction_LexicalThis_CreatedInMethod.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_CreatedInMethod.js) | Normal functions support receiver-based this for member calls; arrow functions implement lexical this binding via runtime helpers. |
+
+### 20.2.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances-length))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Function instance length property | Supported with Limitations | [`Function_Instance_Length_Name_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js) | Delegate-backed functions expose a numeric length property derived from CLR delegate method signatures. Exact ECMA-262 length metadata rules are not fully implemented. |
+
+### 20.2.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances-name))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Function instance name property | Supported with Limitations | [`Function_Instance_Length_Name_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js) | Delegate-backed functions expose a string name property based on the underlying CLR method name. Exact SetFunctionName behavior is not implemented. |
 
 ### 20.2.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances-prototype))
 

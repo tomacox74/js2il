@@ -12,7 +12,7 @@
     {
       "clause": "22.2.1",
       "title": "Patterns",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-patterns"
     },
     {
@@ -294,13 +294,13 @@
     {
       "clause": "22.2.4",
       "title": "The RegExp Constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-regexp-constructor"
     },
     {
       "clause": "22.2.4.1",
       "title": "RegExp ( pattern , flags )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-regexp-pattern-flags"
     },
     {
@@ -522,7 +522,7 @@
     {
       "clause": "22.2.8",
       "title": "Properties of RegExp Instances",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-regexp-instances"
     },
     {
@@ -570,6 +570,18 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "22.2.4.1",
+        "feature": "RegExp ( pattern , flags )",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-regexp-pattern-flags",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js",
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js",
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js"
+        ],
+        "notes": "Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). This is a minimal subset backed by .NET Regex; only 'g', 'i', and 'm' flags are currently functional. RegExp is not yet representable as a normal first-class function value (e.g., RegExp.prototype / passing RegExp around as a value are not supported)."
+      },
       {
         "clause": "22.2.6.2",
         "feature": "RegExp.prototype.exec",

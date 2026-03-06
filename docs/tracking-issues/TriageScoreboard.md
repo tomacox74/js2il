@@ -1,6 +1,6 @@
 # JS2IL Triage Scoreboard
 
-> **Last Updated**: 2026-02-17  
+> **Last Updated**: 2026-03-06  
 > **Planning Horizon**: Rolling 2 weeks  
 > **North Star**: Real-world unblock impact
 
@@ -8,8 +8,8 @@ This file is the working source of truth for implementation prioritization.
 
 ## Session Context Snapshots
 
-- [NodeGapPopularityBacklog_2026-02-17.md](./NodeGapPopularityBacklog_2026-02-17.md): Holistic missing-functionality analysis with popularity-weighted priority ranking.
-- [ECMA262TopMissingBacklog_2026-02-21.md](./ECMA262TopMissingBacklog_2026-02-21.md): Top 10 unsupported/incomplete ECMA-262 features prioritized for issue creation.
+- [NodeGapPopularityBacklog.md](./NodeGapPopularityBacklog.md): Holistic missing-functionality analysis with popularity-weighted priority ranking.
+- [ECMA262TopMissingBacklog.md](./ECMA262TopMissingBacklog.md): Top 10 unsupported/incomplete ECMA-262 features prioritized for issue creation.
 
 ## Capacity Split
 
@@ -46,6 +46,7 @@ Goal: improve language/runtime correctness where breakage is common.
 - Low-to-medium implementation risk relative to impact
 
 **Candidate queue (rank during weekly triage)**
+- [ ] #772: ES modules live bindings / cyclic ESM graphs (pragmatic lowering)
 - [ ] `Object.hasOwn` and `Object.is`
 - [ ] `Array.from`, `Array.prototype.forEach`, `every`, `some`, `includes`
 - [ ] Remaining Symbol/well-known-symbol gaps affecting iterator semantics

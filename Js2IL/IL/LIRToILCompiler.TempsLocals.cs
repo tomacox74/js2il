@@ -565,8 +565,8 @@ internal sealed partial class LIRToILCompiler
 
                     // For each element: dup, load element value, callvirt Add
                     var addMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(System.Collections.Generic.List<object>),
-                        nameof(System.Collections.Generic.List<object>.Add));
+                        typeof(JavaScriptRuntime.Array),
+                        nameof(JavaScriptRuntime.Array.Add));
                     for (int i = 0; i < newJsArray.Elements.Count; i++)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
@@ -587,33 +587,81 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(createObjectLiteral);
 
-                    // For each property: dup, ldstr key, load value, call Object.SetItem(obj, key, value), pop
-                    var setItemMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.SetItem),
-                        parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
+                    // For each property emit a typed JsObject setter when possible to avoid boxing.
+                    var setNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.JsObject),
+                        nameof(JavaScriptRuntime.JsObject.SetNumber),
+                        parameterTypes: new[] { typeof(string), typeof(double) });
+                    var setBooleanMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.JsObject),
+                        nameof(JavaScriptRuntime.JsObject.SetBoolean),
+                        parameterTypes: new[] { typeof(string), typeof(bool) });
+                    var setObjectMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.JsObject),
+                        nameof(JavaScriptRuntime.JsObject.SetObject),
+                        parameterTypes: new[] { typeof(string), typeof(object) });
                     foreach (var prop in newJsObject.Properties)
                     {
+                        var valueStorage = GetTempStorage(prop.Value);
                         ilEncoder.OpCode(ILOpCode.Dup);
                         ilEncoder.Ldstr(_metadataBuilder, prop.Key);
-                        EmitLoadTempAsObject(prop.Value, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(setItemMethod);
-                        ilEncoder.OpCode(ILOpCode.Pop);
+                        if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
+                        {
+                            EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
+                            ilEncoder.Token(setNumberMethod);
+                        }
+                        else if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(bool))
+                        {
+                            EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
+                            ilEncoder.Token(setBooleanMethod);
+                        }
+                        else
+                        {
+                            EmitLoadTempAsObject(prop.Value, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
+                            ilEncoder.Token(setObjectMethod);
+                        }
                     }
                     // Object reference stays on stack
                 }
                 break;
             case LIRGetLength getLength:
-                // Emit inline: call JavaScriptRuntime.Object.GetLength(object)
-                EmitLoadTempAsObject(getLength.Object, ilEncoder, allocation, methodDescriptor);
                 {
+                    // Emit inline: call JavaScriptRuntime.Object.GetLength(object)
+                    EmitLoadTempAsObject(getLength.Object, ilEncoder, allocation, methodDescriptor);
                     var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.GetLength),
                         parameterTypes: new[] { typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(getLengthMethod);
+                }
+                break;
+
+            case LIRGetStringLength getStringLength:
+                {
+                    // Inline: receiver as string, callvirt get_Length, conv.r8
+                    var receiverStorage = GetTempStorage(getStringLength.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(string))
+                    {
+                        EmitLoadTemp(getStringLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getStringLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(string)));
+                    }
+
+                    var getStringLengthMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(string),
+                        "get_Length",
+                        parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getStringLengthMethod);
+                    ilEncoder.OpCode(ILOpCode.Conv_r8);
                 }
                 break;
 
@@ -633,7 +681,7 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     var getCountMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(System.Collections.Generic.List<object>),
+                        typeof(JavaScriptRuntime.Array),
                         "get_Count",
                         parameterTypes: Type.EmptyTypes);
                     ilEncoder.OpCode(ILOpCode.Callvirt);
@@ -692,6 +740,29 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.Token(toNumberMref);
                         }
                     }
+                    else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string))
+                    {
+                        // Emit inline: call JavaScriptRuntime.Object.GetItem(object, string)
+                        EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItem),
+                            parameterTypes: new[] { typeof(object), typeof(string) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemMethod);
+
+                        // If the temp storage expects an unboxed double, coerce the object result to a number.
+                        if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                        {
+                            var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.TypeUtilities),
+                                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                                parameterTypes: new[] { typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(toNumberMref);
+                        }
+                    }
                     else
                     {
                         // Emit inline: call JavaScriptRuntime.Object.GetItem(object, object)
@@ -714,6 +785,12 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.OpCode(ILOpCode.Call);
                             ilEncoder.Token(toNumberMref);
                         }
+                    }
+
+                    if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_bclReferences.StringType);
                     }
                 }
                 break;
@@ -745,6 +822,20 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemAsNumberMethod);
                     }
+                }
+                break;
+
+            case LIRGetItemAsNumberString getItemAsNumberString:
+                {
+                    // Emit inline: call float64 JavaScriptRuntime.Object.GetItemAsNumber(object, string)
+                    EmitLoadTempAsObject(getItemAsNumberString.Object, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(getItemAsNumberString.Index, ilEncoder, allocation, methodDescriptor);
+                    var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.GetItemAsNumber),
+                        parameterTypes: new[] { typeof(object), typeof(string) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(getItemAsNumberMethod);
                 }
                 break;
 
@@ -782,6 +873,12 @@ internal sealed partial class LIRToILCompiler
                             parameterTypes: new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(toNumberMref);
+                    }
+
+                    if (resultStorage.Kind == ValueStorageKind.Reference && resultStorage.ClrType == typeof(string))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_bclReferences.StringType);
                     }
 
                     break;
@@ -1303,18 +1400,21 @@ internal sealed partial class LIRToILCompiler
                         requiresScopes = signature.RequiresScopesParameter;
                     }
 
-                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    // Create a JsFuncNoScopesN delegate.
+                    // - requiresScopes: close over scopes as delegate target (binds first static arg object[] scopes)
+                    // - no scopes: regular static delegate target = null
+                    if (requiresScopes)
+                    {
+                        EmitLoadTemp(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
-
-                    // Bind delegate to scopes array: Closure.Bind(object, object[])
-                    EmitLoadTemp(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
-                    ilEncoder.Token(bindRef);
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes: false));
                     // Result stays on stack
                     break;
                 }
@@ -1409,6 +1509,18 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
                     }
+                    else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string))
+                    {
+                        EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(setItem.Index, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                        var setItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.SetItem),
+                            parameterTypes: new[] { typeof(object), typeof(string), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(setItemMethod);
+                    }
                     else
                     {
                         EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
@@ -1432,6 +1544,42 @@ internal sealed partial class LIRToILCompiler
                             parameterTypes: new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(toNumberMref);
+                    }
+
+                    break;
+                }
+
+            case LIRSetJsArrayLength setArrayLength:
+                {
+                    // Inline the assignment-expression result of setting Array.length.
+                    var receiverStorage = GetTempStorage(setArrayLength.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
+                    {
+                        EmitLoadTemp(setArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
+                    }
+
+                    EmitLoadTempAsDouble(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
+                    var arrayLengthSetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Array),
+                        "set_length",
+                        parameterTypes: new[] { typeof(double) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(arrayLengthSetter);
+
+                    var resultStorage = GetTempStorage(temp);
+                    if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                    {
+                        EmitLoadTempAsDouble(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
                     }
 
                     break;
@@ -1581,7 +1729,21 @@ internal sealed partial class LIRToILCompiler
                 // reference-typed values (notably `undefined` which is represented as ldnull).
                 // Emitting `ldnull; box <valuetype>` produces invalid IL, so just forward the
                 // reference value as-is.
-                if (GetTempStorage(convertToObject.Source).Kind == ValueStorageKind.Reference)
+                var convertToObjectSourceStorage = GetTempStorage(convertToObject.Source);
+                if (convertToObjectSourceStorage.Kind == ValueStorageKind.Reference
+                    || convertToObjectSourceStorage.Kind == ValueStorageKind.BoxedValue)
+                {
+                    EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+                    return true;
+                }
+
+                var convertToObjectSourceType = convertToObjectSourceStorage.ClrType;
+                if (convertToObjectSourceType == null && convertToObject.SourceType != typeof(object))
+                {
+                    convertToObjectSourceType = convertToObject.SourceType;
+                }
+
+                if (convertToObjectSourceType == null)
                 {
                     EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
                     return true;
@@ -1589,17 +1751,25 @@ internal sealed partial class LIRToILCompiler
 
                 EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Box);
-                if (convertToObject.SourceType == typeof(bool))
+                if (convertToObjectSourceType == typeof(bool))
                 {
                     ilEncoder.Token(_bclReferences.BooleanType);
                 }
-                else if (convertToObject.SourceType == typeof(JavaScriptRuntime.JsNull))
+                else if (convertToObjectSourceType == typeof(JavaScriptRuntime.JsNull))
                 {
                     ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
                 }
-                else
+                else if (convertToObjectSourceType == typeof(int))
+                {
+                    ilEncoder.Token(_bclReferences.Int32Type);
+                }
+                else if (convertToObjectSourceType == typeof(double))
                 {
                     ilEncoder.Token(_bclReferences.DoubleType);
+                }
+                else
+                {
+                    throw new NotSupportedException($"Unsupported ConvertToObject source type: {convertToObjectSourceType}");
                 }
                 return true;
 
@@ -1971,13 +2141,10 @@ internal sealed partial class LIRToILCompiler
     /// </summary>
     private void EmitEmptyScopesArray(InstructionEncoder ilEncoder)
     {
-        ilEncoder.LoadConstantI4(1);
-        ilEncoder.OpCode(ILOpCode.Newarr);
-        ilEncoder.Token(_bclReferences.ObjectType);
-        ilEncoder.OpCode(ILOpCode.Dup);
-        ilEncoder.LoadConstantI4(0);
-        ilEncoder.OpCode(ILOpCode.Ldnull);
-        ilEncoder.OpCode(ILOpCode.Stelem_ref);
+        // Reuse a singleton array instead of allocating a new 1-element array each time.
+        var emptyScopesField = _memberRefRegistry.GetOrAddField(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.EmptyScopes));
+        ilEncoder.OpCode(ILOpCode.Ldsfld);
+        ilEncoder.Token(emptyScopesField);
     }
 
     /// <summary>

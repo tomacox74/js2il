@@ -46,7 +46,7 @@ internal sealed class ModuleExecutor
 
         // Node semantics: require.main is the entry module.
         requireService.SetMainModule(mainModule);
-        JavaScriptRuntime.Object.SetProperty(mainRequire, "main", mainModule);
+        JavaScriptRuntime.ObjectRuntime.SetProperty(mainRequire, "main", mainModule);
         RuntimeServices.RegisterModuleRequire(mainModule.id, mainRequire);
 
         // Set the main module as the current parent for require() calls

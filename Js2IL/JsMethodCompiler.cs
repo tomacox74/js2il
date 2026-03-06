@@ -414,6 +414,22 @@ internal sealed class JsMethodCompiler
         var dummyTypeName = $"<TwoPhaseDummy_M{MetadataTokens.GetRowNumber(expectedMethodDef)}>";
         var dummyType = new TypeBuilder(_metadataBuilder, "", dummyTypeName);
 
+        Type? inferredReturnClrType = null;
+        if (scope.Kind == ScopeKind.Function)
+        {
+            if (scope.Parent?.Kind == ScopeKind.Class)
+            {
+                inferredReturnClrType = scope.StableReturnClrType;
+            }
+            else if (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array)
+                || scope.StableReturnClrType == typeof(string))
+            {
+                // Keep non-class callable ABI object-typed by default, but allow stable Array/string
+                // returns so generated signatures can expose specialized return types where proven.
+                inferredReturnClrType = scope.StableReturnClrType;
+            }
+        }
+
         var methodDescriptor = new MethodDescriptor(ilMethodName, dummyType, parameters)
         {
             IsStatic = !isInstanceMethod,
@@ -424,10 +440,7 @@ internal sealed class JsMethodCompiler
                 ? typeof(void)
                 : (lirMethod.IsGenerator
                     ? typeof(object)
-                    : (((scope.Kind == ScopeKind.Function && scope.Parent?.Kind == ScopeKind.Class)
-                            ? scope.StableReturnClrType
-                            : null)
-                        ?? typeof(object))),
+                    : (inferredReturnClrType ?? typeof(object))),
             ReturnTypeHandle = default,
             ScopesFieldHandle = scopesFieldHandle,
             IsConstructor = callableKind == ScopesCallableKind.Constructor,
@@ -516,6 +529,14 @@ internal sealed class JsMethodCompiler
             typeBuilder,
             parameters);
 
+        if (scope.Kind == ScopeKind.Function
+            && scope.Parent?.Kind != ScopeKind.Class
+            && (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array)
+                || scope.StableReturnClrType == typeof(string)))
+        {
+            methodDescriptor.ReturnClrType = scope.StableReturnClrType;
+        }
+
         if (node is Acornima.Ast.MethodDefinition methodDef)
         {
             methodDescriptor.IsStatic = methodDef.Static;
@@ -571,6 +592,14 @@ internal sealed class JsMethodCompiler
             methodName,
             arrowTypeBuilder,
             parameters);
+
+        if (scope.Kind == ScopeKind.Function
+            && scope.Parent?.Kind != ScopeKind.Class
+            && (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array)
+                || scope.StableReturnClrType == typeof(string)))
+        {
+            methodDescriptor.ReturnClrType = scope.StableReturnClrType;
+        }
 
         var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
@@ -755,7 +784,8 @@ internal sealed class JsMethodCompiler
 
         // Normalize intrinsic-specific patterns (e.g., Int32Array element access) into explicit LIR instructions.
         // This keeps the LIR->IL compiler simpler and avoids fragile late pattern-matching.
-        LIRIntrinsicNormalization.Normalize(lirMethod!, classRegistry);
+        var callableReader = _serviceProvider.GetService<ICallableDeclarationReader>();
+        LIRIntrinsicNormalization.Normalize(lirMethod!, classRegistry, callableReader);
 
         // Normalize generic member calls into explicit early-bound typed member call instructions when provably safe.
         // This keeps the LIR->IL compiler focused on IL mechanics rather than type-directed rewrites.
@@ -764,6 +794,10 @@ internal sealed class JsMethodCompiler
         // Normalize generic LIR patterns into more explicit typed forms when provably safe.
         // This keeps LIR->IL focused on IL mechanics rather than type-directed rewrites.
         LIRTypeNormalization.Normalize(lirMethod!, classRegistry);
+
+        // CSE: eliminate redundant coercions (ToNumber/ToBoolean/IsTruthy) within basic blocks
+        // when the source is a known primitive. This avoids repeated helper calls in tight loops.
+        LIRCoercionCSE.Optimize(lirMethod!);
 
         methodBody = lirMethod!;
         return true;

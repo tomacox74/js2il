@@ -496,6 +496,29 @@ public class JavaScriptAstValidator : IAstValidator
         // Pre-collect hoisted declarations for the top-level (Program) scope.
         CollectHoistedDeclarations(ast, scopeStack.Peek());
 
+        // Pre-collect top-level lexical declarations (let/const/class) so missing-globals validation
+        // does not report false positives for patterns that reference lexical bindings before their
+        // declaration (e.g., hoisted ESM export getters created before the declaration executes).
+        foreach (var statement in ast.Body)
+        {
+            switch (statement)
+            {
+                case VariableDeclaration vd when vd.Kind != VariableDeclarationKind.Var:
+                    foreach (var decl in vd.Declarations)
+                    {
+                        if (decl?.Id != null)
+                        {
+                            DeclarePatternNames(decl.Id, scopeStack.Peek());
+                        }
+                    }
+                    break;
+
+                case ClassDeclaration cd when cd.Id != null:
+                    scopeStack.Peek().DeclaredNames.Add(cd.Id.Name);
+                    break;
+            }
+        }
+
         static bool IsBindingPatternNode(Node n)
             => n is ObjectPattern
             || n is ArrayPattern

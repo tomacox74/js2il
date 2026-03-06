@@ -45,6 +45,12 @@ public record LIRGetJsArrayLength(TempVariable Receiver, TempVariable Result) : 
 public record LIRGetInt32ArrayLength(TempVariable Receiver, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Gets the length of a proven string receiver.
+/// Contract: Receiver is a proven string; Result is an unboxed double.
+/// </summary>
+public record LIRGetStringLength(TempVariable Receiver, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Gets an item from an object by index (calls JavaScriptRuntime.Object.GetItem).
 /// </summary>
 public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
@@ -58,10 +64,24 @@ public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable R
 public record LIRGetItemAsNumber(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Gets an item from an object by a string key and converts the result to an unboxed number.
+/// Calls JavaScriptRuntime.Object.GetItemAsNumber(object, string).
+/// Contract: Index is a reference temp typed as string; Result is an unboxed double.
+/// </summary>
+public record LIRGetItemAsNumberString(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Sets an item on an object by index/key (calls JavaScriptRuntime.Object.SetItem).
 /// Returns the assigned value.
 /// </summary>
 public record LIRSetItem(TempVariable Object, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Sets the length on a proven JavaScriptRuntime.Array.
+/// Contract: Receiver is a proven Array; Value is the assigned RHS value.
+/// Result (if materialized) is the assigned value.
+/// </summary>
+public record LIRSetJsArrayLength(TempVariable Receiver, TempVariable Value, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Gets an element from a proven JavaScriptRuntime.Array by numeric index.
@@ -98,9 +118,11 @@ public record LIRSetInt32ArrayElement(TempVariable Receiver, TempVariable Index,
 public readonly record struct ObjectProperty(string Key, TempVariable Value);
 
 /// <summary>
-/// Creates and initializes a JavaScript object (ExpandoObject) with the given properties.
-/// IL emitter: newobj ExpandoObject, [dup, ldstr key, ldtemp value, callvirt IDictionary.set_Item]*.
+/// Creates and initializes a JavaScript object (<see cref="JavaScriptRuntime.JsObject"/>) with the given properties.
+/// IL emitter: call RuntimeServices.CreateObjectLiteral(), [dup, ldstr key, load value, call SetProperty*]*.
+/// For numeric/bool/string values the IL emitter uses void typed-setter overloads
+/// (SetPropertyNumber/SetPropertyBoolean/SetPropertyString) to avoid 'box' instructions.
 /// </summary>
-/// <param name="Properties">The list of property key-value pairs.</param>
+/// <param name="Properties">The list of property key-value pairs (values may be unboxed typed temps).</param>
 /// <param name="Result">The temp variable to store the created object.</param>
 public record LIRNewJsObject(IReadOnlyList<ObjectProperty> Properties, TempVariable Result) : LIRInstruction;

@@ -387,6 +387,12 @@ internal static class TempLocalAllocator
             case LIRCallIsTruthy callIsTruthy:
                 yield return callIsTruthy.Value;
                 break;
+            case LIRCallIsTruthyDouble callIsTruthyDouble:
+                yield return callIsTruthyDouble.Value;
+                break;
+            case LIRCallIsTruthyBool callIsTruthyBool:
+                yield return callIsTruthyBool.Value;
+                break;
             case LIRCopyTemp copyTemp:
                 yield return copyTemp.Source;
                 break;
@@ -635,6 +641,9 @@ internal static class TempLocalAllocator
             case LIRGetLength getLength:
                 yield return getLength.Object;
                 break;
+            case LIRGetStringLength getStringLength:
+                yield return getStringLength.Receiver;
+                break;
             case LIRGetJsArrayLength getJsArrayLength:
                 yield return getJsArrayLength.Receiver;
                 break;
@@ -653,6 +662,10 @@ internal static class TempLocalAllocator
                 yield return setItem.Object;
                 yield return setItem.Index;
                 yield return setItem.Value;
+                break;
+            case LIRSetJsArrayLength setJsArrayLength:
+                yield return setJsArrayLength.Receiver;
+                yield return setJsArrayLength.Value;
                 break;
             case LIRGetJsArrayElement getJsArray:
                 yield return getJsArray.Receiver;
@@ -943,6 +956,12 @@ internal static class TempLocalAllocator
             case LIRCallIsTruthy callIsTruthy:
                 defined = callIsTruthy.Result;
                 return true;
+            case LIRCallIsTruthyDouble callIsTruthyDouble:
+                defined = callIsTruthyDouble.Result;
+                return true;
+            case LIRCallIsTruthyBool callIsTruthyBool:
+                defined = callIsTruthyBool.Result;
+                return true;
             case LIRCopyTemp copyTemp:
                 defined = copyTemp.Destination;
                 return true;
@@ -1084,6 +1103,9 @@ internal static class TempLocalAllocator
             case LIRGetLength getLength:
                 defined = getLength.Result;
                 return true;
+            case LIRGetStringLength getStringLength:
+                defined = getStringLength.Result;
+                return true;
             case LIRGetJsArrayLength getJsArrayLength:
                 defined = getJsArrayLength.Result;
                 return true;
@@ -1099,6 +1121,10 @@ internal static class TempLocalAllocator
 
             case LIRSetItem setItem:
                 defined = setItem.Result;
+                return true;
+
+            case LIRSetJsArrayLength setJsArrayLength:
+                defined = setJsArrayLength.Result;
                 return true;
 
             case LIRSetJsArrayElement setJsArray:

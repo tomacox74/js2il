@@ -162,7 +162,7 @@ internal sealed class ModuleExportsContractEmitter
             if (TryResolveExportAsFunction(valueNode, topLevel, out var functionNode, out var functionNameForInference))
             {
                 var methodName = ToPascalCase(exportName);
-                var method = BuildContractMethodFromFunction(methodName, functionNode, topLevel, instanceInterfacesByClassName, ensureClassInstanceInterface: null);
+                var method = BuildContractMethodFromFunction(methodName, functionNode, topLevel, instanceInterfacesByClassName, ensureClassInstanceInterface: null, symbolTable: symbolTable);
                 EmitInterfaceMethod(exportsTypeBuilder, method);
                 continue;
             }
@@ -190,7 +190,20 @@ internal sealed class ModuleExportsContractEmitter
             }
 
             // Default: exported value projected as a read-only property.
-            var clrType = InferClrTypeFromExpression(valueNode, topLevel, classFields: null, instanceInterfacesByClassName, ensureClassInstanceInterface: null);
+            // Prefer stable binding type from symbol table when available (e.g. const x = complexExpr).
+            TypeOrHandle clrType;
+            if (valueNode is Identifier exportedId
+                && symbolTable?.Root is Js2IL.SymbolTables.Scope globalScope
+                && globalScope.Bindings.TryGetValue(exportedId.Name, out var exportedBinding)
+                && exportedBinding.IsStableType
+                && exportedBinding.ClrType != null)
+            {
+                clrType = TypeOrHandle.FromClr(MapClrType(exportedBinding.ClrType));
+            }
+            else
+            {
+                clrType = InferClrTypeFromExpression(valueNode, topLevel, classFields: null, instanceInterfacesByClassName, ensureClassInstanceInterface: null);
+            }
             var propHandle = EmitReadOnlyProperty(exportsTypeBuilder, ToPascalCase(exportName), clrType);
             if (firstExportsProperty.IsNil)
             {
@@ -277,7 +290,9 @@ internal sealed class ModuleExportsContractEmitter
                     topLevelIndex: null,
                     instanceInterfacesByClassName: null,
                     ensureClassInstanceInterface: null,
-                    classFields: stableFields);
+                    classFields: stableFields,
+                    symbolTable: symbolTable,
+                    scopeLookupNode: fn);
                 EmitInterfaceMethod(typeBuilder, method);
             }
         }
@@ -562,7 +577,9 @@ internal sealed class ModuleExportsContractEmitter
         TopLevelIndex? topLevelIndex,
         Dictionary<string, TypeDefinitionHandle>? instanceInterfacesByClassName,
         Func<string, TypeDefinitionHandle>? ensureClassInstanceInterface,
-        Dictionary<string, Type>? classFields = null)
+        Dictionary<string, Type>? classFields = null,
+        SymbolTable? symbolTable = null,
+        Node? scopeLookupNode = null)
     {
         var paramNames = new List<string>();
         foreach (var p in GetFunctionParams(functionNode))
@@ -578,7 +595,19 @@ internal sealed class ModuleExportsContractEmitter
             }
         }
 
-        var baseReturnType = InferReturnTypeFromFunction(functionNode, topLevelIndex, classFields, instanceInterfacesByClassName, ensureClassInstanceInterface);
+        // Prefer stable return type from symbol table when available.
+        TypeOrHandle baseReturnType;
+        var lookupNode = scopeLookupNode ?? functionNode;
+        var scope = symbolTable?.FindScopeByAstNode(lookupNode);
+        if (scope?.StableReturnClrType != null)
+        {
+            baseReturnType = TypeOrHandle.FromClr(MapClrType(scope.StableReturnClrType));
+        }
+        else
+        {
+            baseReturnType = InferReturnTypeFromFunction(functionNode, topLevelIndex, classFields, instanceInterfacesByClassName, ensureClassInstanceInterface);
+        }
+
         var returnType = WrapReturnTypeForAsyncFunction(functionNode, baseReturnType);
 
         // Very conservative parameter typing: if the return type is numeric, assume numeric params.

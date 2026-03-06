@@ -1,5 +1,4 @@
 using System;
-using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
 using JavaScriptRuntime;
@@ -45,24 +44,7 @@ namespace JavaScriptRuntime.Node
                 path = Environment.CurrentDirectory;
             }
 
-            bool withFileTypes = false;
-            try
-            {
-                if (options is ExpandoObject exp)
-                {
-                    var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
-                    if (dict.TryGetValue("withFileTypes", out var val))
-                    {
-                        withFileTypes = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
-                    }
-                }
-                else if (options != null)
-                {
-                    var val = JavaScriptRuntime.Object.GetProperty(options, "withFileTypes");
-                    withFileTypes = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
-                }
-            }
-            catch { }
+            var withFileTypes = FsCommon.GetBooleanOption(options, "withFileTypes");
 
             var promiseWithResolvers = Promise.withResolvers();
             _ioScheduler.BeginIo();
@@ -76,7 +58,7 @@ namespace JavaScriptRuntime.Node
             }
             catch (Exception ex)
             {
-                _ioScheduler.EndIo(promiseWithResolvers, TranslateReaddirError(path, ex), isError: true);
+                _ioScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateReaddirError(path, ex), isError: true);
                 return promiseWithResolvers.promise;
             }
         }
@@ -107,7 +89,7 @@ namespace JavaScriptRuntime.Node
             }
             catch (Exception ex)
             {
-                _ioScheduler.EndIo(promiseWithResolvers, TranslateReaddirError(path, ex), isError: true);
+                _ioScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateReaddirError(path, ex), isError: true);
             }
         }
 
@@ -121,25 +103,7 @@ namespace JavaScriptRuntime.Node
                     return Promise.reject(new Error("Path must be a non-empty string"));
                 }
 
-                bool recursive = false;
-                try
-                {
-                    if (options is ExpandoObject exp)
-                    {
-                        var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
-                        if (dict.TryGetValue("recursive", out var val))
-                        {
-                            recursive = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
-                        }
-                    }
-                    else if (options != null)
-                    {
-                        var val = JavaScriptRuntime.Object.GetProperty(options, "recursive");
-                        recursive = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
-                    }
-                }
-                catch { }
-
+                var recursive = FsCommon.GetBooleanOption(options, "recursive");
                 _ = recursive; // Directory.CreateDirectory is already recursive.
                 Directory.CreateDirectory(path);
                 return Promise.resolve(null);
@@ -167,7 +131,7 @@ namespace JavaScriptRuntime.Node
             {
                 // Fire-and-forget is intentional: exceptions are handled inside
                 // CompleteCopyFileAsync and forwarded via _ioScheduler.EndIo(...).
-                _ = CompleteCopyFileAsync(s, d, promiseWithResolvers);
+                _ = FsCommon.CompleteCopyFileAsync(_ioScheduler, s, d, promiseWithResolvers);
                 return promiseWithResolvers.promise;
             }
             catch (Exception ex)
@@ -194,46 +158,19 @@ namespace JavaScriptRuntime.Node
                 {
                     // Fire-and-forget is intentional: exceptions are handled inside
                     // CompleteReadFileTextAsync and forwarded via _ioScheduler.EndIo(...).
-                    _ = CompleteReadFileTextAsync(path, textEncoding!, promiseWithResolvers);
+                    _ = FsCommon.CompleteReadFileTextAsync(_ioScheduler, path, textEncoding!, promiseWithResolvers);
                     return promiseWithResolvers.promise;
                 }
 
                 // Fire-and-forget is intentional: exceptions are handled inside
                 // CompleteReadFileBytesAsync and forwarded via _ioScheduler.EndIo(...).
-                _ = CompleteReadFileBytesAsync(path, promiseWithResolvers);
+                _ = FsCommon.CompleteReadFileBytesAsync(_ioScheduler, path, promiseWithResolvers);
                 return promiseWithResolvers.promise;
             }
             catch (Exception ex)
             {
-                _ioScheduler.EndIo(promiseWithResolvers, TranslateReadFileError(path, ex), isError: true);
+                _ioScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateReadFileError(path, ex), isError: true);
                 return promiseWithResolvers.promise;
-            }
-        }
-
-        private async Task CompleteReadFileTextAsync(string path, System.Text.Encoding textEncoding, PromiseWithResolvers promiseWithResolvers)
-        {
-            try
-            {
-                var content = await File.ReadAllTextAsync(path, textEncoding).ConfigureAwait(false);
-                _ioScheduler.EndIo(promiseWithResolvers, content, isError: false);
-            }
-            catch (Exception ex)
-            {
-                _ioScheduler.EndIo(promiseWithResolvers, TranslateReadFileError(path, ex), isError: true);
-            }
-        }
-
-        private async Task CompleteReadFileBytesAsync(string path, PromiseWithResolvers promiseWithResolvers)
-        {
-            try
-            {
-                var bytes = await File.ReadAllBytesAsync(path).ConfigureAwait(false);
-                var buffer = Buffer.FromBytes(bytes);
-                _ioScheduler.EndIo(promiseWithResolvers, buffer, isError: false);
-            }
-            catch (Exception ex)
-            {
-                _ioScheduler.EndIo(promiseWithResolvers, TranslateReadFileError(path, ex), isError: true);
             }
         }
 
@@ -259,7 +196,7 @@ namespace JavaScriptRuntime.Node
                 {
                     // Fire-and-forget is intentional: exceptions are handled inside
                     // CompleteWriteFileBytesAsync and forwarded via _ioScheduler.EndIo(...).
-                    _ = CompleteWriteFileBytesAsync(path, buffer.ToByteArray(), promiseWithResolvers);
+                    _ = FsCommon.CompleteWriteFileBytesAsync(_ioScheduler, path, buffer.ToByteArray(), promiseWithResolvers);
                     return promiseWithResolvers.promise;
                 }
 
@@ -267,7 +204,7 @@ namespace JavaScriptRuntime.Node
                 {
                     // Fire-and-forget is intentional: exceptions are handled inside
                     // CompleteWriteFileBytesAsync and forwarded via _ioScheduler.EndIo(...).
-                    _ = CompleteWriteFileBytesAsync(path, bytes, promiseWithResolvers);
+                    _ = FsCommon.CompleteWriteFileBytesAsync(_ioScheduler, path, bytes, promiseWithResolvers);
                     return promiseWithResolvers.promise;
                 }
 
@@ -276,75 +213,19 @@ namespace JavaScriptRuntime.Node
                 {
                     // Fire-and-forget is intentional: exceptions are handled inside
                     // CompleteWriteFileTextAsync and forwarded via _ioScheduler.EndIo(...).
-                    _ = CompleteWriteFileTextAsync(path, text, textEncoding!, promiseWithResolvers);
+                    _ = FsCommon.CompleteWriteFileTextAsync(_ioScheduler, path, text, textEncoding!, promiseWithResolvers);
                     return promiseWithResolvers.promise;
                 }
 
                 // Fire-and-forget is intentional: exceptions are handled inside
                 // CompleteWriteFileTextAsync and forwarded via _ioScheduler.EndIo(...).
-                _ = CompleteWriteFileTextAsync(path, text, FsEncodingOptions.Utf8NoBom, promiseWithResolvers);
+                _ = FsCommon.CompleteWriteFileTextAsync(_ioScheduler, path, text, FsEncodingOptions.Utf8NoBom, promiseWithResolvers);
                 return promiseWithResolvers.promise;
             }
             catch (Exception ex)
             {
-                _ioScheduler.EndIo(promiseWithResolvers, TranslateWriteFileError(path, ex), isError: true);
+                _ioScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateWriteFileError(path, ex), isError: true);
                 return promiseWithResolvers.promise;
-            }
-        }
-
-        private async Task CompleteCopyFileAsync(string sourcePath, string destinationPath, PromiseWithResolvers promiseWithResolvers)
-        {
-            try
-            {
-                await using var source = new FileStream(
-                    sourcePath,
-                    FileMode.Open,
-                    FileAccess.Read,
-                    FileShare.Read,
-                    bufferSize: 81920,
-                    options: FileOptions.Asynchronous);
-
-                await using var destination = new FileStream(
-                    destinationPath,
-                    FileMode.Create,
-                    FileAccess.Write,
-                    FileShare.None,
-                    bufferSize: 81920,
-                    options: FileOptions.Asynchronous);
-
-                await source.CopyToAsync(destination).ConfigureAwait(false);
-                await destination.FlushAsync().ConfigureAwait(false);
-                _ioScheduler.EndIo(promiseWithResolvers, null, isError: false);
-            }
-            catch (Exception ex)
-            {
-                _ioScheduler.EndIo(promiseWithResolvers, new Error(ex.Message, ex), isError: true);
-            }
-        }
-
-        private async Task CompleteWriteFileBytesAsync(string path, byte[] bytes, PromiseWithResolvers promiseWithResolvers)
-        {
-            try
-            {
-                await File.WriteAllBytesAsync(path, bytes).ConfigureAwait(false);
-                _ioScheduler.EndIo(promiseWithResolvers, null, isError: false);
-            }
-            catch (Exception ex)
-            {
-                _ioScheduler.EndIo(promiseWithResolvers, TranslateWriteFileError(path, ex), isError: true);
-            }
-        }
-
-        private async Task CompleteWriteFileTextAsync(string path, string text, System.Text.Encoding encoding, PromiseWithResolvers promiseWithResolvers)
-        {
-            try
-            {
-                await File.WriteAllTextAsync(path, text, encoding).ConfigureAwait(false);
-                _ioScheduler.EndIo(promiseWithResolvers, null, isError: false);
-            }
-            catch (Exception ex)
-            {
-                _ioScheduler.EndIo(promiseWithResolvers, TranslateWriteFileError(path, ex), isError: true);
             }
         }
 
@@ -408,79 +289,5 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private static Error TranslateReadFileError(string path, Exception ex)
-        {
-            if (ex is FileNotFoundException || ex is DirectoryNotFoundException)
-            {
-                return new Error($"ENOENT: no such file or directory, open '{path}'", ex);
-            }
-
-            if (Directory.Exists(path))
-            {
-                return new Error($"EISDIR: illegal operation on a directory, read '{path}'", ex);
-            }
-
-            if (ex is UnauthorizedAccessException)
-            {
-                return new Error($"EACCES: permission denied, open '{path}'", ex);
-            }
-
-            if (ex is IOException)
-            {
-                return new Error($"EIO: i/o error, read '{path}'", ex);
-            }
-
-            return new Error($"EIO: i/o error, read '{path}'", ex);
-        }
-
-        private static Error TranslateWriteFileError(string path, Exception ex)
-        {
-            if (ex is FileNotFoundException || ex is DirectoryNotFoundException)
-            {
-                return new Error($"ENOENT: no such file or directory, open '{path}'", ex);
-            }
-
-            if (Directory.Exists(path))
-            {
-                return new Error($"EISDIR: illegal operation on a directory, open '{path}'", ex);
-            }
-
-            if (ex is UnauthorizedAccessException)
-            {
-                return new Error($"EACCES: permission denied, open '{path}'", ex);
-            }
-
-            if (ex is IOException)
-            {
-                return new Error($"EIO: i/o error, write '{path}'", ex);
-            }
-
-            return new Error($"EIO: i/o error, write '{path}'", ex);
-        }
-
-        private static Error TranslateReaddirError(string path, Exception ex)
-        {
-            if (ex is DirectoryNotFoundException)
-            {
-                return new Error($"ENOENT: no such file or directory, scandir '{path}'", ex);
-            }
-
-            if (File.Exists(path))
-            {
-                return new Error($"ENOTDIR: not a directory, scandir '{path}'", ex);
-            }
-
-            if (ex is UnauthorizedAccessException)
-            {
-                return new Error($"EACCES: permission denied, scandir '{path}'", ex);
-            }
-
-            if (ex is IOException)
-            {
-                return new Error($"EIO: i/o error, scandir '{path}'", ex);
-            }
-
-            return new Error($"EIO: i/o error, scandir '{path}'", ex);
-        }
     }
 }

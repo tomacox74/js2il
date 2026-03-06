@@ -111,5 +111,6 @@ dotnet run --project .\js2il_pkg\samples\Hosting.Basic\host
 
 ## Links
 
+- Hosting (.NET library mode): https://github.com/tomacox74/js2il/blob/master/docs/hosting/Index.md
 - Source, issues, docs: https://github.com/tomacox74/js2il
 - License: Apache-2.0

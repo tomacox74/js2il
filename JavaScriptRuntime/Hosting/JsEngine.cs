@@ -10,7 +10,7 @@ public static class JsEngine
     /// Prefer this over scanning types directly; compiled assemblies emitted by JS2IL include
     /// an assembly-level manifest via <see cref="JsCompiledModuleAttribute"/>.
     /// </summary>
-    internal static IReadOnlyList<string> GetModuleIds(Assembly compiledAssembly)
+    public static IReadOnlyList<string> GetModuleIds(Assembly compiledAssembly)
     {
         ArgumentNullException.ThrowIfNull(compiledAssembly);
 

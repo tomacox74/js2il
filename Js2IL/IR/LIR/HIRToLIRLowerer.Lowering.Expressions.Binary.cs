@@ -46,8 +46,10 @@ public sealed partial class HIRToLIRLowerer
 
             // Left was falsy; return left.
             _methodBodyIR.Instructions.Add(new LIRLabel(falsyLabel));
+            ClearNumericRefinementsAtLabel();
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
             _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            ClearNumericRefinementsAtLabel();
 
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -77,8 +79,10 @@ public sealed partial class HIRToLIRLowerer
 
             // Left was truthy; return left.
             _methodBodyIR.Instructions.Add(new LIRLabel(truthyLabel));
+            ClearNumericRefinementsAtLabel();
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
             _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            ClearNumericRefinementsAtLabel();
 
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
@@ -109,6 +113,7 @@ public sealed partial class HIRToLIRLowerer
 
             // Left is nullish; evaluate RHS and return it.
             _methodBodyIR.Instructions.Add(new LIRLabel(evalRightLabel));
+            ClearNumericRefinementsAtLabel();
             if (!TryLowerExpression(binaryExpr.Right, out var coalesceRightTempVar))
             {
                 return false;
@@ -118,6 +123,7 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(rightBoxed, resultTempVar));
 
             _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            ClearNumericRefinementsAtLabel();
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
         }
@@ -856,9 +862,11 @@ public sealed partial class HIRToLIRLowerer
 
         // Shared throw block so we only emit one helper callsite.
         _methodBodyIR.Instructions.Add(new LIRLabel(throwLabel));
+        ClearNumericRefinementsAtLabel();
         EmitDestructuringNullOrUndefinedThrow(sourceObject, sourceVariableName, targetVariableName);
 
         _methodBodyIR.Instructions.Add(new LIRLabel(okLabel));
+        ClearNumericRefinementsAtLabel();
     }
 
     private void EmitDestructuringNullOrUndefinedThrow(TempVariable sourceObject, string? sourceVariableName, string? targetVariableName)

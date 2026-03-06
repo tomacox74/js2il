@@ -15,6 +15,9 @@ internal static class LIRTypeNormalization
 {
     public static void Normalize(MethodBodyIR methodBody, ClassRegistry? classRegistry)
     {
+        // Specialize IsTruthy calls regardless of whether a ClassRegistry is present.
+        SpecializeIsTruthyCalls(methodBody);
+
         if (classRegistry == null)
         {
             return;
@@ -170,6 +173,34 @@ internal static class LIRTypeNormalization
         // if we coalesce temps onto existing slots. Compact variable slots to avoid emitting
         // unused IL locals and to keep local indices stable/meaningful.
         CompactUnusedVariableSlots(methodBody);
+    }
+
+    /// <summary>
+    /// Rewrites <see cref="LIRCallIsTruthy"/> to its typed variant when the operand type is statically known,
+    /// enabling the IL emitter to select the correct <c>Operators.IsTruthy</c> overload without
+    /// inspecting storage at IL-emit time.
+    /// </summary>
+    private static void SpecializeIsTruthyCalls(MethodBodyIR methodBody)
+    {
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is not LIRCallIsTruthy isTruthy)
+            {
+                continue;
+            }
+
+            var valueStorage = GetTempStorage(methodBody, isTruthy.Value);
+
+            if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
+            {
+                methodBody.Instructions[i] = new LIRCallIsTruthyDouble(isTruthy.Value, isTruthy.Result);
+            }
+            else if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(bool))
+            {
+                methodBody.Instructions[i] = new LIRCallIsTruthyBool(isTruthy.Value, isTruthy.Result);
+            }
+            // Otherwise leave as LIRCallIsTruthy (object overload).
+        }
     }
 
     private static void CompactUnusedVariableSlots(MethodBodyIR methodBody)

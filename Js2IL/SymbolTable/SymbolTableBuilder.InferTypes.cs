@@ -33,6 +33,7 @@ public partial class SymbolTableBuilder
         {
             // Reset per-run inferred markers.
             scope.StableReturnIsThis = false;
+            scope.StableReturnArrayElementClrType = null;
 
             // Async/generator callables never return the direct expression value in JS;
             // they return a Promise/Iterator wrapper object.
@@ -108,6 +109,8 @@ public partial class SymbolTableBuilder
 
     private Type? InferStableReturnClrTypeFromBlockBody(Scope callableScope, Node functionBoundaryNode, BlockStatement body)
     {
+        bool canInferStableArrayReturn = callableScope.Parent?.Kind != ScopeKind.Class;
+
         // Bail out on try/finally/catch: return epilogues in lowering are currently object-typed.
         bool hasTry = false;
         var returns = new List<ReturnStatement>();
@@ -163,6 +166,29 @@ public partial class SymbolTableBuilder
         {
             callableScope.StableReturnIsThis = true;
             return null;
+        }
+
+        // Multi-return array inference (non-class callables only):
+        // require a final top-level return and all observed returns to resolve to Array.
+        if (returns.Count > 1
+            && canInferStableArrayReturn
+            && body.Body.Count > 0
+            && body.Body.Last() is ReturnStatement lastTopLevelReturn
+            && lastTopLevelReturn.Argument != null)
+        {
+            var finalType = InferExpressionClrType(lastTopLevelReturn.Argument, callableScope);
+            if (finalType == typeof(JavaScriptRuntime.Array)
+                && returns.All(r =>
+                    r.Argument != null
+                    && InferExpressionClrType(r.Argument, callableScope) == typeof(JavaScriptRuntime.Array)))
+            {
+                callableScope.StableReturnArrayElementClrType = InferCommonStableArrayElementClrType(
+                    returns
+                        .Where(r => r.Argument != null)
+                        .Select(r => r.Argument!),
+                    callableScope);
+                return typeof(JavaScriptRuntime.Array);
+            }
         }
 
         // Require exactly one return statement.
@@ -271,10 +297,31 @@ public partial class SymbolTableBuilder
         }
 
         // Only allow a small, well-understood value-like primitive set.
-        // (String return typing needs additional lowering guarantees; keep it disabled for now.)
         if (inferred == typeof(double) || inferred == typeof(bool))
         {
             return inferred;
+        }
+
+        if (canInferStableArrayReturn && inferred == typeof(JavaScriptRuntime.Array))
+        {
+            callableScope.StableReturnArrayElementClrType = InferExpressionArrayElementClrType(
+                onlyReturn.Argument,
+                callableScope);
+            return inferred;
+        }
+
+        // Allow string return typing for stable String.fromCharCode(...) call sites.
+        // This keeps string-return ABI specialization targeted and predictable.
+        if (inferred == typeof(string)
+            && onlyReturn.Argument is CallExpression returnCall
+            && returnCall.Callee is MemberExpression returnMember
+            && !returnMember.Computed
+            && returnMember.Object is Identifier returnObject
+            && returnMember.Property is Identifier returnProperty
+            && string.Equals(returnObject.Name, "String", StringComparison.Ordinal)
+            && string.Equals(returnProperty.Name, "fromCharCode", StringComparison.Ordinal))
+        {
+            return typeof(string);
         }
 
         return null;
@@ -349,6 +396,11 @@ public partial class SymbolTableBuilder
             return;
         }
 
+        foreach (var binding in scope.Bindings.Values)
+        {
+            binding.StableElementClrType = null;
+        }
+
         var proposedClrTypes = new Dictionary<string, Type>();
         var unitializedClrTypes = new HashSet<string>();
 
@@ -358,7 +410,15 @@ public partial class SymbolTableBuilder
         foreach (var binding in scope.Bindings.Values)
         {
             if (binding.IsCaptured && binding.Kind != BindingKind.Const)
+            {
+                if (TryInferStableCapturedBindingClrType(scope, binding, proposedClrTypes, out var capturedType)
+                    && capturedType != null)
+                {
+                    proposedClrTypes[binding.Name] = capturedType;
+                }
+
                 continue;
+            }
 
             if (binding.DeclarationNode is VariableDeclarator variableDeclarator)
             {
@@ -428,12 +488,40 @@ public partial class SymbolTableBuilder
             }
         }
 
+        // For uninitialized uncaptured bindings, also consider assignments in nested blocks/scopes.
+        // This mirrors the captured-binding write analysis but is limited to reference types.
+        foreach (var uninitializedBindingName in unitializedClrTypes.ToArray())
+        {
+            if (!scope.Bindings.TryGetValue(uninitializedBindingName, out var binding))
+            {
+                continue;
+            }
+
+            if (binding.IsCaptured && binding.Kind != BindingKind.Const)
+            {
+                continue;
+            }
+
+            var assignedType = InferCapturedBindingReferenceTypeFromWrites(scope, binding, proposedClrTypes);
+            if (assignedType == null || assignedType.IsValueType)
+            {
+                continue;
+            }
+
+            if (!AreCapturedBindingWritesCompatible(scope, binding, assignedType, proposedClrTypes))
+            {
+                continue;
+            }
+
+            proposedClrTypes[uninitializedBindingName] = assignedType;
+        }
+
         foreach (var kvp in proposedClrTypes)
         {
             var binding = scope.Bindings[kvp.Key];
             binding.ClrType = kvp.Value;
             binding.IsStableType = true;
-        }      
+        }
     }
 
     void InferVariableClrTypesRecursively(Scope scope)
@@ -444,6 +532,660 @@ public partial class SymbolTableBuilder
         {
             InferVariableClrTypesRecursively(childScope);
         }
+
+        InferStableArrayElementClrTypesForScope(scope);
+    }
+
+    private void InferStableArrayElementClrTypesForScope(Scope scope)
+    {
+        var proposedClrTypes = scope.Bindings
+            .Where(kvp => kvp.Value.ClrType != null)
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ClrType!);
+
+        foreach (var binding in scope.Bindings.Values)
+        {
+            if (!binding.IsStableType || binding.ClrType != typeof(JavaScriptRuntime.Array))
+            {
+                binding.StableElementClrType = null;
+                continue;
+            }
+
+            binding.StableElementClrType = InferStableArrayElementClrTypeFromWrites(scope, binding, proposedClrTypes);
+        }
+    }
+
+    private bool TryInferStableCapturedBindingClrType(
+        Scope declaringScope,
+        BindingInfo binding,
+        Dictionary<string, Type> proposedClrTypes,
+        out Type? inferredType)
+    {
+        inferredType = null;
+
+        if (!binding.IsCaptured || binding.Kind == BindingKind.Const)
+        {
+            return false;
+        }
+
+        if (binding.DeclarationNode is not VariableDeclarator declarator)
+        {
+            return false;
+        }
+
+        if (declarator.Init == null)
+        {
+            var assignedType = InferCapturedBindingReferenceTypeFromWrites(declaringScope, binding, proposedClrTypes);
+            if (assignedType == null)
+            {
+                return false;
+            }
+
+            if (!AreCapturedBindingWritesCompatible(declaringScope, binding, assignedType, proposedClrTypes))
+            {
+                return false;
+            }
+
+            inferredType = assignedType;
+            return true;
+        }
+
+        var initializerType = InferExpressionClrType(declarator.Init, declaringScope, proposedClrTypes);
+        if (initializerType == null || initializerType.IsValueType)
+        {
+            return false;
+        }
+
+        if (!AreCapturedBindingWritesCompatible(declaringScope, binding, initializerType, proposedClrTypes))
+        {
+            return false;
+        }
+
+        inferredType = initializerType;
+        return true;
+    }
+
+    private Type? InferCapturedBindingReferenceTypeFromWrites(
+        Scope scope,
+        BindingInfo targetBinding,
+        Dictionary<string, Type> proposedClrTypes)
+    {
+        Type? inferred = null;
+        bool sawWrite = false;
+        bool isCompatible = true;
+
+        void WalkScope(Scope currentScope)
+        {
+            if (!isCompatible)
+            {
+                return;
+            }
+            // If this scope resolves the name to a different binding (shadowing), this subtree cannot
+            // write to the captured binding we are validating.
+            if (!ReferenceEquals(TryResolveBinding(currentScope, targetBinding.Name), targetBinding))
+            {
+                return;
+            }
+
+            bool IsChildScopeRoot(Node node)
+            {
+                foreach (var childScope in currentScope.Children)
+                {
+                    if (ReferenceEquals(childScope.AstNode, node))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            void WalkNode(Node? node)
+            {
+                if (node == null || !isCompatible)
+                {
+                    return;
+                }
+
+                // Nested scope roots are validated in their own scope context.
+                if (!ReferenceEquals(node, currentScope.AstNode) && IsChildScopeRoot(node))
+                {
+                    return;
+                }
+
+                if (node is AssignmentExpression assignExpr
+                    && assignExpr.Left is Identifier id
+                    && ReferenceEquals(TryResolveBinding(currentScope, id.Name), targetBinding))
+                {
+                    if (assignExpr.Operator != Operator.Assignment)
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+
+                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                    if (rightType == null || rightType.IsValueType)
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+
+                    sawWrite = true;
+                    if (inferred == null)
+                    {
+                        inferred = rightType;
+                        return;
+                    }
+
+                    if (inferred != rightType)
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+                }
+                else if (node is UpdateExpression updateExpr
+                    && updateExpr.Argument is Identifier updateId
+                    && ReferenceEquals(TryResolveBinding(currentScope, updateId.Name), targetBinding))
+                {
+                    isCompatible = false;
+                    return;
+                }
+
+                foreach (var child in node.ChildNodes)
+                {
+                    WalkNode(child);
+                }
+            }
+
+            WalkNode(currentScope.AstNode);
+
+            foreach (var childScope in currentScope.Children)
+            {
+                WalkScope(childScope);
+            }
+        }
+
+        WalkScope(scope);
+        return isCompatible && sawWrite ? inferred : null;
+    }
+
+    private bool AreCapturedBindingWritesCompatible(
+        Scope scope,
+        BindingInfo targetBinding,
+        Type expectedType,
+        Dictionary<string, Type> proposedClrTypes)
+    {
+        bool isCompatible = true;
+
+        void WalkScope(Scope currentScope)
+        {
+            if (!isCompatible)
+            {
+                return;
+            }
+
+            // If this scope resolves the name to a different binding (shadowing), this subtree cannot
+            // write to the captured binding we are validating.
+            if (!ReferenceEquals(TryResolveBinding(currentScope, targetBinding.Name), targetBinding))
+            {
+                return;
+            }
+
+            bool IsChildScopeRoot(Node node)
+            {
+                foreach (var childScope in currentScope.Children)
+                {
+                    if (ReferenceEquals(childScope.AstNode, node))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            void WalkNode(Node? node)
+            {
+                if (node == null || !isCompatible)
+                {
+                    return;
+                }
+
+                // Nested scope roots are validated in their own scope context.
+                if (!ReferenceEquals(node, currentScope.AstNode) && IsChildScopeRoot(node))
+                {
+                    return;
+                }
+
+                if (node is AssignmentExpression assignExpr
+                    && assignExpr.Left is Identifier id
+                    && ReferenceEquals(TryResolveBinding(currentScope, id.Name), targetBinding))
+                {
+                    if (assignExpr.Operator != Operator.Assignment)
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+
+                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                    if (rightType != expectedType)
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+                }
+                else if (node is UpdateExpression updateExpr
+                    && updateExpr.Argument is Identifier updateId
+                    && ReferenceEquals(TryResolveBinding(currentScope, updateId.Name), targetBinding))
+                {
+                    isCompatible = false;
+                    return;
+                }
+
+                foreach (var child in node.ChildNodes)
+                {
+                    WalkNode(child);
+                }
+            }
+
+            WalkNode(currentScope.AstNode);
+
+            foreach (var childScope in currentScope.Children)
+            {
+                WalkScope(childScope);
+            }
+        }
+
+        WalkScope(scope);
+        return isCompatible;
+    }
+
+    private Type? InferCommonStableArrayElementClrType(IEnumerable<Node> returnExpressions, Scope scope)
+    {
+        Type? common = null;
+        foreach (var returnExpr in returnExpressions)
+        {
+            var candidate = InferExpressionArrayElementClrType(returnExpr, scope);
+            if (candidate == null)
+            {
+                return null;
+            }
+
+            if (common == null)
+            {
+                common = candidate;
+                continue;
+            }
+
+            if (common != candidate)
+            {
+                return null;
+            }
+        }
+
+        return common;
+    }
+
+    private Type? InferExpressionArrayElementClrType(Node expr, Scope? scope = null, Dictionary<string, Type>? proposedTypes = null)
+    {
+        static Scope? FindRootScope(Scope? s)
+        {
+            var current = s;
+            while (current?.Parent != null)
+            {
+                current = current.Parent;
+            }
+
+            return current;
+        }
+
+        static Scope? FindScopeByAstNodeRecursive(Scope scopeNode, Node astNode)
+        {
+            if (ReferenceEquals(scopeNode.AstNode, astNode))
+            {
+                return scopeNode;
+            }
+
+            foreach (var child in scopeNode.Children)
+            {
+                var found = FindScopeByAstNodeRecursive(child, astNode);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        switch (expr)
+        {
+            case Identifier id when scope != null:
+            {
+                var binding = TryResolveBinding(scope, id.Name);
+                if (binding?.IsStableType == true
+                    && binding.ClrType == typeof(JavaScriptRuntime.Array))
+                {
+                    return binding.StableElementClrType;
+                }
+
+                return null;
+            }
+
+            case ArrayExpression arrayExpr:
+            {
+                Type? common = null;
+                foreach (var elementNode in arrayExpr.Elements)
+                {
+                    if (elementNode is not Node element)
+                    {
+                        // Holes in array literals are not considered stable element evidence.
+                        return null;
+                    }
+
+                    var elementType = InferExpressionClrType(element, scope, proposedTypes);
+                    if (elementType == null || elementType.IsValueType)
+                    {
+                        return null;
+                    }
+
+                    if (common == null)
+                    {
+                        common = elementType;
+                        continue;
+                    }
+
+                    if (common != elementType)
+                    {
+                        return null;
+                    }
+                }
+
+                return common;
+            }
+
+            case CallExpression callExpr:
+            {
+                if (callExpr.Callee is Identifier calleeId && scope != null)
+                {
+                    var calleeBinding = TryResolveBinding(scope, calleeId.Name);
+                    if (calleeBinding?.Kind == BindingKind.Function && calleeBinding.DeclarationNode != null)
+                    {
+                        var root = FindRootScope(scope);
+                        if (root != null)
+                        {
+                            var calleeScope = FindScopeByAstNodeRecursive(root, calleeBinding.DeclarationNode);
+                            if (calleeScope?.StableReturnClrType == typeof(JavaScriptRuntime.Array))
+                            {
+                                return calleeScope.StableReturnArrayElementClrType;
+                            }
+                        }
+                    }
+                }
+
+                // Preserve element type for array copy-like operations.
+                if (callExpr.Callee is MemberExpression member
+                    && !member.Computed
+                    && member.Property is Identifier methodId
+                    && string.Equals(methodId.Name, "slice", StringComparison.Ordinal)
+                    && InferExpressionClrType(member.Object, scope, proposedTypes) == typeof(JavaScriptRuntime.Array))
+                {
+                    return InferExpressionArrayElementClrType(member.Object, scope, proposedTypes);
+                }
+
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    private Type? InferStableArrayElementClrTypeFromWrites(
+        Scope scope,
+        BindingInfo targetBinding,
+        Dictionary<string, Type> proposedClrTypes)
+    {
+        Type? inferred = null;
+        bool sawEvidence = false;
+        bool isCompatible = true;
+        var aliasBindings = new HashSet<BindingInfo> { targetBinding };
+
+        static bool IsSupportedNumberLike(Type? t) =>
+            t == typeof(double) || t == typeof(bool) || t == typeof(JavaScriptRuntime.JsNull);
+
+        bool IsNeutralArrayInitialization(Node rhs, Scope currentScope, Dictionary<string, Type> proposed)
+        {
+            if (rhs is ArrayExpression arr)
+            {
+                return arr.Elements.Count == 0;
+            }
+
+            if (rhs is NewExpression ne
+                && ne.Callee is Identifier ctorId
+                && string.Equals(ctorId.Name, "Array", StringComparison.Ordinal))
+            {
+                if (ne.Arguments.Count == 0)
+                {
+                    return true;
+                }
+
+                if (ne.Arguments.Count == 1)
+                {
+                    var arg0 = ne.Arguments[0] as Node;
+                    var arg0Type = arg0 != null ? InferExpressionClrType(arg0, currentScope, proposed) : null;
+                    return IsSupportedNumberLike(arg0Type);
+                }
+            }
+
+            return false;
+        }
+
+        void MergeCandidate(Type? candidate)
+        {
+            if (candidate != typeof(string))
+            {
+                isCompatible = false;
+                return;
+            }
+
+            sawEvidence = true;
+            if (inferred == null)
+            {
+                inferred = candidate;
+                return;
+            }
+
+            if (inferred != candidate)
+            {
+                isCompatible = false;
+            }
+        }
+
+        bool IsTargetOrAliasBinding(BindingInfo? binding) =>
+            binding != null && aliasBindings.Contains(binding);
+
+        void TrackAliasBindingFromAssignment(BindingInfo? leftBinding, Node? rightExpr, Scope currentScope)
+        {
+            if (leftBinding == null || rightExpr == null || ReferenceEquals(leftBinding, targetBinding))
+            {
+                return;
+            }
+
+            if (rightExpr is not Identifier rightIdentifier)
+            {
+                return;
+            }
+
+            var rightBinding = TryResolveBinding(currentScope, rightIdentifier.Name);
+            if (IsTargetOrAliasBinding(rightBinding))
+            {
+                aliasBindings.Add(leftBinding);
+            }
+        }
+
+        void ProcessArrayAssignmentRhs(Node rhs, Scope currentScope)
+        {
+            var rhsType = InferExpressionClrType(rhs, currentScope, proposedClrTypes);
+            if (rhsType != typeof(JavaScriptRuntime.Array))
+            {
+                isCompatible = false;
+                return;
+            }
+
+            var rhsElementType = InferExpressionArrayElementClrType(rhs, currentScope, proposedClrTypes);
+            if (rhsElementType == null)
+            {
+                if (IsNeutralArrayInitialization(rhs, currentScope, proposedClrTypes))
+                {
+                    return;
+                }
+
+                isCompatible = false;
+                return;
+            }
+
+            MergeCandidate(rhsElementType);
+        }
+
+        void WalkScope(Scope currentScope)
+        {
+            if (!isCompatible)
+            {
+                return;
+            }
+
+            // If this scope resolves the name to a different binding (shadowing), this subtree cannot
+            // read/write the target binding.
+            if (!ReferenceEquals(TryResolveBinding(currentScope, targetBinding.Name), targetBinding))
+            {
+                return;
+            }
+
+            bool IsChildScopeRoot(Node node)
+            {
+                foreach (var childScope in currentScope.Children)
+                {
+                    if (ReferenceEquals(childScope.AstNode, node))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            void WalkNode(Node? node)
+            {
+                if (node == null || !isCompatible)
+                {
+                    return;
+                }
+
+                // Nested scope roots are validated in their own scope context.
+                if (!ReferenceEquals(node, currentScope.AstNode) && IsChildScopeRoot(node))
+                {
+                    return;
+                }
+
+                if (node is VariableDeclarator declarator
+                    && declarator.Id is Identifier declId
+                    && declarator.Init != null)
+                {
+                    var declBinding = TryResolveBinding(currentScope, declId.Name);
+                    TrackAliasBindingFromAssignment(declBinding, declarator.Init, currentScope);
+                    if (ReferenceEquals(declBinding, targetBinding))
+                    {
+                        ProcessArrayAssignmentRhs(declarator.Init, currentScope);
+                    }
+                }
+                else if (node is AssignmentExpression assignExpr)
+                {
+                    var leftIdentifierBinding = assignExpr.Left is Identifier assignIdentifier
+                        ? TryResolveBinding(currentScope, assignIdentifier.Name)
+                        : null;
+
+                    if (assignExpr.Operator == Operator.Assignment)
+                    {
+                        TrackAliasBindingFromAssignment(leftIdentifierBinding, assignExpr.Right, currentScope);
+                    }
+
+                    if (assignExpr.Operator != Operator.Assignment)
+                    {
+                        // Compound assignments against the target are not stable for element typing.
+                        if (ReferenceEquals(leftIdentifierBinding, targetBinding))
+                        {
+                            isCompatible = false;
+                            return;
+                        }
+
+                        if (assignExpr.Left is MemberExpression compoundMember
+                            && compoundMember.Object is Identifier compoundMemberObjectId
+                            && ReferenceEquals(TryResolveBinding(currentScope, compoundMemberObjectId.Name), targetBinding))
+                        {
+                            isCompatible = false;
+                            return;
+                        }
+                    }
+
+                    if (ReferenceEquals(leftIdentifierBinding, targetBinding))
+                    {
+                        ProcessArrayAssignmentRhs(assignExpr.Right, currentScope);
+                    }
+                    else if (assignExpr.Left is MemberExpression memberAssign
+                        && memberAssign.Object is Identifier memberObjectId
+                        && IsTargetOrAliasBinding(TryResolveBinding(currentScope, memberObjectId.Name)))
+                    {
+                        if (!memberAssign.Computed)
+                        {
+                            // Non-computed writes like arr.length mutate array shape; treat as unstable.
+                            isCompatible = false;
+                            return;
+                        }
+
+                        var indexType = InferExpressionClrType(memberAssign.Property, currentScope, proposedClrTypes);
+                        if (memberAssign.Property is StringLiteral || indexType == typeof(string))
+                        {
+                            isCompatible = false;
+                            return;
+                        }
+
+                        var rhsType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                        MergeCandidate(rhsType);
+                    }
+                }
+                else if (node is UpdateExpression updateExpr)
+                {
+                    if (updateExpr.Argument is Identifier updateId
+                        && ReferenceEquals(TryResolveBinding(currentScope, updateId.Name), targetBinding))
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+
+                    if (updateExpr.Argument is MemberExpression memberUpdate
+                        && memberUpdate.Object is Identifier updateObjectId
+                        && IsTargetOrAliasBinding(TryResolveBinding(currentScope, updateObjectId.Name)))
+                    {
+                        isCompatible = false;
+                        return;
+                    }
+                }
+
+                foreach (var child in node.ChildNodes)
+                {
+                    WalkNode(child);
+                }
+            }
+
+            WalkNode(currentScope.AstNode);
+
+            foreach (var childScope in currentScope.Children)
+            {
+                WalkScope(childScope);
+            }
+        }
+
+        WalkScope(scope);
+        return isCompatible && sawEvidence ? inferred : null;
     }
 
     private void InferClassInstanceFieldClrTypesRecursively(Scope scope)
@@ -610,6 +1352,8 @@ public partial class SymbolTableBuilder
                     return typeof(bool);
                 case NullLiteral:
                     return typeof(JavaScriptRuntime.JsNull);
+                case Literal regexLiteral when regexLiteral.Raw != null && regexLiteral.Raw.TrimStart().StartsWith("/", StringComparison.Ordinal):
+                    return typeof(JavaScriptRuntime.RegExp);
                 case MemberExpression me when me.Object is ThisExpression && !me.Computed:
                 {
                     var name = me.Property switch
@@ -849,6 +1593,25 @@ public partial class SymbolTableBuilder
             return current;
         }
 
+        static Scope? FindScopeByAstNode(Scope scopeNode, Node astNode)
+        {
+            if (ReferenceEquals(scopeNode.AstNode, astNode))
+            {
+                return scopeNode;
+            }
+
+            foreach (var child in scopeNode.Children)
+            {
+                var found = FindScopeByAstNode(child, astNode);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
         static Scope? FindClassScopeRecursive(Scope scope, string className)
         {
             if (scope.Kind == ScopeKind.Class && string.Equals(scope.Name, className, StringComparison.Ordinal))
@@ -859,6 +1622,25 @@ public partial class SymbolTableBuilder
             foreach (var child in scope.Children)
             {
                 var found = FindClassScopeRecursive(child, className);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        static Scope? FindScopeByAstNodeRecursive(Scope scope, Node astNode)
+        {
+            if (ReferenceEquals(scope.AstNode, astNode))
+            {
+                return scope;
+            }
+
+            foreach (var child in scope.Children)
+            {
+                var found = FindScopeByAstNodeRecursive(child, astNode);
                 if (found != null)
                 {
                     return found;
@@ -902,6 +1684,8 @@ public partial class SymbolTableBuilder
             case NullLiteral:
                 // Treat JavaScript `null` as a distinct known value.
                 return typeof(JavaScriptRuntime.JsNull);
+            case Literal regexLiteral when regexLiteral.Raw != null && regexLiteral.Raw.TrimStart().StartsWith("/", StringComparison.Ordinal):
+                return typeof(JavaScriptRuntime.RegExp);
             case ArrayExpression:
                 // Array literals always compile to the runtime Array implementation.
                 return typeof(JavaScriptRuntime.Array);
@@ -968,12 +1752,41 @@ public partial class SymbolTableBuilder
                             return typeof(double);
                         }
                     }
+
+                    if (receiverType == typeof(JavaScriptRuntime.Array))
+                    {
+                        var indexType = InferExpressionClrType(me.Property, scope, proposedTypes);
+                        if (IsSupportedNumberLike(indexType))
+                        {
+                            return InferExpressionArrayElementClrType(me.Object, scope, proposedTypes);
+                        }
+                    }
                 }
 
                 return null;
             }
             case CallExpression ce:
             {
+                // Direct call to a known function declaration/expression binding.
+                // If the callee has a stable inferred return type, propagate it to this expression.
+                if (ce.Callee is Identifier calleeId && scope != null)
+                {
+                    var calleeBinding = TryResolveBinding(scope, calleeId.Name);
+                    if (calleeBinding?.Kind == BindingKind.Function && calleeBinding.DeclarationNode != null)
+                    {
+                        var root = FindRootScope(scope);
+                        if (root != null)
+                        {
+                            var calleeScope = FindScopeByAstNodeRecursive(root, calleeBinding.DeclarationNode);
+                            var stableReturn = calleeScope?.StableReturnClrType;
+                            if (stableReturn == typeof(JavaScriptRuntime.Array))
+                            {
+                                return stableReturn;
+                            }
+                        }
+                    }
+                }
+
                 // Math.*(...) numeric helpers
                 // (e.g., const q = Math.ceil(Math.sqrt(this.sieveSizeInBits));)
                 if (ce.Callee is MemberExpression mathMe &&
@@ -985,6 +1798,22 @@ public partial class SymbolTableBuilder
                     IsSupportedMathNumberMethod(mathMethodId.Name))
                 {
                     return typeof(double);
+                }
+
+                // Calls to function declarations with stable inferred primitive return types.
+                if (ce.Callee is Identifier functionId && scope != null)
+                {
+                    var resolvedBinding = TryResolveBinding(scope, functionId.Name);
+                    if (resolvedBinding?.DeclarationNode is FunctionDeclaration functionDecl)
+                    {
+                        var root = FindRootScope(scope);
+                        var functionScope = root != null ? FindScopeByAstNode(root, functionDecl) : null;
+                        var stableReturnType = functionScope?.StableReturnClrType;
+                        if (stableReturnType == typeof(double) || stableReturnType == typeof(bool) || stableReturnType == typeof(string))
+                        {
+                            return stableReturnType;
+                        }
+                    }
                 }
 
                 // this.<field>.<method>(...) where <field> is a user-class instance
@@ -1042,6 +1871,18 @@ public partial class SymbolTableBuilder
                     }
                 }
 
+                // String.fromCharCode(...)
+                if (ce.Callee is MemberExpression stringMe
+                    && !stringMe.Computed
+                    && stringMe.Object is Identifier stringId
+                    && string.Equals(stringId.Name, "String", StringComparison.Ordinal)
+                    && stringMe.Property is Identifier stringMethodId
+                    && string.Equals(stringMethodId.Name, "fromCharCode", StringComparison.Ordinal)
+                    && !IsIdentifierShadowed(scope, "String"))
+                {
+                    return typeof(string);
+                }
+
                 // Array instance methods - use reflection to get return type
                 if (ce.Callee is MemberExpression instanceMe && instanceMe.Property is Identifier methodId)
                 {
@@ -1065,11 +1906,11 @@ public partial class SymbolTableBuilder
                                 {
                                     return returnType;
                                 }
-                                // For object return types, check if it's Array
-                                else if (returnType == typeof(object) || returnType == receiverType)
+                                // Some array methods (slice/map/filter/concat/...) return Array.
+                                // Preserve that to unlock downstream typed array calls/indexing.
+                                else if (returnType == receiverType)
                                 {
-                                    // Some methods like slice, map return Array but are typed as object
-                                    // We already handle these cases elsewhere, so skip here
+                                    return receiverType;
                                 }
                             }
                         }

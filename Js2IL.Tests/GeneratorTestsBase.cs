@@ -98,6 +98,23 @@ namespace Js2IL.Tests
                 resolvedResourceName = legacy;
             }
 
+            if (stream == null)
+            {
+                // Some build configurations produce manifest resource names with different casing
+                // (e.g., "JS2IL.Tests" vs "Js2IL.Tests"). Resolve case-insensitively.
+                var names = assembly.GetManifestResourceNames();
+                var match = (categorySpecific != null
+                    ? names.FirstOrDefault(n => string.Equals(n, categorySpecific, StringComparison.OrdinalIgnoreCase))
+                    : null)
+                    ?? names.FirstOrDefault(n => string.Equals(n, legacy, StringComparison.OrdinalIgnoreCase));
+
+                if (match != null)
+                {
+                    stream = assembly.GetManifestResourceStream(match);
+                    resolvedResourceName = match;
+                }
+            }
+
             using (stream)
             {
                 if (stream == null)

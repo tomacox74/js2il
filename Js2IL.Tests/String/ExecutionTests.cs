@@ -52,6 +52,12 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Search_Basic()
+        {
+            return ExecutionTest(nameof(String_Search_Basic));
+        }
+
+        [Fact]
         public Task String_RegExp_Exec_LastIndex_Global()
         {
             return ExecutionTest(nameof(String_RegExp_Exec_LastIndex_Global));
@@ -108,6 +114,12 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_FromCharCode_Basic()
+        {
+            return ExecutionTest(nameof(String_FromCharCode_Basic));
+        }
+
+        [Fact]
         public Task String_ToLowerCase_ToUpperCase_Basic()
         {
             return ExecutionTest(nameof(String_ToLowerCase_ToUpperCase_Basic));
@@ -147,6 +159,12 @@ namespace Js2IL.Tests.String
         public Task String_MemberCall_FastPath_CommonMethods()
         {
             return ExecutionTest(nameof(String_MemberCall_FastPath_CommonMethods));
+        }
+
+        [Fact]
+        public Task String_Repeat_Basic()
+        {
+            return ExecutionTest(nameof(String_Repeat_Basic));
         }
     }
 }

@@ -26,7 +26,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22eb
+				// Method begins at RVA 0x227a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -47,7 +47,7 @@
 				object $p0
 			) cil managed 
 		{
-			// Method begins at RVA 0x2194
+			// Method begins at RVA 0x212c
 			// Header size: 12
 			// Code size: 72 (0x48)
 			.maxstack 8
@@ -70,11 +70,11 @@
 
 			IL_0021: ldarg.1
 			IL_0022: ldstr "a"
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
 			IL_002c: stloc.0
 			IL_002d: ldarg.1
 			IL_002e: ldstr "b"
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
 			IL_0038: stloc.1
 			IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_003e: ldloc.0
@@ -109,7 +109,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22f4
+				// Method begins at RVA 0x2283
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -130,9 +130,9 @@
 				object $p0
 			) cil managed 
 		{
-			// Method begins at RVA 0x21e8
+			// Method begins at RVA 0x2180
 			// Header size: 12
-			// Code size: 238 (0xee)
+			// Code size: 229 (0xe5)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -159,7 +159,7 @@
 
 			IL_0021: ldarg.1
 			IL_0022: ldstr "host"
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
 			IL_002c: stloc.s 4
 			IL_002e: ldloc.s 4
 			IL_0030: brtrue IL_0040
@@ -173,7 +173,7 @@
 
 			IL_0043: ldarg.1
 			IL_0044: ldstr "port"
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
 			IL_004e: stloc.s 4
 			IL_0050: ldloc.s 4
 			IL_0052: brtrue IL_006b
@@ -188,7 +188,7 @@
 
 			IL_006e: ldarg.1
 			IL_006f: ldstr "secure"
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
 			IL_0079: stloc.s 4
 			IL_007b: ldloc.s 4
 			IL_007d: brtrue IL_008e
@@ -229,16 +229,11 @@
 			IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_00d7: stloc.s 7
 			IL_00d9: ldloc.s 5
-			IL_00db: ldc.i4.1
-			IL_00dc: newarr [System.Runtime]System.Object
-			IL_00e1: dup
-			IL_00e2: ldc.i4.0
-			IL_00e3: ldloc.s 7
-			IL_00e5: stelem.ref
-			IL_00e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00eb: pop
-			IL_00ec: ldnull
-			IL_00ed: ret
+			IL_00db: ldloc.s 7
+			IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00e2: pop
+			IL_00e3: ldnull
+			IL_00e4: ret
 		} // end of method config::__js_call__
 
 	} // end of class config
@@ -259,7 +254,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22e2
+			// Method begins at RVA 0x2271
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -285,14 +280,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 309 (0x135)
+		// Code size: 205 (0xcd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ParameterDestructuring_Object/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.Function_ParameterDestructuring_Object/Scope::.ctor()
@@ -300,100 +295,64 @@
 		IL_0006: ldnull
 		IL_0007: ldftn object Modules.Function_ParameterDestructuring_Object/show::__js_call__(object, object)
 		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0012: stloc.3
+		IL_0013: ldloc.3
+		IL_0014: stloc.1
+		IL_0015: ldnull
+		IL_0016: ldftn object Modules.Function_ParameterDestructuring_Object/config::__js_call__(object, object)
+		IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_0021: stloc.3
 		IL_0022: ldloc.3
-		IL_0023: stloc.1
-		IL_0024: ldnull
-		IL_0025: ldftn object Modules.Function_ParameterDestructuring_Object/config::__js_call__(object, object)
-		IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0030: ldc.i4.1
-		IL_0031: newarr [System.Runtime]System.Object
-		IL_0036: dup
-		IL_0037: ldc.i4.0
-		IL_0038: ldloc.0
-		IL_0039: stelem.ref
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_003f: stloc.3
-		IL_0040: ldloc.3
-		IL_0041: stloc.2
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0047: dup
-		IL_0048: ldstr "a"
-		IL_004d: ldc.r8 10
-		IL_0056: box [System.Runtime]System.Double
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0060: pop
+		IL_0023: stloc.2
+		IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0029: dup
+		IL_002a: ldstr "a"
+		IL_002f: ldc.r8 10
+		IL_0038: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_003d: dup
+		IL_003e: ldstr "b"
+		IL_0043: ldc.r8 20
+		IL_004c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0051: stloc.s 4
+		IL_0053: ldnull
+		IL_0054: ldloc.s 4
+		IL_0056: call object Modules.Function_ParameterDestructuring_Object/show::__js_call__(object, object)
+		IL_005b: pop
+		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0061: dup
-		IL_0062: ldstr "b"
-		IL_0067: ldc.r8 20
-		IL_0070: box [System.Runtime]System.Double
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_007a: pop
-		IL_007b: stloc.s 4
-		IL_007d: ldnull
-		IL_007e: ldftn object Modules.Function_ParameterDestructuring_Object/show::__js_call__(object, object)
-		IL_0084: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0089: ldnull
-		IL_008a: ldloc.s 4
-		IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
-		IL_0091: pop
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0097: dup
-		IL_0098: ldstr "host"
-		IL_009d: ldstr "example.com"
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00a7: pop
-		IL_00a8: stloc.s 4
-		IL_00aa: ldnull
-		IL_00ab: ldftn object Modules.Function_ParameterDestructuring_Object/config::__js_call__(object, object)
-		IL_00b1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00b6: ldnull
-		IL_00b7: ldloc.s 4
-		IL_00b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
-		IL_00be: pop
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00c4: dup
-		IL_00c5: ldstr "host"
-		IL_00ca: ldstr "api.test.com"
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00d4: pop
-		IL_00d5: dup
-		IL_00d6: ldstr "port"
-		IL_00db: ldc.r8 3000
-		IL_00e4: box [System.Runtime]System.Double
-		IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00ee: pop
-		IL_00ef: dup
-		IL_00f0: ldstr "secure"
-		IL_00f5: ldc.i4.1
-		IL_00f6: box [System.Runtime]System.Boolean
-		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0100: pop
-		IL_0101: stloc.s 4
-		IL_0103: ldnull
-		IL_0104: ldftn object Modules.Function_ParameterDestructuring_Object/config::__js_call__(object, object)
-		IL_010a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_010f: ldnull
-		IL_0110: ldloc.s 4
-		IL_0112: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
-		IL_0117: pop
-		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_011d: stloc.s 4
-		IL_011f: ldnull
-		IL_0120: ldftn object Modules.Function_ParameterDestructuring_Object/config::__js_call__(object, object)
-		IL_0126: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_012b: ldnull
-		IL_012c: ldloc.s 4
-		IL_012e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
-		IL_0133: pop
-		IL_0134: ret
+		IL_0062: ldstr "host"
+		IL_0067: ldstr "example.com"
+		IL_006c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0071: stloc.s 4
+		IL_0073: ldnull
+		IL_0074: ldloc.s 4
+		IL_0076: call object Modules.Function_ParameterDestructuring_Object/config::__js_call__(object, object)
+		IL_007b: pop
+		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0081: dup
+		IL_0082: ldstr "host"
+		IL_0087: ldstr "api.test.com"
+		IL_008c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0091: dup
+		IL_0092: ldstr "port"
+		IL_0097: ldc.r8 3000
+		IL_00a0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00a5: dup
+		IL_00a6: ldstr "secure"
+		IL_00ab: ldc.i4.1
+		IL_00ac: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_00b1: stloc.s 4
+		IL_00b3: ldnull
+		IL_00b4: ldloc.s 4
+		IL_00b6: call object Modules.Function_ParameterDestructuring_Object/config::__js_call__(object, object)
+		IL_00bb: pop
+		IL_00bc: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00c1: stloc.s 4
+		IL_00c3: ldnull
+		IL_00c4: ldloc.s 4
+		IL_00c6: call object Modules.Function_ParameterDestructuring_Object/config::__js_call__(object, object)
+		IL_00cb: pop
+		IL_00cc: ret
 	} // end of method Function_ParameterDestructuring_Object::__js_module_init__
 
 } // end of class Modules.Function_ParameterDestructuring_Object
@@ -405,7 +364,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22fd
+		// Method begins at RVA 0x228c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

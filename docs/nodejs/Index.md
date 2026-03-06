@@ -4,7 +4,7 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-02-19T01:44:08Z`
+**Generated:** `2026-03-06T06:03:03Z`
 
 ## Summary
 
@@ -51,5 +51,5 @@
 
 - Buffer core APIs for binary workflows are implemented, including from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes, array-like indexing, and binary read/write methods for Int8/16/32, UInt8/16/32, FloatLE/BE, and DoubleLE/BE with utf8/hex/base64 encodings.
 - events module implements full core EventEmitter listener lifecycle APIs, events.errorMonitor behavior, and async helper APIs (events.on/events.once); advanced features such as captureRejections and newListener/removeListener event semantics are not yet implemented.
-- CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; ESM import.meta.url is not.
+- CommonJS globals (__dirname/__filename) are supported; require() supports compiled local modules, implemented core modules, and compile-time node_modules package.json main plus a minimal exports subset; ESM import.meta.url is not.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.

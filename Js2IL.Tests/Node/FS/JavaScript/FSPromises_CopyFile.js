@@ -4,8 +4,9 @@ const syncFs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const src = path.join(os.tmpdir(), 'test-copyfile-src.txt');
-const dst = path.join(os.tmpdir(), 'test-copyfile-dst.txt');
+const unique = `${Date.now()}-${Math.floor(Math.random() * 1000000000)}`;
+const src = path.join(os.tmpdir(), `test-copyfile-src-${unique}.txt`);
+const dst = path.join(os.tmpdir(), `test-copyfile-dst-${unique}.txt`);
 
 syncFs.writeFileSync(src, 'copied content', 'utf8');
 

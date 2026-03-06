@@ -28,6 +28,7 @@ public sealed partial class HIRToLIRLowerer
 
         // Loop start label
         lirInstructions.Add(new LIRLabel(loopStartLabel));
+        ClearNumericRefinementsAtLabel();
 
         // Loop body (always executes at least once)
         _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopTestLabel, doWhileStmt.Label));
@@ -45,6 +46,7 @@ public sealed partial class HIRToLIRLowerer
 
         // Continue target (do/while continue should skip remainder of body and go to test)
         lirInstructions.Add(new LIRLabel(loopTestLabel));
+        ClearNumericRefinementsAtLabel();
 
         // Test condition
         if (!TryLowerExpression(doWhileStmt.Test, out var conditionTemp))
@@ -74,6 +76,7 @@ public sealed partial class HIRToLIRLowerer
 
         // Loop end label
         lirInstructions.Add(new LIRLabel(loopEndLabel));
+        ClearNumericRefinementsAtLabel();
 
         return true;
     }

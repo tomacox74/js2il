@@ -115,6 +115,80 @@ public class GeneratedContractTests
         Assert.Equal(3.0, await task);
     }
 
+    [Fact]
+    public void GeneratedContracts_StableReturnType_IsSurfacedInMethodSignature()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            rootModuleName: "stableTypes",
+            scriptResourcePath: "Hosting_StableTypeInference.js");
+
+        var contractType = module.Assembly
+            .GetTypes()
+            .Single(t => t.IsInterface
+                      && t.GetCustomAttribute<Js2IL.Runtime.JsModuleAttribute>()?.ModuleId == "stableTypes");
+
+        // The return type of calculateSum should be double (not object) because
+        // stable type inference knows `sum` is always a double even though the
+        // AST-only heuristic would fall back to object for a local loop variable.
+        var calculateSum = contractType.GetMethod("CalculateSum", BindingFlags.Public | BindingFlags.Instance);
+        Assert.NotNull(calculateSum);
+        Assert.Equal(typeof(double), calculateSum!.ReturnType);
+
+        // Verify invocation still works end-to-end.
+        var loadNoArgs = typeof(Js2IL.Runtime.JsEngine)
+            .GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Single(m => m.Name == nameof(Js2IL.Runtime.JsEngine.LoadModule)
+                      && m.IsGenericMethodDefinition
+                      && m.GetParameters().Length == 0);
+
+        var exportsObj = loadNoArgs.MakeGenericMethod(contractType).Invoke(null, null);
+        Assert.NotNull(exportsObj);
+
+        using var exports = (IDisposable)exportsObj!;
+
+        var result = calculateSum.Invoke(exportsObj, new object?[] { 10.0 });
+        Assert.Equal(55.0, Convert.ToDouble(result));
+    }
+
+    [Fact]
+    public void GeneratedContracts_StableReturnType_ClassInstanceMethod_IsSurfacedInMethodSignature()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            rootModuleName: "stableClassTypes",
+            scriptResourcePath: "Hosting_StableTypeInference_ClassMethod.js");
+
+        var contractType = module.Assembly
+            .GetTypes()
+            .Single(t => t.IsInterface
+                      && t.GetCustomAttribute<Js2IL.Runtime.JsModuleAttribute>()?.ModuleId == "stableClassTypes");
+
+        var classInterfaceType = module.Assembly.GetType("Js2IL.stableClassTypes.ICounterSum", throwOnError: true)!;
+        var calculateSum = classInterfaceType.GetMethod("CalculateSum", BindingFlags.Public | BindingFlags.Instance);
+        Assert.NotNull(calculateSum);
+        Assert.Equal(typeof(double), calculateSum!.ReturnType);
+
+        var loadNoArgs = typeof(Js2IL.Runtime.JsEngine)
+            .GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Single(m => m.Name == nameof(Js2IL.Runtime.JsEngine.LoadModule)
+                      && m.IsGenericMethodDefinition
+                      && m.GetParameters().Length == 0);
+
+        var exportsObj = loadNoArgs.MakeGenericMethod(contractType).Invoke(null, null);
+        Assert.NotNull(exportsObj);
+
+        using var exports = (IDisposable)exportsObj!;
+
+        var ctor = contractType.GetProperty("CounterSum")!.GetValue(exportsObj);
+        Assert.NotNull(ctor);
+
+        var construct = ctor!.GetType().GetMethod("Construct")!;
+        var counter = construct.Invoke(ctor, new object?[] { System.Array.Empty<object?>() });
+        Assert.NotNull(counter);
+
+        var result = calculateSum.Invoke(counter, new object?[] { 10.0 });
+        Assert.Equal(55.0, Convert.ToDouble(result));
+    }
+
     private sealed class CompiledModuleAssembly : IDisposable
     {
         private readonly string _outputDir;

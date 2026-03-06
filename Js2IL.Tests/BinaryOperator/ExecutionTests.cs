@@ -132,6 +132,12 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_SubNumberNumber() { var testName = nameof(BinaryOperator_SubNumberNumber); return ExecutionTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_NumericRefinement_ParameterReuseCSE() { var testName = nameof(BinaryOperator_NumericRefinement_ParameterReuseCSE); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_NumericRefinement_ExplicitNumberAssignment() { var testName = nameof(BinaryOperator_NumericRefinement_ExplicitNumberAssignment); return ExecutionTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_UnsignedRightShiftNumberNumber() { var testName = nameof(BinaryOperator_UnsignedRightShiftNumberNumber); return ExecutionTest(testName); }
     }
 }

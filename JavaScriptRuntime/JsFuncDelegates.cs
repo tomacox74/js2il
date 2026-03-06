@@ -6,16 +6,18 @@ internal static class JsFuncDelegates
 
     static JsFuncDelegates()
     {
+        var runtimeAssembly = typeof(JsFuncDelegates).Assembly;
+
         // Register all JsFuncN delegate types
         for (int i = 0; i <= 32; i++)
         {
-            var delegateType = Type.GetType($"JavaScriptRuntime.JsFunc{i}");
+            var delegateType = runtimeAssembly.GetType($"JavaScriptRuntime.JsFunc{i}");
             if (delegateType != null)
             {
                 _registeredDelegateTypes.Add(delegateType);
             }
 
-            var noScopesDelegateType = Type.GetType($"JavaScriptRuntime.JsFuncNoScopes{i}");
+            var noScopesDelegateType = runtimeAssembly.GetType($"JavaScriptRuntime.JsFuncNoScopes{i}");
             if (noScopesDelegateType != null)
             {
                 _registeredDelegateTypes.Add(noScopesDelegateType);

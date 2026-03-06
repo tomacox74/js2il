@@ -56,6 +56,12 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_Error_ConstructorSurface()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_Error_ConstructorSurface));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Object_Callable_ReturnsObject()
         {
             return ExecutionTest(nameof(IntrinsicCallables_Object_Callable_ReturnsObject));
@@ -109,6 +115,18 @@ namespace Js2IL.Tests.IntrinsicCallables
             return ExecutionTest(nameof(IntrinsicCallables_Symbol_Callable_Basic));
         }
 
+
+        [Fact]
+        public Task IntrinsicCallables_Symbol_Registry_WellKnown()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_Symbol_Registry_WellKnown));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_Symbol_Prototype_Basic()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_Symbol_Prototype_Basic));
+        }
         [Fact]
         public Task IntrinsicCallables_BigInt_Callable_Basic()
         {

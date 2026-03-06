@@ -74,6 +74,7 @@ public sealed partial class HIRToLIRLowerer
 
             // Loop start label
             lirInstructions.Add(new LIRLabel(loopStartLabel));
+            ClearNumericRefinementsAtLabel();
 
             // Test condition (if present)
             if (forStmt.Test != null)
@@ -117,6 +118,7 @@ public sealed partial class HIRToLIRLowerer
 
             // Continue target (for-loops continue runs update, then loops)
             lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+            ClearNumericRefinementsAtLabel();
 
             // CreatePerIterationEnvironment: ensure the update expression mutates the
             // next iteration's environment, not the previous iteration's.
@@ -141,6 +143,7 @@ public sealed partial class HIRToLIRLowerer
 
             // Loop end label
             lirInstructions.Add(new LIRLabel(loopEndLabel));
+            ClearNumericRefinementsAtLabel();
 
             return true;
         }

@@ -142,6 +142,9 @@ namespace Js2IL.Tests.Function
         public Task Function_Closure_CapturedBoolean_AssignAndRead() { var testName = nameof(Function_Closure_CapturedBoolean_AssignAndRead); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_VariableDeclaration_UndefinedInit_TypedReferenceAssignment() { var testName = nameof(Function_VariableDeclaration_UndefinedInit_TypedReferenceAssignment); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_Call_Basic() { var testName = nameof(Function_Call_Basic); return ExecutionTest(testName); }
 
         [Fact]
@@ -173,6 +176,18 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_Prototype_ObjectCreate_ObjectPrototype() { var testName = nameof(Function_Prototype_ObjectCreate_ObjectPrototype); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Prototype_Bind_PropertyExists() { var testName = nameof(Function_Prototype_Bind_PropertyExists); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Prototype_Constructor_ReferencesFunction() { var testName = nameof(Function_Prototype_Constructor_ReferencesFunction); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Prototype_ToString_Basic() { var testName = nameof(Function_Prototype_ToString_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Instance_Length_Name_Basic() { var testName = nameof(Function_Instance_Length_Name_Basic); return ExecutionTest(testName); }
 
         [Fact]
         public Task Function_MaxParameters_16() { var testName = nameof(Function_MaxParameters_16); return ExecutionTest(testName); }

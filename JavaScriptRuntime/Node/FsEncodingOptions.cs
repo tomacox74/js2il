@@ -22,7 +22,7 @@ namespace JavaScriptRuntime.Node
 
             try
             {
-                var encodingValue = JavaScriptRuntime.Object.GetProperty(options, "encoding");
+                var encodingValue = JavaScriptRuntime.ObjectRuntime.GetProperty(options, "encoding");
                 if (encodingValue == null || encodingValue is JsNull)
                 {
                     return false;

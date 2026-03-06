@@ -378,9 +378,13 @@
         "feature": "Top-level static import declarations",
         "status": "Supported with Limitations",
         "testScripts": [
-          "Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js"
+          "Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js",
+          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named.js",
+          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js",
+          "Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
+          "Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js"
         ],
-        "notes": "Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls. In this MVP, static import/export declarations must appear before non-directive top-level statements."
+        "notes": "Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls, and imported identifier reads are rewritten to live reads to better match ESM semantics. Namespace imports from ESM return the module export object; namespace imports from CommonJS return a cached synthetic namespace object whose properties forward through to the underlying exports (live values for keys present at namespace creation time). Imported bindings are treated as immutable; assignment/update/destructuring writes and `delete` of an imported binding are rejected at compile time. In this MVP, static import/export declarations must appear before non-directive top-level statements."
       },
       {
         "clause": "16.2.3",
@@ -388,10 +392,15 @@
         "status": "Supported with Limitations",
         "testScripts": [
           "Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule_Lib.mjs",
+          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named_Lib.mjs",
+          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle_A.mjs",
+          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle_B.mjs",
           "Js2IL.Tests/Import/JavaScript/Import_ExportNamedFrom.js",
-          "Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js"
+          "Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js",
+          "Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic_Lib.mjs",
+          "Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable_Lib.cjs"
         ],
-        "notes": "Supported forms include named/default exports, `export ... from`, and `export *` re-exports. Exports are projected through CommonJS `exports` with getter-based wiring."
+        "notes": "Supported forms include named/default exports, `export ... from`, and `export *` re-exports. Exports are projected through CommonJS `exports` with getter-based wiring; export getters are installed before generated import `require(...)` calls to improve behavior for common cyclic graphs."
       },
       {
         "clause": "16.2.1",

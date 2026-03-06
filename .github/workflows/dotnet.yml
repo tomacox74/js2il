@@ -28,3 +28,11 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Upload received snapshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: verify-received-snapshots
+        path: |
+          **/*.received.txt
+        if-no-files-found: ignore

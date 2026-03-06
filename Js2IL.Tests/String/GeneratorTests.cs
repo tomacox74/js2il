@@ -56,6 +56,13 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Search_Basic()
+        {
+            var testName = nameof(String_Search_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_RegExp_Exec_LastIndex_Global()
         {
             var testName = nameof(String_RegExp_Exec_LastIndex_Global);
@@ -119,6 +126,13 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_FromCharCode_Basic()
+        {
+            var testName = nameof(String_FromCharCode_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_ToLowerCase_ToUpperCase_Basic()
         {
             var testName = nameof(String_ToLowerCase_ToUpperCase_Basic);
@@ -163,6 +177,13 @@ namespace Js2IL.Tests.String
         public Task String_MemberCall_FastPath_CommonMethods()
         {
             var testName = nameof(String_MemberCall_FastPath_CommonMethods);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_Repeat_Basic()
+        {
+            var testName = nameof(String_Repeat_Basic);
             return GenerateTest(testName);
         }
     }

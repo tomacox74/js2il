@@ -14,6 +14,20 @@ public class RuntimeServices
     private static readonly ConcurrentDictionary<string, ExpandoObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
 
+    // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
+    // NOTE: Consumers must treat scopes arrays as immutable.
+    public static readonly object[] EmptyScopes = new object[1];
+
+#if DEBUG
+    public static void AssertEmptyScopesUnmodified()
+    {
+        if (EmptyScopes[0] != null)
+        {
+            throw new InvalidOperationException("RuntimeServices.EmptyScopes was mutated (expected [0] == null).");
+        }
+    }
+#endif
+
     public static object? GetCurrentThis()
     {
         return _currentThis.Value;
@@ -149,11 +163,11 @@ public class RuntimeServices
 
     /// <summary>
     /// Creates the backing object for a JavaScript object literal.
-    /// Kept in the runtime so generated IL can avoid directly referencing BCL dynamic types.
+    /// Returns a <see cref="JsObject"/> that stores numeric and boolean values without boxing.
     /// </summary>
-    public static object CreateObjectLiteral()
+    public static JsObject CreateObjectLiteral()
     {
-        return new System.Dynamic.ExpandoObject();
+        return new JsObject();
     }
 
     /// <summary>

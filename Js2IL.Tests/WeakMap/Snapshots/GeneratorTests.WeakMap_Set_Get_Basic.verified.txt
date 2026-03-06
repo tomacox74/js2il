@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20a5
+			// Method begins at RVA 0x209e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 73 (0x49)
+		// Code size: 66 (0x42)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.WeakMap_Set_Get_Basic/Scope,
-			[1] object,
-			[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
-			[3] object
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.WeakMap,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.WeakMap,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.WeakMap_Set_Get_Basic/Scope::.ctor()
@@ -55,7 +56,7 @@
 		IL_000b: stloc.3
 		IL_000c: ldloc.3
 		IL_000d: stloc.1
-		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_000e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0013: stloc.2
 		IL_0014: ldloc.1
 		IL_0015: ldstr "set"
@@ -67,17 +68,12 @@
 		IL_0027: ldstr "get"
 		IL_002c: ldloc.2
 		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0032: stloc.3
-		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0038: ldc.i4.1
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldloc.3
-		IL_0041: stelem.ref
-		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0047: pop
-		IL_0048: ret
+		IL_0032: stloc.s 4
+		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0039: ldloc.s 4
+		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0040: pop
+		IL_0041: ret
 	} // end of method WeakMap_Set_Get_Basic::__js_module_init__
 
 } // end of class Modules.WeakMap_Set_Get_Basic
@@ -89,7 +85,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ae
+		// Method begins at RVA 0x20a7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -944,7 +944,7 @@ namespace JavaScriptRuntime
                 // Convert property to string key (minimal; symbols not yet surfaced here)
                 var proxyPropName = DotNet2JSConversions.ToString(property);
 
-                var hasTrap = JavaScriptRuntime.Object.GetProperty(proxy.Handler, "has");
+                var hasTrap = JavaScriptRuntime.ObjectRuntime.GetProperty(proxy.Handler, "has");
                 if (hasTrap is not null && hasTrap is not JsNull)
                 {
                     var prev = RuntimeServices.SetCurrentThis(proxy.Handler);
@@ -983,11 +983,10 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                // For generic objects (ExpandoObject, dynamic objects)
-                if (target is System.Dynamic.ExpandoObject expando)
+                // For generic objects (ExpandoObject, JsObject, IDictionary-backed objects)
+                if (target is System.Collections.Generic.IDictionary<string, object?> dictGeneric)
                 {
-                    var dict2 = (System.Collections.Generic.IDictionary<string, object?>)expando;
-                    return dict2.ContainsKey(name);
+                    return dictGeneric.ContainsKey(name);
                 }
 
                 // Fallback: check using reflection (not cached - see performance note above)
@@ -1086,7 +1085,7 @@ namespace JavaScriptRuntime
             }
 
             // Spec: let proto = ctor.prototype; if proto is not an object, throw.
-            var proto = JavaScriptRuntime.Object.GetItem(ctor, "prototype");
+            var proto = JavaScriptRuntime.ObjectRuntime.GetItem(ctor, "prototype");
             if (proto is null || proto is JsNull || proto is string || proto.GetType().IsValueType)
             {
                 throw new TypeError("Function has non-object prototype in instanceof check");

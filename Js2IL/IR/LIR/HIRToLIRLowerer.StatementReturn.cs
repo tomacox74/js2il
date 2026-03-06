@@ -67,12 +67,12 @@ public sealed partial class HIRToLIRLowerer
                 }
             }
 
-            // Default ABI returns object. If we inferred a stable return type for this callable,
-            // preserve/produce the matching unboxed or typed value.
-            // Typed/unboxed returns are only supported for class methods currently.
-            // Keep ABI consistent: other callables must return object.
-            var stableReturnClrType = (_scope?.Kind == ScopeKind.Function && _scope?.Parent?.Kind == ScopeKind.Class)
-                ? _scope.StableReturnClrType
+            // Default ABI returns object. Preserve typed returns where the callable ABI supports them:
+            // - class methods
+            // - function/arrow callables with stable string returns
+            var stableReturnClrType = (_scope is { Kind: ScopeKind.Function } functionScope
+                && (functionScope.Parent?.Kind == ScopeKind.Class || functionScope.StableReturnClrType == typeof(string)))
+                ? functionScope.StableReturnClrType
                 : null;
             if (stableReturnClrType == typeof(double))
             {
@@ -82,7 +82,7 @@ public sealed partial class HIRToLIRLowerer
             {
                 returnTempVar = EnsureBoolean(returnTempVar);
             }
-            else if (_scope?.StableReturnIsThis != true)
+            else if (stableReturnClrType != typeof(string) && _scope?.StableReturnIsThis != true)
             {
                 returnTempVar = EnsureObject(returnTempVar);
             }

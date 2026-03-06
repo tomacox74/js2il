@@ -30,7 +30,7 @@
     {
       "clause": "20.5.2.1",
       "title": "Error.isError ( arg )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-error.iserror"
     },
     {
@@ -42,31 +42,31 @@
     {
       "clause": "20.5.3",
       "title": "Properties of the Error Prototype Object",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-error-prototype-object"
     },
     {
       "clause": "20.5.3.1",
       "title": "Error.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.constructor"
     },
     {
       "clause": "20.5.3.2",
       "title": "Error.prototype.message",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.message"
     },
     {
       "clause": "20.5.3.3",
       "title": "Error.prototype.name",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.name"
     },
     {
       "clause": "20.5.3.4",
       "title": "Error.prototype.toString ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.tostring"
     },
     {
@@ -281,7 +281,57 @@
           "Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read.js",
           "Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read_Lib.js"
         ],
-        "notes": "Exposes the global Error value as a first-class intrinsic and provides a writable Error.prototype object for libraries that read/attach prototype members (e.g., CommonJS polyfills). Error(...) invocation and standard prototype methods/properties are not yet implemented as spec-defined objects."
+        "notes": "Exposes the global Error value as a first-class intrinsic and provides a writable Error.prototype object for libraries that read/attach prototype members (e.g., CommonJS polyfills). Constructor/prototype behavior remains partial relative to full spec object-model semantics."
+      },
+      {
+        "clause": "20.5.2.1",
+        "feature": "Error.isError(arg) basic predicate",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-error.iserror",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+        ],
+        "notes": "Returns true for JavaScriptRuntime.Error instances (including built-in NativeError subclasses) and false for non-error objects. The full spec [[ErrorData]] internal-slot semantics are not implemented."
+      },
+      {
+        "clause": "20.5.3.1",
+        "feature": "Error.prototype.constructor",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.constructor",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+        ],
+        "notes": "Error.prototype.constructor points to the global Error callable value."
+      },
+      {
+        "clause": "20.5.3.2",
+        "feature": "Error.prototype.message default value",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.message",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+        ],
+        "notes": "Provides an empty-string default value on Error.prototype."
+      },
+      {
+        "clause": "20.5.3.3",
+        "feature": "Error.prototype.name default value",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.name",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+        ],
+        "notes": "Provides the default \"Error\" value on Error.prototype.name."
+      },
+      {
+        "clause": "20.5.3.4",
+        "feature": "Error.prototype.toString() basic formatting",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.tostring",
+        "testScripts": [
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+        ],
+        "notes": "Formats values as name/message combinations and supports .call(receiver) usage for object receivers. Throws TypeError for null/undefined receivers."
       },
       {
         "clause": "20.5.4",

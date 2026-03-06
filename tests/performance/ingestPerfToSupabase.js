@@ -35,6 +35,8 @@ const HOST_COLUMN_KEYS = [
     'github_image_version'
 ];
 
+const UPSERT_CONFLICT_KEYS = ['run_id', 'run_attempt', 'source', 'scenario', 'runtime', 'metric'];
+
 const HTML_ENTITY_MAP = {
     '&#39;': "'",
     '&quot;': '"',
@@ -78,7 +80,42 @@ function normalizeRuntime(raw) {
 function parseScriptNameFromDisplay(displayInfo) {
     const text = String(displayInfo ?? '');
     const match = text.match(/ScriptName\s*[:=]\s*([A-Za-z0-9._-]+)/i);
-    return match ? slugify(match[1]) : null;
+    if (!match) return null;
+    const candidate = match[1];
+    if (candidate.includes('...')) return null;
+    return slugify(candidate);
+}
+
+function parseScriptNameFromFullName(fullName) {
+    const text = String(fullName ?? '');
+    const quoted = text.match(/ScriptName\s*:\s*"([^"]+)"/i);
+    if (quoted) {
+        return slugify(quoted[1]);
+    }
+
+    const unquoted = text.match(/ScriptName\s*:\s*([^)]+)/i);
+    return unquoted ? slugify(unquoted[1]) : null;
+}
+
+function parseScriptNameFromParameters(parameters) {
+    if (parameters === null || parameters === undefined) return null;
+
+    if (typeof parameters === 'string') {
+        const match = parameters.match(/(?:^|,\s*)ScriptName\s*=\s*([^,\]]+)/i);
+        if (!match) return null;
+        const candidate = decodeHtmlEntities(match[1]).trim();
+        if (!candidate || candidate.includes('...')) return null;
+        return slugify(candidate.replace(/^"(.*)"$/, '$1'));
+    }
+
+    if (typeof parameters === 'object') {
+        const candidate = parameters.ScriptName ?? parameters.scriptName;
+        if (candidate) {
+            return slugify(candidate);
+        }
+    }
+
+    return null;
 }
 
 function parseDurationToNs(value) {
@@ -185,6 +222,20 @@ function compactObject(obj) {
     return Object.fromEntries(
         Object.entries(obj).filter(([, value]) => value !== null && value !== undefined && value !== '')
     );
+}
+
+function buildUpsertConflictKey(row) {
+    return UPSERT_CONFLICT_KEYS
+        .map(key => String(row?.[key] ?? ''))
+        .join('||');
+}
+
+function dedupeRowsForUpsert(rows) {
+    const byKey = new Map();
+    for (const row of rows) {
+        byKey.set(buildUpsertConflictKey(row), row);
+    }
+    return Array.from(byKey.values());
 }
 
 function getHostMetadata() {
@@ -349,8 +400,12 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata) {
 
         for (const benchmark of benchmarks) {
             const params = benchmark.Parameters ?? benchmark.parameters ?? benchmark.Params ?? {};
-            const displayInfo = benchmark.DisplayInfo ?? benchmark.displayInfo ?? benchmark.FullName ?? benchmark.fullName ?? '';
-            const scenario = params.ScriptName ?? params.scriptName ?? parseScriptNameFromDisplay(displayInfo) ?? 'unknown';
+            const fullName = benchmark.FullName ?? benchmark.fullName ?? '';
+            const displayInfo = benchmark.DisplayInfo ?? benchmark.displayInfo ?? fullName ?? '';
+            const scenario = parseScriptNameFromParameters(params)
+                ?? parseScriptNameFromFullName(fullName)
+                ?? parseScriptNameFromDisplay(displayInfo)
+                ?? 'unknown';
             const runtimeRaw = benchmark.Description
                 ?? benchmark.description
                 ?? benchmark.MethodTitle
@@ -585,7 +640,7 @@ async function upsertRows(rows) {
         return false;
     }
 
-    const url = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/perf_results?on_conflict=run_id,run_attempt,source,scenario,runtime,metric`;
+    const url = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/perf_results?on_conflict=${UPSERT_CONFLICT_KEYS.join(',')}`;
     const chunkSize = 500;
 
     const uploadChunked = async (rowsToUpload) => {
@@ -664,13 +719,18 @@ async function main() {
         return;
     }
 
-    const uploaded = await upsertRows(rows);
+    const dedupedRows = dedupeRowsForUpsert(rows);
+    if (dedupedRows.length !== rows.length) {
+        console.log(`Deduplicated ${rows.length - dedupedRows.length} rows with identical upsert keys before upload.`);
+    }
+
+    const uploaded = await upsertRows(dedupedRows);
     if (!uploaded) {
-        console.log(`Prepared ${rows.length} rows from '${source}' (upload skipped).`);
+        console.log(`Prepared ${dedupedRows.length} rows from '${source}' (upload skipped).`);
         return;
     }
 
-    console.log(`Ingested ${rows.length} rows to Supabase from '${source}'.`);
+    console.log(`Ingested ${dedupedRows.length} rows to Supabase from '${source}'.`);
 }
 
 main().catch(error => {

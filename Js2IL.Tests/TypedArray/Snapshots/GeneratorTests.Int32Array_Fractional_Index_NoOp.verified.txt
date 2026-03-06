@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2146
+			// Method begins at RVA 0x2136
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,12 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 234 (0xea)
+		// Code size: 218 (0xda)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Fractional_Index_NoOp/Scope,
-			[1] object,
-			[2] object
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_Fractional_Index_NoOp/Scope::.ctor()
@@ -59,57 +59,41 @@
 		IL_001c: ldloc.1
 		IL_001d: ldc.r8 0.0
 		IL_0026: ldc.r8 100
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-		IL_0034: pop
-		IL_0035: ldloc.1
-		IL_0036: ldc.r8 1
-		IL_003f: ldc.r8 200
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-		IL_004d: pop
-		IL_004e: ldloc.1
-		IL_004f: ldc.r8 1.5
-		IL_0058: ldc.r8 999
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-		IL_0066: pop
-		IL_0067: ldloc.1
-		IL_0068: ldc.r8 1.9
-		IL_0071: ldc.r8 888
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-		IL_007f: pop
-		IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0085: ldc.i4.1
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: dup
-		IL_008c: ldc.i4.0
-		IL_008d: ldloc.1
-		IL_008e: ldc.r8 0.0
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_009c: stelem.ref
-		IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a2: pop
-		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a8: ldc.i4.1
-		IL_00a9: newarr [System.Runtime]System.Object
-		IL_00ae: dup
-		IL_00af: ldc.i4.0
-		IL_00b0: ldloc.1
-		IL_00b1: ldc.r8 1
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_00bf: stelem.ref
-		IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c5: pop
-		IL_00c6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cb: ldc.i4.1
-		IL_00cc: newarr [System.Runtime]System.Object
-		IL_00d1: dup
-		IL_00d2: ldc.i4.0
-		IL_00d3: ldloc.1
-		IL_00d4: ldc.r8 2
-		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_00e2: stelem.ref
-		IL_00e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e8: pop
-		IL_00e9: ret
+		IL_002f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+		IL_0034: ldloc.1
+		IL_0035: ldc.r8 1
+		IL_003e: ldc.r8 200
+		IL_0047: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+		IL_004c: ldloc.1
+		IL_004d: ldc.r8 1.5
+		IL_0056: ldc.r8 999
+		IL_005f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+		IL_0064: ldloc.1
+		IL_0065: ldc.r8 1.9
+		IL_006e: ldc.r8 888
+		IL_0077: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0081: ldloc.1
+		IL_0082: ldc.r8 0.0
+		IL_008b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+		IL_0090: box [System.Runtime]System.Double
+		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_009a: pop
+		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a0: ldloc.1
+		IL_00a1: ldc.r8 1
+		IL_00aa: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+		IL_00af: box [System.Runtime]System.Double
+		IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b9: pop
+		IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bf: ldloc.1
+		IL_00c0: ldc.r8 2
+		IL_00c9: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+		IL_00ce: box [System.Runtime]System.Double
+		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d8: pop
+		IL_00d9: ret
 	} // end of method Int32Array_Fractional_Index_NoOp::__js_module_init__
 
 } // end of class Modules.Int32Array_Fractional_Index_NoOp
@@ -121,7 +105,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214f
+		// Method begins at RVA 0x213f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

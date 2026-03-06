@@ -76,7 +76,7 @@ internal sealed partial class LIRToILCompiler
                     {
                         EmitLoadTempAsObject(storeScopeFieldTemp.Value, ilEncoder, allocation, methodDescriptor);
 
-                        if (fieldClrType != typeof(object) && !fieldClrType.IsValueType)
+                        if (ShouldEmitReferenceNarrowingCastForStore(fieldClrType, storeScopeFieldTemp.Value))
                         {
                             ilEncoder.OpCode(ILOpCode.Castclass);
                             ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
@@ -156,7 +156,7 @@ internal sealed partial class LIRToILCompiler
                     {
                         EmitLoadTempAsObject(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
 
-                        if (fieldClrType != typeof(object) && !fieldClrType.IsValueType)
+                        if (ShouldEmitReferenceNarrowingCastForStore(fieldClrType, storeLeafField.Value))
                         {
                             ilEncoder.OpCode(ILOpCode.Castclass);
                             ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
@@ -192,7 +192,7 @@ internal sealed partial class LIRToILCompiler
                     {
                         EmitLoadTempAsObject(storeScopeField.Value, ilEncoder, allocation, methodDescriptor);
 
-                        if (fieldClrType != typeof(object) && !fieldClrType.IsValueType)
+                        if (ShouldEmitReferenceNarrowingCastForStore(fieldClrType, storeScopeField.Value))
                         {
                             ilEncoder.OpCode(ILOpCode.Castclass);
                             ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));

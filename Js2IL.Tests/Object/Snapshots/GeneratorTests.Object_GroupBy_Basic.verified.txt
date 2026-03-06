@@ -1,0 +1,317 @@
+﻿// IL code: Object_GroupBy_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Object_GroupBy_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_grouped
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x22fe
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object n
+			) cil managed 
+		{
+			// Method begins at RVA 0x22b4
+			// Header size: 12
+			// Code size: 53 (0x35)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] float64
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: ldc.r8 2
+			IL_000f: rem
+			IL_0010: stloc.1
+			IL_0011: ldloc.1
+			IL_0012: ldc.r8 0.0
+			IL_001b: ceq
+			IL_001d: brfalse IL_002d
+
+			IL_0022: ldstr "even"
+			IL_0027: stloc.0
+			IL_0028: br IL_0033
+
+			IL_002d: ldstr "odd"
+			IL_0032: stloc.0
+
+			IL_0033: ldloc.0
+			IL_0034: ret
+		} // end of method FunctionExpression_grouped::__js_call__
+
+	} // end of class FunctionExpression_grouped
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x22f5
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 597 (0x255)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Object_GroupBy_Basic/Scope,
+			[1] object,
+			[2] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] bool,
+			[5] object,
+			[6] object,
+			[7] object,
+			[8] object,
+			[9] object,
+			[10] object
+		)
+
+		IL_0000: newobj instance void Modules.Object_GroupBy_Basic/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Object_GroupBy_Basic/FunctionExpression_grouped::__js_call__(object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0012: stloc.2
+		IL_0013: ldc.i4.5
+		IL_0014: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0019: dup
+		IL_001a: ldc.r8 1
+		IL_0023: box [System.Runtime]System.Double
+		IL_0028: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_002d: dup
+		IL_002e: ldc.r8 2
+		IL_0037: box [System.Runtime]System.Double
+		IL_003c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0041: dup
+		IL_0042: ldc.r8 3
+		IL_004b: box [System.Runtime]System.Double
+		IL_0050: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0055: dup
+		IL_0056: ldc.r8 4
+		IL_005f: box [System.Runtime]System.Double
+		IL_0064: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0069: dup
+		IL_006a: ldc.r8 5
+		IL_0073: box [System.Runtime]System.Double
+		IL_0078: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_007d: ldloc.2
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::groupBy(object, object)
+		IL_0083: stloc.2
+		IL_0084: ldloc.2
+		IL_0085: stloc.1
+		IL_0086: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008b: ldloc.1
+		IL_008c: ldstr "even"
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_0096: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_009b: box [System.Runtime]System.Double
+		IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a5: pop
+		IL_00a6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ab: ldloc.1
+		IL_00ac: ldstr "odd"
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_00b6: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_00bb: box [System.Runtime]System.Double
+		IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c5: pop
+		IL_00c6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cb: stloc.3
+		IL_00cc: ldloc.1
+		IL_00cd: ldstr "even"
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_00d7: ldc.r8 0.0
+		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_00e5: stloc.2
+		IL_00e6: ldloc.2
+		IL_00e7: ldc.r8 2
+		IL_00f0: box [System.Runtime]System.Double
+		IL_00f5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00fa: stloc.s 4
+		IL_00fc: ldloc.s 4
+		IL_00fe: box [System.Runtime]System.Boolean
+		IL_0103: stloc.s 5
+		IL_0105: ldloc.s 5
+		IL_0107: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_010c: stloc.s 4
+		IL_010e: ldloc.s 4
+		IL_0110: brfalse IL_0157
+
+		IL_0115: ldloc.1
+		IL_0116: ldstr "even"
+		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_0120: ldc.r8 1
+		IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_012e: stloc.2
+		IL_012f: ldloc.2
+		IL_0130: ldc.r8 4
+		IL_0139: box [System.Runtime]System.Double
+		IL_013e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0143: stloc.s 4
+		IL_0145: ldloc.s 4
+		IL_0147: box [System.Runtime]System.Boolean
+		IL_014c: stloc.s 6
+		IL_014e: ldloc.s 6
+		IL_0150: stloc.s 8
+		IL_0152: br IL_015b
+
+		IL_0157: ldloc.s 5
+		IL_0159: stloc.s 8
+
+		IL_015b: ldloc.3
+		IL_015c: ldloc.s 8
+		IL_015e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0163: pop
+		IL_0164: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0169: stloc.3
+		IL_016a: ldloc.1
+		IL_016b: ldstr "odd"
+		IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_0175: ldc.r8 0.0
+		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_0183: stloc.2
+		IL_0184: ldloc.2
+		IL_0185: ldc.r8 1
+		IL_018e: box [System.Runtime]System.Double
+		IL_0193: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0198: stloc.s 4
+		IL_019a: ldloc.s 4
+		IL_019c: box [System.Runtime]System.Boolean
+		IL_01a1: stloc.s 5
+		IL_01a3: ldloc.s 5
+		IL_01a5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_01aa: stloc.s 4
+		IL_01ac: ldloc.s 4
+		IL_01ae: brfalse IL_01f5
+
+		IL_01b3: ldloc.1
+		IL_01b4: ldstr "odd"
+		IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_01be: ldc.r8 1
+		IL_01c7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_01cc: stloc.2
+		IL_01cd: ldloc.2
+		IL_01ce: ldc.r8 3
+		IL_01d7: box [System.Runtime]System.Double
+		IL_01dc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01e1: stloc.s 4
+		IL_01e3: ldloc.s 4
+		IL_01e5: box [System.Runtime]System.Boolean
+		IL_01ea: stloc.s 6
+		IL_01ec: ldloc.s 6
+		IL_01ee: stloc.s 9
+		IL_01f0: br IL_01f9
+
+		IL_01f5: ldloc.s 5
+		IL_01f7: stloc.s 9
+
+		IL_01f9: ldloc.s 9
+		IL_01fb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0200: stloc.s 4
+		IL_0202: ldloc.s 4
+		IL_0204: brfalse IL_024b
+
+		IL_0209: ldloc.1
+		IL_020a: ldstr "odd"
+		IL_020f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_0214: ldc.r8 2
+		IL_021d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_0222: stloc.2
+		IL_0223: ldloc.2
+		IL_0224: ldc.r8 5
+		IL_022d: box [System.Runtime]System.Double
+		IL_0232: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0237: stloc.s 4
+		IL_0239: ldloc.s 4
+		IL_023b: box [System.Runtime]System.Boolean
+		IL_0240: stloc.s 5
+		IL_0242: ldloc.s 5
+		IL_0244: stloc.s 9
+		IL_0246: br IL_024b
+
+		IL_024b: ldloc.3
+		IL_024c: ldloc.s 9
+		IL_024e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0253: pop
+		IL_0254: ret
+	} // end of method Object_GroupBy_Basic::__js_module_init__
+
+} // end of class Modules.Object_GroupBy_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2307
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Object_GroupBy_Basic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
