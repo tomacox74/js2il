@@ -52,10 +52,27 @@
       ]
     },
     {
+      "name": "format(format[, ...args])",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Formats a string using placeholders like %s, %d/%i, %f, %j, %o/%O, and %% and appends any extra arguments separated by spaces.",
+      "docs": "https://nodejs.org/api/util.html#utilformatformat-args",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Format_Basic",
+          "file": "Js2IL.Tests/Node/Util/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Format_Basic",
+          "file": "Js2IL.Tests/Node/Util/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
       "name": "types",
       "kind": "property",
       "status": "partial",
-      "notes": "Provides type-checking functions. Supported checks: isArray, isDate, isError, isFunction, isPromise, isRegExp, isString, isNumber, isBoolean, isUndefined, isNull, isObject, isBigInt, isSymbol, isAsyncFunction. Additional Node.js type checks (typed arrays, shared buffers, etc.) are not yet implemented.",
+      "notes": "Provides type-checking functions. Supported checks: isArray, isDate, isError, isFunction, isPromise, isRegExp, isString, isNumber, isBoolean, isUndefined, isNull, isObject, isBigInt, isSymbol, isAsyncFunction, isMap, isSet, isProxy, isTypedArray. Additional Node.js type checks (ArrayBuffer/DataView/most TypedArray flavors, shared buffers, etc.) are not yet implemented.",
       "docs": "https://nodejs.org/api/util.html#utiltypes",
       "tests": [
         {
@@ -71,6 +88,10 @@
           "file": "Js2IL.Tests/Node/Util/ExecutionTests.cs"
         },
         {
+          "name": "Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Types_Expanded",
+          "file": "Js2IL.Tests/Node/Util/ExecutionTests.cs"
+        },
+        {
           "name": "Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_IsPromise",
           "file": "Js2IL.Tests/Node/Util/GeneratorTests.cs"
         },
@@ -81,6 +102,10 @@
         {
           "name": "Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_IsFunction",
           "file": "Js2IL.Tests/Node/Util/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_Expanded",
+          "file": "Js2IL.Tests/Node/Util/GeneratorTests.cs"
         }
       ]
     },
@@ -88,7 +113,7 @@
       "name": "inspect(value[, options])",
       "kind": "function",
       "status": "partial",
-      "notes": "Provides basic object inspection for debugging. Supports depth limiting and handles circular references. Options supported: depth, showHidden, colors (parsed but colors not applied to output). Does not implement full Node.js inspect formatting or custom inspect symbols.",
+      "notes": "Provides basic object inspection for debugging. Supports depth limiting and handles circular references. Options supported: depth, showHidden, colors (parsed but colors not applied to output). Supports Node's custom inspect hook via util.inspect.custom (Symbol.for('nodejs.util.inspect.custom')).",
       "docs": "https://nodejs.org/api/util.html#utilinspectobject-options",
       "tests": [
         {
@@ -100,11 +125,19 @@
           "file": "Js2IL.Tests/Node/Util/ExecutionTests.cs"
         },
         {
+          "name": "Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Inspect_Custom",
+          "file": "Js2IL.Tests/Node/Util/ExecutionTests.cs"
+        },
+        {
           "name": "Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inspect_Basic",
           "file": "Js2IL.Tests/Node/Util/GeneratorTests.cs"
         },
         {
           "name": "Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inspect_Object",
+          "file": "Js2IL.Tests/Node/Util/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inspect_Custom",
           "file": "Js2IL.Tests/Node/Util/GeneratorTests.cs"
         }
       ]
