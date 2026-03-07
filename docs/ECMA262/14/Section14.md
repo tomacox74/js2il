@@ -4,7 +4,7 @@ Specifies statements and declarations, including control flow, blocks, and bindi
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-07T06:48:54Z
 
 _This section is split into subsection documents for readability._
 
@@ -12,7 +12,7 @@ _This section is split into subsection documents for readability._
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 14 | ECMAScript Language: Statements and Declarations | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations) |
+| 14 | ECMAScript Language: Statements and Declarations | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations) |
 
 ## Subsections
 

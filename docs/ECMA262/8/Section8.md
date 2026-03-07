@@ -4,7 +4,7 @@ Defines syntax-directed operations, linking grammar productions to static semant
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-07T06:48:54Z
 
 _This section is split into subsection documents for readability._
 

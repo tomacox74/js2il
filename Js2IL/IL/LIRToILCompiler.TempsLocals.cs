@@ -2047,6 +2047,7 @@ internal sealed partial class LIRToILCompiler
             0 => intrinsicType.GetConstructor(Type.EmptyTypes),
             1 => intrinsicType.GetConstructor(new[] { typeof(object) }),
             2 => intrinsicType.GetConstructor(new[] { typeof(object), typeof(object) }),
+            3 => intrinsicType.GetConstructor(new[] { typeof(object), typeof(object), typeof(object) }),
             _ => null
         };
 

@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- runtime/spec/docs: implement ArrayBuffer and DataView primitives (fixed-length ArrayBuffer backing store, ArrayBuffer.isView for current DataView/Int32Array views, DataView numeric getters/setters with endianness and bounds checks), add focused typed-array execution/generator coverage, and update ECMA-262 §25 support tracking plus issue triage docs (#773).
 - perf/abi/runtime/tests/docs: introduce explicit callable scope ABI metadata via `JsCallableScopeAbiAttribute` (`NoScopes`, `SingleScope`, `ScopeArray`), emit it from single-phase and two-phase compilation, route runtime/hosting invocation through metadata-first ABI resolution with compatibility fallbacks for older assemblies, refresh affected generator snapshots, and document the rollout design (closes #812).
 - Node/path: add `path.posix` and `path.win32` variant APIs (fixes #784).
 - Node/fs: add callback-style async APIs (`readFile`, `writeFile`, `copyFile`, `readdir`, `mkdir`, `stat`, `rm`, `access`, `realpath`) with execution coverage (#785).

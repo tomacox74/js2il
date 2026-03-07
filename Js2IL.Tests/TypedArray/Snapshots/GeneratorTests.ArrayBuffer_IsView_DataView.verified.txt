@@ -1,0 +1,133 @@
+﻿// IL code: ArrayBuffer_IsView_DataView
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.ArrayBuffer_IsView_DataView
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20f8
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 156 (0x9c)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.ArrayBuffer_IsView_DataView/Scope,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.DataView,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.DataView,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
+			[7] bool,
+			[8] object
+		)
+
+		IL_0000: newobj instance void Modules.ArrayBuffer_IsView_DataView/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 4
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::.ctor(object)
+		IL_0019: stloc.s 4
+		IL_001b: ldloc.s 4
+		IL_001d: stloc.1
+		IL_001e: ldloc.1
+		IL_001f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.DataView::.ctor(object)
+		IL_0024: stloc.s 5
+		IL_0026: ldloc.s 5
+		IL_0028: stloc.2
+		IL_0029: ldc.r8 2
+		IL_0032: box [System.Runtime]System.Double
+		IL_0037: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+		IL_003c: stloc.s 6
+		IL_003e: ldloc.s 6
+		IL_0040: stloc.3
+		IL_0041: ldloc.1
+		IL_0042: call bool [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::isView(object)
+		IL_0047: stloc.s 7
+		IL_0049: ldloc.s 7
+		IL_004b: box [System.Runtime]System.Boolean
+		IL_0050: stloc.s 8
+		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0057: ldloc.s 8
+		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005e: pop
+		IL_005f: ldloc.2
+		IL_0060: call bool [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::isView(object)
+		IL_0065: stloc.s 7
+		IL_0067: ldloc.s 7
+		IL_0069: box [System.Runtime]System.Boolean
+		IL_006e: stloc.s 8
+		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0075: ldloc.s 8
+		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007c: pop
+		IL_007d: ldloc.3
+		IL_007e: call bool [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::isView(object)
+		IL_0083: stloc.s 7
+		IL_0085: ldloc.s 7
+		IL_0087: box [System.Runtime]System.Boolean
+		IL_008c: stloc.s 8
+		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0093: ldloc.s 8
+		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_009a: pop
+		IL_009b: ret
+	} // end of method ArrayBuffer_IsView_DataView::__js_module_init__
+
+} // end of class Modules.ArrayBuffer_IsView_DataView
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2101
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.ArrayBuffer_IsView_DataView::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

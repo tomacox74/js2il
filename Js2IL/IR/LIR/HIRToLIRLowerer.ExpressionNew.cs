@@ -170,7 +170,7 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            if (newExpr.Arguments.Count > 2)
+            if (newExpr.Arguments.Count > 3)
             {
                 return false;
             }
