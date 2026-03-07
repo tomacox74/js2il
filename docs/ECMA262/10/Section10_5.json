@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "10.5",
   "title": "Proxy Object Internal Methods and Internal Slots",
-  "status": "Supported with Limitations",
+  "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots",
   "parent": {
     "clause": "10"
@@ -103,35 +103,55 @@
   "support": {
     "entries": [
       {
-        "clause": "10.5.8",
-        "feature": "get trap (handler.get)",
-        "status": "Supported with Limitations",
-        "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-get-p-receiver",
-        "testScripts": [
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js"
-        ],
-        "notes": "Routes basic property reads through handler.get(target, propertyKey, receiver) when present; does not implement full invariants/edge-case behaviors."
-      },
-      {
-        "clause": "10.5.9",
-        "feature": "set trap (handler.set)",
-        "status": "Supported with Limitations",
-        "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-set-p-v-receiver",
-        "testScripts": [
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js"
-        ],
-        "notes": "Routes basic property writes through handler.set(target, propertyKey, value, receiver) when present; does not implement full invariants/edge-case behaviors."
-      },
-      {
         "clause": "10.5.7",
-        "feature": "has trap (handler.has)",
+        "feature": "Proxy has trap (handler.has)",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-hasproperty-p",
         "testScripts": [
           "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js"
         ],
-        "notes": "Routes the in operator through handler.has(target, propertyKey) when present; does not implement full invariants/edge-case behaviors."
+        "notes": "The in operator routes through handler.has(target, propertyKey) when present. Proxy invariants and descriptor-based validation are not enforced."
+      },
+      {
+        "clause": "10.5.8",
+        "feature": "Proxy get trap (handler.get)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-get-p-receiver",
+        "testScripts": [
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js"
+        ],
+        "notes": "Property reads call handler.get(target, propertyKey, receiver) before falling back to the target. Non-configurable target invariants and other edge cases are not checked."
+      },
+      {
+        "clause": "10.5.9",
+        "feature": "Proxy set trap (handler.set)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-set-p-v-receiver",
+        "testScripts": [
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js"
+        ],
+        "notes": "Property writes call handler.set(target, propertyKey, value, receiver) before falling back to the target. The return value is not validated against target descriptors or other proxy invariants."
+      },
+      {
+        "clause": "10.5.15",
+        "feature": "new Proxy(target, handler)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxycreate",
+        "testScripts": [
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js"
+        ],
+        "notes": "ProxyCreate is implemented as a minimal holder object that stores the target and handler and lets get/set/has route through them. apply, construct, ownKeys, deleteProperty, getPrototypeOf, setPrototypeOf, and revocation are still missing."
+      },
+      {
+        "clause": "10.5.10",
+        "feature": "Advanced proxy traps and revocation",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-delete-p",
+        "notes": "deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, isExtensible, preventExtensions, apply, construct, and ValidateNonRevokedProxy/revocable proxy semantics are not implemented yet."
       }
     ]
-  }
+  },
+  "intro": "JS2IL currently implements only the core get, set, and has proxy traps needed by existing workloads. The remaining proxy internal methods still fall back to missing or ordinary-object behavior, so proxy support is useful but far from complete."
 }

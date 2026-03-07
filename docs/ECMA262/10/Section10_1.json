@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "10.1",
   "title": "Ordinary Object Internal Methods and Internal Slots",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots",
   "parent": {
     "clause": "10"
@@ -36,61 +36,61 @@
     {
       "clause": "10.1.3",
       "title": "[[IsExtensible]] ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-isextensible"
     },
     {
       "clause": "10.1.3.1",
       "title": "OrdinaryIsExtensible ( O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinaryisextensible"
     },
     {
       "clause": "10.1.4",
       "title": "[[PreventExtensions]] ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-preventextensions"
     },
     {
       "clause": "10.1.4.1",
       "title": "OrdinaryPreventExtensions ( O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinarypreventextensions"
     },
     {
       "clause": "10.1.5",
       "title": "[[GetOwnProperty]] ( P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getownproperty-p"
     },
     {
       "clause": "10.1.5.1",
       "title": "OrdinaryGetOwnProperty ( O , P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinarygetownproperty"
     },
     {
       "clause": "10.1.6",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-defineownproperty-p-desc"
     },
     {
       "clause": "10.1.6.1",
       "title": "OrdinaryDefineOwnProperty ( O , P , Desc )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinarydefineownproperty"
     },
     {
       "clause": "10.1.6.2",
       "title": "IsCompatiblePropertyDescriptor ( Extensible , Desc , Current )",
-      "status": "Not Yet Supported",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-iscompatiblepropertydescriptor"
     },
     {
       "clause": "10.1.6.3",
       "title": "ValidateAndApplyPropertyDescriptor ( O , P , extensible , Desc , current )",
-      "status": "Not Yet Supported",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-validateandapplypropertydescriptor"
     },
     {
@@ -132,31 +132,31 @@
     {
       "clause": "10.1.9.2",
       "title": "OrdinarySetWithOwnDescriptor ( O , P , V , Receiver , ownDesc )",
-      "status": "Not Yet Supported",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinarysetwithowndescriptor"
     },
     {
       "clause": "10.1.10",
       "title": "[[Delete]] ( P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-delete-p"
     },
     {
       "clause": "10.1.10.1",
       "title": "OrdinaryDelete ( O , P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinarydelete"
     },
     {
       "clause": "10.1.11",
       "title": "[[OwnPropertyKeys]] ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-ownpropertykeys"
     },
     {
       "clause": "10.1.11.1",
       "title": "OrdinaryOwnPropertyKeys ( O )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-ordinaryownpropertykeys"
     },
     {
@@ -188,58 +188,86 @@
     "entries": [
       {
         "clause": "10.1.1",
-        "feature": "Ordinary object property get/set (object literals + host objects)",
-        "status": "Supported with Limitations",
-        "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots",
-        "testScripts": [
-          "Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js",
-          "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js",
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js"
-        ],
-        "notes": "Supports a pragmatic subset of [[Get]]/[[Set]]/[[HasProperty]] over ExpandoObject/object literals and reflection-backed host objects. Prototype-chain lookup is supported when prototype-chain mode is enabled. Full internal-slot and descriptor mechanics are not implemented."
-      },
-      {
-        "clause": "10.1.1",
-        "feature": "[[GetPrototypeOf]]/[[SetPrototypeOf]] (prototype chain storage + lookup)",
+        "feature": "Prototype access and mutation via Object.getPrototypeOf/Object.setPrototypeOf",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getprototypeof",
         "testScripts": [
           "Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js"
         ],
-        "notes": "JS2IL does not implement ECMAScript internal slots directly; instead, when prototype-chain mode is enabled, JavaScriptRuntime.PrototypeChain stores an optional prototype reference in a side-table and runtime property helpers walk that chain on misses. Extensibility/invariant checks and exotic objects are not modeled."
+        "notes": "JS2IL stores an optional [[Prototype]] in the PrototypeChain side-table and only enables prototype-chain semantics when code exercises them. Null-prototype objects and explicit prototype mutation work, but ordinary/exotic invariants are not enforced."
       },
       {
-        "clause": "10.1.6",
-        "feature": "Property existence and enumeration in ordinary objects",
+        "clause": "10.1.3",
+        "feature": "Object.preventExtensions / Object.isExtensible / Object.seal / Object.freeze",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-isextensible",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js"
+        ],
+        "notes": "Integrity APIs are backed by a simplified ObjectIntegrityState plus descriptor rewrites for existing own properties. They cover the common preventExtensions/seal/freeze checks, but do not model every descriptor invariant or exotic-object edge case from the specification."
+      },
+      {
+        "clause": "10.1.5",
+        "feature": "Property descriptor APIs (defineProperty, defineProperties, getOwnPropertyDescriptor(s))",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getownproperty-p",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
+          "Js2IL.Tests/Object/JavaScript/Object_DefineProperties_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyDescriptors_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
+        ],
+        "notes": "Descriptors are stored in PropertyDescriptorStore and support common data/accessor scenarios, non-enumerable properties, and non-extensible object checks. Validation is still a best-effort subset of IsCompatiblePropertyDescriptor / ValidateAndApplyPropertyDescriptor rather than a full spec implementation."
+      },
+      {
+        "clause": "10.1.7",
+        "feature": "Property lookup, assignment, and membership on ordinary objects",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-hasproperty-p",
+        "testScripts": [
+          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js",
+          "Js2IL.Tests/Object/JavaScript/Object_HasOwn_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js",
+          "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
+        ],
+        "notes": "Ordinary-style [[HasProperty]], [[Get]], and [[Set]] work over JsObject/ExpandoObject/IDictionary receivers, reflection-backed host objects, descriptor-backed accessors, and opt-in prototype chains. Descriptor validation, receiver substitution, and exotic-object corner cases remain incomplete."
+      },
+      {
+        "clause": "10.1.10",
+        "feature": "Deleting ordinary object properties",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-delete-p",
+        "testScripts": [
+          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js",
+          "Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js"
+        ],
+        "notes": "delete removes configurable properties from dictionary-backed objects and respects non-configurable descriptors. Arrays, typed arrays, strings, and CLR-backed objects still use simplified no-op behavior rather than full ordinary-object deletion semantics."
+      },
+      {
+        "clause": "10.1.11",
+        "feature": "Own key enumeration and reflection helpers",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinaryownpropertykeys",
         "testScripts": [
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js",
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js"
+          "Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js"
         ],
-        "notes": "Supports a for-in style enumerable key iteration and basic key presence checks. Ordering, symbols, and descriptor attributes are not fully aligned with spec."
+        "notes": "Object.keys/values/entries/getOwnPropertyNames enumerate own keys and descriptor-backed enumerability for ordinary objects. Ordering and symbol-key behavior are pragmatic rather than fully ECMA-262 compliant."
       },
       {
         "clause": "10.1.12",
-        "feature": "Object creation from object literals and JSON.parse",
+        "feature": "Object.create and constructor-based ordinary object creation",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinaryobjectcreate",
         "testScripts": [
-          "Js2IL.Tests/Literals/JavaScript/ObjectLiteral.js",
-          "Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
+          "Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
         ],
-        "notes": "Creates runtime objects for literals/JSON, but does not implement prototype selection and descriptor initialization per spec."
-      },
-      {
-        "clause": "10.1.13",
-        "feature": "Create-from-constructor patterns used by built-ins and user code",
-        "status": "Supported with Limitations",
-        "specUrl": "https://tc39.es/ecma262/#sec-ordinarycreatefromconstructor",
-        "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_Map_Basic.js",
-          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js"
-        ],
-        "notes": "Many built-ins are implemented directly in the runtime rather than via species/prototype mechanics, so behavior may differ from spec for custom constructors and @@species."
+        "notes": "Object.create handles null and explicit prototypes, and function construction consults constructor.prototype when instantiating delegate-backed functions. newTarget-based default prototype selection and other constructor-side abstract operations are still simplified."
       }
     ]
   }
