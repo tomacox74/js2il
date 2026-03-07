@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2157
+				// Method begins at RVA 0x215b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -40,7 +40,10 @@
 				object reject
 			) cil managed 
 		{
-			// Method begins at RVA 0x20f8
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2104
 			// Header size: 12
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -73,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2160
+				// Method begins at RVA 0x2164
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -90,21 +93,23 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				class Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/Scope scope,
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2122
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 06 00 00 02
+			)
+			// Method begins at RVA 0x212e
 			// Header size: 1
-			// Code size: 14 (0xe)
+			// Code size: 7 (0x7)
 			.maxstack 8
 
 			IL_0000: ldarg.0
-			IL_0001: ldc.i4.0
-			IL_0002: ldelem.ref
-			IL_0003: castclass Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/Scope
-			IL_0008: ldfld object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/Scope::thenable
-			IL_000d: ret
+			IL_0001: ldfld object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/Scope::thenable
+			IL_0006: ret
 		} // end of method ArrowFunction_L9C32::__js_call__
 
 	} // end of class ArrowFunction_L9C32
@@ -126,7 +131,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2169
+				// Method begins at RVA 0x216d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -147,7 +152,10 @@
 				object e
 			) cil managed 
 		{
-			// Method begins at RVA 0x2134
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2138
 			// Header size: 12
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -182,7 +190,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x214e
+			// Method begins at RVA 0x2152
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -208,7 +216,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 154 (0x9a)
+		// Code size: 165 (0xa5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/Scope,
@@ -238,41 +246,48 @@
 		IL_002e: ldstr "orig"
 		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
 		IL_0038: stloc.2
-		IL_0039: ldnull
-		IL_003a: ldftn object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/ArrowFunction_L9C32::__js_call__(object[], object)
-		IL_0040: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-		IL_0045: ldc.i4.1
-		IL_0046: newarr [System.Runtime]System.Object
-		IL_004b: dup
-		IL_004c: ldc.i4.0
-		IL_004d: ldloc.0
-		IL_004e: stelem.ref
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0059: stloc.s 4
-		IL_005b: ldloc.2
-		IL_005c: ldstr "finally"
-		IL_0061: ldloc.s 4
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0068: stloc.s 4
-		IL_006a: ldnull
-		IL_006b: ldftn object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/ArrowFunction_L9C54::__js_call__(object, object)
-		IL_0071: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0076: ldc.i4.1
-		IL_0077: newarr [System.Runtime]System.Object
-		IL_007c: dup
-		IL_007d: ldc.i4.0
-		IL_007e: ldloc.0
-		IL_007f: stelem.ref
-		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_008a: stloc.2
-		IL_008b: ldloc.s 4
-		IL_008d: ldstr "catch"
-		IL_0092: ldloc.2
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0098: pop
-		IL_0099: ret
+		IL_0039: ldc.i4.1
+		IL_003a: newarr [System.Runtime]System.Object
+		IL_003f: dup
+		IL_0040: ldc.i4.0
+		IL_0041: ldloc.0
+		IL_0042: stelem.ref
+		IL_0043: ldc.i4.0
+		IL_0044: ldelem.ref
+		IL_0045: ldftn object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/ArrowFunction_L9C32::__js_call__(class Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/Scope, object)
+		IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0050: ldc.i4.1
+		IL_0051: newarr [System.Runtime]System.Object
+		IL_0056: dup
+		IL_0057: ldc.i4.0
+		IL_0058: ldloc.0
+		IL_0059: stelem.ref
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0064: stloc.s 4
+		IL_0066: ldloc.2
+		IL_0067: ldstr "finally"
+		IL_006c: ldloc.s 4
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0073: stloc.s 4
+		IL_0075: ldnull
+		IL_0076: ldftn object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected/ArrowFunction_L9C54::__js_call__(object, object)
+		IL_007c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0081: ldc.i4.1
+		IL_0082: newarr [System.Runtime]System.Object
+		IL_0087: dup
+		IL_0088: ldc.i4.0
+		IL_0089: ldloc.0
+		IL_008a: stelem.ref
+		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0095: stloc.2
+		IL_0096: ldloc.s 4
+		IL_0098: ldstr "catch"
+		IL_009d: ldloc.2
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a3: pop
+		IL_00a4: ret
 	} // end of method Promise_Finally_ReturnsThenable_PassThrough_Rejected::__js_module_init__
 
 } // end of class Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected
@@ -284,7 +299,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2172
+		// Method begins at RVA 0x2176
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

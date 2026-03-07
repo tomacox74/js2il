@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2101
+				// Method begins at RVA 0x2106
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,32 +35,34 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				class Modules.Require_Path_Join_NestedFunction/Scope scope,
 				object newTarget,
 				object a,
 				object b
 			) cil managed 
 		{
-			// Method begins at RVA 0x20d0
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 04 00 00 02
+			)
+			// Method begins at RVA 0x20dc
 			// Header size: 12
-			// Code size: 28 (0x1c)
+			// Code size: 21 (0x15)
 			.maxstack 8
 			.locals init (
 				[0] object
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldc.i4.0
-			IL_0002: ldelem.ref
-			IL_0003: castclass Modules.Require_Path_Join_NestedFunction/Scope
-			IL_0008: ldfld object Modules.Require_Path_Join_NestedFunction/Scope::path
-			IL_000d: ldstr "join"
-			IL_0012: ldarg.2
-			IL_0013: ldarg.3
-			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0019: stloc.0
-			IL_001a: ldloc.0
-			IL_001b: ret
+			IL_0001: ldfld object Modules.Require_Path_Join_NestedFunction/Scope::path
+			IL_0006: ldstr "join"
+			IL_000b: ldarg.2
+			IL_000c: ldarg.3
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0012: stloc.0
+			IL_0013: ldloc.0
+			IL_0014: ret
 		} // end of method joinWrapper::__js_call__
 
 	} // end of class joinWrapper
@@ -81,7 +83,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x20fd
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -107,7 +109,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 113 (0x71)
+		// Code size: 128 (0x80)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Join_NestedFunction/Scope,
@@ -124,42 +126,48 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
-		IL_0010: ldftn object Modules.Require_Path_Join_NestedFunction/joinWrapper::__js_call__(object[], object, object, object)
-		IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_001b: stloc.3
-		IL_001c: ldloc.3
-		IL_001d: stloc.1
-		IL_001e: ldarg.1
-		IL_001f: ldstr "path"
-		IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0029: stloc.3
-		IL_002a: ldloc.0
-		IL_002b: ldloc.3
-		IL_002c: stfld object Modules.Require_Path_Join_NestedFunction/Scope::path
-		IL_0031: ldc.i4.1
-		IL_0032: newarr [System.Runtime]System.Object
-		IL_0037: dup
-		IL_0038: ldc.i4.0
-		IL_0039: ldloc.0
-		IL_003a: stelem.ref
-		IL_003b: ldnull
-		IL_003c: ldstr "a"
-		IL_0041: ldstr "b"
-		IL_0046: call object Modules.Require_Path_Join_NestedFunction/joinWrapper::__js_call__(object[], object, object, object)
-		IL_004b: stloc.3
-		IL_004c: ldloc.3
-		IL_004d: ldstr "replace"
-		IL_0052: ldstr "\\"
-		IL_0057: ldstr "/"
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0061: stloc.3
-		IL_0062: ldloc.3
-		IL_0063: stloc.2
-		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0069: ldloc.2
-		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_006f: pop
-		IL_0070: ret
+		IL_0010: ldc.i4.0
+		IL_0011: ldelem.ref
+		IL_0012: ldftn object Modules.Require_Path_Join_NestedFunction/joinWrapper::__js_call__(class Modules.Require_Path_Join_NestedFunction/Scope, object, object, object)
+		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_001d: stloc.3
+		IL_001e: ldloc.3
+		IL_001f: stloc.1
+		IL_0020: ldarg.1
+		IL_0021: ldstr "path"
+		IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_002b: stloc.3
+		IL_002c: ldloc.0
+		IL_002d: ldloc.3
+		IL_002e: stfld object Modules.Require_Path_Join_NestedFunction/Scope::path
+		IL_0033: ldc.i4.1
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: dup
+		IL_003a: ldc.i4.0
+		IL_003b: ldloc.0
+		IL_003c: stelem.ref
+		IL_003d: ldc.i4.0
+		IL_003e: ldelem.ref
+		IL_003f: ldftn object Modules.Require_Path_Join_NestedFunction/joinWrapper::__js_call__(class Modules.Require_Path_Join_NestedFunction/Scope, object, object, object)
+		IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_004a: ldnull
+		IL_004b: ldstr "a"
+		IL_0050: ldstr "b"
+		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_005a: stloc.3
+		IL_005b: ldloc.3
+		IL_005c: ldstr "replace"
+		IL_0061: ldstr "\\"
+		IL_0066: ldstr "/"
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0070: stloc.3
+		IL_0071: ldloc.3
+		IL_0072: stloc.2
+		IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0078: ldloc.2
+		IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007e: pop
+		IL_007f: ret
 	} // end of method Require_Path_Join_NestedFunction::__js_module_init__
 
 } // end of class Modules.Require_Path_Join_NestedFunction
@@ -171,7 +179,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210a
+		// Method begins at RVA 0x210f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

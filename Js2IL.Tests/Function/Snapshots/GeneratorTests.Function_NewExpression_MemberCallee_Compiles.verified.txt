@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212c
+				// Method begins at RVA 0x2125
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -39,7 +39,10 @@
 				object d
 			) cil managed 
 		{
-			// Method begins at RVA 0x20cb
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x20cd
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -65,7 +68,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2135
+				// Method begins at RVA 0x212e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -82,14 +85,19 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				class Modules.Function_NewExpression_MemberCallee_Compiles/Scope scope,
 				object newTarget,
 				object x
 			) cil managed 
 		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 05 00 00 02
+			)
 			// Method begins at RVA 0x20e0
 			// Header size: 12
-			// Code size: 55 (0x37)
+			// Code size: 48 (0x30)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -97,28 +105,25 @@
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldc.i4.0
-			IL_0002: ldelem.ref
-			IL_0003: castclass Modules.Function_NewExpression_MemberCallee_Compiles/Scope
-			IL_0008: ldfld object Modules.Function_NewExpression_MemberCallee_Compiles/Scope::impl
-			IL_000d: ldstr "Window"
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ldc.i4.1
-			IL_001a: newarr [System.Runtime]System.Object
-			IL_001f: dup
-			IL_0020: ldc.i4.0
-			IL_0021: ldarg.2
-			IL_0022: stelem.ref
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-			IL_0028: stloc.1
-			IL_0029: ldloc.1
-			IL_002a: stloc.0
-			IL_002b: ldloc.0
-			IL_002c: ldstr "d"
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
-			IL_0036: ret
+			IL_0001: ldfld object Modules.Function_NewExpression_MemberCallee_Compiles/Scope::impl
+			IL_0006: ldstr "Window"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+			IL_0010: stloc.1
+			IL_0011: ldloc.1
+			IL_0012: ldc.i4.1
+			IL_0013: newarr [System.Runtime]System.Object
+			IL_0018: dup
+			IL_0019: ldc.i4.0
+			IL_001a: ldarg.2
+			IL_001b: stelem.ref
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+			IL_0021: stloc.1
+			IL_0022: ldloc.1
+			IL_0023: stloc.0
+			IL_0024: ldloc.0
+			IL_0025: ldstr "d"
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+			IL_002f: ret
 		} // end of method FunctionExpression_createWindow::__js_call__
 
 	} // end of class FunctionExpression_createWindow
@@ -137,7 +142,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2123
+			// Method begins at RVA 0x211c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -163,7 +168,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 111 (0x6f)
+		// Code size: 113 (0x71)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NewExpression_MemberCallee_Compiles/Scope,
@@ -194,24 +199,26 @@
 		IL_0033: ldc.i4.0
 		IL_0034: ldloc.0
 		IL_0035: stelem.ref
-		IL_0036: ldftn object Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_createWindow::__js_call__(object[], object, object)
-		IL_003c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0041: stloc.2
-		IL_0042: ldloc.2
-		IL_0043: stloc.1
-		IL_0044: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0049: stloc.s 4
-		IL_004b: ldloc.1
-		IL_004c: ldloc.s 4
-		IL_004e: ldc.r8 123
-		IL_0057: box [System.Runtime]System.Double
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_0061: stloc.2
-		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0067: ldloc.2
-		IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_006d: pop
-		IL_006e: ret
+		IL_0036: ldc.i4.0
+		IL_0037: ldelem.ref
+		IL_0038: ldftn object Modules.Function_NewExpression_MemberCallee_Compiles/FunctionExpression_createWindow::__js_call__(class Modules.Function_NewExpression_MemberCallee_Compiles/Scope, object, object)
+		IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0043: stloc.2
+		IL_0044: ldloc.2
+		IL_0045: stloc.1
+		IL_0046: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_004b: stloc.s 4
+		IL_004d: ldloc.1
+		IL_004e: ldloc.s 4
+		IL_0050: ldc.r8 123
+		IL_0059: box [System.Runtime]System.Double
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+		IL_0063: stloc.2
+		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0069: ldloc.2
+		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006f: pop
+		IL_0070: ret
 	} // end of method Function_NewExpression_MemberCallee_Compiles::__js_module_init__
 
 } // end of class Modules.Function_NewExpression_MemberCallee_Compiles
@@ -223,7 +230,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213e
+		// Method begins at RVA 0x2137
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

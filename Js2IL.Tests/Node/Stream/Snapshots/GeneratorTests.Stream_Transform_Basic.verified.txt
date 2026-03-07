@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2234
+				// Method begins at RVA 0x2229
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -39,7 +39,10 @@
 				object chunk
 			) cil managed 
 		{
-			// Method begins at RVA 0x2190
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2194
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -73,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223d
+				// Method begins at RVA 0x2232
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -90,26 +93,28 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				class Modules.Stream_Transform_Basic/Scope scope,
 				object newTarget,
 				object chunk
 			) cil managed 
 		{
-			// Method begins at RVA 0x21bb
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 06 00 00 02
+			)
+			// Method begins at RVA 0x21bf
 			// Header size: 1
-			// Code size: 22 (0x16)
+			// Code size: 15 (0xf)
 			.maxstack 8
 
 			IL_0000: ldarg.0
-			IL_0001: ldc.i4.0
-			IL_0002: ldelem.ref
-			IL_0003: castclass Modules.Stream_Transform_Basic/Scope
-			IL_0008: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Transform_Basic/Scope::written
-			IL_000d: ldarg.2
-			IL_000e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_0013: pop
-			IL_0014: ldnull
-			IL_0015: ret
+			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Transform_Basic/Scope::written
+			IL_0006: ldarg.2
+			IL_0007: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_000c: pop
+			IL_000d: ldnull
+			IL_000e: ret
 		} // end of method FunctionExpression_L14C18::__js_call__
 
 	} // end of class FunctionExpression_L14C18
@@ -125,7 +130,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2246
+				// Method begins at RVA 0x223b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -142,13 +147,18 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				class Modules.Stream_Transform_Basic/Scope scope,
 				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x21d4
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 06 00 00 02
+			)
+			// Method begins at RVA 0x21d0
 			// Header size: 12
-			// Code size: 75 (0x4b)
+			// Code size: 68 (0x44)
 			.maxstack 8
 			.locals init (
 				[0] string
@@ -159,28 +169,25 @@
 			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_000f: pop
 			IL_0010: ldarg.0
-			IL_0011: ldc.i4.0
-			IL_0012: ldelem.ref
-			IL_0013: castclass Modules.Stream_Transform_Basic/Scope
-			IL_0018: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Transform_Basic/Scope::written
-			IL_001d: ldc.i4.1
-			IL_001e: newarr [System.Runtime]System.Object
-			IL_0023: dup
-			IL_0024: ldc.i4.0
-			IL_0025: ldstr ","
-			IL_002a: stelem.ref
-			IL_002b: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-			IL_0030: stloc.0
-			IL_0031: ldstr "written:"
-			IL_0036: ldloc.0
-			IL_0037: call string [System.Runtime]System.String::Concat(string, string)
-			IL_003c: stloc.0
-			IL_003d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0042: ldloc.0
-			IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0048: pop
-			IL_0049: ldnull
-			IL_004a: ret
+			IL_0011: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Transform_Basic/Scope::written
+			IL_0016: ldc.i4.1
+			IL_0017: newarr [System.Runtime]System.Object
+			IL_001c: dup
+			IL_001d: ldc.i4.0
+			IL_001e: ldstr ","
+			IL_0023: stelem.ref
+			IL_0024: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0029: stloc.0
+			IL_002a: ldstr "written:"
+			IL_002f: ldloc.0
+			IL_0030: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0035: stloc.0
+			IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003b: ldloc.0
+			IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0041: pop
+			IL_0042: ldnull
+			IL_0043: ret
 		} // end of method FunctionExpression_L18C22::__js_call__
 
 	} // end of class FunctionExpression_L18C22
@@ -199,7 +206,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x222b
+			// Method begins at RVA 0x2220
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -225,7 +232,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 307 (0x133)
+		// Code size: 311 (0x137)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Transform_Basic/Scope,
@@ -290,56 +297,60 @@
 		IL_0097: ldc.i4.0
 		IL_0098: ldloc.0
 		IL_0099: stelem.ref
-		IL_009a: ldftn object Modules.Stream_Transform_Basic/FunctionExpression_L14C18::__js_call__(object[], object, object)
-		IL_00a0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00a5: stloc.s 5
-		IL_00a7: ldloc.s 4
-		IL_00a9: ldstr "_write"
-		IL_00ae: ldloc.s 5
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
-		IL_00b5: pop
-		IL_00b6: ldc.i4.1
-		IL_00b7: newarr [System.Runtime]System.Object
-		IL_00bc: dup
-		IL_00bd: ldc.i4.0
-		IL_00be: ldloc.0
-		IL_00bf: stelem.ref
-		IL_00c0: ldftn object Modules.Stream_Transform_Basic/FunctionExpression_L18C22::__js_call__(object[], object)
-		IL_00c6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00cb: stloc.s 5
-		IL_00cd: ldloc.s 4
-		IL_00cf: ldstr "on"
-		IL_00d4: ldstr "finish"
-		IL_00d9: ldloc.s 5
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00e0: pop
-		IL_00e1: ldloc.2
-		IL_00e2: ldstr "pipe"
-		IL_00e7: ldloc.3
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ed: stloc.s 5
-		IL_00ef: ldloc.s 5
-		IL_00f1: ldstr "pipe"
-		IL_00f6: ldloc.s 4
-		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00fd: pop
-		IL_00fe: ldloc.2
-		IL_00ff: ldstr "push"
-		IL_0104: ldstr "a"
-		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_010e: pop
-		IL_010f: ldloc.2
-		IL_0110: ldstr "push"
-		IL_0115: ldstr "b"
-		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_011f: pop
-		IL_0120: ldloc.2
-		IL_0121: ldstr "push"
-		IL_0126: ldc.i4.0
-		IL_0127: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0131: pop
-		IL_0132: ret
+		IL_009a: ldc.i4.0
+		IL_009b: ldelem.ref
+		IL_009c: ldftn object Modules.Stream_Transform_Basic/FunctionExpression_L14C18::__js_call__(class Modules.Stream_Transform_Basic/Scope, object, object)
+		IL_00a2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00a7: stloc.s 5
+		IL_00a9: ldloc.s 4
+		IL_00ab: ldstr "_write"
+		IL_00b0: ldloc.s 5
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, object)
+		IL_00b7: pop
+		IL_00b8: ldc.i4.1
+		IL_00b9: newarr [System.Runtime]System.Object
+		IL_00be: dup
+		IL_00bf: ldc.i4.0
+		IL_00c0: ldloc.0
+		IL_00c1: stelem.ref
+		IL_00c2: ldc.i4.0
+		IL_00c3: ldelem.ref
+		IL_00c4: ldftn object Modules.Stream_Transform_Basic/FunctionExpression_L18C22::__js_call__(class Modules.Stream_Transform_Basic/Scope, object)
+		IL_00ca: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00cf: stloc.s 5
+		IL_00d1: ldloc.s 4
+		IL_00d3: ldstr "on"
+		IL_00d8: ldstr "finish"
+		IL_00dd: ldloc.s 5
+		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00e4: pop
+		IL_00e5: ldloc.2
+		IL_00e6: ldstr "pipe"
+		IL_00eb: ldloc.3
+		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f1: stloc.s 5
+		IL_00f3: ldloc.s 5
+		IL_00f5: ldstr "pipe"
+		IL_00fa: ldloc.s 4
+		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0101: pop
+		IL_0102: ldloc.2
+		IL_0103: ldstr "push"
+		IL_0108: ldstr "a"
+		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0112: pop
+		IL_0113: ldloc.2
+		IL_0114: ldstr "push"
+		IL_0119: ldstr "b"
+		IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0123: pop
+		IL_0124: ldloc.2
+		IL_0125: ldstr "push"
+		IL_012a: ldc.i4.0
+		IL_012b: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0135: pop
+		IL_0136: ret
 	} // end of method Stream_Transform_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Transform_Basic
@@ -351,7 +362,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x224f
+		// Method begins at RVA 0x2244
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

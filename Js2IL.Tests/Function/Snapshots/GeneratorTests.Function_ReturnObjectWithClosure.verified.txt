@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21d5
+					// Method begins at RVA 0x21f1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -44,7 +44,10 @@
 					object x
 				) cil managed 
 			{
-				// Method begins at RVA 0x2194
+				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Method begins at RVA 0x21b0
 				// Header size: 12
 				// Code size: 35 (0x23)
 				.maxstack 8
@@ -88,7 +91,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21cc
+				// Method begins at RVA 0x21e8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -105,14 +108,19 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				class Modules.Function_ReturnObjectWithClosure/Scope scope,
 				object newTarget,
 				object factor
 			) cil managed 
 		{
-			// Method begins at RVA 0x2138
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 05 00 00 02
+			)
+			// Method begins at RVA 0x2154
 			// Header size: 12
-			// Code size: 80 (0x50)
+			// Code size: 78 (0x4e)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_ReturnObjectWithClosure/createCalculator/Scope,
@@ -131,31 +139,29 @@
 			IL_0013: dup
 			IL_0014: ldc.i4.0
 			IL_0015: ldarg.0
-			IL_0016: ldc.i4.0
-			IL_0017: ldelem.ref
-			IL_0018: stelem.ref
-			IL_0019: dup
-			IL_001a: ldc.i4.1
-			IL_001b: ldloc.0
-			IL_001c: stelem.ref
-			IL_001d: ldftn object Modules.Function_ReturnObjectWithClosure/createCalculator/multiply::__js_call__(object[], object, object)
-			IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0028: stloc.2
-			IL_0029: ldloc.2
-			IL_002a: stloc.1
-			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0030: dup
-			IL_0031: ldstr "multiply"
-			IL_0036: ldloc.1
-			IL_0037: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_003c: dup
-			IL_003d: ldstr "factor"
-			IL_0042: ldloc.0
-			IL_0043: ldfld object Modules.Function_ReturnObjectWithClosure/createCalculator/Scope::factor
-			IL_0048: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_004d: stloc.3
-			IL_004e: ldloc.3
-			IL_004f: ret
+			IL_0016: stelem.ref
+			IL_0017: dup
+			IL_0018: ldc.i4.1
+			IL_0019: ldloc.0
+			IL_001a: stelem.ref
+			IL_001b: ldftn object Modules.Function_ReturnObjectWithClosure/createCalculator/multiply::__js_call__(object[], object, object)
+			IL_0021: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_0026: stloc.2
+			IL_0027: ldloc.2
+			IL_0028: stloc.1
+			IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_002e: dup
+			IL_002f: ldstr "multiply"
+			IL_0034: ldloc.1
+			IL_0035: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_003a: dup
+			IL_003b: ldstr "factor"
+			IL_0040: ldloc.0
+			IL_0041: ldfld object Modules.Function_ReturnObjectWithClosure/createCalculator/Scope::factor
+			IL_0046: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_004b: stloc.3
+			IL_004c: ldloc.3
+			IL_004d: ret
 		} // end of method createCalculator::__js_call__
 
 	} // end of class createCalculator
@@ -175,7 +181,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c3
+			// Method begins at RVA 0x21df
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -201,7 +207,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 220 (0xdc)
+		// Code size: 248 (0xf8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ReturnObjectWithClosure/Scope,
@@ -219,67 +225,77 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
-		IL_0010: ldftn object Modules.Function_ReturnObjectWithClosure/createCalculator::__js_call__(object[], object, object)
-		IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_001b: stloc.s 4
-		IL_001d: ldloc.s 4
-		IL_001f: stloc.1
-		IL_0020: ldc.i4.1
-		IL_0021: newarr [System.Runtime]System.Object
-		IL_0026: dup
-		IL_0027: ldc.i4.0
-		IL_0028: ldloc.0
-		IL_0029: stelem.ref
-		IL_002a: ldnull
-		IL_002b: ldc.r8 10
-		IL_0034: box [System.Runtime]System.Double
-		IL_0039: call object Modules.Function_ReturnObjectWithClosure/createCalculator::__js_call__(object[], object, object)
-		IL_003e: stloc.s 4
-		IL_0040: ldloc.s 4
-		IL_0042: stloc.2
-		IL_0043: ldloc.2
-		IL_0044: ldstr "multiply"
-		IL_0049: ldc.r8 5
-		IL_0052: box [System.Runtime]System.Double
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_005c: stloc.s 4
-		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0063: ldstr "multiply(5):"
-		IL_0068: ldloc.s 4
-		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_006f: pop
-		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0075: ldstr "factor:"
-		IL_007a: ldloc.2
-		IL_007b: ldstr "factor"
-		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
-		IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_008a: pop
-		IL_008b: ldc.i4.1
-		IL_008c: newarr [System.Runtime]System.Object
-		IL_0091: dup
-		IL_0092: ldc.i4.0
-		IL_0093: ldloc.0
-		IL_0094: stelem.ref
-		IL_0095: ldnull
-		IL_0096: ldc.r8 3
-		IL_009f: box [System.Runtime]System.Double
-		IL_00a4: call object Modules.Function_ReturnObjectWithClosure/createCalculator::__js_call__(object[], object, object)
-		IL_00a9: stloc.s 4
-		IL_00ab: ldloc.s 4
-		IL_00ad: stloc.3
-		IL_00ae: ldloc.3
-		IL_00af: ldstr "multiply"
-		IL_00b4: ldc.r8 7
-		IL_00bd: box [System.Runtime]System.Double
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00c7: stloc.s 4
-		IL_00c9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ce: ldstr "calc2.multiply(7):"
-		IL_00d3: ldloc.s 4
-		IL_00d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00da: pop
-		IL_00db: ret
+		IL_0010: ldc.i4.0
+		IL_0011: ldelem.ref
+		IL_0012: ldftn object Modules.Function_ReturnObjectWithClosure/createCalculator::__js_call__(class Modules.Function_ReturnObjectWithClosure/Scope, object, object)
+		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_001d: stloc.s 4
+		IL_001f: ldloc.s 4
+		IL_0021: stloc.1
+		IL_0022: ldc.i4.1
+		IL_0023: newarr [System.Runtime]System.Object
+		IL_0028: dup
+		IL_0029: ldc.i4.0
+		IL_002a: ldloc.0
+		IL_002b: stelem.ref
+		IL_002c: ldc.i4.0
+		IL_002d: ldelem.ref
+		IL_002e: ldftn object Modules.Function_ReturnObjectWithClosure/createCalculator::__js_call__(class Modules.Function_ReturnObjectWithClosure/Scope, object, object)
+		IL_0034: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0039: ldnull
+		IL_003a: ldc.r8 10
+		IL_0043: box [System.Runtime]System.Double
+		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_004d: stloc.s 4
+		IL_004f: ldloc.s 4
+		IL_0051: stloc.2
+		IL_0052: ldloc.2
+		IL_0053: ldstr "multiply"
+		IL_0058: ldc.r8 5
+		IL_0061: box [System.Runtime]System.Double
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_006b: stloc.s 4
+		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0072: ldstr "multiply(5):"
+		IL_0077: ldloc.s 4
+		IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_007e: pop
+		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0084: ldstr "factor:"
+		IL_0089: ldloc.2
+		IL_008a: ldstr "factor"
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0099: pop
+		IL_009a: ldc.i4.1
+		IL_009b: newarr [System.Runtime]System.Object
+		IL_00a0: dup
+		IL_00a1: ldc.i4.0
+		IL_00a2: ldloc.0
+		IL_00a3: stelem.ref
+		IL_00a4: ldc.i4.0
+		IL_00a5: ldelem.ref
+		IL_00a6: ldftn object Modules.Function_ReturnObjectWithClosure/createCalculator::__js_call__(class Modules.Function_ReturnObjectWithClosure/Scope, object, object)
+		IL_00ac: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00b1: ldnull
+		IL_00b2: ldc.r8 3
+		IL_00bb: box [System.Runtime]System.Double
+		IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_00c5: stloc.s 4
+		IL_00c7: ldloc.s 4
+		IL_00c9: stloc.3
+		IL_00ca: ldloc.3
+		IL_00cb: ldstr "multiply"
+		IL_00d0: ldc.r8 7
+		IL_00d9: box [System.Runtime]System.Double
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e3: stloc.s 4
+		IL_00e5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ea: ldstr "calc2.multiply(7):"
+		IL_00ef: ldloc.s 4
+		IL_00f1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00f6: pop
+		IL_00f7: ret
 	} // end of method Function_ReturnObjectWithClosure::__js_module_init__
 
 } // end of class Modules.Function_ReturnObjectWithClosure
@@ -291,7 +307,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21de
+		// Method begins at RVA 0x21fa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
