@@ -90,7 +90,11 @@ internal sealed partial class LIRToILCompiler
                 {
                     var parameterDefinition = methodParameters[i];
 
-                    if (parameterDefinition.ParameterType == typeof(object))
+                    if (!parameterDefinition.ParameterTypeHandle.IsNil)
+                    {
+                        parameters.AddParameter().Type().Type(parameterDefinition.ParameterTypeHandle, isValueType: false);
+                    }
+                    else if (parameterDefinition.ParameterType == typeof(object))
                     {
                         parameters.AddParameter().Type().Object();
                     }
@@ -141,8 +145,63 @@ internal sealed partial class LIRToILCompiler
             throw new InvalidOperationException("Expected a scopes parameter but methodDescriptor.HasScopesParameter is false");
         }
 
+        if (methodDescriptor.ScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope)
+        {
+            throw new InvalidOperationException("SingleScope methods do not expose an object[] scopes argument directly.");
+        }
+
         // Static: arg0 = scopes. Instance: arg0 = this, arg1 = scopes.
         return methodDescriptor.IsStatic ? 0 : 1;
+    }
+
+    private static int GetIlArgIndexForScopePayload(MethodDescriptor methodDescriptor)
+    {
+        if (!methodDescriptor.HasScopesParameter)
+        {
+            throw new InvalidOperationException("Expected a scope payload parameter but methodDescriptor.HasScopesParameter is false");
+        }
+
+        return methodDescriptor.IsStatic ? 0 : 1;
+    }
+
+    private static bool UsesSingleScopeAbi(MethodDescriptor methodDescriptor)
+        => methodDescriptor.ScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope;
+
+    private static bool UsesSingleScopeAbi(CallableSignature? signature)
+        => signature?.ScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope;
+
+    private void EmitLoadSingleScopePayload(InstructionEncoder ilEncoder, MethodDescriptor methodDescriptor)
+    {
+        if (!UsesSingleScopeAbi(methodDescriptor))
+        {
+            throw new InvalidOperationException("Expected SingleScope ABI when loading the single scope payload.");
+        }
+
+        ilEncoder.LoadArgument(GetIlArgIndexForScopePayload(methodDescriptor));
+    }
+
+    private void EmitLoadSingleScopeFromScopesArray(
+        TempVariable scopesArray,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor,
+        CallableSignature signature)
+    {
+        if (signature.ScopeAbiKind != Js2IL.Runtime.CallableScopeAbiKind.SingleScope)
+        {
+            throw new InvalidOperationException("Expected SingleScope callable signature when loading a single scope from scopes array.");
+        }
+
+        if (string.IsNullOrWhiteSpace(signature.SingleScopeScopeName))
+        {
+            throw new InvalidOperationException("SingleScope callable signature is missing its scope type identity.");
+        }
+
+        EmitLoadTemp(scopesArray, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.LoadConstantI4(0);
+        ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(_scopeMetadataRegistry.GetScopeTypeHandle(signature.SingleScopeScopeName));
     }
 
     private Type GetDeclaredScopeFieldClrType(string scopeName, string fieldName)

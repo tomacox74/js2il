@@ -174,17 +174,16 @@ internal static class ExportMemberResolver
         var invokeArgs = new object?[parameters.Length];
 
         var argIndex = 0;
-        var hasScopes = parameters[0].ParameterType == typeof(object[]);
-        var isJsFuncDelegate = JavaScriptRuntime.JsFuncDelegates.IsJsFuncDelegateType(d.GetType());
-        var hasNewTarget = isJsFuncDelegate
-            && (
-                (hasScopes && parameters.Length > 1 && parameters[1].ParameterType == typeof(object))
-                || (!hasScopes && parameters.Length > 0 && parameters[0].ParameterType == typeof(object))
-            );
+        var abi = JsCallableScopeAbiResolver.Resolve(d);
+        var hasScopes = abi.Kind != CallableScopeAbiKind.NoScopes;
+        var hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind);
 
         if (hasScopes)
         {
-            invokeArgs[0] = CreateDefaultScopes(d.Target);
+            var defaultScopes = CreateDefaultScopes(d.Target);
+            invokeArgs[0] = abi.Kind == CallableScopeAbiKind.ScopeArray
+                ? defaultScopes
+                : JsCallableScopeAbiResolver.GetSingleScopeArgument(defaultScopes, abi.SingleScopeType);
             argIndex = 1;
         }
 
@@ -283,20 +282,13 @@ internal static class ExportMemberResolver
         // - scopes: object[]
         // - newTarget: object (immediately after scopes)
         // Hosting callers provide only JavaScript args; inject hidden ABI slots here.
-        var scopesOffset = 0;
-        if (parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]))
-        {
-            scopesOffset = 1;
-        }
+        var abi = parameters.Length == 0
+            ? new JsCallableScopeAbiDescriptor(CallableScopeAbiKind.NoScopes, SingleScopeType: null, IsFromAttribute: false)
+            : JsCallableScopeAbiResolver.Resolve(parameters[0].Member as MethodInfo
+                ?? throw new InvalidOperationException("Parameter metadata is missing a declaring method."));
+        var scopesOffset = abi.Kind == CallableScopeAbiKind.NoScopes ? 0 : 1;
 
-        var newTargetOffset = 0;
-        if (scopesOffset == 1
-            && parameters.Length > 1
-            && parameters[1].ParameterType == typeof(object)
-            && string.Equals(parameters[1].Name, "newTarget", StringComparison.Ordinal))
-        {
-            newTargetOffset = 1;
-        }
+        var newTargetOffset = JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind) ? 1 : 0;
 
         var jsArgStart = scopesOffset + newTargetOffset;
 
@@ -310,7 +302,10 @@ internal static class ExportMemberResolver
 
         if (scopesOffset == 1)
         {
-            invokeArgs[0] = CreateDefaultScopes(target);
+            var defaultScopes = CreateDefaultScopes(target);
+            invokeArgs[0] = abi.Kind == CallableScopeAbiKind.ScopeArray
+                ? defaultScopes
+                : JsCallableScopeAbiResolver.GetSingleScopeArgument(defaultScopes, abi.SingleScopeType);
         }
 
         if (newTargetOffset == 1)

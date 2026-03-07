@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- perf/abi/runtime/tests/docs: introduce explicit callable scope ABI metadata via `JsCallableScopeAbiAttribute` (`NoScopes`, `SingleScope`, `ScopeArray`), emit it from single-phase and two-phase compilation, route runtime/hosting invocation through metadata-first ABI resolution with compatibility fallbacks for older assemblies, refresh affected generator snapshots, and document the rollout design (closes #812).
 - Node/path: add `path.posix` and `path.win32` variant APIs (fixes #784).
 - Node/fs: add callback-style async APIs (`readFile`, `writeFile`, `copyFile`, `readdir`, `mkdir`, `stat`, `rm`, `access`, `realpath`) with execution coverage (#785).
 - Node/stream: expand baseline with `Duplex`, `Transform`, and `PassThrough` plus basic `pipe()` backpressure (`write()==false` → pause until `drain`) and a minimal `highWaterMark` knob (#786).

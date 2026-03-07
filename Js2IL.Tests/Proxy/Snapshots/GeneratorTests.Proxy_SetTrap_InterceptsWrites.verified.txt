@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2157
+				// Method begins at RVA 0x2154
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,7 +35,7 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				class Modules.Proxy_SetTrap_InterceptsWrites/Scope scope,
 				object newTarget,
 				object t,
 				object prop,
@@ -43,9 +43,14 @@
 				object receiver
 			) cil managed 
 		{
-			// Method begins at RVA 0x2110
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 04 00 00 02
+			)
+			// Method begins at RVA 0x2114
 			// Header size: 12
-			// Code size: 50 (0x32)
+			// Code size: 43 (0x2b)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
@@ -53,26 +58,23 @@
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldc.i4.0
-			IL_0002: ldelem.ref
-			IL_0003: castclass Modules.Proxy_SetTrap_InterceptsWrites/Scope
-			IL_0008: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_SetTrap_InterceptsWrites/Scope::seen
-			IL_000d: stloc.0
-			IL_000e: ldarg.3
-			IL_000f: ldstr "="
-			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0019: stloc.1
-			IL_001a: ldloc.1
-			IL_001b: ldarg.s 'value'
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0022: stloc.1
-			IL_0023: ldloc.0
-			IL_0024: ldloc.1
-			IL_0025: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_002a: pop
-			IL_002b: ldc.i4.1
-			IL_002c: box [System.Runtime]System.Boolean
-			IL_0031: ret
+			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_SetTrap_InterceptsWrites/Scope::seen
+			IL_0006: stloc.0
+			IL_0007: ldarg.3
+			IL_0008: ldstr "="
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: ldarg.s 'value'
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_001b: stloc.1
+			IL_001c: ldloc.0
+			IL_001d: ldloc.1
+			IL_001e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_0023: pop
+			IL_0024: ldc.i4.1
+			IL_0025: box [System.Runtime]System.Boolean
+			IL_002a: ret
 		} // end of method FunctionExpression_handler::__js_call__
 
 	} // end of class FunctionExpression_handler
@@ -91,7 +93,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x214e
+			// Method begins at RVA 0x214b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -117,7 +119,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 177 (0xb1)
+		// Code size: 184 (0xb8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Proxy_SetTrap_InterceptsWrites/Scope,
@@ -147,42 +149,45 @@
 		IL_0033: ldc.i4.0
 		IL_0034: ldloc.0
 		IL_0035: stelem.ref
-		IL_0036: ldftn object Modules.Proxy_SetTrap_InterceptsWrites/FunctionExpression_handler::__js_call__(object[], object, object, object, object, object)
-		IL_003c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes4::.ctor(object, native int)
-		IL_0041: stloc.s 4
-		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0048: dup
-		IL_0049: ldstr "set"
-		IL_004e: ldloc.s 4
-		IL_0050: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0055: stloc.s 5
-		IL_0057: ldloc.s 5
-		IL_0059: stloc.2
-		IL_005a: ldloc.1
-		IL_005b: ldloc.2
-		IL_005c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
-		IL_0061: stloc.s 6
-		IL_0063: ldloc.s 6
-		IL_0065: stloc.3
-		IL_0066: ldloc.3
-		IL_0067: ldstr "a"
-		IL_006c: ldc.r8 5
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, float64)
-		IL_007a: pop
-		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0080: ldloc.0
-		IL_0081: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_SetTrap_InterceptsWrites/Scope::seen
-		IL_0086: ldc.r8 0.0
-		IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0099: pop
-		IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009f: ldloc.1
-		IL_00a0: ldstr "a"
-		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
-		IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00af: pop
-		IL_00b0: ret
+		IL_0036: ldc.i4.0
+		IL_0037: ldelem.ref
+		IL_0038: castclass Modules.Proxy_SetTrap_InterceptsWrites/Scope
+		IL_003d: ldftn object Modules.Proxy_SetTrap_InterceptsWrites/FunctionExpression_handler::__js_call__(class Modules.Proxy_SetTrap_InterceptsWrites/Scope, object, object, object, object, object)
+		IL_0043: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes4::.ctor(object, native int)
+		IL_0048: stloc.s 4
+		IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_004f: dup
+		IL_0050: ldstr "set"
+		IL_0055: ldloc.s 4
+		IL_0057: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_005c: stloc.s 5
+		IL_005e: ldloc.s 5
+		IL_0060: stloc.2
+		IL_0061: ldloc.1
+		IL_0062: ldloc.2
+		IL_0063: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_0068: stloc.s 6
+		IL_006a: ldloc.s 6
+		IL_006c: stloc.3
+		IL_006d: ldloc.3
+		IL_006e: ldstr "a"
+		IL_0073: ldc.r8 5
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, string, float64)
+		IL_0081: pop
+		IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0087: ldloc.0
+		IL_0088: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_SetTrap_InterceptsWrites/Scope::seen
+		IL_008d: ldc.r8 0.0
+		IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a0: pop
+		IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a6: ldloc.1
+		IL_00a7: ldstr "a"
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_00b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b6: pop
+		IL_00b7: ret
 	} // end of method Proxy_SetTrap_InterceptsWrites::__js_module_init__
 
 } // end of class Modules.Proxy_SetTrap_InterceptsWrites
@@ -194,7 +199,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2160
+		// Method begins at RVA 0x215d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

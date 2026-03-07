@@ -48,19 +48,35 @@ internal sealed partial class LIRToILCompiler
                         requiresScopes = callableSignature.RequiresScopesParameter;
                     }
 
+                    bool usesSingleScope = UsesSingleScopeAbi(callableSignature);
+                    bool delegateRequiresScopeArray = requiresScopes && !usesSingleScope;
+
                     // If the callee needs an `arguments` object or has rest parameters, preserve the full runtime args list.
                     // We route through Closure.InvokeDirectWithArgs which sets the ambient arguments context.
                     if (callableId.NeedsArgumentsObject || callableId.HasRestParameters)
                     {
-                        // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                        if (usesSingleScope)
+                        {
+                            EmitLoadSingleScopeFromScopesArray(
+                                callFunc.ScopesArray,
+                                ilEncoder,
+                                allocation,
+                                methodDescriptor,
+                                callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
                         ilEncoder.OpCode(ILOpCode.Ldftn);
                         ilEncoder.Token(methodHandle);
                         ilEncoder.OpCode(ILOpCode.Newobj);
-                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(callableId.JsParamCount, requiresScopes));
+                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(callableId.JsParamCount, delegateRequiresScopeArray));
 
-                        // Load scopes array
-                        EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                        if (delegateRequiresScopeArray)
+                        {
+                            EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                        }
 
                         // Build args array from call-site arguments (no truncation)
                         ilEncoder.LoadConstantI4(callFunc.Arguments.Count);
@@ -76,7 +92,7 @@ internal sealed partial class LIRToILCompiler
                         }
 
                         ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(_bclReferences.GetInvokeDirectWithArgsRef(callableId.JsParamCount));
+                        ilEncoder.Token(_bclReferences.GetInvokeDirectWithArgsRef(callableId.JsParamCount, delegateRequiresScopeArray));
 
                         if (IsMaterialized(callFunc.Result, allocation))
                         {
@@ -95,14 +111,25 @@ internal sealed partial class LIRToILCompiler
                     int jsParamCount = callableId.JsParamCount;
                     int argsToPass = Math.Min(callFunc.Arguments.Count, jsParamCount);
 
-                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    if (usesSingleScope)
+                    {
+                        EmitLoadSingleScopeFromScopesArray(
+                            callFunc.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor,
+                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray));
 
-                    if (requiresScopes)
+                    if (delegateRequiresScopeArray)
                     {
                         // Load scopes array only when required by callee ABI.
                         EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
@@ -125,7 +152,7 @@ internal sealed partial class LIRToILCompiler
 
                     // Invoke: callvirt Func<object[], [object, ...], object>::Invoke
                     ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount, requiresScopes));
+                    ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount, delegateRequiresScopeArray));
 
                     if (IsMaterialized(callFunc.Result, allocation))
                     {
@@ -166,12 +193,26 @@ internal sealed partial class LIRToILCompiler
                         requiresScopes = callableSignature.RequiresScopesParameter;
                     }
 
-                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    bool usesSingleScope = UsesSingleScopeAbi(callableSignature);
+                    bool delegateRequiresScopeArray = requiresScopes && !usesSingleScope;
+
+                    if (usesSingleScope)
+                    {
+                        EmitLoadSingleScopeFromScopesArray(
+                            callFuncArray.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor,
+                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray));
 
                     // Load scopes array
                     EmitLoadTemp(callFuncArray.ScopesArray, ilEncoder, allocation, methodDescriptor);
@@ -745,12 +786,26 @@ internal sealed partial class LIRToILCompiler
                         requiresScopes = signature.RequiresScopesParameter;
                     }
 
-                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    bool usesSingleScope = UsesSingleScopeAbi(signature);
+                    bool delegateRequiresScopeArray = requiresScopes && !usesSingleScope;
+
+                    if (usesSingleScope)
+                    {
+                        EmitLoadSingleScopeFromScopesArray(
+                            createArrow.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor,
+                            signature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray));
 
                     // Bind delegate to scopes array AND lexical 'this': Closure.BindArrow(object, object[], object)
                     EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
@@ -806,10 +861,21 @@ internal sealed partial class LIRToILCompiler
                         requiresScopes = signature.RequiresScopesParameter;
                     }
 
+                    bool usesSingleScope = UsesSingleScopeAbi(signature);
+
                     // Create a JsFuncNoScopesN delegate.
                     // - requiresScopes: close over scopes as delegate target (binds first static arg object[] scopes)
                     // - no scopes: regular static delegate target = null
-                    if (requiresScopes)
+                    if (usesSingleScope)
+                    {
+                        EmitLoadSingleScopeFromScopesArray(
+                            createFunc.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor,
+                            signature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
+                    }
+                    else if (requiresScopes)
                     {
                         EmitLoadTemp(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     }

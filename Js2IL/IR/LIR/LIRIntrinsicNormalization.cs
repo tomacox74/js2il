@@ -393,7 +393,13 @@ internal static class LIRIntrinsicNormalization
                 continue;
             }
 
-            bool requiresScopes = callableReader.GetSignature(callableId)?.RequiresScopesParameter ?? true;
+            var signature = callableReader.GetSignature(callableId);
+            if (signature?.ScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope)
+            {
+                continue;
+            }
+
+            bool requiresScopes = signature?.RequiresScopesParameter ?? true;
             int jsParamCount = callableId.JsParamCount;
             int argsToPass = Math.Min(callFunction.Arguments.Count, jsParamCount);
 

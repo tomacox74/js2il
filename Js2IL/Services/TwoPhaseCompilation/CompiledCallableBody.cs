@@ -22,6 +22,12 @@ public sealed record CompiledCallableBody
 
     public required BlobHandle Signature { get; init; }
 
+    public Js2IL.Runtime.CallableScopeAbiKind ScopeAbiKind { get; init; } = Js2IL.Runtime.CallableScopeAbiKind.NoScopes;
+
+    public int SingleScopeTypeMetadataToken { get; init; }
+
+    public bool EmitCallableScopeAbiAttribute { get; init; } = true;
+
     /// <summary>
     /// Offset into the MethodBodyStream where the method body was written.
     /// Note: 0 is a valid offset.

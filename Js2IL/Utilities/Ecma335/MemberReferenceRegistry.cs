@@ -422,8 +422,9 @@ namespace Js2IL.Utilities.Ecma335
                 var bclTypeReference = _typeRefRegistry.GetOrAdd(type);
                 encoder.Type(bclTypeReference, isValueType: false);
             }
-            // JavaScriptRuntime types (including nested types like Node.Process)
-            else if (type.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
+            // Runtime types (including nested types like Node.Process and hosting attributes in Js2IL.Runtime)
+            else if ((type.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
+                || (type.Namespace?.StartsWith("Js2IL.Runtime", StringComparison.Ordinal) == true))
             {
                 var typeRef = _typeRefRegistry.GetOrAdd(type);
                 encoder.Type(typeRef, isValueType: type.IsValueType);

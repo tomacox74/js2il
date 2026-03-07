@@ -93,7 +93,9 @@ namespace Js2IL.Services.ILGenerators
                     isInstanceMethod: false,
                     hasScopesParameter: signature.RequiresScopesParameter,
                     scopesFieldHandle: null,
-                    returnsVoid: false);
+                    returnsVoid: false,
+                    scopeAbiKind: signature.ScopeAbiKind,
+                    singleScopeScopeName: signature.SingleScopeScopeName);
 
                 IR.IRPipelineMetrics.RecordArrowFunctionAttempt(compiledBody != null);
                 if (compiledBody == null)
@@ -102,7 +104,7 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 var irTb = new TypeBuilder(_metadataBuilder, string.Empty, arrowTypeName);
-                _ = MethodDefinitionFinalizer.EmitMethod(_metadataBuilder, irTb, compiledBody);
+                _ = MethodDefinitionFinalizer.EmitMethod(_metadataBuilder, irTb, compiledBody, _bclReferences);
 
                 _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, expectedPreallocatedHandle.Value);
                 _callableRegistry.MarkBodyCompiledForAstNode(arrowFunction);
