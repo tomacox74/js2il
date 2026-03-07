@@ -4,6 +4,8 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 JS2IL supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, `super`, and core meta-property behavior for `new.target` / `import.meta` in CommonJS-hosted scripts).
 
 Notes on scope: the statuses here describe JS2IL's *compiler/runtime behavior*, not a full mechanistic implementation of every spec abstract operation.

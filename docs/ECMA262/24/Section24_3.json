@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "24.3",
   "title": "WeakMap Objects",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-weakmap-objects",
   "parent": {
     "clause": "24"
@@ -12,86 +12,141 @@
     {
       "clause": "24.3.1",
       "title": "The WeakMap Constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap-constructor"
     },
     {
       "clause": "24.3.1.1",
       "title": "WeakMap ( [ iterable ] )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap-iterable"
     },
     {
       "clause": "24.3.2",
       "title": "Properties of the WeakMap Constructor",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-weakmap-constructor"
     },
     {
       "clause": "24.3.2.1",
       "title": "WeakMap.prototype",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype"
     },
     {
       "clause": "24.3.3",
       "title": "Properties of the WeakMap Prototype Object",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-weakmap-prototype-object"
     },
     {
       "clause": "24.3.3.1",
       "title": "WeakMap.prototype.constructor",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.constructor"
     },
     {
       "clause": "24.3.3.2",
       "title": "WeakMap.prototype.delete ( key )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.delete"
     },
     {
       "clause": "24.3.3.3",
       "title": "WeakMap.prototype.get ( key )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.get"
     },
     {
       "clause": "24.3.3.4",
       "title": "WeakMap.prototype.getOrInsert ( key , value )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert"
     },
     {
       "clause": "24.3.3.5",
       "title": "WeakMap.prototype.getOrInsertComputed ( key , callback )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsertcomputed"
     },
     {
       "clause": "24.3.3.6",
       "title": "WeakMap.prototype.has ( key )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.has"
     },
     {
       "clause": "24.3.3.7",
       "title": "WeakMap.prototype.set ( key , value )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.set"
     },
     {
       "clause": "24.3.3.8",
       "title": "WeakMap.prototype [ %Symbol.toStringTag% ]",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype-%symbol.tostringtag%"
     },
     {
       "clause": "24.3.4",
       "title": "Properties of WeakMap Instances",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-weakmap-instances"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "24.3.1.1",
+        "feature": "new WeakMap()",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-weakmap-iterable",
+        "testScripts": [
+          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js"
+        ],
+        "notes": "Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection."
+      },
+      {
+        "clause": "24.3.1.1",
+        "feature": "new WeakMap(iterable)",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-weakmap-iterable",
+        "notes": "JavaScriptRuntime.WeakMap exposes only a parameterless constructor, so iterable initialization is not available."
+      },
+      {
+        "clause": "24.3.2.1",
+        "feature": "WeakMap constructor value and WeakMap.prototype surface",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype",
+        "notes": "WeakMap is compiler-recognized in new expressions but is not exposed as a first-class global constructor value with readable prototype properties."
+      },
+      {
+        "clause": "24.3.3",
+        "feature": "WeakMap.prototype.set / get / has / delete",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-weakmap-prototype-object",
+        "testScripts": [
+          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js",
+          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js",
+          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js",
+          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js"
+        ],
+        "notes": "Core WeakMap flows work for the object keys used in tests. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-key restrictions for every non-null primitive or boxed value."
+      },
+      {
+        "clause": "24.3.3.4",
+        "feature": "WeakMap.prototype.getOrInsert / getOrInsertComputed",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert",
+        "notes": "The newer WeakMap insertion helpers are not implemented."
+      },
+      {
+        "clause": "24.3.3.8",
+        "feature": "WeakMap.prototype[@@toStringTag]",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype-%symbol.tostringtag%",
+        "notes": "WeakMap instances do not currently expose a symbol-keyed toStringTag property."
+      }
+    ]
+  }
 }

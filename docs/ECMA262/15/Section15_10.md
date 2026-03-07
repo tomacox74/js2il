@@ -4,6 +4,8 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 ECMA-262 defines static tail-position analysis (IsInTailPosition / HasCallInTailPosition) and a runtime hook (PrepareForTailCall) used for Proper Tail Calls (PTC). JS2IL currently emits calls normally and does not implement PTC/tail-call optimization.
 
 | Clause | Title | Status | Link |

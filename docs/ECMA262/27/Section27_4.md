@@ -4,6 +4,8 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 _Lists clause numbers/titles/links only (no spec text)._
 
 | Clause | Title | Status | Link |

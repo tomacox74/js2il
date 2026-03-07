@@ -4,6 +4,8 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 | Clause | Title | Status | Link |
 |---:|---|---|---|
 | 15.2 | Function Definitions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-definitions) |

@@ -4,6 +4,8 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 JS2IL supports most common statement forms (control flow, loops, switch, try/catch/finally, throw/return) but rejects some statement types in the validator and has known semantic gaps (notably iterator-protocol fidelity for general `for..of`).
 
 | Clause | Title | Status | Link |

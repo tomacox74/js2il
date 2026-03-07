@@ -4,6 +4,8 @@ Covers control abstraction objects, including promises and generator/async contr
 
 [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 _This section is split into subsection documents for readability._
 
 ## Section Entry

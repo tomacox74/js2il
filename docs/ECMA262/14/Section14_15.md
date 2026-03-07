@@ -4,6 +4,8 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 try/catch/finally is supported for common cases, including throwing and catching arbitrary JS values. Some edge-case fidelity (notably top-level unhandled throw behavior and certain early errors) is not exhaustively validated.
 
 | Clause | Title | Status | Link |

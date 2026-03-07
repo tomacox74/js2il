@@ -4,6 +4,8 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 | Clause | Title | Status | Link |
 |---:|---|---|---|
 | 22.2 | RegExp (Regular Expression) Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-regexp-regular-expression-objects) |

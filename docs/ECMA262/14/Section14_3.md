@@ -4,6 +4,8 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 JS2IL supports common declaration forms (`let`, `const`, `var`) and destructuring binding patterns. Some spec-required early errors are not exhaustively covered, and TDZ behavior currently has a skipped test (so not fully implemented/validated yet).
 
 | Clause | Title | Status | Link |

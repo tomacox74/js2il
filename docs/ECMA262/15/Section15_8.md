@@ -4,6 +4,8 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 | Clause | Title | Status | Link |
 |---:|---|---|---|
 | 15.8 | Async Function Definitions | Supported | [tc39.es](https://tc39.es/ecma262/#sec-async-function-definitions) |

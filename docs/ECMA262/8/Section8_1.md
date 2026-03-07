@@ -4,6 +4,8 @@
 
 [Back to Section8](Section8.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 JS2IL lowers runtime evaluation semantics for the supported JavaScript subset through its HIR/LIR/IL pipeline; unsupported grammar and early-error cases are rejected in parse/validation stages.
 
 | Clause | Title | Status | Link |

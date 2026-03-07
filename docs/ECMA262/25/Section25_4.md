@@ -4,6 +4,8 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 | Clause | Title | Status | Link |
 |---:|---|---|---|
 | 25.4 | The Atomics Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-atomics-object) |

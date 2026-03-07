@@ -4,6 +4,8 @@ Introduces the standard built-in objects and shared conventions used by the buil
 
 [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 _Note: In the current ECMA-262 spec, Section 18 is a single clause and does not have numbered subsections._
 
 ## Section Entry

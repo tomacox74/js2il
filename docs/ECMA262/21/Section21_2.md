@@ -4,6 +4,8 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 JS2IL provides a minimal BigInt callable implementation backed by System.Numerics.BigInteger, sufficient for basic BigInt(value) usage and typeof semantics. The broader BigInt constructor/prototype surface and full spec conversion rules are not yet implemented.
 
 | Clause | Title | Status | Link |

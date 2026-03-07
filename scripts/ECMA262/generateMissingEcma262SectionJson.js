@@ -16,6 +16,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { isGeneratedTimestampLine } = require('./generatedMarkdownMetadata');
 
 const DEFAULT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'ECMA262');
 
@@ -173,6 +174,7 @@ function parseSectionDocFromMarkdown(mdPath, mdText, verbose) {
         .slice(backIdx + 1, tableIdx)
         .filter((l) => l.trim().length > 0)
         .filter((l) => !l.startsWith('<!-- AUTO-GENERATED:'))
+        .filter((l) => !isGeneratedTimestampLine(l))
         .join(eol)
         .trim();
       if (chunk.length > 0) intro = chunk;
