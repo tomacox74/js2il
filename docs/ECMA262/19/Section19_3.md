@@ -4,6 +4,8 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 | Clause | Title | Status | Link |
 |---:|---|---|---|
 | 19.3 | Constructor Properties of the Global Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object) |
@@ -63,7 +65,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean)) | Supported with Limitations | [`Compile_Scripts_DecompileGeneratorTest.js`](../../../Js2IL.Tests/Integration/JavaScript/Compile_Scripts_DecompileGeneratorTest.js) | js2il supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics. |
+| Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean)) | Supported with Limitations | `Js2IL.Tests/Integration/JavaScript/Compile_Scripts_DecompileGeneratorTest.js` | js2il supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics. |
 
 ### 19.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function))
 

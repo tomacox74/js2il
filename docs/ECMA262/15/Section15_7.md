@@ -4,6 +4,8 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 JS2IL supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), and public/private instance/static fields with initializers. Limitations: class static blocks are not supported; class getters/setters are rejected; computed method/field names and private methods are rejected.
 
 | Clause | Title | Status | Link |

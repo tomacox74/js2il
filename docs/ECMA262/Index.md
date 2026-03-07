@@ -19,6 +19,8 @@ Notes:
 - `Partially Supported` is deprecated legacy wording and is treated as `Supported with Limitations`.
 - Prototype-chain design/strategy: see [PrototypeChainSupport.md](../PrototypeChainSupport.md).
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 ## Summary
 - Total clauses indexed: **2176**
 - Clauses with tracked status: **104** (Supported: **98**, Supported with Limitations: **5**, Not Yet Supported: **1**)
@@ -36,13 +38,13 @@ Notes:
 | 6 | ECMAScript Data Types and Values | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-data-types-and-values) | [Section6.md](6/Section6.md) |
 | 7 | Abstract Operations | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations) | [Section7.md](7/Section7.md) |
 | 8 | Syntax-Directed Operations | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations) | [Section8.md](8/Section8.md) |
-| 9 | Executable Code and Execution Contexts | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-executable-code-and-execution-contexts) | [Section9.md](9/Section9.md) |
+| 9 | Executable Code and Execution Contexts | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-executable-code-and-execution-contexts) | [Section9.md](9/Section9.md) |
 | 10 | Ordinary and Exotic Objects Behaviours | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-and-exotic-objects-behaviours) | [Section10.md](10/Section10.md) |
 | 11 | ECMAScript Language: Source Text | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-source-code) | [Section11.md](11/Section11.md) |
 | 12 | ECMAScript Language: Lexical Grammar | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar) | [Section12.md](12/Section12.md) |
 | 13 | ECMAScript Language: Expressions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-expressions) | [Section13.md](13/Section13.md) |
-| 14 | ECMAScript Language: Statements and Declarations | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations) | [Section14.md](14/Section14.md) |
-| 15 | ECMAScript Language: Functions and Classes | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) | [Section15.md](15/Section15.md) |
+| 14 | ECMAScript Language: Statements and Declarations | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations) | [Section14.md](14/Section14.md) |
+| 15 | ECMAScript Language: Functions and Classes | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) | [Section15.md](15/Section15.md) |
 | 16 | ECMAScript Language: Scripts and Modules | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-scripts-and-modules) | [Section16.md](16/Section16.md) |
 | 17 | Error Handling and Language Extensions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-error-handling-and-language-extensions) | [Section17.md](17/Section17.md) |
 | 18 | ECMAScript Standard Built-in Objects | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-standard-built-in-objects) | [Section18.md](18/Section18.md) |
@@ -50,8 +52,8 @@ Notes:
 | 20 | Fundamental Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-fundamental-objects) | [Section20.md](20/Section20.md) |
 | 21 | Numbers and Dates | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-numbers-and-dates) | [Section21.md](21/Section21.md) |
 | 22 | Text Processing | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-text-processing) | [Section22.md](22/Section22.md) |
-| 23 | Indexed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-indexed-collections) | [Section23.md](23/Section23.md) |
-| 24 | Keyed Collections | Supported | [tc39.es](https://tc39.es/ecma262/#sec-keyed-collections) | [Section24.md](24/Section24.md) |
+| 23 | Indexed Collections | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-indexed-collections) | [Section23.md](23/Section23.md) |
+| 24 | Keyed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-keyed-collections) | [Section24.md](24/Section24.md) |
 | 25 | Structured Data | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-structured-data) | [Section25.md](25/Section25.md) |
 | 26 | Managing Memory | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-managing-memory) | [Section26.md](26/Section26.md) |
 | 27 | Control Abstraction Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-control-abstraction-objects) | [Section27.md](27/Section27.md) |

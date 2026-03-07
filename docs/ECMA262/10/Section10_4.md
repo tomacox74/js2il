@@ -4,6 +4,8 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 This section covers spec-defined *exotic objects* and their internal methods/slots (Bound Function, Array, String, Arguments, TypedArray, etc.). JS2IL currently does not attempt to model these internal-method details as specified. For the intrinsic function-scope `arguments` binding, JS2IL implements a minimal behavior tracked under Section 10.2 (non-arrow functions materialize `arguments` lazily as a JS Array snapshot; arrow functions capture `arguments` lexically). The full spec **Arguments Exotic Object** behavior (including mapped-arguments aliasing) remains not implemented.
 
 | Clause | Title | Status | Link |

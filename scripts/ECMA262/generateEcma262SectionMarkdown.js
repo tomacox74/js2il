@@ -14,6 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { buildGeneratedTimestampLine } = require('./generatedMarkdownMetadata');
 
 const DEFAULT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'ECMA262');
 const AUTO_GENERATED_MARKER = '<!-- AUTO-GENERATED: generateEcma262SectionMarkdown.js -->';
@@ -206,7 +207,7 @@ function getSpecUrlForClause(doc, clause) {
   return '';
 }
 
-function render(doc, sectionClause, mdPath, repoRootDir) {
+function render(doc, sectionClause, mdPath, repoRootDir, generatedAt) {
   const clause = requireString(doc, 'clause');
   const title = requireString(doc, 'title');
   const status = normalizeLegacyStatus(requireString(doc, 'status'));
@@ -231,6 +232,8 @@ function render(doc, sectionClause, mdPath, repoRootDir) {
   lines.push(`# Section ${clause}: ${title}`);
   lines.push('');
   lines.push(`[Back to Section${parentClause}](${parentDoc}) | [Back to Index](../Index.md)`);
+  lines.push('');
+  lines.push(buildGeneratedTimestampLine(generatedAt));
   lines.push('');
 
   if (doc.intro && typeof doc.intro === 'string' && doc.intro.trim().length > 0) {
@@ -387,7 +390,8 @@ function main() {
 
   const doc = JSON.parse(readText(jsonPath));
   const repoRootDir = path.resolve(__dirname, '..', '..');
-  const lines = render(doc, `${parsed.parent}.${parsed.sub}`, mdPath, repoRootDir);
+  const generatedAt = new Date();
+  const lines = render(doc, `${parsed.parent}.${parsed.sub}`, mdPath, repoRootDir, generatedAt);
   const changed = writeTextPreserveEol(mdPath, lines);
 
   console.log(`${changed ? 'Generated' : 'Up-to-date'} ${path.relative(path.resolve(__dirname, '..', '..'), mdPath)}`);

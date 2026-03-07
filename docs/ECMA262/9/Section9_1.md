@@ -4,6 +4,8 @@
 
 [Back to Section9](Section9.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 JS2IL models lexical/function/global environments through compiler-managed scope structures and runtime helpers rather than first-class ECMA-262 Environment Record objects.
 
 | Clause | Title | Status | Link |

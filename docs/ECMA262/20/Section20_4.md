@@ -4,6 +4,8 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 JS2IL supports Symbol callable creation, global registry APIs (Symbol.for/keyFor), well-known symbols, and core Symbol.prototype behaviors (description/toString/valueOf). Some advanced descriptor-level semantics remain tracked as limitations.
 
 | Clause | Title | Status | Link |

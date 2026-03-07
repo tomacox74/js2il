@@ -17,6 +17,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { buildGeneratedTimestampLine, isGeneratedTimestampLine } = require('./generatedMarkdownMetadata');
 
 const DEFAULT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'ECMA262');
 const AUTO_GENERATED_MARKER = '<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->';
@@ -129,6 +130,42 @@ function getRollupStatus(statuses) {
   return 'Untracked';
 }
 
+function upsertGeneratedTimestampBeforeSummary(lines, generatedAt) {
+  const existingIndex = lines.findIndex(isGeneratedTimestampLine);
+  if (existingIndex >= 0) {
+    lines.splice(existingIndex, 1);
+    if (existingIndex < lines.length && lines[existingIndex] === '') {
+      lines.splice(existingIndex, 1);
+    }
+  }
+
+  const summaryIndex = findLineIndex(lines, '## Summary');
+  const insertIndex = summaryIndex >= 0 ? summaryIndex : lines.length;
+  lines.splice(insertIndex, 0, buildGeneratedTimestampLine(generatedAt), '');
+}
+
+function upsertGeneratedTimestampAfterBackLink(lines, generatedAt) {
+  const existingIndex = lines.findIndex(isGeneratedTimestampLine);
+  if (existingIndex >= 0) {
+    lines.splice(existingIndex, 1);
+    if (existingIndex < lines.length && lines[existingIndex] === '') {
+      lines.splice(existingIndex, 1);
+    }
+  }
+
+  const backIndex = lines.findIndex((line) => line.includes('[Back to Index]('));
+  if (backIndex < 0) return false;
+
+  let insertIndex = backIndex + 1;
+  if (insertIndex >= lines.length || lines[insertIndex] !== '') {
+    lines.splice(insertIndex, 0, '');
+  }
+
+  insertIndex = backIndex + 2;
+  lines.splice(insertIndex, 0, buildGeneratedTimestampLine(generatedAt), '');
+  return true;
+}
+
 function getSubsectionDocTableRowCount(filePath) {
   if (!fs.existsSync(filePath)) return 0;
 
@@ -227,6 +264,7 @@ function listSubsectionFiles(sectionDir, sectionNumber) {
 function main() {
   const args = parseArgs(process.argv);
   const rootDir = path.resolve(args.root && args.root.trim().length > 0 ? args.root : DEFAULT_ROOT);
+  const generatedAt = new Date();
 
   const indexPath = path.join(rootDir, 'Index.md');
   const sectionIndex = getSectionIndex(indexPath);
@@ -241,6 +279,12 @@ function main() {
 
     const sectionNumber = parseInt(mSection[1], 10);
     const sectionDir = path.dirname(sectionPath);
+
+    const existingSection = readLines(sectionPath);
+    const existingSectionLines = existingSection.lines.slice();
+    if (upsertGeneratedTimestampAfterBackLink(existingSectionLines, generatedAt)) {
+      writeLinesPreserveEol(sectionPath, existingSectionLines);
+    }
 
     // If this section still has the full clause table, generate subsection docs.
     const sectionRead = readLines(sectionPath);
@@ -289,7 +333,16 @@ function main() {
           const subTitle = subTitleRow ? subTitleRow.Title : subRows[0].Title;
 
           const subPath = path.join(sectionDir, `Section${sectionNumber}_${sub}.md`);
-          if (!shouldOverwriteSubsectionDoc(subPath)) continue;
+          if (!shouldOverwriteSubsectionDoc(subPath)) {
+            if (fs.existsSync(subPath)) {
+              const existingSub = readLines(subPath);
+              const existingSubLines = existingSub.lines.slice();
+              if (upsertGeneratedTimestampAfterBackLink(existingSubLines, generatedAt)) {
+                writeLinesPreserveEol(subPath, existingSubLines);
+              }
+            }
+            continue;
+          }
 
           const content = [];
           content.push(AUTO_GENERATED_MARKER);
@@ -297,6 +350,8 @@ function main() {
           content.push(`# Section ${subClause}: ${subTitle}`);
           content.push('');
           content.push(`[Back to Section${sectionNumber}](Section${sectionNumber}.md) | [Back to Index](../Index.md)`);
+          content.push('');
+          content.push(buildGeneratedTimestampLine(generatedAt));
           content.push('');
           content.push('| Clause | Title | Status | Link |');
           content.push('|---:|---|---|---|');
@@ -334,6 +389,12 @@ function main() {
       const subClause = `${sectionNumber}.${sf.sub}`;
       const subPath = path.join(sectionDir, sf.fileName);
 
+      const existingSub = readLines(subPath);
+      const existingSubLines = existingSub.lines.slice();
+      if (upsertGeneratedTimestampAfterBackLink(existingSubLines, generatedAt)) {
+        writeLinesPreserveEol(subPath, existingSubLines);
+      }
+
       const subLines = readLines(subPath).lines;
       const subHeaderIndex = findLineIndex(subLines, '| Clause | Title | Status | Link |');
       if (subHeaderIndex < 0) continue;
@@ -369,6 +430,8 @@ function main() {
 
     const out = [];
     out.push(...headerLines);
+    out.push('');
+    out.push(buildGeneratedTimestampLine(generatedAt));
     out.push('');
     out.push('_This section is split into subsection documents for readability._');
     out.push('');
@@ -415,6 +478,7 @@ function main() {
         indexLines[i] = `| ${cells.join(' | ')} |`;
       }
 
+      upsertGeneratedTimestampBeforeSummary(indexLines, generatedAt);
       writeLinesPreserveEol(indexPath, indexLines);
     }
   }

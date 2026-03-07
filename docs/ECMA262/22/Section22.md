@@ -4,6 +4,8 @@ Covers text-processing built-ins, including strings and regular expressions.
 
 [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 _This section is split into subsection documents for readability._
 
 ## Section Entry
@@ -16,5 +18,5 @@ _This section is split into subsection documents for readability._
 
 | Subsection | Title | Status | Spec | Document |
 |---:|---|---|---|---|
-| 22.1 | String Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-string-objects) | [Section22_1.md](Section22_1.md) |
+| 22.1 | String Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string-objects) | [Section22_1.md](Section22_1.md) |
 | 22.2 | RegExp (Regular Expression) Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-regexp-regular-expression-objects) | [Section22_2.md](Section22_2.md) |

@@ -4,6 +4,8 @@
 
 [Back to Section7](Section7.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 Type conversion in JS2IL is implemented on an as-needed basis for supported language features and intrinsics. Some conversions are partial/minimal implementations intended to support specific call sites (e.g., BigInt(value)).
 
 | Clause | Title | Status | Link |

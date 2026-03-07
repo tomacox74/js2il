@@ -17,6 +17,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { buildGeneratedTimestampLine, isGeneratedTimestampLine } = require('./generatedMarkdownMetadata');
 
 const DEFAULT_ROOT = path.resolve(__dirname, '..', '..', 'docs', 'ECMA262');
 
@@ -206,6 +207,20 @@ function asSpecLink(url) {
   return u ? `[tc39.es](${u})` : '';
 }
 
+function upsertGeneratedTimestampBeforeSummary(lines, generatedAt) {
+  const existingIndex = lines.findIndex(isGeneratedTimestampLine);
+  if (existingIndex >= 0) {
+    lines.splice(existingIndex, 1);
+    if (existingIndex < lines.length && lines[existingIndex] === '') {
+      lines.splice(existingIndex, 1);
+    }
+  }
+
+  const summaryIndex = findLineIndex(lines, '## Summary');
+  const insertIndex = summaryIndex >= 0 ? summaryIndex : lines.length;
+  lines.splice(insertIndex, 0, buildGeneratedTimestampLine(generatedAt), '');
+}
+
 function isNumericDirent(d) {
   return d && d.isDirectory && d.isDirectory() && /^\d+$/.test(d.name);
 }
@@ -260,7 +275,7 @@ function findExistingSectionEntry(sectionLines, sectionNumber) {
   return null;
 }
 
-function updateSectionHubMarkdown(sectionDir, sectionNumber, subsectionRows) {
+function updateSectionHubMarkdown(sectionDir, sectionNumber, subsectionRows, generatedAt) {
   const sectionPath = path.join(sectionDir, `Section${sectionNumber}.md`);
   if (!fs.existsSync(sectionPath)) return { changed: false, status: null };
 
@@ -297,6 +312,8 @@ function updateSectionHubMarkdown(sectionDir, sectionNumber, subsectionRows) {
   const out = [];
   out.push(...headerLines);
   out.push('');
+  out.push(buildGeneratedTimestampLine(generatedAt));
+  out.push('');
   out.push('_This section is split into subsection documents for readability._');
   out.push('');
   out.push('## Section Entry');
@@ -321,7 +338,7 @@ function updateSectionHubMarkdown(sectionDir, sectionNumber, subsectionRows) {
   return { changed, status: sectionRollupStatus };
 }
 
-function updateIndexMarkdown(rootDir, sectionStatusByNumber) {
+function updateIndexMarkdown(rootDir, sectionStatusByNumber, generatedAt) {
   const indexPath = path.join(rootDir, 'Index.md');
   if (!fs.existsSync(indexPath)) return false;
 
@@ -330,8 +347,6 @@ function updateIndexMarkdown(rootDir, sectionStatusByNumber) {
 
   const sectionsHeaderIndex = findLineIndex(indexLines, '| Section | Title | Status | Spec | Document |');
   if (sectionsHeaderIndex < 0) return false;
-
-  let anyChange = false;
 
   for (let i = sectionsHeaderIndex + 2; i < indexLines.length; i++) {
     const line = indexLines[i];
@@ -347,14 +362,11 @@ function updateIndexMarkdown(rootDir, sectionStatusByNumber) {
     if (!cells || cells.length < 5) continue;
 
     const newStatus = sectionStatusByNumber[n];
-    if (cells[2] !== newStatus) {
-      cells[2] = newStatus;
-      indexLines[i] = `| ${cells.join(' | ')} |`;
-      anyChange = true;
-    }
+    cells[2] = newStatus;
+    indexLines[i] = `| ${cells.join(' | ')} |`;
   }
 
-  if (!anyChange) return false;
+  upsertGeneratedTimestampBeforeSummary(indexLines, generatedAt);
   return writeLinesPreserveEol(indexPath, indexLines);
 }
 
@@ -370,6 +382,7 @@ function main() {
     throw new Error(`ECMA262 docs root not found: ${rootDir}`);
   }
 
+  const generatedAt = new Date();
   const sectionDirs = listNumericSectionDirs(rootDir);
 
   const sectionStatusByNumber = {};
@@ -427,14 +440,14 @@ function main() {
       return aSub - bSub;
     });
 
-    const hub = updateSectionHubMarkdown(sectionDir, sectionNumber, subsectionRows);
+    const hub = updateSectionHubMarkdown(sectionDir, sectionNumber, subsectionRows, generatedAt);
     if (hub.status) {
       sectionStatusByNumber[String(sectionNumber)] = hub.status;
     }
     if (hub.changed) changedSectionCount++;
   }
 
-  const indexChanged = updateIndexMarkdown(rootDir, sectionStatusByNumber);
+  const indexChanged = updateIndexMarkdown(rootDir, sectionStatusByNumber, generatedAt);
 
   console.log(
     `Rollup complete. Updated sections: ${changedSectionCount}. Index updated: ${indexChanged ? 'yes' : 'no'}.`

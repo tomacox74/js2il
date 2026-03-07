@@ -4,6 +4,8 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 Block statements are supported, including lexical scoping for `let`/`const` declarations. Some early-error edge cases and full spec fidelity around declaration instantiation are not exhaustively validated.
 
 | Clause | Title | Status | Link |

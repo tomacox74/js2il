@@ -4,6 +4,8 @@
 
 [Back to Section16](Section16.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 JS2IL supports a practical subset of static module syntax by lowering top-level `import` / `export` declarations to the existing CommonJS runtime model. This enables mixed CJS/ESM-style graphs for common patterns, but does not implement full ECMA-262 module-record/linking/evaluation semantics.
 
 | Clause | Title | Status | Link |

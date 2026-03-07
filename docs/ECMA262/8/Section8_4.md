@@ -4,6 +4,8 @@
 
 [Back to Section8](Section8.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
 | Clause | Title | Status | Link |
 |---:|---|---|---|
 | 8.4 | Function Name Inference | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-function-name-inference) |
