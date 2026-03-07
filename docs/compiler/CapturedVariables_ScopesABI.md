@@ -11,7 +11,7 @@ JS2IL compiles JavaScript using a **AST → HIR → LIR → IL** lowering pipeli
 
 - Every JavaScript scope becomes a generated .NET reference type ("scope class").
 - Captured bindings (and other field-backed bindings like hoisted function declarations) become **instance fields** on the scope class.
-- Nested functions access parent scopes via an `object[] scopes` chain.
+- Nested functions access parent scopes via an explicit callable ABI. Today that ABI is either an `object[] scopes` chain or no scopes parameter at all; the next revision proposes a strongly typed single-scope variant as well.
 
 This document specifies the runtime calling convention for closure environments (the **ABI**) and the core data structures / lowering rules for materializing scope chains and accessing captured bindings.
 
@@ -45,13 +45,14 @@ This design intentionally aligns with current conventions, but the contract belo
 
 ### Method signature encoding
 
-`MethodBuilder.BuildMethodSignature(...)` can add an optional leading `object[] scopes` parameter:
+`MethodBuilder.BuildMethodSignature(...)` currently models a two-way ABI split:
 
-- If `hasScopesParam` is true, the *first* parameter is `object[]`.
-- Remaining parameters are `object`.
-- Return type is `object` (or `void` for constructors).
+- array ABI: an optional leading `object[] scopes` parameter
+- no-scopes ABI: no leading scopes parameter at all
+- remaining parameters are `object`
+- return type is `object` (or `void` for constructors)
 
-This matches the current function/arrow emission strategy.
+This matches the current function/arrow emission strategy. The next revision described below extends this to an explicit three-state ABI: `None`, `SingleScope`, and `Array`.
 
 ### Class parent scope storage (`_scopes`)
 
@@ -69,6 +70,28 @@ The current IR lowering emits `LIRBuildScopesArray(...)` to materialize the scop
 
 This document defines how that instruction must be materialized once environments are supported.
 
+## Proposed evolution (March 2026)
+
+The next iteration of this design should make the callable scope ABI explicit and versionable instead of inferring it from parameter shape.
+
+### Proposal summary
+
+1. Introduce a compiler-emitted method attribute (working name: `JsCallableAbiAttribute`) that describes the callable scope ABI.
+2. Replace the current bool-based notion of "has scopes parameter" with a richer model:
+   - `None`: no scopes parameter
+   - `SingleScope`: one strongly typed scope instance passed as the first ABI payload
+   - `Array`: the current `object[] scopes` chain
+3. Formalize the already-existing no-scopes optimization under the new attribute instead of treating it as a separate special case.
+4. Limit the first `SingleScope` rollout to non-async, non-generator, static-style function and arrow callables.
+5. Keep constructors, class instance methods, async functions, generators, and any callable that provably needs more than one scope on the existing ABI paths until the new metadata flow is stable.
+
+### Feedback and recommendations
+
+- This is a good direction because `Closure` and `ExportMemberResolver` currently infer ABI from a leading `object[]` parameter, which is brittle for long-term evolution.
+- The new attribute should be the authoritative source for newly generated code, but the runtime should keep a parameter-shape fallback for backward compatibility with older assemblies.
+- The new ABI model should use an enum-based descriptor rather than additional booleans. If `SingleScope` needs to identify a scope type, prefer metadata handles or another compiler-stable identity over string-only lookup.
+- Preserve correctness over performance. When capture analysis, resumable execution, or hosted invocation is ambiguous, the compiler should fall back to the current array ABI.
+
 ## ABI Contract (Authoritative)
 
 This section is the **contract** that both pipelines must obey.
@@ -82,22 +105,31 @@ We define a small set of callable kinds because the ABI differs materially betwe
 **Signature**
 
 - Static method.
-- First parameter is `object[] scopes`.
+- The callable scope ABI is explicit metadata, not just an inferred parameter convention.
+- The first ABI payload is one of:
+  - no scopes payload (`None`)
+  - one strongly typed scope instance (`SingleScope`)
+  - `object[] scopes` (`Array`)
 - Then N JavaScript parameters as `object`.
 - Returns `object`.
 
 ```csharp
-static object Fn(object[] scopes, object p0, object p1, ...)
+static object Fn(object p0, object p1, ...)                   // None
+static object Fn(TScope scope, object p0, object p1, ...)     // SingleScope
+static object Fn(object[] scopes, object p0, object p1, ...)  // Array
 ```
 
 **Scopes source inside callee**
 
-- Parent scopes are read from the `scopes` argument.
+- `None`: the callee does not read parent scopes from an argument.
+- `SingleScope`: the callee reads its only required parent scope directly from the typed scope argument.
+- `Array`: parent scopes are read from the `scopes` argument.
 
 **Notes**
 
-- Functionally, `object[] scopes` is only required when the callable needs access to parent scopes.
-- Performance optimization: omitting `object[] scopes` when unused is tracked as a separate issue: https://github.com/tomacox74/js2il/issues/213
+- The no-scopes ABI already exists in the compiler/runtime and should be formalized by the new metadata rather than rediscovered through heuristics.
+- The first `SingleScope` rollout should apply only to non-async, non-generator, static-style function/arrow callables.
+- The `Array` ABI remains the conservative fallback whenever a callable needs multiple parent scopes or participates in runtime plumbing that still assumes an array shape.
 
 #### 1.2 Class constructor
 
@@ -143,7 +175,7 @@ ES6 class fields (instance and static) are emitted as .NET fields on the class t
 No scopes parameter is required.
 
 - The global scope instance (if needed) is typically represented as a leaf local (typed scope class) in the method body.
-- When creating delegates or calling generated functions, the caller materializes the `object[] scopes` chain.
+- When creating delegates or calling generated functions, the caller materializes the callee's declared scopes payload (`None`, `SingleScope`, or `Array`).
 
 ### 2) `object[] scopes` ordering
 
@@ -216,24 +248,24 @@ The IR layer frequently speaks in terms of JavaScript parameter index (0-based).
 
 Define:
 
-- `HasScopesParam` (bool): whether `object[] scopes` is present as a parameter.
+- `ScopeAbiKind`: `None`, `SingleScope`, or `Array`.
 - `IsInstanceMethod` (bool): whether the generated method is instance.
 
 Then:
 
 - IL arg 0 is `this` for instance methods.
-- If `HasScopesParam` is true, the `scopes` parameter is the first non-`this` arg.
+- If `ScopeAbiKind != None` and scopes are passed as an argument, the scopes payload is the first non-`this` arg.
 
 Mapping function (conceptual):
 
 ```text
 JsParamToIlArgIndex(jsParamIndex) =
-  (IsInstanceMethod ? 1 : 0) + (HasScopesParam ? 1 : 0) + jsParamIndex
+  (IsInstanceMethod ? 1 : 0) + (ScopeAbiKind == None ? 0 : 1) + jsParamIndex
 ```
 
-For class instance methods: `HasScopesParam = false`, `IsInstanceMethod = true`.
+For class instance methods: `ScopeAbiKind = None`, `IsInstanceMethod = true`, and parent scopes continue to come from `this._scopes`.
 
-For functions/arrow functions: `HasScopesParam = true`, `IsInstanceMethod = false`.
+For functions/arrow functions: `IsInstanceMethod = false` and the scope ABI may be `None`, `SingleScope`, or `Array`.
 
 ### 4) Scope-field access contract
 
@@ -288,8 +320,10 @@ The runtime supports a bounded set of closure delegate shapes.
 
 Contract:
 
-- Delegates are `Func<object[], object, ..., object>` (0–6 JS params).
-- The first parameter is always `object[] scopes`.
+- The runtime already supports two delegate families:
+  - `JsFuncN`: array scopes ABI
+  - `JsFuncNoScopesN`: no-scopes ABI
+- The next revision should add a third delegate family for `SingleScope`, where the first ABI payload is the concrete scope type rather than `object[]`.
 
 If a call site cannot resolve a supported delegate shape, it must fall back to the runtime dispatcher (existing behavior).
 
@@ -375,17 +409,25 @@ Represents the ABI shape of a compiled method.
 Suggested structure:
 
 ```csharp
+public enum ScopeAbiKind
+{
+    None,
+    SingleScope,
+    Array
+}
+
 public enum ScopesSource
 {
     None,
-    Argument,     // object[] is a method parameter
-    ThisField     // object[] stored in this._scopes
+    Argument,
+    ThisField
 }
 
 public sealed record CallableAbi(
     bool IsInstanceMethod,
-    bool HasScopesParam,
+    ScopeAbiKind ScopeAbiKind,
     ScopesSource ScopesSource,
+    TypeDefinitionHandle SingleScopeTypeHandle,
     int JsParameterCount,
     int MaxSupportedDelegateArity // currently 6
 );
@@ -393,8 +435,10 @@ public sealed record CallableAbi(
 
 Invariants:
 
-- If `ScopesSource == Argument`, then `HasScopesParam == true`.
-- If `ScopesSource == ThisField`, then `IsInstanceMethod == true` and `HasScopesParam == false`.
+- If `ScopeAbiKind == None`, then `ScopesSource == None`.
+- If `ScopeAbiKind == SingleScope`, then `ScopesSource == Argument`.
+- If `ScopesSource == ThisField`, then `IsInstanceMethod == true` and `ScopeAbiKind == Array` for the current class-method ABI.
+- `SingleScopeTypeHandle` is populated only when `ScopeAbiKind == SingleScope`.
 
 ### 2) `ScopeChainLayout`
 
