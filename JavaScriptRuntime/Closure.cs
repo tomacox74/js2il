@@ -49,7 +49,43 @@ namespace JavaScriptRuntime
             public Delegate Target { get; }
         }
 
+        private sealed class DelegateInvokeMetadata
+        {
+            public DelegateInvokeMetadata(
+                ParameterInfo[] parameters,
+                JsCallableScopeAbiDescriptor abi,
+                bool isJsFuncDelegate,
+                bool hasNewTarget,
+                int jsParamStart,
+                bool hasParamsArray,
+                int fixedJsParamCount)
+            {
+                Parameters = parameters;
+                Abi = abi;
+                IsJsFuncDelegate = isJsFuncDelegate;
+                HasNewTarget = hasNewTarget;
+                JsParamStart = jsParamStart;
+                HasParamsArray = hasParamsArray;
+                FixedJsParamCount = fixedJsParamCount;
+            }
+
+            public ParameterInfo[] Parameters { get; }
+
+            public JsCallableScopeAbiDescriptor Abi { get; }
+
+            public bool IsJsFuncDelegate { get; }
+
+            public bool HasNewTarget { get; }
+
+            public int JsParamStart { get; }
+
+            public bool HasParamsArray { get; }
+
+            public int FixedJsParamCount { get; }
+        }
+
         private static readonly ConditionalWeakTable<Delegate, BoundDelegateMetadata> _boundDelegates = new();
+        private static readonly ConditionalWeakTable<Delegate, DelegateInvokeMetadata> _delegateInvokeMetadata = new();
 
         private static T InvokeWithThis<T>(object? boundThis, Func<T> invoke)
         {
@@ -143,30 +179,53 @@ namespace JavaScriptRuntime
             return false;
         }
 
+        private static DelegateInvokeMetadata GetDelegateInvokeMetadata(Delegate target)
+        {
+            return _delegateInvokeMetadata.GetValue(target, static del =>
+            {
+                var delegateType = del.GetType();
+                var invoke = delegateType.GetMethod("Invoke")
+                    ?? throw new ArgumentException($"Delegate type '{delegateType}' does not define Invoke().", nameof(del));
+                var parameters = invoke.GetParameters();
+                var abi = JsCallableScopeAbiResolver.Resolve(del);
+                bool hasScopes = abi.HasExplicitScopePayload;
+                bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind);
+                int jsParamStart = hasScopes
+                    ? (hasNewTarget ? 2 : 1)
+                    : (hasNewTarget ? 1 : 0);
+                int expectedJsParamCount = parameters.Length - jsParamStart;
+
+                // ParamArrayAttribute is not preserved on delegate Invoke() parameters when a delegate is created
+                // from a method using ldftn/newobj. For intrinsic delegates (e.g., timers), treat a trailing
+                // object[] parameter as a params-array as well.
+                bool hasParamsArray = expectedJsParamCount > 0
+                    && (
+                        Attribute.IsDefined(parameters[^1], typeof(ParamArrayAttribute))
+                        || (parameters[^1].ParameterType.IsArray && parameters[^1].ParameterType.GetElementType() == typeof(object))
+                    );
+
+                return new DelegateInvokeMetadata(
+                    parameters,
+                    abi,
+                    JsFuncDelegates.IsJsFuncDelegateType(delegateType),
+                    hasNewTarget,
+                    jsParamStart,
+                    hasParamsArray,
+                    hasParamsArray ? expectedJsParamCount - 1 : expectedJsParamCount);
+            });
+        }
+
         private static object InvokeDelegateWithArgs(Delegate target, object[] scopes, object?[] args, object? newTarget)
         {
-            var invoke = target.GetType().GetMethod("Invoke")
-                ?? throw new ArgumentException($"Delegate type '{target.GetType()}' does not define Invoke().", nameof(target));
-            var parameters = invoke.GetParameters();
-
-            var abi = JsCallableScopeAbiResolver.Resolve(target);
+            var metadata = GetDelegateInvokeMetadata(target);
+            var parameters = metadata.Parameters;
+            var abi = metadata.Abi;
             bool hasScopes = abi.HasExplicitScopePayload;
-            bool isJsFuncDelegate = JsFuncDelegates.IsJsFuncDelegateType(target.GetType());
-            bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind);
-            int jsParamStart = hasScopes
-                ? (hasNewTarget ? 2 : 1)
-                : (hasNewTarget ? 1 : 0);
-            int expectedJsParamCount = parameters.Length - jsParamStart;
-
-            // ParamArrayAttribute is not preserved on delegate Invoke() parameters when a delegate is created
-            // from a method using ldftn/newobj. For intrinsic delegates (e.g., timers), treat a trailing
-            // object[] parameter as a params-array as well.
-            bool hasParamsArray = expectedJsParamCount > 0
-                && (
-                    Attribute.IsDefined(parameters[^1], typeof(ParamArrayAttribute))
-                    || (parameters[^1].ParameterType.IsArray && parameters[^1].ParameterType.GetElementType() == typeof(object))
-                );
-            int fixedJsParamCount = hasParamsArray ? expectedJsParamCount - 1 : expectedJsParamCount;
+            bool isJsFuncDelegate = metadata.IsJsFuncDelegate;
+            bool hasNewTarget = metadata.HasNewTarget;
+            int jsParamStart = metadata.JsParamStart;
+            bool hasParamsArray = metadata.HasParamsArray;
+            int fixedJsParamCount = metadata.FixedJsParamCount;
 
             // Fast-path: most JS2IL-generated functions are strongly typed as Func<object[], object, ... , object>.
             // Avoid Delegate.DynamicInvoke() for these common cases to reduce overhead and (on some runtimes)
