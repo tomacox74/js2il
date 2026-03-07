@@ -43,10 +43,20 @@ public sealed record CallableSignature
     public required TypeDefinitionHandle OwnerTypeHandle { get; init; }
     
     /// <summary>
-    /// Whether the callable requires a scopes parameter (object[] scopes).
-    /// True when the callable references variables from an enclosing scope.
+    /// The explicit callable scope ABI used by the method signature.
     /// </summary>
-    public bool RequiresScopesParameter { get; init; }
+    public Js2IL.Runtime.CallableScopeAbiKind ScopeAbiKind { get; init; }
+
+    /// <summary>
+    /// The registry scope name of the single scope payload when <see cref="ScopeAbiKind"/>
+    /// is <see cref="Js2IL.Runtime.CallableScopeAbiKind.SingleScope"/>.
+    /// </summary>
+    public string? SingleScopeScopeName { get; init; }
+
+    /// <summary>
+    /// Whether the callable requires an explicit scopes payload parameter.
+    /// </summary>
+    public bool RequiresScopesParameter => ScopeAbiKind != Js2IL.Runtime.CallableScopeAbiKind.NoScopes;
     
     /// <summary>
     /// The number of JavaScript parameters (excluding the scopes parameter).

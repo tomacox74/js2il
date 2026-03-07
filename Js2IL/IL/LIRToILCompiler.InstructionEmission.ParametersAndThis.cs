@@ -71,8 +71,7 @@ internal sealed partial class LIRToILCompiler
                         return false;
                     }
 
-                    // Static functions: scopes is arg0. Instance constructors: scopes is arg1.
-                    ilEncoder.LoadArgument(methodDescriptor.IsStatic ? 0 : 1);
+                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
                     EmitStoreTemp(loadScopesArg.Result, ilEncoder, allocation);
                     break;
                 }

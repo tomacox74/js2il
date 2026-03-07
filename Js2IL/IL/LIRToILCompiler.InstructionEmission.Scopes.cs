@@ -51,11 +51,24 @@ internal sealed partial class LIRToILCompiler
                         loadParentField.Field.ScopeName,
                         loadParentField.Field.FieldName,
                         "LIRLoadParentScopeField instruction");
-                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
-                    ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
-                    ilEncoder.OpCode(ILOpCode.Ldelem_ref);
-                    ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(scopeTypeHandle);
+
+                    if (UsesSingleScopeAbi(methodDescriptor))
+                    {
+                        if (loadParentField.ParentScopeIndex != 0)
+                        {
+                            throw new InvalidOperationException("SingleScope ABI only supports parent scope index 0.");
+                        }
+
+                        EmitLoadSingleScopePayload(ilEncoder, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadScopesArray(ilEncoder, methodDescriptor);
+                        ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
+                        ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(scopeTypeHandle);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
 
@@ -77,11 +90,24 @@ internal sealed partial class LIRToILCompiler
                         storeParentField.Field.ScopeName,
                         storeParentField.Field.FieldName,
                         "LIRStoreParentScopeField instruction");
-                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
-                    ilEncoder.LoadConstantI4(storeParentField.ParentScopeIndex);
-                    ilEncoder.OpCode(ILOpCode.Ldelem_ref);
-                    ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(scopeTypeHandle);
+
+                    if (UsesSingleScopeAbi(methodDescriptor))
+                    {
+                        if (storeParentField.ParentScopeIndex != 0)
+                        {
+                            throw new InvalidOperationException("SingleScope ABI only supports parent scope index 0.");
+                        }
+
+                        EmitLoadSingleScopePayload(ilEncoder, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadScopesArray(ilEncoder, methodDescriptor);
+                        ilEncoder.LoadConstantI4(storeParentField.ParentScopeIndex);
+                        ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(scopeTypeHandle);
+                    }
 
                     var fieldClrType = GetDeclaredScopeFieldClrType(storeParentField.Field.ScopeName, storeParentField.Field.FieldName);
                     if (fieldClrType == typeof(double))

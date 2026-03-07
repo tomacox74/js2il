@@ -65,6 +65,11 @@ internal sealed partial class LIRToILCompiler
             ExpectedMethodDef = expectedMethodDef,
             Attributes = methodAttributes,
             Signature = methodSig,
+            ScopeAbiKind = methodDescriptor.ScopeAbiKind,
+            SingleScopeTypeMetadataToken = methodDescriptor.SingleScopeTypeHandle.IsNil
+                ? 0
+                : MetadataTokens.GetToken(methodDescriptor.SingleScopeTypeHandle),
+            EmitCallableScopeAbiAttribute = methodDescriptor.EmitCallableScopeAbiAttribute,
             BodyOffset = bodyOffset,
             ParameterNames = methodDescriptor.Parameters.Select(p => p.Name).ToArray(),
             SequencePoints = points
@@ -125,6 +130,16 @@ internal sealed partial class LIRToILCompiler
                 ParameterAttributes.None,
                 _metadataBuilder.GetOrAddString(paramName),
                 sequence++);
+        }
+
+        if (methodDescriptor.EmitCallableScopeAbiAttribute)
+        {
+            CallableScopeAbiAttributeEmitter.Emit(
+                _metadataBuilder,
+                _bclReferences,
+                methodDefinitionHandle,
+                methodDescriptor.ScopeAbiKind,
+                methodDescriptor.SingleScopeTypeHandle.IsNil ? 0 : MetadataTokens.GetToken(methodDescriptor.SingleScopeTypeHandle));
         }
 
         return (methodDefinitionHandle, methodSig);

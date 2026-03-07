@@ -458,11 +458,23 @@ internal sealed partial class LIRToILCompiler
                         loadParentField.Field.ScopeName,
                         loadParentField.Field.FieldName,
                         "inline LIRLoadParentScopeField emission");
-                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
-                    ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
-                    ilEncoder.OpCode(ILOpCode.Ldelem_ref);
-                    ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(scopeTypeHandle);
+                    if (UsesSingleScopeAbi(methodDescriptor))
+                    {
+                        if (loadParentField.ParentScopeIndex != 0)
+                        {
+                            throw new InvalidOperationException("SingleScope ABI only supports parent scope index 0.");
+                        }
+
+                        EmitLoadSingleScopePayload(ilEncoder, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadScopesArray(ilEncoder, methodDescriptor);
+                        ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
+                        ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(scopeTypeHandle);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
 
@@ -968,20 +980,29 @@ internal sealed partial class LIRToILCompiler
                         requiresScopes = signature.RequiresScopesParameter;
                     }
 
+                    bool usesSingleScope = UsesSingleScopeAbi(signature);
+                    bool delegateRequiresScopeArray = requiresScopes && !usesSingleScope;
+
                     // IMPORTANT: use the callee's declared parameter count, not the call-site argument count.
                     // The call-site may omit args (default parameters), but the delegate signature must match
                     // the target method signature, otherwise the JIT can crash the process.
                     int jsParamCount = callableId.JsParamCount;
                     int argsToPass = Math.Min(callFunc.Arguments.Count, jsParamCount);
 
-                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    if (usesSingleScope)
+                    {
+                        EmitLoadSingleScopeFromScopesArray(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray));
 
-                    if (requiresScopes)
+                    if (delegateRequiresScopeArray)
                     {
                         // Load scopes array only when required by callee ABI.
                         EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
@@ -1004,7 +1025,7 @@ internal sealed partial class LIRToILCompiler
 
                     // Invoke: callvirt Func<object[], [object, ...], object>::Invoke
                     ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount, requiresScopes));
+                    ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount, delegateRequiresScopeArray));
                     // Result stays on stack
                     break;
                 }
@@ -1364,12 +1385,21 @@ internal sealed partial class LIRToILCompiler
                         requiresScopes = signature.RequiresScopesParameter;
                     }
 
-                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    bool usesSingleScope = UsesSingleScopeAbi(signature);
+                    bool delegateRequiresScopeArray = requiresScopes && !usesSingleScope;
+
+                    if (usesSingleScope)
+                    {
+                        EmitLoadSingleScopeFromScopesArray(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray));
 
                     // Bind delegate to scopes array: Closure.Bind(object, object[])
                     EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
@@ -1400,10 +1430,16 @@ internal sealed partial class LIRToILCompiler
                         requiresScopes = signature.RequiresScopesParameter;
                     }
 
+                    bool usesSingleScope = UsesSingleScopeAbi(signature);
+
                     // Create a JsFuncNoScopesN delegate.
                     // - requiresScopes: close over scopes as delegate target (binds first static arg object[] scopes)
                     // - no scopes: regular static delegate target = null
-                    if (requiresScopes)
+                    if (usesSingleScope)
+                    {
+                        EmitLoadSingleScopeFromScopesArray(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (requiresScopes)
                     {
                         EmitLoadTemp(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     }
@@ -2036,6 +2072,18 @@ internal sealed partial class LIRToILCompiler
     /// </summary>
     private void EmitLoadScopesArray(InstructionEncoder ilEncoder, MethodDescriptor methodDescriptor)
     {
+        if (UsesSingleScopeAbi(methodDescriptor))
+        {
+            ilEncoder.LoadConstantI4(1);
+            ilEncoder.OpCode(ILOpCode.Newarr);
+            ilEncoder.Token(_bclReferences.ObjectType);
+            ilEncoder.OpCode(ILOpCode.Dup);
+            ilEncoder.LoadConstantI4(0);
+            EmitLoadSingleScopePayload(ilEncoder, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            return;
+        }
+
         if (methodDescriptor.IsStatic && methodDescriptor.HasScopesParameter)
         {
             // Static function with scopes parameter - scopes is arg 0
@@ -2102,11 +2150,22 @@ internal sealed partial class LIRToILCompiler
                 break;
 
             case ScopeInstanceSource.ScopesArgument:
-                // Load from scopes argument: ldarg.0 (scopes), ldc.i4 index, ldelem.ref
+                // Load from the explicit scope payload.
                 if (!methodDescriptor.HasScopesParameter)
                 {
                     throw new InvalidOperationException("Cannot load from ScopesArgument - method has no scopes parameter");
                 }
+                if (UsesSingleScopeAbi(methodDescriptor))
+                {
+                    if (slotSource.SourceIndex != 0)
+                    {
+                        throw new InvalidOperationException("SingleScope ABI only supports parent scope index 0.");
+                    }
+
+                    EmitLoadSingleScopePayload(ilEncoder, methodDescriptor);
+                    break;
+                }
+
                 ilEncoder.LoadArgument(methodDescriptor.IsStatic ? 0 : 1); // scopes arg position
                 ilEncoder.LoadConstantI4(slotSource.SourceIndex);
                 ilEncoder.OpCode(ILOpCode.Ldelem_ref);

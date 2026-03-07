@@ -140,6 +140,9 @@ namespace Js2IL.Services
         public MemberReferenceHandle JsModuleAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsModuleAttribute), new[] { typeof(string) });
 
+        public MemberReferenceHandle JsCallableScopeAbiAttribute_Ctor_Ref =>
+            _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsCallableScopeAbiAttribute), new[] { typeof(Js2IL.Runtime.CallableScopeAbiKind) });
+
         public MemberReferenceHandle DebuggableAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(System.Diagnostics.DebuggableAttribute), new[] { typeof(bool), typeof(bool) });
 
@@ -158,13 +161,16 @@ namespace Js2IL.Services
             return _memberRefRegistry.GetOrAddMethod(delegateType, "Invoke");
         }
 
-        public MemberReferenceHandle GetInvokeDirectWithArgsRef(int jsParamCount)
+        public MemberReferenceHandle GetInvokeDirectWithArgsRef(int jsParamCount, bool requiresScopes = true)
         {
-            var delegateType = GetFunctionDelegateType(jsParamCount);
+            var delegateType = GetFunctionDelegateType(jsParamCount, requiresScopes);
+            var parameterTypes = requiresScopes
+                ? new[] { delegateType, typeof(object[]), typeof(object[]) }
+                : new[] { delegateType, typeof(object[]) };
             return _memberRefRegistry.GetOrAddMethod(
                 typeof(JavaScriptRuntime.Closure),
                 nameof(JavaScriptRuntime.Closure.InvokeDirectWithArgs),
-                new[] { delegateType, typeof(object[]), typeof(object[]) });
+                parameterTypes);
         }
     }
 }

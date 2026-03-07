@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Acornima.Ast;
 using Js2IL.Services.ILGenerators;
+using Js2IL.Services.ScopesAbi;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 using Js2IL.Utilities;
@@ -421,7 +422,9 @@ public sealed class TwoPhaseCompilationCoordinator
             isInstanceMethod: false,
             hasScopesParameter: signature.RequiresScopesParameter,
             scopesFieldHandle: null,
-            returnsVoid: false);
+            returnsVoid: false,
+            scopeAbiKind: signature.ScopeAbiKind,
+            singleScopeScopeName: signature.SingleScopeScopeName);
 
         if (body == null)
         {
@@ -452,7 +455,7 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         var irTb = new TypeBuilder(metadataBuilder, string.Empty, functionNameForRegistry);
-        _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, irTb, body);
+        _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, irTb, body, bclReferences);
 
         _registry.MarkBodyCompiledForAstNode(funcDecl);
     }
@@ -890,6 +893,7 @@ public sealed class TwoPhaseCompilationCoordinator
 
         var compiled = new Dictionary<CallableId, CompiledCallableBody>();
         var methodCompiler = serviceProvider.GetRequiredService<JsMethodCompiler>();
+        var bclReferences = serviceProvider.GetRequiredService<BaseClassLibraryReferences>();
 
         // Phase 2: compile bodies in planned order (no MethodDef rows emitted here)
         foreach (var callable in plannedOrder)
@@ -1013,7 +1017,7 @@ public sealed class TwoPhaseCompilationCoordinator
                     throw new InvalidOperationException($"[TwoPhase] Missing compiled body for class callable: {callable.DisplayName}");
                 }
 
-                _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, tb, body);
+                _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, tb, body, bclReferences);
             }
         }
     }
@@ -1258,6 +1262,11 @@ public sealed class TwoPhaseCompilationCoordinator
 
             // IR first
             var methodCompiler = serviceProvider.GetRequiredService<JsMethodCompiler>();
+            if (!_registry.TryGetSignature(callable, out var signature))
+            {
+                throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration signature not found: {callable.DisplayName}");
+            }
+
             var irBody = methodCompiler.TryCompileCallableBody(
                 callable: callable,
                 expectedMethodDef: expected,
@@ -1266,9 +1275,11 @@ public sealed class TwoPhaseCompilationCoordinator
                 scope: funcScope,
                 methodBodyStreamEncoder: methodBodyStreamEncoder,
                 isInstanceMethod: false,
-                hasScopesParameter: true,
+                hasScopesParameter: signature.RequiresScopesParameter,
                 scopesFieldHandle: null,
-                returnsVoid: false);
+                returnsVoid: false,
+                scopeAbiKind: signature.ScopeAbiKind,
+                singleScopeScopeName: signature.SingleScopeScopeName);
 
             CompiledCallableBody body;
             if (irBody != null)
@@ -1330,7 +1341,7 @@ public sealed class TwoPhaseCompilationCoordinator
 
             // Emit the MethodDef (TypeDef was already created).
             var functionTb = new TypeBuilder(metadataBuilder, $"Modules.{moduleName}", functionName);
-            _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, functionTb, body);
+            _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, functionTb, body, bclReferences);
         }
     }
 
@@ -1484,7 +1495,9 @@ public sealed class TwoPhaseCompilationCoordinator
             isInstanceMethod: false,
             hasScopesParameter: signature.RequiresScopesParameter,
             scopesFieldHandle: null,
-            returnsVoid: false);
+            returnsVoid: false,
+            scopeAbiKind: signature.ScopeAbiKind,
+            singleScopeScopeName: signature.SingleScopeScopeName);
 
         if (compiledBody == null)
         {
@@ -1502,7 +1515,7 @@ public sealed class TwoPhaseCompilationCoordinator
         // a MethodDef/TypeDef so existing call sites (ldftn / delegate creation) reference a real
         // method body at the preallocated token.
         var irTb = new TypeBuilder(metadataBuilder, string.Empty, funcTypeName);
-        _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, irTb, compiledBody);
+        _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, irTb, compiledBody, bclReferences);
 
         _registry.SetDeclaredTokenForAstNode(funcExpr, expected);
         _registry.MarkBodyCompiledForAstNode(funcExpr);
@@ -1564,26 +1577,15 @@ public sealed class TwoPhaseCompilationCoordinator
         
         foreach (var callable in _discoveredCallables)
         {
-            // Compute whether this callable requires a scopes parameter.
-            // For class methods, this is handled differently (they use this._scopes field).
-            // For functions and arrows, we check if the scope references parent variables.
-            bool requiresScopesParameter = callable.Kind switch
-            {
-                CallableKind.ClassMethod or 
-                CallableKind.ClassGetter or 
-                CallableKind.ClassSetter or
-                CallableKind.ClassStaticMethod or
-                CallableKind.ClassStaticGetter or
-                CallableKind.ClassStaticSetter => false, // Class methods don't use scopes parameter
-                _ => ComputeRequiresScopesParameter(callable, symbolTable)
-            };
+            var (scopeAbiKind, singleScopeScopeName) = ComputeCallableScopeAbi(callable, symbolTable);
 
             // Build CallableSignature from CallableId
             // Placeholder owner type handle (is set during token allocation)
             var signature = new CallableSignature
             {
                 OwnerTypeHandle = default, // Will be set during token allocation
-                RequiresScopesParameter = requiresScopesParameter,
+                ScopeAbiKind = scopeAbiKind,
+                SingleScopeScopeName = singleScopeScopeName,
                 JsParamCount = callable.JsParamCount,
                 InvokeShape = CallableSignature.GetInvokeShape(callable.JsParamCount),
                 IsInstanceMethod = callable.Kind == CallableKind.ClassMethod,
@@ -1669,15 +1671,8 @@ public sealed class TwoPhaseCompilationCoordinator
         return $"{accessorKind}_{prop}";
     }
 
-    /// <summary>
-    /// Computes whether a callable requires a scopes parameter based on scope analysis.
-    /// Symbol-table analysis is authoritative for parent-scope references; this method
-    /// applies ABI policy on top (e.g., resumable callables remain conservative).
-    /// </summary>
-    private static bool ComputeRequiresScopesParameter(CallableId callable, SymbolTable symbolTable)
+    private static bool IsResumableCallable(CallableId callable)
     {
-        // Resumable callables (async/generator) currently rely on scopes plumbing in leaf-scope
-        // creation and resume paths. Keep scopes parameter enabled for these callables.
         if (callable.AstNode is FunctionDeclaration fd && (fd.Async || fd.Generator))
         {
             return true;
@@ -1693,21 +1688,63 @@ public sealed class TwoPhaseCompilationCoordinator
             return true;
         }
 
-        // Try to find the scope for this callable
+        return false;
+    }
+
+    /// <summary>
+    /// Computes the callable scope ABI based on scope analysis.
+    /// </summary>
+    private static (Js2IL.Runtime.CallableScopeAbiKind Kind, string? SingleScopeScopeName) ComputeCallableScopeAbi(
+        CallableId callable,
+        SymbolTable symbolTable)
+    {
+        if (callable.Kind is CallableKind.ClassMethod
+            or CallableKind.ClassGetter
+            or CallableKind.ClassSetter
+            or CallableKind.ClassStaticMethod
+            or CallableKind.ClassStaticGetter
+            or CallableKind.ClassStaticSetter
+            or CallableKind.ClassStaticInitializer)
+        {
+            return (Js2IL.Runtime.CallableScopeAbiKind.NoScopes, null);
+        }
+
+        if (IsResumableCallable(callable))
+        {
+            return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+        }
+
         if (callable.AstNode == null)
         {
-            // No AST node - conservatively assume scopes are required
-            return true;
+            return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
         }
 
         var scope = symbolTable.FindScopeByAstNode(callable.AstNode);
         if (scope == null)
         {
-            // Scope not found - conservatively assume scopes are required
-            return true;
+            return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
         }
 
-        return scope.ReferencesParentScopeVariables;
+        if (!scope.ReferencesParentScopeVariables)
+        {
+            return (Js2IL.Runtime.CallableScopeAbiKind.NoScopes, null);
+        }
+
+        if (callable.Kind is not CallableKind.FunctionDeclaration
+            and not CallableKind.FunctionExpression
+            and not CallableKind.Arrow)
+        {
+            return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+        }
+
+        var layoutBuilder = new EnvironmentLayoutBuilder(new Services.VariableBindings.ScopeMetadataRegistry());
+        var layout = layoutBuilder.Build(scope, Js2IL.Services.ScopesAbi.CallableKind.Function);
+        if (layout.Abi.ScopesSource == ScopesSource.Argument && layout.ScopeChain.Slots.Count == 1)
+        {
+            return (Js2IL.Runtime.CallableScopeAbiKind.SingleScope, layout.ScopeChain.Slots[0].ScopeName);
+        }
+
+        return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
     }
     
     /// <summary>

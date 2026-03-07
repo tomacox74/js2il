@@ -24,8 +24,16 @@ sealed record MethodParameterDescriptor
         ParameterType = parameterType;
     }
 
+    public MethodParameterDescriptor(string name, EntityHandle parameterTypeHandle)
+    {
+        Name = name;
+        ParameterType = typeof(object);
+        ParameterTypeHandle = parameterTypeHandle;
+    }
+
     public string Name { get; init; }
     public Type ParameterType { get; init; }
+    public EntityHandle ParameterTypeHandle { get; init; }
 }
 
 sealed record MethodDescriptor
@@ -69,6 +77,12 @@ sealed record MethodDescriptor
     /// Module Main methods don't have this (arg0+ = module wrapper params).
     /// </summary>
     public bool HasScopesParameter { get; set; } = true;
+
+    public Js2IL.Runtime.CallableScopeAbiKind ScopeAbiKind { get; set; } = Js2IL.Runtime.CallableScopeAbiKind.ScopeArray;
+
+    public EntityHandle SingleScopeTypeHandle { get; set; } = default;
+
+    public bool EmitCallableScopeAbiAttribute { get; set; }
 
     /// <summary>
     /// Whether the method has a new.target parameter.
@@ -245,7 +259,8 @@ internal sealed class JsMethodCompiler
             hasScopesParameter: false,
             scopesFieldHandle: null,
             returnsVoid: true,
-            callableKindOverride: ScopesCallableKind.ClassStaticInitializer);
+            callableKindOverride: ScopesCallableKind.ClassStaticInitializer,
+            emitCallableScopeAbiAttribute: false);
 
         if (irBody != null)
         {
@@ -342,7 +357,10 @@ internal sealed class JsMethodCompiler
         FieldDefinitionHandle? scopesFieldHandle,
         bool returnsVoid = false,
         ScopesCallableKind? callableKindOverride = null,
-        bool isDerivedConstructor = false)
+        bool isDerivedConstructor = false,
+        Js2IL.Runtime.CallableScopeAbiKind? scopeAbiKind = null,
+        string? singleScopeScopeName = null,
+        bool emitCallableScopeAbiAttribute = true)
     {
         // Extract params/body from supported node shapes
         NodeList<Node>? functionParams = null;
@@ -383,15 +401,39 @@ internal sealed class JsMethodCompiler
 
         var callableKind = callableKindOverride ?? inferredKind;
 
+        var inferredScopeAbi = scopeAbiKind.HasValue
+            ? (kind: scopeAbiKind.Value, singleScopeScopeName)
+            : ComputeCallableScopeAbi(scope, node, callableKind, hasScopesParameter);
+        var effectiveScopeAbiKind = inferredScopeAbi.kind;
+        singleScopeScopeName = inferredScopeAbi.singleScopeScopeName;
+
+        if (effectiveScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope && !hasScopesParameter)
+        {
+            throw new InvalidOperationException("SingleScope ABI requires an explicit scope parameter.");
+        }
+
         if (!TryLowerASTToLIR(bodyNode, scope, callableKind, hasScopesParameter, out var lirMethod, callableId: callable, isDerivedConstructor: isDerivedConstructor))
         {
             return null;
         }
 
+        EntityHandle singleScopeTypeHandle = default;
+        if (effectiveScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope)
+        {
+            if (string.IsNullOrWhiteSpace(singleScopeScopeName))
+            {
+                throw new InvalidOperationException($"Callable '{callable.DisplayName}' is SingleScope but no scope name was provided.");
+            }
+
+            singleScopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(singleScopeScopeName);
+        }
+
         var parameters = new List<MethodParameterDescriptor>();
         if (hasScopesParameter)
         {
-            parameters.Add(new MethodParameterDescriptor("scopes", typeof(object[])));
+            parameters.Add(effectiveScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope
+                ? new MethodParameterDescriptor("scope", singleScopeTypeHandle)
+                : new MethodParameterDescriptor("scopes", typeof(object[])));
         }
 
         // Add hidden new.target parameter for functions (always present for function ABI).
@@ -434,6 +476,8 @@ internal sealed class JsMethodCompiler
         {
             IsStatic = !isInstanceMethod,
             HasScopesParameter = hasScopesParameter,
+            ScopeAbiKind = effectiveScopeAbiKind,
+            SingleScopeTypeHandle = singleScopeTypeHandle,
             HasNewTargetParameter = hasNewTargetParameter,
             ReturnsVoid = returnsVoid,
             ReturnClrType = returnsVoid
@@ -444,7 +488,8 @@ internal sealed class JsMethodCompiler
             ReturnTypeHandle = default,
             ScopesFieldHandle = scopesFieldHandle,
             IsConstructor = callableKind == ScopesCallableKind.Constructor,
-            IsDerivedConstructor = callableKind == ScopesCallableKind.Constructor && isDerivedConstructor
+            IsDerivedConstructor = callableKind == ScopesCallableKind.Constructor && isDerivedConstructor,
+            EmitCallableScopeAbiAttribute = emitCallableScopeAbiAttribute && callableKind != ScopesCallableKind.ClassStaticInitializer
         };
 
         // Allow class instance methods that `return this` to have a class-typed IL signature.
@@ -511,12 +556,27 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
-        // Build parameter descriptors: scopes array + newTarget + JS parameters
-        var parameters = new List<MethodParameterDescriptor>
+        var (scopeAbiKind, singleScopeScopeName) = ComputeCallableScopeAbi(scope, node, callableKind, hasScopesParameter);
+        EntityHandle singleScopeTypeHandle = default;
+        if (scopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope)
         {
-            new MethodParameterDescriptor("scopes", typeof(object[])),
-            new MethodParameterDescriptor("newTarget", typeof(object))
-        };
+            if (string.IsNullOrWhiteSpace(singleScopeScopeName))
+            {
+                throw new InvalidOperationException($"Scope '{scope.GetQualifiedName()}' resolved to SingleScope without a scope name.");
+            }
+
+            singleScopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(singleScopeScopeName);
+        }
+
+        // Build parameter descriptors: scopes array + newTarget + JS parameters
+        var parameters = new List<MethodParameterDescriptor>();
+        if (hasScopesParameter)
+        {
+            parameters.Add(scopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope
+                ? new MethodParameterDescriptor("scope", singleScopeTypeHandle)
+                : new MethodParameterDescriptor("scopes", typeof(object[])));
+        }
+        parameters.Add(new MethodParameterDescriptor("newTarget", typeof(object)));
         
         // Add JS function parameters (all typed as object)
         foreach (var paramName in lirMethod!.Parameters)
@@ -539,13 +599,14 @@ internal sealed class JsMethodCompiler
 
         if (node is Acornima.Ast.MethodDefinition methodDef)
         {
-            methodDescriptor.IsStatic = methodDef.Static;
-            if (!methodDef.Static)
-            {
-                // Instance methods don't have the scopes or newTarget parameters.
-                methodDescriptor.Parameters = parameters.Skip(2).ToList();
-                methodDescriptor.HasScopesParameter = false;
-                methodDescriptor.HasNewTargetParameter = false;
+                methodDescriptor.IsStatic = methodDef.Static;
+                if (!methodDef.Static)
+                {
+                    // Instance methods don't have the scopes or newTarget parameters.
+                    methodDescriptor.Parameters = parameters.Skip(hasScopesParameter ? 2 : 1).ToList();
+                    methodDescriptor.HasScopesParameter = false;
+                    methodDescriptor.HasNewTargetParameter = false;
+                    methodDescriptor.ScopeAbiKind = Js2IL.Runtime.CallableScopeAbiKind.NoScopes;
 
                 // Instance methods access scopes via this._scopes field.
                 if (scopesFieldHandle.HasValue)
@@ -554,6 +615,14 @@ internal sealed class JsMethodCompiler
                 }
             }
         }
+
+        if (node is not Acornima.Ast.MethodDefinition { Static: false })
+        {
+            methodDescriptor.ScopeAbiKind = scopeAbiKind;
+            methodDescriptor.SingleScopeTypeHandle = singleScopeTypeHandle;
+        }
+
+        methodDescriptor.EmitCallableScopeAbiAttribute = true;
 
         return CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }
@@ -572,13 +641,27 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
+        var (scopeAbiKind, singleScopeScopeName) = ComputeCallableScopeAbi(scope, node, ScopesCallableKind.Function, hasScopesParameter: true);
+        EntityHandle singleScopeTypeHandle = default;
+        if (scopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope)
+        {
+            if (string.IsNullOrWhiteSpace(singleScopeScopeName))
+            {
+                throw new InvalidOperationException($"Scope '{scope.GetQualifiedName()}' resolved to SingleScope without a scope name.");
+            }
+
+            singleScopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(singleScopeScopeName);
+        }
+
         // Create the type builder for the arrow function
         var arrowTypeBuilder = new TypeBuilder(_metadataBuilder, "Functions", typeName);
 
         // Build parameter descriptors: scopes array + newTarget + JS parameters
         var parameters = new List<MethodParameterDescriptor>
         {
-            new MethodParameterDescriptor("scopes", typeof(object[])),
+            scopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope
+                ? new MethodParameterDescriptor("scope", singleScopeTypeHandle)
+                : new MethodParameterDescriptor("scopes", typeof(object[])),
             new MethodParameterDescriptor("newTarget", typeof(object))
         };
         
@@ -592,6 +675,9 @@ internal sealed class JsMethodCompiler
             methodName,
             arrowTypeBuilder,
             parameters);
+        methodDescriptor.ScopeAbiKind = scopeAbiKind;
+        methodDescriptor.SingleScopeTypeHandle = singleScopeTypeHandle;
+        methodDescriptor.EmitCallableScopeAbiAttribute = true;
 
         if (scope.Kind == ScopeKind.Function
             && scope.Parent?.Kind != ScopeKind.Class
@@ -650,6 +736,8 @@ internal sealed class JsMethodCompiler
         methodDescriptor.ReturnsVoid = true;
         methodDescriptor.IsConstructor = true;
         methodDescriptor.IsDerivedConstructor = constructorScope.Parent?.AstNode is ClassDeclaration cd && cd.SuperClass != null;
+        methodDescriptor.ScopeAbiKind = Js2IL.Runtime.CallableScopeAbiKind.NoScopes;
+        methodDescriptor.EmitCallableScopeAbiAttribute = true;
 
         // Note: This won't produce valid constructor IL yet because we need:
         // 1. Base constructor call (ldarg.0 + call System.Object::.ctor)
@@ -745,6 +833,47 @@ internal sealed class JsMethodCompiler
             RestElement => true,
             _ => false
         });
+    }
+
+    private static (Js2IL.Runtime.CallableScopeAbiKind kind, string? singleScopeScopeName) ComputeCallableScopeAbi(
+        Scope scope,
+        Node node,
+        ScopesCallableKind callableKind,
+        bool hasScopesParameter)
+    {
+        if (!hasScopesParameter)
+        {
+            return (Js2IL.Runtime.CallableScopeAbiKind.NoScopes, null);
+        }
+
+        var isEligibleFunctionLike = callableKind == ScopesCallableKind.Function
+            && node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression;
+        if (!isEligibleFunctionLike)
+        {
+            return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+        }
+
+        var isResumable = node switch
+        {
+            FunctionDeclaration fd => fd.Async || fd.Generator,
+            FunctionExpression fe => fe.Async || fe.Generator,
+            ArrowFunctionExpression af => af.Async,
+            _ => false
+        };
+        if (isResumable)
+        {
+            return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+        }
+
+        var layout = new Services.ScopesAbi.EnvironmentLayoutBuilder(new Services.VariableBindings.ScopeMetadataRegistry())
+            .Build(scope, Services.ScopesAbi.CallableKind.Function);
+        if (layout.Abi.ScopesSource == Services.ScopesAbi.ScopesSource.Argument
+            && layout.ScopeChain.Slots.Count == 1)
+        {
+            return (Js2IL.Runtime.CallableScopeAbiKind.SingleScope, layout.ScopeChain.Slots[0].ScopeName);
+        }
+
+        return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
     }
 
     private bool TryLowerASTToLIR(Node node, Scope scope, ScopesCallableKind callableKind, bool hasScopesParameter, out MethodBodyIR? methodBody, CallableId? callableId = null, bool isDerivedConstructor = false)

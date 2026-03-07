@@ -8,11 +8,16 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 
 internal static class MethodDefinitionFinalizer
 {
-    public static MethodDefinitionHandle EmitMethod(MetadataBuilder metadataBuilder, TypeBuilder typeBuilder, CompiledCallableBody body)
+    public static MethodDefinitionHandle EmitMethod(
+        MetadataBuilder metadataBuilder,
+        TypeBuilder typeBuilder,
+        CompiledCallableBody body,
+        BaseClassLibraryReferences bclReferences)
     {
         if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
         if (typeBuilder == null) throw new ArgumentNullException(nameof(typeBuilder));
         if (body == null) throw new ArgumentNullException(nameof(body));
+        if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
 
         body.Validate();
 
@@ -45,6 +50,16 @@ internal static class MethodDefinitionFinalizer
             throw new InvalidOperationException(
                 $"[TwoPhase] MethodDef token mismatch for {body.Callable.DisplayName}. " +
                 $"Expected 0x{MetadataTokens.GetToken(body.ExpectedMethodDef):X8}, got 0x{MetadataTokens.GetToken(handle):X8}.");
+        }
+
+        if (body.EmitCallableScopeAbiAttribute)
+        {
+            CallableScopeAbiAttributeEmitter.Emit(
+                metadataBuilder,
+                bclReferences,
+                handle,
+                body.ScopeAbiKind,
+                body.SingleScopeTypeMetadataToken);
         }
 
         return handle;
