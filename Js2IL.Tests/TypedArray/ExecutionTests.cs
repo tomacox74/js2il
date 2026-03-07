@@ -10,6 +10,27 @@ namespace Js2IL.Tests.TypedArray
         public Task BeanCounter_Class_Index_Assign() { var testName = nameof(BeanCounter_Class_Index_Assign); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ArrayBuffer_Construct_ByteLength() { var testName = nameof(ArrayBuffer_Construct_ByteLength); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrayBuffer_IsView_DataView() { var testName = nameof(ArrayBuffer_IsView_DataView); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task DataView_BoundsChecks_RangeError() { var testName = nameof(DataView_BoundsChecks_RangeError); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task DataView_ByteOffset_ByteLength() { var testName = nameof(DataView_ByteOffset_ByteLength); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task DataView_Float32_Float64_RoundTrip() { var testName = nameof(DataView_Float32_Float64_RoundTrip); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task DataView_InvalidByteOffset_ByteLength_Messages() { var testName = nameof(DataView_InvalidByteOffset_ByteLength_Messages); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task DataView_SetGet_UintAndEndian() { var testName = nameof(DataView_SetGet_UintAndEndian); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Int32Array_Construct_Length() { var testName = nameof(Int32Array_Construct_Length); return ExecutionTest(testName); }
 
         [Fact]

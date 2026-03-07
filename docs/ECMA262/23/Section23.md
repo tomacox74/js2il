@@ -5,7 +5,7 @@ The current ECMA-262 draft organizes this section into three top-level subsectio
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-07T06:48:54Z
 
 _This section is split into subsection documents for readability._
 
@@ -13,7 +13,7 @@ _This section is split into subsection documents for readability._
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 23 | Indexed Collections | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-indexed-collections) |
+| 23 | Indexed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-indexed-collections) |
 
 ## Subsections
 

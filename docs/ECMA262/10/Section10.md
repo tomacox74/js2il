@@ -4,7 +4,7 @@ Defines ordinary and exotic object behaviors, including internal methods/slots a
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T02:30:25Z
+> Last generated (UTC): 2026-03-07T06:48:54Z
 
 _This section is split into subsection documents for readability._
 
@@ -23,4 +23,3 @@ _This section is split into subsection documents for readability._
 | 10.3 | Built-in Function Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-built-in-function-objects) | [Section10_3.md](Section10_3.md) |
 | 10.4 | Built-in Exotic Object Internal Methods and Slots | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-built-in-exotic-object-internal-methods-and-slots) | [Section10_4.md](Section10_4.md) |
 | 10.5 | Proxy Object Internal Methods and Internal Slots | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots) | [Section10_5.md](Section10_5.md) |
-

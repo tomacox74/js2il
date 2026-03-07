@@ -1781,7 +1781,8 @@ class HIRMethodBuilder
                 }
 
                 // For generic intrinsic ctors, keep the IR surface conservative for now.
-                // We only lower common ctor shapes: .ctor(), .ctor(object), .ctor(object, object).
+                // We only lower common ctor shapes: .ctor(), .ctor(object), .ctor(object, object),
+                // and .ctor(object, object, object).
                 if (intrinsicType != null && !(isArrayCtor || isStringCtor || isBooleanCtor || isNumberCtor))
                 {
                     bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
@@ -1790,7 +1791,7 @@ class HIRMethodBuilder
                         // Constructible intrinsics must be non-static classes.
                         return false;
                     }
-                    if (newArgExprs.Count > 2)
+                    if (newArgExprs.Count > 3)
                     {
                         return false;
                     }
