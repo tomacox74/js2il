@@ -27,21 +27,22 @@ namespace JavaScriptRuntime
             }
 
             _buffer = arrayBuffer;
-            _byteOffset = CoerceIndex(byteOffset, 0, "Invalid DataView length");
+            _byteOffset = CoerceIndex(byteOffset, 0, "Invalid DataView byteOffset");
 
-            var remaining = arrayBuffer.ByteLengthInt - _byteOffset;
-            if (_byteOffset > arrayBuffer.ByteLengthInt)
+            long remainingLong = (long)arrayBuffer.ByteLengthInt - _byteOffset;
+            if (_byteOffset > arrayBuffer.ByteLengthInt || remainingLong < 0 || remainingLong > int.MaxValue)
             {
-                throw new RangeError("Invalid DataView length");
+                throw new RangeError("Invalid DataView byteOffset");
             }
 
+            var remaining = (int)remainingLong;
             _byteLength = byteLength is null || byteLength is JsNull
                 ? remaining
-                : CoerceIndex(byteLength, 0, "Invalid DataView length");
+                : CoerceIndex(byteLength, 0, "Invalid DataView byteLength");
 
-            if (_byteOffset + _byteLength > arrayBuffer.ByteLengthInt)
+            if ((long)_byteOffset + _byteLength > arrayBuffer.ByteLengthInt)
             {
-                throw new RangeError("Invalid DataView length");
+                throw new RangeError("Invalid DataView byteLength");
             }
         }
 
@@ -284,12 +285,21 @@ namespace JavaScriptRuntime
         private int GetAbsoluteIndex(object? requestedOffset, int elementSize)
         {
             var relativeIndex = CoerceIndex(requestedOffset, 0, "Offset is outside the bounds of the DataView");
-            if (relativeIndex < 0 || relativeIndex + elementSize > _byteLength)
+            long relativeIndexLong = relativeIndex;
+            long elementSizeLong = elementSize;
+            long byteLengthLong = _byteLength;
+            if (relativeIndexLong < 0 || relativeIndexLong + elementSizeLong > byteLengthLong)
             {
                 throw new RangeError("Offset is outside the bounds of the DataView");
             }
 
-            return _byteOffset + relativeIndex;
+            long absoluteIndexLong = (long)_byteOffset + relativeIndexLong;
+            if (absoluteIndexLong < 0 || absoluteIndexLong > int.MaxValue)
+            {
+                throw new RangeError("Offset is outside the bounds of the DataView");
+            }
+
+            return (int)absoluteIndexLong;
         }
 
         private static bool UseLittleEndian(object? value)

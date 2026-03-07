@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T06:40:35Z
+> Last generated (UTC): 2026-03-07T09:52:16Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -63,7 +63,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| DataView(buffer, byteOffset, byteLength) | Supported with Limitations | [`DataView_ByteOffset_ByteLength.js`](../../../Js2IL.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js)<br>[`DataView_BoundsChecks_RangeError.js`](../../../Js2IL.Tests/TypedArray/JavaScript/DataView_BoundsChecks_RangeError.js) | Supports fixed-length ArrayBuffer-backed views with byteOffset/byteLength validation and RangeError bounds checks. SharedArrayBuffer, resizable buffers, and detached buffer semantics are not implemented. |
+| DataView(buffer, byteOffset, byteLength) | Supported with Limitations | [`DataView_ByteOffset_ByteLength.js`](../../../Js2IL.Tests/TypedArray/JavaScript/DataView_ByteOffset_ByteLength.js)<br>[`DataView_BoundsChecks_RangeError.js`](../../../Js2IL.Tests/TypedArray/JavaScript/DataView_BoundsChecks_RangeError.js)<br>[`DataView_InvalidByteOffset_ByteLength_Messages.js`](../../../Js2IL.Tests/TypedArray/JavaScript/DataView_InvalidByteOffset_ByteLength_Messages.js) | Supports fixed-length ArrayBuffer-backed views with byteOffset/byteLength validation, distinct RangeError diagnostics for invalid byteOffset versus byteLength, and bounds checks. SharedArrayBuffer, resizable buffers, and detached buffer semantics are not implemented. |
 
 ### 25.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-dataview-prototype-object))
 

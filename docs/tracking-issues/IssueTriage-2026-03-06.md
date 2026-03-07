@@ -1,10 +1,10 @@
-# Issue triage snapshot (2026-03-07)
+# Issue triage snapshot (2026-03-06)
 
 This file captures a point-in-time prioritized list of open issues/PRs and the current active item being addressed.
 
 Synced to:
 - Repo: `master` @ `b2d6b1fb` (merge of PR #813 / GH #812 callable scope ABI metadata)
-- GitHub: open issues/PRs state as of 2026-03-07
+- GitHub: open issues/PRs state as of 2026-03-07 (refreshed in-place)
 
 ## Current active item
 **Issue #773** (OPEN; highest-priority remaining item from this list and addressed on the `copilot/gh-773-arraybuffer-dataview` branch):

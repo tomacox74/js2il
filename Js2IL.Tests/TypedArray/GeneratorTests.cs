@@ -25,6 +25,9 @@ namespace Js2IL.Tests.TypedArray
         public Task DataView_Float32_Float64_RoundTrip() { var testName = nameof(DataView_Float32_Float64_RoundTrip); return GenerateTest(testName); }
 
         [Fact]
+        public Task DataView_InvalidByteOffset_ByteLength_Messages() { var testName = nameof(DataView_InvalidByteOffset_ByteLength_Messages); return GenerateTest(testName); }
+
+        [Fact]
         public Task DataView_SetGet_UintAndEndian() { var testName = nameof(DataView_SetGet_UintAndEndian); return GenerateTest(testName); }
 
         [Fact]
