@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "10.3",
   "title": "Built-in Function Objects",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-built-in-function-objects",
   "parent": {
     "clause": "10"
@@ -12,26 +12,66 @@
     {
       "clause": "10.3.1",
       "title": "[[Call]] ( thisArgument , argumentsList )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-built-in-function-objects-call-thisargument-argumentslist"
     },
     {
       "clause": "10.3.2",
       "title": "[[Construct]] ( argumentsList , newTarget )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-built-in-function-objects-construct-argumentslist-newtarget"
     },
     {
       "clause": "10.3.3",
       "title": "BuiltinCallOrConstruct ( F , thisArgument , argumentsList , newTarget )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-builtincallorconstruct"
     },
     {
       "clause": "10.3.4",
       "title": "CreateBuiltinFunction ( behaviour , length , name , additionalInternalSlotsList [ , realm [ , prototype [ , prefix [ , async ] ] ] ] )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-createbuiltinfunction"
     }
-  ]
+  ],
+  "intro": "JS2IL exposes many ECMAScript built-ins as CLR-backed delegates or intrinsic runtime constructors. That gives everyday built-in call/construct behavior for the implemented subset, but built-in function objects are not created through the full ECMA-262 realm/prototype/length/name machinery.",
+  "support": {
+    "entries": [
+      {
+        "clause": "10.3.1",
+        "feature": "Built-in callable dispatch for Array/Object/Function helpers",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-built-in-function-objects-call-thisargument-argumentslist",
+        "testScripts": [
+          "Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js",
+          "Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js"
+        ],
+        "notes": "Implemented built-ins are surfaced as delegates and CLR instance/static methods, then invoked through the same Closure dispatch machinery as user functions. Realm-specific callable creation, full Function.prototype inheritance, and exhaustive built-in coverage are still incomplete."
+      },
+      {
+        "clause": "10.3.2",
+        "feature": "Constructible built-ins such as Array, Object, Int32Array, and Proxy",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-built-in-function-objects-construct-argumentslist-newtarget",
+        "testScripts": [
+          "Js2IL.Tests/Array/JavaScript/Array_Callable_Construct.js",
+          "Js2IL.Tests/Array/JavaScript/Array_New_Length.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js"
+        ],
+        "notes": "The implemented subset of built-ins can usually be called/constructed directly through dedicated intrinsic lowering or runtime helpers. First-class constructor values are still uneven (for example the global Function constructor remains intentionally unsupported), so constructibility is not uniform across all built-in function objects."
+      },
+      {
+        "clause": "10.3.4",
+        "feature": "Intrinsic built-in registration and prototype wiring",
+        "status": "Incomplete",
+        "specUrl": "https://tc39.es/ecma262/#sec-createbuiltinfunction",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js"
+        ],
+        "notes": "Built-ins are discovered through IntrinsicObject attributes and selectively wired onto GlobalThis/prototype objects, which is sufficient for many library patterns. The engine does not yet implement CreateBuiltinFunction in the full spec sense with realms, exact length/name attributes, and uniform constructor/call behavior across every intrinsic."
+      }
+    ]
+  }
 }

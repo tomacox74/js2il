@@ -2,9 +2,9 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "10.4",
   "title": "Built-in Exotic Object Internal Methods and Slots",
-  "status": "Untracked",
+  "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-built-in-exotic-object-internal-methods-and-slots",
-  "intro": "This section covers spec-defined *exotic objects* and their internal methods/slots (Bound Function, Array, String, Arguments, TypedArray, etc.). JS2IL currently does not attempt to model these internal-method details as specified. For the intrinsic function-scope `arguments` binding, JS2IL implements a minimal behavior tracked under Section 10.2 (non-arrow functions materialize `arguments` lazily as a JS Array snapshot; arrow functions capture `arguments` lexically). The full spec **Arguments Exotic Object** behavior (including mapped-arguments aliasing) remains not implemented.",
+  "intro": "JS2IL implements a pragmatic subset of spec-defined exotic-object behavior for the features it currently supports. Arrays, bound functions, typed arrays, and namespace imports expose useful observable behavior, but the engine does not model true exotic internal methods/slots with full ECMA-262 invariants.",
   "parent": {
     "clause": "10"
   },
@@ -13,91 +13,91 @@
     {
       "clause": "10.4.1",
       "title": "Bound Function Exotic Objects",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-bound-function-exotic-objects"
     },
     {
       "clause": "10.4.1.1",
       "title": "[[Call]] ( thisArgument , argumentsList )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-bound-function-exotic-objects-call-thisargument-argumentslist"
     },
     {
       "clause": "10.4.1.2",
       "title": "[[Construct]] ( argumentsList , newTarget )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-bound-function-exotic-objects-construct-argumentslist-newtarget"
     },
     {
       "clause": "10.4.1.3",
       "title": "BoundFunctionCreate ( targetFunction , boundThis , boundArgs )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-boundfunctioncreate"
     },
     {
       "clause": "10.4.2",
       "title": "Array Exotic Objects",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-array-exotic-objects"
     },
     {
       "clause": "10.4.2.1",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-array-exotic-objects-defineownproperty-p-desc"
     },
     {
       "clause": "10.4.2.2",
       "title": "ArrayCreate ( length [ , proto ] )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arraycreate"
     },
     {
       "clause": "10.4.2.3",
       "title": "ArraySpeciesCreate ( originalArray , length )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-arrayspeciescreate"
     },
     {
       "clause": "10.4.2.4",
       "title": "ArraySetLength ( A , Desc )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arraysetlength"
     },
     {
       "clause": "10.4.3",
       "title": "String Exotic Objects",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-string-exotic-objects"
     },
     {
       "clause": "10.4.3.1",
       "title": "[[GetOwnProperty]] ( P )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-string-exotic-objects-getownproperty-p"
     },
     {
       "clause": "10.4.3.2",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-string-exotic-objects-defineownproperty-p-desc"
     },
     {
       "clause": "10.4.3.3",
       "title": "[[OwnPropertyKeys]] ( )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-string-exotic-objects-ownpropertykeys"
     },
     {
       "clause": "10.4.3.4",
       "title": "StringCreate ( value , prototype )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-stringcreate"
     },
     {
       "clause": "10.4.3.5",
       "title": "StringGetOwnProperty ( S , P )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-stringgetownproperty"
     },
     {
@@ -163,228 +163,287 @@
     {
       "clause": "10.4.5",
       "title": "TypedArray Exotic Objects",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-exotic-objects"
     },
     {
       "clause": "10.4.5.1",
       "title": "[[PreventExtensions]] ( )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-preventextensions"
     },
     {
       "clause": "10.4.5.2",
       "title": "[[GetOwnProperty]] ( P )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-getownproperty"
     },
     {
       "clause": "10.4.5.3",
       "title": "[[HasProperty]] ( P )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-hasproperty"
     },
     {
       "clause": "10.4.5.4",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-defineownproperty"
     },
     {
       "clause": "10.4.5.5",
       "title": "[[Get]] ( P , Receiver )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-get"
     },
     {
       "clause": "10.4.5.6",
       "title": "[[Set]] ( P , V , Receiver )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-set"
     },
     {
       "clause": "10.4.5.7",
       "title": "[[Delete]] ( P )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-delete"
     },
     {
       "clause": "10.4.5.8",
       "title": "[[OwnPropertyKeys]] ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-ownpropertykeys"
     },
     {
       "clause": "10.4.5.9",
       "title": "TypedArray With Buffer Witness Records",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-with-buffer-witness-records"
     },
     {
       "clause": "10.4.5.10",
       "title": "MakeTypedArrayWithBufferWitnessRecord ( obj , order )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-maketypedarraywithbufferwitnessrecord"
     },
     {
       "clause": "10.4.5.11",
       "title": "TypedArrayCreate ( prototype )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarraycreate"
     },
     {
       "clause": "10.4.5.12",
       "title": "TypedArrayByteLength ( taRecord )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarraybytelength"
     },
     {
       "clause": "10.4.5.13",
       "title": "TypedArrayLength ( taRecord )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarraylength"
     },
     {
       "clause": "10.4.5.14",
       "title": "IsTypedArrayOutOfBounds ( taRecord )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-istypedarrayoutofbounds"
     },
     {
       "clause": "10.4.5.15",
       "title": "IsTypedArrayFixedLength ( O )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-istypedarrayfixedlength"
     },
     {
       "clause": "10.4.5.16",
       "title": "IsValidIntegerIndex ( O , index )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-isvalidintegerindex"
     },
     {
       "clause": "10.4.5.17",
       "title": "TypedArrayGetElement ( O , index )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarraygetelement"
     },
     {
       "clause": "10.4.5.18",
       "title": "TypedArraySetElement ( O , index , value )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarraysetelement"
     },
     {
       "clause": "10.4.5.19",
       "title": "IsArrayBufferViewOutOfBounds ( O )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-isarraybufferviewoutofbounds"
     },
     {
       "clause": "10.4.6",
       "title": "Module Namespace Exotic Objects",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects"
     },
     {
       "clause": "10.4.6.1",
       "title": "[[GetPrototypeOf]] ( )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-getprototypeof"
     },
     {
       "clause": "10.4.6.2",
       "title": "[[SetPrototypeOf]] ( V )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-setprototypeof-v"
     },
     {
       "clause": "10.4.6.3",
       "title": "[[IsExtensible]] ( )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-isextensible"
     },
     {
       "clause": "10.4.6.4",
       "title": "[[PreventExtensions]] ( )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-preventextensions"
     },
     {
       "clause": "10.4.6.5",
       "title": "[[GetOwnProperty]] ( P )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-getownproperty-p"
     },
     {
       "clause": "10.4.6.6",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-defineownproperty-p-desc"
     },
     {
       "clause": "10.4.6.7",
       "title": "[[HasProperty]] ( P )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-hasproperty-p"
     },
     {
       "clause": "10.4.6.8",
       "title": "[[Get]] ( P , Receiver )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-get-p-receiver"
     },
     {
       "clause": "10.4.6.9",
       "title": "[[Set]] ( P , V , Receiver )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-set-p-v-receiver"
     },
     {
       "clause": "10.4.6.10",
       "title": "[[Delete]] ( P )",
-      "status": "Untracked",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-delete-p"
     },
     {
       "clause": "10.4.6.11",
       "title": "[[OwnPropertyKeys]] ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-ownpropertykeys"
     },
     {
       "clause": "10.4.6.12",
       "title": "ModuleNamespaceCreate ( module , exports )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-modulenamespacecreate"
     },
     {
       "clause": "10.4.7",
       "title": "Immutable Prototype Exotic Objects",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects"
     },
     {
       "clause": "10.4.7.1",
       "title": "[[SetPrototypeOf]] ( V )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects-setprototypeof-v"
     },
     {
       "clause": "10.4.7.2",
       "title": "SetImmutablePrototype ( O , V )",
-      "status": "Untracked",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set-immutable-prototype"
     }
   ],
   "support": {
     "entries": [
       {
+        "clause": "10.4.1",
+        "feature": "Bound functions created by Function.prototype.bind",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-bound-function-exotic-objects",
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js"
+        ],
+        "notes": "bind creates wrapper delegates with captured this/arguments and remembers the original target for metadata lookups. Bound call semantics are useful in practice, but bound-function construction and true [[BoundTargetFunction]] / [[BoundArguments]] slot semantics remain incomplete."
+      },
+      {
+        "clause": "10.4.2",
+        "feature": "Array exotic indexing and length behavior",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-array-exotic-objects",
+        "testScripts": [
+          "Js2IL.Tests/Array/JavaScript/Array_New_Length.js",
+          "Js2IL.Tests/Array/JavaScript/Array_New_MultipleArgs.js",
+          "Js2IL.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js"
+        ],
+        "notes": "Arrays support numeric element access, length-based construction, and range-checked length writes that truncate or extend the backing store. The specialized [[DefineOwnProperty]] / ArraySpeciesCreate machinery is still only partially modeled."
+      },
+      {
         "clause": "10.4.4",
-        "feature": "Arguments Exotic Objects (mapped/unmapped semantics)",
+        "feature": "Arguments objects are plain arrays, not Arguments Exotic Objects",
         "status": "Not Yet Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects",
-        "notes": "JS2IL does not implement the spec Arguments Exotic Object internal methods (including mapped-arguments aliasing). The compiler/runtime currently materialize a minimal function-scope `arguments` value as a JavaScriptRuntime.Array snapshot when referenced; see Section 10.2 tracking for the supported subset."
+        "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js"
+        ],
+        "notes": "When referenced, non-arrow functions materialize a JavaScriptRuntime.Array snapshot of the runtime arguments list. Mapped-arguments aliasing, Arguments Exotic Object internal methods, and the accessor helpers from 10.4.4.7 are not implemented."
+      },
+      {
+        "clause": "10.4.5",
+        "feature": "Int32Array construction, element access, and integer-index semantics",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray-exotic-objects",
+        "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Index_Assign.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js"
+        ],
+        "notes": "JS2IL currently implements only Int32Array, with construction from length/iterables, integer index reads and writes, and pragmatic out-of-bounds handling. It does not model ArrayBuffer-backed typed-array witness records, detach/out-of-bounds abstract operations, or the full family of typed array exotics."
+      },
+      {
+        "clause": "10.4.6",
+        "feature": "Namespace import interop objects with live getter properties",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects",
+        "testScripts": [
+          "Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
+          "Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js"
+        ],
+        "notes": "JSImport namespace lowering rewrites imports to a helper that builds a plain object with accessor descriptors for live reads of exported members. That captures common namespace-import behavior, but the result is not a true Module Namespace Exotic Object with the full non-extensible, non-configurable invariant set from the spec."
+      },
+      {
+        "clause": "10.4.7",
+        "feature": "Immutable prototype exotic invariants",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects",
+        "notes": "JS2IL does not currently model any object with a dedicated immutable-prototype exotic internal method. Prototype mutation is handled through the ordinary PrototypeChain side-table instead."
       }
     ]
   }
