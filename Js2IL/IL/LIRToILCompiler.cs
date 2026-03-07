@@ -184,11 +184,24 @@ internal sealed partial class LIRToILCompiler
         TempVariable scopesArray,
         InstructionEncoder ilEncoder,
         TempLocalAllocation allocation,
-        MethodDescriptor methodDescriptor)
+        MethodDescriptor methodDescriptor,
+        CallableSignature signature)
     {
+        if (signature.ScopeAbiKind != Js2IL.Runtime.CallableScopeAbiKind.SingleScope)
+        {
+            throw new InvalidOperationException("Expected SingleScope callable signature when loading a single scope from scopes array.");
+        }
+
+        if (string.IsNullOrWhiteSpace(signature.SingleScopeScopeName))
+        {
+            throw new InvalidOperationException("SingleScope callable signature is missing its scope type identity.");
+        }
+
         EmitLoadTemp(scopesArray, ilEncoder, allocation, methodDescriptor);
         ilEncoder.LoadConstantI4(0);
         ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(_scopeMetadataRegistry.GetScopeTypeHandle(signature.SingleScopeScopeName));
     }
 
     private Type GetDeclaredScopeFieldClrType(string scopeName, string fieldName)

@@ -991,7 +991,12 @@ internal sealed partial class LIRToILCompiler
 
                     if (usesSingleScope)
                     {
-                        EmitLoadSingleScopeFromScopesArray(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadSingleScopeFromScopesArray(
+                            callFunc.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor,
+                            signature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
                     }
                     else
                     {
@@ -1390,7 +1395,12 @@ internal sealed partial class LIRToILCompiler
 
                     if (usesSingleScope)
                     {
-                        EmitLoadSingleScopeFromScopesArray(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadSingleScopeFromScopesArray(
+                            createArrow.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor,
+                            signature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
                     }
                     else
                     {
@@ -1437,7 +1447,12 @@ internal sealed partial class LIRToILCompiler
                     // - no scopes: regular static delegate target = null
                     if (usesSingleScope)
                     {
-                        EmitLoadSingleScopeFromScopesArray(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadSingleScopeFromScopesArray(
+                            createFunc.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor,
+                            signature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
                     }
                     else if (requiresScopes)
                     {
