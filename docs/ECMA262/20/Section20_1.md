@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-08T20:04:27Z
+> Last generated (UTC): 2026-03-08T23:10:56Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -123,31 +123,31 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.getOwnPropertyDescriptor | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js) | Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns a descriptor object for properties defined via defineProperty/defineProperties; falls back to a simplified default descriptor for plain ExpandoObject properties. Symbol-keyed properties and full host-object descriptor fidelity are not implemented. |
+| Object.getOwnPropertyDescriptor | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`Object_SymbolKey_Descriptors_And_Enumeration.js`](../../../Js2IL.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js) | Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary js2il objects, with simplified fallbacks for plain dynamic-object properties. Full host-object descriptor fidelity remains limited. |
 
 ### 20.1.2.9 ([tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertydescriptors))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.getOwnPropertyDescriptors | Supported with Limitations | [`Object_GetOwnPropertyDescriptors_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyDescriptors_Basic.js) | Returns descriptor objects for own string and encoded-symbol keys using descriptor store + dictionary fallbacks; does not provide full host-object descriptor fidelity. |
+| Object.getOwnPropertyDescriptors | Supported with Limitations | [`Object_GetOwnPropertyDescriptors_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyDescriptors_Basic.js)<br>[`Object_SymbolKey_Descriptors_And_Enumeration.js`](../../../Js2IL.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js) | Returns descriptor objects for own string and symbol keys using descriptor store + dictionary fallbacks, and symbol keys round-trip through the returned descriptor bag. Full host-object descriptor fidelity remains limited. |
 
 ### 20.1.2.10 ([tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertynames))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.getOwnPropertyNames | Supported with Limitations | [`Object_GetOwnPropertyNames_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js) | Implemented in JavaScriptRuntime.Object.getOwnPropertyNames using a ConditionalWeakTable-backed descriptor store plus ExpandoObject keys. Symbol-keyed properties and full spec ordering guarantees are not implemented. |
+| Object.getOwnPropertyNames | Supported with Limitations | [`Object_GetOwnPropertyNames_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js)<br>[`Object_OwnPropertyKeyOrdering.js`](../../../Js2IL.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js) | Implemented in JavaScriptRuntime.Object.getOwnPropertyNames using ordered own-key helpers plus descriptor/dynamic stores. Returns only string keys, preserving ordinary-object numeric-then-string ordering while excluding symbol keys. |
 
 ### 20.1.2.11 ([tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertysymbols))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.getOwnPropertySymbols | Supported with Limitations | [`Object_GetOwnPropertySymbols_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertySymbols_Basic.js) | Supported through JS2IL encoded-symbol keys (Symbol.DebugId mapping). Not a complete ECMAScript symbol-keyed property model. |
+| Object.getOwnPropertySymbols | Supported with Limitations | [`Object_GetOwnPropertySymbols_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertySymbols_Basic.js)<br>[`Object_OwnPropertyKeyOrdering.js`](../../../Js2IL.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js)<br>[`Object_SymbolKey_Descriptors_And_Enumeration.js`](../../../Js2IL.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js) | Supported through js2il's encoded-symbol-key mapping. Returns only symbol keys, preserving ordinary-object symbol insertion order and keeping symbols out of the string-key enumeration APIs. |
 
 ### 20.1.2.11.1 ([tc39.es](https://tc39.es/ecma262/#sec-getownpropertykeys))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| GetOwnPropertyKeys internal operation | Supported with Limitations | [`Object_GetOwnPropertyNames_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js)<br>[`Object_GetOwnPropertySymbols_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertySymbols_Basic.js) | Modeled through Object.getOwnPropertyNames/Object.getOwnPropertySymbols split using descriptor and dynamic object stores. |
+| GetOwnPropertyKeys internal operation | Supported with Limitations | [`Object_GetOwnPropertyNames_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js)<br>[`Object_GetOwnPropertySymbols_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertySymbols_Basic.js)<br>[`Object_OwnPropertyKeyOrdering.js`](../../../Js2IL.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js)<br>[`Object_SymbolKey_Descriptors_And_Enumeration.js`](../../../Js2IL.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js) | Modeled through Object.getOwnPropertyNames/Object.getOwnPropertySymbols plus ordered-own-key helpers, preserving ordinary-object numeric/string ordering separately from symbol insertion order. |
 
 ### 20.1.2.12 ([tc39.es](https://tc39.es/ecma262/#sec-object.getprototypeof))
 
@@ -261,7 +261,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.prototype.toString | Supported with Limitations | [`Object_Prototype_ToString_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Prototype_ToString_Basic.js)<br>[`Generator_Prototype_ToStringTag.js`](../../../Js2IL.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js) | Supports built-in tags and Symbol.toStringTag lookup for key runtime types; full brand checks and all exotic cases are not exhaustive. |
+| Object.prototype.toString | Supported with Limitations | [`Object_Prototype_ToString_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Prototype_ToString_Basic.js)<br>[`Object_Prototype_ToString_SymbolToStringTag_Custom.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Prototype_ToString_SymbolToStringTag_Custom.js)<br>[`Generator_Prototype_ToStringTag.js`](../../../Js2IL.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js) | Supports built-in tags plus Symbol.toStringTag lookup for ordinary objects, arrays, and key runtime types; full brand checks and all exotic cases are not exhaustive. |
 
 ### 20.1.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype.valueof))
 
