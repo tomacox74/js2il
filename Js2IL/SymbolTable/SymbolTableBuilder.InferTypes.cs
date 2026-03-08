@@ -1733,7 +1733,8 @@ public partial class SymbolTableBuilder
                 if (!me.Computed && me.Property is Identifier propId && string.Equals(propId.Name, "length", StringComparison.Ordinal))
                 {
                     var receiverType = InferExpressionClrType(me.Object, scope, proposedTypes);
-                    if (receiverType == typeof(JavaScriptRuntime.Array) || receiverType == typeof(JavaScriptRuntime.Int32Array))
+                    if (receiverType == typeof(JavaScriptRuntime.Array)
+                        || (receiverType != null && typeof(JavaScriptRuntime.TypedArrayBase).IsAssignableFrom(receiverType)))
                     {
                         return typeof(double);
                     }
@@ -1743,7 +1744,7 @@ public partial class SymbolTableBuilder
                 if (me.Computed)
                 {
                     var receiverType = InferExpressionClrType(me.Object, scope, proposedTypes);
-                    if (receiverType == typeof(JavaScriptRuntime.Int32Array))
+                    if (receiverType != null && typeof(JavaScriptRuntime.TypedArrayBase).IsAssignableFrom(receiverType))
                     {
                         var indexType = InferExpressionClrType(me.Property, scope, proposedTypes);
                         // Numeric index required (JS will ToNumber, but we only infer when it's already clearly number-like).

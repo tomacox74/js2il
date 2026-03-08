@@ -166,13 +166,18 @@ internal sealed partial class LIRToILCompiler
 
             case LIRNewIntrinsicObject newIntrinsic:
                 {
-                    if (!IsMaterialized(newIntrinsic.Result, allocation))
-                    {
-                        return true;
-                    }
-
                     EmitNewIntrinsicObjectCore(newIntrinsic, ilEncoder, allocation, methodDescriptor);
-                    EmitStoreTemp(newIntrinsic.Result, ilEncoder, allocation);
+
+                    if (IsMaterialized(newIntrinsic.Result, allocation))
+                    {
+                        EmitStoreTemp(newIntrinsic.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        // Unused intrinsic constructions still need to run so constructor side effects
+                        // and thrown exceptions are preserved for expression statements like `new T(...);`.
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
                     return true;
                 }
 

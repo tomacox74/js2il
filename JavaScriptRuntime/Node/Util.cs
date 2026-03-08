@@ -429,7 +429,7 @@ namespace JavaScriptRuntime.Node
             dict["isMap"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Map);
             dict["isSet"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Set);
             dict["isProxy"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Proxy);
-            dict["isTypedArray"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Int32Array || v is JavaScriptRuntime.Node.Buffer);
+            dict["isTypedArray"] = new Func<object?, bool>(v => v is JavaScriptRuntime.TypedArrayBase || v is JavaScriptRuntime.Node.Buffer);
 
             return typesObj;
         }
