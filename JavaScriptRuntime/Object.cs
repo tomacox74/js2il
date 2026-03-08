@@ -258,16 +258,31 @@ namespace JavaScriptRuntime
             };
         }
 
+        private static bool IsPropertyDescriptorObject(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                return false;
+            }
+
+            if (value is string || value is Symbol)
+            {
+                return false;
+            }
+
+            return !value.GetType().IsValueType;
+        }
+
         private static RequestedPropertyDescriptor ParseRequestedPropertyDescriptor(object attributes)
         {
             var descriptor = new RequestedPropertyDescriptor
             {
-                HasEnumerable = HasOwnProperty(attributes, "enumerable"),
-                HasConfigurable = HasOwnProperty(attributes, "configurable"),
-                HasWritable = HasOwnProperty(attributes, "writable"),
-                HasValue = HasOwnProperty(attributes, "value"),
-                HasGet = HasOwnProperty(attributes, "get"),
-                HasSet = HasOwnProperty(attributes, "set")
+                HasEnumerable = HasProperty(attributes, "enumerable"),
+                HasConfigurable = HasProperty(attributes, "configurable"),
+                HasWritable = HasProperty(attributes, "writable"),
+                HasValue = HasProperty(attributes, "value"),
+                HasGet = HasProperty(attributes, "get"),
+                HasSet = HasProperty(attributes, "set")
             };
 
             if (descriptor.HasEnumerable)
@@ -566,9 +581,19 @@ namespace JavaScriptRuntime
             }
             else if (obj is System.Collections.IDictionary dictObject)
             {
+                var dictionaryKeys = new List<string>();
                 foreach (var key in dictObject.Keys)
                 {
-                    AddKey(keys, seen, DotNet2JSConversions.ToString(key));
+                    var stringKey = DotNet2JSConversions.ToString(key);
+                    if (!string.IsNullOrEmpty(stringKey))
+                    {
+                        dictionaryKeys.Add(stringKey);
+                    }
+                }
+
+                foreach (var key in dictionaryKeys.OrderBy(static key => key, StringComparer.Ordinal))
+                {
+                    AddKey(keys, seen, key);
                 }
             }
 
@@ -1099,13 +1124,13 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            if (attributes is null || attributes is JsNull)
+            if (!IsPropertyDescriptorObject(attributes))
             {
                 throw new TypeError("Property description must be an object");
             }
 
             var key = ToPropertyKeyString(prop);
-            var requested = ParseRequestedPropertyDescriptor(attributes);
+            var requested = ParseRequestedPropertyDescriptor(attributes!);
 
             if (!IsExtensibleInternal(obj) && !HasOwnProperty(obj, key))
             {
@@ -2758,6 +2783,90 @@ namespace JavaScriptRuntime
             {
                 return false;
             }
+        }
+
+        private static bool HasOwnPropertyForPropertyLookup(object target, string name)
+        {
+            if (HasOwnProperty(target, name))
+            {
+                return true;
+            }
+
+            if (target is Array jsArray)
+            {
+                if (name == "length")
+                {
+                    return true;
+                }
+
+                return TryParseCanonicalIndexString(name, out var index) && index >= 0 && index < jsArray.length;
+            }
+
+            if (target is TypedArrayBase typedArray)
+            {
+                if (name == "length" || name == "buffer" || name == "byteOffset" || name == "byteLength")
+                {
+                    return true;
+                }
+
+                return TryParseCanonicalIndexString(name, out var index) && index >= 0 && index < typedArray.length;
+            }
+
+            if (target is string str)
+            {
+                if (name == "length")
+                {
+                    return true;
+                }
+
+                return TryParseCanonicalIndexString(name, out var index) && index >= 0 && index < str.Length;
+            }
+
+            return false;
+        }
+
+        private static bool HasProperty(object target, string name)
+        {
+            if (target is null || target is JsNull)
+            {
+                return false;
+            }
+
+            if (HasOwnPropertyForPropertyLookup(target, name))
+            {
+                return true;
+            }
+
+            if (!PrototypeChain.Enabled)
+            {
+                return false;
+            }
+
+            var current = target;
+            var proto = PrototypeChain.GetPrototypeOrNull(current);
+            if (proto is null || proto is JsNull)
+            {
+                return false;
+            }
+
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance) { target };
+            while (proto is not null && proto is not JsNull)
+            {
+                if (!visited.Add(proto))
+                {
+                    return false;
+                }
+
+                if (HasOwnPropertyForPropertyLookup(proto, name))
+                {
+                    return true;
+                }
+
+                current = proto;
+                proto = PrototypeChain.GetPrototypeOrNull(current);
+            }
+
+            return false;
         }
 
         private static object? InvokeCallable(object? callable, object thisArg, object?[] args)
@@ -5393,146 +5502,7 @@ namespace JavaScriptRuntime
                 _ => DotNet2JSConversions.ToString(key)
             } ?? string.Empty;
 
-            static bool HasOwnProperty(object target, string name)
-            {
-                if (PropertyDescriptorStore.TryGetOwn(target, name, out _))
-                {
-                    return true;
-                }
-
-                // ExpandoObject (object literal)
-                if (target is System.Dynamic.ExpandoObject exp)
-                {
-                    var dict = (IDictionary<string, object?>)exp;
-                    return dict.ContainsKey(name);
-                }
-
-                // IDictionary<string, object?> (includes JsObject)
-                if (target is IDictionary<string, object?> dictGeneric)
-                {
-                    return dictGeneric.ContainsKey(name);
-                }
-
-                if (target is System.Collections.IDictionary dictObj)
-                {
-                    if (dictObj.Contains(name))
-                    {
-                        return true;
-                    }
-
-                    foreach (var key in dictObj.Keys)
-                    {
-                        if (string.Equals(DotNet2JSConversions.ToString(key), name, StringComparison.Ordinal))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-                // JS Array (numeric indexes + length)
-                if (target is Array jsArr)
-                {
-                    if (name == "length") return true;
-                    if (int.TryParse(name, out var ai))
-                    {
-                        return ai >= 0 && ai < jsArr.length;
-                    }
-                    return false;
-                }
-
-                // Typed arrays
-                if (target is TypedArrayBase typedArray)
-                {
-                    if (name == "length" || name == "buffer" || name == "byteOffset" || name == "byteLength") return true;
-                    if (int.TryParse(name, out var ti))
-                    {
-                        return ti >= 0 && ti < typedArray.length;
-                    }
-                    return false;
-                }
-
-                // string (indices + length)
-                if (target is string str)
-                {
-                    if (name == "length") return true;
-                    if (int.TryParse(name, out var si))
-                    {
-                        return si >= 0 && si < str.Length;
-                    }
-                    return false;
-                }
-
-                // Fallback: reflection public instance property/field presence
-                var type = target.GetType();
-                var pi = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-                if (pi != null) return true;
-                var fi = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-                if (fi != null) return true;
-                return false;
-            }
-
-            if (HasOwnProperty(obj, propName))
-            {
-                return true;
-            }
-
-            if (!PrototypeChain.Enabled)
-            {
-                return false;
-            }
-
-            // Avoid allocating cycle-detection state for the common case where no prototype
-            // has been assigned.
-            var current = obj;
-            var proto = PrototypeChain.GetPrototypeOrNull(current);
-            if (proto is null || proto is JsNull)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(proto, obj))
-            {
-                return false;
-            }
-
-            if (HasOwnProperty(proto, propName))
-            {
-                return true;
-            }
-
-            current = proto;
-            proto = PrototypeChain.GetPrototypeOrNull(current);
-            if (proto is null || proto is JsNull)
-            {
-                return false;
-            }
-
-            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance)
-            {
-                obj,
-                current
-            };
-
-            while (true)
-            {
-                if (!visited.Add(proto))
-                {
-                    return false;
-                }
-
-                if (HasOwnProperty(proto, propName))
-                {
-                    return true;
-                }
-
-                current = proto;
-                proto = PrototypeChain.GetPrototypeOrNull(current);
-                if (proto is null || proto is JsNull)
-                {
-                    return false;
-                }
-            }
+            return HasProperty(obj, propName);
         }
     }
 }

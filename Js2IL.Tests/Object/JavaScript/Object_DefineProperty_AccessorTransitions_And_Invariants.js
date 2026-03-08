@@ -73,3 +73,22 @@ try {
 
 var yDesc = Object.getOwnPropertyDescriptor(locked, "y");
 console.log("locked_final=" + yDesc.value + "," + yDesc.writable + "," + yDesc.configurable);
+
+try {
+  Object.defineProperty({}, "primitive", "not-an-object");
+  console.log("primitive=allowed");
+} catch (e) {
+  console.log("primitive=" + e.name);
+}
+
+var inheritedAttributes = Object.create({
+  enumerable: true,
+  configurable: true,
+  value: 33
+});
+var inheritedTarget = {};
+Object.defineProperty(inheritedTarget, "proto", inheritedAttributes);
+var inheritedDesc = Object.getOwnPropertyDescriptor(inheritedTarget, "proto");
+console.log("proto_value=" + inheritedTarget.proto);
+console.log("proto_enum=" + inheritedDesc.enumerable);
+console.log("proto_config=" + inheritedDesc.configurable);
