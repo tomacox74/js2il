@@ -1,6 +1,8 @@
 using Acornima.Ast;
 using System.Reflection;
 using System.Linq;
+using Js2IL.Services;
+using Js2IL.Utilities;
 
 namespace Js2IL.SymbolTables
 {
@@ -15,9 +17,11 @@ namespace Js2IL.SymbolTables
         // reaches the same AST node via multiple paths (explicit handling + reflective walk).
         private readonly HashSet<Node> _visitedArrowFunctions = new();
         private readonly HashSet<Node> _visitedFunctionExpressions = new();
+        private readonly JavaScriptParser _parser = new();
 
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
+        private string _currentModulePath = string.Empty;
 
         private static BindingInfo? TryResolveBinding(Scope scope, string name)
         {
@@ -28,7 +32,7 @@ namespace Js2IL.SymbolTables
                 {
                     return binding;
                 }
-                current = current.Parent;
+                current = current.UsesGlobalScopeSemantics ? null : current.Parent;
             }
 
             return null;
@@ -45,6 +49,7 @@ namespace Js2IL.SymbolTables
 
         public void Build(ModuleDefinition module)
         {
+            _currentModulePath = module.Path;
             var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast);
 
             AddModuleBuiltInParameters(globalScope, module.Ast);
@@ -83,6 +88,106 @@ namespace Js2IL.SymbolTables
                 globalScope.Bindings[param.Name] = new BindingInfo(param.Name, bindingKind, globalScope, astNode);
                 globalScope.Parameters.Add(param.Name);
             }
+        }
+
+        private static bool IsDirectGlobalFunctionConstructor(Scope currentScope, Identifier calleeId)
+        {
+            return string.Equals(calleeId.Name, "Function", StringComparison.Ordinal)
+                && TryResolveBinding(currentScope, calleeId.Name) == null;
+        }
+
+        private void TryCreateDynamicFunctionScope(
+            Scope globalScope,
+            Scope currentScope,
+            Node siteNode,
+            Identifier calleeId,
+            IEnumerable<Node> arguments)
+        {
+            if (!IsDirectGlobalFunctionConstructor(currentScope, calleeId))
+            {
+                return;
+            }
+
+            if (currentScope.Children.Any(child => ReferenceEquals(child.SyntheticOriginatingNode, siteNode)))
+            {
+                return;
+            }
+
+            if (!DynamicFunctionSupport.TryGetStringLiteralArguments(arguments, out var literalArgs))
+            {
+                return;
+            }
+
+            var loc = siteNode.Location.Start;
+            if (!DynamicFunctionSupport.TryParseFunctionExpression(
+                    _parser,
+                    _currentModulePath,
+                    literalArgs,
+                    loc.Line,
+                    loc.Column,
+                    out var parsedFunctionExpr,
+                    out _)
+                || parsedFunctionExpr == null)
+            {
+                return;
+            }
+
+            _visitedFunctionExpressions.Add(parsedFunctionExpr);
+
+            var baseScopeName = DynamicFunctionSupport.GetScopeName(siteNode);
+            var scopeName = baseScopeName;
+            var suffix = 2;
+            while (currentScope.Children.Any(child => string.Equals(child.Name, scopeName, StringComparison.Ordinal)))
+            {
+                scopeName = $"{baseScopeName}_{suffix++}";
+            }
+
+            var dynamicScope = new Scope(scopeName, ScopeKind.Function, currentScope, parsedFunctionExpr)
+            {
+                SyntheticOriginatingNode = siteNode,
+                UsesGlobalScopeSemantics = true,
+                IsAsync = parsedFunctionExpr.Async,
+                IsGenerator = parsedFunctionExpr.Generator
+            };
+
+            if (dynamicScope.IsAsync)
+            {
+                dynamicScope.AwaitPointCount = CountAwaitExpressions(parsedFunctionExpr.Body);
+            }
+
+            if (dynamicScope.IsGenerator)
+            {
+                dynamicScope.YieldPointCount = CountYieldExpressions(parsedFunctionExpr.Body);
+            }
+
+            BindObjectPatternParameters(parsedFunctionExpr.Params, dynamicScope);
+
+            if (dynamicScope.IsGenerator)
+            {
+                foreach (var p in dynamicScope.Parameters.Where(dynamicScope.Bindings.ContainsKey))
+                {
+                    dynamicScope.Bindings[p].IsCaptured = true;
+                }
+
+                foreach (var p in dynamicScope.DestructuredParameters.Where(dynamicScope.Bindings.ContainsKey))
+                {
+                    dynamicScope.Bindings[p].IsCaptured = true;
+                }
+            }
+
+            if (parsedFunctionExpr.Body is BlockStatement functionBlock)
+            {
+                foreach (var statement in functionBlock.Body)
+                {
+                    BuildScopeRecursive(globalScope, statement, dynamicScope);
+                }
+            }
+            else
+            {
+                BuildScopeRecursive(globalScope, parsedFunctionExpr.Body, dynamicScope);
+            }
+
+            AddImplicitArgumentsBinding(dynamicScope);
         }
 
         /// <summary>
@@ -473,8 +578,12 @@ namespace Js2IL.SymbolTables
                 AnalyzeFreeVariables(child);
             }
 
+            if (scope.UsesGlobalScopeSemantics)
+            {
+                scope.ReferencesParentScopeVariables = false;
+            }
             // For class scopes, check if any method child references parent variables
-            if (scope.Kind == ScopeKind.Class)
+            else if (scope.Kind == ScopeKind.Class)
             {
                 foreach (var methodScope in scope.Children.Where(c => c.Kind == ScopeKind.Function))
                 {
@@ -529,7 +638,9 @@ namespace Js2IL.SymbolTables
             // Nested functions may reference globals/parent scopes even when the immediate
             // parent function body does not. Closures still require the parent scope slot(s)
             // in the scopes array to exist to avoid IndexOutOfRange at runtime.
-            if (scope.Kind == ScopeKind.Function && !scope.ReferencesParentScopeVariables)
+            if (scope.Kind == ScopeKind.Function
+                && !scope.ReferencesParentScopeVariables
+                && !scope.UsesGlobalScopeSemantics)
             {
                 scope.ReferencesParentScopeVariables = hasDescendantCallableReferencingParentScopeVariables;
             }
@@ -1215,9 +1326,26 @@ namespace Js2IL.SymbolTables
                     }
                     break;
                 case CallExpression callExpr:
+                    if (callExpr.Callee is Identifier callCalleeId)
+                    {
+                        TryCreateDynamicFunctionScope(globalScope, currentScope, callExpr, callCalleeId, callExpr.Arguments.Cast<Node>());
+                    }
+
                     // Process callee and arguments but don't create scopes for call expressions themselves
                     BuildScopeRecursive(globalScope, callExpr.Callee, currentScope);
                     foreach (var arg in callExpr.Arguments)
+                    {
+                        BuildScopeRecursive(globalScope, arg, currentScope);
+                    }
+                    break;
+                case NewExpression newExpr:
+                    if (newExpr.Callee is Identifier newCalleeId)
+                    {
+                        TryCreateDynamicFunctionScope(globalScope, currentScope, newExpr, newCalleeId, newExpr.Arguments.Cast<Node>());
+                    }
+
+                    BuildScopeRecursive(globalScope, newExpr.Callee, currentScope);
+                    foreach (var arg in newExpr.Arguments)
                     {
                         BuildScopeRecursive(globalScope, arg, currentScope);
                     }
@@ -1818,6 +1946,11 @@ namespace Js2IL.SymbolTables
         private HashSet<string> CollectReferencedParentVariables(Scope childScope, Scope targetScope)
         {
             var result = new HashSet<string>();
+            if (childScope.UsesGlobalScopeSemantics)
+            {
+                return result;
+            }
+
             var childLocals = new HashSet<string>(childScope.Bindings.Keys);
             childLocals.UnionWith(childScope.Parameters);
             
@@ -1830,7 +1963,7 @@ namespace Js2IL.SymbolTables
                 {
                     ancestorVariables.Add(key);
                 }
-                currentAncestor = currentAncestor.Parent;
+                currentAncestor = currentAncestor.UsesGlobalScopeSemantics ? null : currentAncestor.Parent;
             }
             
             if (childScope.AstNode != null)

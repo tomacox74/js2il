@@ -261,6 +261,12 @@ namespace JavaScriptRuntime
             if (string.Equals(name, "__js_call__", StringComparison.Ordinal))
             {
                 var declaringTypeName = resolvedTarget.Method.DeclaringType?.Name;
+                if (!string.IsNullOrEmpty(declaringTypeName)
+                    && declaringTypeName.StartsWith("DynamicFunction_", StringComparison.Ordinal))
+                {
+                    return "anonymous";
+                }
+
                 if (!string.IsNullOrEmpty(declaringTypeName) && !declaringTypeName.StartsWith("<", StringComparison.Ordinal))
                 {
                     return declaringTypeName;

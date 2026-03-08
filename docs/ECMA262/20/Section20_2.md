@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-08T21:51:25Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -14,9 +14,9 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 20.2.1 | The Function Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-constructor) |
-| 20.2.1.1 | Function ( ... parameterArgs , bodyArg ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-function-p1-p2-pn-body) |
-| 20.2.1.1.1 | CreateDynamicFunction ( constructor , newTarget , kind , parameterArgs , bodyArg ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-createdynamicfunction) |
+| 20.2.1 | The Function Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-constructor) |
+| 20.2.1.1 | Function ( ... parameterArgs , bodyArg ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-p1-p2-pn-body) |
+| 20.2.1.1.1 | CreateDynamicFunction ( constructor , newTarget , kind , parameterArgs , bodyArg ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-createdynamicfunction) |
 | 20.2.2 | Properties of the Function Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-function-constructor) |
 | 20.2.2.1 | Function.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function.prototype) |
 | 20.2.3 | Properties of the Function Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object) |
@@ -35,6 +35,12 @@
 ## Support
 
 Feature-level support tracking with test script references.
+
+### 20.2.1.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-createdynamicfunction))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Function/new Function with compile-time string literal parameter/body source | Supported with Limitations | [`Function_Constructor_New_ConstantString_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js)<br>[`Function_Constructor_Call_Length_Name.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js)<br>[`Function_Constructor_GlobalScope_NoClosure.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_GlobalScope_NoClosure.js)<br>[`Function_Constructor_NonLiteral_RuntimeError.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_NonLiteral_RuntimeError.js)<br>[`Function_Constructor_SyntaxError.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_SyntaxError.js) | Stage 1 support only: direct `Function(...)` and `new Function(...)` sites are compiled ahead-of-time when every parameter/body argument is a string literal. JS2IL parses the generated source during compilation, emits a synthetic callable with global-scope semantics (so module locals and enclosing locals are not captured), derives `.length` from the parsed parameter list, reports `.name` as `anonymous`, throws `SyntaxError` for invalid literal source, and throws `Error` for non-literal runtime forms. |
 
 ### 20.2.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-function.prototype.apply))
 
@@ -58,7 +64,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Function.prototype.constructor references the Function constructor | Supported with Limitations | [`Function_Prototype_Constructor_ReferencesFunction.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_Constructor_ReferencesFunction.js) | Function.prototype exposes a data property named constructor that references the runtime Function constructor value. The Function constructor itself remains unsupported for dynamic source compilation. |
+| Function.prototype.constructor references the Function constructor | Supported with Limitations | [`Function_Prototype_Constructor_ReferencesFunction.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_Constructor_ReferencesFunction.js) | Function.prototype exposes a data property named constructor that references the runtime Function constructor value. Direct compile-time-literal `Function(...)` / `new Function(...)` forms are supported; non-literal runtime forms throw a documented `Error`. |
 
 ### 20.2.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-function.prototype.tostring))
 
@@ -78,13 +84,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Function instance length property | Supported with Limitations | [`Function_Instance_Length_Name_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js) | Delegate-backed functions expose a numeric length property derived from CLR delegate method signatures. Exact ECMA-262 length metadata rules are not fully implemented. |
+| Function instance length property | Supported with Limitations | [`Function_Instance_Length_Name_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js)<br>[`Function_Constructor_Call_Length_Name.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js) | Delegate-backed functions expose a numeric length property derived from CLR delegate method signatures. Function-constructor-created callables use the parsed parameter list to set `.length`. Exact ECMA-262 length metadata rules are not fully implemented. |
 
 ### 20.2.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances-name))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Function instance name property | Supported with Limitations | [`Function_Instance_Length_Name_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js) | Delegate-backed functions expose a string name property based on the underlying CLR method name. Exact SetFunctionName behavior is not implemented. |
+| Function instance name property | Supported with Limitations | [`Function_Instance_Length_Name_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js)<br>[`Function_Constructor_New_ConstantString_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js) | Delegate-backed functions expose a string name property based on the underlying CLR method name. Function-constructor-created callables default to `anonymous`. Exact SetFunctionName behavior is not implemented. |
 
 ### 20.2.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances-prototype))
 

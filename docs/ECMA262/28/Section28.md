@@ -4,7 +4,7 @@ Covers reflection capabilities, including Proxy/Reflect and meta-level operation
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-08T05:22:30Z
+> Last generated (UTC): 2026-03-08T21:51:25Z
 
 _This section is split into subsection documents for readability._
 

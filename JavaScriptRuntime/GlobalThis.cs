@@ -57,7 +57,7 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.TypeUtilities.ToNumber(value);
 
         private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
-            throw new NotSupportedException("The Function constructor is not supported yet.");
+            throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in js2il.");
 
         // Placeholder Array constructor value. JS2IL uses dedicated codegen paths for `new Array(...)`.
         // We expose a callable value so libraries can reference `Array` as a global identifier and

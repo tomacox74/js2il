@@ -115,6 +115,13 @@ public sealed partial class HIRToLIRLowerer
             if (symbol.Kind == BindingKind.Global)
             {
                 var name = symbol.Name;
+                if (string.Equals(name, "Function", StringComparison.Ordinal)
+                    && TryGetDynamicFunctionSyntaxErrorMessage(callExpr.Arguments, out var syntaxErrorMessage)
+                    && !string.IsNullOrWhiteSpace(syntaxErrorMessage))
+                {
+                    return TryEmitThrownBuiltInError("SyntaxError", syntaxErrorMessage, out resultTempVar);
+                }
+
                 if (string.Equals(name, "String", StringComparison.Ordinal)
                     || string.Equals(name, "Number", StringComparison.Ordinal)
                     || string.Equals(name, "Boolean", StringComparison.Ordinal))

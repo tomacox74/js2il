@@ -398,6 +398,7 @@ public class JavaScriptAstValidator : IAstValidator
             AddIntrinsicName(names, typeof(JavaScriptRuntime.Boolean));
             AddIntrinsicName(names, typeof(JavaScriptRuntime.BigInt));
             AddIntrinsicName(names, typeof(JavaScriptRuntime.Symbol));
+            names.Add(nameof(JavaScriptRuntime.GlobalThis.Function));
         }
         catch
         {

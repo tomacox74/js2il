@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-08T21:51:25Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -71,7 +71,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Global Function identifier is exposed (placeholder) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) | Exposes JavaScriptRuntime.GlobalThis.Function as a callable function value so libraries can reference Function as a global identifier (e.g., Function.prototype...). Invoking Function(...) throws NotSupportedException until Function constructor semantics are implemented. |
+| Global Function identifier is exposed as a constructor value | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js)<br>[`Function_Constructor_New_ConstantString_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js)<br>[`Function_Constructor_Call_Length_Name.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js) | Exposes JavaScriptRuntime.GlobalThis.Function as a callable function value so libraries can reference Function as a global identifier (e.g., Function.prototype...). Direct `Function(...)` / `new Function(...)` sites with string literal source are compiled ahead-of-time; non-literal runtime forms throw a documented `Error`. |
 
 ### 19.3.21 ([tc39.es](https://tc39.es/ecma262/#sec-map))
 

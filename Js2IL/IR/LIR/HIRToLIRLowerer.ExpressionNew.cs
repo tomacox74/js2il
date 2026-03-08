@@ -32,6 +32,13 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
         }
 
+        if (string.Equals(ctorName, "Function", StringComparison.Ordinal)
+            && TryGetDynamicFunctionSyntaxErrorMessage(newExpr.Arguments, out var syntaxErrorMessage)
+            && !string.IsNullOrWhiteSpace(syntaxErrorMessage))
+        {
+            return TryEmitThrownBuiltInError("SyntaxError", syntaxErrorMessage, out resultTempVar);
+        }
+
         // PL3.3a: built-in Error types
         if (BuiltInErrorTypes.IsBuiltInErrorTypeName(ctorName))
         {

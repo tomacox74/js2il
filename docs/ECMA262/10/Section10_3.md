@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T02:30:25Z
+> Last generated (UTC): 2026-03-08T21:51:25Z
 
 JS2IL exposes many ECMAScript built-ins as CLR-backed delegates or intrinsic runtime constructors. That gives everyday built-in call/construct behavior for the implemented subset, but built-in function objects are not created through the full ECMA-262 realm/prototype/length/name machinery.
 
@@ -35,7 +35,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Constructible built-ins such as Array, Object, Int32Array, and Proxy | Supported with Limitations | [`Array_Callable_Construct.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Callable_Construct.js)<br>[`Array_New_Length.js`](../../../Js2IL.Tests/Array/JavaScript/Array_New_Length.js)<br>[`Int32Array_Construct_Length.js`](../../../Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js)<br>[`Proxy_GetTrap_OverridesProperty.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js) | The implemented subset of built-ins can usually be called/constructed directly through dedicated intrinsic lowering or runtime helpers. First-class constructor values are still uneven (for example the global Function constructor remains intentionally unsupported), so constructibility is not uniform across all built-in function objects. |
+| Constructible built-ins such as Array, Object, Int32Array, and Proxy | Supported with Limitations | [`Array_Callable_Construct.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Callable_Construct.js)<br>[`Array_New_Length.js`](../../../Js2IL.Tests/Array/JavaScript/Array_New_Length.js)<br>[`Int32Array_Construct_Length.js`](../../../Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js)<br>[`Proxy_GetTrap_OverridesProperty.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js) | The implemented subset of built-ins can usually be called/constructed directly through dedicated intrinsic lowering or runtime helpers. First-class constructor values are still uneven; for example, the global `Function` constructor only supports direct compile-time string literal call/new forms and throws for non-literal runtime usage. |
 
 ### 10.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-createbuiltinfunction))
 

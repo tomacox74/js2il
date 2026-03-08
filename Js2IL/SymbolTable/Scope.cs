@@ -95,6 +95,19 @@ public class Scope
     public Node AstNode { get; }
 
     /// <summary>
+    /// For synthetic dynamic functions created from <c>Function(...)</c> / <c>new Function(...)</c>,
+    /// points at the original constructor call/new site in the source AST.
+    /// </summary>
+    public Node? SyntheticOriginatingNode { get; set; }
+
+    /// <summary>
+    /// When true, unresolved identifiers in this scope resolve as global bindings instead of walking
+    /// the structural parent chain. This is used for Function-constructor-created callables, which
+    /// must not close over outer lexical/module scopes.
+    /// </summary>
+    public bool UsesGlobalScopeSemantics { get; set; }
+
+    /// <summary>
     /// Authoritative .NET namespace for this scope's generated type (if any).
     /// When null, generators may apply a default.
     /// </summary>
@@ -179,9 +192,10 @@ public class Scope
     {
         if (this.Bindings.ContainsKey(name) == false)
         {
-            if (Parent != null)
+            var resolutionParent = UsesGlobalScopeSemantics ? null : Parent;
+            if (resolutionParent != null)
             {
-                return Parent.FindSymbol(name);
+                return resolutionParent.FindSymbol(name);
             }
             
             // parent is null and we have undeclard symbol
