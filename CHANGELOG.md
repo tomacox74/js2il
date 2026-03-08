@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/spec/tests/docs: add `Int32Array.prototype.slice(start, end)` for the current Int32Array-focused TypedArray subset with relative index coercion and copy semantics, add focused TypedArray execution/generator coverage, and update ECMA-262 §23.2 plus issue-triage tracking for the active #774 follow-up work.
 
 ## v0.8.28 - 2026-03-08
 
