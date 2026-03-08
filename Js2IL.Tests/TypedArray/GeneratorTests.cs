@@ -88,6 +88,9 @@ namespace Js2IL.Tests.TypedArray
         public Task Int32Array_Fill_Reverse_Join_LastIndexOf() { var testName = nameof(Int32Array_Fill_Reverse_Join_LastIndexOf); return GenerateTest(testName); }
 
         [Fact]
+        public Task TypedArray_ConstructorAndSet_Errors() { var testName = nameof(TypedArray_ConstructorAndSet_Errors); return GenerateTest(testName); }
+
+        [Fact]
         public Task Prime_SetBitsTrue_SmallStep_WordValueOrAssign() { var testName = nameof(Prime_SetBitsTrue_SmallStep_WordValueOrAssign); return GenerateTest(testName); }
 
         [Fact]

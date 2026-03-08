@@ -44,9 +44,9 @@ namespace JavaScriptRuntime
 
         public object? set(object[]? args)
         {
-            if (args == null || args.Length == 0 || args[0] == null)
+            if (args == null || args.Length == 0 || args[0] == null || args[0] is JsNull)
             {
-                return null;
+                throw new TypeError("Cannot convert undefined or null to object");
             }
 
             var sourceValues = CaptureSourceValues(args[0]);
@@ -408,9 +408,9 @@ namespace JavaScriptRuntime
                 return;
             }
 
-            if (TryToNumber(arg, out var number))
+            if (IsConstructorLengthArgument(arg))
             {
-                InitializeFromLength(ToLength(number));
+                InitializeFromLength(ToConstructorLength(TypeUtilities.ToNumber(arg), $"Invalid {TypedArrayName} length"));
                 return;
             }
 
@@ -499,38 +499,48 @@ namespace JavaScriptRuntime
             return factory(mapped);
         }
 
-        protected static bool TryToNumber(object? value, out double number)
+        private static bool IsConstructorLengthArgument(object? value)
         {
             switch (value)
             {
-                case double d:
-                    number = d;
-                    return true;
-                case float f:
-                    number = f;
-                    return true;
-                case int i:
-                    number = i;
-                    return true;
-                case long l:
-                    number = l;
-                    return true;
-                case short s:
-                    number = s;
-                    return true;
-                case byte b:
-                    number = b;
-                    return true;
-                case bool boolean:
-                    number = boolean ? 1 : 0;
-                    return true;
-                case string text when double.TryParse(text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var parsed):
-                    number = parsed;
+                case double:
+                case float:
+                case decimal:
+                case int:
+                case long:
+                case short:
+                case sbyte:
+                case byte:
+                case uint:
+                case ulong:
+                case ushort:
+                case bool:
+                case string:
                     return true;
                 default:
-                    number = 0;
                     return false;
             }
+        }
+
+        protected static int ToConstructorLength(double value, string errorMessage)
+        {
+            if (double.IsNaN(value) || value == 0)
+            {
+                return 0;
+            }
+
+            if (double.IsInfinity(value) || value < 0)
+            {
+                throw new RangeError(errorMessage);
+            }
+
+            var truncated = global::System.Math.Truncate(value);
+            if (truncated > int.MaxValue)
+            {
+                throw new RangeError(errorMessage);
+            }
+
+            return (int)truncated;
         }
 
         protected static int ToLength(double value)
