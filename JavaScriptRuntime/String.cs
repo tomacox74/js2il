@@ -472,20 +472,20 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Implements String.prototype.search(regexp).
-        /// Returns the zero-based index of the first match, or -1 when no match is found.
+        /// When a custom @@search override is present its return value is forwarded as-is.
         /// </summary>
-        public static double Search(string input)
+        public static object Search(string input)
         {
             return Search(input, null);
         }
 
-        public static double Search(string input, object? regexp)
+        public static object Search(string input, object? regexp)
         {
             input ??= string.Empty;
 
             if (TryInvokeWellKnownSymbol(regexp, Symbol.search, new object?[] { input }, out var symbolResult))
             {
-                return JavaScriptRuntime.TypeUtilities.ToNumber(symbolResult);
+                return symbolResult!;
             }
 
             var re = regexp as JavaScriptRuntime.RegExp
@@ -644,15 +644,15 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Implements a subset of String.prototype.replace when the pattern is a plain string.
         /// Only replaces the first occurrence, matching JS behavior for string patterns.
-        /// Replacement is coerced to string via ToString.
+        /// When a custom @@replace override is present its return value is forwarded as-is.
         /// </summary>
-        public static string Replace(string input, object patternOrString, object replacement)
+        public static object Replace(string input, object patternOrString, object replacement)
         {
             input ??= string.Empty;
 
             if (TryInvokeWellKnownSymbol(patternOrString, Symbol.replace, new object?[] { input, replacement }, out var symbolResult))
             {
-                return DotNet2JSConversions.ToString(symbolResult) ?? string.Empty;
+                return symbolResult!;
             }
 
             if (patternOrString is RegExp regExp)
@@ -933,12 +933,12 @@ namespace JavaScriptRuntime
         /// Supports string or regular expression separators and optional limit.
         /// Returns a JavaScriptRuntime.Array of strings.
         /// </summary>
-        public static JavaScriptRuntime.Array Split(string input)
+        public static object Split(string input)
         {
             return Split(input, null, null);
         }
 
-        public static JavaScriptRuntime.Array Split(string input, object? separatorOrPattern)
+        public static object Split(string input, object? separatorOrPattern)
         {
             return Split(input, separatorOrPattern, null);
         }
@@ -946,7 +946,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Split with optional limit. Separator can be string, Regex, or null/undefined.
         /// </summary>
-        public static JavaScriptRuntime.Array Split(string input, object? separatorOrPattern, object? limit)
+        public static object Split(string input, object? separatorOrPattern, object? limit)
         {
             input ??= string.Empty;
             int maxCount = ToSplitLimit(limit);
@@ -964,7 +964,7 @@ namespace JavaScriptRuntime
 
             if (TryInvokeWellKnownSymbol(separatorOrPattern, Symbol.split, new object?[] { input, limit }, out var splitResult))
             {
-                return CoerceToArrayResult(splitResult);
+                return splitResult!;
             }
 
             // Regex separator path
@@ -1206,7 +1206,7 @@ namespace JavaScriptRuntime
 
             if (symbolMethod is not Delegate callable)
             {
-                throw new JavaScriptRuntime.TypeError($"{symbol} is not a function");
+                throw new JavaScriptRuntime.TypeError($"{GetWellKnownSymbolName(symbol)} is not a function");
             }
 
             var previousThis = RuntimeServices.SetCurrentThis(target);
@@ -1221,25 +1221,19 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static JavaScriptRuntime.Array CoerceToArrayResult(object? value)
+        private static string GetWellKnownSymbolName(Symbol symbol)
         {
-            if (value is JavaScriptRuntime.Array array)
+            var symbolName = symbol.ToString();
+            const string prefix = "Symbol(";
+            const string suffix = ")";
+
+            if (symbolName.StartsWith(prefix, StringComparison.Ordinal)
+                && symbolName.EndsWith(suffix, StringComparison.Ordinal))
             {
-                return array;
+                symbolName = symbolName.Substring(prefix.Length, symbolName.Length - prefix.Length - suffix.Length);
             }
 
-            if (value is System.Collections.IEnumerable enumerable && value is not string)
-            {
-                var result = new JavaScriptRuntime.Array();
-                foreach (var item in enumerable)
-                {
-                    result.Add(item);
-                }
-
-                return result;
-            }
-
-            return new JavaScriptRuntime.Array();
+            return symbolName;
         }
 
         private static int ToSplitLimit(object? limit)

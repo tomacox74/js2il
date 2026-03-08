@@ -12,28 +12,42 @@ custom[Symbol.replace] = function (input, replacement) {
     console.log(this === custom);
     console.log(input);
     console.log(replacement);
-    return "R";
+    return 17;
 };
 
 custom[Symbol.search] = function (input) {
     console.log(this === custom);
     console.log(input);
-    return 7;
+    return "SEARCH";
 };
 
 custom[Symbol.split] = function (input, limit) {
     console.log(this === custom);
     console.log(input);
     console.log(limit);
-    return ["S1", "S2"];
+    return { marker: "split-result" };
 };
 
 var match = "abc".match(custom);
 console.log(match[0]);
-console.log("abc".replace(custom, "x"));
-console.log("abc".search(custom));
+var replaced = "abc".replace(custom, "x");
+console.log(typeof replaced);
+console.log(replaced);
+
+var searched = "abc".search(custom);
+console.log(typeof searched);
+console.log(searched);
 
 var split = "abc".split(custom, 5);
-console.log(split.length);
-console.log(split[0]);
-console.log(split[1]);
+console.log(typeof split);
+console.log(split.marker);
+
+var invalid = {};
+invalid[Symbol.match] = 1;
+
+try {
+    "abc".match(invalid);
+} catch (e) {
+    console.log(e.name);
+    console.log(e.message);
+}

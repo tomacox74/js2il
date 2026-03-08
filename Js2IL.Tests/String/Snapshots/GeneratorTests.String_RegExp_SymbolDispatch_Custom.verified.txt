@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x239e
+				// Method begins at RVA 0x245f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,7 +45,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2244
+			// Method begins at RVA 0x230c
 			// Header size: 12
 			// Code size: 66 (0x42)
 			.maxstack 8
@@ -91,7 +91,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23a7
+				// Method begins at RVA 0x2468
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -119,9 +119,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2294
+			// Method begins at RVA 0x235c
 			// Header size: 12
-			// Code size: 66 (0x42)
+			// Code size: 75 (0x4b)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -148,8 +148,9 @@
 			IL_0035: ldarg.3
 			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_003b: pop
-			IL_003c: ldstr "R"
-			IL_0041: ret
+			IL_003c: ldc.r8 17
+			IL_0045: box [System.Runtime]System.Double
+			IL_004a: ret
 		} // end of method FunctionExpression_L11C25::__js_call__
 
 	} // end of class FunctionExpression_L11C25
@@ -165,7 +166,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b0
+				// Method begins at RVA 0x2471
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -192,9 +193,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x22e4
+			// Method begins at RVA 0x23b4
 			// Header size: 12
-			// Code size: 63 (0x3f)
+			// Code size: 54 (0x36)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -217,9 +218,8 @@
 			IL_0029: ldarg.2
 			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_002f: pop
-			IL_0030: ldc.r8 7
-			IL_0039: box [System.Runtime]System.Double
-			IL_003e: ret
+			IL_0030: ldstr "SEARCH"
+			IL_0035: ret
 		} // end of method FunctionExpression_L18C24::__js_call__
 
 	} // end of class FunctionExpression_L18C24
@@ -235,7 +235,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b9
+				// Method begins at RVA 0x247a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -251,7 +251,7 @@
 
 		// Methods
 		.method public hidebysig static 
-			class [JavaScriptRuntime]JavaScriptRuntime.Array __js_call__ (
+			object __js_call__ (
 				class Modules.String_RegExp_SymbolDispatch_Custom/Scope scope,
 				object newTarget,
 				object input,
@@ -263,9 +263,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2330
+			// Method begins at RVA 0x23f8
 			// Header size: 12
-			// Code size: 89 (0x59)
+			// Code size: 82 (0x52)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -292,15 +292,12 @@
 			IL_0035: ldarg.3
 			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_003b: pop
-			IL_003c: ldc.i4.2
-			IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_0042: dup
-			IL_0043: ldstr "S1"
-			IL_0048: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_004d: dup
-			IL_004e: ldstr "S2"
-			IL_0053: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_0058: ret
+			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0041: dup
+			IL_0042: ldstr "marker"
+			IL_0047: ldstr "split-result"
+			IL_004c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0051: ret
 		} // end of method FunctionExpression_L24C23::__js_call__
 
 	} // end of class FunctionExpression_L24C23
@@ -312,6 +309,48 @@
 			01 00 15 53 63 6f 70 65 20 63 75 73 74 6f 6d 3d
 			7b 63 75 73 74 6f 6d 7d 00 00
 		)
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L48C4
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2483
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L48C4::.ctor
+
+		} // end of class Block_L48C4
+
+		.class nested private auto ansi beforefieldinit Block_L50C12
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x248c
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L50C12::.ctor
+
+		} // end of class Block_L50C12
+
+
 		// Fields
 		.field public object 'custom'
 
@@ -319,7 +358,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2395
+			// Method begins at RVA 0x2456
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -345,7 +384,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 488 (0x1e8)
+		// Code size: 672 (0x2a0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_RegExp_SymbolDispatch_Custom/Scope,
@@ -353,10 +392,13 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object,
-			[6] string,
-			[7] float64,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.Array
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[6] class [System.Runtime]System.Exception,
+			[7] object,
+			[8] object,
+			[9] object,
+			[10] object,
+			[11] object
 		)
 
 		IL_0000: newobj instance void Modules.String_RegExp_SymbolDispatch_Custom/Scope::.ctor()
@@ -366,161 +408,232 @@
 		IL_000c: stfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
 		IL_0011: ldloc.0
 		IL_0012: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_0017: stloc.3
-		IL_0018: ldstr "match"
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_0022: stloc.s 4
-		IL_0024: ldc.i4.1
-		IL_0025: newarr [System.Runtime]System.Object
-		IL_002a: dup
-		IL_002b: ldc.i4.0
-		IL_002c: ldloc.0
-		IL_002d: stelem.ref
-		IL_002e: ldc.i4.0
-		IL_002f: ldelem.ref
-		IL_0030: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
-		IL_0035: ldftn class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L5C23::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object)
-		IL_003b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0040: stloc.s 5
-		IL_0042: ldloc.3
-		IL_0043: ldloc.s 4
-		IL_0045: ldloc.s 5
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_004c: pop
-		IL_004d: ldloc.0
-		IL_004e: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_0053: stloc.s 5
-		IL_0055: ldstr "replace"
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_005f: stloc.s 4
-		IL_0061: ldc.i4.1
-		IL_0062: newarr [System.Runtime]System.Object
-		IL_0067: dup
-		IL_0068: ldc.i4.0
-		IL_0069: ldloc.0
-		IL_006a: stelem.ref
-		IL_006b: ldc.i4.0
-		IL_006c: ldelem.ref
-		IL_006d: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
-		IL_0072: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L11C25::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object, object)
-		IL_0078: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_007d: stloc.3
-		IL_007e: ldloc.s 5
-		IL_0080: ldloc.s 4
-		IL_0082: ldloc.3
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0088: pop
-		IL_0089: ldloc.0
-		IL_008a: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_008f: stloc.3
-		IL_0090: ldstr "search"
-		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_009a: stloc.s 4
-		IL_009c: ldc.i4.1
-		IL_009d: newarr [System.Runtime]System.Object
-		IL_00a2: dup
-		IL_00a3: ldc.i4.0
-		IL_00a4: ldloc.0
-		IL_00a5: stelem.ref
-		IL_00a6: ldc.i4.0
-		IL_00a7: ldelem.ref
-		IL_00a8: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
-		IL_00ad: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L18C24::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object)
-		IL_00b3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00b8: stloc.s 5
-		IL_00ba: ldloc.3
-		IL_00bb: ldloc.s 4
-		IL_00bd: ldloc.s 5
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_00c4: pop
-		IL_00c5: ldloc.0
-		IL_00c6: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_00cb: stloc.s 5
-		IL_00cd: ldstr "split"
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_00d7: stloc.s 4
-		IL_00d9: ldc.i4.1
-		IL_00da: newarr [System.Runtime]System.Object
-		IL_00df: dup
-		IL_00e0: ldc.i4.0
-		IL_00e1: ldloc.0
-		IL_00e2: stelem.ref
-		IL_00e3: ldc.i4.0
-		IL_00e4: ldelem.ref
-		IL_00e5: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
-		IL_00ea: ldftn class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L24C23::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object, object)
-		IL_00f0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_00f5: stloc.3
-		IL_00f6: ldloc.s 5
-		IL_00f8: ldloc.s 4
-		IL_00fa: ldloc.3
-		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0100: pop
-		IL_0101: ldstr "abc"
-		IL_0106: ldloc.0
-		IL_0107: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.String::Match(string, object)
-		IL_0111: stloc.3
-		IL_0112: ldloc.3
-		IL_0113: stloc.1
-		IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0119: ldloc.1
-		IL_011a: ldc.r8 0.0
-		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_0128: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_012d: pop
-		IL_012e: ldloc.0
-		IL_012f: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_0134: stloc.3
-		IL_0135: ldstr "abc"
-		IL_013a: ldloc.3
-		IL_013b: ldstr "x"
-		IL_0140: call string [JavaScriptRuntime]JavaScriptRuntime.String::Replace(string, object, object)
-		IL_0145: stloc.s 6
-		IL_0147: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_014c: ldloc.s 6
-		IL_014e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0153: pop
-		IL_0154: ldstr "abc"
-		IL_0159: ldloc.0
-		IL_015a: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_015f: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::Search(string, object)
-		IL_0164: stloc.s 7
-		IL_0166: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_016b: ldloc.s 7
-		IL_016d: box [System.Runtime]System.Double
-		IL_0172: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0177: pop
+		IL_0017: stloc.s 9
+		IL_0019: ldstr "match"
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_0023: stloc.s 10
+		IL_0025: ldc.i4.1
+		IL_0026: newarr [System.Runtime]System.Object
+		IL_002b: dup
+		IL_002c: ldc.i4.0
+		IL_002d: ldloc.0
+		IL_002e: stelem.ref
+		IL_002f: ldc.i4.0
+		IL_0030: ldelem.ref
+		IL_0031: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
+		IL_0036: ldftn class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L5C23::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object)
+		IL_003c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0041: stloc.s 11
+		IL_0043: ldloc.s 9
+		IL_0045: ldloc.s 10
+		IL_0047: ldloc.s 11
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_004e: pop
+		IL_004f: ldloc.0
+		IL_0050: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_0055: stloc.s 11
+		IL_0057: ldstr "replace"
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_0061: stloc.s 10
+		IL_0063: ldc.i4.1
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldloc.0
+		IL_006c: stelem.ref
+		IL_006d: ldc.i4.0
+		IL_006e: ldelem.ref
+		IL_006f: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
+		IL_0074: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L11C25::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object, object)
+		IL_007a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_007f: stloc.s 9
+		IL_0081: ldloc.s 11
+		IL_0083: ldloc.s 10
+		IL_0085: ldloc.s 9
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_008c: pop
+		IL_008d: ldloc.0
+		IL_008e: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_0093: stloc.s 9
+		IL_0095: ldstr "search"
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_009f: stloc.s 10
+		IL_00a1: ldc.i4.1
+		IL_00a2: newarr [System.Runtime]System.Object
+		IL_00a7: dup
+		IL_00a8: ldc.i4.0
+		IL_00a9: ldloc.0
+		IL_00aa: stelem.ref
+		IL_00ab: ldc.i4.0
+		IL_00ac: ldelem.ref
+		IL_00ad: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
+		IL_00b2: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L18C24::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object)
+		IL_00b8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00bd: stloc.s 11
+		IL_00bf: ldloc.s 9
+		IL_00c1: ldloc.s 10
+		IL_00c3: ldloc.s 11
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_00ca: pop
+		IL_00cb: ldloc.0
+		IL_00cc: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_00d1: stloc.s 11
+		IL_00d3: ldstr "split"
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_00dd: stloc.s 10
+		IL_00df: ldc.i4.1
+		IL_00e0: newarr [System.Runtime]System.Object
+		IL_00e5: dup
+		IL_00e6: ldc.i4.0
+		IL_00e7: ldloc.0
+		IL_00e8: stelem.ref
+		IL_00e9: ldc.i4.0
+		IL_00ea: ldelem.ref
+		IL_00eb: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
+		IL_00f0: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L24C23::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object, object)
+		IL_00f6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_00fb: stloc.s 9
+		IL_00fd: ldloc.s 11
+		IL_00ff: ldloc.s 10
+		IL_0101: ldloc.s 9
+		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0108: pop
+		IL_0109: ldstr "abc"
+		IL_010e: ldloc.0
+		IL_010f: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.String::Match(string, object)
+		IL_0119: stloc.s 9
+		IL_011b: ldloc.s 9
+		IL_011d: stloc.1
+		IL_011e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0123: ldloc.1
+		IL_0124: ldc.r8 0.0
+		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_0132: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0137: pop
+		IL_0138: ldloc.0
+		IL_0139: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_013e: stloc.s 9
+		IL_0140: ldstr "abc"
+		IL_0145: ldloc.s 9
+		IL_0147: ldstr "x"
+		IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.String::Replace(string, object, object)
+		IL_0151: stloc.s 9
+		IL_0153: ldloc.s 9
+		IL_0155: stloc.2
+		IL_0156: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_015b: ldloc.2
+		IL_015c: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0161: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0166: pop
+		IL_0167: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_016c: ldloc.2
+		IL_016d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0172: pop
+		IL_0173: ldstr "abc"
 		IL_0178: ldloc.0
 		IL_0179: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_017e: stloc.3
-		IL_017f: ldstr "abc"
-		IL_0184: ldloc.3
-		IL_0185: ldc.r8 5
-		IL_018e: box [System.Runtime]System.Double
-		IL_0193: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.String::Split(string, object, object)
-		IL_0198: stloc.s 8
-		IL_019a: ldloc.s 8
-		IL_019c: stloc.2
-		IL_019d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01a2: ldloc.2
-		IL_01a3: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_01a8: box [System.Runtime]System.Double
-		IL_01ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01b2: pop
-		IL_01b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01b8: ldloc.2
-		IL_01b9: ldc.r8 0.0
-		IL_01c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_01c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01cc: pop
+		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.String::Search(string, object)
+		IL_0183: stloc.s 9
+		IL_0185: ldloc.s 9
+		IL_0187: stloc.3
+		IL_0188: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_018d: ldloc.3
+		IL_018e: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0193: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0198: pop
+		IL_0199: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_019e: ldloc.3
+		IL_019f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01a4: pop
+		IL_01a5: ldloc.0
+		IL_01a6: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_01ab: stloc.s 9
+		IL_01ad: ldstr "abc"
+		IL_01b2: ldloc.s 9
+		IL_01b4: ldc.r8 5
+		IL_01bd: box [System.Runtime]System.Double
+		IL_01c2: call object [JavaScriptRuntime]JavaScriptRuntime.String::Split(string, object, object)
+		IL_01c7: stloc.s 9
+		IL_01c9: ldloc.s 9
+		IL_01cb: stloc.s 4
 		IL_01cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01d2: ldloc.2
-		IL_01d3: ldc.r8 1
-		IL_01dc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_01e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01e6: pop
-		IL_01e7: ret
+		IL_01d2: ldloc.s 4
+		IL_01d4: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_01d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01de: pop
+		IL_01df: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01e4: ldloc.s 4
+		IL_01e6: ldstr "marker"
+		IL_01eb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+		IL_01f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01f5: pop
+		IL_01f6: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01fb: stloc.s 5
+		IL_01fd: ldstr "match"
+		IL_0202: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_0207: stloc.s 9
+		IL_0209: ldloc.s 5
+		IL_020b: ldloc.s 9
+		IL_020d: ldc.r8 1
+		IL_0216: box [System.Runtime]System.Double
+		IL_021b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0220: pop
+		.try
+		{
+			IL_0221: ldstr "abc"
+			IL_0226: ldloc.s 5
+			IL_0228: call object [JavaScriptRuntime]JavaScriptRuntime.String::Match(string, object)
+			IL_022d: pop
+			IL_022e: leave IL_029f
+		} // end .try
+		catch [System.Runtime]System.Exception
+		{
+			IL_0233: stloc.s 6
+			IL_0235: ldloc.s 6
+			IL_0237: dup
+			IL_0238: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_023d: dup
+			IL_023e: brtrue IL_0254
+
+			IL_0243: pop
+			IL_0244: dup
+			IL_0245: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_024a: dup
+			IL_024b: brtrue IL_0261
+
+			IL_0250: pop
+			IL_0251: pop
+			IL_0252: rethrow
+
+			IL_0254: pop
+			IL_0255: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_025a: stloc.s 7
+			IL_025c: br IL_0264
+
+			IL_0261: pop
+			IL_0262: stloc.s 7
+
+			IL_0264: ldloc.s 7
+			IL_0266: stloc.s 9
+			IL_0268: ldloc.s 9
+			IL_026a: stloc.s 8
+			IL_026c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0271: ldloc.s 8
+			IL_0273: ldstr "name"
+			IL_0278: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+			IL_027d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0282: pop
+			IL_0283: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0288: ldloc.s 8
+			IL_028a: ldstr "message"
+			IL_028f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, string)
+			IL_0294: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0299: pop
+			IL_029a: leave IL_029f
+		} // end handler
+
+		IL_029f: ret
 	} // end of method String_RegExp_SymbolDispatch_Custom::__js_module_init__
 
 } // end of class Modules.String_RegExp_SymbolDispatch_Custom
@@ -532,7 +645,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23c2
+		// Method begins at RVA 0x2495
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
