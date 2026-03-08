@@ -21,7 +21,9 @@
     "release:version": "node scripts/bumpVersion.js",
     "release:cut": "node scripts/release.js",
     "diff:test": "node scripts/differential-test/run.js",
-    "diff:test:generate": "node scripts/differential-test/run.js --generate 50 --seed 42"
+    "diff:test:generate": "node scripts/differential-test/run.js --generate 50 --seed 42",
+    "diff:test:canary": "node scripts/differential-test/runCanarySuites.js --suite pr --timeout 20 --compile-timeout 60",
+    "diff:test:canary:nightly": "node scripts/differential-test/runCanarySuites.js --suite nightly --timeout 20 --compile-timeout 60"
   },
   "dependencies": {
     "turndown": "^7.2.2"

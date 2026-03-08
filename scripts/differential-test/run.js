@@ -138,7 +138,7 @@ function compileWithJs2IL(jsFile, outDir, js2il, timeoutMs) {
     const durationMs = Date.now() - t0;
 
     if (result.error && result.error.code === 'ETIMEDOUT') {
-        return { success: false, dllPath: null, stderr: 'COMPILE_TIMEOUT', durationMs };
+        return { success: false, dllPath: null, stderr: 'COMPILE_TIMEOUT', durationMs, timeoutMs };
     }
     if (result.status !== 0) {
         const stderr = (result.stderr || '') + (result.stdout || '');
@@ -429,7 +429,21 @@ async function main() {
     // No extra cleanup needed; outDir is temp.
 }
 
-main().catch(err => {
-    console.error('Harness error:', err);
-    process.exitCode = 1;
-});
+module.exports = {
+    compileWithJs2IL,
+    extractJsError,
+    findJs2IL,
+    normaliseOutput,
+    parseArgs,
+    runDotnet,
+    runOneProgram,
+    runProcess,
+    runWithNode,
+};
+
+if (require.main === module) {
+    main().catch(err => {
+        console.error('Harness error:', err);
+        process.exitCode = 1;
+    });
+}

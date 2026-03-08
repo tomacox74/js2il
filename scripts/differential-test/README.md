@@ -10,6 +10,12 @@ mismatch is a potential compiler bug.
 # Run fixed corpus only (fast, suitable for CI)
 npm run diff:test
 
+# Run the small real-world canary PR gate
+npm run diff:test:canary
+
+# Run the PR gate plus the expanded nightly canaries
+npm run diff:test:canary:nightly
+
 # Run corpus + 50 generated programs (weekly-style)
 npm run diff:test:generate
 
@@ -48,6 +54,20 @@ node scripts/differential-test/run.js \
 | `array-index.js` | `Array.length` and index arithmetic |
 | `array-mixed.js` | `map / filter / reduce / indexOf` |
 
+## Canary suites
+
+The canary suites live under `scripts/differential-test/corpus/canary/` and validate committed expected output rather than just Node-vs-JS2IL parity.
+
+- **PR gate**: `npm run diff:test:canary`
+  - `dromaeo-object-array-modern.js`
+  - `dromaeo-object-regexp.js`
+- **Nightly-expanded**: `npm run diff:test:canary:nightly`
+  - PR gate cases, plus:
+  - `array-stress.js`
+  - `stopwatch-modern.js`
+
+Each canary consists of a `.js` driver plus a sibling `.expected.txt`. The runner compiles the driver with JS2IL, runs both Node and the compiled assembly with bounded timeouts, and requires both to match the committed expected stdout.
+
 ## Generated programs
 
 `generate.js` produces deterministic JS programs from five templates that
@@ -64,6 +84,7 @@ node scripts/differential-test/generate.js --seed 7 --count 20 --output /tmp/gen
 `differential.yml` wires this harness into GitHub Actions:
 
 * **Weekly** – runs corpus + 50 generated programs (scheduled Monday at 02:00 UTC).
+* **Canary smoke** – `canary-smoke.yml` runs the small real-world canary gate on pull requests/pushes and the expanded suite on a nightly schedule.
 * **Manual** – `workflow_dispatch` accepts custom `seed` / `generate` inputs.
 * To keep PR CI fast, this workflow is intentionally **not** triggered on pull requests.
 * If the scheduled weekly run fails, the workflow opens a GitHub issue automatically.
