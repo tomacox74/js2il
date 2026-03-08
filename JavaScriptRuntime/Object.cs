@@ -198,6 +198,25 @@ namespace JavaScriptRuntime
             public bool Frozen;
         }
 
+        private sealed class RequestedPropertyDescriptor
+        {
+            public bool HasEnumerable;
+            public bool Enumerable;
+            public bool HasConfigurable;
+            public bool Configurable;
+            public bool HasWritable;
+            public bool Writable;
+            public bool HasValue;
+            public object? Value;
+            public bool HasGet;
+            public object? Get;
+            public bool HasSet;
+            public object? Set;
+
+            public bool IsAccessorDescriptor => HasGet || HasSet;
+            public bool IsDataDescriptor => HasValue || HasWritable;
+        }
+
         private static readonly ConditionalWeakTable<object, ObjectIntegrityState> _integrityStates = new();
         private static readonly ConcurrentDictionary<string, Symbol> _encodedSymbolKeys = new(StringComparer.Ordinal);
 
@@ -223,6 +242,386 @@ namespace JavaScriptRuntime
 
             symbol = null;
             return false;
+        }
+
+        private static JsPropertyDescriptor CloneDescriptor(JsPropertyDescriptor descriptor)
+        {
+            return new JsPropertyDescriptor
+            {
+                Kind = descriptor.Kind,
+                Enumerable = descriptor.Enumerable,
+                Configurable = descriptor.Configurable,
+                Writable = descriptor.Writable,
+                Value = descriptor.Value,
+                Get = descriptor.Get,
+                Set = descriptor.Set
+            };
+        }
+
+        private static RequestedPropertyDescriptor ParseRequestedPropertyDescriptor(object attributes)
+        {
+            var descriptor = new RequestedPropertyDescriptor
+            {
+                HasEnumerable = HasOwnProperty(attributes, "enumerable"),
+                HasConfigurable = HasOwnProperty(attributes, "configurable"),
+                HasWritable = HasOwnProperty(attributes, "writable"),
+                HasValue = HasOwnProperty(attributes, "value"),
+                HasGet = HasOwnProperty(attributes, "get"),
+                HasSet = HasOwnProperty(attributes, "set")
+            };
+
+            if (descriptor.HasEnumerable)
+            {
+                descriptor.Enumerable = TypeUtilities.ToBoolean(GetProperty(attributes, "enumerable"));
+            }
+
+            if (descriptor.HasConfigurable)
+            {
+                descriptor.Configurable = TypeUtilities.ToBoolean(GetProperty(attributes, "configurable"));
+            }
+
+            if (descriptor.HasWritable)
+            {
+                descriptor.Writable = TypeUtilities.ToBoolean(GetProperty(attributes, "writable"));
+            }
+
+            if (descriptor.HasValue)
+            {
+                descriptor.Value = GetProperty(attributes, "value");
+            }
+
+            if (descriptor.HasGet)
+            {
+                descriptor.Get = GetProperty(attributes, "get");
+                if (descriptor.Get is not null && descriptor.Get is not Delegate)
+                {
+                    throw new TypeError("Getter must be a function");
+                }
+            }
+
+            if (descriptor.HasSet)
+            {
+                descriptor.Set = GetProperty(attributes, "set");
+                if (descriptor.Set is not null && descriptor.Set is not Delegate)
+                {
+                    throw new TypeError("Setter must be a function");
+                }
+            }
+
+            if (descriptor.IsAccessorDescriptor && descriptor.IsDataDescriptor)
+            {
+                throw new TypeError("Invalid property descriptor. Cannot both specify accessors and a value or writable attribute");
+            }
+
+            return descriptor;
+        }
+
+        private static JsPropertyDescriptor CreateDescriptorForNewProperty(RequestedPropertyDescriptor requested)
+        {
+            if (requested.IsAccessorDescriptor)
+            {
+                return new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Accessor,
+                    Enumerable = requested.HasEnumerable && requested.Enumerable,
+                    Configurable = requested.HasConfigurable && requested.Configurable,
+                    Get = requested.HasGet ? requested.Get : null,
+                    Set = requested.HasSet ? requested.Set : null
+                };
+            }
+
+            return new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = requested.HasEnumerable && requested.Enumerable,
+                Configurable = requested.HasConfigurable && requested.Configurable,
+                Writable = requested.HasWritable && requested.Writable,
+                Value = requested.HasValue ? requested.Value : null
+            };
+        }
+
+        private static JsPropertyDescriptor ApplyRequestedDescriptorToExisting(JsPropertyDescriptor current, RequestedPropertyDescriptor requested)
+        {
+            var result = CloneDescriptor(current);
+            var changesKind = requested.IsAccessorDescriptor
+                ? current.Kind != JsPropertyDescriptorKind.Accessor
+                : requested.IsDataDescriptor && current.Kind != JsPropertyDescriptorKind.Data;
+
+            if (!current.Configurable)
+            {
+                if (requested.HasConfigurable && requested.Configurable)
+                {
+                    throw new TypeError("Cannot redefine non-configurable property");
+                }
+
+                if (requested.HasEnumerable && requested.Enumerable != current.Enumerable)
+                {
+                    throw new TypeError("Cannot redefine non-configurable property");
+                }
+
+                if (changesKind)
+                {
+                    throw new TypeError("Cannot redefine non-configurable property");
+                }
+            }
+
+            if (current.Kind == JsPropertyDescriptorKind.Data)
+            {
+                if (requested.IsAccessorDescriptor)
+                {
+                    return new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Accessor,
+                        Enumerable = requested.HasEnumerable ? requested.Enumerable : current.Enumerable,
+                        Configurable = requested.HasConfigurable ? requested.Configurable : current.Configurable,
+                        Get = requested.HasGet ? requested.Get : null,
+                        Set = requested.HasSet ? requested.Set : null
+                    };
+                }
+
+                if (!current.Configurable && !current.Writable)
+                {
+                    if (requested.HasWritable && requested.Writable)
+                    {
+                        throw new TypeError("Cannot redefine non-configurable property");
+                    }
+
+                    if (requested.HasValue && !Operators.SameValue(current.Value, requested.Value))
+                    {
+                        throw new TypeError("Cannot redefine non-configurable property");
+                    }
+                }
+
+                if (requested.HasEnumerable)
+                {
+                    result.Enumerable = requested.Enumerable;
+                }
+
+                if (requested.HasConfigurable)
+                {
+                    result.Configurable = requested.Configurable;
+                }
+
+                if (requested.HasWritable)
+                {
+                    result.Writable = requested.Writable;
+                }
+
+                if (requested.HasValue)
+                {
+                    result.Value = requested.Value;
+                }
+
+                return result;
+            }
+
+            if (requested.IsDataDescriptor)
+            {
+                return new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = requested.HasEnumerable ? requested.Enumerable : current.Enumerable,
+                    Configurable = requested.HasConfigurable ? requested.Configurable : current.Configurable,
+                    Writable = requested.HasWritable && requested.Writable,
+                    Value = requested.HasValue ? requested.Value : null
+                };
+            }
+
+            if (!current.Configurable)
+            {
+                if (requested.HasGet && !ReferenceEquals(current.Get, requested.Get))
+                {
+                    throw new TypeError("Cannot redefine non-configurable property");
+                }
+
+                if (requested.HasSet && !ReferenceEquals(current.Set, requested.Set))
+                {
+                    throw new TypeError("Cannot redefine non-configurable property");
+                }
+            }
+
+            if (requested.HasEnumerable)
+            {
+                result.Enumerable = requested.Enumerable;
+            }
+
+            if (requested.HasConfigurable)
+            {
+                result.Configurable = requested.Configurable;
+            }
+
+            if (requested.HasGet)
+            {
+                result.Get = requested.Get;
+            }
+
+            if (requested.HasSet)
+            {
+                result.Set = requested.Set;
+            }
+
+            return result;
+        }
+
+        private static bool TryGetCanonicalArrayIndexKey(string key, out uint index)
+        {
+            if (string.IsNullOrEmpty(key)
+                || IsEncodedSymbolKey(key)
+                || !uint.TryParse(key, out index)
+                || index == uint.MaxValue)
+            {
+                index = 0;
+                return false;
+            }
+
+            return key == index.ToString(global::System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        private static List<string> ReorderOwnKeys(IEnumerable<string> encounteredKeys, bool includeEncodedSymbolKeys)
+        {
+            var numericKeys = new List<(uint Index, string Key)>();
+            var stringKeys = new List<string>();
+            var symbolKeys = new List<string>();
+
+            foreach (var key in encounteredKeys)
+            {
+                if (string.IsNullOrEmpty(key))
+                {
+                    continue;
+                }
+
+                if (IsEncodedSymbolKey(key))
+                {
+                    if (includeEncodedSymbolKeys)
+                    {
+                        symbolKeys.Add(key);
+                    }
+
+                    continue;
+                }
+
+                if (TryGetCanonicalArrayIndexKey(key, out var index))
+                {
+                    numericKeys.Add((index, key));
+                    continue;
+                }
+
+                stringKeys.Add(key);
+            }
+
+            numericKeys.Sort(static (left, right) => left.Index.CompareTo(right.Index));
+
+            var orderedKeys = new List<string>(numericKeys.Count + stringKeys.Count + symbolKeys.Count);
+            orderedKeys.AddRange(numericKeys.Select(entry => entry.Key));
+            orderedKeys.AddRange(stringKeys);
+            orderedKeys.AddRange(symbolKeys);
+            return orderedKeys;
+        }
+
+        private static List<string> CollectOwnKeysInEncounterOrder(object obj)
+        {
+            var keys = new List<string>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            static void AddKey(List<string> keys, HashSet<string> seen, string? key)
+            {
+                if (string.IsNullOrEmpty(key))
+                {
+                    return;
+                }
+
+                if (seen.Add(key))
+                {
+                    keys.Add(key);
+                }
+            }
+
+            if (obj is JavaScriptRuntime.Array jsArray)
+            {
+                for (int i = 0; i < jsArray.Count; i++)
+                {
+                    AddKey(keys, seen, i.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+                }
+            }
+            else if (obj is JavaScriptRuntime.TypedArrayBase typedArray)
+            {
+                for (int i = 0; i < typedArray.length; i++)
+                {
+                    AddKey(keys, seen, i.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+                }
+            }
+            else if (obj is ExpandoObject expando)
+            {
+                foreach (var key in ((IDictionary<string, object?>)expando).Keys)
+                {
+                    AddKey(keys, seen, key);
+                }
+            }
+            else if (obj is IDictionary<string, object?> dictGeneric)
+            {
+                foreach (var key in dictGeneric.Keys)
+                {
+                    AddKey(keys, seen, key);
+                }
+            }
+            else if (obj is System.Collections.IDictionary dictObject)
+            {
+                foreach (var key in dictObject.Keys)
+                {
+                    AddKey(keys, seen, DotNet2JSConversions.ToString(key));
+                }
+            }
+
+            foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
+            {
+                AddKey(keys, seen, key);
+            }
+
+            if (obj is not ExpandoObject
+                && obj is not IDictionary<string, object?>
+                && obj is not System.Collections.IDictionary
+                && obj is not JavaScriptRuntime.Array
+                && obj is not JavaScriptRuntime.TypedArrayBase)
+            {
+                var type = obj.GetType();
+                foreach (var property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(property => property.Name, StringComparer.Ordinal))
+                {
+                    AddKey(keys, seen, property.Name);
+                }
+
+                foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(field => field.Name, StringComparer.Ordinal))
+                {
+                    AddKey(keys, seen, field.Name);
+                }
+            }
+
+            return keys;
+        }
+
+        private static List<string> GetOrderedOwnKeys(object obj, bool includeEncodedSymbolKeys)
+        {
+            return ReorderOwnKeys(CollectOwnKeysInEncounterOrder(obj), includeEncodedSymbolKeys);
+        }
+
+        internal static List<string> GetOwnEnumerableKeysInOrder(object obj, bool includeEncodedSymbolKeys = false)
+        {
+            var orderedKeys = GetOrderedOwnKeys(obj, includeEncodedSymbolKeys);
+            var enumerableKeys = new List<string>(orderedKeys.Count);
+
+            foreach (var key in orderedKeys)
+            {
+                if (!includeEncodedSymbolKeys && IsEncodedSymbolKey(key))
+                {
+                    continue;
+                }
+
+                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, key))
+                {
+                    enumerableKeys.Add(key);
+                }
+            }
+
+            return enumerableKeys;
         }
 
         /// <summary>
@@ -496,82 +895,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var keys = new List<string>();
-            var seen = new HashSet<string>(StringComparer.Ordinal);
-
-            static void AddKey(List<string> keys, HashSet<string> seen, string? key)
-            {
-                if (string.IsNullOrEmpty(key))
-                {
-                    return;
-                }
-
-                if (IsEncodedSymbolKey(key))
-                {
-                    return;
-                }
-
-                if (seen.Add(key))
-                {
-                    keys.Add(key);
-                }
-            }
-
-            foreach (var k in PropertyDescriptorStore.GetOwnKeys(obj))
-            {
-                AddKey(keys, seen, k);
-            }
-
-            if (obj is System.Dynamic.ExpandoObject exp)
-            {
-                var dict = (IDictionary<string, object?>)exp;
-                foreach (var k in dict.Keys)
-                {
-                    AddKey(keys, seen, k);
-                }
-            }
-
-            if (obj is IDictionary<string, object?> dictGeneric)
-            {
-                foreach (var k in dictGeneric.Keys)
-                {
-                    AddKey(keys, seen, k);
-                }
-                // Skip CLR reflection for dictionary-backed objects: their own properties
-                // are already captured above. Falling through to reflection would expose
-                // the CLR interface properties (Keys, Values, Count, ...) as JS properties.
-                return new JavaScriptRuntime.Array(keys);
-            }
-
-            if (obj is System.Collections.IDictionary dictObj)
-            {
-                var convertedKeys = new List<string>();
-                foreach (var k in dictObj.Keys)
-                {
-                    convertedKeys.Add(DotNet2JSConversions.ToString(k));
-                }
-
-                // IDictionary key ordering can be unstable; sort for determinism.
-                convertedKeys.Sort(StringComparer.Ordinal);
-                foreach (var k in convertedKeys)
-                {
-                    AddKey(keys, seen, k);
-                }
-                return new JavaScriptRuntime.Array(keys);
-            }
-
-            // Reflection fallback for host objects.
-            var type = obj.GetType();
-            foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(p => p.Name, StringComparer.Ordinal))
-            {
-                AddKey(keys, seen, p.Name);
-            }
-            foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(f => f.Name, StringComparer.Ordinal))
-            {
-                AddKey(keys, seen, f.Name);
-            }
-
-            return new JavaScriptRuntime.Array(keys);
+            return new JavaScriptRuntime.Array(GetOrderedOwnKeys(obj, includeEncodedSymbolKeys: false));
         }
 
         /// <summary>
@@ -648,18 +972,8 @@ namespace JavaScriptRuntime
 
         private static void EnumerateOwnEnumerableProperties(object obj, ISet<string> seen, Action<string, object?> processProperty, bool includeEncodedSymbolKeys = false)
         {
-            foreach (var k in PropertyDescriptorStore.GetOwnKeys(obj))
+            foreach (var k in GetOwnEnumerableKeysInOrder(obj, includeEncodedSymbolKeys))
             {
-                if (!includeEncodedSymbolKeys && IsEncodedSymbolKey(k))
-                {
-                    continue;
-                }
-
-                if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
-                {
-                    continue;
-                }
-
                 if (seen.Add(k))
                 {
                     object? value = null;
@@ -669,85 +983,6 @@ namespace JavaScriptRuntime
                     }
 
                     processProperty(k, value);
-                }
-            }
-
-            if (obj is System.Dynamic.ExpandoObject exp)
-            {
-                var dict = (IDictionary<string, object?>)exp;
-                foreach (var kvp in dict)
-                {
-                    if (!includeEncodedSymbolKeys && IsEncodedSymbolKey(kvp.Key))
-                    {
-                        continue;
-                    }
-
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, kvp.Key) && seen.Add(kvp.Key))
-                    {
-                        processProperty(kvp.Key, kvp.Value);
-                    }
-                }
-
-                return;
-            }
-
-            if (obj is IDictionary<string, object?> dictGeneric)
-            {
-                foreach (var kvp in dictGeneric)
-                {
-                    if (!includeEncodedSymbolKeys && IsEncodedSymbolKey(kvp.Key))
-                    {
-                        continue;
-                    }
-
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key) && seen.Add(kvp.Key))
-                    {
-                        processProperty(kvp.Key, kvp.Value);
-                    }
-                }
-
-                return;
-            }
-
-            if (obj is System.Collections.IDictionary dictObj)
-            {
-                var sortedKeys = new List<string>();
-                foreach (var k in dictObj.Keys)
-                {
-                    sortedKeys.Add(DotNet2JSConversions.ToString(k));
-                }
-
-                sortedKeys.Sort(StringComparer.Ordinal);
-                foreach (var k in sortedKeys)
-                {
-                    if (!includeEncodedSymbolKeys && IsEncodedSymbolKey(k))
-                    {
-                        continue;
-                    }
-
-                    if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k) && seen.Add(k))
-                    {
-                        processProperty(k, dictObj[k]);
-                    }
-                }
-
-                return;
-            }
-
-            var type = obj.GetType();
-            foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(p => p.Name, StringComparer.Ordinal))
-            {
-                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, p.Name) && seen.Add(p.Name))
-                {
-                    processProperty(p.Name, p.GetValue(obj));
-                }
-            }
-
-            foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public).OrderBy(f => f.Name, StringComparer.Ordinal))
-            {
-                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, f.Name) && seen.Add(f.Name))
-                {
-                    processProperty(f.Name, f.GetValue(obj));
                 }
             }
         }
@@ -870,114 +1105,34 @@ namespace JavaScriptRuntime
             }
 
             var key = ToPropertyKeyString(prop);
+            var requested = ParseRequestedPropertyDescriptor(attributes);
 
             if (!IsExtensibleInternal(obj) && !HasOwnProperty(obj, key))
             {
                 throw new TypeError("Cannot define property on non-extensible object");
             }
 
-            var hasExistingDescriptor = PropertyDescriptorStore.TryGetOwn(obj, key, out var existingDescriptor);
+            var hasExistingDescriptor = TryGetOwnPropertyDescriptor(obj, key, out var existingDescriptor);
+            var appliedDescriptor = hasExistingDescriptor
+                ? ApplyRequestedDescriptorToExisting(existingDescriptor, requested)
+                : CreateDescriptorForNewProperty(requested);
 
-            // Determine descriptor kind.
-            // Prefer the resolved get/set values; this is robust even when the attribute object
-            // is not a plain ExpandoObject.
-            var getValue = GetProperty(attributes, "get");
-            var setValue = GetProperty(attributes, "set");
-            bool isAccessor = (getValue is not null && getValue is not JsNull)
-                || (setValue is not null && setValue is not JsNull)
-                || HasOwnProperty(attributes, "get")
-                || HasOwnProperty(attributes, "set");
-
-            // In ECMAScript, absent boolean fields default to false.
-            bool enumerable = HasOwnProperty(attributes, "enumerable") && TypeUtilities.ToBoolean(GetProperty(attributes, "enumerable"));
-            bool configurable = HasOwnProperty(attributes, "configurable") && TypeUtilities.ToBoolean(GetProperty(attributes, "configurable"));
-            bool writable = HasOwnProperty(attributes, "writable") && TypeUtilities.ToBoolean(GetProperty(attributes, "writable"));
-            var value = HasOwnProperty(attributes, "value") ? GetProperty(attributes, "value") : null;
-
-            if (hasExistingDescriptor && !existingDescriptor.Configurable)
+            if (obj is IDictionary<string, object?> dict)
             {
-                if (configurable)
+                if (appliedDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
                 {
-                    throw new TypeError("Cannot redefine non-configurable property");
-                }
-
-                if (HasOwnProperty(attributes, "enumerable") && enumerable != existingDescriptor.Enumerable)
-                {
-                    throw new TypeError("Cannot redefine non-configurable property");
-                }
-
-                if (existingDescriptor.Kind != (isAccessor ? JsPropertyDescriptorKind.Accessor : JsPropertyDescriptorKind.Data))
-                {
-                    throw new TypeError("Cannot redefine non-configurable property");
-                }
-
-                if (existingDescriptor.Kind == JsPropertyDescriptorKind.Data)
-                {
-                    if (!existingDescriptor.Writable)
+                    if (!dict.ContainsKey(key))
                     {
-                        if (HasOwnProperty(attributes, "writable") && writable)
-                        {
-                            throw new TypeError("Cannot redefine non-configurable property");
-                        }
-
-                        if (HasOwnProperty(attributes, "value") && !Operators.SameValue(existingDescriptor.Value, value))
-                        {
-                            throw new TypeError("Cannot redefine non-configurable property");
-                        }
+                        dict[key] = null;
                     }
                 }
                 else
                 {
-                    if (HasOwnProperty(attributes, "get") && !ReferenceEquals(existingDescriptor.Get, getValue))
-                    {
-                        throw new TypeError("Cannot redefine non-configurable property");
-                    }
-
-                    if (HasOwnProperty(attributes, "set") && !ReferenceEquals(existingDescriptor.Set, setValue))
-                    {
-                        throw new TypeError("Cannot redefine non-configurable property");
-                    }
+                    dict[key] = appliedDescriptor.Value;
                 }
             }
 
-            if (isAccessor)
-            {
-                var desc = new JsPropertyDescriptor
-                {
-                    Kind = JsPropertyDescriptorKind.Accessor,
-                    Enumerable = enumerable,
-                    Configurable = configurable,
-                    Get = getValue,
-                    Set = setValue
-                };
-
-                // Ensure key presence for dictionary-backed object literal enumeration.
-                if (obj is IDictionary<string, object?> dict && !dict.ContainsKey(key))
-                {
-                    dict[key] = null;
-                }
-
-                PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
-                return obj;
-            }
-
-            var dataDesc = new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = enumerable,
-                Configurable = configurable,
-                Writable = writable,
-                Value = value
-            };
-
-            PropertyDescriptorStore.DefineOrUpdate(obj, key, dataDesc);
-
-            // Best-effort backing store update for dictionary-backed objects.
-            if (obj is IDictionary<string, object?> dict2)
-            {
-                dict2[key] = value;
-            }
-
+            PropertyDescriptorStore.DefineOrUpdate(obj, key, appliedDescriptor);
             return obj;
         }
 
@@ -1074,15 +1229,8 @@ namespace JavaScriptRuntime
             }
 
             var symbols = new List<object?>();
-            var seen = new HashSet<string>(StringComparer.Ordinal);
-
-            foreach (var key in GetOwnKeysForIntegrity(obj))
+            foreach (var key in GetOrderedOwnKeys(obj, includeEncodedSymbolKeys: true))
             {
-                if (!seen.Add(key))
-                {
-                    continue;
-                }
-
                 if (TryDecodeEncodedSymbolKey(key, out var symbol))
                 {
                     symbols.Add(symbol);
@@ -1099,53 +1247,7 @@ namespace JavaScriptRuntime
 
         private static IEnumerable<string> GetOwnKeysForIntegrity(object obj)
         {
-            var keys = new List<string>();
-            var seen = new HashSet<string>(StringComparer.Ordinal);
-
-            static void AddKey(List<string> keys, HashSet<string> seen, string? key)
-            {
-                if (string.IsNullOrEmpty(key))
-                {
-                    return;
-                }
-
-                if (seen.Add(key))
-                {
-                    keys.Add(key);
-                }
-            }
-
-            foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
-            {
-                AddKey(keys, seen, key);
-            }
-
-            if (obj is System.Dynamic.ExpandoObject exp)
-            {
-                var dict = (IDictionary<string, object?>)exp;
-                foreach (var key in dict.Keys)
-                {
-                    AddKey(keys, seen, key);
-                }
-            }
-
-            if (obj is IDictionary<string, object?> dictGeneric)
-            {
-                foreach (var key in dictGeneric.Keys)
-                {
-                    AddKey(keys, seen, key);
-                }
-            }
-
-            if (obj is System.Collections.IDictionary dictObj)
-            {
-                foreach (var key in dictObj.Keys)
-                {
-                    AddKey(keys, seen, DotNet2JSConversions.ToString(key));
-                }
-            }
-
-            return keys;
+            return GetOrderedOwnKeys(obj, includeEncodedSymbolKeys: true);
         }
 
         private static void EnsureIntegrityDescriptorsForExistingOwnProperties(object obj)

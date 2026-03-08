@@ -189,26 +189,9 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
     private static List<string> GetOwnEnumerableKeysSingleTarget(object target)
     {
         // Dictionary-backed plain objects (JsObject/ExpandoObject): union descriptor keys and backing keys.
-        if (target is IDictionary<string, object?> dictGeneric)
+        if (target is IDictionary<string, object?>)
         {
-            var result = new List<string>();
-            var seen = new HashSet<string>(StringComparer.Ordinal);
-
-            // Descriptor-defined keys first (preserves definition order for defineProperty-like writes).
-            foreach (var k in PropertyDescriptorStore.GetOwnKeys(target))
-            {
-                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, k) && seen.Add(k))
-                    result.Add(k);
-            }
-
-            // Backing dictionary keys (direct assignments).
-            foreach (var k in dictGeneric.Keys)
-            {
-                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, k) && seen.Add(k))
-                    result.Add(k);
-            }
-
-            return result;
+            return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
         }
 
         // JS Array: enumerate indices
@@ -247,16 +230,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         // IDictionary: enumerate keys (stringified)
         if (target is IDictionary dictObj)
         {
-            var keys = new List<string>();
-            foreach (var k in dictObj.Keys)
-            {
-                var strKey = DotNet2JSConversions.ToString(k);
-                if (strKey != null && PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, strKey))
-                {
-                    keys.Add(strKey);
-                }
-            }
-            return keys;
+            return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
         }
 
         return new List<string>();

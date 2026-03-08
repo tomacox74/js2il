@@ -32,6 +32,7 @@ internal static class PropertyDescriptorStore
     private sealed class Slot
     {
         public readonly Dictionary<string, JsPropertyDescriptor> Descriptors = new(StringComparer.Ordinal);
+        public readonly List<string> KeyOrder = new();
     }
 
     private static readonly ConditionalWeakTable<object, Slot> _slots = new();
@@ -57,6 +58,10 @@ internal static class PropertyDescriptorStore
         if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
 
         var slot = _slots.GetOrCreateValue(target);
+        if (!slot.Descriptors.ContainsKey(key))
+        {
+            slot.KeyOrder.Add(key);
+        }
         slot.Descriptors[key] = descriptor;
     }
 
@@ -66,9 +71,7 @@ internal static class PropertyDescriptorStore
 
         if (_slots.TryGetValue(target, out var slot))
         {
-            // Snapshot keys to avoid exposing a live view of the dictionary.
-            var keys = new string[slot.Descriptors.Count];
-            slot.Descriptors.Keys.CopyTo(keys, 0);
+            var keys = slot.KeyOrder.ToArray();
             return keys;
         }
 
@@ -82,7 +85,12 @@ internal static class PropertyDescriptorStore
 
         if (_slots.TryGetValue(target, out var slot))
         {
-            return slot.Descriptors.Remove(key);
+            var removed = slot.Descriptors.Remove(key);
+            if (removed)
+            {
+                slot.KeyOrder.Remove(key);
+            }
+            return removed;
         }
 
         return false;

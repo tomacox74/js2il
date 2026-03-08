@@ -84,13 +84,13 @@
     {
       "clause": "10.1.6.2",
       "title": "IsCompatiblePropertyDescriptor ( Extensible , Desc , Current )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iscompatiblepropertydescriptor"
     },
     {
       "clause": "10.1.6.3",
       "title": "ValidateAndApplyPropertyDescriptor ( O , P , extensible , Desc , current )",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-validateandapplypropertydescriptor"
     },
     {
@@ -208,17 +208,29 @@
       },
       {
         "clause": "10.1.5",
-        "feature": "Property descriptor APIs (defineProperty, defineProperties, getOwnPropertyDescriptor(s))",
+        "feature": "Own descriptor reflection via getOwnPropertyDescriptor(s)",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getownproperty-p",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
-          "Js2IL.Tests/Object/JavaScript/Object_DefineProperties_Basic.js",
           "Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyDescriptors_Basic.js",
           "Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
+          "Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js"
+        ],
+        "notes": "Own descriptor reflection synthesizes ordinary data descriptors for dictionary-backed direct-assignment properties and returns explicit data/accessor descriptors stored in PropertyDescriptorStore. Host objects and other exotic receivers still use simplified reflection-backed behavior rather than full spec-accurate descriptor materialization."
+      },
+      {
+        "clause": "10.1.6",
+        "feature": "defineProperty / defineProperties ordinary redefinition invariants",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-defineownproperty-p-desc",
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
+          "Js2IL.Tests/Object/JavaScript/Object_DefineProperties_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/Object_DefineProperty_AccessorTransitions_And_Invariants.js",
+          "Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js",
           "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
         ],
-        "notes": "Descriptors are stored in PropertyDescriptorStore and support common data/accessor scenarios, non-enumerable properties, and non-extensible object checks. Validation is still a best-effort subset of IsCompatiblePropertyDescriptor / ValidateAndApplyPropertyDescriptor rather than a full spec implementation."
+        "notes": "Ordinary-object defineProperty handling now preserves unspecified attributes on redefinition, rejects mixed data/accessor descriptors, blocks invalid non-configurable/non-writable redefinitions, and rejects new own properties on non-extensible ordinary objects. Array, typed-array, string, and other exotic-object descriptor edge cases are still not modeled end-to-end."
       },
       {
         "clause": "10.1.7",
@@ -253,9 +265,11 @@
           "Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js",
           "Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js",
           "Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js"
+          "Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertySymbols_Basic.js",
+          "Js2IL.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js"
         ],
-        "notes": "Object.keys/values/entries/getOwnPropertyNames enumerate own keys and descriptor-backed enumerability for ordinary objects. Ordering and symbol-key behavior are pragmatic rather than fully ECMA-262 compliant."
+        "notes": "Ordinary-object own-key reflection now follows the usual ECMA-262 ordering for array-index string keys (ascending), then string keys in insertion order, then symbols in insertion order across Object.keys/values/entries, getOwnPropertyNames, getOwnPropertySymbols, and for...in on dictionary-backed ordinary objects. Host objects and some exotic receivers still rely on simplified reflection ordering."
       },
       {
         "clause": "10.1.12",

@@ -97,6 +97,12 @@ namespace Js2IL.Tests.Object
         public Task Object_DefineProperties_Basic() { var testName = nameof(Object_DefineProperties_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Object_DefineProperty_AccessorTransitions_And_Invariants() { var testName = nameof(Object_DefineProperty_AccessorTransitions_And_Invariants); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_DefineProperty_NonExtensible_ReconfigureExisting() { var testName = nameof(Object_DefineProperty_NonExtensible_ReconfigureExisting); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Object_GetOwnPropertyDescriptors_Basic() { var testName = nameof(Object_GetOwnPropertyDescriptors_Basic); return ExecutionTest(testName); }
 
         [Fact]
@@ -110,6 +116,9 @@ namespace Js2IL.Tests.Object
 
         [Fact]
         public Task Object_Integrity_FreezeSeal_PreventExtensions() { var testName = nameof(Object_Integrity_FreezeSeal_PreventExtensions); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_OwnPropertyKeyOrdering() { var testName = nameof(Object_OwnPropertyKeyOrdering); return ExecutionTest(testName); }
 
         [Fact]
         public Task Object_Prototype_Constructor_IsPrototypeOf() { var testName = nameof(Object_Prototype_Constructor_IsPrototypeOf); return ExecutionTest(testName); }
