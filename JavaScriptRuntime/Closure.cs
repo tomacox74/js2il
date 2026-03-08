@@ -185,7 +185,7 @@ namespace JavaScriptRuntime
             {
                 var delegateType = del.GetType();
                 var invoke = delegateType.GetMethod("Invoke")
-                    ?? throw new ArgumentException($"Delegate type '{delegateType}' does not define Invoke().", nameof(del));
+                    ?? throw new ArgumentException($"Delegate type '{delegateType}' does not define Invoke().", "target");
                 var parameters = invoke.GetParameters();
                 var abi = JsCallableScopeAbiResolver.Resolve(del);
                 bool hasScopes = abi.HasExplicitScopePayload;

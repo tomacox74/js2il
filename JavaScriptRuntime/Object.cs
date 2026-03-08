@@ -1994,12 +1994,18 @@ namespace JavaScriptRuntime
                 return false;
             }
 
+            if (!dictionary.TryGetValue(memberName, out var dictionaryValue))
+            {
+                return false;
+            }
+
             if (PropertyDescriptorStore.TryGetOwn(receiver, memberName, out _))
             {
                 return false;
             }
 
-            return dictionary.TryGetValue(memberName, out value);
+            value = dictionaryValue;
+            return true;
         }
 
         private static object InvokeMemberDelegate(object receiver, Delegate member, object?[] callArgs)
@@ -2007,14 +2013,59 @@ namespace JavaScriptRuntime
             var previousThis = RuntimeServices.SetCurrentThis(receiver);
             try
             {
-                return callArgs.Length switch
-                {
-                    0 => Closure.InvokeWithArgs0(member, System.Array.Empty<object>()),
-                    1 => Closure.InvokeWithArgs1(member, System.Array.Empty<object>(), callArgs[0]),
-                    2 => Closure.InvokeWithArgs2(member, System.Array.Empty<object>(), callArgs[0], callArgs[1]),
-                    3 => Closure.InvokeWithArgs3(member, System.Array.Empty<object>(), callArgs[0], callArgs[1], callArgs[2]),
-                    _ => Closure.InvokeWithArgs(member, System.Array.Empty<object>(), callArgs)
-                };
+                return Closure.InvokeWithArgs(member, System.Array.Empty<object>(), callArgs);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static object InvokeMemberDelegate0(object receiver, Delegate member)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs0(member, System.Array.Empty<object>());
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static object InvokeMemberDelegate1(object receiver, Delegate member, object? a0)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs1(member, System.Array.Empty<object>(), a0);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static object InvokeMemberDelegate2(object receiver, Delegate member, object? a0, object? a1)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs2(member, System.Array.Empty<object>(), a0, a1);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static object InvokeMemberDelegate3(object receiver, Delegate member, object? a0, object? a1, object? a2)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs3(member, System.Array.Empty<object>(), a0, a1, a2);
             }
             finally
             {
@@ -2054,7 +2105,7 @@ namespace JavaScriptRuntime
             {
                 if (directMemberValue is Delegate directMember)
                 {
-                    return InvokeMemberDelegate(receiver, directMember, System.Array.Empty<object>());
+                    return InvokeMemberDelegate0(receiver, directMember);
                 }
 
                 throw new TypeError($"{methodName} is not a function");
@@ -2104,7 +2155,7 @@ namespace JavaScriptRuntime
             {
                 if (directMemberValue is Delegate directMember)
                 {
-                    return InvokeMemberDelegate(receiver, directMember, new object?[] { a0! });
+                    return InvokeMemberDelegate1(receiver, directMember, a0);
                 }
 
                 throw new TypeError($"{methodName} is not a function");
@@ -2154,7 +2205,7 @@ namespace JavaScriptRuntime
             {
                 if (directMemberValue is Delegate directMember)
                 {
-                    return InvokeMemberDelegate(receiver, directMember, new object?[] { a0!, a1! });
+                    return InvokeMemberDelegate2(receiver, directMember, a0, a1);
                 }
 
                 throw new TypeError($"{methodName} is not a function");
@@ -2204,7 +2255,7 @@ namespace JavaScriptRuntime
             {
                 if (directMemberValue is Delegate directMember)
                 {
-                    return InvokeMemberDelegate(receiver, directMember, new object?[] { a0!, a1!, a2! });
+                    return InvokeMemberDelegate3(receiver, directMember, a0, a1, a2);
                 }
 
                 throw new TypeError($"{methodName} is not a function");
