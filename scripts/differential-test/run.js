@@ -429,7 +429,21 @@ async function main() {
     // No extra cleanup needed; outDir is temp.
 }
 
-main().catch(err => {
-    console.error('Harness error:', err);
-    process.exitCode = 1;
-});
+module.exports = {
+    compileWithJs2IL,
+    extractJsError,
+    findJs2IL,
+    normaliseOutput,
+    parseArgs,
+    runDotnet,
+    runOneProgram,
+    runProcess,
+    runWithNode,
+};
+
+if (require.main === module) {
+    main().catch(err => {
+        console.error('Harness error:', err);
+        process.exitCode = 1;
+    });
+}
