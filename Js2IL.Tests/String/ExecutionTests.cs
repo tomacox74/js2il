@@ -70,6 +70,12 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_RegExp_Exec_LastIndex_Sticky()
+        {
+            return ExecutionTest(nameof(String_RegExp_Exec_LastIndex_Sticky));
+        }
+
+        [Fact]
         public Task String_Substring()
         {
             return ExecutionTest(nameof(String_Substring));

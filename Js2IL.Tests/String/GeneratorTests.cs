@@ -77,6 +77,13 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_RegExp_Exec_LastIndex_Sticky()
+        {
+            var testName = nameof(String_RegExp_Exec_LastIndex_Sticky);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_Substring()
         {
             var testName = nameof(String_Substring);

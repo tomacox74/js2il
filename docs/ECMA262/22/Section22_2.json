@@ -578,9 +578,10 @@
         "testScripts": [
           "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js",
           "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js",
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js",
           "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js"
         ],
-        "notes": "Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). This is a minimal subset backed by .NET Regex; only 'g', 'i', and 'm' flags are currently functional. RegExp is not yet representable as a normal first-class function value (e.g., RegExp.prototype / passing RegExp around as a value are not supported)."
+        "notes": "Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). This remains a minimal subset backed by .NET Regex; the g, i, m, and y flags are currently functional, while d, s, u, and v are still unsupported. RegExp is not yet representable as a normal first-class function value (e.g., RegExp.prototype / passing RegExp around as a value are not supported)."
       },
       {
         "clause": "22.2.6.2",
@@ -588,9 +589,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.exec",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js"
+          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js",
+          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.exec as a minimal subset. Supports returning an Array of captures and attaches .index and .input. Full RegExp exotic object semantics, sticky (/y), unicode modes, named groups, and @@exec overrides are not implemented."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.exec as a minimal subset. Supports returning an Array of captures, attaching .index and .input, and honoring lastIndex for both /g and /y regexes. Full RegExp exotic object semantics, unicode modes, named groups, and @@exec overrides are not implemented."
       },
       {
         "clause": "22.2.8.1",
@@ -598,9 +600,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-lastindex",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js"
+          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js",
+          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js",
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp as a numeric property. Participates in both exec() and test() for /g (global) regexes; when no match is found lastIndex is reset to 0."
+        "notes": "Implemented in JavaScriptRuntime.RegExp as a numeric property. Participates in exec() and test() for both /g and /y regexes, and resets to 0 after failed sticky/global matches or when the stored start position is past the end of the input."
       },
       {
         "clause": "22.2.6.5",
@@ -648,9 +652,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.test",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js"
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js",
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.test. Updates lastIndex for global regexes (/g flag). Sticky flag (/y) and unicode modes are not yet supported."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.test. Updates lastIndex for both global (/g) and sticky (/y) regexes using the same matching rules as exec(). Unicode modes and the broader symbol-dispatch string integration are still not implemented."
       },
       {
         "clause": "22.2.6.17",
@@ -668,9 +673,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.flags",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js"
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js",
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.flags. Returns flags in canonical order (dgimsuyv). Only 'g', 'i', 'm' flags are currently functional."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.flags. Returns flags in canonical order (dgimsuvy). The g, i, m, and y flags are currently functional."
       },
       {
         "clause": "22.2.6.3",
@@ -698,9 +704,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.sticky",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js"
+          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.RegExp.sticky. Currently always returns false as 'y' flag is not yet supported."
+        "notes": "Implemented in JavaScriptRuntime.RegExp.sticky from the stored y flag. Sticky regexes now use lastIndex-constrained matching in exec() and test(); unicode and symbol-method parity remain incomplete."
       },
       {
         "clause": "22.2.6.18",

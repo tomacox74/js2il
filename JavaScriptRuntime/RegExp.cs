@@ -8,6 +8,7 @@ namespace JavaScriptRuntime
     {
         private readonly Regex _regex;
         private readonly bool _global;
+        private readonly bool _sticky;
         private readonly string _source;
 
         // Minimal support for RegExp.prototype.lastIndex (used heavily by parsers).
@@ -20,6 +21,7 @@ namespace JavaScriptRuntime
             _source = string.Empty;
             _regex = new Regex(_source);
             _global = false;
+            _sticky = false;
             lastIndex = 0;
         }
 
@@ -28,6 +30,7 @@ namespace JavaScriptRuntime
             _source = DotNet2JSConversions.ToString(pattern);
             _regex = new Regex(_source);
             _global = false;
+            _sticky = false;
             lastIndex = 0;
         }
 
@@ -40,12 +43,15 @@ namespace JavaScriptRuntime
             if (f.IndexOf('m') >= 0) opts |= RegexOptions.Multiline;
             // 'g' (global) enables lastIndex tracking (affects exec() and test()).
             _global = f.IndexOf('g') >= 0;
+            _sticky = f.IndexOf('y') >= 0;
             _regex = new Regex(_source, opts);
             lastIndex = 0;
         }
 
         internal Regex Regex => _regex;
         internal bool Global => _global;
+        internal bool Sticky => _sticky;
+        private bool UsesLastIndexSemantics => _global || _sticky;
 
         // ECMAScript RegExp instance properties (subset).
         public string source => _source;
@@ -55,7 +61,7 @@ namespace JavaScriptRuntime
         
         // Additional flag properties (currently unsupported flags return false)
         public bool dotAll => false;  // 's' flag - not supported yet
-        public bool sticky => false;  // 'y' flag - not supported yet
+        public bool sticky => _sticky;
         public bool unicode => false; // 'u' flag - not supported yet
         public bool unicodeSets => false; // 'v' flag - not supported yet
         public bool hasIndices => false; // 'd' flag - not supported yet
@@ -82,43 +88,14 @@ namespace JavaScriptRuntime
         public object test(object? input)
         {
             var s = DotNet2JSConversions.ToString(input) ?? string.Empty;
-            
-            // For global regexes, test() should update lastIndex just like exec()
-            if (_global)
+
+            if (!TryMatch(s, out var match))
             {
-                int startAt = 0;
-                if (double.IsNaN(lastIndex) || double.IsInfinity(lastIndex) || lastIndex < 0)
-                {
-                    startAt = 0;
-                }
-                else
-                {
-                    startAt = (int)lastIndex;
-                    if (startAt > s.Length)
-                    {
-                        lastIndex = 0;
-                        return false;
-                    }
-                }
-                
-                var match = _regex.Match(s, startAt);
-                if (!match.Success)
-                {
-                    lastIndex = 0;
-                    return false;
-                }
-                
-                // Advance lastIndex
-                int nextIndex = match.Index + match.Length;
-                if (match.Length == 0)
-                {
-                    nextIndex = match.Index + 1;
-                }
-                lastIndex = nextIndex;
-                return true;
+                return false;
             }
-            
-            return _regex.IsMatch(s);
+
+            UpdateLastIndexAfterSuccess(match);
+            return true;
         }
 
         // Minimal RegExp.prototype.exec(string)
@@ -127,49 +104,12 @@ namespace JavaScriptRuntime
         {
             var s = DotNet2JSConversions.ToString(input) ?? string.Empty;
 
-            int startAt = 0;
-            if (_global)
+            if (!TryMatch(s, out var match))
             {
-                // Clamp/normalize lastIndex to a valid starting offset.
-                if (double.IsNaN(lastIndex) || double.IsInfinity(lastIndex) || lastIndex < 0)
-                {
-                    startAt = 0;
-                }
-                else
-                {
-                    startAt = (int)lastIndex;
-                    if (startAt > s.Length)
-                    {
-                        // Per RegExpBuiltinExec / lastIndex semantics, a global exec with lastIndex
-                        // beyond string length fails and resets lastIndex to 0.
-                        lastIndex = 0;
-                        return JsNull.Null;
-                    }
-                }
-            }
-
-            var match = _regex.Match(s, startAt);
-            if (!match.Success)
-            {
-                if (_global)
-                {
-                    lastIndex = 0;
-                }
-
                 return JsNull.Null;
             }
 
-            if (_global)
-            {
-                // Advance lastIndex. For zero-length matches we must still advance to avoid
-                // infinite loops in user code like: while (re.exec(s)) { }
-                int nextIndex = match.Index + match.Length;
-                if (match.Length == 0)
-                {
-                    nextIndex = match.Index + 1;
-                }
-                lastIndex = nextIndex;
-            }
+            UpdateLastIndexAfterSuccess(match);
 
             var result = new JavaScriptRuntime.Array(match.Groups.Count);
             for (int i = 0; i < match.Groups.Count; i++)
@@ -188,6 +128,78 @@ namespace JavaScriptRuntime
         public string toString()
         {
             return "/" + _source + "/" + flags;
+        }
+
+        private bool TryMatch(string input, out Match match)
+        {
+            var startAt = 0;
+            if (!TryGetMatchStart(input, out startAt))
+            {
+                match = Match.Empty;
+                return false;
+            }
+
+            match = _regex.Match(input, startAt);
+            if (!match.Success || (_sticky && match.Index != startAt))
+            {
+                if (UsesLastIndexSemantics)
+                {
+                    lastIndex = 0;
+                }
+
+                match = Match.Empty;
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool TryGetMatchStart(string input, out int startAt)
+        {
+            startAt = 0;
+            if (!UsesLastIndexSemantics)
+            {
+                return true;
+            }
+
+            if (double.IsNaN(lastIndex) || double.IsNegativeInfinity(lastIndex) || lastIndex < 0)
+            {
+                return true;
+            }
+
+            if (double.IsPositiveInfinity(lastIndex))
+            {
+                lastIndex = 0;
+                return false;
+            }
+
+            var truncated = System.Math.Truncate(lastIndex);
+            if (truncated > input.Length)
+            {
+                lastIndex = 0;
+                return false;
+            }
+
+            startAt = (int)truncated;
+            return true;
+        }
+
+        private void UpdateLastIndexAfterSuccess(Match match)
+        {
+            if (!UsesLastIndexSemantics)
+            {
+                return;
+            }
+
+            // Keep the existing exec()/test() behavior that advances past empty matches
+            // so user loops do not get stuck on zero-length results.
+            int nextIndex = match.Index + match.Length;
+            if (match.Length == 0)
+            {
+                nextIndex = match.Index + 1;
+            }
+
+            lastIndex = nextIndex;
         }
     }
 }

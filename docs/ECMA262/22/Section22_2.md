@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-08T06:04:27Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -116,13 +116,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| RegExp ( pattern , flags ) | Supported with Limitations | [`IntrinsicCallables_RegExp_Callable_CreatesRegex.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js)<br>[`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js)<br>[`IntrinsicCallables_RegExp_ToString_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js) | Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). This is a minimal subset backed by .NET Regex; only 'g', 'i', and 'm' flags are currently functional. RegExp is not yet representable as a normal first-class function value (e.g., RegExp.prototype / passing RegExp around as a value are not supported). |
+| RegExp ( pattern , flags ) | Supported with Limitations | [`IntrinsicCallables_RegExp_Callable_CreatesRegex.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js)<br>[`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js)<br>[`IntrinsicCallables_RegExp_Sticky_Getters.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js)<br>[`IntrinsicCallables_RegExp_ToString_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js) | Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). This remains a minimal subset backed by .NET Regex; the g, i, m, and y flags are currently functional, while d, s, u, and v are still unsupported. RegExp is not yet representable as a normal first-class function value (e.g., RegExp.prototype / passing RegExp around as a value are not supported). |
 
 ### 22.2.6.2 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.exec))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| RegExp.prototype.exec | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js) | Implemented in JavaScriptRuntime.RegExp.exec as a minimal subset. Supports returning an Array of captures and attaches .index and .input. Full RegExp exotic object semantics, sticky (/y), unicode modes, named groups, and @@exec overrides are not implemented. |
+| RegExp.prototype.exec | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js)<br>[`String_RegExp_Exec_LastIndex_Sticky.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js) | Implemented in JavaScriptRuntime.RegExp.exec as a minimal subset. Supports returning an Array of captures, attaching .index and .input, and honoring lastIndex for both /g and /y regexes. Full RegExp exotic object semantics, unicode modes, named groups, and @@exec overrides are not implemented. |
 
 ### 22.2.6.3 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll))
 
@@ -134,7 +134,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| get RegExp.prototype.flags | Supported with Limitations | [`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js) | Implemented in JavaScriptRuntime.RegExp.flags. Returns flags in canonical order (dgimsuyv). Only 'g', 'i', 'm' flags are currently functional. |
+| get RegExp.prototype.flags | Supported with Limitations | [`IntrinsicCallables_RegExp_Flags_Getter.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js)<br>[`IntrinsicCallables_RegExp_Sticky_Getters.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js) | Implemented in JavaScriptRuntime.RegExp.flags. Returns flags in canonical order (dgimsuvy). The g, i, m, and y flags are currently functional. |
 
 ### 22.2.6.5 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.global))
 
@@ -170,13 +170,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| get RegExp.prototype.sticky | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js) | Implemented in JavaScriptRuntime.RegExp.sticky. Currently always returns false as 'y' flag is not yet supported. |
+| get RegExp.prototype.sticky | Supported with Limitations | [`IntrinsicCallables_RegExp_Sticky_Getters.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js) | Implemented in JavaScriptRuntime.RegExp.sticky from the stored y flag. Sticky regexes now use lastIndex-constrained matching in exec() and test(); unicode and symbol-method parity remain incomplete. |
 
 ### 22.2.6.16 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.test))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| RegExp.prototype.test | Supported with Limitations | [`IntrinsicCallables_RegExp_Test_LastIndex_Global.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js) | Implemented in JavaScriptRuntime.RegExp.test. Updates lastIndex for global regexes (/g flag). Sticky flag (/y) and unicode modes are not yet supported. |
+| RegExp.prototype.test | Supported with Limitations | [`IntrinsicCallables_RegExp_Test_LastIndex_Global.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js)<br>[`IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js) | Implemented in JavaScriptRuntime.RegExp.test. Updates lastIndex for both global (/g) and sticky (/y) regexes using the same matching rules as exec(). Unicode modes and the broader symbol-dispatch string integration are still not implemented. |
 
 ### 22.2.6.17 ([tc39.es](https://tc39.es/ecma262/#sec-regexp.prototype.tostring))
 
@@ -200,5 +200,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| RegExp instance lastIndex | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js) | Implemented in JavaScriptRuntime.RegExp as a numeric property. Participates in both exec() and test() for /g (global) regexes; when no match is found lastIndex is reset to 0. |
+| RegExp instance lastIndex | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js)<br>[`String_RegExp_Exec_LastIndex_Sticky.js`](../../../Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js)<br>[`IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js) | Implemented in JavaScriptRuntime.RegExp as a numeric property. Participates in exec() and test() for both /g and /y regexes, and resets to 0 after failed sticky/global matches or when the stored start position is past the end of the input. |
 

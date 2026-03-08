@@ -50,6 +50,18 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_RegExp_Sticky_Getters()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_RegExp_Sticky_Getters));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_RegExp_Test_LastIndex_Sticky()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_RegExp_Test_LastIndex_Sticky));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Error_Callable_CreatesInstances()
         {
             return ExecutionTest(nameof(IntrinsicCallables_Error_Callable_CreatesInstances));
