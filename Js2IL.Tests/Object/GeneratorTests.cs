@@ -118,6 +118,9 @@ namespace Js2IL.Tests.Object
         public Task Object_Integrity_FreezeSeal_PreventExtensions() { var testName = nameof(Object_Integrity_FreezeSeal_PreventExtensions); return GenerateTest(testName); }
 
         [Fact]
+        public Task Object_Integrity_DefineProperty_And_StrictWrites() { var testName = nameof(Object_Integrity_DefineProperty_And_StrictWrites); return GenerateTest(testName); }
+
+        [Fact]
         public Task Object_OwnPropertyKeyOrdering() { var testName = nameof(Object_OwnPropertyKeyOrdering); return GenerateTest(testName); }
 
         [Fact]

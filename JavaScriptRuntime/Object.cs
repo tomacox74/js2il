@@ -3140,7 +3140,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static bool TryInvokePrototypeSetter(object receiver, string propName, object? value)
+        private static bool TrySetPropertyViaPrototypeOrThrow(object receiver, string propName, object? value)
         {
             if (!PrototypeChain.Enabled)
             {
@@ -3172,13 +3172,25 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                if (PropertyDescriptorStore.TryGetOwn(proto, propName, out var desc)
-                    && desc.Kind == JsPropertyDescriptorKind.Accessor
-                    && desc.Set is not null
-                    && desc.Set is not JsNull)
+                if (TryGetOwnPropertyDescriptor(proto, propName, out var desc))
                 {
-                    InvokeCallable(desc.Set, receiver, new object?[] { value });
-                    return true;
+                    if (desc.Kind == JsPropertyDescriptorKind.Accessor)
+                    {
+                        if (desc.Set is not null && desc.Set is not JsNull)
+                        {
+                            InvokeCallable(desc.Set, receiver, new object?[] { value });
+                            return true;
+                        }
+
+                        throw new TypeError($"Cannot set property '{propName}' of object which has only a getter");
+                    }
+
+                    if (!desc.Writable)
+                    {
+                        throw new TypeError($"Cannot assign to read only property '{propName}' of object");
+                    }
+
+                    return false;
                 }
 
                 current = proto;
@@ -4856,8 +4868,9 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// Implements the JavaScript <c>delete obj.prop</c> runtime semantics (minimal).
-        /// Returns true if the deletion succeeds or the property is not present.
+        /// Implements the JavaScript <c>delete obj.prop</c> runtime semantics for this
+        /// strict-mode-only runtime. Returns true if the deletion succeeds or the property
+        /// is not present, and throws for non-configurable own properties.
         /// </summary>
         public static bool DeleteProperty(object? receiver, object? propName)
         {
@@ -4871,7 +4884,7 @@ namespace JavaScriptRuntime
             if (PropertyDescriptorStore.TryGetOwn(receiver, key, out var ownDescriptor)
                 && !ownDescriptor.Configurable)
             {
-                return false;
+                throw new JavaScriptRuntime.TypeError($"Cannot delete property '{key}' of object");
             }
 
             if (receiver is System.Dynamic.ExpandoObject exp)
@@ -5120,14 +5133,14 @@ namespace JavaScriptRuntime
             }
 
             var hasOwn = HasOwnProperty(obj, name);
-            if (!hasOwn && TryInvokePrototypeSetter(obj, name, value))
+            if (!hasOwn && TrySetPropertyViaPrototypeOrThrow(obj, name, value))
             {
                 return value;
             }
 
             if (!hasOwn && !IsExtensibleInternal(obj))
             {
-                return value;
+                throw new TypeError($"Cannot add property '{name}', object is not extensible");
             }
 
             // Descriptor-defined own property handling (accessors + writable enforcement)
@@ -5138,23 +5151,27 @@ namespace JavaScriptRuntime
                     if (desc.Set is not null && desc.Set is not JsNull)
                     {
                         InvokeCallable(desc.Set, obj, new object?[] { value });
+                        return value;
                     }
-                    return value;
+
+                    throw new TypeError($"Cannot set property '{name}' of object which has only a getter");
                 }
 
-                if (desc.Writable)
+                if (!desc.Writable)
                 {
-                    desc.Value = value;
-                    PropertyDescriptorStore.DefineOrUpdate(obj, name, desc);
-                    if (obj is System.Dynamic.ExpandoObject expDesc)
-                    {
-                        var dict = (IDictionary<string, object?>)expDesc;
-                        dict[name] = value;
-                    }
-                    else if (obj is IDictionary<string, object?> dictDesc)
-                    {
-                        dictDesc[name] = value;
-                    }
+                    throw new TypeError($"Cannot assign to read only property '{name}' of object");
+                }
+
+                desc.Value = value;
+                PropertyDescriptorStore.DefineOrUpdate(obj, name, desc);
+                if (obj is System.Dynamic.ExpandoObject expDesc)
+                {
+                    var dict = (IDictionary<string, object?>)expDesc;
+                    dict[name] = value;
+                }
+                else if (obj is IDictionary<string, object?> dictDesc)
+                {
+                    dictDesc[name] = value;
                 }
                 return value;
             }
@@ -5166,7 +5183,7 @@ namespace JavaScriptRuntime
 
                 // Prototype-setter semantics: if no own property exists, and a prototype accessor
                 // defines a setter, route the assignment to that setter.
-                if (!dict.ContainsKey(name) && TryInvokePrototypeSetter(obj, name, value))
+                if (!dict.ContainsKey(name) && TrySetPropertyViaPrototypeOrThrow(obj, name, value))
                 {
                     return value;
                 }
@@ -5177,7 +5194,7 @@ namespace JavaScriptRuntime
 
             if (obj is IDictionary<string, object?> dictGeneric)
             {
-                if (!dictGeneric.ContainsKey(name) && TryInvokePrototypeSetter(obj, name, value))
+                if (!dictGeneric.ContainsKey(name) && TrySetPropertyViaPrototypeOrThrow(obj, name, value))
                 {
                     return value;
                 }
@@ -5199,7 +5216,7 @@ namespace JavaScriptRuntime
                     return value;
                 }
 
-                if (TryInvokePrototypeSetter(obj, name, value))
+                if (TrySetPropertyViaPrototypeOrThrow(obj, name, value))
                 {
                     return value;
                 }
@@ -5220,7 +5237,7 @@ namespace JavaScriptRuntime
             // properties (e.g., MyEvent.prototype = ...). Store these in the descriptor table.
             if (obj is Delegate)
             {
-                if (TryInvokePrototypeSetter(obj, name, value))
+                if (TrySetPropertyViaPrototypeOrThrow(obj, name, value))
                 {
                     return value;
                 }
@@ -5262,7 +5279,7 @@ namespace JavaScriptRuntime
             // Prototype-setter semantics for "plain" CLR objects (e.g., JS2IL-generated scope classes).
             // If no own writable field/property exists, but a prototype accessor defines a setter,
             // route the assignment to that setter.
-            if (TryInvokePrototypeSetter(obj, name, value))
+            if (TrySetPropertyViaPrototypeOrThrow(obj, name, value))
             {
                 return value;
             }
