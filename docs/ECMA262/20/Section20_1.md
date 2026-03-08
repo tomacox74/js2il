@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-08T20:04:27Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -99,7 +99,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.defineProperty | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectDefineProperty_Enumerable_ForIn.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js) | Implemented in JavaScriptRuntime.Object.defineProperty using a ConditionalWeakTable-backed descriptor store. Supports data and accessor descriptors, and respects enumerable:false for for..in enumeration. Default attribute values follow the spec (missing fields default to false), but full descriptor redefinition rules and many throw/invariant cases are not implemented. |
+| Object.defineProperty | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectDefineProperty_Enumerable_ForIn.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`Object_DefineProperty_AccessorTransitions_And_Invariants.js`](../../../Js2IL.Tests/Object/JavaScript/Object_DefineProperty_AccessorTransitions_And_Invariants.js)<br>[`Object_DefineProperty_NonExtensible_ReconfigureExisting.js`](../../../Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js) | Implemented in JavaScriptRuntime.Object.defineProperty using a ConditionalWeakTable-backed descriptor store plus implicit descriptors for dictionary-backed ordinary properties. Ordinary-object redefinition checks cover data/accessor transitions, non-configurable and non-writable invariants, inherited descriptor fields, and non-extensible/sealed/frozen interactions for ordinary objects. Exotic arrays, typed arrays, host objects, and full proxy invariants remain partial. |
 
 ### 20.1.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-object.entries))
 
@@ -111,7 +111,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.freeze | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js) | Marks objects non-extensible and makes own descriptor-backed data properties non-writable/non-configurable. Behavior for exotic objects/arrays is partial. |
+| Object.freeze | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js) | For ordinary objects, synthesizes descriptors for existing own properties, marks the object non-extensible, sets own properties non-configurable, and makes own data properties non-writable. Subsequent strict-mode writes, deletes, and incompatible Object.defineProperty redefinitions fail through the ordinary property paths with TypeError. Array and other exotic-object invariants remain partial. |
 
 ### 20.1.2.7 ([tc39.es](https://tc39.es/ecma262/#sec-object.fromentries))
 
@@ -177,19 +177,19 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.isExtensible | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js) | Backed by a runtime integrity side-table; primitives return false. Exotic object behavior and complete realm invariants are partial. |
+| Object.isExtensible | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js) | Backed by a runtime integrity side-table; primitives return false. Ordinary objects transition to false after preventExtensions/seal/freeze and that state is consulted by assignment and Object.defineProperty paths. Exotic object behavior and complete realm invariants are partial. |
 
 ### 20.1.2.17 ([tc39.es](https://tc39.es/ecma262/#sec-object.isfrozen))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.isFrozen | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js) | Computed from integrity state plus own descriptor attributes. Full array-index/exotic-property semantics are partial. |
+| Object.isFrozen | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js) | Computed from non-extensible state plus own descriptor configurability and writability for ordinary objects; empty non-extensible ordinary objects report true. Full array-index and other exotic-property semantics are partial. |
 
 ### 20.1.2.18 ([tc39.es](https://tc39.es/ecma262/#sec-object.issealed))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.isSealed | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js) | Computed from integrity state plus own descriptor configurability. Exotic object semantics are partial. |
+| Object.isSealed | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js) | Computed from non-extensible state plus own descriptor configurability for ordinary objects; empty non-extensible ordinary objects report true. Exotic object semantics are partial. |
 
 ### 20.1.2.19 ([tc39.es](https://tc39.es/ecma262/#sec-object.keys))
 
@@ -201,7 +201,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.preventExtensions | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js) | Marks objects non-extensible in runtime integrity state; assignment of new dynamic properties is blocked in generic property paths. |
+| Object.preventExtensions | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>[`Object_DefineProperty_NonExtensible_ReconfigureExisting.js`](../../../Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js) | Marks ordinary objects non-extensible in runtime integrity state and blocks adding new properties through assignment and Object.defineProperty. Because JS2IL requires strict mode, failed additions surface as TypeError instead of silent no-op. Exotic object behavior remains partial. |
 
 ### 20.1.2.21 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype))
 
@@ -213,7 +213,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object.seal | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js) | Marks objects non-extensible and sets own descriptor-backed properties non-configurable. Full host/exotic invariants are partial. |
+| Object.seal | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js) | For ordinary objects, synthesizes descriptors for existing own properties, marks the object non-extensible, and sets own properties non-configurable while leaving writable data properties writable. delete and incompatible Object.defineProperty redefinitions then fail through ordinary descriptor enforcement. Full host and exotic-object invariants are partial. |
 
 ### 20.1.2.23 ([tc39.es](https://tc39.es/ecma262/#sec-object.setprototypeof))
 
