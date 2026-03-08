@@ -8,7 +8,7 @@ namespace Js2IL.Utilities;
 
 internal static class DynamicFunctionSupport
 {
-    internal const string ScopeNamePrefix = "DynamicFunction_";
+    internal const string ScopeNamePrefix = "<>DynamicFunction_";
 
     internal static string GetScopeName(Node siteNode)
     {

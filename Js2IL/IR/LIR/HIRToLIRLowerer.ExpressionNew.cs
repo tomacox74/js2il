@@ -32,7 +32,8 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
         }
 
-        if (string.Equals(ctorName, "Function", StringComparison.Ordinal)
+        if (calleeVar?.Name.Kind == BindingKind.Global
+            && string.Equals(ctorName, "Function", StringComparison.Ordinal)
             && TryGetDynamicFunctionSyntaxErrorMessage(newExpr.Arguments, out var syntaxErrorMessage)
             && !string.IsNullOrWhiteSpace(syntaxErrorMessage))
         {

@@ -205,6 +205,12 @@ namespace Js2IL.Tests.Function
         public Task Function_Constructor_SyntaxError() { var testName = nameof(Function_Constructor_SyntaxError); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_Constructor_New_ShadowedLocal_NoSyntaxError() { var testName = nameof(Function_Constructor_New_ShadowedLocal_NoSyntaxError); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous() { var testName = nameof(Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_MaxParameters_16() { var testName = nameof(Function_MaxParameters_16); return ExecutionTest(testName); }
 
         [Fact]

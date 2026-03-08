@@ -261,8 +261,7 @@ namespace JavaScriptRuntime
             if (string.Equals(name, "__js_call__", StringComparison.Ordinal))
             {
                 var declaringTypeName = resolvedTarget.Method.DeclaringType?.Name;
-                if (!string.IsNullOrEmpty(declaringTypeName)
-                    && declaringTypeName.StartsWith("DynamicFunction_", StringComparison.Ordinal))
+                if (IsSyntheticDynamicFunctionDeclaringTypeName(declaringTypeName))
                 {
                     return "anonymous";
                 }
@@ -274,6 +273,46 @@ namespace JavaScriptRuntime
             }
 
             return string.IsNullOrEmpty(name) ? string.Empty : name;
+        }
+
+        private static bool IsSyntheticDynamicFunctionDeclaringTypeName(string? declaringTypeName)
+        {
+            const string prefix = "<>DynamicFunction_L";
+
+            if (string.IsNullOrEmpty(declaringTypeName)
+                || !declaringTypeName.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            var index = prefix.Length;
+            if (index >= declaringTypeName.Length || !char.IsDigit(declaringTypeName[index]))
+            {
+                return false;
+            }
+
+            while (index < declaringTypeName.Length && char.IsDigit(declaringTypeName[index]))
+            {
+                index++;
+            }
+
+            if (index >= declaringTypeName.Length || declaringTypeName[index] != 'C')
+            {
+                return false;
+            }
+
+            index++;
+            if (index >= declaringTypeName.Length || !char.IsDigit(declaringTypeName[index]))
+            {
+                return false;
+            }
+
+            while (index < declaringTypeName.Length && char.IsDigit(declaringTypeName[index]))
+            {
+                index++;
+            }
+
+            return index == declaringTypeName.Length;
         }
 
         public static string ToSourceString(Delegate target)
