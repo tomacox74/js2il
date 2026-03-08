@@ -73,7 +73,19 @@ namespace Js2IL.Tests.TypedArray
         public Task Uint8Array_Values_Iterator() { var testName = nameof(Uint8Array_Values_Iterator); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Uint8Array_Iterator_Metadata() { var testName = nameof(Uint8Array_Iterator_Metadata); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Float64Array_Construct_ArrayBuffer_Search() { var testName = nameof(Float64Array_Construct_ArrayBuffer_Search); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Float64Array_Callback_Methods() { var testName = nameof(Float64Array_Callback_Methods); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task TypedArray_Static_From_Of() { var testName = nameof(TypedArray_Static_From_Of); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Int32Array_Fill_Reverse_Join_LastIndexOf() { var testName = nameof(Int32Array_Fill_Reverse_Join_LastIndexOf); return ExecutionTest(testName); }
 
         [Fact]
         public Task Prime_SetBitsTrue_SmallStep_WordValueOrAssign() { var testName = nameof(Prime_SetBitsTrue_SmallStep_WordValueOrAssign); return ExecutionTest(testName); }

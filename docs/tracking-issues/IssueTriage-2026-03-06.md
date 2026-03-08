@@ -12,7 +12,9 @@ Synced to:
 
 Rationale:
 - #773 is now closed, so #774 is the first unfinished issue in the prioritized list below.
-- The current branch has been broadened from the initial `Int32Array.prototype.slice(...)` slice into ArrayBuffer-backed `%TypedArray%` work covering `Int32Array`, `Uint8Array`, and `Float64Array` plus shared constructor/view/set/search/iterator behavior; draft PR #818 now needs its title/body refreshed to match that wider scope before review submission.
+- The current branch has been broadened from the initial `Int32Array.prototype.slice(...)` slice into ArrayBuffer-backed `%TypedArray%` work covering `Int32Array`, `Uint8Array`, and `Float64Array`, static `from`/`of`, shared constructor/view/search/callback/mutation helpers, and iterator/metadata basics.
+- Validation now covers the expanded surface with focused execution + generator coverage; the filtered TypedArray suite is green (`71` tests passed).
+- Draft PR #818 now tracks the broader `%TypedArray%` scope and appears to satisfy issue #774's stated acceptance criteria pending review/merge.
 
 ## Recommended next item after #774
 **Issue #775** (OPEN):
@@ -43,6 +45,7 @@ Rationale:
 
 1. #774 (priority:high) ECMA-262: Complete %TypedArray% constructors + prototype methods
    - https://github.com/tomacox74/js2il/issues/774
+   - Current branch status: acceptance criteria appear covered by draft PR #818; remaining work is review/merge unless the issue is intentionally expanded.
 2. #775 (priority:high) ECMA-262: RegExp modern flags and symbol methods parity (u/y/d/v, @@match, etc.)
    - https://github.com/tomacox74/js2il/issues/775
 3. #583 (priority:medium) Quality: add real-world canary corpus smoke tests (bounded) for ecosystem stability
@@ -104,7 +107,7 @@ Rationale:
 
 ## Open PRs (for context)
 - #704 (OPEN): https://github.com/tomacox74/js2il/pull/704
-- #818 (OPEN, draft): https://github.com/tomacox74/js2il/pull/818 — currently tracks the broader ArrayBuffer-backed `%TypedArray%` implementation work for #774, not just the earlier `Int32Array.prototype.slice(...)` slice
+- #818 (OPEN, draft): https://github.com/tomacox74/js2il/pull/818 — tracks the broader ArrayBuffer-backed `%TypedArray%` implementation work for #774, including static `from`/`of`, shared callback/mutation helpers, and iterator metadata basics
 
 ## Label/metadata gaps (as of this snapshot)
 - Open issues: 30

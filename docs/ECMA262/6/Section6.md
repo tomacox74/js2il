@@ -4,7 +4,7 @@ Defines ECMAScript data types and values (primitives, objects) and the core conc
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-08T01:35:56Z
+> Last generated (UTC): 2026-03-08T05:22:30Z
 
 _This section is split into subsection documents for readability._
 

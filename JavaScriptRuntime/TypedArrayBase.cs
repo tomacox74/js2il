@@ -20,6 +20,7 @@ namespace JavaScriptRuntime
         protected int ByteOffsetBytes => _byteOffset;
         protected int LengthElements => _length;
 
+        public double BYTES_PER_ELEMENT => BytesPerElement;
         public ArrayBuffer buffer => _buffer;
         public double byteOffset => _byteOffset;
         public double byteLength => (double)_length * BytesPerElement;
@@ -77,11 +78,17 @@ namespace JavaScriptRuntime
         public double at(object? index)
             => AtCore(index);
 
+        public bool includes()
+            => false;
+
         public bool includes(object? searchElement)
             => IncludesCore(searchElement, null);
 
         public bool includes(object? searchElement, object? fromIndex)
             => IncludesCore(searchElement, fromIndex);
+
+        public double indexOf()
+            => -1.0;
 
         public double indexOf(object? searchElement)
             => IndexOfCore(searchElement, null);
@@ -89,14 +96,234 @@ namespace JavaScriptRuntime
         public double indexOf(object? searchElement, object? fromIndex)
             => IndexOfCore(searchElement, fromIndex);
 
+        public double lastIndexOf()
+            => -1.0;
+
+        public double lastIndexOf(object? searchElement)
+            => LastIndexOfCore(searchElement, null);
+
+        public double lastIndexOf(object? searchElement, object? fromIndex)
+            => LastIndexOfCore(searchElement, fromIndex);
+
         public IJavaScriptIterator values()
-            => new TypedArrayIterator(this);
+            => new TypedArrayIterator(this, TypedArrayIteratorKind.Values);
+
+        public IJavaScriptIterator keys()
+            => new TypedArrayIterator(this, TypedArrayIteratorKind.Keys);
+
+        public IJavaScriptIterator entries()
+            => new TypedArrayIterator(this, TypedArrayIteratorKind.Entries);
+
+        public string join()
+            => JoinCore(null);
+
+        public string join(object? separator)
+            => JoinCore(separator);
+
+        public string toString()
+            => JoinCore(null);
+
+        public string toString(object[]? args)
+            => toString();
+
+        public string toLocaleString()
+            => JoinCore(null);
+
+        public string toLocaleString(object[]? args)
+            => toLocaleString();
+
+        public TypedArrayBase reverse()
+        {
+            for (int left = 0, right = _length - 1; left < right; left++, right--)
+            {
+                var leftValue = ReadElementValue(left);
+                var rightValue = ReadElementValue(right);
+                WriteElementValue(left, rightValue);
+                WriteElementValue(right, leftValue);
+            }
+
+            return this;
+        }
+
+        public TypedArrayBase fill(object[]? args)
+        {
+            var fillValue = args != null && args.Length > 0
+                ? TypeUtilities.ToNumber(args[0])
+                : TypeUtilities.ToNumber(null);
+            var start = args != null && args.Length > 1
+                ? CoerceRelativeIndex(args[1], 0, _length)
+                : 0;
+            var end = args != null && args.Length > 2
+                ? CoerceRelativeIndex(args[2], _length, _length)
+                : _length;
+
+            if (end < start)
+            {
+                end = start;
+            }
+
+            for (int i = start; i < end; i++)
+            {
+                WriteElementValue(i, fillValue);
+            }
+
+            return this;
+        }
+
+        public bool every(object[]? args)
+        {
+            var callback = GetRequiredCallback(args, "every");
+            var thisArg = GetThisArg(args);
+
+            for (int i = 0; i < _length; i++)
+            {
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.every", 3, ReadElementValue(i), (double)i, this, null);
+                if (!Operators.IsTruthy(result))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool some(object[]? args)
+        {
+            var callback = GetRequiredCallback(args, "some");
+            var thisArg = GetThisArg(args);
+
+            for (int i = 0; i < _length; i++)
+            {
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.some", 3, ReadElementValue(i), (double)i, this, null);
+                if (Operators.IsTruthy(result))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public object? find(object[]? args)
+        {
+            var callback = GetRequiredCallback(args, "find");
+            var thisArg = GetThisArg(args);
+
+            for (int i = 0; i < _length; i++)
+            {
+                var value = ReadElementValue(i);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.find", 3, value, (double)i, this, null);
+                if (Operators.IsTruthy(result))
+                {
+                    return value;
+                }
+            }
+
+            return null;
+        }
+
+        public double findIndex(object[]? args)
+        {
+            var callback = GetRequiredCallback(args, "findIndex");
+            var thisArg = GetThisArg(args);
+
+            for (int i = 0; i < _length; i++)
+            {
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.findIndex", 3, ReadElementValue(i), (double)i, this, null);
+                if (Operators.IsTruthy(result))
+                {
+                    return i;
+                }
+            }
+
+            return -1.0;
+        }
+
+        public object? forEach(object[]? args)
+        {
+            var callback = GetRequiredCallback(args, "forEach");
+            var thisArg = GetThisArg(args);
+
+            for (int i = 0; i < _length; i++)
+            {
+                _ = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.forEach", 3, ReadElementValue(i), (double)i, this, null);
+            }
+
+            return null;
+        }
+
+        public TypedArrayBase map(object[]? args)
+        {
+            var callback = GetRequiredCallback(args, "map");
+            var thisArg = GetThisArg(args);
+            var mapped = CreateSameTypeWithLength(_length);
+
+            for (int i = 0; i < _length; i++)
+            {
+                var value = ReadElementValue(i);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.map", 3, value, (double)i, this, null);
+                mapped.WriteElementValue(i, TypeUtilities.ToNumber(result));
+            }
+
+            return mapped;
+        }
+
+        public TypedArrayBase filter(object[]? args)
+        {
+            var callback = GetRequiredCallback(args, "filter");
+            var thisArg = GetThisArg(args);
+            var keptValues = new List<double>();
+
+            for (int i = 0; i < _length; i++)
+            {
+                var value = ReadElementValue(i);
+                var result = InvokeCallback(callback, thisArg, $"{TypedArrayName}.prototype.filter", 3, value, (double)i, this, null);
+                if (Operators.IsTruthy(result))
+                {
+                    keptValues.Add(value);
+                }
+            }
+
+            return CreateSameTypeFromValues(keptValues);
+        }
+
+        public object? reduce(object[]? args)
+        {
+            var callback = GetRequiredCallback(args, "reduce");
+            var hasInitialValue = args != null && args.Length > 1;
+
+            if (_length == 0 && !hasInitialValue)
+            {
+                throw new TypeError("Reduce of empty typed array with no initial value");
+            }
+
+            object? accumulator;
+            int startIndex;
+            if (hasInitialValue)
+            {
+                accumulator = args![1];
+                startIndex = 0;
+            }
+            else
+            {
+                accumulator = ReadElementValue(0);
+                startIndex = 1;
+            }
+
+            for (int i = startIndex; i < _length; i++)
+            {
+                accumulator = InvokeCallback(callback, null, $"{TypedArrayName}.prototype.reduce", 4, accumulator, ReadElementValue(i), (double)i, this);
+            }
+
+            return accumulator;
+        }
 
         protected void InitializeEmpty()
         {
             _buffer = new ArrayBuffer();
             _byteOffset = 0;
             _length = 0;
+            InitializeIntrinsicSurface();
         }
 
         protected void InitializeFromLength(int length)
@@ -117,6 +344,7 @@ namespace JavaScriptRuntime
                 : new ArrayBuffer(new byte[(int)byteLengthLong], cloneBuffer: false);
             _byteOffset = 0;
             _length = length;
+            InitializeIntrinsicSurface();
         }
 
         protected void InitializeFromExisting(ArrayBuffer buffer, int byteOffset, int length)
@@ -124,6 +352,7 @@ namespace JavaScriptRuntime
             _buffer = buffer;
             _byteOffset = byteOffset;
             _length = length;
+            InitializeIntrinsicSurface();
         }
 
         protected void InitializeFromBuffer(ArrayBuffer buffer, object? byteOffset, object? length)
@@ -162,6 +391,7 @@ namespace JavaScriptRuntime
             _buffer = buffer;
             _byteOffset = offset;
             _length = elementLength;
+            InitializeIntrinsicSurface();
         }
 
         protected void InitializeFromArgument(object? arg)
@@ -222,6 +452,51 @@ namespace JavaScriptRuntime
             var subarrayLength = endIndex - startIndex;
             var byteOffset = checked(_byteOffset + (startIndex * BytesPerElement));
             return CreateSameType(_buffer, byteOffset, subarrayLength);
+        }
+
+        protected TypedArrayBase CreateSameTypeWithLength(int length)
+        {
+            if (length <= 0)
+            {
+                return CreateSameType(new ArrayBuffer(), 0, 0);
+            }
+
+            var byteLength = checked(length * BytesPerElement);
+            return CreateSameType(new ArrayBuffer(new byte[byteLength], cloneBuffer: false), 0, length);
+        }
+
+        protected TypedArrayBase CreateSameTypeFromValues(IReadOnlyList<double> values)
+        {
+            var result = CreateSameTypeWithLength(values.Count);
+            for (int i = 0; i < values.Count; i++)
+            {
+                result.WriteElementValue(i, values[i]);
+            }
+
+            return result;
+        }
+
+        protected static T FromSource<T>(string typedArrayName, object? source, object? mapper, object? thisArg, Func<object?[], T> factory)
+            where T : TypedArrayBase
+        {
+            if (source is null || source is JsNull)
+            {
+                throw new TypeError($"{typedArrayName}.from requires a source value");
+            }
+
+            var items = CaptureSourceItems(source);
+            if (mapper is null || mapper is JsNull)
+            {
+                return factory(items.Count == 0 ? System.Array.Empty<object?>() : items.ToArray());
+            }
+
+            var mapped = new object?[items.Count];
+            for (int i = 0; i < items.Count; i++)
+            {
+                mapped[i] = InvokeCallback(mapper, thisArg, $"{typedArrayName}.from", 2, items[i], (double)i, null, null);
+            }
+
+            return factory(mapped);
         }
 
         protected static bool TryToNumber(object? value, out double number)
@@ -339,6 +614,26 @@ namespace JavaScriptRuntime
             {
                 WriteElementValue(i, values[i]);
             }
+        }
+
+        private void InitializeIntrinsicSurface()
+        {
+            PropertyDescriptorStore.DefineOrUpdate(this, Symbol.iterator.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = new Func<IJavaScriptIterator>(values)
+            });
+            PropertyDescriptorStore.DefineOrUpdate(this, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = TypedArrayName
+            });
         }
 
         private double GetElement(double index)
@@ -476,16 +771,122 @@ namespace JavaScriptRuntime
             return -1.0;
         }
 
-        private static List<double> CaptureSourceValues(object? source)
+        private double LastIndexOfCore(object? searchElement, object? fromIndex)
+        {
+            if (_length == 0)
+            {
+                return -1.0;
+            }
+
+            var searchNumber = TypeUtilities.ToNumber(searchElement);
+            if (double.IsNaN(searchNumber))
+            {
+                return -1.0;
+            }
+
+            var startIndex = _length - 1;
+            if (fromIndex is not null && fromIndex is not JsNull)
+            {
+                var number = TypeUtilities.ToNumber(fromIndex);
+                if (!double.IsNaN(number))
+                {
+                    if (double.IsNegativeInfinity(number))
+                    {
+                        return -1.0;
+                    }
+
+                    if (!double.IsPositiveInfinity(number))
+                    {
+                        var truncated = (int)global::System.Math.Truncate(number);
+                        startIndex = truncated < 0 ? _length + truncated : truncated;
+                    }
+                }
+            }
+
+            if (startIndex >= _length)
+            {
+                startIndex = _length - 1;
+            }
+
+            for (int i = startIndex; i >= 0; i--)
+            {
+                if (ReadElementValue(i) == searchNumber)
+                {
+                    return i;
+                }
+            }
+
+            return -1.0;
+        }
+
+        private string JoinCore(object? separator)
+        {
+            if (_length == 0)
+            {
+                return string.Empty;
+            }
+
+            var actualSeparator = separator is null
+                ? ","
+                : DotNet2JSConversions.ToString(separator);
+            var parts = new string[_length];
+            for (int i = 0; i < _length; i++)
+            {
+                parts[i] = DotNet2JSConversions.ToString(ReadElementValue(i));
+            }
+
+            return string.Join(actualSeparator, parts);
+        }
+
+        private object? GetRequiredCallback(object[]? args, string methodName)
+        {
+            var callback = args != null && args.Length > 0 ? args[0] : null;
+            if (callback is not Delegate)
+            {
+                throw new TypeError($"{TypedArrayName}.prototype.{methodName} requires a callback function");
+            }
+
+            return callback;
+        }
+
+        private static object? GetThisArg(object[]? args)
+            => args != null && args.Length > 1 ? args[1] : null;
+
+        private static object? InvokeCallback(object? callback, object? thisArg, string callbackKind, int argCount, object? a0, object? a1, object? a2, object? a3)
+        {
+            if (callback is not Delegate del)
+            {
+                throw new TypeError($"{callbackKind} callback is not a function");
+            }
+
+            var previousThis = RuntimeServices.SetCurrentThis(thisArg);
+            try
+            {
+                return argCount switch
+                {
+                    <= 0 => Closure.InvokeWithArgs0(del, System.Array.Empty<object>()),
+                    1 => Closure.InvokeWithArgs1(del, System.Array.Empty<object>(), a0),
+                    2 => Closure.InvokeWithArgs2(del, System.Array.Empty<object>(), a0, a1),
+                    3 => Closure.InvokeWithArgs3(del, System.Array.Empty<object>(), a0, a1, a2),
+                    _ => Closure.InvokeWithArgs(del, System.Array.Empty<object>(), new object?[] { a0, a1, a2, a3 })
+                };
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static List<object?> CaptureSourceItems(object? source)
         {
             switch (source)
             {
                 case TypedArrayBase typedArray:
                     {
-                        var values = new List<double>((int)typedArray.length);
-                        for (int i = 0; i < typedArray.length; i++)
+                        var values = new List<object?>(typedArray.LengthElements);
+                        for (int i = 0; i < typedArray.LengthElements; i++)
                         {
-                            values.Add(typedArray[(double)i]);
+                            values.Add(typedArray.ReadElementValue(i));
                         }
 
                         return values;
@@ -493,10 +894,10 @@ namespace JavaScriptRuntime
 
                 case Array jsArray:
                     {
-                        var values = new List<double>(jsArray.Count);
+                        var values = new List<object?>(jsArray.Count);
                         for (int i = 0; i < jsArray.Count; i++)
                         {
-                            values.Add(TypeUtilities.ToNumber(jsArray[i]));
+                            values.Add(jsArray[i]);
                         }
 
                         return values;
@@ -504,39 +905,104 @@ namespace JavaScriptRuntime
 
                 case System.Array array:
                     {
-                        var values = new List<double>(array.Length);
+                        var values = new List<object?>(array.Length);
                         for (int i = 0; i < array.Length; i++)
                         {
-                            values.Add(TypeUtilities.ToNumber(array.GetValue(i)));
+                            values.Add(array.GetValue(i));
                         }
 
                         return values;
                     }
 
-                case IEnumerable enumerable when source is not string:
+                case IJavaScriptIterator iterator:
                     {
-                        var values = new List<double>();
+                        var values = new List<object?>();
+                        while (true)
+                        {
+                            var next = iterator.Next();
+                            if (next.done)
+                            {
+                                return values;
+                            }
+
+                            values.Add(next.value);
+                        }
+                    }
+
+                case IEnumerable enumerable when source is not string && !TryGetArrayLikeLength(source, out _):
+                    {
+                        var values = new List<object?>();
                         foreach (var item in enumerable)
                         {
-                            values.Add(TypeUtilities.ToNumber(item));
+                            values.Add(item);
                         }
 
                         return values;
                     }
             }
 
-            return new List<double>();
+            if (TryGetArrayLikeLength(source, out var length))
+            {
+                var values = new List<object?>(length);
+                for (int i = 0; i < length; i++)
+                {
+                    values.Add(JavaScriptRuntime.Object.GetItem(source!, (double)i));
+                }
+
+                return values;
+            }
+
+            return new List<object?>();
         }
+
+        private static List<double> CaptureSourceValues(object? source)
+        {
+            var items = CaptureSourceItems(source);
+            var values = new List<double>(items.Count);
+            for (int i = 0; i < items.Count; i++)
+            {
+                values.Add(TypeUtilities.ToNumber(items[i]));
+            }
+
+            return values;
+        }
+
+        private static bool TryGetArrayLikeLength(object? source, out int length)
+        {
+            length = 0;
+            if (source is null || source is JsNull || source is string)
+            {
+                return false;
+            }
+
+            var lengthValue = JavaScriptRuntime.Object.GetProperty(source, "length");
+            if (lengthValue is null || lengthValue is JsNull)
+            {
+                return false;
+            }
+
+            length = ToLength(TypeUtilities.ToNumber(lengthValue));
+            return true;
+        }
+    }
+
+    internal enum TypedArrayIteratorKind
+    {
+        Keys,
+        Values,
+        Entries
     }
 
     internal sealed class TypedArrayIterator : IJavaScriptIterator
     {
         private readonly TypedArrayBase _typedArray;
+        private readonly TypedArrayIteratorKind _kind;
         private int _index;
 
-        public TypedArrayIterator(TypedArrayBase typedArray)
+        public TypedArrayIterator(TypedArrayBase typedArray, TypedArrayIteratorKind kind)
         {
             _typedArray = typedArray;
+            _kind = kind;
         }
 
         public IteratorResultObject Next()
@@ -546,7 +1012,15 @@ namespace JavaScriptRuntime
                 return IteratorResult.Create(null, true);
             }
 
-            return new IteratorResultObject(_typedArray[(double)_index++], done: false);
+            object? value = _kind switch
+            {
+                TypedArrayIteratorKind.Keys => (double)_index,
+                TypedArrayIteratorKind.Entries => new JavaScriptRuntime.Array(new object?[] { (double)_index, _typedArray[(double)_index] }),
+                _ => _typedArray[(double)_index]
+            };
+
+            _index++;
+            return new IteratorResultObject(value, done: false);
         }
 
         public object next(object? value = null)

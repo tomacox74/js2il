@@ -45,6 +45,18 @@ namespace JavaScriptRuntime
             InitializeFromExisting(buffer, byteOffset, length);
         }
 
+        public static Float64Array from(object? source)
+            => FromSource(nameof(Float64Array), source, null, null, static values => new Float64Array(values));
+
+        public static Float64Array from(object? source, object? mapper)
+            => FromSource(nameof(Float64Array), source, mapper, null, static values => new Float64Array(values));
+
+        public static Float64Array from(object? source, object? mapper, object? thisArg)
+            => FromSource(nameof(Float64Array), source, mapper, thisArg, static values => new Float64Array(values));
+
+        public static Float64Array of(object[]? args)
+            => new Float64Array(args ?? global::System.Array.Empty<object?>());
+
         protected override int BytesPerElement => ElementSize;
 
         protected override string TypedArrayName => nameof(Float64Array);

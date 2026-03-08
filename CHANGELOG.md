@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-- runtime/spec/compiler/tests/docs: broaden `%TypedArray%` support with a shared ArrayBuffer-backed `TypedArrayBase`, convert `Int32Array` to real buffer views while preserving existing compiler fast paths, add `Uint8Array` and `Float64Array`, implement shared constructors/properties/methods (`at`, `includes`, `indexOf`, `set`, `slice`, `subarray`, `values`), recognize typed arrays in `ArrayBuffer.isView`/iterator/runtime helper paths, fix unused intrinsic-constructor expression statements so constructor side effects and RangeErrors are preserved, and add focused execution/generator coverage plus refreshed ECMA-262 §23.2 tracking for issue #774.
+- runtime/spec/compiler/tests/docs: broaden `%TypedArray%` support with a shared ArrayBuffer-backed `TypedArrayBase`, convert `Int32Array` to real buffer views while preserving existing compiler fast paths, add `Uint8Array` and `Float64Array`, implement shared constructors/properties/methods (`from`, `of`, `at`, `includes`, `indexOf`, `lastIndexOf`, `set`, `slice`, `subarray`, `values`, `keys`, `entries`, `fill`, `reverse`, `join`, `map`, `filter`, `reduce`, `every`, `some`, `find`, `findIndex`, `forEach`, plus `%Symbol.iterator%`/`%Symbol.toStringTag%` basics), recognize typed arrays in `ArrayBuffer.isView`/iterator/runtime helper paths, fix unused intrinsic-constructor expression statements so constructor side effects and RangeErrors are preserved, and add focused execution/generator coverage plus refreshed ECMA-262 §23.2 tracking for issue #774.
 
 ## v0.8.28 - 2026-03-08
 

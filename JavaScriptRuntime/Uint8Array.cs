@@ -44,6 +44,18 @@ namespace JavaScriptRuntime
             InitializeFromExisting(buffer, byteOffset, length);
         }
 
+        public static Uint8Array from(object? source)
+            => FromSource(nameof(Uint8Array), source, null, null, static values => new Uint8Array(values));
+
+        public static Uint8Array from(object? source, object? mapper)
+            => FromSource(nameof(Uint8Array), source, mapper, null, static values => new Uint8Array(values));
+
+        public static Uint8Array from(object? source, object? mapper, object? thisArg)
+            => FromSource(nameof(Uint8Array), source, mapper, thisArg, static values => new Uint8Array(values));
+
+        public static Uint8Array of(object[]? args)
+            => new Uint8Array(args ?? global::System.Array.Empty<object?>());
+
         protected override int BytesPerElement => ElementSize;
 
         protected override string TypedArrayName => nameof(Uint8Array);

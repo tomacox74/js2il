@@ -45,6 +45,18 @@ namespace JavaScriptRuntime
             InitializeFromExisting(buffer, byteOffset, length);
         }
 
+        public static Int32Array from(object? source)
+            => FromSource(nameof(Int32Array), source, null, null, static values => new Int32Array(values));
+
+        public static Int32Array from(object? source, object? mapper)
+            => FromSource(nameof(Int32Array), source, mapper, null, static values => new Int32Array(values));
+
+        public static Int32Array from(object? source, object? mapper, object? thisArg)
+            => FromSource(nameof(Int32Array), source, mapper, thisArg, static values => new Int32Array(values));
+
+        public static Int32Array of(object[]? args)
+            => new Int32Array(args ?? global::System.Array.Empty<object?>());
+
         protected override int BytesPerElement => ElementSize;
 
         protected override string TypedArrayName => nameof(Int32Array);
