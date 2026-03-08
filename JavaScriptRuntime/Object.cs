@@ -1933,6 +1933,16 @@ namespace JavaScriptRuntime
                 return chosen.Invoke(jsArray, invokeArgs);
             }
 
+            if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
+            {
+                if (directMemberValue is Delegate directMember)
+                {
+                    return InvokeMemberDelegate(receiver, directMember, callArgs);
+                }
+
+                throw new TypeError($"{methodName} is not a function");
+            }
+
             // 3) ExpandoObject (object literal): properties may contain function delegates
             if (receiver is System.Dynamic.ExpandoObject exp)
             {
@@ -1975,6 +1985,94 @@ namespace JavaScriptRuntime
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
 
+        private static bool TryGetFastDictionaryOwnValue(object receiver, string memberName, out object? value)
+        {
+            value = null;
+
+            if (receiver is not IDictionary<string, object?> dictionary)
+            {
+                return false;
+            }
+
+            if (!dictionary.TryGetValue(memberName, out var dictionaryValue))
+            {
+                return false;
+            }
+
+            if (PropertyDescriptorStore.TryGetOwn(receiver, memberName, out _))
+            {
+                return false;
+            }
+
+            value = dictionaryValue;
+            return true;
+        }
+
+        private static object InvokeMemberDelegate(object receiver, Delegate member, object?[] callArgs)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs(member, System.Array.Empty<object>(), callArgs);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static object InvokeMemberDelegate0(object receiver, Delegate member)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs0(member, System.Array.Empty<object>());
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static object InvokeMemberDelegate1(object receiver, Delegate member, object? a0)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs1(member, System.Array.Empty<object>(), a0);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static object InvokeMemberDelegate2(object receiver, Delegate member, object? a0, object? a1)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs2(member, System.Array.Empty<object>(), a0, a1);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static object InvokeMemberDelegate3(object receiver, Delegate member, object? a0, object? a1, object? a2)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs3(member, System.Array.Empty<object>(), a0, a1, a2);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
         // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
         // These inline the logic to avoid creating arrays when possible.
 
@@ -2001,6 +2099,16 @@ namespace JavaScriptRuntime
                 {
                     return JavaScriptRuntime.Function.ToSourceString(del);
                 }
+            }
+
+            if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
+            {
+                if (directMemberValue is Delegate directMember)
+                {
+                    return InvokeMemberDelegate0(receiver, directMember);
+                }
+
+                throw new TypeError($"{methodName} is not a function");
             }
 
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
@@ -2043,6 +2151,16 @@ namespace JavaScriptRuntime
                 }
             }
 
+            if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
+            {
+                if (directMemberValue is Delegate directMember)
+                {
+                    return InvokeMemberDelegate1(receiver, directMember, a0);
+                }
+
+                throw new TypeError($"{methodName} is not a function");
+            }
+
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
             {
                 var input = DotNet2JSConversions.ToString(receiver);
@@ -2083,6 +2201,16 @@ namespace JavaScriptRuntime
                 }
             }
 
+            if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
+            {
+                if (directMemberValue is Delegate directMember)
+                {
+                    return InvokeMemberDelegate2(receiver, directMember, a0, a1);
+                }
+
+                throw new TypeError($"{methodName} is not a function");
+            }
+
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
             {
                 var input = DotNet2JSConversions.ToString(receiver);
@@ -2121,6 +2249,16 @@ namespace JavaScriptRuntime
                 {
                     return JavaScriptRuntime.Function.ToSourceString(del);
                 }
+            }
+
+            if (TryGetFastDictionaryOwnValue(receiver, methodName, out var directMemberValue))
+            {
+                if (directMemberValue is Delegate directMember)
+                {
+                    return InvokeMemberDelegate3(receiver, directMember, a0, a1, a2);
+                }
+
+                throw new TypeError($"{methodName} is not a function");
             }
 
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
@@ -4728,6 +4866,11 @@ namespace JavaScriptRuntime
             if (PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
             {
                 return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto : null;
+            }
+
+            if (TryGetFastDictionaryOwnValue(obj, name, out var fastOwnValue))
+            {
+                return fastOwnValue;
             }
 
             if (TryGetOwnPropertyValue(obj, name, out var ownValue))
