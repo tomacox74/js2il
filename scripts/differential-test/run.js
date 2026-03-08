@@ -138,7 +138,7 @@ function compileWithJs2IL(jsFile, outDir, js2il, timeoutMs) {
     const durationMs = Date.now() - t0;
 
     if (result.error && result.error.code === 'ETIMEDOUT') {
-        return { success: false, dllPath: null, stderr: 'COMPILE_TIMEOUT', durationMs };
+        return { success: false, dllPath: null, stderr: 'COMPILE_TIMEOUT', durationMs, timeoutMs };
     }
     if (result.status !== 0) {
         const stderr = (result.stderr || '') + (result.stdout || '');

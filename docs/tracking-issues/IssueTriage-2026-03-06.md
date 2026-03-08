@@ -1,4 +1,4 @@
-# Issue triage snapshot (2026-03-08)
+# Issue triage snapshot (2026-03-06)
 
 This file captures a point-in-time prioritized list of open issues/PRs and the current active item being addressed.
 

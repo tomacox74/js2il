@@ -161,6 +161,10 @@ function buildArtifactDirectory(outputRoot, canaryCase) {
   return path.join(outputRoot, canaryCase.suite, safeName);
 }
 
+function buildCompileOutputDirectory(outputRoot, canaryCase) {
+  return path.join(outputRoot, canaryCase.suite);
+}
+
 function formatExpectedMismatch(expected, actual, sourceLabel) {
   return [
     `${sourceLabel} stdout did not match the committed canary expectation.`,
@@ -185,17 +189,42 @@ function formatProcessFailure(sourceLabel, result) {
 }
 
 function formatCompileFailure(compileResult) {
+  const rawStderr = compileResult && typeof compileResult.stderr === 'string'
+    ? compileResult.stderr
+    : '';
+  const normalisedStderr = normaliseOutput(rawStderr);
+  const isTimeout = rawStderr.includes('COMPILE_TIMEOUT');
+
+  if (isTimeout) {
+    const durationMs = typeof compileResult.durationMs === 'number'
+      ? compileResult.durationMs
+      : typeof compileResult.timeoutMs === 'number'
+        ? compileResult.timeoutMs
+        : undefined;
+    const durationSuffix = typeof durationMs === 'number'
+      ? ` after ${Math.round(durationMs / 1000)}s`
+      : '';
+
+    return [
+      `JS2IL compilation timed out${durationSuffix}.`,
+      '',
+      'Compiler stderr/stdout:',
+      normalisedStderr || '(no output)',
+    ].join('\n');
+  }
+
   return [
     'JS2IL compilation failed.',
     '',
     'Compiler stderr/stdout:',
-    normaliseOutput(compileResult.stderr) || '(no output)',
+    normalisedStderr || '(no output)',
   ].join('\n');
 }
 
 function runCanaryCase(canaryCase, js2il, timeoutSec, compileTimeoutSec, outputRoot) {
   const expected = normaliseOutput(fs.readFileSync(canaryCase.expectedFile, 'utf8'));
   const artifactDir = buildArtifactDirectory(outputRoot, canaryCase);
+  const compileOutputDir = buildCompileOutputDirectory(outputRoot, canaryCase);
 
   fs.mkdirSync(artifactDir, { recursive: true });
 
@@ -231,7 +260,12 @@ function runCanaryCase(canaryCase, js2il, timeoutSec, compileTimeoutSec, outputR
     };
   }
 
-  const compileResult = compileWithJs2IL(canaryCase.jsFile, artifactDir, js2il, compileTimeoutSec * 1000);
+  const compileResult = compileWithJs2IL(
+    canaryCase.jsFile,
+    compileOutputDir,
+    js2il,
+    compileTimeoutSec * 1000
+  );
   if (!compileResult.success) {
     return {
       name: canaryCase.name,
