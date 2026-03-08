@@ -51,7 +51,7 @@ namespace JavaScriptRuntime
         }
 
         public static bool isView(object? arg)
-            => arg is DataView or Int32Array;
+            => arg is DataView or TypedArrayBase;
 
         internal int ByteLengthInt => _bytes.Length;
 

@@ -4,7 +4,7 @@ Describes ECMAScript source text and how code is interpreted as scripts/modules.
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T06:48:54Z
+> Last generated (UTC): 2026-03-08T01:35:56Z
 
 _This section is split into subsection documents for readability._
 

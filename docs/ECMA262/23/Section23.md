@@ -5,7 +5,7 @@ The current ECMA-262 draft organizes this section into three top-level subsectio
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T06:48:54Z
+> Last generated (UTC): 2026-03-08T01:35:56Z
 
 _This section is split into subsection documents for readability._
 

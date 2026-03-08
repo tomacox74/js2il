@@ -51,7 +51,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         _useTypeChain = !_usePrototypeChain
             && !(root is ExpandoObject)
             && root is not JavaScriptRuntime.Array
-            && root is not JavaScriptRuntime.Int32Array
+            && root is not JavaScriptRuntime.TypedArrayBase
             && root is not string
             && root is not IDictionary
             && root is not IDictionary<string, object?>;
@@ -223,10 +223,10 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         }
 
         // Typed array: enumerate indices
-        if (target is JavaScriptRuntime.Int32Array i32)
+        if (target is JavaScriptRuntime.TypedArrayBase typedArray)
         {
-            var keys = new List<string>((int)i32.length);
-            for (int i = 0; i < i32.length; i++)
+            var keys = new List<string>((int)typedArray.length);
+            for (int i = 0; i < typedArray.length; i++)
             {
                 keys.Add(i.ToString());
             }
@@ -311,13 +311,13 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         }
 
         // Typed array
-        if (target is JavaScriptRuntime.Int32Array i32)
+        if (target is JavaScriptRuntime.TypedArrayBase typedArray)
         {
             if (!int.TryParse(key, out var idx) || idx < 0)
             {
                 return false;
             }
-            return idx < i32.length;
+            return idx < typedArray.length;
         }
 
         // String

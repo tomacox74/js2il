@@ -2781,8 +2781,8 @@ namespace JavaScriptRuntime
                 return dictGeneric.TryGetValue(propName, out value);
             }
 
-            // JavaScriptRuntime.Array / typed arrays: no custom properties yet
-            if (target is Array || target is Int32Array)
+            // JavaScriptRuntime.Array: no custom properties yet
+            if (target is Array)
             {
                 value = null;
                 return false;
@@ -3028,14 +3028,14 @@ namespace JavaScriptRuntime
                 }
                 return array[intIndex]!;
             }
-            else if (obj is Int32Array i32)
+            else if (obj is TypedArrayBase typedArray)
             {
                 if (!isIndex)
                 {
-                    return GetProperty(i32, propName)!;
+                    return GetProperty(typedArray, propName)!;
                 }
-                // Reads outside bounds return 0 per typed array semantics
-                return i32[(double)intIndex];
+
+                return typedArray[(double)intIndex];
             }
             else if (obj is JavaScriptRuntime.Node.Buffer buffer)
             {
@@ -3092,10 +3092,9 @@ namespace JavaScriptRuntime
                 }
                 return array[intIndex]!;
             }
-            else if (obj is Int32Array i32)
+            else if (obj is TypedArrayBase typedArray)
             {
-                // Reads outside bounds return 0 per typed array semantics
-                return i32[(double)intIndex];
+                return typedArray[index];
             }
             else if (obj is JavaScriptRuntime.Node.Buffer buffer)
             {
@@ -3124,30 +3123,30 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Gets an item from an object and converts the result to a number (double).
-        /// Provides a fast path for Int32Array receivers that avoids boxing the element value.
+        /// Provides a fast path for typed-array receivers that avoids boxing the element value.
         /// For all other receivers, falls back to TypeUtilities.ToNumber(GetItem(obj, index)).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double GetItemAsNumber(object obj, double index)
         {
-            if (obj is Int32Array i32)
+            if (obj is TypedArrayBase typedArray)
             {
-                return i32[index];
+                return typedArray[index];
             }
             return TypeUtilities.ToNumber(GetItem(obj, index));
         }
 
         /// <summary>
         /// Gets an item from an object and converts the result to a number (double).
-        /// Provides a fast path for Int32Array receivers that avoids boxing the element value.
+        /// Provides a fast path for typed-array receivers that avoids boxing the element value.
         /// For all other receivers, falls back to TypeUtilities.ToNumber(GetItem(obj, index)).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double GetItemAsNumber(object obj, object index)
         {
-            if (obj is Int32Array i32 && index is double d)
+            if (obj is TypedArrayBase typedArray && index is double d)
             {
-                return i32[d];
+                return typedArray[d];
             }
             return TypeUtilities.ToNumber(GetItem(obj, index));
         }
@@ -3200,14 +3199,14 @@ namespace JavaScriptRuntime
                 }
                 return array[intIndex]!;
             }
-            else if (obj is Int32Array i32)
+            else if (obj is TypedArrayBase typedArray)
             {
                 if (!isIndex)
                 {
-                    return GetProperty(i32, key)!;
+                    return GetProperty(typedArray, key)!;
                 }
-                // Reads outside bounds return 0 per typed array semantics
-                return i32[(double)intIndex];
+
+                return typedArray[(double)intIndex];
             }
             else if (obj is JavaScriptRuntime.Node.Buffer buffer)
             {
@@ -3302,14 +3301,14 @@ namespace JavaScriptRuntime
             }
 
             // Typed arrays: coerce and store when in-bounds
-            if (obj is Int32Array i32)
+            if (obj is TypedArrayBase typedArray)
             {
                 if (!isIndex)
                 {
-                    return SetProperty(i32, propName, value);
+                    return SetProperty(typedArray, propName, value);
                 }
-                // Index/value are numeric for typed arrays; coerce here so Int32Array can remain numeric.
-                i32[(double)intIndex] = JavaScriptRuntime.TypeUtilities.ToNumber(value);
+
+                typedArray[(double)intIndex] = JavaScriptRuntime.TypeUtilities.ToNumber(value);
                 return value;
             }
 
@@ -3396,14 +3395,14 @@ namespace JavaScriptRuntime
             }
 
             // Typed arrays: coerce and store when in-bounds
-            if (obj is Int32Array i32)
+            if (obj is TypedArrayBase typedArray)
             {
                 if (!isIndex)
                 {
-                    return SetProperty(i32, key, value);
+                    return SetProperty(typedArray, key, value);
                 }
-                // Index/value are numeric for typed arrays; coerce here so Int32Array can remain numeric.
-                i32[(double)intIndex] = JavaScriptRuntime.TypeUtilities.ToNumber(value);
+
+                typedArray[(double)intIndex] = JavaScriptRuntime.TypeUtilities.ToNumber(value);
                 return value;
             }
 
@@ -3496,13 +3495,14 @@ namespace JavaScriptRuntime
             }
 
             // Typed arrays: value is already numeric.
-            if (obj is Int32Array i32)
+            if (obj is TypedArrayBase typedArray)
             {
                 if (!isIndex)
                 {
-                    return SetProperty(i32, key, value);
+                    return SetProperty(typedArray, key, value);
                 }
-                i32[(double)intIndex] = value;
+
+                typedArray[(double)intIndex] = value;
                 return value;
             }
 
@@ -3524,7 +3524,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Gets an iterator for for..of using the iterator protocol.
         /// Supports:
-        ///  - Arrays, strings, Int32Array
+        ///  - Arrays, strings, typed arrays
         ///  - User-defined iterables via [Symbol.iterator]
         ///  - .NET IEnumerable as a best-effort fallback
         /// </summary>
@@ -3552,9 +3552,9 @@ namespace JavaScriptRuntime
                 return new ArrayIterator(arr);
             }
 
-            if (iterable is JavaScriptRuntime.Int32Array i32)
+            if (iterable is JavaScriptRuntime.TypedArrayBase typedArray)
             {
-                return new Int32ArrayIterator(i32);
+                return typedArray.values();
             }
 
             // User-defined iterables: call obj[Symbol.iterator]().
@@ -3903,36 +3903,6 @@ namespace JavaScriptRuntime
             }
         }
 
-        private sealed class Int32ArrayIterator : IJavaScriptIterator
-        {
-            private readonly JavaScriptRuntime.Int32Array _arr;
-            private int _index;
-            private bool _isClosed;
-
-            public Int32ArrayIterator(JavaScriptRuntime.Int32Array arr)
-            {
-                _arr = arr;
-            }
-
-            public bool HasReturn => true;
-
-            public IteratorResultObject Next()
-            {
-                if (_isClosed || _index >= _arr.length)
-                {
-                    return new IteratorResultObject(null, done: true);
-                }
-
-                var value = (double)_arr[_index++];
-                return new IteratorResultObject(value, done: false);
-            }
-
-            public void Return()
-            {
-                _isClosed = true;
-            }
-        }
-
         private sealed class EnumerableIterator : IJavaScriptIterator
         {
             private readonly System.Collections.IEnumerator _enumerator;
@@ -4195,25 +4165,19 @@ namespace JavaScriptRuntime
 
             // Typed arrays: only use element write path if index is finite, integer, and in-bounds.
             // Otherwise treat as no-op (typed arrays do not store non-integer-index properties).
-            if (obj is Int32Array i32)
+            if (obj is TypedArrayBase typedArray)
             {
-                // Check if index is a valid integer index
                 if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
                 {
-                    // Validate index is within int32 range before casting
                     if (index >= 0 && index <= int.MaxValue)
                     {
-                        int i32Index = (int)index;
-                        // Only write if in bounds [0, length)
-                        if (i32Index < (int)i32.length)
+                        var typedArrayIndex = (int)index;
+                        if (typedArrayIndex < (int)typedArray.length)
                         {
-                            i32.SetFromDouble(i32Index, value);
+                            typedArray.SetFromDouble(typedArrayIndex, value);
                         }
-                        // Out-of-bounds: no-op (typed arrays don't expand)
                     }
-                    // Negative or too large: no-op
                 }
-                // NaN/Infinity/fractional: no-op (do not treat as element 0 or property)
                 return value;
             }
 
@@ -4252,7 +4216,7 @@ namespace JavaScriptRuntime
         /// Minimal semantics:
         ///  - null/undefined (null or JsNull) are ignored
         ///  - ExpandoObject: copy all keys
-        ///  - JavaScriptRuntime.Array / Int32Array / string: copy index keys
+        ///  - JavaScriptRuntime.Array / typed arrays / string: copy index keys
         ///  - IDictionary&lt;string, object?&gt;: copy keys
         ///  - host objects: copy public instance properties/fields
         ///
@@ -4360,13 +4324,13 @@ namespace JavaScriptRuntime
                 return target;
             }
 
-            // Int32Array: copy numeric indices as properties.
-            if (source is Int32Array i32)
+            // Typed arrays: copy numeric indices as properties.
+            if (source is TypedArrayBase typedArray)
             {
-                var len = (int)i32.length;
+                var len = (int)typedArray.length;
                 for (int i = 0; i < len; i++)
                 {
-                    SetOwn(targetExpandoDict, target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), i32[(double)i]);
+                    SetOwn(targetExpandoDict, target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), typedArray[(double)i]);
                 }
                 return target;
             }
@@ -4539,9 +4503,9 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Normalizes an iterable for use by for..of desugaring.
-        /// Returns a value compatible with GetLength/GetItem (string, Array, Int32Array).
+        /// Returns a value compatible with GetLength/GetItem (string, Array, typed arrays).
         /// - string stays string (GetItem returns 1-length strings)
-        /// - Array/Int32Array pass through
+        /// - Array/typed arrays pass through
         /// - Set and any other IEnumerable are converted via Array.from
         /// </summary>
         public static object NormalizeForOfIterable(object? iterable)
@@ -4556,7 +4520,7 @@ namespace JavaScriptRuntime
                 return iterable;
             }
 
-            if (iterable is Array || iterable is Int32Array)
+            if (iterable is Array || iterable is TypedArrayBase)
             {
                 return iterable;
             }
@@ -4598,7 +4562,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Returns enumerable property keys for for..in. Minimal implementation:
         /// - ExpandoObject: own keys
-        /// - Array/Int32Array/string: numeric indices as strings
+        /// - Array/typed arrays/string: numeric indices as strings
         /// - IDictionary: keys coerced to strings
         /// Other types: empty list
         /// </summary>
@@ -4641,10 +4605,10 @@ namespace JavaScriptRuntime
             }
 
             // Typed array: enumerate indices
-            if (obj is JavaScriptRuntime.Int32Array i32)
+            if (obj is JavaScriptRuntime.TypedArrayBase typedArray)
             {
                 var keys = new JavaScriptRuntime.Array();
-                for (int i = 0; i < i32.length; i++)
+                for (int i = 0; i < typedArray.length; i++)
                 {
                     keys.Add(i.ToString());
                 }
@@ -4757,11 +4721,11 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Dynamic indexed / computed property assignment used when the compiler
-        /// cannot statically bind an Int32Array or Array element store. Returns the
+        /// cannot statically bind an Array or typed-array element store. Returns the
         /// assigned value (boxed) to match JavaScript assignment expression result.
         /// Supports:
         ///  - JavaScriptRuntime.Array (List<object>) with numeric index (expands with nulls)
-        ///  - JavaScriptRuntime.Int32Array (ignored if OOB)
+        ///  - JavaScriptRuntime.TypedArrayBase (ignored if OOB)
         ///  - Fallback: throws for unsupported receiver types.
         /// </summary>
         public static object? AssignItem(object receiver, object index, object value)
@@ -4794,28 +4758,11 @@ namespace JavaScriptRuntime
                 jsArray[i] = value;
                 return value;
             }
-            if (receiver is Int32Array i32)
+            if (receiver is TypedArrayBase typedArray)
             {
-                if (i < i32.length)
+                if (i < typedArray.length)
                 {
-                    // Coerce value to int32 similar to runtime semantics
-                    int iv;
-                    switch (value)
-                    {
-                        case int vi: iv = vi; break;
-                        case double vd: iv = (int)vd; break;
-                        case float vf: iv = (int)vf; break;
-                        case long vl: iv = (int)vl; break;
-                        case short vs: iv = vs; break;
-                        case byte vb: iv = vb; break;
-                        case bool vb2: iv = vb2 ? 1 : 0; break;
-                        case string s when int.TryParse(s, out var ps): iv = ps; break;
-                        default:
-                            try { iv = Convert.ToInt32(value); }
-                            catch { iv = 0; }
-                            break;
-                    }
-                    i32[(double)i] = iv;
+                    typedArray[(double)i] = TypeUtilities.ToNumber(value);
                 }
                 return value;
             }
@@ -4832,8 +4779,8 @@ namespace JavaScriptRuntime
                     return JavaScriptRuntime.Function.GetLength(del);
                 case Array arr:
                     return arr.length;
-                case Int32Array i32:
-                    return i32.length;
+                case TypedArrayBase typedArray:
+                    return typedArray.length;
                 case JavaScriptRuntime.Node.Buffer buffer:
                     return buffer.length;
                 case string s:
@@ -5031,7 +4978,7 @@ namespace JavaScriptRuntime
             // Arrays / typed arrays: allow ad-hoc properties (arrays are objects in JS).
             // Numeric index semantics are handled elsewhere; this path covers things like
             // RegExp exec results setting `match.index` / `match.input`.
-            if (obj is Array || obj is Int32Array)
+            if (obj is Array || obj is TypedArrayBase)
             {
                 if (obj is Array arr && string.Equals(name, "length", StringComparison.Ordinal))
                 {
@@ -5392,13 +5339,13 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                // Int32Array (typed array minimal support)
-                if (target is Int32Array i32)
+                // Typed arrays
+                if (target is TypedArrayBase typedArray)
                 {
-                    if (name == "length") return true;
+                    if (name == "length" || name == "buffer" || name == "byteOffset" || name == "byteLength") return true;
                     if (int.TryParse(name, out var ti))
                     {
-                        return ti >= 0 && ti < i32.length;
+                        return ti >= 0 && ti < typedArray.length;
                     }
                     return false;
                 }

@@ -12,7 +12,7 @@ Synced to:
 
 Rationale:
 - #773 is now closed, so #774 is the first unfinished issue in the prioritized list below.
-- The current branch is implementing an initial `%TypedArray%` follow-on slice via `Int32Array.prototype.slice(...)`.
+- The current branch has been broadened from the initial `Int32Array.prototype.slice(...)` slice into ArrayBuffer-backed `%TypedArray%` work covering `Int32Array`, `Uint8Array`, and `Float64Array` plus shared constructor/view/set/search/iterator behavior; draft PR #818 now needs its title/body refreshed to match that wider scope before review submission.
 
 ## Recommended next item after #774
 **Issue #775** (OPEN):
@@ -104,7 +104,7 @@ Rationale:
 
 ## Open PRs (for context)
 - #704 (OPEN): https://github.com/tomacox74/js2il/pull/704
-- #818 (OPEN, draft): https://github.com/tomacox74/js2il/pull/818
+- #818 (OPEN, draft): https://github.com/tomacox74/js2il/pull/818 — currently tracks the broader ArrayBuffer-backed `%TypedArray%` implementation work for #774, not just the earlier `Int32Array.prototype.slice(...)` slice
 
 ## Label/metadata gaps (as of this snapshot)
 - Open issues: 30

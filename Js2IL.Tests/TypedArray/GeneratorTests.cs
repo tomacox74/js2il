@@ -16,6 +16,9 @@ namespace Js2IL.Tests.TypedArray
         public Task ArrayBuffer_IsView_DataView() { var testName = nameof(ArrayBuffer_IsView_DataView); return GenerateTest(testName); }
 
         [Fact]
+        public Task ArrayBuffer_IsView_TypedArrays() { var testName = nameof(ArrayBuffer_IsView_TypedArrays); return GenerateTest(testName); }
+
+        [Fact]
         public Task DataView_BoundsChecks_RangeError() { var testName = nameof(DataView_BoundsChecks_RangeError); return GenerateTest(testName); }
 
         [Fact]
@@ -37,10 +40,19 @@ namespace Js2IL.Tests.TypedArray
         public Task Int32Array_FromArray_CopyAndCoerce() { var testName = nameof(Int32Array_FromArray_CopyAndCoerce); return GenerateTest(testName); }
 
         [Fact]
+        public Task Int32Array_Construct_ArrayBuffer_ViewProperties() { var testName = nameof(Int32Array_Construct_ArrayBuffer_ViewProperties); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Int32Array_Construct_ArrayBuffer_Alignment_RangeError() { var testName = nameof(Int32Array_Construct_ArrayBuffer_Alignment_RangeError); return GenerateTest(testName); }
+
+        [Fact]
         public Task Int32Array_Index_Assign() { var testName = nameof(Int32Array_Index_Assign); return GenerateTest(testName); }
 
         [Fact]
         public Task Int32Array_Set_FromArray_WithOffset() { var testName = nameof(Int32Array_Set_FromArray_WithOffset); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Int32Array_Set_BoundsChecks() { var testName = nameof(Int32Array_Set_BoundsChecks); return GenerateTest(testName); }
 
         [Fact]
         public Task Int32Array_Slice_Basic() { var testName = nameof(Int32Array_Slice_Basic); return GenerateTest(testName); }
@@ -49,7 +61,19 @@ namespace Js2IL.Tests.TypedArray
         public Task Int32Array_Slice_RelativeIndices() { var testName = nameof(Int32Array_Slice_RelativeIndices); return GenerateTest(testName); }
 
         [Fact]
+        public Task Int32Array_Subarray_ViewSemantics() { var testName = nameof(Int32Array_Subarray_ViewSemantics); return GenerateTest(testName); }
+
+        [Fact]
         public Task Int32Array_ShiftDerived_Index_Access() { var testName = nameof(Int32Array_ShiftDerived_Index_Access); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Uint8Array_Construct_ArrayLike_Buffer_Search() { var testName = nameof(Uint8Array_Construct_ArrayLike_Buffer_Search); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Uint8Array_Values_Iterator() { var testName = nameof(Uint8Array_Values_Iterator); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Float64Array_Construct_ArrayBuffer_Search() { var testName = nameof(Float64Array_Construct_ArrayBuffer_Search); return GenerateTest(testName); }
 
         [Fact]
         public Task Prime_SetBitsTrue_SmallStep_WordValueOrAssign() { var testName = nameof(Prime_SetBitsTrue_SmallStep_WordValueOrAssign); return GenerateTest(testName); }

@@ -60,25 +60,25 @@
     {
       "clause": "23.2.3.1",
       "title": "%TypedArray%.prototype.at ( index )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.at"
     },
     {
       "clause": "23.2.3.2",
       "title": "get %TypedArray%.prototype.buffer",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-%typedarray%.prototype.buffer"
     },
     {
       "clause": "23.2.3.3",
       "title": "get %TypedArray%.prototype.byteLength",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-%typedarray%.prototype.bytelength"
     },
     {
       "clause": "23.2.3.4",
       "title": "get %TypedArray%.prototype.byteOffset",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-get-%typedarray%.prototype.byteoffset"
     },
     {
@@ -150,13 +150,13 @@
     {
       "clause": "23.2.3.16",
       "title": "%TypedArray%.prototype.includes ( searchElement [ , fromIndex ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.includes"
     },
     {
       "clause": "23.2.3.17",
       "title": "%TypedArray%.prototype.indexOf ( searchElement [ , fromIndex ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.indexof"
     },
     {
@@ -246,7 +246,7 @@
     {
       "clause": "23.2.3.30",
       "title": "%TypedArray%.prototype.subarray ( start , end )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.subarray"
     },
     {
@@ -276,7 +276,7 @@
     {
       "clause": "23.2.3.35",
       "title": "%TypedArray%.prototype.values ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.values"
     },
     {
@@ -312,7 +312,7 @@
     {
       "clause": "23.2.4.2",
       "title": "TypedArrayCreateSameType ( exemplar , length )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-create-same-type"
     },
     {
@@ -348,7 +348,7 @@
     {
       "clause": "23.2.5",
       "title": "The TypedArray Constructors",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-typedarray-constructors"
     },
     {
@@ -372,7 +372,7 @@
     {
       "clause": "23.2.5.1.3",
       "title": "InitializeTypedArrayFromArrayBuffer ( O , buffer , byteOffset , length )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-initializetypedarrayfromarraybuffer"
     },
     {
@@ -440,49 +440,61 @@
     "entries": [
       {
         "clause": "23.2",
-        "feature": "TypedArray surface area in JS2IL",
-        "status": "Incomplete",
+        "feature": "ArrayBuffer-backed TypedArray subset",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-typedarray-objects",
-        "notes": "Current implementation is an Int32Array-focused subset rather than the full %TypedArray% constructor/prototype hierarchy."
+        "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_TypedArrays.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js"
+        ],
+        "notes": "JS2IL now provides a shared ArrayBuffer-backed TypedArray implementation for Int32Array, Uint8Array, and Float64Array. The full %TypedArray% constructor hierarchy, detached-buffer semantics, species hooks, and many prototype methods are still incomplete."
       },
       {
         "clause": "23.2.5.1",
-        "feature": "Int32Array constructor (length, array-like, typed-array copy subset)",
+        "feature": "Int32Array constructors and preserved compiler fast paths",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-typedarray",
         "testScripts": [
           "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
-          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js"
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_Alignment_RangeError.js"
         ],
-        "notes": "Supports new Int32Array(length) and selected array-like/list sources with ToInt32-style coercion; full multi-constructor TypedArray model is not implemented."
+        "notes": "Int32Array now supports length, array-like/typed-array copy, and ArrayBuffer view construction while keeping existing compiler-specialized member/index access entry points intact. Detached-buffer semantics, species construction, and constructor metadata like BYTES_PER_ELEMENT remain incomplete."
       },
       {
-        "clause": "23.2.3.26",
-        "feature": "Int32Array.prototype.set(source[, offset])",
+        "clause": "23.2.5.1",
+        "feature": "Uint8Array constructors",
         "status": "Supported with Limitations",
-        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.set",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray",
         "testScripts": [
-          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js"
+          "Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js"
         ],
-        "notes": "Copies from array-like and Int32Array inputs with offset support; behavior is tailored to Int32Array and does not cover full TypedArray species/buffer edge cases."
+        "notes": "Uint8Array supports length, array-like, and ArrayBuffer-backed construction with Uint8 coercion and shared TypedArray view metadata. Uint8ClampedArray and constructor metadata/prototype parity remain out of scope."
       },
       {
-        "clause": "23.2.3.27",
-        "feature": "Int32Array.prototype.slice(start, end)",
+        "clause": "23.2.5.1",
+        "feature": "Float64Array constructors",
         "status": "Supported with Limitations",
-        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.slice",
+        "specUrl": "https://tc39.es/ecma262/#sec-typedarray",
         "testScripts": [
-          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Slice_Basic.js",
-          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Slice_RelativeIndices.js"
+          "Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_Alignment_RangeError.js"
         ],
-        "notes": "Implements Int32Array slicing with relative index coercion and copy semantics for the current Int32Array-focused TypedArray subset; species construction and ArrayBuffer-backed view semantics are not yet implemented."
+        "notes": "Float64Array supports length, array-like, and ArrayBuffer-backed construction with IEEE-754 storage and shared TypedArray view metadata. BigInt-typed families and constructor metadata/prototype parity remain incomplete."
       },
       {
         "clause": "23.2.8",
-        "feature": "Int32Array instance index and length behavior",
+        "feature": "Shared typed array instance properties and indexed element access",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-typedarray-instances",
         "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Subarray_ViewSemantics.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
           "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Index_Assign.js",
           "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Wrapping_Semantics.js",
           "Js2IL.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js",
@@ -490,14 +502,52 @@
           "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Fractional_Index_NoOp.js",
           "Js2IL.Tests/TypedArray/JavaScript/Int32Array_ShiftDerived_Index_Access.js"
         ],
-        "notes": "Numeric element access and length are implemented for Int32Array with wrapping ToInt32 writes and no-op invalid index writes; generalized TypedArray internals are incomplete."
+        "notes": "buffer, byteOffset, byteLength, length, and numeric index access are shared across the supported TypedArray families, backed by ArrayBuffer views. Out-of-range reads and writes, detached buffers, and full property-descriptor semantics are not fully spec-complete."
       },
       {
-        "clause": "23.2.5.1.3",
-        "feature": "InitializeTypedArrayFromArrayBuffer",
-        "status": "Not Yet Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-initializetypedarrayfromarraybuffer",
-        "notes": "ArrayBuffer-backed TypedArray construction semantics are not implemented in the current Int32Array subset."
+        "clause": "23.2.3.1",
+        "feature": "Shared %TypedArray%.prototype.at/includes/indexOf",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.at",
+        "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js"
+        ],
+        "notes": "The supported TypedArray families share at(), includes(), and indexOf() implementations with numeric coercion and NaN handling for includes(). at() currently returns numeric defaults rather than fully spec-accurate undefined behavior for every out-of-range case."
+      },
+      {
+        "clause": "23.2.3.26",
+        "feature": "Shared %TypedArray%.prototype.set(source[, offset])",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.set",
+        "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_BoundsChecks.js"
+        ],
+        "notes": "set() supports array-like and typed-array sources, explicit offsets, bounds checks, and overlap-safe copying for the supported families. Species/detached-buffer semantics and broader TypedArray interoperability are still limited."
+      },
+      {
+        "clause": "23.2.3.27",
+        "feature": "Shared %TypedArray%.prototype.slice/subarray",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.slice",
+        "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Slice_Basic.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Slice_RelativeIndices.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Subarray_ViewSemantics.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js"
+        ],
+        "notes": "slice() returns same-type copies backed by fresh ArrayBuffers, while subarray() returns same-type views over the original buffer. Species construction and broader constructor selection rules are not yet implemented."
+      },
+      {
+        "clause": "23.2.3.35",
+        "feature": "TypedArray values() iterator basics",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.values",
+        "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Values_Iterator.js"
+        ],
+        "notes": "values() returns an iterator object with callable next() support, and supported TypedArrays participate in for-of via the runtime iterator path. The explicit %Symbol.iterator% method surface is still incomplete."
       },
       {
         "clause": "23.2.2.1",
