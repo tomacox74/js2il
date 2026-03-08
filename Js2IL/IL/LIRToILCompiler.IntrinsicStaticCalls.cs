@@ -125,16 +125,7 @@ internal sealed partial class LIRToILCompiler
         var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
 
         var argCount = instruction.Arguments.Count;
-        var chosen = methods
-            .Where(mi => mi.GetParameters().Length == argCount)
-            .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
-            .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
-            .FirstOrDefault();
-        if (chosen == null)
-        {
-            // Try params object[] signature
-            chosen = methods.FirstOrDefault(IsParamsObjectArrayOverload);
-        }
+        var chosen = ResolveIntrinsicStaticMethod(methods, instruction.Arguments);
 
         if (chosen == null)
         {
@@ -163,9 +154,9 @@ internal sealed partial class LIRToILCompiler
         else
         {
             // Load each argument directly (boxing handled if needed based on target parameter type)
-            foreach (var arg in instruction.Arguments)
+            for (int i = 0; i < instruction.Arguments.Count; i++)
             {
-                EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempForParameter(instruction.Arguments[i], parameters[i].ParameterType, ilEncoder, allocation, methodDescriptor);
             }
         }
 
@@ -206,15 +197,7 @@ internal sealed partial class LIRToILCompiler
         var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
 
         var argCount = instruction.Arguments.Count;
-        var chosen = methods
-            .Where(mi => mi.GetParameters().Length == argCount)
-            .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
-            .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
-            .FirstOrDefault();
-        if (chosen == null)
-        {
-            chosen = methods.FirstOrDefault(IsParamsObjectArrayOverload);
-        }
+        var chosen = ResolveIntrinsicStaticMethod(methods, instruction.Arguments);
 
         if (chosen == null)
         {
@@ -241,9 +224,9 @@ internal sealed partial class LIRToILCompiler
         }
         else
         {
-            foreach (var arg in instruction.Arguments)
+            for (int i = 0; i < instruction.Arguments.Count; i++)
             {
-                EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempForParameter(instruction.Arguments[i], parameters[i].ParameterType, ilEncoder, allocation, methodDescriptor);
             }
         }
 
@@ -279,15 +262,7 @@ internal sealed partial class LIRToILCompiler
         var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
 
         var argCount = instruction.Arguments.Count;
-        var chosen = methods
-            .Where(mi => mi.GetParameters().Length == argCount)
-            .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
-            .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
-            .FirstOrDefault();
-        if (chosen == null)
-        {
-            chosen = methods.FirstOrDefault(IsParamsObjectArrayOverload);
-        }
+        var chosen = ResolveIntrinsicStaticMethod(methods, instruction.Arguments);
 
         if (chosen == null)
         {
@@ -316,9 +291,9 @@ internal sealed partial class LIRToILCompiler
         else
         {
             // Load each argument directly (boxing handled if needed based on target parameter type)
-            foreach (var arg in instruction.Arguments)
+            for (int i = 0; i < instruction.Arguments.Count; i++)
             {
-                EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempForParameter(instruction.Arguments[i], parameters[i].ParameterType, ilEncoder, allocation, methodDescriptor);
             }
         }
 
@@ -327,6 +302,152 @@ internal sealed partial class LIRToILCompiler
         var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
+    }
+
+    private System.Reflection.MethodInfo? ResolveIntrinsicStaticMethod(
+        List<System.Reflection.MethodInfo> methods,
+        IReadOnlyList<TempVariable> arguments)
+    {
+        var argCount = arguments.Count;
+
+        var compatible = methods
+            .Where(mi => mi.GetParameters().Length == argCount)
+            .Where(mi => AreIntrinsicArgumentsCompatible(arguments, mi.GetParameters()))
+            .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
+            .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
+            .FirstOrDefault();
+        if (compatible != null)
+        {
+            return compatible;
+        }
+
+        var exactArity = methods
+            .Where(mi => mi.GetParameters().Length == argCount)
+            .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
+            .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
+            .FirstOrDefault();
+        if (exactArity != null)
+        {
+            return exactArity;
+        }
+
+        return methods.FirstOrDefault(IsParamsObjectArrayOverload);
+    }
+
+    private bool AreIntrinsicArgumentsCompatible(
+        IReadOnlyList<TempVariable> arguments,
+        System.Reflection.ParameterInfo[] parameters)
+    {
+        if (parameters.Length != arguments.Count)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            if (!IsIntrinsicArgumentCompatible(arguments[i], parameters[i].ParameterType))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool IsIntrinsicArgumentCompatible(TempVariable argument, Type parameterType)
+    {
+        if (parameterType == typeof(object))
+        {
+            return true;
+        }
+
+        var storage = GetTempStorage(argument);
+        var clrType = storage.ClrType;
+
+        if (parameterType == typeof(string))
+        {
+            return storage.Kind == ValueStorageKind.Reference && clrType == typeof(string);
+        }
+
+        if (parameterType == typeof(double))
+        {
+            return clrType == typeof(double);
+        }
+
+        if (parameterType == typeof(bool))
+        {
+            return clrType == typeof(bool);
+        }
+
+        if (!parameterType.IsValueType)
+        {
+            return storage.Kind == ValueStorageKind.Reference
+                && clrType != null
+                && clrType != typeof(object)
+                && parameterType.IsAssignableFrom(clrType);
+        }
+
+        return storage.Kind == ValueStorageKind.UnboxedValue && clrType == parameterType;
+    }
+
+    private void EmitLoadTempForParameter(
+        TempVariable argument,
+        Type parameterType,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var storage = GetTempStorage(argument);
+
+        if (parameterType == typeof(object))
+        {
+            EmitLoadTempAsObject(argument, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (parameterType == typeof(string))
+        {
+            EmitLoadTempAsString(argument, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (parameterType == typeof(double))
+        {
+            EmitLoadTempAsDouble(argument, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (parameterType == typeof(bool))
+        {
+            EmitLoadTempAsBoolean(argument, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (!parameterType.IsValueType)
+        {
+            if (storage.Kind == ValueStorageKind.Reference
+                && storage.ClrType != null
+                && parameterType.IsAssignableFrom(storage.ClrType))
+            {
+                EmitLoadTemp(argument, ilEncoder, allocation, methodDescriptor);
+                return;
+            }
+
+            EmitLoadTempAsObject(argument, ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(parameterType));
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == parameterType)
+        {
+            EmitLoadTemp(argument, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        EmitLoadTempAsObject(argument, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.OpCode(ILOpCode.Unbox_any);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(parameterType));
     }
 
     private static bool IsParamsObjectArrayOverload(System.Reflection.MethodInfo method)

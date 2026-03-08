@@ -70,6 +70,12 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_RegExp_Exec_LastIndex_Sticky()
+        {
+            return ExecutionTest(nameof(String_RegExp_Exec_LastIndex_Sticky));
+        }
+
+        [Fact]
         public Task String_Substring()
         {
             return ExecutionTest(nameof(String_Substring));
@@ -79,6 +85,18 @@ namespace Js2IL.Tests.String
         public Task String_Split_Basic()
         {
             return ExecutionTest(nameof(String_Split_Basic));
+        }
+
+        [Fact]
+        public Task String_Split_Regex_Basic()
+        {
+            return ExecutionTest(nameof(String_Split_Regex_Basic));
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_Custom()
+        {
+            return ExecutionTest(nameof(String_RegExp_SymbolDispatch_Custom));
         }
 
         [Fact]

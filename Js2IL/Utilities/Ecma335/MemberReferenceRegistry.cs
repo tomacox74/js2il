@@ -95,6 +95,36 @@ namespace Js2IL.Utilities.Ecma335
         }
 
         /// <summary>
+        /// Gets or creates a metadata handle suitable for IL type tokens.
+        /// Uses TypeSpecifications for arrays and constructed generic types.
+        /// </summary>
+        public EntityHandle GetOrAddTypeHandle(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (!RequiresTypeSpecification(type))
+            {
+                return _typeRefRegistry.GetOrAdd(type);
+            }
+
+            if (_typeSpecCache.TryGetValue(type, out var cachedSpec))
+            {
+                return cachedSpec;
+            }
+
+            var specBlob = new BlobBuilder();
+            EncodeSignatureType(new BlobEncoder(specBlob).TypeSpecificationSignature(), type);
+
+            var specBlobHandle = _metadataBuilder.GetOrAddBlob(specBlob);
+            var specHandle = _metadataBuilder.AddTypeSpecification(specBlobHandle);
+            _typeSpecCache[type] = specHandle;
+            return specHandle;
+        }
+
+        /// <summary>
         /// Gets or creates a MethodSpecificationHandle for Array.Empty&lt;object&gt;().
         /// This is a generic method instantiation that returns an empty object[] array.
         /// </summary>
@@ -251,6 +281,11 @@ namespace Js2IL.Utilities.Ecma335
             var specHandle = _metadataBuilder.AddTypeSpecification(specBlobHandle);
             _typeSpecCache[type] = specHandle;
             return specHandle;
+        }
+
+        private static bool RequiresTypeSpecification(Type type)
+        {
+            return type.IsArray || (type.IsGenericType && !type.IsGenericTypeDefinition);
         }
 
         /// <summary>
