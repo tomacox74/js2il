@@ -2031,7 +2031,7 @@ namespace JavaScriptRuntime
             if (item is not string && !item.GetType().IsValueType)
             {
                 var spreadable = JavaScriptRuntime.ObjectRuntime.GetItem(item, Symbol.isConcatSpreadable);
-                if (spreadable is not null && spreadable is not JsNull)
+                if (spreadable is not null)
                 {
                     return TypeUtilities.ToBoolean(spreadable);
                 }
