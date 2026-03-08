@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-08T00:20:55Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -50,7 +50,7 @@
 | 23.2.3.26 | %TypedArray%.prototype.set ( source [ , offset ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.set) |
 | 23.2.3.26.1 | SetTypedArrayFromArrayLike ( target , targetOffset , source ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-settypedarrayfromarraylike) |
 | 23.2.3.26.2 | SetTypedArrayFromTypedArray ( target , targetOffset , source ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-settypedarrayfromtypedarray) |
-| 23.2.3.27 | %TypedArray%.prototype.slice ( start , end ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.slice) |
+| 23.2.3.27 | %TypedArray%.prototype.slice ( start , end ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.slice) |
 | 23.2.3.28 | %TypedArray%.prototype.some ( callback [ , thisArg ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.some) |
 | 23.2.3.29 | %TypedArray%.prototype.sort ( comparator ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.sort) |
 | 23.2.3.30 | %TypedArray%.prototype.subarray ( start , end ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.subarray) |
@@ -107,6 +107,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Int32Array.prototype.set(source[, offset]) | Supported with Limitations | [`Int32Array_Set_FromArray_WithOffset.js`](../../../Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js) | Copies from array-like and Int32Array inputs with offset support; behavior is tailored to Int32Array and does not cover full TypedArray species/buffer edge cases. |
+
+### 23.2.3.27 ([tc39.es](https://tc39.es/ecma262/#sec-%typedarray%.prototype.slice))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Int32Array.prototype.slice(start, end) | Supported with Limitations | [`Int32Array_Slice_Basic.js`](../../../Js2IL.Tests/TypedArray/JavaScript/Int32Array_Slice_Basic.js)<br>[`Int32Array_Slice_RelativeIndices.js`](../../../Js2IL.Tests/TypedArray/JavaScript/Int32Array_Slice_RelativeIndices.js) | Implements Int32Array slicing with relative index coercion and copy semantics for the current Int32Array-focused TypedArray subset; species construction and ArrayBuffer-backed view semantics are not yet implemented. |
 
 ### 23.2.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-typedarray))
 

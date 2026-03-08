@@ -68,6 +68,11 @@ namespace JavaScriptRuntime
             _buffer = System.Array.Empty<int>();
         }
 
+        private Int32Array(int[] buffer, bool cloneBuffer)
+        {
+            _buffer = cloneBuffer ? (int[])buffer.Clone() : buffer;
+        }
+
         // JS typed arrays expose a numeric length; keep as double for consistency with runtime helpers
         public double length => _buffer.Length;
 
@@ -175,6 +180,32 @@ namespace JavaScriptRuntime
             return null!;
         }
 
+        public Int32Array slice()
+            => slice(null, null);
+
+        public Int32Array slice(object? start)
+            => slice(start, null);
+
+        public Int32Array slice(object? start, object? end)
+        {
+            var startIndex = CoerceRelativeIndex(start, 0, _buffer.Length);
+            var endIndex = CoerceRelativeIndex(end, _buffer.Length, _buffer.Length);
+            if (endIndex < startIndex)
+            {
+                endIndex = startIndex;
+            }
+
+            var length = endIndex - startIndex;
+            if (length <= 0)
+            {
+                return new Int32Array(System.Array.Empty<int>(), cloneBuffer: false);
+            }
+
+            var copy = new int[length];
+            System.Array.Copy(_buffer, startIndex, copy, 0, length);
+            return new Int32Array(copy, cloneBuffer: false);
+        }
+
         private static bool TryToNumber(object o, out double d)
         {
             switch (o)
@@ -243,6 +274,38 @@ namespace JavaScriptRuntime
             if (double.IsInfinity(d)) return int.MaxValue;
             if (d > int.MaxValue) return int.MaxValue;
             return (int)d;
+        }
+
+        private static int CoerceRelativeIndex(object? value, int defaultValue, int length)
+        {
+            if (value is null || value is JsNull)
+            {
+                return defaultValue;
+            }
+
+            var number = TypeUtilities.ToNumber(value);
+            if (double.IsNaN(number) || double.IsNegativeInfinity(number))
+            {
+                return 0;
+            }
+
+            if (double.IsPositiveInfinity(number))
+            {
+                return length;
+            }
+
+            var truncated = System.Math.Truncate(number);
+            if (truncated < 0)
+            {
+                truncated = System.Math.Max(length + truncated, 0);
+            }
+
+            if (truncated > length)
+            {
+                truncated = length;
+            }
+
+            return (int)truncated;
         }
     }
 }

@@ -228,7 +228,7 @@
     {
       "clause": "23.2.3.27",
       "title": "%TypedArray%.prototype.slice ( start , end )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.slice"
     },
     {
@@ -465,6 +465,17 @@
           "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js"
         ],
         "notes": "Copies from array-like and Int32Array inputs with offset support; behavior is tailored to Int32Array and does not cover full TypedArray species/buffer edge cases."
+      },
+      {
+        "clause": "23.2.3.27",
+        "feature": "Int32Array.prototype.slice(start, end)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.slice",
+        "testScripts": [
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Slice_Basic.js",
+          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Slice_RelativeIndices.js"
+        ],
+        "notes": "Implements Int32Array slicing with relative index coercion and copy semantics for the current Int32Array-focused TypedArray subset; species construction and ArrayBuffer-backed view semantics are not yet implemented."
       },
       {
         "clause": "23.2.8",

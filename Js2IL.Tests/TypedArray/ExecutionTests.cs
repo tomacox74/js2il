@@ -43,6 +43,12 @@ namespace Js2IL.Tests.TypedArray
         public Task Int32Array_Set_FromArray_WithOffset() { var testName = nameof(Int32Array_Set_FromArray_WithOffset); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Int32Array_Slice_Basic() { var testName = nameof(Int32Array_Slice_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Int32Array_Slice_RelativeIndices() { var testName = nameof(Int32Array_Slice_RelativeIndices); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Int32Array_ShiftDerived_Index_Access() { var testName = nameof(Int32Array_ShiftDerived_Index_Access); return ExecutionTest(testName); }
 
         [Fact]
