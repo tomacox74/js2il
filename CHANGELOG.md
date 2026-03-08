@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.28 - 2026-03-08
+
 - perf/runtime/benchmarks: speed up stopwatch-style constructor-function hot paths by fast-pathing dictionary-backed delegate member calls/property reads in `JavaScriptRuntime.Object` and caching delegate invoke metadata in `Closure`, improving local `stopwatch-modern` execute-lane Dry benchmark results from about `1.144 s / 191,391.58 KB` to `442.4 ms / 87,508.57 KB`.
 
 ## v0.8.27 - 2026-03-07
