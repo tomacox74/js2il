@@ -7,13 +7,14 @@ Synced to:
 - GitHub: open issues/PRs state as of 2026-03-08 (refreshed in-place)
 
 ## Current active item
-**Issue #776** (OPEN; active work is now on `copilot/gh-776-object-invariants`, with focused runtime/test work in progress and a new draft PR still to be opened):
+**Issue #776** (OPEN; active work is now on `copilot/gh-776-object-invariants`, with draft PR #821 open for review):
 - https://github.com/tomacox74/js2il/issues/776
+- Draft PR: https://github.com/tomacox74/js2il/pull/821
 
 Rationale:
 - #583 is now closed via merged PR #820, so #776 becomes the next unfinished ranked medium-priority item from this list.
-- The current branch is tightening ordinary-object descriptor invariants and own-key ordering in `JavaScriptRuntime.Object`, `PropertyDescriptorStore`, and `ForInIterator`.
-- Focused Object execution/generator coverage is green for descriptor redefinition invariants, non-extensible-object behavior, and own-key ordering.
+- The current branch tightens ordinary-object descriptor invariants and own-key ordering in `JavaScriptRuntime.Object`, `PropertyDescriptorStore`, and `ForInIterator`.
+- Focused Object execution/generator coverage is green for descriptor redefinition invariants, non-extensible-object behavior, and own-key ordering, and the draft PR is now ready for review.
 - This is a good dependency for the adjacent integrity follow-up in #777 because the seal/freeze/preventExtensions surface depends on accurate ordinary-object descriptor rules.
 
 ## Recommended next item after #776
@@ -54,7 +55,7 @@ Rationale:
 
 1. #776 (priority:medium) ECMA-262: Ordinary object internal method invariants (DefineOwnProperty/GetOwnProperty, keys ordering)
    - https://github.com/tomacox74/js2il/issues/776
-   - Current branch status: `copilot/gh-776-object-invariants` has runtime + focused test updates in progress; draft PR creation is the remaining packaging step.
+   - Current branch status: `copilot/gh-776-object-invariants` now has draft PR #821 open with runtime + focused test updates and refreshed ECMA-262 tracking docs.
 2. #777 (priority:medium) ECMA-262: Object integrity APIs semantics audit (freeze/seal/preventExtensions/is*)
    - https://github.com/tomacox74/js2il/issues/777
 3. #778 (priority:medium) ECMA-262: Support Function constructor (new Function / CreateDynamicFunction)
@@ -109,6 +110,7 @@ Rationale:
     - https://github.com/tomacox74/js2il/issues/768
 
 ## Open PRs (for context)
+- #821 (DRAFT): https://github.com/tomacox74/js2il/pull/821 — ordinary object internal method invariants for issue #776.
 - #704 (OPEN): https://github.com/tomacox74/js2il/pull/704 — earlier attempt at issue #583 canary smoke coverage; now superseded by merged PR #820.
 
 ## Label/metadata gaps (as of this snapshot)
