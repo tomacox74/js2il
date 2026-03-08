@@ -397,6 +397,8 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
+        var storage = GetTempStorage(argument);
+
         if (parameterType == typeof(object))
         {
             EmitLoadTempAsObject(argument, ilEncoder, allocation, methodDescriptor);
@@ -423,13 +425,20 @@ internal sealed partial class LIRToILCompiler
 
         if (!parameterType.IsValueType)
         {
+            if (storage.Kind == ValueStorageKind.Reference
+                && storage.ClrType != null
+                && parameterType.IsAssignableFrom(storage.ClrType))
+            {
+                EmitLoadTemp(argument, ilEncoder, allocation, methodDescriptor);
+                return;
+            }
+
             EmitLoadTempAsObject(argument, ilEncoder, allocation, methodDescriptor);
             ilEncoder.OpCode(ILOpCode.Castclass);
-            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(parameterType));
+            ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(parameterType));
             return;
         }
 
-        var storage = GetTempStorage(argument);
         if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == parameterType)
         {
             EmitLoadTemp(argument, ilEncoder, allocation, methodDescriptor);
@@ -438,7 +447,7 @@ internal sealed partial class LIRToILCompiler
 
         EmitLoadTempAsObject(argument, ilEncoder, allocation, methodDescriptor);
         ilEncoder.OpCode(ILOpCode.Unbox_any);
-        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(parameterType));
+        ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(parameterType));
     }
 
     private static bool IsParamsObjectArrayOverload(System.Reflection.MethodInfo method)
