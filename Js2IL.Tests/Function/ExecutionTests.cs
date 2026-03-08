@@ -190,6 +190,27 @@ namespace Js2IL.Tests.Function
         public Task Function_Instance_Length_Name_Basic() { var testName = nameof(Function_Instance_Length_Name_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_Constructor_New_ConstantString_Basic() { var testName = nameof(Function_Constructor_New_ConstantString_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_Call_Length_Name() { var testName = nameof(Function_Constructor_Call_Length_Name); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_GlobalScope_NoClosure() { var testName = nameof(Function_Constructor_GlobalScope_NoClosure); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_NonLiteral_RuntimeError() { var testName = nameof(Function_Constructor_NonLiteral_RuntimeError); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_SyntaxError() { var testName = nameof(Function_Constructor_SyntaxError); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_New_ShadowedLocal_NoSyntaxError() { var testName = nameof(Function_Constructor_New_ShadowedLocal_NoSyntaxError); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous() { var testName = nameof(Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_MaxParameters_16() { var testName = nameof(Function_MaxParameters_16); return ExecutionTest(testName); }
 
         [Fact]

@@ -6,6 +6,7 @@ using Acornima.Ast;
 using Js2IL.DebugSymbols;
 using Js2IL.Services;
 using Js2IL.Services.TwoPhaseCompilation;
+using Js2IL.Utilities;
 using ScopesCallableKind = Js2IL.Services.ScopesAbi.CallableKind;
 
 using Js2IL.SymbolTables;
@@ -489,6 +490,71 @@ class HIRMethodBuilder
         ArgumentNullException.ThrowIfNull(scope, nameof(scope));
         _rootScope = scope;
         _currentScope = scope;
+    }
+
+    private string GetCurrentDeclaringScopeName()
+    {
+        var root = _currentScope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        return _currentScope.Kind == ScopeKind.Global
+            ? root.Name
+            : $"{root.Name}/{_currentScope.GetQualifiedName()}";
+    }
+
+    private HIRFunctionExpression CreateFunctionExpressionValue(Scope functionScope, FunctionExpression funcExpr)
+    {
+        var functionName = (funcExpr.Id as Identifier)?.Name;
+        var callableId = new CallableId
+        {
+            Kind = CallableKind.FunctionExpression,
+            DeclaringScopeName = GetCurrentDeclaringScopeName(),
+            Name = functionName,
+            Location = SourceLocation.FromNode(funcExpr),
+            JsParamCount = funcExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
+            NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+            HasRestParameters = functionScope.HasRestParameters,
+            AstNode = null
+        };
+
+        return new HIRFunctionExpression(callableId, functionScope);
+    }
+
+    private Scope? FindDynamicFunctionScopeForSite(Node siteNode)
+    {
+        var byReference = _currentScope.Children.FirstOrDefault(child => ReferenceEquals(child.SyntheticOriginatingNode, siteNode));
+        if (byReference != null)
+        {
+            return byReference;
+        }
+
+        var baseScopeName = DynamicFunctionSupport.GetScopeName(siteNode);
+        return _currentScope.Children.FirstOrDefault(child =>
+            child.Kind == ScopeKind.Function
+            && child.SyntheticOriginatingNode != null
+            && child.Name.StartsWith(baseScopeName, StringComparison.Ordinal));
+    }
+
+    private bool TryCreateDynamicFunctionExpression(Node siteNode, out HIRExpression? hirExpr)
+    {
+        hirExpr = null;
+
+        var dynamicScope = FindDynamicFunctionScopeForSite(siteNode);
+        if (dynamicScope?.AstNode is not FunctionExpression dynamicFuncExpr)
+        {
+            return false;
+        }
+
+        if (!HIRBuilder.ParamsSupportedForIR(dynamicFuncExpr.Params))
+        {
+            return false;
+        }
+
+        hirExpr = CreateFunctionExpressionValue(dynamicScope, dynamicFuncExpr);
+        return true;
     }
 
     public void AddPrologueStatement([In, NotNull] HIRStatement statement)
@@ -1644,6 +1710,14 @@ class HIRMethodBuilder
                 return true;
 
             case CallExpression callExpr:
+                if (callExpr.Callee is Identifier directFunctionId
+                    && string.Equals(directFunctionId.Name, "Function", StringComparison.Ordinal)
+                    && TryCreateDynamicFunctionExpression(callExpr, out var dynamicFunctionExpr))
+                {
+                    hirExpr = dynamicFunctionExpr;
+                    return true;
+                }
+
                 // Handle call expressions
                 HIRExpression? calleeExpr;
                 var argExprs = new List<HIRExpression>();
@@ -1693,6 +1767,14 @@ class HIRMethodBuilder
                 return true;
 
             case NewExpression newExpr:
+                if (newExpr.Callee is Identifier directNewFunctionId
+                    && string.Equals(directNewFunctionId.Name, "Function", StringComparison.Ordinal)
+                    && TryCreateDynamicFunctionExpression(newExpr, out var dynamicCtorExpr))
+                {
+                    hirExpr = dynamicCtorExpr;
+                    return true;
+                }
+
                 // PL3.3: NewExpression support in IR pipeline.
                 // - PL3.3a: built-in Error types
                 // - PL3.3b: user-defined classes
@@ -1751,9 +1833,10 @@ class HIRMethodBuilder
                 bool isStringCtor = string.Equals(calleeName, "String", StringComparison.Ordinal);
                 bool isBooleanCtor = string.Equals(calleeName, "Boolean", StringComparison.Ordinal);
                 bool isNumberCtor = string.Equals(calleeName, "Number", StringComparison.Ordinal);
+                bool isFunctionCtor = string.Equals(calleeName, "Function", StringComparison.Ordinal);
                 var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(calleeName);
 
-                if (!isBuiltInError && !isArrayCtor && !isStringCtor && !isBooleanCtor && !isNumberCtor && intrinsicType == null)
+                if (!isBuiltInError && !isArrayCtor && !isStringCtor && !isBooleanCtor && !isNumberCtor && !isFunctionCtor && intrinsicType == null)
                 {
                     return false;
                 }
@@ -2046,30 +2129,7 @@ class HIRMethodBuilder
                     return false;
                 }
 
-                var root2 = _currentScope;
-                while (root2.Parent != null)
-                {
-                    root2 = root2.Parent;
-                }
-                var moduleName2 = root2.Name;
-                var declaringScopeName2 = _currentScope.Kind == ScopeKind.Global
-                    ? moduleName2
-                    : $"{moduleName2}/{_currentScope.GetQualifiedName()}";
-
-                var functionName = (funcExpr.Id as Identifier)?.Name;
-                var funcCallableId = new CallableId
-                {
-                    Kind = CallableKind.FunctionExpression,
-                    DeclaringScopeName = declaringScopeName2,
-                    Name = functionName,
-                    Location = SourceLocation.FromNode(funcExpr),
-                    JsParamCount = funcExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
-                    NeedsArgumentsObject = funcScope.NeedsArgumentsObject,
-                    HasRestParameters = funcScope.HasRestParameters,
-                    AstNode = null
-                };
-
-                hirExpr = new HIRFunctionExpression(funcCallableId, funcScope);
+                hirExpr = CreateFunctionExpressionValue(funcScope, funcExpr);
                 return true;
 
             case NumericLiteral literalExpr:
