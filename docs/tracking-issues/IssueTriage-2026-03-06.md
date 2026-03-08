@@ -72,11 +72,11 @@ Rationale:
 7. #789 (priority:medium) node: implement url/querystring baseline (URL, URLSearchParams, parse/stringify)
    - https://github.com/tomacox74/js2il/issues/789
 8. #790 (priority:medium) node: implement crypto minimum practical subset (createHash, randomBytes, webcrypto bridge)
-     - https://github.com/tomacox74/js2il/issues/790
+   - https://github.com/tomacox74/js2il/issues/790
 9. #781 (priority:low) ECMA-262: Implement WeakRef + FinalizationRegistry host cleanup model
-     - https://github.com/tomacox74/js2il/issues/781
+   - https://github.com/tomacox74/js2il/issues/781
 10. #791 (priority:low) node: add ESM interop baseline (import.meta.url + Node-style ESM resolution plan)
-     - https://github.com/tomacox74/js2il/issues/791
+   - https://github.com/tomacox74/js2il/issues/791
 
 ## Remaining open issues
 11. #792 (priority:low) node: add http/https/net/tls baseline plan (client/server skeleton)

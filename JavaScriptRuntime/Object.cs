@@ -3172,7 +3172,7 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                if (TryGetOwnPropertyDescriptor(proto, propName, out var desc))
+                if (PropertyDescriptorStore.TryGetOwn(proto, propName, out var desc))
                 {
                     if (desc.Kind == JsPropertyDescriptorKind.Accessor)
                     {
@@ -3190,6 +3190,20 @@ namespace JavaScriptRuntime
                         throw new TypeError($"Cannot assign to read only property '{propName}' of object");
                     }
 
+                    return false;
+                }
+
+                if (proto is System.Dynamic.ExpandoObject expProto)
+                {
+                    var expandoDict = (IDictionary<string, object?>)expProto;
+                    if (expandoDict.ContainsKey(propName))
+                    {
+                        return false;
+                    }
+                }
+                else if (proto is IDictionary<string, object?> dictProto
+                    && dictProto.ContainsKey(propName))
+                {
                     return false;
                 }
 
