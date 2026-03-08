@@ -104,6 +104,7 @@ Rationale:
 
 ## Open PRs (for context)
 - #704 (OPEN): https://github.com/tomacox74/js2il/pull/704
+- #818 (OPEN, draft): https://github.com/tomacox74/js2il/pull/818
 
 ## Label/metadata gaps (as of this snapshot)
 - Open issues: 30
