@@ -62,6 +62,18 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_RegExp_ModernFlags_Basic()
+        {
+            return GenerateTest(nameof(IntrinsicCallables_RegExp_ModernFlags_Basic));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_RegExp_Indices_Exec()
+        {
+            return GenerateTest(nameof(IntrinsicCallables_RegExp_Indices_Exec));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Error_Callable_CreatesInstances()
         {
             return GenerateTest(nameof(IntrinsicCallables_Error_Callable_CreatesInstances));

@@ -88,6 +88,18 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Split_Regex_Basic()
+        {
+            return ExecutionTest(nameof(String_Split_Regex_Basic));
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_Custom()
+        {
+            return ExecutionTest(nameof(String_RegExp_SymbolDispatch_Custom));
+        }
+
+        [Fact]
         public Task String_StartsWith_Basic()
         {
             return ExecutionTest(nameof(String_StartsWith_Basic));

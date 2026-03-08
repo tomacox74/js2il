@@ -460,54 +460,14 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
+            if (TryInvokeWellKnownSymbol(regexp, Symbol.match, new object?[] { input }, out var symbolResult))
+            {
+                return symbolResult!;
+            }
+
             JavaScriptRuntime.RegExp re = regexp as JavaScriptRuntime.RegExp
                 ?? new JavaScriptRuntime.RegExp(DotNet2JSConversions.ToString(regexp));
-
-            if (!re.Global)
-            {
-                var single = re.exec(input);
-                return single is JsNull ? JsNull.Null : single;
-            }
-
-            // Global match: collect full-match strings.
-            var result = new JavaScriptRuntime.Array();
-            re.lastIndex = 0;
-
-            while (true)
-            {
-                double lastIndexBefore = re.lastIndex;
-                var exec = re.exec(input);
-                if (exec is JsNull)
-                {
-                    break;
-                }
-
-                if (exec is JavaScriptRuntime.Array matchArray)
-                {
-                    var full = matchArray.Count > 0 ? matchArray[0] : null;
-                    result.Add(full);
-
-                    // Prevent infinite loops on empty matches.
-                    // RegExp.exec should advance lastIndex for empty matches, but keep a guard
-                    // in case of future behavior differences.
-                    if (full is string s && s.Length == 0 && re.lastIndex == lastIndexBefore)
-                    {
-                        re.lastIndex = lastIndexBefore + 1;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-
-                if (re.lastIndex > input.Length)
-                {
-                    break;
-                }
-            }
-
-            re.lastIndex = 0;
-            return result.Count == 0 ? JsNull.Null : result;
+            return MatchWithRegExp(input, re);
         }
 
         /// <summary>
@@ -523,17 +483,14 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (regexp is JavaScriptRuntime.RegExp re)
+            if (TryInvokeWellKnownSymbol(regexp, Symbol.search, new object?[] { input }, out var symbolResult))
             {
-                var match = re.Regex.Match(input);
-                return match.Success ? match.Index : -1d;
+                return JavaScriptRuntime.TypeUtilities.ToNumber(symbolResult);
             }
 
-            // Per JS semantics, non-RegExp arguments are converted and treated as a regex pattern.
-            var pattern = DotNet2JSConversions.ToString(regexp);
-            var regex = new Regex(pattern);
-            var first = regex.Match(input);
-            return first.Success ? first.Index : -1d;
+            var re = regexp as JavaScriptRuntime.RegExp
+                ?? new JavaScriptRuntime.RegExp(DotNet2JSConversions.ToString(regexp));
+            return SearchWithRegExp(input, re);
         }
 
         /// <summary>
@@ -693,44 +650,14 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            // If the pattern is a RegExp object, use its compiled Regex (and global flag)
-            // rather than falling back to ToString() which would treat it as a plain string.
+            if (TryInvokeWellKnownSymbol(patternOrString, Symbol.replace, new object?[] { input, replacement }, out var symbolResult))
+            {
+                return DotNet2JSConversions.ToString(symbolResult) ?? string.Empty;
+            }
+
             if (patternOrString is RegExp regExp)
             {
-                // Replacement may be a string or a callback delegate.
-                if (replacement is Func<object[], object, object> f1 || replacement is Func<object[], object> f0)
-                {
-                    string Invoke(string match)
-                    {
-                        if (replacement is Func<object[], object, object> cb1)
-                        {
-                            var r = cb1(System.Array.Empty<object>(), match);
-                            return DotNet2JSConversions.ToString(r);
-                        }
-
-                        var cb0 = (Func<object[], object>)replacement;
-                        var r0 = cb0(System.Array.Empty<object>());
-                        return DotNet2JSConversions.ToString(r0);
-                    }
-
-                    var evaluator = new MatchEvaluator(m => Invoke(m.Value));
-                    if (regExp.Global)
-                    {
-                        return regExp.Regex.Replace(input, evaluator);
-                    }
-
-                    // Replace only the first match
-                    return regExp.Regex.Replace(input, evaluator, 1, 0);
-                }
-
-                var replacementText = DotNet2JSConversions.ToString(replacement) ?? string.Empty;
-                if (regExp.Global)
-                {
-                    return regExp.Regex.Replace(input, replacementText);
-                }
-
-                // Replace only the first match
-                return regExp.Regex.Replace(input, replacementText, 1);
+                return ReplaceWithRegExp(input, regExp, replacement);
             }
 
             var pattern = patternOrString?.ToString() ?? string.Empty;
@@ -1035,6 +962,11 @@ namespace JavaScriptRuntime
                 return one;
             }
 
+            if (TryInvokeWellKnownSymbol(separatorOrPattern, Symbol.split, new object?[] { input, limit }, out var splitResult))
+            {
+                return CoerceToArrayResult(splitResult);
+            }
+
             // Regex separator path
             if (separatorOrPattern is Regex rx)
             {
@@ -1079,6 +1011,127 @@ namespace JavaScriptRuntime
             return result;
         }
 
+        internal static object MatchWithRegExp(string input, JavaScriptRuntime.RegExp re)
+        {
+            if (!re.Global)
+            {
+                var single = re.exec(input);
+                return single is JsNull ? JsNull.Null : single;
+            }
+
+            var result = new JavaScriptRuntime.Array();
+            re.lastIndex = 0;
+
+            while (true)
+            {
+                double lastIndexBefore = re.lastIndex;
+                var exec = re.exec(input);
+                if (exec is JsNull)
+                {
+                    break;
+                }
+
+                if (exec is JavaScriptRuntime.Array matchArray)
+                {
+                    var full = matchArray.Count > 0 ? matchArray[0] : null;
+                    result.Add(full);
+
+                    if (full is string s && s.Length == 0 && re.lastIndex == lastIndexBefore)
+                    {
+                        re.lastIndex = AdvanceEmptyMatchIndex(input, lastIndexBefore, re.unicode);
+                    }
+                }
+                else
+                {
+                    break;
+                }
+
+                if (re.lastIndex > input.Length)
+                {
+                    break;
+                }
+            }
+
+            re.lastIndex = 0;
+            return result.Count == 0 ? JsNull.Null : result;
+        }
+
+        internal static double SearchWithRegExp(string input, JavaScriptRuntime.RegExp re)
+        {
+            var savedLastIndex = re.lastIndex;
+            try
+            {
+                re.lastIndex = 0;
+                var exec = re.exec(input);
+                if (exec is not JavaScriptRuntime.Array matchArray)
+                {
+                    return -1d;
+                }
+
+                return JavaScriptRuntime.TypeUtilities.ToNumber(JavaScriptRuntime.ObjectRuntime.GetItem(matchArray, "index"));
+            }
+            finally
+            {
+                re.lastIndex = savedLastIndex;
+            }
+        }
+
+        internal static string ReplaceWithRegExp(string input, JavaScriptRuntime.RegExp regExp, object? replacement)
+        {
+            var savedLastIndex = regExp.lastIndex;
+            try
+            {
+                if (replacement is Func<object[], object, object> || replacement is Func<object[], object>)
+                {
+                    string Invoke(string match)
+                    {
+                        if (replacement is Func<object[], object, object> cb1)
+                        {
+                            var r = cb1(System.Array.Empty<object>(), match);
+                            return DotNet2JSConversions.ToString(r) ?? string.Empty;
+                        }
+
+                        var cb0 = (Func<object[], object>)replacement;
+                        var r0 = cb0(System.Array.Empty<object>());
+                        return DotNet2JSConversions.ToString(r0) ?? string.Empty;
+                    }
+
+                    var evaluator = new MatchEvaluator(m => Invoke(m.Value));
+                    if (regExp.Global)
+                    {
+                        return regExp.Regex.Replace(input, evaluator);
+                    }
+
+                    return regExp.Regex.Replace(input, evaluator, 1, 0);
+                }
+
+                var replacementText = DotNet2JSConversions.ToString(replacement) ?? string.Empty;
+                if (regExp.Global)
+                {
+                    return regExp.Regex.Replace(input, replacementText);
+                }
+
+                return regExp.Regex.Replace(input, replacementText, 1);
+            }
+            finally
+            {
+                regExp.lastIndex = savedLastIndex;
+            }
+        }
+
+        internal static JavaScriptRuntime.Array SplitWithRegExp(string input, JavaScriptRuntime.RegExp regExp, object? limit)
+        {
+            var savedLastIndex = regExp.lastIndex;
+            try
+            {
+                return SplitWithRegex(input, regExp.Regex, ToSplitLimit(limit));
+            }
+            finally
+            {
+                regExp.lastIndex = savedLastIndex;
+            }
+        }
+
         /// <summary>
         /// Split using a regex pattern with flags provided by the generator.
         /// Currently only ignoreCase is observed for split behavior.
@@ -1116,6 +1169,77 @@ namespace JavaScriptRuntime
                 arr.Add(parts[i] ?? string.Empty);
             }
             return arr;
+        }
+
+        private static int AdvanceEmptyMatchIndex(string input, double index, bool unicode)
+        {
+            var truncated = (int)global::System.Math.Truncate(index);
+            if (!unicode || truncated < 0 || truncated >= input.Length)
+            {
+                return truncated + 1;
+            }
+
+            if (char.IsHighSurrogate(input[truncated])
+                && truncated + 1 < input.Length
+                && char.IsLowSurrogate(input[truncated + 1]))
+            {
+                return truncated + 2;
+            }
+
+            return truncated + 1;
+        }
+
+        private static bool TryInvokeWellKnownSymbol(object? target, Symbol symbol, object?[] args, out object? result)
+        {
+            result = null;
+            if (target is null || target is JsNull)
+            {
+                return false;
+            }
+
+            var symbolMethod = JavaScriptRuntime.ObjectRuntime.GetItem(target, symbol);
+
+            if (symbolMethod is null || symbolMethod is JsNull)
+            {
+                return false;
+            }
+
+            if (symbolMethod is not Delegate callable)
+            {
+                throw new JavaScriptRuntime.TypeError($"{symbol} is not a function");
+            }
+
+            var previousThis = RuntimeServices.SetCurrentThis(target);
+            try
+            {
+                result = Closure.InvokeWithArgs(callable, System.Array.Empty<object>(), args);
+                return true;
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static JavaScriptRuntime.Array CoerceToArrayResult(object? value)
+        {
+            if (value is JavaScriptRuntime.Array array)
+            {
+                return array;
+            }
+
+            if (value is System.Collections.IEnumerable enumerable && value is not string)
+            {
+                var result = new JavaScriptRuntime.Array();
+                foreach (var item in enumerable)
+                {
+                    result.Add(item);
+                }
+
+                return result;
+            }
+
+            return new JavaScriptRuntime.Array();
         }
 
         private static int ToSplitLimit(object? limit)

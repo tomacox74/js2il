@@ -98,6 +98,20 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Split_Regex_Basic()
+        {
+            var testName = nameof(String_Split_Regex_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_Custom()
+        {
+            var testName = nameof(String_RegExp_SymbolDispatch_Custom);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_StartsWith_Basic()
         {
             var testName = nameof(String_StartsWith_Basic);

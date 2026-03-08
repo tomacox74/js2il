@@ -13,10 +13,10 @@ Synced to:
 
 Rationale:
 - #774 is now closed via merged PR #818, so #775 is the first unfinished `priority:high` item in the ranking below.
-- The current branch intentionally takes the sticky `/y` acceptance-criteria slice first: `RegExp.prototype.sticky`, canonical `flags`, and `exec()` / `test()` / `lastIndex` sticky semantics.
-- Focused RegExp/String execution + generator validation is green (`22` tests passed).
-- Docs now reflect that `g`, `i`, `m`, and `y` are functional, while `u`, `d`, `v`, `s`, and symbol-method parity remain future work under the broader umbrella issue.
-- Because issue #775 is broader than sticky `/y` alone, draft PR #819 should be treated as meaningful incremental progress rather than as automatic closure of the umbrella issue.
+- The current branch now broadens PR #819 beyond the initial sticky slice: sticky `/y` exec/test/lastIndex behavior, `s` / `u` / `d` flag parsing and reflection, limited unicode rewriting for common `/u` cases, minimal `.indices` support for `/d`, explicit `v` rejection, and well-known symbol dispatch for `match` / `replace` / `search` / `split`.
+- Focused RegExp/String execution + generator validation is green (`80` tests passed).
+- Docs now reflect the supported `g`, `i`, `m`, `s`, `u`, `d`, and `y` surface plus the remaining limitations (`v` rejection, `matchAll` and fuller unicode/exotic semantics still pending).
+- Draft PR #819 now appears sufficient to close issue #775 on merge.
 
 ## Recommended next item after #775
 **Issue #583** (OPEN):
@@ -50,7 +50,7 @@ Rationale:
 
 1. #775 (priority:high) ECMA-262: RegExp modern flags and symbol methods parity (u/y/d/v, @@match, etc.)
    - https://github.com/tomacox74/js2il/issues/775
-   - Current branch status: draft PR #819 covers the sticky `/y` acceptance-criteria slice (`sticky`, `flags`, `exec`, `test`, `lastIndex`), but the broader umbrella issue remains open.
+   - Current branch status: draft PR #819 now covers sticky `/y`, minimal `/d` indices, limited `/u` + `/s`, explicit `v` rejection, and well-known symbol dispatch for `match` / `replace` / `search` / `split`; it appears sufficient to close the issue after review/merge.
 2. #583 (priority:medium) Quality: add real-world canary corpus smoke tests (bounded) for ecosystem stability
    - https://github.com/tomacox74/js2il/issues/583
 3. #776 (priority:medium) ECMA-262: Ordinary object internal method invariants (DefineOwnProperty/GetOwnProperty, keys ordering)
@@ -110,7 +110,7 @@ Rationale:
 
 ## Open PRs (for context)
 - #704 (OPEN): https://github.com/tomacox74/js2il/pull/704
-- #819 (OPEN, draft): https://github.com/tomacox74/js2il/pull/819 — sticky `/y` RegExp `exec`/`test`/`lastIndex` slice for issue #775
+- #819 (OPEN, draft): https://github.com/tomacox74/js2il/pull/819 — broadened RegExp issue #775 coverage (`y` / `s` / `u` / `d`, `v` rejection, and symbol dispatch for `match` / `replace` / `search` / `split`)
 
 ## Label/metadata gaps (as of this snapshot)
 - Open issues: 29
