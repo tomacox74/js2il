@@ -3778,22 +3778,6 @@ namespace JavaScriptRuntime
                 return nativeIterator;
             }
 
-            // Built-ins
-            if (iterable is string s)
-            {
-                return new StringIterator(s);
-            }
-
-            if (iterable is JavaScriptRuntime.Array arr)
-            {
-                return new ArrayIterator(arr);
-            }
-
-            if (iterable is JavaScriptRuntime.TypedArrayBase typedArray)
-            {
-                return typedArray.values();
-            }
-
             // User-defined iterables: call obj[Symbol.iterator]().
             object? iteratorMethod;
             try
@@ -3830,6 +3814,22 @@ namespace JavaScriptRuntime
             if (iteratorMethod != null)
             {
                 throw new JavaScriptRuntime.TypeError("Symbol.iterator is not a function");
+            }
+
+            // Built-ins without an exposed Symbol.iterator surface fall back here.
+            if (iterable is string s)
+            {
+                return new StringIterator(s);
+            }
+
+            if (iterable is JavaScriptRuntime.Array arr)
+            {
+                return arr.values();
+            }
+
+            if (iterable is JavaScriptRuntime.TypedArrayBase typedArray)
+            {
+                return typedArray.values();
             }
 
             // Best-effort fallback: treat .NET IEnumerable as iterable.

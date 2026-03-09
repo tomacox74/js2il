@@ -20,10 +20,43 @@ namespace JavaScriptRuntime
         {
             var exp = new ExpandoObject();
             var dict = (IDictionary<string, object?>)exp;
+            var prototypeValues = (Func<object[], object?[]?, object?>)PrototypeValues;
             dict["push"] = (Func<object[], object?[], object?>)PrototypePush;
             dict["reduce"] = (Func<object[], object?[], object?>)PrototypeReduce;
             dict["reduceRight"] = (Func<object[], object?[], object?>)PrototypeReduceRight;
             dict["indexOf"] = (Func<object[], object?[], object?>)PrototypeIndexOf;
+            PropertyDescriptorStore.DefineOrUpdate(exp, "entries", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = (Func<object[], object?[]?, object?>)PrototypeEntries
+            });
+            PropertyDescriptorStore.DefineOrUpdate(exp, "keys", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = (Func<object[], object?[]?, object?>)PrototypeKeys
+            });
+            PropertyDescriptorStore.DefineOrUpdate(exp, "values", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = prototypeValues
+            });
+            PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.iterator.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = prototypeValues
+            });
             return exp;
         }
 
@@ -370,20 +403,120 @@ namespace JavaScriptRuntime
             return (int)d;
         }
 
+        private static object? PrototypeEntries(object[] scopes, object?[]? args)
+        {
+            return CreateIteratorFromReceiver(RuntimeServices.GetCurrentThis(), ArrayIteratorKind.Entries, "entries");
+        }
+
+        private static object? PrototypeKeys(object[] scopes, object?[]? args)
+        {
+            return CreateIteratorFromReceiver(RuntimeServices.GetCurrentThis(), ArrayIteratorKind.Keys, "keys");
+        }
+
+        private static object? PrototypeValues(object[] scopes, object?[]? args)
+        {
+            return CreateIteratorFromReceiver(RuntimeServices.GetCurrentThis(), ArrayIteratorKind.Values, "values");
+        }
+
+        private static IJavaScriptIterator CreateIteratorFromReceiver(object? receiver, ArrayIteratorKind kind, string methodName)
+        {
+            if (receiver is null || receiver is JsNull)
+            {
+                throw new TypeError($"Array.prototype.{methodName} called on null or undefined");
+            }
+
+            if (receiver is Array jsArray)
+            {
+                return new ArrayIterator(jsArray, () => jsArray.Count, kind);
+            }
+
+            return new ArrayIterator(receiver, () => ToArrayLikeLength(receiver), kind);
+        }
+
+        private void InitializeIntrinsicSurface()
+        {
+            PrototypeChain.SetPrototype(this, Prototype);
+        }
+
+        private enum ArrayIteratorKind
+        {
+            Keys,
+            Values,
+            Entries
+        }
+
+        private sealed class ArrayIterator : IJavaScriptIterator
+        {
+            private readonly object _receiver;
+            private readonly Func<int> _getLength;
+            private readonly ArrayIteratorKind _kind;
+            private int _index;
+            private bool _isClosed;
+
+            public ArrayIterator(object receiver, Func<int> getLength, ArrayIteratorKind kind)
+            {
+                _receiver = receiver;
+                _getLength = getLength;
+                _kind = kind;
+            }
+
+            public bool HasReturn => true;
+
+            public IteratorResultObject Next()
+            {
+                if (_isClosed)
+                {
+                    return new IteratorResultObject(null, done: true);
+                }
+
+                int index = _index;
+                if (index >= _getLength())
+                {
+                    return new IteratorResultObject(null, done: true);
+                }
+
+                _index++;
+                object? value = _kind switch
+                {
+                    ArrayIteratorKind.Keys => (double)index,
+                    ArrayIteratorKind.Values => JavaScriptRuntime.ObjectRuntime.GetItem(_receiver, (double)index),
+                    ArrayIteratorKind.Entries => new Array(new object?[]
+                    {
+                        (double)index,
+                        JavaScriptRuntime.ObjectRuntime.GetItem(_receiver, (double)index)
+                    }),
+                    _ => null
+                };
+
+                return new IteratorResultObject(value, done: false);
+            }
+
+            public object next(object? value = null)
+                => Next();
+
+            public void Return()
+            {
+                _isClosed = true;
+            }
+        }
+
         public Array()
         {
             _items = new List<object?>();
             _logicalLength = 0;
+            InitializeIntrinsicSurface();
         }
         public Array(int capacity)
         {
             _items = new List<object?>(capacity);
             _logicalLength = 0;
+            InitializeIntrinsicSurface();
         }
         public Array(System.Collections.IEnumerable collection)
         {
             _items = collection.Cast<object?>().ToList();
             _logicalLength = _items.Count;
+            InitializeIntrinsicSurface();
         }
 
         public int Count => LogicalCount;
@@ -507,6 +640,15 @@ namespace JavaScriptRuntime
                 yield return this[i];
             }
         }
+
+        public IJavaScriptIterator values()
+            => new ArrayIterator(this, () => Count, ArrayIteratorKind.Values);
+
+        public IJavaScriptIterator keys()
+            => new ArrayIterator(this, () => Count, ArrayIteratorKind.Keys);
+
+        public IJavaScriptIterator entries()
+            => new ArrayIterator(this, () => Count, ArrayIteratorKind.Entries);
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -660,6 +802,22 @@ namespace JavaScriptRuntime
                 return new Array(jsArr);
             }
 
+            if (source is string)
+            {
+                return FromIterator(JavaScriptRuntime.ObjectRuntime.GetIterator(source));
+            }
+
+            if (source is IJavaScriptIterator iterator)
+            {
+                return FromIterator(iterator);
+            }
+
+            var iteratorMethod = JavaScriptRuntime.ObjectRuntime.GetItem(source, Symbol.iterator);
+            if (iteratorMethod is not null && iteratorMethod is not JsNull)
+            {
+                return FromIterator(JavaScriptRuntime.ObjectRuntime.GetIterator(source));
+            }
+
             // If source is IEnumerable, copy items
             if (source is System.Collections.IEnumerable enumerable)
             {
@@ -673,6 +831,23 @@ namespace JavaScriptRuntime
 
             // Fallback: wrap single element
             return new Array(new object[] { source });
+        }
+
+        private static Array FromIterator(IJavaScriptIterator iterator)
+        {
+            var result = new Array();
+            while (true)
+            {
+                var step = iterator.Next();
+                if (step.done)
+                {
+                    break;
+                }
+
+                result.Add(step.value);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -1912,17 +2087,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public void PushRange(object source)
         {
-            // Fast-path: spreading a JS Array copies elements directly.
-            if (source is Array jsArray)
-            {
-                // Copy elements directly
-                for (int i = 0; i < jsArray.Count; i++) this.Add(jsArray[i]);
-                return;
-            }
-
             // Spec-aligned behavior: array spread consumes the iterator protocol.
-            // This supports strings, typed arrays, user-defined iterables via Symbol.iterator,
-            // and falls back to .NET IEnumerable when available.
             var iterator = JavaScriptRuntime.ObjectRuntime.GetIterator(source);
             while (true)
             {

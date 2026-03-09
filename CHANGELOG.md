@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- runtime/spec/tests/docs: expose `Array.prototype.entries` / `keys` / `values` / `%Symbol.iterator%` for issue #780, reuse that iterator surface for `for..of` and array spread, extend `Array.from(...)` coverage for iterator sources, add focused Array execution/generator coverage, and refresh ECMA-262 §23.1 tracking.
 - runtime/tests/docs: audit symbol ecosystem coverage for issue #779 by honoring `Symbol.isConcatSpreadable` in `Array.prototype.concat`, adding symbol-key descriptor/enumeration coverage, documenting ordinary-object symbol reflection ordering, and adding custom `Symbol.toStringTag` coverage.
 - compiler/runtime/spec/tests/docs: add Stage 1 `Function(...)` / `new Function(...)` support for compile-time string-literal sources by parsing and compiling synthetic callables with isolated global-scope semantics, wiring `anonymous`/`.length` defaults, surfacing runtime `Error`/`SyntaxError` for unsupported or invalid sources, adding focused Function execution/generator coverage, and updating ECMA-262 tracking for issue #778.
 - runtime/spec/tests/docs: audit object integrity APIs for issue #777 by enforcing strict-mode `TypeError` behavior for adding properties to non-extensible objects, writing read-only or getter-only properties, deleting non-configurable properties, and assigning through inherited frozen/getter-only prototype descriptors; add focused integrity/`Object.defineProperty` coverage; and refresh ECMA-262 §20.1 tracking plus issue triage.
