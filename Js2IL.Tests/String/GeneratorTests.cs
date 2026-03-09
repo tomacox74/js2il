@@ -147,6 +147,13 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_CharAt_Basic()
+        {
+            var testName = nameof(String_CharAt_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_FromCharCode_Basic()
         {
             var testName = nameof(String_FromCharCode_Basic);

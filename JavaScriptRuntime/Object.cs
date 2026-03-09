@@ -2495,6 +2495,12 @@ namespace JavaScriptRuntime
         {
             switch (methodName)
             {
+                case "charAt":
+                    result = argCount <= 0
+                        ? JavaScriptRuntime.String.CharAt(input)
+                        : JavaScriptRuntime.String.CharAt(input, a0);
+                    return true;
+
                 case "charCodeAt":
                     result = argCount <= 0
                         ? JavaScriptRuntime.String.CharCodeAt(input)

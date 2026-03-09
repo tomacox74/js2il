@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- quality/tooling/workflows: expand the nightly real-world canary smoke corpus for issue #583 with additional bounded benchmark cases (`dromaeo-object-string-modern`, `dromaeo-object-regexp-modern`, `dromaeo-3d-cube-modern`, `dromaeo-core-eval-modern`) while keeping the fast PR gate unchanged.
 - runtime/tests/docs: add a focused Node `crypto` baseline for issue #790 by implementing synchronous `createHash(...)` hashing (md5/sha1/sha256/sha384/sha512), `randomBytes(size)` returning `Buffer`, a minimal `crypto.getRandomValues` / `crypto.webcrypto.getRandomValues` bridge for supported buffer/typed-array shapes, focused execution/generator coverage, and refreshed Node tracking/module docs.
 - runtime/tests/docs: add a focused Node `url` / `querystring` baseline for issue #789 by implementing WHATWG-style `URL` / `URLSearchParams` parsing for common http(s)/file cases, `fileURLToPath` / `pathToFileURL`, legacy `querystring.parse` / `querystring.stringify`, focused execution/generator coverage, and refreshed Node tracking/module docs.
 - runtime/tests/docs: expand Node `child_process` support for issue #788 by adding minimal async `spawn`, `exec`, and `execFile` flows with EventEmitter-backed child handles, piped stdout/stderr capture, callback completion/error shapes, focused Node child_process execution/generator coverage, and refreshed module/triage docs.

@@ -3,27 +3,30 @@
 This file captures a point-in-time prioritized list of open issues/PRs and the current active item being addressed.
 
 Synced to:
-- Repo: `master` @ `9b16d8c8` (post-merge state through PR #828 / issue #789)
+- Repo: `master` @ `2db13472` (post-merge state through PR #829 / issue #790 code landing)
 - GitHub: open issues/PRs state as of 2026-03-09 (refreshed in-place)
 
 ## Current active item
-**Issue #790** (OPEN; active work is now on `copilot/gh-790-crypto-minimum-subset`):
-- https://github.com/tomacox74/js2il/issues/790
-
-Rationale:
-- #789 is now closed via merged PR #828, so the next ranked unfinished issue becomes #790 from the triage ordering.
-- The current branch targets the next high-leverage Node compatibility slice by covering practical hashing and secure-random flows that unblock many packages.
-- The work builds directly on the existing Buffer, ArrayBuffer, and CommonJS module infrastructure already in `master`.
-
-## Recommended next item after #790
-**Issue #583** (OPEN):
+**Issue #583** (OPEN; active work is now on `copilot/gh-583-canary-corpus-follow-up`):
 - https://github.com/tomacox74/js2il/issues/583
 
 Rationale:
-- Once the crypto subset lands, #583 becomes the next unfinished medium-priority item in the ranked list.
-- The existing bounded canary gate from PR #820 leaves the repo ready for a broader real-world corpus follow-up as the next cross-cutting stability investment.
+- PR #820 already landed the bounded canary harness, but issue #583 still calls for broader representative nightly corpus coverage and artifact-ready smoke validation.
+- The infrastructure is already present on `master`, so the remaining work is a tight follow-up that expands coverage without adding a new execution model.
+- This is the next ranked unfinished item after the merged #790 crypto baseline work.
+
+## Recommended next item after #583
+**Issue #781** (OPEN):
+- https://github.com/tomacox74/js2il/issues/781
+
+Rationale:
+- Once the canary corpus follow-up lands, #781 becomes the next unfinished ranked item in the list.
+- It is the next concrete, scoped issue after the current ecosystem-stability work and already has a proposed host-safe implementation direction.
 
 ## Recently completed since the previous snapshot
+- **#790** (priority:medium) node: implement crypto minimum practical subset (createHash, randomBytes, webcrypto bridge) — merged via PR #829 on 2026-03-09
+  - https://github.com/tomacox74/js2il/issues/790
+  - https://github.com/tomacox74/js2il/pull/829
 - **#789** (priority:medium) node: implement url/querystring baseline (URL, URLSearchParams, parse/stringify) — CLOSED via PR #828 on 2026-03-09
   - https://github.com/tomacox74/js2il/issues/789
   - https://github.com/tomacox74/js2il/pull/828
@@ -66,51 +69,48 @@ Rationale:
 - https://github.com/tomacox74/js2il/issues/772
 - https://github.com/tomacox74/js2il/commit/78edaae01b2b3da4560068b12314005a4c40387a
 
-**Issue #583 is still OPEN even though PR #820 merged an initial bounded canary slice.** Treat it as follow-up expansion/hardening work rather than a completed item:
-- https://github.com/tomacox74/js2il/issues/583
-- https://github.com/tomacox74/js2il/pull/820
+**Issue #790 is still OPEN even though PR #829 merged the crypto baseline into `master`.** It should be closed or explicitly re-scoped:
+- https://github.com/tomacox74/js2il/issues/790
+- https://github.com/tomacox74/js2il/pull/829
 
-## Top 10 open issues after the current active item (excluding #772, which still looks like hygiene work)
+## Top 10 open issues after the current active item (excluding #772 and #790, which currently look like hygiene follow-up)
 (Heuristic ranking using `priority:*` labels + module/spec/perf keywords in titles/labels; recommendation-only.)
 
-1. #583 (priority:medium) Quality: add real-world canary corpus smoke tests (bounded) for ecosystem stability
-   - https://github.com/tomacox74/js2il/issues/583
-   - Current signal: PR #820 landed an initial bounded smoke gate, but the issue remains open for broader corpus/artifact follow-up.
-2. #781 (priority:low) ECMA-262: Implement WeakRef + FinalizationRegistry host cleanup model
+1. #781 (priority:low) ECMA-262: Implement WeakRef + FinalizationRegistry host cleanup model
    - https://github.com/tomacox74/js2il/issues/781
-3. #791 (priority:low) node: add ESM interop baseline (import.meta.url + Node-style ESM resolution plan)
+2. #791 (priority:low) node: add ESM interop baseline (import.meta.url + Node-style ESM resolution plan)
    - https://github.com/tomacox74/js2il/issues/791
-4. #792 (priority:low) node: add http/https/net/tls baseline plan (client/server skeleton)
+3. #792 (priority:low) node: add http/https/net/tls baseline plan (client/server skeleton)
    - https://github.com/tomacox74/js2il/issues/792
-5. #727 Function length/name should be descriptor-backed own properties
+4. #727 Function length/name should be descriptor-backed own properties
    - https://github.com/tomacox74/js2il/issues/727
-6. #728 Complete bound function semantics for constructor/new-target and metadata
+5. #728 Complete bound function semantics for constructor/new-target and metadata
    - https://github.com/tomacox74/js2il/issues/728
-7. #419 Hosting: support mutable CommonJS exports (Node-like)
+6. #419 Hosting: support mutable CommonJS exports (Node-like)
    - https://github.com/tomacox74/js2il/issues/419
-8. #439 Hosting: publish referenceable library/build NuGet package
+7. #439 Hosting: publish referenceable library/build NuGet package
    - https://github.com/tomacox74/js2il/issues/439
-9. #451 perf(il): expand typed temps/locals to reduce casts/boxing
-    - https://github.com/tomacox74/js2il/issues/451
-10. #737 perf: callsite-based typed parameter specialization for non-exported functions
-    - https://github.com/tomacox74/js2il/issues/737
+8. #451 perf(il): expand typed temps/locals to reduce casts/boxing
+     - https://github.com/tomacox74/js2il/issues/451
+9. #737 perf: callsite-based typed parameter specialization for non-exported functions
+     - https://github.com/tomacox74/js2il/issues/737
+10. #738 perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations
+     - https://github.com/tomacox74/js2il/issues/738
 
 ## Remaining open issues
-11. #738 perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations
-    - https://github.com/tomacox74/js2il/issues/738
-12. #740 perf(prime): keep sieve loop math in typed locals with fallback
+11. #740 perf(prime): keep sieve loop math in typed locals with fallback
     - https://github.com/tomacox74/js2il/issues/740
-13. #742 perf(prime): trim timing/config coercion overhead in main path
+12. #742 perf(prime): trim timing/config coercion overhead in main path
     - https://github.com/tomacox74/js2il/issues/742
-14. #743 perf(prime): add Prime perf acceptance gate and reporting
+13. #743 perf(prime): add Prime perf acceptance gate and reporting
     - https://github.com/tomacox74/js2il/issues/743
-15. #746 perf: make dromaeo-object-regexp faster than Jint prepared
+14. #746 perf: make dromaeo-object-regexp faster than Jint prepared
     - https://github.com/tomacox74/js2il/issues/746
-16. #747 perf(regexp): cache Regex instances by source+flags
+15. #747 perf(regexp): cache Regex instances by source+flags
     - https://github.com/tomacox74/js2il/issues/747
-17. #748 perf(dispatch): add RegExp fast paths in Object.CallMember1/2
+16. #748 perf(dispatch): add RegExp fast paths in Object.CallMember1/2
     - https://github.com/tomacox74/js2il/issues/748
-18. #768 Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)
+17. #768 Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)
     - https://github.com/tomacox74/js2il/issues/768
 
 ## Open PRs (for context)

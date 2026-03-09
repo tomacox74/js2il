@@ -494,6 +494,42 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Implements String.prototype.charAt([index]).
+        /// Returns a one-code-unit string, or the empty string when out of range.
+        /// </summary>
+        public static string CharAt(string input)
+        {
+            return CharAt(input, null);
+        }
+
+        /// <summary>
+        /// Implements String.prototype.charAt(index).
+        /// </summary>
+        public static string CharAt(string input, object? index)
+        {
+            input ??= string.Empty;
+
+            var idx = index == null ? 0d : JavaScriptRuntime.TypeUtilities.ToNumber(index);
+
+            if (double.IsNaN(idx))
+            {
+                idx = 0d;
+            }
+            else if (double.IsInfinity(idx))
+            {
+                return string.Empty;
+            }
+
+            idx = global::System.Math.Truncate(idx);
+            if (idx < 0 || idx >= input.Length)
+            {
+                return string.Empty;
+            }
+
+            return input[(int)idx].ToString();
+        }
+
+        /// <summary>
         /// Implements String.prototype.charCodeAt([index]).
         /// Returns a UTF-16 code unit as a number, or NaN when out of range.
         /// </summary>
