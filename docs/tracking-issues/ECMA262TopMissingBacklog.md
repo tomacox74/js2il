@@ -1,6 +1,6 @@
 # ECMA-262 Top Missing Features Backlog
 
-> **Last Updated**: 2026-03-08
+> **Last Updated**: 2026-03-09
 > Purpose: capture the highest-value unsupported or still-incomplete ECMA-262 features to drive issue execution planning.
 > Source basis: current branch/runtime/compiler state, current `docs\ECMA262\**\Section*.json` status tracking, and targeted behavior checks.
 
@@ -12,7 +12,8 @@
 - **Issue #776 is no longer backlog work.** PR #821 landed the ordinary object invariant work on `master`, closing the descriptor/key-ordering gap that this backlog previously ranked near the top.
 - **Issue #777 is no longer backlog work.** PR #822 is merged, issue #777 is closed, and object integrity semantics are now documented on `master`.
 - **Issue #778 is no longer backlog work.** PR #823 is merged, issue #778 is closed, and the staged Function-constructor support has landed on `master`.
-- **Issue #779 now looks like active landing work rather than a top missing feature.** The current branch (`copilot/gh-779-symbol-ecosystem`) has PR #824 open with runtime/tests/docs updates for symbol-key reflection, `Symbol.isConcatSpreadable`, and `Symbol.toStringTag`.
+- **Issue #779 is no longer backlog work.** PR #824 is merged on `master`, issue #779 is closed, and the symbol ecosystem audit landed with runtime/tests/docs updates.
+- **Issue #780 now looks like active landing work rather than a top missing feature.** The current branch (`copilot/gh-780-array-iterator-methods`) has PR #825 open with Array iterator methods, `%Symbol.iterator%` wiring, shared iterator-protocol usage for array spread / `for..of`, and related docs/tests.
 - **Issue #772 still reads more like close-or-rescope hygiene than a top missing implementation gap.** Static `import` / `export` lowering plus live-binding and cycle coverage already exist for common cases, so the remaining work needs sharper scoping if the issue stays open.
 
 ## Ranking Criteria
@@ -26,11 +27,12 @@
 
 | Rank | Backlog item | Primary spec areas | Current status signal |
 |---:|---|---|---|
-| 1 | [Array iterator method surface (`entries`, `keys`, `values`, `Array.prototype[Symbol.iterator]`)](https://github.com/tomacox74/js2il/issues/780) | 23.1.3.5, 23.1.3.19, 23.1.3.38, 23.1.3.40 | Partially supported (`for..of` works; direct prototype methods remain incomplete) |
-| 2 | [WeakRef / FinalizationRegistry processing model and cleanup jobs](https://github.com/tomacox74/js2il/issues/781) | 9.9-9.13 | Not Yet Supported |
-| 3 | [Re-scope or close the remaining ES module semantics issue](https://github.com/tomacox74/js2il/issues/772) | 16.2.x | Supported with Limitations / likely issue hygiene unless broader module-record semantics are still required |
-| 4 | [Descriptor-backed `Function` metadata (`length` / `name`)](https://github.com/tomacox74/js2il/issues/727) | 20.2.4.1, 20.2.4.2 | Supported with Limitations |
-| 5 | [Complete bound function constructor/new-target + metadata semantics](https://github.com/tomacox74/js2il/issues/728) | 20.2.3.2, 10.2.x | Supported with Limitations |
+| 1 | [WeakRef / FinalizationRegistry processing model and cleanup jobs](https://github.com/tomacox74/js2il/issues/781) | 9.9-9.13 | Not Yet Supported |
+| 2 | [Re-scope or close the remaining ES module semantics issue](https://github.com/tomacox74/js2il/issues/772) | 16.2.x | Supported with Limitations / likely issue hygiene unless broader module-record semantics are still required |
+| 3 | [Descriptor-backed `Function` metadata (`length` / `name`)](https://github.com/tomacox74/js2il/issues/727) | 20.2.4.1, 20.2.4.2 | Supported with Limitations |
+| 4 | [Complete bound function constructor/new-target + metadata semantics](https://github.com/tomacox74/js2il/issues/728) | 20.2.3.2, 10.2.x | Supported with Limitations |
+
+No fifth tracked ECMA-262 issue currently stands above these four; additional spec backlog work likely needs fresh issue scoping rather than carrying forward now-landed #779 / active-landing #780 work.
 
 ## TypedArray follow-up note
 
@@ -46,30 +48,28 @@
 
 ## Symbol ecosystem status note
 
-- The current branch + open PR #824 appear to satisfy issue #779's explicit acceptance criteria.
+- PR #824 is merged and issue #779 is closed, so symbol ecosystem work is no longer backlog planning material.
+- If additional symbol follow-up is needed, it should likely narrow to the remaining well-known-symbol hooks (`Symbol.hasInstance`, `Symbol.species`, `Symbol.toPrimitive`) rather than reopen the completed #779 landing scope.
+
+## Array iterator status note
+
+- The current branch + open PR #825 appear to satisfy issue #780's explicit acceptance criteria.
 - Remaining work is review/merge rather than a large missing implementation area:
-  - `Symbol.isConcatSpreadable` in `Array.prototype.concat`
-  - symbol-key descriptor / enumeration coverage and doc alignment
-  - custom `Symbol.toStringTag` behavior coverage
-- If review uncovers gaps, follow-up should likely narrow to the remaining well-known-symbol hooks (`Symbol.hasInstance`, `Symbol.species`, `Symbol.toPrimitive`) rather than re-ranking #779 as a top missing feature.
+  - `Array.prototype.entries` / `keys` / `values`
+  - `Array.prototype[Symbol.iterator]`
+  - reuse of the same iterator surface for `for..of`, spread, and `Array.from(...)`
+- If review uncovers gaps, follow-up should likely narrow to iterator metadata/fidelity (for example `%ArrayIteratorPrototype%[%Symbol.toStringTag%]` and more exotic edge cases) rather than re-ranking #780 as a top missing feature.
 
 ## Issue-ready backlog stubs
 
-## Issue 1: Implement Array Iterator Methods and Symbol Iterator Wiring ([#780](https://github.com/tomacox74/js2il/issues/780))
-- Suggested labels: `enhancement`, `spec:ecma-262`, `priority:medium`
-- Minimum acceptance:
-  - Expose `entries`, `keys`, `values`, and `Array.prototype[Symbol.iterator]`
-  - Ensure compatibility with `for..of` and iterator protocol helpers
-  - Add tests for direct iterator method usage and interoperability
-
-## Issue 2: Implement WeakRef / FinalizationRegistry Processing Model ([#781](https://github.com/tomacox74/js2il/issues/781))
+## Issue 1: Implement WeakRef / FinalizationRegistry Processing Model ([#781](https://github.com/tomacox74/js2il/issues/781))
 - Suggested labels: `enhancement`, `spec:ecma-262`, `priority:low`
 - Minimum acceptance:
   - Add a runtime model and host hooks for cleanup-job scheduling
   - Implement `ClearKeptObjects` and related abstract operations
   - Add deterministic or host-safe tests for supported cleanup semantics
 
-## Issue 3: Re-scope ES Module Semantics Gaps ([#772](https://github.com/tomacox74/js2il/issues/772))
+## Issue 2: Re-scope ES Module Semantics Gaps ([#772](https://github.com/tomacox74/js2il/issues/772))
 - Suggested labels: `enhancement`, `spec:ecma-262`, `modules`, `commonjs`, `priority:medium`
 - Current reality:
   - Static `import` / `export` lowering already exists
@@ -80,14 +80,14 @@
   - If kept open, document the exact unsupported behavior still intended (rather than the already-landed lowering work)
   - Add or refresh targeted tests only for the remaining unsupported semantics
 
-## Issue 4: Descriptor-Backed `Function` Metadata ([#727](https://github.com/tomacox74/js2il/issues/727))
+## Issue 3: Descriptor-Backed `Function` Metadata ([#727](https://github.com/tomacox74/js2il/issues/727))
 - Suggested labels: `enhancement`, `spec:ecma-262`, `priority:medium`
 - Minimum acceptance:
   - Move `Function` instance `.length` / `.name` to descriptor-backed own properties
   - Match ordinary property reflection behavior for those metadata properties
   - Add execution/generator coverage for descriptor interactions and reflection
 
-## Issue 5: Complete Bound Function Semantics ([#728](https://github.com/tomacox74/js2il/issues/728))
+## Issue 4: Complete Bound Function Semantics ([#728](https://github.com/tomacox74/js2il/issues/728))
 - Suggested labels: `enhancement`, `spec:ecma-262`, `priority:medium`
 - Minimum acceptance:
   - Preserve bound constructor / `new.target` semantics
