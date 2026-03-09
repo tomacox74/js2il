@@ -7,19 +7,31 @@ namespace JavaScriptRuntime.EngineCore;
 /// </summary>
 public sealed class NodeEventLoopPump
 {
+    private sealed class NoOpFinalizationRegistryHost : IFinalizationRegistryHost
+    {
+        public static readonly NoOpFinalizationRegistryHost Instance = new();
+
+        public void AddToKeptObjects(object target) { }
+        public void ClearKeptObjects() { }
+        public void CollectAndQueueCleanupJobs(bool forceCollection) { }
+        public void TrackRegistry(JavaScriptRuntime.FinalizationRegistry registry) { }
+    }
+
     private readonly NodeSchedulerState _state;
     private readonly ITickSource _tickSource;
     private readonly IWaitHandle _wakeup;
+    private readonly IFinalizationRegistryHost _finalizationHost;
 
     private readonly Queue<Action> _macro = new();
 
     private readonly int _ownerThreadId;
 
-    public NodeEventLoopPump(NodeSchedulerState state, ITickSource tickSource, IWaitHandle waitHandle)
+    public NodeEventLoopPump(NodeSchedulerState state, ITickSource tickSource, IWaitHandle waitHandle, IFinalizationRegistryHost? finalizationHost = null)
     {
         _state = state;
         _tickSource = tickSource;
         _wakeup = waitHandle;
+        _finalizationHost = finalizationHost ?? NoOpFinalizationRegistryHost.Instance;
         _ownerThreadId = Environment.CurrentManagedThreadId;
     }
 
@@ -82,8 +94,12 @@ public sealed class NodeEventLoopPump
     {
         ThrowIfNotOwnerThread();
 
+        _finalizationHost.ClearKeptObjects();
+        _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
         DrainNextTicks();
         DrainMicrotasks();
+        _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
+        DrainCleanupJobs();
         DrainNextTicks();
         DrainImmediatesOneTick();
         PromoteOneDueTimerToMacro();
@@ -92,10 +108,16 @@ public sealed class NodeEventLoopPump
         {
             _macro.Dequeue().Invoke();
             DrainNextTicks();
+            DrainMicrotasks();
+            _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
+            DrainCleanupJobs();
         }
 
         DrainNextTicks();
         DrainMicrotasks();
+        _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
+        DrainCleanupJobs();
+        _finalizationHost.ClearKeptObjects();
     }
 
     public void WaitForWorkOrNextTimer(int maxWaitMs = 50)
@@ -128,6 +150,8 @@ public sealed class NodeEventLoopPump
 
             // Promise reactions are modeled as microtasks. Run a microtask checkpoint after each callback.
             DrainMicrotasks();
+            _finalizationHost.CollectAndQueueCleanupJobs(forceCollection: false);
+            DrainCleanupJobs();
         }
     }
 
@@ -174,6 +198,22 @@ public sealed class NodeEventLoopPump
             action.Invoke();
 
             DrainNextTicks();
+        }
+    }
+
+    private void DrainCleanupJobs(int max = 1024)
+    {
+        int ticks = 0;
+        while (ticks++ < max)
+        {
+            if (!_state.TryDequeueCleanupJob(out var action) || action == null)
+            {
+                break;
+            }
+
+            action.Invoke();
+            DrainNextTicks();
+            DrainMicrotasks();
         }
     }
 }

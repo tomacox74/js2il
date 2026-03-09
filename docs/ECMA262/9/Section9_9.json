@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "9.9",
   "title": "Processing Model of WeakRef and FinalizationRegistry Targets",
-  "status": "Not Yet Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-weakref-processing-model",
   "parent": {
     "clause": "9"
@@ -12,31 +12,31 @@
     {
       "clause": "9.9.1",
       "title": "Objectives",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakref-invariants"
     },
     {
       "clause": "9.9.2",
       "title": "Liveness",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-liveness"
     },
     {
       "clause": "9.9.3",
       "title": "Execution",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakref-execution"
     },
     {
       "clause": "9.9.4",
       "title": "Host Hooks",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakref-host-hooks"
     },
     {
       "clause": "9.9.4.1",
       "title": "HostEnqueueFinalizationRegistryCleanupJob ( finalizationRegistry )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-host-cleanup-finalization-registry"
     }
   ],
@@ -45,9 +45,13 @@
       {
         "clause": "9.9",
         "feature": "WeakRef/FinalizationRegistry processing model",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weakref-processing-model",
-        "notes": "WeakRef and FinalizationRegistry intrinsics/host hooks are not implemented in the runtime."
+        "testScripts": [
+          "Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js",
+          "Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js"
+        ],
+        "notes": "Implements a host-managed WeakRef/FinalizationRegistry processing model with kept objects, a cleanup-job queue, and deterministic test forcing via the non-standard global `gc()` helper. Cleanup timing outside that helper still depends on .NET GC and active event-loop checkpoints, so the model remains host-safe rather than fully browser/Node equivalent."
       }
     ]
   }

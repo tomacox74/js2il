@@ -4,11 +4,11 @@
 
 [Back to Section9](Section9.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-09T23:42:36Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 9.12 | CleanupFinalizationRegistry ( finalizationRegistry ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#CleanupFinalizationRegistry) |
+| 9.12 | CleanupFinalizationRegistry ( finalizationRegistry ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#CleanupFinalizationRegistry) |
 
 ## Support
 
@@ -18,5 +18,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| CleanupFinalizationRegistry ( finalizationRegistry ) | Not Yet Supported |  | Depends on WeakRef/FinalizationRegistry machinery, which is not currently implemented. |
+| CleanupFinalizationRegistry ( finalizationRegistry ) | Supported with Limitations | [`FinalizationRegistry_Cleanup_Order.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) | Collected registrations are converted into host cleanup jobs and invoke the cleanup callback with held values when drained. Timing remains host/.NET-GC dependent unless tests explicitly force collection with the non-standard global `gc()` helper. |
 

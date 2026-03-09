@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-08T21:51:25Z
+> Last generated (UTC): 2026-03-09T23:42:36Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -16,9 +16,9 @@
 |---:|---|---|---|
 | 19.3.1 | AggregateError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-aggregate-error) |
 | 19.3.2 | Array ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-array) |
-| 19.3.3 | ArrayBuffer ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-arraybuffer) |
+| 19.3.3 | ArrayBuffer ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-arraybuffer) |
 | 19.3.4 | BigInt ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint) |
-| 19.3.5 | BigInt64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint64array) |
+| 19.3.5 | BigInt64Array ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint64array) |
 | 19.3.6 | BigUint64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-biguint64array) |
 | 19.3.7 | Boolean ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean) |
 | 19.3.8 | DataView ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-dataview) |
@@ -67,6 +67,12 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean)) | Supported with Limitations | `Js2IL.Tests/Integration/JavaScript/Compile_Scripts_DecompileGeneratorTest.js` | js2il supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics. |
 
+### 19.3.12 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-finalization-registry))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| FinalizationRegistry constructible global baseline | Supported with Limitations | [`FinalizationRegistry_Cleanup_Order.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) | Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus register/unregister/toStringTag baseline behavior. js2il does not yet expose a full first-class `globalThis.FinalizationRegistry` constructor/prototype object, and deterministic cleanup in tests uses the non-standard global `gc()` helper. |
+
 ### 19.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function))
 
 | Feature name | Status | Test scripts | Notes |
@@ -108,6 +114,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | WeakMap constructor and core prototype methods | Supported with Limitations | [`WeakMap_Constructor_Empty.js`](../../../Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js)<br>[`WeakMap_Set_Get_Basic.js`](../../../Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js)<br>[`WeakMap_Has_Basic.js`](../../../Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js)<br>[`WeakMap_Delete_Basic.js`](../../../Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js) | Implements new WeakMap() constructor and core prototype methods: set, get, has, delete. Keys must be objects (non-null reference types). Uses ConditionalWeakTable to allow garbage collection of keys. Does not support constructor with iterable argument. Does not implement full object-type validation. |
+
+### 19.3.41 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakref))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| WeakRef constructible global baseline | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js) | Supports `new WeakRef(target)` in construct positions plus `deref()` and kept-object behavior. js2il does not yet expose a full first-class `globalThis.WeakRef` constructor/prototype object, and deterministic collection in tests uses the non-standard global `gc()` helper. |
 
 ### 19.3.42 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakset))
 

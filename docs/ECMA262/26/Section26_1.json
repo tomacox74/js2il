@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "26.1",
   "title": "WeakRef Objects",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-weak-ref-objects",
   "parent": {
     "clause": "26"
@@ -12,68 +12,82 @@
     {
       "clause": "26.1.1",
       "title": "The WeakRef Constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weak-ref-constructor"
     },
     {
       "clause": "26.1.1.1",
       "title": "WeakRef ( target )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weak-ref-target"
     },
     {
       "clause": "26.1.2",
       "title": "Properties of the WeakRef Constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-weak-ref-constructor"
     },
     {
       "clause": "26.1.2.1",
       "title": "WeakRef.prototype",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weak-ref.prototype"
     },
     {
       "clause": "26.1.3",
       "title": "Properties of the WeakRef Prototype Object",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-weak-ref-prototype-object"
     },
     {
       "clause": "26.1.3.1",
       "title": "WeakRef.prototype.constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weak-ref.prototype.constructor"
     },
     {
       "clause": "26.1.3.2",
       "title": "WeakRef.prototype.deref ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weak-ref.prototype.deref"
     },
     {
       "clause": "26.1.3.3",
       "title": "WeakRef.prototype [ %Symbol.toStringTag% ]",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weak-ref.prototype-%symbol.tostringtag%"
     },
     {
       "clause": "26.1.4",
       "title": "WeakRef Abstract Operations",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakref-abstract-operations"
     },
     {
       "clause": "26.1.4.1",
       "title": "WeakRefDeref ( weakRef )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakrefderef"
     },
     {
       "clause": "26.1.5",
       "title": "Properties of WeakRef Instances",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-weak-ref-instances"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "26.1",
+        "feature": "WeakRef constructor, deref(), and kept-object baseline",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-weak-ref-objects",
+        "testScripts": [
+          "Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js"
+        ],
+        "notes": "Supports `new WeakRef(target)` in construct positions, `deref()`, and `%Symbol.toStringTag%` via instance-level descriptor wiring. `deref()` adds live targets to a host-kept set until the next cleanup checkpoint, and tests use the non-standard global `gc()` helper to force deterministic collection. js2il does not yet expose a full first-class `WeakRef` constructor/prototype object on `globalThis`."
+      }
+    ]
+  }
 }

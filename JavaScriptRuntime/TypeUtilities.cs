@@ -26,6 +26,15 @@ namespace JavaScriptRuntime
             return true;
         }
 
+        /// <summary>
+        /// Best-effort runtime approximation of ECMA-262 CanBeHeldWeakly.
+        /// JS2IL currently treats non-null reference types (including symbols/functions) as weakly holdable.
+        /// </summary>
+        public static bool CanBeHeldWeakly(object? value)
+        {
+            return IsConstructorReturnOverride(value);
+        }
+
         // JS ToNumber coercion used by codegen slow paths when operand type is uncertain
         public static double ToNumber(object? value)
         {

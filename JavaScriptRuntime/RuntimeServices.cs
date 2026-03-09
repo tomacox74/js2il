@@ -229,9 +229,11 @@ public class RuntimeServices
         container.Register<EngineCore.IWaitHandle, EngineCore.WaitHandle>();
         container.Register<EngineCore.NodeSchedulerState>();
         container.Register<EngineCore.NodeEventLoopPump>();
+        container.Register<EngineCore.ICleanupJobScheduler, EngineCore.NodeSchedulerState>();
         container.Register<EngineCore.IMicrotaskScheduler, EngineCore.NodeSchedulerState>();
         container.Register<EngineCore.IScheduler, EngineCore.NodeSchedulerState>();
         container.Register<EngineCore.IIOScheduler, EngineCore.NodeSchedulerState>();
+        container.Register<EngineCore.IFinalizationRegistryHost, EngineCore.FinalizationRegistryHost>();
         container.Register<CommonJS.Require>();
         container.Register<LocalModulesAssembly>();
         container.Register<IEnvironment, DefaultEnvironment>();
