@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-08T23:10:56Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -26,7 +26,7 @@
 | 23.1.3 | Properties of the Array Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object) |
 | 23.1.3.1 | Array.prototype.at ( index ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.at) |
 | 23.1.3.2 | Array.prototype.concat ( ... items ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.concat) |
-| 23.1.3.2.1 | IsConcatSpreadable ( O ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-isconcatspreadable) |
+| 23.1.3.2.1 | IsConcatSpreadable ( O ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-isconcatspreadable) |
 | 23.1.3.3 | Array.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.constructor) |
 | 23.1.3.4 | Array.prototype.copyWithin ( target , start [ , end ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.copywithin) |
 | 23.1.3.5 | Array.prototype.entries ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.entries) |
@@ -112,6 +112,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Array.of | Supported | [`Array_Static_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js) | Creates arrays from argument lists with expected element ordering. |
+
+### 23.1.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.concat))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Array.prototype.concat with Symbol.isConcatSpreadable | Supported with Limitations | [`Array_NonMutatingOps_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js)<br>[`Array_Concat_SymbolIsConcatSpreadable.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Concat_SymbolIsConcatSpreadable.js) | Supports concatenating arrays, primitive values, and array-like objects that opt in or out via Symbol.isConcatSpreadable. Species, sparse-hole fidelity, and broader exotic receiver behavior remain limited. |
 
 ### 23.1.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.entries))
 

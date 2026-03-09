@@ -106,6 +106,9 @@ namespace Js2IL.Tests.Object
         public Task Object_GetOwnPropertyDescriptors_Basic() { var testName = nameof(Object_GetOwnPropertyDescriptors_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Object_SymbolKey_Descriptors_And_Enumeration() { var testName = nameof(Object_SymbolKey_Descriptors_And_Enumeration); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Object_GetOwnPropertySymbols_Basic() { var testName = nameof(Object_GetOwnPropertySymbols_Basic); return ExecutionTest(testName); }
 
         [Fact]
@@ -134,5 +137,8 @@ namespace Js2IL.Tests.Object
 
         [Fact]
         public Task Object_Prototype_ToString_Basic() { var testName = nameof(Object_Prototype_ToString_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Object_Prototype_ToString_SymbolToStringTag_Custom() { var testName = nameof(Object_Prototype_ToString_SymbolToStringTag_Custom); return ExecutionTest(testName); }
     }
 }

@@ -4,9 +4,9 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-08T23:10:56Z
 
-JS2IL supports Symbol callable creation, global registry APIs (Symbol.for/keyFor), well-known symbols, and core Symbol.prototype behaviors (description/toString/valueOf). Some advanced descriptor-level semantics remain tracked as limitations.
+JS2IL supports Symbol callable creation, global registry APIs (Symbol.for/keyFor), well-known symbols, core Symbol.prototype behaviors (description/toString/valueOf), symbol-key reflection on ordinary objects, Array.prototype.concat spreadability hooks, and Object.prototype.toString Symbol.toStringTag lookup. Some broader well-known-symbol protocol integrations remain tracked as limitations.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -62,13 +62,25 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Symbol constructor properties (well-known symbols) | Supported with Limitations | [`IntrinsicCallables_Symbol_Registry_WellKnown.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js) | Supports Symbol.iterator, Symbol.asyncIterator, Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.match, Symbol.matchAll, Symbol.replace, Symbol.search, Symbol.species, Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, and Symbol.unscopables as stable singletons. |
+| Symbol constructor properties (well-known symbols) | Supported with Limitations | [`IntrinsicCallables_Symbol_Registry_WellKnown.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js) | Supports Symbol.iterator, Symbol.asyncIterator, Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.match, Symbol.matchAll, Symbol.replace, Symbol.search, Symbol.species, Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, and Symbol.unscopables as stable singletons. js2il also wires Symbol.asyncIterator, RegExp symbol dispatch, Array.prototype.concat spreadability, and Object.prototype.toString Symbol.toStringTag lookup; hasInstance/species/toPrimitive protocol hooks remain partial. |
 
 ### 20.4.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-symbol.for))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Symbol.for(key) and Symbol.keyFor(sym) registry APIs | Supported | [`IntrinsicCallables_Symbol_Registry_WellKnown.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js) | Supports global symbol registry round-tripping and TypeError on non-symbol Symbol.keyFor input. |
+
+### 20.4.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-symbol.isconcatspreadable))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Symbol.isConcatSpreadable influences Array.prototype.concat | Supported with Limitations | [`Array_Concat_SymbolIsConcatSpreadable.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Concat_SymbolIsConcatSpreadable.js) | Array.prototype.concat honors explicit Symbol.isConcatSpreadable flags on arrays and ordinary array-like objects. Species, sparse-hole fidelity, and broader exotic concat edge cases remain limited. |
+
+### 20.4.2.15 ([tc39.es](https://tc39.es/ecma262/#sec-symbol.tostringtag))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Symbol.toStringTag participates in Object.prototype.toString | Supported with Limitations | [`Object_Prototype_ToString_SymbolToStringTag_Custom.js`](../../../Js2IL.Tests/Object/JavaScript/Object_Prototype_ToString_SymbolToStringTag_Custom.js)<br>[`Generator_Prototype_ToStringTag.js`](../../../Js2IL.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js) | Object.prototype.toString consults Symbol.toStringTag for ordinary objects, arrays, and the built-in generator/runtime types that expose custom brands. Full exotic-brand coverage is not exhaustive. |
 
 ### 20.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-symbol-prototype-object))
 

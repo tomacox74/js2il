@@ -2003,9 +2003,9 @@ namespace JavaScriptRuntime
             for (int i = 0; i < args.Length; i++)
             {
                 var item = args[i];
-                if (item is Array arr)
+                if (ShouldConcatSpread(item))
                 {
-                    for (int j = 0; j < arr.Count; j++) result.Add(arr[j]);
+                    AppendConcatElements(result, item!);
                 }
                 else
                 {
@@ -2019,6 +2019,44 @@ namespace JavaScriptRuntime
         public Array concat()
         {
             return new Array(this);
+        }
+
+        private static bool ShouldConcatSpread(object? item)
+        {
+            if (item is null || item is JsNull)
+            {
+                return false;
+            }
+
+            if (item is not string && !item.GetType().IsValueType)
+            {
+                var spreadable = JavaScriptRuntime.ObjectRuntime.GetItem(item, Symbol.isConcatSpreadable);
+                if (spreadable is not null)
+                {
+                    return TypeUtilities.ToBoolean(spreadable);
+                }
+            }
+
+            return item is Array;
+        }
+
+        private static void AppendConcatElements(Array result, object item)
+        {
+            if (item is Array arr)
+            {
+                for (int j = 0; j < arr.Count; j++)
+                {
+                    result.Add(arr[j]);
+                }
+
+                return;
+            }
+
+            var length = ToArrayLikeLength(item);
+            for (int j = 0; j < length; j++)
+            {
+                result.Add(JavaScriptRuntime.ObjectRuntime.GetItem(item, (double)j));
+            }
         }
 
         /// <summary>

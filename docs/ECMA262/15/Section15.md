@@ -4,7 +4,7 @@ Covers functions and classes, including callable/constructable semantics and cla
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-08T21:51:25Z
+> Last generated (UTC): 2026-03-08T23:10:56Z
 
 _This section is split into subsection documents for readability._
 
