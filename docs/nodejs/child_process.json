@@ -7,19 +7,71 @@
   "docsUrl": "https://nodejs.org/api/child_process.html",
   "nodeVersionTarget": "22.x LTS",
   "implementation": "JavaScriptRuntime/Node/ChildProcess.cs",
+  "notes": "Provides synchronous process execution plus a minimal async ChildProcess surface with piped stdout/stderr capture, exit/close events, callback completion for exec/execFile, and kill() on the returned handle.",
   "apis": [
+    {
+      "name": "spawn(command[, args][, options])",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Returns an EventEmitter-backed child handle with pid, stdout/stderr Readable pipes, a Writable stdin pipe when piped, exit/close events, and kill(). Supports cwd, shell, and stdio ('pipe'/'inherit' plus basic first-three-entry array handling).",
+      "docs": "https://nodejs.org/api/child_process.html#child_processspawncommand-args-options",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Basic",
+          "file": "Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Basic",
+          "file": "Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "exec(command[, options][, callback])",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Executes via a shell and optionally invokes an error-first callback with (err, stdout, stderr). Returns the child handle immediately. Non-zero exit codes surface an Error-like object carrying status/code/stdout/stderr.",
+      "docs": "https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Exec_Callback",
+          "file": "Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Exec_Callback",
+          "file": "Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "execFile(file[, args][, options][, callback])",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Runs a file directly without an implicit shell and optionally invokes an error-first callback with (err, stdout, stderr). Non-zero exits surface the same Error-like callback shape used by exec().",
+      "docs": "https://nodejs.org/api/child_process.html#child_processexecfilefile-args-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_ExecFile_NonZero",
+          "file": "Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_ExecFile_NonZero",
+          "file": "Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+        }
+      ]
+    },
     {
       "name": "spawnSync(command, args, options)",
       "kind": "function",
       "status": "supported",
-      "notes": "Supports options: cwd, stdio ('inherit'), shell. Returns { status, stdout, stderr }.",
+      "notes": "Supports cwd, shell, and stdio ('pipe'/'inherit' plus basic first-three-entry array handling). Returns { status, stdout, stderr }.",
       "docs": "https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options"
     },
     {
       "name": "execSync(command, options)",
       "kind": "function",
       "status": "supported",
-      "notes": "Supports options: cwd, stdio ('inherit'), encoding ('utf8'). Throws an Error-like object with stdout/stderr on non-zero exit.",
+      "notes": "Supports cwd, stdio ('pipe'/'inherit' plus basic first-three-entry array handling), and encoding ('utf8'). Throws an Error-like object with status/code/stdout/stderr on non-zero exit.",
       "docs": "https://nodejs.org/api/child_process.html#child_processexecsynccommand-options"
     }
   ]
