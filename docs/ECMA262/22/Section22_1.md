@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-09T23:10:54Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -23,7 +23,7 @@
 | 22.1.2.4 | String.raw ( template , ... substitutions ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.raw) |
 | 22.1.3 | Properties of the String Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-string-prototype-object) |
 | 22.1.3.1 | String.prototype.at ( index ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.at) |
-| 22.1.3.2 | String.prototype.charAt ( pos ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charat) |
+| 22.1.3.2 | String.prototype.charAt ( pos ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charat) |
 | 22.1.3.3 | String.prototype.charCodeAt ( pos ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charcodeat) |
 | 22.1.3.4 | String.prototype.codePointAt ( pos ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.codepointat) |
 | 22.1.3.5 | String.prototype.concat ( ... args ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.concat) |
@@ -121,7 +121,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.charAt | Not Yet Supported |  | charAt is not surfaced on primitives; only charCodeAt is currently wired. |
+| String.prototype.charAt | Supported with Limitations | [`String_CharAt_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_CharAt_Basic.js) | Implemented via JavaScriptRuntime.String.CharAt and routed through the string member-call fast path in JavaScriptRuntime.Object. Covers primitive strings plus current new String sugar cases, but JS2IL still does not expose a spec-observable String.prototype object or boxed String wrapper semantics. |
 
 ### 22.1.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charcodeat))
 
