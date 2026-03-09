@@ -72,26 +72,17 @@ namespace JavaScriptRuntime.Node
                 var psi = BuildStartInfo(commandText, argList, cwd, shell, stdio);
 
                 using var p = DiagnosticsProcess.Start(psi) ?? throw new Error("Failed to start process.");
-
-                string? stdout = null;
-                string? stderr = null;
-
-                if (stdio.PipeStdout)
+                if (stdio.StdinMode == StdioMode.Ignore)
                 {
-                    stdout = p.StandardOutput.ReadToEnd();
+                    p.StandardInput.Close();
                 }
 
-                if (stdio.PipeStderr)
-                {
-                    stderr = p.StandardError.ReadToEnd();
-                }
-
-                p.WaitForExit();
+                var completion = WaitForProcessCompletionSync(p, stdio);
 
                 dynamic result = new ExpandoObject();
-                result.status = (double)p.ExitCode;
-                result.stdout = stdout;
-                result.stderr = stderr;
+                result.status = (double)completion.ExitCode;
+                result.stdout = stdio.StdoutMode == StdioMode.Pipe ? completion.Stdout : null;
+                result.stderr = stdio.StderrMode == StdioMode.Pipe ? completion.Stderr : null;
                 return result;
             }
             catch (Exception ex)
@@ -163,25 +154,18 @@ namespace JavaScriptRuntime.Node
             var psi = BuildStartInfo(commandText, args: System.Array.Empty<string>(), cwd, shell: true, stdio);
 
             using var p = DiagnosticsProcess.Start(psi) ?? throw new Error("Failed to start process.");
-
-            string stdout = string.Empty;
-            string stderr = string.Empty;
-
-            if (stdio.PipeStdout)
+            if (stdio.StdinMode == StdioMode.Ignore)
             {
-                stdout = p.StandardOutput.ReadToEnd();
+                p.StandardInput.Close();
             }
 
-            if (stdio.PipeStderr)
-            {
-                stderr = p.StandardError.ReadToEnd();
-            }
+            var completion = WaitForProcessCompletionSync(p, stdio);
+            var stdout = completion.Stdout;
+            var stderr = completion.Stderr;
 
-            p.WaitForExit();
-
-            if (p.ExitCode != 0)
+            if (completion.ExitCode != 0)
             {
-                throw new ExecSyncError(commandText, p.ExitCode, stdout, stderr);
+                throw new ChildProcessError(commandText, completion.ExitCode, stdout, stderr);
             }
 
             // For now we only support string output; Node returns Buffer when no encoding is provided.
@@ -283,9 +267,9 @@ namespace JavaScriptRuntime.Node
             return StartChildProcess(file, args, options, shellOverride: false, callback: cb, suppressUnhandledError: cb != null);
         }
 
-        public sealed class ExecSyncError : Error
+        public sealed class ChildProcessError : Error
         {
-            public ExecSyncError(string command, int exitCode, string stdout, string stderr)
+            public ChildProcessError(string command, int exitCode, string stdout, string stderr)
                 : base($"Command failed: {command} (exit code {exitCode})")
             {
                 status = (double)exitCode;
@@ -298,7 +282,7 @@ namespace JavaScriptRuntime.Node
             // Lowercase to match Node-ish shape
             public double status { get; }
 
-            public object code { get; }
+            public double code { get; }
 
             public string cmd { get; }
 
@@ -326,7 +310,15 @@ namespace JavaScriptRuntime.Node
             {
                 var psi = BuildStartInfo(commandText, argList, cwd, shell, stdio);
                 var process = DiagnosticsProcess.Start(psi) ?? throw new Error("Failed to start process.");
-                child.Attach(process);
+                try
+                {
+                    child.Attach(process);
+                }
+                catch
+                {
+                    process.Dispose();
+                    throw;
+                }
 
                 IoScheduler.BeginIo();
                 try
@@ -361,8 +353,8 @@ namespace JavaScriptRuntime.Node
         {
             try
             {
-                Task<string>? stdoutTask = stdio.PipeStdout ? process.StandardOutput.ReadToEndAsync() : null;
-                Task<string>? stderrTask = stdio.PipeStderr ? process.StandardError.ReadToEndAsync() : null;
+                Task<string>? stdoutTask = StartTextReadTask(process.StandardOutput, stdio.StdoutMode);
+                Task<string>? stderrTask = StartTextReadTask(process.StandardError, stdio.StderrMode);
                 var completionTasks = new List<Task>(capacity: 3)
                 {
                     process.WaitForExitAsync(),
@@ -423,7 +415,7 @@ namespace JavaScriptRuntime.Node
                 {
                     var error = completion.ExitCode == 0
                         ? (object)JsNull.Null
-                        : new ExecSyncError(commandText, completion.ExitCode, completion.Stdout, completion.Stderr);
+                        : new ChildProcessError(commandText, completion.ExitCode, completion.Stdout, completion.Stderr);
 
                     InvokeExecCallback(callback, error, completion.Stdout, completion.Stderr);
                 }
@@ -452,6 +444,56 @@ namespace JavaScriptRuntime.Node
             Closure.InvokeWithArgs(callback, RuntimeServices.EmptyScopes, errArg, stdout, stderr);
         }
 
+        private static ProcessCompletionResult WaitForProcessCompletionSync(DiagnosticsProcess process, StdioConfiguration stdio)
+        {
+            Task<string>? stdoutTask = StartTextReadTask(process.StandardOutput, stdio.StdoutMode);
+            Task<string>? stderrTask = StartTextReadTask(process.StandardError, stdio.StderrMode);
+
+            if (stdoutTask != null && stderrTask != null)
+            {
+                Task.WaitAll(stdoutTask, stderrTask);
+            }
+            else if (stdoutTask != null)
+            {
+                stdoutTask.Wait();
+            }
+            else if (stderrTask != null)
+            {
+                stderrTask.Wait();
+            }
+            else
+            {
+                process.WaitForExit();
+            }
+
+            process.WaitForExit();
+
+            return new ProcessCompletionResult(
+                process.ExitCode,
+                stdoutTask?.Result ?? string.Empty,
+                stderrTask?.Result ?? string.Empty);
+        }
+
+        private static Task<string>? StartTextReadTask(StreamReader reader, StdioMode mode)
+        {
+            return mode switch
+            {
+                StdioMode.Pipe => reader.ReadToEndAsync(),
+                StdioMode.Ignore => DrainTextReaderAsync(reader),
+                _ => null,
+            };
+        }
+
+        private static async Task<string> DrainTextReaderAsync(TextReader reader)
+        {
+            var buffer = new char[1024];
+            while (await reader.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false) > 0)
+            {
+            }
+
+            return string.Empty;
+        }
+
         private void QueueImmediate(Action action)
         {
             ((IScheduler)NodeScheduler).ScheduleImmediate(action);
@@ -467,9 +509,9 @@ namespace JavaScriptRuntime.Node
             var psi = new DiagnosticsProcessStartInfo
             {
                 UseShellExecute = false,
-                RedirectStandardInput = stdio.PipeStdin,
-                RedirectStandardOutput = stdio.PipeStdout,
-                RedirectStandardError = stdio.PipeStderr,
+                RedirectStandardInput = stdio.StdinMode != StdioMode.Inherit,
+                RedirectStandardOutput = stdio.StdoutMode != StdioMode.Inherit,
+                RedirectStandardError = stdio.StderrMode != StdioMode.Inherit,
                 CreateNoWindow = true,
             };
 
@@ -639,16 +681,16 @@ namespace JavaScriptRuntime.Node
 
                 if (text.Equals("ignore", StringComparison.OrdinalIgnoreCase))
                 {
-                    return StdioConfiguration.InheritAll;
+                    return StdioConfiguration.IgnoreAll;
                 }
             }
 
             if (TryCoerceArray(stdio, out var slots))
             {
                 return new StdioConfiguration(
-                    PipeSlot(slots, 0, defaults.PipeStdin),
-                    PipeSlot(slots, 1, defaults.PipeStdout),
-                    PipeSlot(slots, 2, defaults.PipeStderr));
+                    ParseSlotMode(slots, 0, defaults.StdinMode),
+                    ParseSlotMode(slots, 1, defaults.StdoutMode),
+                    ParseSlotMode(slots, 2, defaults.StderrMode));
             }
 
             return defaults;
@@ -677,7 +719,7 @@ namespace JavaScriptRuntime.Node
             return false;
         }
 
-        private static bool PipeSlot(object?[] slots, int index, bool defaultValue)
+        private static StdioMode ParseSlotMode(object?[] slots, int index, StdioMode defaultValue)
         {
             if (index >= slots.Length)
             {
@@ -694,17 +736,28 @@ namespace JavaScriptRuntime.Node
             {
                 if (text.Equals("pipe", StringComparison.OrdinalIgnoreCase))
                 {
-                    return true;
+                    return StdioMode.Pipe;
                 }
 
-                if (text.Equals("inherit", StringComparison.OrdinalIgnoreCase)
-                    || text.Equals("ignore", StringComparison.OrdinalIgnoreCase))
+                if (text.Equals("inherit", StringComparison.OrdinalIgnoreCase))
                 {
-                    return false;
+                    return StdioMode.Inherit;
+                }
+
+                if (text.Equals("ignore", StringComparison.OrdinalIgnoreCase))
+                {
+                    return StdioMode.Ignore;
                 }
             }
 
             return defaultValue;
+        }
+
+        internal enum StdioMode
+        {
+            Inherit,
+            Pipe,
+            Ignore,
         }
 
         internal sealed class ProcessCompletionResult
@@ -725,22 +778,23 @@ namespace JavaScriptRuntime.Node
 
         internal sealed class StdioConfiguration
         {
-            public static readonly StdioConfiguration SyncDefault = new(pipeStdin: false, pipeStdout: true, pipeStderr: true);
-            public static readonly StdioConfiguration AsyncDefault = new(pipeStdin: true, pipeStdout: true, pipeStderr: true);
-            public static readonly StdioConfiguration InheritAll = new(pipeStdin: false, pipeStdout: false, pipeStderr: false);
+            public static readonly StdioConfiguration SyncDefault = new(StdioMode.Inherit, StdioMode.Pipe, StdioMode.Pipe);
+            public static readonly StdioConfiguration AsyncDefault = new(StdioMode.Pipe, StdioMode.Pipe, StdioMode.Pipe);
+            public static readonly StdioConfiguration InheritAll = new(StdioMode.Inherit, StdioMode.Inherit, StdioMode.Inherit);
+            public static readonly StdioConfiguration IgnoreAll = new(StdioMode.Ignore, StdioMode.Ignore, StdioMode.Ignore);
 
-            public StdioConfiguration(bool pipeStdin, bool pipeStdout, bool pipeStderr)
+            public StdioConfiguration(StdioMode stdinMode, StdioMode stdoutMode, StdioMode stderrMode)
             {
-                PipeStdin = pipeStdin;
-                PipeStdout = pipeStdout;
-                PipeStderr = pipeStderr;
+                StdinMode = stdinMode;
+                StdoutMode = stdoutMode;
+                StderrMode = stderrMode;
             }
 
-            public bool PipeStdin { get; }
+            public StdioMode StdinMode { get; }
 
-            public bool PipeStdout { get; }
+            public StdioMode StdoutMode { get; }
 
-            public bool PipeStderr { get; }
+            public StdioMode StderrMode { get; }
         }
 
         public sealed class ChildProcessHandle : EventEmitter
@@ -753,9 +807,9 @@ namespace JavaScriptRuntime.Node
 
             internal ChildProcessHandle(StdioConfiguration stdio)
             {
-                _stdinWritable = stdio.PipeStdin ? new ChildProcessWritable() : null;
-                _stdoutReadable = stdio.PipeStdout ? new Readable() : null;
-                _stderrReadable = stdio.PipeStderr ? new Readable() : null;
+                _stdinWritable = stdio.StdinMode == StdioMode.Pipe ? new ChildProcessWritable() : null;
+                _stdoutReadable = stdio.StdoutMode == StdioMode.Pipe ? new Readable() : null;
+                _stderrReadable = stdio.StderrMode == StdioMode.Pipe ? new Readable() : null;
 
                 stdin = _stdinWritable != null ? _stdinWritable : JsNull.Null;
                 stdout = _stdoutReadable != null ? _stdoutReadable : JsNull.Null;
@@ -779,6 +833,18 @@ namespace JavaScriptRuntime.Node
                 _process = process;
                 pid = (double)process.Id;
                 _stdinWritable?.Attach(process);
+
+                if (_stdinWritable == null && process.StartInfo.RedirectStandardInput)
+                {
+                    try
+                    {
+                        process.StandardInput.Close();
+                    }
+                    catch
+                    {
+                        // Ignore best-effort stdin shutdown for ignored stdio.
+                    }
+                }
             }
 
             internal void CompleteSuccess(ProcessCompletionResult completion)

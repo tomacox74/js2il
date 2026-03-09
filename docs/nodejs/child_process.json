@@ -7,13 +7,13 @@
   "docsUrl": "https://nodejs.org/api/child_process.html",
   "nodeVersionTarget": "22.x LTS",
   "implementation": "JavaScriptRuntime/Node/ChildProcess.cs",
-  "notes": "Provides synchronous process execution plus a minimal async ChildProcess surface with piped stdout/stderr capture, exit/close events, callback completion for exec/execFile, and kill() on the returned handle.",
+  "notes": "Provides synchronous process execution plus a minimal async ChildProcess surface with piped stdout/stderr capture, exit/close events, callback completion for exec/execFile, kill() on the returned handle, and basic stdio support for 'pipe', 'inherit', and 'ignore'.",
   "apis": [
     {
       "name": "spawn(command[, args][, options])",
       "kind": "function",
       "status": "supported",
-      "notes": "Returns an EventEmitter-backed child handle with pid, stdout/stderr Readable pipes, a Writable stdin pipe when piped, exit/close events, and kill(). Supports cwd, shell, and stdio ('pipe'/'inherit' plus basic first-three-entry array handling).",
+      "notes": "Returns an EventEmitter-backed child handle with pid, stdout/stderr Readable pipes, a Writable stdin pipe when piped, exit/close events, and kill(). Supports cwd, shell, and stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling).",
       "docs": "https://nodejs.org/api/child_process.html#child_processspawncommand-args-options",
       "tests": [
         {
@@ -21,7 +21,15 @@
           "file": "Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
         },
         {
+          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Ignore",
+          "file": "Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+        },
+        {
           "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Basic",
+          "file": "Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Ignore",
           "file": "Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
         }
       ]
@@ -64,14 +72,14 @@
       "name": "spawnSync(command, args, options)",
       "kind": "function",
       "status": "supported",
-      "notes": "Supports cwd, shell, and stdio ('pipe'/'inherit' plus basic first-three-entry array handling). Returns { status, stdout, stderr }.",
+      "notes": "Supports cwd, shell, and stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling). Returns { status, stdout, stderr }.",
       "docs": "https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options"
     },
     {
       "name": "execSync(command, options)",
       "kind": "function",
       "status": "supported",
-      "notes": "Supports cwd, stdio ('pipe'/'inherit' plus basic first-three-entry array handling), and encoding ('utf8'). Throws an Error-like object with status/code/stdout/stderr on non-zero exit.",
+      "notes": "Supports cwd, stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling), and encoding ('utf8'). Throws an Error-like object with status/code/stdout/stderr on non-zero exit.",
       "docs": "https://nodejs.org/api/child_process.html#child_processexecsynccommand-options"
     }
   ]

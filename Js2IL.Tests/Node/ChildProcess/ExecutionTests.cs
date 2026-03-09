@@ -11,6 +11,10 @@ namespace Js2IL.Tests.Node.ChildProcess
             => ExecutionTest(nameof(Require_ChildProcess_Spawn_Basic));
 
         [Fact]
+        public Task Require_ChildProcess_Spawn_Ignore()
+            => ExecutionTest(nameof(Require_ChildProcess_Spawn_Ignore));
+
+        [Fact]
         public Task Require_ChildProcess_Exec_Callback()
             => ExecutionTest(nameof(Require_ChildProcess_Exec_Callback));
 

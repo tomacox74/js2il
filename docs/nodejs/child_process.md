@@ -15,7 +15,7 @@
 
 ## Notes
 
-Provides synchronous process execution plus a minimal async ChildProcess surface with piped stdout/stderr capture, exit/close events, callback completion for exec/execFile, and kill() on the returned handle.
+Provides synchronous process execution plus a minimal async ChildProcess surface with piped stdout/stderr capture, exit/close events, callback completion for exec/execFile, kill() on the returned handle, and basic stdio support for 'pipe', 'inherit', and 'ignore'.
 
 ## APIs
 
@@ -31,11 +31,13 @@ Provides synchronous process execution plus a minimal async ChildProcess surface
 
 ### spawn(command[, args][, options])
 
-Returns an EventEmitter-backed child handle with pid, stdout/stderr Readable pipes, a Writable stdin pipe when piped, exit/close events, and kill(). Supports cwd, shell, and stdio ('pipe'/'inherit' plus basic first-three-entry array handling).
+Returns an EventEmitter-backed child handle with pid, stdout/stderr Readable pipes, a Writable stdin pipe when piped, exit/close events, and kill(). Supports cwd, shell, and stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling).
 
 **Tests:**
 - `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Basic` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Ignore` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Basic` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Ignore` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
 
 ### exec(command[, options][, callback])
 
@@ -55,8 +57,8 @@ Runs a file directly without an implicit shell and optionally invokes an error-f
 
 ### spawnSync(command, args, options)
 
-Supports cwd, shell, and stdio ('pipe'/'inherit' plus basic first-three-entry array handling). Returns { status, stdout, stderr }.
+Supports cwd, shell, and stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling). Returns { status, stdout, stderr }.
 
 ### execSync(command, options)
 
-Supports cwd, stdio ('pipe'/'inherit' plus basic first-three-entry array handling), and encoding ('utf8'). Throws an Error-like object with status/code/stdout/stderr on non-zero exit.
+Supports cwd, stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling), and encoding ('utf8'). Throws an Error-like object with status/code/stdout/stderr on non-zero exit.
