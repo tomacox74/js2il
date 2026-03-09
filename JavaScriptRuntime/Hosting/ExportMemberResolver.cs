@@ -236,7 +236,7 @@ internal static class ExportMemberResolver
         ArgumentNullException.ThrowIfNull(constructor);
 
         var callArgs = NormalizeArgs(args);
-        return JavaScriptRuntime.ObjectRuntime.ConstructValue(constructor, callArgs);
+        return JavaScriptRuntime.Object.ConstructValue(constructor, callArgs);
     }
 
     private static bool TryInvokeMethod(object target, string methodName, object[] args, out object? result)

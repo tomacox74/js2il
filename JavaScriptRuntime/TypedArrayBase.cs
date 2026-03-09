@@ -956,7 +956,7 @@ namespace JavaScriptRuntime
                 var values = new List<object?>(length);
                 for (int i = 0; i < length; i++)
                 {
-                    values.Add(JavaScriptRuntime.Object.GetItem(source!, (double)i));
+                    values.Add(JavaScriptRuntime.ObjectRuntime.GetItem(source!, (double)i));
                 }
 
                 return values;

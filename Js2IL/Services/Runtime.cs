@@ -39,7 +39,7 @@ namespace Js2IL.Services
         public void InvokeGetItemFromObject()
         {
             // we assume the object and index are already on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetItem));
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.GetItem));
             _il.Call(mref);
         }
 

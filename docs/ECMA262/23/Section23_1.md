@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-08T23:10:56Z
+> Last generated (UTC): 2026-03-09T07:34:42Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -29,7 +29,7 @@
 | 23.1.3.2.1 | IsConcatSpreadable ( O ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-isconcatspreadable) |
 | 23.1.3.3 | Array.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.constructor) |
 | 23.1.3.4 | Array.prototype.copyWithin ( target , start [ , end ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.copywithin) |
-| 23.1.3.5 | Array.prototype.entries ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.entries) |
+| 23.1.3.5 | Array.prototype.entries ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.entries) |
 | 23.1.3.6 | Array.prototype.every ( callback [ , thisArg ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.every) |
 | 23.1.3.7 | Array.prototype.fill ( value [ , start [ , end ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.fill) |
 | 23.1.3.8 | Array.prototype.filter ( callback [ , thisArg ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.filter) |
@@ -45,7 +45,7 @@
 | 23.1.3.16 | Array.prototype.includes ( searchElement [ , fromIndex ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.includes) |
 | 23.1.3.17 | Array.prototype.indexOf ( searchElement [ , fromIndex ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.indexof) |
 | 23.1.3.18 | Array.prototype.join ( separator ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.join) |
-| 23.1.3.19 | Array.prototype.keys ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.keys) |
+| 23.1.3.19 | Array.prototype.keys ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.keys) |
 | 23.1.3.20 | Array.prototype.lastIndexOf ( searchElement [ , fromIndex ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.lastindexof) |
 | 23.1.3.21 | Array.prototype.map ( callback [ , thisArg ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.map) |
 | 23.1.3.22 | Array.prototype.pop ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.pop) |
@@ -66,9 +66,9 @@
 | 23.1.3.35 | Array.prototype.toSpliced ( start , skipCount , ... items ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.tospliced) |
 | 23.1.3.36 | Array.prototype.toString ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.tostring) |
 | 23.1.3.37 | Array.prototype.unshift ( ... items ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.unshift) |
-| 23.1.3.38 | Array.prototype.values ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.values) |
+| 23.1.3.38 | Array.prototype.values ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.values) |
 | 23.1.3.39 | Array.prototype.with ( index , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.with) |
-| 23.1.3.40 | Array.prototype [ %Symbol.iterator% ] ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype-%symbol.iterator%) |
+| 23.1.3.40 | Array.prototype [ %Symbol.iterator% ] ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype-%symbol.iterator%) |
 | 23.1.3.41 | Array.prototype [ %Symbol.unscopables% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype-%symbol.unscopables%) |
 | 23.1.4 | Properties of Array Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-array-instances) |
 | 23.1.4.1 | length | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-array-instances-length) |
@@ -93,7 +93,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Array.from (items) | Supported with Limitations | [`Array_Static_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js) | Supports array/enumerable sources and shallow copy behavior; mapper and thisArg semantics are not fully modeled. |
+| Array.from (items) | Supported with Limitations | [`Array_Static_Basic.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js)<br>[`Array_Iterator_Methods.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Iterator_Methods.js) | Supports array, enumerable, and iterator-producing sources (including Array iterator methods); mapper and thisArg semantics are not fully modeled. |
 
 ### 23.1.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-array.fromasync))
 
@@ -123,7 +123,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Array.prototype.entries/keys/values | Not Yet Supported |  | These iterator-returning prototype methods are not currently exposed as callable Array prototype methods. |
+| Array.prototype.entries / keys / values / [Symbol.iterator] | Supported with Limitations | [`Array_Iterator_Methods.js`](../../../Js2IL.Tests/Array/JavaScript/Array_Iterator_Methods.js) | Exposes Array iterator methods plus Array.prototype[Symbol.iterator] as the values alias, supports borrowed array-like calls, and routes for..of / spread through the same iterator surface. %ArrayIteratorPrototype% metadata (for example %Symbol.toStringTag%) and broader exotic edge behavior remain limited. |
 
 ### 23.1.3.14 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.flatmap))
 

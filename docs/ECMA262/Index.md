@@ -19,7 +19,7 @@ Notes:
 - `Partially Supported` is deprecated legacy wording and is treated as `Supported with Limitations`.
 - Prototype-chain design/strategy: see [PrototypeChainSupport.md](../PrototypeChainSupport.md).
 
-> Last generated (UTC): 2026-03-08T23:10:56Z
+> Last generated (UTC): 2026-03-09T07:34:42Z
 
 ## Summary
 - Total clauses indexed: **2176**

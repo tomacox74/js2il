@@ -1,4 +1,4 @@
-namespace Js2IL.IR;
+﻿namespace Js2IL.IR;
 
 /// <summary>
 /// Creates and initializes an object array with the given elements in a single operation.
@@ -51,13 +51,13 @@ public record LIRGetInt32ArrayLength(TempVariable Receiver, TempVariable Result)
 public record LIRGetStringLength(TempVariable Receiver, TempVariable Result) : LIRInstruction;
 
 /// <summary>
-/// Gets an item from an object by index (calls JavaScriptRuntime.Object.GetItem).
+/// Gets an item from an object by index (calls JavaScriptRuntime.ObjectRuntime.GetItem).
 /// </summary>
 public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Gets an item from an object by index and converts the result to an unboxed number.
-/// Calls JavaScriptRuntime.Object.GetItemAsNumber for a direct double result, avoiding boxing.
+/// Calls JavaScriptRuntime.ObjectRuntime.GetItemAsNumber for a direct double result, avoiding boxing.
 /// Fast path for Int32Array receivers; fallback to ToNumber(GetItem(...)) for all others.
 /// Contract: Result is an unboxed double.
 /// </summary>
@@ -65,13 +65,13 @@ public record LIRGetItemAsNumber(TempVariable Object, TempVariable Index, TempVa
 
 /// <summary>
 /// Gets an item from an object by a string key and converts the result to an unboxed number.
-/// Calls JavaScriptRuntime.Object.GetItemAsNumber(object, string).
+/// Calls JavaScriptRuntime.ObjectRuntime.GetItemAsNumber(object, string).
 /// Contract: Index is a reference temp typed as string; Result is an unboxed double.
 /// </summary>
 public record LIRGetItemAsNumberString(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
 
 /// <summary>
-/// Sets an item on an object by index/key (calls JavaScriptRuntime.Object.SetItem).
+/// Sets an item on an object by index/key (calls JavaScriptRuntime.ObjectRuntime.SetItem).
 /// Returns the assigned value.
 /// </summary>
 public record LIRSetItem(TempVariable Object, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;

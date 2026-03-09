@@ -68,7 +68,7 @@ namespace JavaScriptRuntime
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
-            JavaScriptRuntime.ObjectRuntime.Construct(value);
+            JavaScriptRuntime.Object.Construct(value);
 
         private static readonly Func<object[], object?[], object?> _errorConstructorValue = static (_, args) =>
         {
@@ -131,8 +131,8 @@ namespace JavaScriptRuntime
                 Value = _booleanPrototypeValue
             });
 
-            // Centralized Object constructor/prototype wiring lives in JavaScriptRuntime.ObjectRuntime.
-            JavaScriptRuntime.ObjectRuntime.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
+            // Centralized Object constructor/prototype wiring lives on JavaScriptRuntime.Object.
+            JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
             PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "prototype", new JsPropertyDescriptor
@@ -222,88 +222,6 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static object? ObjectPrototypeHasOwnProperty(object[] scopes, object?[] args)
-        {
-            var target = RuntimeServices.GetCurrentThis();
-            var prop = args != null && args.Length > 0 ? args[0] : null;
-
-            if (target is null || target is JsNull)
-            {
-                throw new TypeError("Cannot convert undefined or null to object");
-            }
-
-            var name = DotNet2JSConversions.ToString(prop);
-
-            // Own-property check (minimal):
-            // 1) Descriptor store (our primary object-model)
-            // 2) Expando/Dictionary
-            // 3) Reflection for host objects
-            if (PropertyDescriptorStore.TryGetOwn(target, name, out var _descriptor))
-            {
-                return true;
-            }
-
-            if (target is ExpandoObject exp2)
-            {
-                var expDict = (IDictionary<string, object?>)exp2;
-                return expDict.ContainsKey(name);
-            }
-
-            if (target is IDictionary<string, object?> dictGeneric)
-            {
-                return dictGeneric.ContainsKey(name);
-            }
-
-            if (target is IDictionary dictObj)
-            {
-                if (dictObj.Contains(name)) return true;
-                foreach (var k in dictObj.Keys)
-                {
-                    if (string.Equals(DotNet2JSConversions.ToString(k), name, StringComparison.Ordinal))
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            var t = target.GetType();
-            return t.GetProperty(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public) != null
-                || t.GetField(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public) != null;
-        }
-
-        /// <summary>
-        /// Object.prototype.toString() — returns "[object Tag]" per ECMA-262 §20.1.3.6.
-        /// Checks @@toStringTag first; falls back to built-in type tags.
-        /// </summary>
-        private static object? ObjectPrototypeToString(object[] scopes, object?[] args)
-        {
-            var thisVal = RuntimeServices.GetCurrentThis();
-
-            if (thisVal == null) return "[object Undefined]";
-            if (thisVal is JsNull) return "[object Null]";
-
-            // Try @@toStringTag (Symbol.toStringTag) first.
-            var toStringTagSym = Symbol.toStringTag;
-            var tag = JavaScriptRuntime.Object.GetItem(thisVal, toStringTagSym);
-            if (tag is string tagStr)
-            {
-                return $"[object {tagStr}]";
-            }
-
-            // Built-in type tags.
-            if (thisVal is JavaScriptRuntime.Array) return "[object Array]";
-            if (thisVal is string) return "[object String]";
-            if (thisVal is bool) return "[object Boolean]";
-            if (thisVal is double or float or int or long) return "[object Number]";
-            if (thisVal is Delegate) return "[object Function]";
-            if (thisVal is JavaScriptRuntime.RegExp) return "[object RegExp]";
-            if (thisVal is GeneratorObject) return "[object Generator]";
-            if (thisVal is AsyncGeneratorObject) return "[object AsyncGenerator]";
-
-            return "[object Object]";
-        }
-
         private static object? ErrorPrototypeToString(object[] scopes, object?[] args)
         {
             var thisVal = RuntimeServices.GetCurrentThis();
@@ -312,8 +230,8 @@ namespace JavaScriptRuntime
                 throw new TypeError("Error.prototype.toString called on null or undefined");
             }
 
-            var nameValue = JavaScriptRuntime.Object.GetItem(thisVal, "name");
-            var messageValue = JavaScriptRuntime.Object.GetItem(thisVal, "message");
+            var nameValue = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal, "name");
+            var messageValue = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal, "message");
 
             var name = (nameValue is null || nameValue is JsNull)
                 ? "Error"

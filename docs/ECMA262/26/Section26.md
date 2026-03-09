@@ -4,7 +4,7 @@ Covers memory-management related features such as WeakRef and FinalizationRegist
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-08T23:10:56Z
+> Last generated (UTC): 2026-03-09T07:34:42Z
 
 _This section is split into subsection documents for readability._
 

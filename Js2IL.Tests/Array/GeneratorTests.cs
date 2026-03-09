@@ -85,6 +85,9 @@ namespace Js2IL.Tests.Array
         public Task Array_Concat_SymbolIsConcatSpreadable() { var testName = nameof(Array_Concat_SymbolIsConcatSpreadable); return GenerateTest(testName); }
 
         [Fact]
+        public Task Array_Iterator_Methods() { var testName = nameof(Array_Iterator_Methods); return GenerateTest(testName); }
+
+        [Fact]
         public Task Array_Static_Basic() { var testName = nameof(Array_Static_Basic); return GenerateTest(testName); }
 
         [Fact]
