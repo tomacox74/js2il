@@ -4,14 +4,14 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-03-09T20:57:07Z`
+**Generated:** `2026-03-09T21:21:36Z`
 
 ## Summary
 
-- **Modules:** 10
+- **Modules:** 12
 - **Globals:** 14
   - Supported: 14
-  - Partial: 8
+  - Partial: 10
 
 ## Modules
 
@@ -25,7 +25,9 @@
 | [path](path.md) | partial | [Node.js](https://nodejs.org/api/path.html) |
 | [perf_hooks](perf_hooks.md) | partial | [Node.js](https://nodejs.org/api/perf_hooks.html) |
 | [process](process.md) | completed | [Node.js](https://nodejs.org/api/process.html) |
+| [querystring](querystring.md) | partial | [Node.js](https://nodejs.org/api/querystring.html) |
 | [stream](stream.md) | partial | [Node.js](https://nodejs.org/api/stream.html) |
+| [url](url.md) | partial | [Node.js](https://nodejs.org/api/url.html) |
 | [util](util.md) | partial | [Node.js](https://nodejs.org/api/util.html) |
 
 ## Globals

@@ -1,6 +1,6 @@
 # Node Gap Popularity Backlog
 
-> **Last Updated**: 2026-03-06  
+> **Last Updated**: 2026-03-09  
 > Purpose: Persist a holistic, popularity-weighted view of missing functionality so triage context is not lost between sessions.
 > Scope: Node.js compatibility first, with adjacent ECMA impacts called out where they block common Node workloads.
 
@@ -15,7 +15,7 @@
 
 ## Current Baseline (Snapshot)
 
-- Node docs track **10 modules** (8 currently `partial`, 2 `completed`) and **14 globals** (**14 `supported`**, **0 `partial`**).
+- Node docs track **12 modules** (10 currently `partial`, 2 `completed`) and **14 globals** (**14 `supported`**, **0 `partial`**).
 - Major blockers currently documented:
   - CommonJS `require(id)` supports compile-time `node_modules` package resolution via `package.json` `main` and a minimal `exports` subset, but the runtime does not probe the filesystem (packages must be discovered at compile time).
   - ESM `import.meta.url` is not implemented.
@@ -36,8 +36,8 @@
 | 3 | [Expand `fs` module parity (callbacks, buffers, mkdir/copyFile/readFile/writeFile)](https://github.com/tomacox74/js2il/issues/785) | `fs` | Merged (PR #800) |
 | 4 | [Expand `stream` module (Duplex/Transform/PassThrough + basic backpressure)](https://github.com/tomacox74/js2il/issues/786) | `stream` | In review (PR #803) |
 | 5 | [Expand `util` essentials (format, inspect parity, util.types breadth)](https://github.com/tomacox74/js2il/issues/787) | `util` | Merged (PR #826) |
-| 6 | [Expand `child_process` beyond sync (spawn/exec/execFile, stdio pipes)](https://github.com/tomacox74/js2il/issues/788) | `child_process` | In progress on `copilot/gh-788-child-process-async` |
-| 7 | [Implement `url`/`querystring` baseline (URL, URLSearchParams, parse/stringify)](https://github.com/tomacox74/js2il/issues/789) | `url`, `querystring` | Not Yet Supported |
+| 6 | [Expand `child_process` beyond sync (spawn/exec/execFile, stdio pipes)](https://github.com/tomacox74/js2il/issues/788) | `child_process` | Merged (PR #827) |
+| 7 | [Implement `url`/`querystring` baseline (URL, URLSearchParams, parse/stringify)](https://github.com/tomacox74/js2il/issues/789) | `url`, `querystring` | In progress on `copilot/gh-789-url-querystring-baseline` |
 | 8 | [Implement `crypto` minimum practical subset (createHash, randomBytes, webcrypto bridge)](https://github.com/tomacox74/js2il/issues/790) | `crypto` | Not Yet Supported |
 | 9 | [Add ESM interop baseline (`import.meta.url` + Node-style ESM resolution plan)](https://github.com/tomacox74/js2il/issues/791) | ESM loader/interop | Not Yet Supported |
 | 10 | [Add `http`/`https`/`net`/`tls` baseline plan (client/server skeleton)](https://github.com/tomacox74/js2il/issues/792) | networking | Not Yet Supported |
@@ -82,12 +82,13 @@
 
 ## Issue 6: Expand `child_process` Beyond Sync ([#788](https://github.com/tomacox74/js2il/issues/788))
 - Suggested labels: `enhancement`, `modules`, `priority:medium`
-- Status: in progress on `copilot/gh-788-child-process-async`; current slice adds async `spawn` / `exec` / `execFile` baselines with piped stdout capture and callback error shapes
+- Status: merged (PR #827): https://github.com/tomacox74/js2il/pull/827
 - Minimum acceptance:
   - Minimal async spawn with deterministic stdout capture
 
 ## Issue 7: Implement `url` / `querystring` Baseline ([#789](https://github.com/tomacox74/js2il/issues/789))
 - Suggested labels: `enhancement`, `modules`, `priority:medium`
+- Status: in progress on `copilot/gh-789-url-querystring-baseline`; current slice adds WHATWG-style `URL` / `URLSearchParams` basics plus legacy `querystring.parse` / `querystring.stringify`
 - Minimum acceptance:
   - URL parsing + URLSearchParams basics
   - querystring parse/stringify basics
