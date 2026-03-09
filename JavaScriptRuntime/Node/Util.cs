@@ -430,6 +430,21 @@ namespace JavaScriptRuntime.Node
             dict["isSet"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Set);
             dict["isProxy"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Proxy);
             dict["isTypedArray"] = new Func<object?, bool>(v => v is JavaScriptRuntime.TypedArrayBase || v is JavaScriptRuntime.Node.Buffer);
+            dict["isAnyArrayBuffer"] = new Func<object?, bool>(v => v is ArrayBuffer);
+            dict["isArrayBuffer"] = new Func<object?, bool>(v => v is ArrayBuffer);
+            dict["isDataView"] = new Func<object?, bool>(v => v is DataView);
+            dict["isInt8Array"] = new Func<object?, bool>(_ => false);
+            dict["isUint8Array"] = new Func<object?, bool>(v => v is Uint8Array || v is JavaScriptRuntime.Node.Buffer);
+            dict["isUint8ClampedArray"] = new Func<object?, bool>(_ => false);
+            dict["isInt16Array"] = new Func<object?, bool>(_ => false);
+            dict["isUint16Array"] = new Func<object?, bool>(_ => false);
+            dict["isInt32Array"] = new Func<object?, bool>(v => v is Int32Array);
+            dict["isUint32Array"] = new Func<object?, bool>(_ => false);
+            dict["isFloat32Array"] = new Func<object?, bool>(_ => false);
+            dict["isFloat64Array"] = new Func<object?, bool>(v => v is Float64Array);
+            dict["isBigInt64Array"] = new Func<object?, bool>(_ => false);
+            dict["isBigUint64Array"] = new Func<object?, bool>(_ => false);
+            dict["isSharedArrayBuffer"] = new Func<object?, bool>(_ => false);
 
             return typesObj;
         }
@@ -474,6 +489,60 @@ namespace JavaScriptRuntime.Node
             if (value is Delegate)
             {
                 return "[Function]";
+            }
+
+            if (value is ArrayBuffer arrayBuffer)
+            {
+                return $"ArrayBuffer {{ byteLength: {DotNet2JSConversions.ToString(arrayBuffer.byteLength)} }}";
+            }
+
+            if (value is DataView dataView)
+            {
+                if (visited.Contains(value))
+                {
+                    return "[Circular]";
+                }
+
+                if (currentDepth >= maxDepth)
+                {
+                    return "[DataView]";
+                }
+
+                visited.Add(value);
+                var inspectedBuffer = InspectValue(dataView.buffer, maxDepth, currentDepth + 1, visited);
+                visited.Remove(value);
+                return $"DataView {{ byteLength: {DotNet2JSConversions.ToString(dataView.byteLength)}, byteOffset: {DotNet2JSConversions.ToString(dataView.byteOffset)}, buffer: {inspectedBuffer} }}";
+            }
+
+            if (value is TypedArrayBase typedArray)
+            {
+                if (visited.Contains(value))
+                {
+                    return "[Circular]";
+                }
+
+                if (currentDepth >= maxDepth)
+                {
+                    return $"[{value.GetType().Name}]";
+                }
+
+                visited.Add(value);
+                var elements = new List<string>();
+                var length = (int)typedArray.length;
+
+                for (int i = 0; i < System.Math.Min(length, 100); i++)
+                {
+                    elements.Add(DotNet2JSConversions.ToString(typedArray[(double)i]));
+                }
+
+                visited.Remove(value);
+
+                if (length > 100)
+                {
+                    elements.Add($"... {length - 100} more items");
+                }
+
+                return $"{value.GetType().Name}({length}) [ {string.Join(", ", elements)} ]";
             }
 
             if (value is JavaScriptRuntime.Array arr)

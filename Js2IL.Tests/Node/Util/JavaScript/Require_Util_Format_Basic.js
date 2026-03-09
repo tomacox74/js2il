@@ -14,3 +14,5 @@ console.log(util.format('%j', circ));
 console.log(util.format('a', 1, { b: 2 }));
 console.log(util.format({ a: 1 }, { b: 2 }));
 console.log(util.format('x%y', 1));
+console.log(util.format('%o', new Uint8Array([1, 2, 3])));
+console.log(util.format('%O', new DataView(new ArrayBuffer(6), 1, 4)));

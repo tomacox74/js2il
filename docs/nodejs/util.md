@@ -15,7 +15,7 @@
 
 ## Notes
 
-Provides essential utility functions for promisifying callbacks, prototype inheritance, type checking, and object inspection.
+Provides essential utility functions for promisifying callbacks, prototype inheritance, placeholder formatting, Node-style object inspection, and type checking for common runtime-backed binary/object shapes.
 
 ## APIs
 
@@ -57,26 +57,30 @@ Formats a string using placeholders like %s, %d/%i, %f, %j, %o/%O, and %% and ap
 
 ### types
 
-Provides type-checking functions. Supported checks: isArray, isDate, isError, isFunction, isPromise, isRegExp, isString, isNumber, isBoolean, isUndefined, isNull, isObject, isBigInt, isSymbol, isAsyncFunction, isMap, isSet, isProxy, isTypedArray. Additional Node.js type checks (ArrayBuffer/DataView/most TypedArray flavors, shared buffers, etc.) are not yet implemented.
+Provides type-checking functions. Supported checks: isArray, isDate, isError, isFunction, isPromise, isRegExp, isString, isNumber, isBoolean, isUndefined, isNull, isObject, isBigInt, isSymbol, isAsyncFunction, isMap, isSet, isProxy, isTypedArray, isAnyArrayBuffer, isArrayBuffer, isDataView, isUint8Array, isInt32Array, and isFloat64Array. Compatibility shims for unsupported runtime types such as SharedArrayBuffer and non-implemented typed-array flavors are also exposed and currently return false.
 
 **Tests:**
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Types_IsPromise` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Types_IsArray` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Types_IsFunction` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Types_Expanded` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Types_TypedBinary` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_IsPromise` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_IsArray` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_IsFunction` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_Expanded` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Types_TypedBinary` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 
 ### inspect(value[, options])
 
-Provides basic object inspection for debugging. Supports depth limiting and handles circular references. Options supported: depth, showHidden, colors (parsed but colors not applied to output). Supports Node's custom inspect hook via util.inspect.custom (Symbol.for('nodejs.util.inspect.custom')).
+Provides basic object inspection for debugging. Supports depth limiting, circular references, typed-array/ArrayBuffer/DataView formatting, and Node's custom inspect hook via util.inspect.custom (Symbol.for('nodejs.util.inspect.custom')). Options supported: depth, showHidden, colors (parsed but colors not applied to output).
 
 **Tests:**
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Inspect_Basic` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Inspect_Object` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Inspect_Custom` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Util.ExecutionTests.Require_Util_Inspect_TypedBinary` (`Js2IL.Tests/Node/Util/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inspect_Basic` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inspect_Object` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inspect_Custom` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Util.GeneratorTests.Require_Util_Inspect_TypedBinary` (`Js2IL.Tests/Node/Util/GeneratorTests.cs`)
