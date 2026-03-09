@@ -49,5 +49,13 @@ namespace Js2IL.Tests.Node.Util
         [Fact]
         public Task Require_Util_Types_Expanded()
             => GenerateTest(nameof(Require_Util_Types_Expanded));
+
+        [Fact]
+        public Task Require_Util_Types_TypedBinary()
+            => GenerateTest(nameof(Require_Util_Types_TypedBinary));
+
+        [Fact]
+        public Task Require_Util_Inspect_TypedBinary()
+            => GenerateTest(nameof(Require_Util_Inspect_TypedBinary));
     }
 }

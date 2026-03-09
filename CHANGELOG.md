@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- runtime/tests/docs: expand Node `util` essentials for issue #787 by adding runtime-backed `util.types` checks for ArrayBuffer/DataView/common typed arrays, exposing compatibility shims for unsupported typed-array flavors, improving `util.inspect` formatting for typed arrays and binary views, and adding focused Node util coverage plus refreshed module/backlog docs.
 - runtime/spec/tests/docs: expose `Array.prototype.entries` / `keys` / `values` / `%Symbol.iterator%` for issue #780, reuse that iterator surface for `for..of` and array spread, extend `Array.from(...)` coverage for iterator sources, add focused Array execution/generator coverage, and refresh ECMA-262 §23.1 tracking.
 - runtime/tests/docs: audit symbol ecosystem coverage for issue #779 by honoring `Symbol.isConcatSpreadable` in `Array.prototype.concat`, adding symbol-key descriptor/enumeration coverage, documenting ordinary-object symbol reflection ordering, and adding custom `Symbol.toStringTag` coverage.
 - compiler/runtime/spec/tests/docs: add Stage 1 `Function(...)` / `new Function(...)` support for compile-time string-literal sources by parsing and compiling synthetic callables with isolated global-scope semantics, wiring `anonymous`/`.length` defaults, surfacing runtime `Error`/`SyntaxError` for unsupported or invalid sources, adding focused Function execution/generator coverage, and updating ECMA-262 tracking for issue #778.
