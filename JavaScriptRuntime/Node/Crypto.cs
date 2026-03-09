@@ -12,25 +12,20 @@ namespace JavaScriptRuntime.Node
 
         public Hash createHash(object? algorithm)
         {
-            if (algorithm == null || algorithm is JsNull)
+            if (algorithm is not string text)
             {
                 throw new TypeError("The \"algorithm\" argument must be of type string");
             }
 
-            return new Hash(ResolveHashAlgorithm(algorithm));
+            return new Hash(ResolveHashAlgorithm(text));
         }
 
         public Buffer randomBytes(object? size)
         {
             var length = CoerceSize(size, "size");
-            if (length == 0)
-            {
-                return Buffer.FromBytes(System.Array.Empty<byte>());
-            }
-
-            var bytes = GC.AllocateUninitializedArray<byte>(length);
-            RandomNumberGenerator.Fill(bytes);
-            return Buffer.FromBytes(bytes);
+            var buffer = Buffer.allocUnsafe(length);
+            FillBuffer(buffer);
+            return buffer;
         }
 
         public object getRandomValues(object? target)
@@ -76,9 +71,9 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private static HashAlgorithmName ResolveHashAlgorithm(object? algorithm)
+        private static HashAlgorithmName ResolveHashAlgorithm(string algorithm)
         {
-            var normalized = DotNet2JSConversions.ToString(algorithm)
+            var normalized = algorithm
                 .Trim()
                 .Replace("-", string.Empty, StringComparison.Ordinal)
                 .ToLowerInvariant();
@@ -96,7 +91,7 @@ namespace JavaScriptRuntime.Node
 
         private static int CoerceSize(object? size, string argumentName)
         {
-            if (size == null || size is JsNull)
+            if (size == null || size is JsNull || !IsNumberValue(size))
             {
                 throw new TypeError($"The \"{argumentName}\" argument must be of type number");
             }
@@ -112,6 +107,21 @@ namespace JavaScriptRuntime.Node
             }
 
             return (int)number;
+        }
+
+        private static bool IsNumberValue(object value)
+        {
+            return value is double
+                || value is float
+                || value is decimal
+                || value is int
+                || value is long
+                || value is short
+                || value is byte
+                || value is sbyte
+                || value is uint
+                || value is ulong
+                || value is ushort;
         }
 
         private static byte[] CopyTypedArrayBytes(TypedArrayBase typedArray)
@@ -130,11 +140,7 @@ namespace JavaScriptRuntime.Node
 
         private static void FillBuffer(Buffer buffer)
         {
-            var bytes = buffer.length;
-            for (int i = 0; i < bytes; i++)
-            {
-                buffer[(double)i] = RandomNumberGenerator.GetInt32(0, 256);
-            }
+            RandomNumberGenerator.Fill(buffer.AsWritableSpan());
         }
 
         private static void FillTypedArray(TypedArrayBase typedArray)

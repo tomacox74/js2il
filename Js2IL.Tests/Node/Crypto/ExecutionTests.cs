@@ -13,5 +13,9 @@ namespace Js2IL.Tests.Node.Crypto
         [Fact]
         public Task Require_Crypto_WebCrypto_GetRandomValues()
             => ExecutionTest(nameof(Require_Crypto_WebCrypto_GetRandomValues));
+
+        [Fact]
+        public Task Require_Crypto_ErrorPaths()
+            => ExecutionTest(nameof(Require_Crypto_ErrorPaths));
     }
 }

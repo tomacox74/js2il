@@ -841,4 +841,4 @@ class Counter {
     }
 
     #endregion
-} 
+}
