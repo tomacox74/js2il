@@ -15,7 +15,7 @@
 
 ## Current Baseline (Snapshot)
 
-- Node docs track **12 modules** (10 currently `partial`, 2 `completed`) and **14 globals** (**14 `supported`**, **0 `partial`**).
+- Node docs track **13 modules** (11 currently `partial`, 2 `completed`) and **14 globals** (**14 `supported`**, **0 `partial`**).
 - Major blockers currently documented:
   - CommonJS `require(id)` supports compile-time `node_modules` package resolution via `package.json` `main` and a minimal `exports` subset, but the runtime does not probe the filesystem (packages must be discovered at compile time).
   - ESM `import.meta.url` is not implemented.
@@ -37,8 +37,8 @@
 | 4 | [Expand `stream` module (Duplex/Transform/PassThrough + basic backpressure)](https://github.com/tomacox74/js2il/issues/786) | `stream` | In review (PR #803) |
 | 5 | [Expand `util` essentials (format, inspect parity, util.types breadth)](https://github.com/tomacox74/js2il/issues/787) | `util` | Merged (PR #826) |
 | 6 | [Expand `child_process` beyond sync (spawn/exec/execFile, stdio pipes)](https://github.com/tomacox74/js2il/issues/788) | `child_process` | Merged (PR #827) |
-| 7 | [Implement `url`/`querystring` baseline (URL, URLSearchParams, parse/stringify)](https://github.com/tomacox74/js2il/issues/789) | `url`, `querystring` | In progress on `copilot/gh-789-url-querystring-baseline` |
-| 8 | [Implement `crypto` minimum practical subset (createHash, randomBytes, webcrypto bridge)](https://github.com/tomacox74/js2il/issues/790) | `crypto` | Not Yet Supported |
+| 7 | [Implement `url`/`querystring` baseline (URL, URLSearchParams, parse/stringify)](https://github.com/tomacox74/js2il/issues/789) | `url`, `querystring` | Merged (PR #828) |
+| 8 | [Implement `crypto` minimum practical subset (createHash, randomBytes, webcrypto bridge)](https://github.com/tomacox74/js2il/issues/790) | `crypto` | In progress on `copilot/gh-790-crypto-minimum-subset` |
 | 9 | [Add ESM interop baseline (`import.meta.url` + Node-style ESM resolution plan)](https://github.com/tomacox74/js2il/issues/791) | ESM loader/interop | Not Yet Supported |
 | 10 | [Add `http`/`https`/`net`/`tls` baseline plan (client/server skeleton)](https://github.com/tomacox74/js2il/issues/792) | networking | Not Yet Supported |
 
@@ -88,15 +88,17 @@
 
 ## Issue 7: Implement `url` / `querystring` Baseline ([#789](https://github.com/tomacox74/js2il/issues/789))
 - Suggested labels: `enhancement`, `modules`, `priority:medium`
-- Status: in progress on `copilot/gh-789-url-querystring-baseline`; current slice adds WHATWG-style `URL` / `URLSearchParams` basics plus legacy `querystring.parse` / `querystring.stringify`
+- Status: merged (PR #828): https://github.com/tomacox74/js2il/pull/828
 - Minimum acceptance:
   - URL parsing + URLSearchParams basics
   - querystring parse/stringify basics
 
 ## Issue 8: Implement `crypto` Minimum Subset ([#790](https://github.com/tomacox74/js2il/issues/790))
 - Suggested labels: `enhancement`, `modules`, `priority:medium`
+- Status: in progress on `copilot/gh-790-crypto-minimum-subset`
 - Minimum acceptance:
-  - createHash('sha256') + randomBytes returning Buffer (document constraints)
+  - createHash('sha256') + randomBytes returning Buffer
+  - minimal `crypto.webcrypto.getRandomValues(...)` bridge for supported buffer / typed-array shapes
 
 ## Issue 9: Add Node ESM Interop Baseline ([#791](https://github.com/tomacox74/js2il/issues/791))
 - Suggested labels: `enhancement`, `modules`, `commonjs`, `priority:low`
