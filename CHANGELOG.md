@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- runtime/tests/docs: add a focused Node `url` / `querystring` baseline for issue #789 by implementing WHATWG-style `URL` / `URLSearchParams` parsing for common http(s)/file cases, `fileURLToPath` / `pathToFileURL`, legacy `querystring.parse` / `querystring.stringify`, focused execution/generator coverage, and refreshed Node tracking/module docs.
 - runtime/tests/docs: expand Node `child_process` support for issue #788 by adding minimal async `spawn`, `exec`, and `execFile` flows with EventEmitter-backed child handles, piped stdout/stderr capture, callback completion/error shapes, focused Node child_process execution/generator coverage, and refreshed module/triage docs.
 - runtime/tests/docs: expand Node `util` essentials for issue #787 by adding runtime-backed `util.types` checks for ArrayBuffer/DataView/common typed arrays, exposing compatibility shims for unsupported typed-array flavors, improving `util.inspect` formatting for typed arrays and binary views, and adding focused Node util coverage plus refreshed module/backlog docs.
 - runtime/spec/tests/docs: expose `Array.prototype.entries` / `keys` / `values` / `%Symbol.iterator%` for issue #780, reuse that iterator surface for `for..of` and array spread, extend `Array.from(...)` coverage for iterator sources, add focused Array execution/generator coverage, and refresh ECMA-262 §23.1 tracking.
