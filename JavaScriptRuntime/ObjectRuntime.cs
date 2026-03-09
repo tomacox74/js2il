@@ -2,6 +2,7 @@ using System;
 
 namespace JavaScriptRuntime
 {
+    [IntrinsicObject("ObjectRuntime")]
     /// <summary>
     /// Low-level object runtime surface.
     /// Runtime helpers live here while JavaScript Object built-ins stay on <see cref="Object"/>.
@@ -22,6 +23,80 @@ namespace JavaScriptRuntime
 
         public static bool HasPropertyIn(object? key, object? obj)
             => Object.HasPropertyIn(key, obj);
+
+        /// <summary>
+        /// Implements the JavaScript <c>delete obj.prop</c> runtime semantics for this
+        /// strict-mode-only runtime. Returns true if the deletion succeeds or the property
+        /// is not present, and throws for non-configurable own properties.
+        /// </summary>
+        public static bool DeleteProperty(object? receiver, object? propName)
+        {
+            if (receiver is null || receiver is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot convert undefined or null to object");
+            }
+
+            var key = DotNet2JSConversions.ToString(propName);
+
+            if (PropertyDescriptorStore.TryGetOwn(receiver, key, out var ownDescriptor)
+                && !ownDescriptor.Configurable)
+            {
+                throw new JavaScriptRuntime.TypeError($"Cannot delete property '{key}' of object");
+            }
+
+            if (receiver is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
+                dict.Remove(key);
+                PropertyDescriptorStore.Delete(receiver, key);
+                return true;
+            }
+
+            if (receiver is System.Collections.Generic.IDictionary<string, object?> dictGeneric)
+            {
+                dictGeneric.Remove(key);
+                PropertyDescriptorStore.Delete(receiver, key);
+                return true;
+            }
+
+            if (receiver is System.Collections.IDictionary dictObj)
+            {
+                if (dictObj.Contains(key))
+                {
+                    dictObj.Remove(key);
+                    return true;
+                }
+
+                object? match = null;
+                foreach (var k in dictObj.Keys)
+                {
+                    if (string.Equals(DotNet2JSConversions.ToString(k), key, StringComparison.Ordinal))
+                    {
+                        match = k;
+                        break;
+                    }
+                }
+                if (match != null)
+                {
+                    dictObj.Remove(match);
+                }
+
+                PropertyDescriptorStore.Delete(receiver, key);
+                return true;
+            }
+
+            // Arrays/typed arrays/strings and CLR objects: deletion is a no-op in this runtime for now.
+            // (Full JS semantics for array holes and non-configurable properties are not modeled.)
+            return true;
+        }
+
+        /// <summary>
+        /// Implements the JavaScript <c>delete obj[index]</c> runtime semantics (minimal).
+        /// </summary>
+        public static bool DeleteItem(object? receiver, object? index)
+        {
+            return DeleteProperty(receiver, DotNet2JSConversions.ToString(index));
+        }
 
         // Determines whether a computed key should be treated as an array index.
         // We intentionally require a *canonical* decimal representation for string keys:
