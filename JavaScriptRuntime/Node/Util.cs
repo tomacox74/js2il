@@ -178,7 +178,7 @@ namespace JavaScriptRuntime.Node
             // Swallowing exceptions here would hide proxy/getter failures; Node propagates those.
             if (value != null && value is not JsNull && value is not string && !value.GetType().IsValueType)
             {
-                var customInspector = Object.GetItem(value, _inspectCustomSymbol);
+                var customInspector = ObjectRuntime.GetItem(value, _inspectCustomSymbol);
 
                 if (customInspector is Delegate del)
                 {

@@ -68,7 +68,7 @@ namespace JavaScriptRuntime
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
-            JavaScriptRuntime.ObjectRuntime.Construct(value);
+            JavaScriptRuntime.Object.Construct(value);
 
         private static readonly Func<object[], object?[], object?> _errorConstructorValue = static (_, args) =>
         {
@@ -131,8 +131,8 @@ namespace JavaScriptRuntime
                 Value = _booleanPrototypeValue
             });
 
-            // Centralized Object constructor/prototype wiring lives in JavaScriptRuntime.ObjectRuntime.
-            JavaScriptRuntime.ObjectRuntime.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
+            // Centralized Object constructor/prototype wiring lives on JavaScriptRuntime.Object.
+            JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
             PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "prototype", new JsPropertyDescriptor
@@ -285,7 +285,7 @@ namespace JavaScriptRuntime
 
             // Try @@toStringTag (Symbol.toStringTag) first.
             var toStringTagSym = Symbol.toStringTag;
-            var tag = JavaScriptRuntime.Object.GetItem(thisVal, toStringTagSym);
+            var tag = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal, toStringTagSym);
             if (tag is string tagStr)
             {
                 return $"[object {tagStr}]";
@@ -312,8 +312,8 @@ namespace JavaScriptRuntime
                 throw new TypeError("Error.prototype.toString called on null or undefined");
             }
 
-            var nameValue = JavaScriptRuntime.Object.GetItem(thisVal, "name");
-            var messageValue = JavaScriptRuntime.Object.GetItem(thisVal, "message");
+            var nameValue = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal, "name");
+            var messageValue = JavaScriptRuntime.ObjectRuntime.GetItem(thisVal, "message");
 
             var name = (nameValue is null || nameValue is JsNull)
                 ? "Error"
