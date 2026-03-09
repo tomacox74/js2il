@@ -17,6 +17,10 @@ This corpus complements the differential corpus with bounded smoke cases that va
 | `pr` | `dromaeo-object-regexp` | Exercises a real benchmark script with regexp-heavy string processing. |
 | `expanded` | `array-stress` | Exercises a bounded array stress benchmark with repeated append/index patterns. |
 | `expanded` | `stopwatch-modern` | Exercises the constructor-function stopwatch benchmark end-to-end. |
+| `expanded` | `dromaeo-object-string-modern` | Broadens nightly coverage with real benchmark string/object manipulation hot paths. |
+| `expanded` | `dromaeo-3d-cube-modern` | Exercises math-heavy object allocation and numeric update flows in a bounded loop. |
+| `expanded` | `dromaeo-core-eval-modern` | Covers a representative eval-driven benchmark path without widening the fast PR gate. |
+| `expanded` | `dromaeo-object-regexp-modern` | Adds the modern regexp-heavy benchmark variant alongside the legacy PR-gate sample. |
 
 ## Adding a new canary
 

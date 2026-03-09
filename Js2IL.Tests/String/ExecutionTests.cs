@@ -132,6 +132,12 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_CharAt_Basic()
+        {
+            return ExecutionTest(nameof(String_CharAt_Basic));
+        }
+
+        [Fact]
         public Task String_FromCharCode_Basic()
         {
             return ExecutionTest(nameof(String_FromCharCode_Basic));
