@@ -806,5 +806,57 @@ namespace JavaScriptRuntime
             // Fallback: treat numeric index as a property key string.
             return SetProperty(obj, DotNet2JSConversions.ToString(index), value) ?? value;
         }
+
+        /// <summary>
+        /// Dynamic indexed / computed property assignment used when the compiler
+        /// cannot statically bind an Array or typed-array element store. Returns the
+        /// assigned value (boxed) to match JavaScript assignment expression result.
+        /// Supports:
+        ///  - JavaScriptRuntime.Array (List<object>) with numeric index (expands with nulls)
+        ///  - JavaScriptRuntime.TypedArrayBase (ignored if OOB)
+        ///  - Fallback: throws for unsupported receiver types.
+        /// </summary>
+        public static object? AssignItem(object receiver, object index, object value)
+        {
+            if (receiver == null) throw new ArgumentNullException(nameof(receiver));
+
+            // Coerce index to int (JS ToInt32-ish truncation)
+            int i = 0;
+            switch (index)
+            {
+                case int ii: i = ii; break;
+                case double dd: i = (int)dd; break;
+                case float ff: i = (int)ff; break;
+                case long ll: i = (int)ll; break;
+                case short ss: i = ss; break;
+                case byte bb: i = bb; break;
+                case string s when int.TryParse(s, out var pi): i = pi; break;
+                case bool b: i = b ? 1 : 0; break;
+                default:
+                    try { i = Convert.ToInt32(index); }
+                    catch { i = 0; }
+                    break;
+            }
+            if (i < 0) return value; // negative indexes ignored for now
+
+            if (receiver is Array jsArray)
+            {
+                // Expand with nulls if index >= Count (approximate JS dense array semantics for numeric indexes)
+                while (i >= jsArray.Count) jsArray.Add(null!);
+                jsArray[i] = value;
+                return value;
+            }
+            if (receiver is TypedArrayBase typedArray)
+            {
+                if (i < typedArray.length)
+                {
+                    typedArray[(double)i] = TypeUtilities.ToNumber(value);
+                }
+                return value;
+            }
+
+            // Future: object / expando numeric property assignment
+            throw new NotSupportedException($"AssignItem not supported for receiver type '{receiver.GetType().FullName}'");
+        }
     }
 }
