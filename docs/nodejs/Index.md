@@ -4,20 +4,21 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-03-09T21:21:36Z`
+**Generated:** `2026-03-09T22:11:06Z`
 
 ## Summary
 
-- **Modules:** 12
+- **Modules:** 13
 - **Globals:** 14
   - Supported: 14
-  - Partial: 10
+  - Partial: 11
 
 ## Modules
 
 | Module | Status | Documentation |
 | --- | --- | --- |
 | [child_process](child_process.md) | partial | [Node.js](https://nodejs.org/api/child_process.html) |
+| [crypto](crypto.md) | partial | [Node.js](https://nodejs.org/api/crypto.html) |
 | [events](events.md) | completed | [Node.js](https://nodejs.org/api/events.html) |
 | [fs](fs.md) | partial | [Node.js](https://nodejs.org/api/fs.html) |
 | [fs/promises](fs_promises.md) | partial | [Node.js](https://nodejs.org/api/fs.html#fspromisesapi) |
@@ -52,6 +53,7 @@
 ## Limitations
 
 - Buffer core APIs for binary workflows are implemented, including from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes, array-like indexing, and binary read/write methods for Int8/16/32, UInt8/16/32, FloatLE/BE, and DoubleLE/BE with utf8/hex/base64 encodings.
+- crypto currently implements a focused synchronous subset only: createHash (md5/sha1/sha256/sha384/sha512), randomBytes, and getRandomValues for Buffer/Uint8Array/Int32Array; callback-style APIs, HMAC/cipher/key operations, and webcrypto.subtle are not implemented.
 - events module implements full core EventEmitter listener lifecycle APIs, events.errorMonitor behavior, and async helper APIs (events.on/events.once); advanced features such as captureRejections and newListener/removeListener event semantics are not yet implemented.
 - CommonJS globals (__dirname/__filename) are supported; require() supports compiled local modules, implemented core modules, and compile-time node_modules package.json main plus a minimal exports subset; ESM import.meta.url is not.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.

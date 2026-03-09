@@ -132,13 +132,23 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_Require_UnsupportedModule_ReportsError()
+    public void Validate_Require_NodeCrypto_Supported_NoError()
     {
         var js = "const c = require('node:crypto');";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_Require_UnsupportedModule_ReportsError()
+    {
+        var js = "const t = require('node:tls');";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Module 'node:crypto' is not yet supported"));
+        Assert.Contains(result.Errors, e => e.Contains("Module 'node:tls' is not yet supported"));
     }
 
     [Fact]
@@ -831,4 +841,4 @@ class Counter {
     }
 
     #endregion
-} 
+}

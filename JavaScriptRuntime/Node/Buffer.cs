@@ -909,6 +909,11 @@ namespace JavaScriptRuntime.Node
             return new Buffer((byte[])bytes.Clone());
         }
 
+        internal Span<byte> AsWritableSpan()
+        {
+            return _bytes.AsSpan(_offset, _length);
+        }
+
         internal byte[] ToByteArray()
         {
             if (_length == 0)
