@@ -509,15 +509,7 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            double idx;
-            try
-            {
-                idx = index == null ? 0d : JavaScriptRuntime.TypeUtilities.ToNumber(index);
-            }
-            catch
-            {
-                idx = 0d;
-            }
+            var idx = index == null ? 0d : JavaScriptRuntime.TypeUtilities.ToNumber(index);
 
             if (double.IsNaN(idx))
             {
