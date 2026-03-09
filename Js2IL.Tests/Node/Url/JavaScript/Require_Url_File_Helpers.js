@@ -8,5 +8,5 @@ console.log("href file:", fileUrl.href.startsWith("file://"));
 console.log("pathname escaped:", fileUrl.pathname.indexOf("folder%20with%20space") >= 0);
 console.log("roundtrip contains:", url.fileURLToPath(fileUrl).indexOf("folder with space") >= 0);
 
-const fromString = url.fileURLToPath("file:///tmp/example.txt");
+const fromString = url.fileURLToPath("file:///var/example.txt");
 console.log("from string suffix:", fromString.indexOf("example.txt") >= 0);
