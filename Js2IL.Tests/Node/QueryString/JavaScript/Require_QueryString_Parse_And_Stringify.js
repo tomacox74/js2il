@@ -20,3 +20,7 @@ console.log("stringify:", serialized);
 const custom = querystring.parse("left:1|right:2", "|", ":");
 console.log("custom:", custom.left + "," + custom.right);
 console.log("custom stringify:", querystring.stringify({ left: 1, right: 2 }, "|", ":"));
+
+const malformed = querystring.parse("bad=%&plus=a+b%");
+console.log("malformed bad:", malformed.bad);
+console.log("malformed plus:", malformed.plus);

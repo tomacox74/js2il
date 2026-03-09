@@ -39,7 +39,13 @@ namespace JavaScriptRuntime.Node
         public URL pathToFileURL(object path)
         {
             var fullPath = System.IO.Path.GetFullPath(UrlQueryHelpers.CoerceString(path));
-            return new URL(new Uri(fullPath).AbsoluteUri);
+            var builder = new UriBuilder
+            {
+                Scheme = Uri.UriSchemeFile,
+                Host = string.Empty,
+                Path = fullPath,
+            };
+            return new URL(builder.Uri.AbsoluteUri);
         }
     }
 
@@ -362,8 +368,9 @@ namespace JavaScriptRuntime.Node
             var previousThis = RuntimeServices.SetCurrentThis(thisArg);
             try
             {
-                foreach (var entry in _entries)
+                for (int i = 0; i < _entries.Count; i++)
                 {
+                    var entry = _entries[i];
                     Closure.InvokeWithArgs(del, System.Array.Empty<object>(), entry.Value, entry.Key, this);
                 }
             }

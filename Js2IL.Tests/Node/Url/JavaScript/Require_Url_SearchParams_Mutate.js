@@ -28,3 +28,16 @@ console.log("href:", parsed.href);
 const copy = new url.URLSearchParams("alpha=1&beta=two+words");
 console.log("copy:", copy.toString());
 console.log("copy beta:", copy.get("beta"));
+
+const mutating = new url.URLSearchParams("a=1");
+mutating.forEach((value, key) => {
+    console.log("mutating pair:", key + "=" + value);
+    if (key === "a") {
+        mutating.append("b", "2");
+    }
+});
+console.log("mutating final:", mutating.toString());
+
+const malformed = new url.URLSearchParams("bad=%&plus=a+b%");
+console.log("malformed bad:", malformed.get("bad"));
+console.log("malformed plus:", malformed.get("plus"));

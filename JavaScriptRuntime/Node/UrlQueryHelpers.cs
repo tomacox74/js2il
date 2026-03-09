@@ -110,7 +110,14 @@ namespace JavaScriptRuntime.Node
                 normalized = normalized.Replace("+", " ", StringComparison.Ordinal);
             }
 
-            return Uri.UnescapeDataString(normalized);
+            try
+            {
+                return Uri.UnescapeDataString(normalized);
+            }
+            catch (UriFormatException)
+            {
+                return normalized;
+            }
         }
 
         public static string CoerceString(object? value)
