@@ -824,7 +824,17 @@ namespace JavaScriptRuntime
             // Calling getPrototypeOf is itself an opt-in signal.
             PrototypeChain.Enable();
 
-            return PrototypeChain.TryGetPrototype(obj, out var prototype) ? prototype : null;
+            if (!PrototypeChain.TryGetPrototype(obj, out var prototype))
+            {
+                return null;
+            }
+
+            if (obj is JavaScriptRuntime.RegExp || JavaScriptRuntime.RegExp.IsIntrinsicPrototypeTarget(obj))
+            {
+                JavaScriptRuntime.RegExp.InvalidateAllPrototypeWellKnownSymbolFastPaths();
+            }
+
+            return prototype;
         }
 
         /// <summary>
@@ -846,6 +856,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Object prototype may only be an Object or null");
             }
 
+            InvalidateRegExpWellKnownSymbolFastPathForPrototypeChange(obj);
             PrototypeChain.SetPrototype(obj, prototype);
             return obj;
         }
@@ -1130,6 +1141,7 @@ namespace JavaScriptRuntime
             }
 
             var key = ToPropertyKeyString(prop);
+            InvalidateRegExpWellKnownSymbolFastPath(obj, key);
             var requested = ParseRequestedPropertyDescriptor(attributes!);
 
             if (!IsExtensibleInternal(obj) && !HasOwnProperty(obj, key))
@@ -4291,6 +4303,7 @@ namespace JavaScriptRuntime
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
             if (string.IsNullOrEmpty(name)) return value;
+            InvalidateRegExpWellKnownSymbolFastPath(obj, name);
             // Proxy set trap
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
@@ -4310,6 +4323,7 @@ namespace JavaScriptRuntime
             {
                 if (IsValidPrototypeValue(value))
                 {
+                    InvalidateRegExpWellKnownSymbolFastPathForPrototypeChange(obj);
                     PrototypeChain.SetPrototype(obj, value);
                 }
                 return value;
@@ -4467,7 +4481,43 @@ namespace JavaScriptRuntime
                 return value;
             }
 
+            if (IsObjectLikeForPrototype(obj))
+            {
+                PropertyDescriptorStore.DefineOrUpdate(obj, name, new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Value = value,
+                    Writable = true,
+                    Enumerable = true,
+                    Configurable = true
+                });
+            }
+
             return value;
+        }
+
+        private static void InvalidateRegExpWellKnownSymbolFastPath(object target, string propertyKey)
+        {
+            if (target is JavaScriptRuntime.RegExp regexp)
+            {
+                regexp.InvalidateIntrinsicWellKnownSymbolFastPath(propertyKey);
+            }
+            else if (JavaScriptRuntime.RegExp.IsIntrinsicPrototypeTarget(target))
+            {
+                JavaScriptRuntime.RegExp.InvalidatePrototypeWellKnownSymbolFastPath(propertyKey);
+            }
+        }
+
+        private static void InvalidateRegExpWellKnownSymbolFastPathForPrototypeChange(object target)
+        {
+            if (target is JavaScriptRuntime.RegExp regexp)
+            {
+                regexp.InvalidateAllIntrinsicWellKnownSymbolFastPaths();
+            }
+            else if (JavaScriptRuntime.RegExp.IsIntrinsicPrototypeTarget(target))
+            {
+                JavaScriptRuntime.RegExp.InvalidateAllPrototypeWellKnownSymbolFastPaths();
+            }
         }
 
         // Dynamic instance method invocation fallback for host/intrinsic objects when the CLR type

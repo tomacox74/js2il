@@ -12,6 +12,27 @@ namespace JavaScriptRuntime
     public static class String
     {
         private const int MaxRepeatResultLength = 50_000_000;
+        private static readonly string MatchSymbolPropertyKey = Symbol.match.DebugId;
+        private static readonly string ReplaceSymbolPropertyKey = Symbol.replace.DebugId;
+        private static readonly string SearchSymbolPropertyKey = Symbol.search.DebugId;
+        private static readonly string SplitSymbolPropertyKey = Symbol.split.DebugId;
+        private static readonly string[] Latin1CharStrings = CreateLatin1CharStrings();
+
+        private static string[] CreateLatin1CharStrings()
+        {
+            var chars = new string[256];
+            for (int i = 0; i < chars.Length; i++)
+            {
+                chars[i] = ((char)i).ToString();
+            }
+
+            return chars;
+        }
+
+        private static string CharToStringFast(char ch)
+        {
+            return ch <= '\u00FF' ? Latin1CharStrings[ch] : ch.ToString();
+        }
 
         private static bool IsEcmaWhitespaceOrLineTerminator(char ch)
         {
@@ -460,7 +481,7 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (TryInvokeWellKnownSymbol(regexp, Symbol.match, new object?[] { input }, out var symbolResult))
+            if (TryInvokeWellKnownSymbol(regexp, Symbol.match, MatchSymbolPropertyKey, input, out var symbolResult))
             {
                 return symbolResult!;
             }
@@ -483,7 +504,7 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (TryInvokeWellKnownSymbol(regexp, Symbol.search, new object?[] { input }, out var symbolResult))
+            if (TryInvokeWellKnownSymbol(regexp, Symbol.search, SearchSymbolPropertyKey, input, out var symbolResult))
             {
                 return symbolResult!;
             }
@@ -686,7 +707,7 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (TryInvokeWellKnownSymbol(patternOrString, Symbol.replace, new object?[] { input, replacement }, out var symbolResult))
+            if (TryInvokeWellKnownSymbol(patternOrString, Symbol.replace, ReplaceSymbolPropertyKey, input, replacement, out var symbolResult))
             {
                 return symbolResult!;
             }
@@ -998,7 +1019,7 @@ namespace JavaScriptRuntime
                 return one;
             }
 
-            if (TryInvokeWellKnownSymbol(separatorOrPattern, Symbol.split, new object?[] { input, limit }, out var splitResult))
+            if (TryInvokeWellKnownSymbol(separatorOrPattern, Symbol.split, SplitSymbolPropertyKey, input, limit, out var splitResult))
             {
                 return splitResult!;
             }
@@ -1015,36 +1036,16 @@ namespace JavaScriptRuntime
             {
                 // Empty string => split into UTF-16 code units
                 int take = global::System.Math.Min(input.Length, maxCount);
-                var arr = new JavaScriptRuntime.Array(take);
-                for (int i = 0; i < take; i++) arr.Add(input[i].ToString());
-                return arr;
-            }
-
-            // Manual split to enforce Ordinal comparison and JS-like limit behavior
-            var result = new JavaScriptRuntime.Array();
-            int start = 0;
-            while (true)
-            {
-                if (result.Count >= maxCount) break;
-                int idx = input.IndexOf(sep, start, StringComparison.Ordinal);
-                if (idx < 0)
+                var items = new object?[take];
+                for (int i = 0; i < take; i++)
                 {
-                    // Remainder (including empty string when separator at end)
-                    result.Add(idx == -1 ? input.Substring(start) : string.Empty);
-                    break;
+                    items[i] = CharToStringFast(input[i]);
                 }
 
-                result.Add(input.Substring(start, idx - start));
-                start = idx + sep.Length;
-
-                // If start == input.Length and we split at the end, append empty string (JS behavior)
-                if (start == input.Length && result.Count < maxCount)
-                {
-                    result.Add(string.Empty);
-                    break;
-                }
+                return new JavaScriptRuntime.Array(items);
             }
-            return result;
+
+            return SplitWithLiteralSeparator(input, sep, maxCount);
         }
 
         internal static object MatchWithRegExp(string input, JavaScriptRuntime.RegExp re)
@@ -1058,29 +1059,40 @@ namespace JavaScriptRuntime
             var result = new JavaScriptRuntime.Array();
             re.lastIndex = 0;
 
-            while (true)
+            if (re.SimpleLiteralPattern is string literalPattern)
             {
-                double lastIndexBefore = re.lastIndex;
-                var exec = re.exec(input);
-                if (exec is JsNull)
+                var searchIndex = 0;
+                while (true)
                 {
-                    break;
-                }
-
-                if (exec is JavaScriptRuntime.Array matchArray)
-                {
-                    var full = matchArray.Count > 0 ? matchArray[0] : null;
-                    result.Add(full);
-
-                    if (full is string s && s.Length == 0 && re.lastIndex == lastIndexBefore)
+                    var matchIndex = input.IndexOf(literalPattern, searchIndex, StringComparison.Ordinal);
+                    if (matchIndex < 0)
                     {
-                        re.lastIndex = AdvanceEmptyMatchIndex(input, lastIndexBefore, re.unicode);
+                        break;
                     }
+
+                    result.Add(literalPattern);
+                    searchIndex = matchIndex + literalPattern.Length;
                 }
-                else
+
+                re.lastIndex = 0;
+                return result.Count == 0 ? JsNull.Null : result;
+            }
+
+            if (re.CanUseEnumerateMatchesFastPath)
+            {
+                foreach (var match in re.Regex.EnumerateMatches(input.AsSpan()))
                 {
-                    break;
+                    result.Add(input.Substring(match.Index, match.Length));
                 }
+
+                re.lastIndex = 0;
+                return result.Count == 0 ? JsNull.Null : result;
+            }
+
+            while (re.TryMatch(input, out var match))
+            {
+                result.Add(match.Value);
+                re.UpdateLastIndexAfterSuccess(input, match);
 
                 if (re.lastIndex > input.Length)
                 {
@@ -1098,13 +1110,12 @@ namespace JavaScriptRuntime
             try
             {
                 re.lastIndex = 0;
-                var exec = re.exec(input);
-                if (exec is not JavaScriptRuntime.Array matchArray)
+                if (!re.TryGetMatchBounds(input, out var matchIndex, out _))
                 {
                     return -1d;
                 }
 
-                return JavaScriptRuntime.TypeUtilities.ToNumber(JavaScriptRuntime.ObjectRuntime.GetItem(matchArray, "index"));
+                return matchIndex;
             }
             finally
             {
@@ -1117,6 +1128,11 @@ namespace JavaScriptRuntime
             var savedLastIndex = regExp.lastIndex;
             try
             {
+                if (TryReplaceWithLiteralPattern(input, regExp, replacement, out var literalReplaceResult))
+                {
+                    return literalReplaceResult;
+                }
+
                 if (replacement is Func<object[], object, object> || replacement is Func<object[], object>)
                 {
                     string Invoke(string match)
@@ -1155,17 +1171,186 @@ namespace JavaScriptRuntime
             }
         }
 
+        private static bool TryReplaceWithLiteralPattern(string input, JavaScriptRuntime.RegExp regExp, object? replacement, out string result)
+        {
+            result = string.Empty;
+            if (regExp.SimpleLiteralPattern is not string literalPattern)
+            {
+                return false;
+            }
+
+            if (replacement is Func<object[], object, object> || replacement is Func<object[], object>)
+            {
+                string InvokeReplacement(string match)
+                {
+                    if (replacement is Func<object[], object, object> cb1)
+                    {
+                        var callbackResult = cb1(System.Array.Empty<object>(), match);
+                        return DotNet2JSConversions.ToString(callbackResult) ?? string.Empty;
+                    }
+
+                    var cb0 = (Func<object[], object>)replacement;
+                    var zeroArgResult = cb0(System.Array.Empty<object>());
+                    return DotNet2JSConversions.ToString(zeroArgResult) ?? string.Empty;
+                }
+
+                result = ReplaceLiteralWithCallback(input, literalPattern, regExp.Global, InvokeReplacement);
+                return true;
+            }
+
+            var replacementText = DotNet2JSConversions.ToString(replacement) ?? string.Empty;
+            if (replacementText.IndexOf('$') >= 0)
+            {
+                return false;
+            }
+
+            if (regExp.Global)
+            {
+                result = input.Replace(literalPattern, replacementText, StringComparison.Ordinal);
+                return true;
+            }
+
+            var firstMatchIndex = input.IndexOf(literalPattern, StringComparison.Ordinal);
+            if (firstMatchIndex < 0)
+            {
+                result = input;
+                return true;
+            }
+
+            result = input.Substring(0, firstMatchIndex)
+                + replacementText
+                + input.Substring(firstMatchIndex + literalPattern.Length);
+            return true;
+        }
+
+        private static string ReplaceLiteralWithCallback(string input, string literalPattern, bool global, Func<string, string> replacementFactory)
+        {
+            var firstMatchIndex = input.IndexOf(literalPattern, StringComparison.Ordinal);
+            if (firstMatchIndex < 0)
+            {
+                return input;
+            }
+
+            if (!global)
+            {
+                return input.Substring(0, firstMatchIndex)
+                    + replacementFactory(literalPattern)
+                    + input.Substring(firstMatchIndex + literalPattern.Length);
+            }
+
+            var builder = new StringBuilder(input.Length);
+            var searchIndex = 0;
+            while (true)
+            {
+                var matchIndex = input.IndexOf(literalPattern, searchIndex, StringComparison.Ordinal);
+                if (matchIndex < 0)
+                {
+                    builder.Append(input, searchIndex, input.Length - searchIndex);
+                    break;
+                }
+
+                builder.Append(input, searchIndex, matchIndex - searchIndex);
+                builder.Append(replacementFactory(literalPattern));
+                searchIndex = matchIndex + literalPattern.Length;
+            }
+
+            return builder.ToString();
+        }
+
         internal static JavaScriptRuntime.Array SplitWithRegExp(string input, JavaScriptRuntime.RegExp regExp, object? limit)
         {
             var savedLastIndex = regExp.lastIndex;
             try
             {
+                if (regExp.IsEmptySplitPattern)
+                {
+                    return SplitWithEmptyRegExp(input, regExp.unicode, ToSplitLimit(limit));
+                }
+
+                if (regExp.SimpleLiteralPattern is string literalPattern)
+                {
+                    return SplitWithLiteralSeparator(input, literalPattern, ToSplitLimit(limit));
+                }
+
                 return SplitWithRegex(input, regExp.Regex, ToSplitLimit(limit));
             }
             finally
             {
                 regExp.lastIndex = savedLastIndex;
             }
+        }
+
+        private static JavaScriptRuntime.Array SplitWithEmptyRegExp(string input, bool unicode, int maxCount)
+        {
+            var estimatedCount = global::System.Math.Min(input.Length, maxCount);
+            if (input.Length == 0 || maxCount == 0)
+            {
+                return new JavaScriptRuntime.Array();
+            }
+
+            var items = new object?[estimatedCount];
+            int count = 0;
+            for (int index = 0; index < input.Length && count < estimatedCount;)
+            {
+                int nextIndex = AdvanceSplitIndex(input, index, unicode);
+                items[count++] = nextIndex == index + 1
+                    ? CharToStringFast(input[index])
+                    : input.Substring(index, nextIndex - index);
+                index = nextIndex;
+            }
+
+            if (count == items.Length)
+            {
+                return new JavaScriptRuntime.Array(items);
+            }
+
+            var trimmed = new object?[count];
+            global::System.Array.Copy(items, trimmed, count);
+            return new JavaScriptRuntime.Array(trimmed);
+        }
+
+        private static int AdvanceSplitIndex(string input, int index, bool unicode)
+        {
+            if (!unicode || index < 0 || index >= input.Length)
+            {
+                return index + 1;
+            }
+
+            if (char.IsHighSurrogate(input[index])
+                && index + 1 < input.Length
+                && char.IsLowSurrogate(input[index + 1]))
+            {
+                return index + 2;
+            }
+
+            return index + 1;
+        }
+
+        private static JavaScriptRuntime.Array SplitWithLiteralSeparator(string input, string separator, int maxCount)
+        {
+            var result = new JavaScriptRuntime.Array();
+            int start = 0;
+            while (true)
+            {
+                if (result.Count >= maxCount) break;
+                int idx = input.IndexOf(separator, start, StringComparison.Ordinal);
+                if (idx < 0)
+                {
+                    result.Add(input.Substring(start));
+                    break;
+                }
+
+                result.Add(input.Substring(start, idx - start));
+                start = idx + separator.Length;
+
+                if (start == input.Length && result.Count < maxCount)
+                {
+                    result.Add(string.Empty);
+                    break;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -1207,54 +1392,81 @@ namespace JavaScriptRuntime
             return arr;
         }
 
-        private static int AdvanceEmptyMatchIndex(string input, double index, bool unicode)
-        {
-            var truncated = (int)global::System.Math.Truncate(index);
-            if (!unicode || truncated < 0 || truncated >= input.Length)
-            {
-                return truncated + 1;
-            }
-
-            if (char.IsHighSurrogate(input[truncated])
-                && truncated + 1 < input.Length
-                && char.IsLowSurrogate(input[truncated + 1]))
-            {
-                return truncated + 2;
-            }
-
-            return truncated + 1;
-        }
-
-        private static bool TryInvokeWellKnownSymbol(object? target, Symbol symbol, object?[] args, out object? result)
+        private static bool TryInvokeWellKnownSymbol(object? target, Symbol symbol, string symbolPropertyKey, string input, out object? result)
         {
             result = null;
-            if (target is null || target is JsNull)
+            if (target is JavaScriptRuntime.RegExp regexp
+                && regexp.TryInvokeIntrinsicWellKnownSymbol(symbol, input, out result))
             {
-                return false;
+                return true;
             }
 
-            var symbolMethod = JavaScriptRuntime.ObjectRuntime.GetItem(target, symbol);
-
-            if (symbolMethod is null || symbolMethod is JsNull)
+            if (!TryGetWellKnownSymbolCallable(target, symbol, symbolPropertyKey, out var callable))
             {
                 return false;
-            }
-
-            if (symbolMethod is not Delegate callable)
-            {
-                throw new JavaScriptRuntime.TypeError($"{GetWellKnownSymbolName(symbol)} is not a function");
             }
 
             var previousThis = RuntimeServices.SetCurrentThis(target);
             try
             {
-                result = Closure.InvokeWithArgs(callable, System.Array.Empty<object>(), args);
+                result = Closure.InvokeWithArgs1(callable, System.Array.Empty<object>(), input);
                 return true;
             }
             finally
             {
                 RuntimeServices.SetCurrentThis(previousThis);
             }
+        }
+
+        private static bool TryInvokeWellKnownSymbol(object? target, Symbol symbol, string symbolPropertyKey, string input, object? arg1, out object? result)
+        {
+            result = null;
+            if (target is JavaScriptRuntime.RegExp regexp
+                && regexp.TryInvokeIntrinsicWellKnownSymbol(symbol, input, arg1, out result))
+            {
+                return true;
+            }
+
+            if (!TryGetWellKnownSymbolCallable(target, symbol, symbolPropertyKey, out var callable))
+            {
+                return false;
+            }
+
+            var previousThis = RuntimeServices.SetCurrentThis(target);
+            try
+            {
+                result = Closure.InvokeWithArgs2(callable, System.Array.Empty<object>(), input, arg1);
+                return true;
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static bool TryGetWellKnownSymbolCallable(object? target, Symbol symbol, string symbolPropertyKey, out Delegate callable)
+        {
+            callable = null!;
+            if (target is null || target is JsNull)
+            {
+                return false;
+            }
+
+            // Bypass generic ToPropertyKey(symbol) conversion in this hot path while preserving
+            // the same property/prototype lookup semantics as ObjectRuntime.GetItem(target, symbol).
+            var symbolMethod = JavaScriptRuntime.Object.GetProperty(target, symbolPropertyKey);
+            if (symbolMethod is null || symbolMethod is JsNull)
+            {
+                return false;
+            }
+
+            if (symbolMethod is not Delegate resolvedCallable)
+            {
+                throw new JavaScriptRuntime.TypeError($"{GetWellKnownSymbolName(symbol)} is not a function");
+            }
+
+            callable = resolvedCallable;
+            return true;
         }
 
         private static string GetWellKnownSymbolName(Symbol symbol)

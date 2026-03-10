@@ -105,9 +105,30 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Split_Regex_Empty()
+        {
+            var testName = nameof(String_Split_Regex_Empty);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_RegExp_SymbolDispatch_Custom()
         {
             var testName = nameof(String_RegExp_SymbolDispatch_Custom);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_RegExpOverride()
+        {
+            var testName = nameof(String_RegExp_SymbolDispatch_RegExpOverride);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_RegExpPrototypeOverride()
+        {
+            var testName = nameof(String_RegExp_SymbolDispatch_RegExpPrototypeOverride);
             return GenerateTest(testName);
         }
 
