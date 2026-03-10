@@ -4,7 +4,7 @@
 
 [Back to Section26](Section26.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-09T23:42:36Z
+> Last generated (UTC): 2026-03-10T00:19:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -33,5 +33,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| FinalizationRegistry constructor, register/unregister, and cleanup callback baseline | Supported with Limitations | [`FinalizationRegistry_Cleanup_Order.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) | Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus `register(target, heldValue, [unregisterToken])`, `unregister(token)`, and `%Symbol.toStringTag%`. Cleanup callbacks are queued through a host-managed finalization queue and become deterministic in tests when the non-standard global `gc()` helper forces collection. js2il does not yet expose a full first-class `FinalizationRegistry` constructor/prototype object on `globalThis`, and cleanup timing otherwise depends on .NET GC plus event-loop checkpoints. |
+| FinalizationRegistry constructor, register/unregister, and cleanup callback baseline | Supported with Limitations | [`FinalizationRegistry_Cleanup_Order.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) | Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus `register(target, heldValue, [unregisterToken])`, `unregister(token)`, and `%Symbol.toStringTag%`. Cleanup callbacks are queued through a host-managed finalization queue and become deterministic in tests when a host-opt-in non-standard global `gc()` helper forces collection. js2il does not yet expose a full first-class `FinalizationRegistry` constructor/prototype object on `globalThis`, and cleanup timing otherwise depends on .NET GC plus event-loop checkpoints. |
 

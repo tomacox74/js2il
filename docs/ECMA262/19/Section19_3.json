@@ -36,7 +36,7 @@
     {
       "clause": "19.3.5",
       "title": "BigInt64Array ( . . . )",
-      "status": "Supported with Limitations",
+      "status": "Not Yet Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint64array"
     },
     {
@@ -78,7 +78,7 @@
     {
       "clause": "19.3.12",
       "title": "FinalizationRegistry ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-finalization-registry"
     },
     {
@@ -252,7 +252,7 @@
     {
       "clause": "19.3.41",
       "title": "WeakRef ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakref"
     },
     {
@@ -353,7 +353,7 @@
           "Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js",
           "Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js"
         ],
-        "notes": "Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus register/unregister/toStringTag baseline behavior. js2il does not yet expose a full first-class `globalThis.FinalizationRegistry` constructor/prototype object, and deterministic cleanup in tests uses the non-standard global `gc()` helper."
+        "notes": "Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus register/unregister/toStringTag baseline behavior. js2il does not yet expose a full first-class `globalThis.FinalizationRegistry` constructor/prototype object, and deterministic cleanup in tests uses a host-opt-in non-standard global `gc()` helper."
       },
       {
         "clause": "19.3.40",
@@ -376,7 +376,7 @@
         "testScripts": [
           "Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js"
         ],
-        "notes": "Supports `new WeakRef(target)` in construct positions plus `deref()` and kept-object behavior. js2il does not yet expose a full first-class `globalThis.WeakRef` constructor/prototype object, and deterministic collection in tests uses the non-standard global `gc()` helper."
+        "notes": "Supports `new WeakRef(target)` in construct positions plus `deref()` and kept-object behavior. js2il does not yet expose a full first-class `globalThis.WeakRef` constructor/prototype object, and deterministic collection in tests uses a host-opt-in non-standard global `gc()` helper."
       },
       {
         "clause": "19.3.42",

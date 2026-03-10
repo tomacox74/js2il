@@ -4,7 +4,7 @@
 
 [Back to Section26](Section26.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-09T23:42:36Z
+> Last generated (UTC): 2026-03-10T00:19:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -34,5 +34,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| WeakRef constructor, deref(), and kept-object baseline | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js) | Supports `new WeakRef(target)` in construct positions, `deref()`, and `%Symbol.toStringTag%` via instance-level descriptor wiring. `deref()` adds live targets to a host-kept set until the next cleanup checkpoint, and tests use the non-standard global `gc()` helper to force deterministic collection. js2il does not yet expose a full first-class `WeakRef` constructor/prototype object on `globalThis`. |
+| WeakRef constructor, deref(), and kept-object baseline | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js) | Supports `new WeakRef(target)` in construct positions, `deref()`, and `%Symbol.toStringTag%` via instance-level descriptor wiring. `deref()` adds live targets to a host-kept set until the next cleanup checkpoint, and tests use a host-opt-in non-standard global `gc()` helper to force deterministic collection. js2il does not yet expose a full first-class `WeakRef` constructor/prototype object on `globalThis`. |
 

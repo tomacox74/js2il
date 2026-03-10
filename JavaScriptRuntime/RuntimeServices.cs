@@ -223,6 +223,7 @@ public class RuntimeServices
     public static ServiceContainer BuildServiceProvider()
     {
         var container = new ServiceContainer();
+        container.RegisterInstance(new GlobalThisOptions());
         
         // Register default engine dependencies
         container.Register<EngineCore.ITickSource, EngineCore.TickSource>();

@@ -4,7 +4,7 @@
 
 [Back to Section9](Section9.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-09T23:42:35Z
+> Last generated (UTC): 2026-03-10T00:19:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -28,5 +28,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| WeakRef/FinalizationRegistry processing model | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js)<br>[`FinalizationRegistry_Cleanup_Order.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js) | Implements a host-managed WeakRef/FinalizationRegistry processing model with kept objects, a cleanup-job queue, and deterministic test forcing via the non-standard global `gc()` helper. Cleanup timing outside that helper still depends on .NET GC and active event-loop checkpoints, so the model remains host-safe rather than fully browser/Node equivalent. |
+| WeakRef/FinalizationRegistry processing model | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js)<br>[`FinalizationRegistry_Cleanup_Order.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js) | Implements a host-managed WeakRef/FinalizationRegistry processing model with kept objects, a cleanup-job queue, and deterministic test forcing via a host-opt-in non-standard global `gc()` helper. Cleanup timing outside that helper still depends on .NET GC and active event-loop checkpoints, so the model remains host-safe rather than fully browser/Node equivalent. |
 

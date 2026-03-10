@@ -333,6 +333,15 @@ namespace JavaScriptRuntime
             });
         }
 
+        private static bool ShouldExposeGc()
+        {
+            var serviceProvider = ServiceProvider;
+            return serviceProvider != null
+                && serviceProvider.TryResolve<GlobalThisOptions>(out var options)
+                && options != null
+                && options.ExposeGc;
+        }
+
         private void SeedGlobalObjectIfMissing()
         {
             var dict = (IDictionary<string, object?>)this;
@@ -394,8 +403,11 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.clearInterval), (Func<object, object?>)clearInterval);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.clearInterval), dict[nameof(GlobalThis.clearInterval)]);
 
-            dict.TryAdd(nameof(GlobalThis.gc), (Func<object?>)gc);
-            DefineNonEnumerableDataProperty(nameof(GlobalThis.gc), dict[nameof(GlobalThis.gc)]);
+            if (ShouldExposeGc())
+            {
+                dict.TryAdd(nameof(GlobalThis.gc), (Func<object?>)gc);
+                DefineNonEnumerableDataProperty(nameof(GlobalThis.gc), dict[nameof(GlobalThis.gc)]);
+            }
 
             dict.TryAdd(nameof(GlobalThis.parseInt), (Func<object?, object?, double>)parseInt);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.parseInt), dict[nameof(GlobalThis.parseInt)]);

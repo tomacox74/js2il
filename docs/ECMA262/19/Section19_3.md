@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-09T23:42:36Z
+> Last generated (UTC): 2026-03-10T00:19:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -18,14 +18,14 @@
 | 19.3.2 | Array ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-array) |
 | 19.3.3 | ArrayBuffer ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-arraybuffer) |
 | 19.3.4 | BigInt ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint) |
-| 19.3.5 | BigInt64Array ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint64array) |
+| 19.3.5 | BigInt64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint64array) |
 | 19.3.6 | BigUint64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-biguint64array) |
 | 19.3.7 | Boolean ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean) |
 | 19.3.8 | DataView ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-dataview) |
 | 19.3.9 | Date ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-date) |
 | 19.3.10 | Error ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-error) |
 | 19.3.11 | EvalError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-evalerror) |
-| 19.3.12 | FinalizationRegistry ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-finalization-registry) |
+| 19.3.12 | FinalizationRegistry ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-finalization-registry) |
 | 19.3.13 | Float16Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-float16array) |
 | 19.3.14 | Float32Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-float32array) |
 | 19.3.15 | Float64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-float64array) |
@@ -54,7 +54,7 @@
 | 19.3.38 | Uint32Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint32array) |
 | 19.3.39 | URIError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-urierror) |
 | 19.3.40 | WeakMap ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakmap) |
-| 19.3.41 | WeakRef ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakref) |
+| 19.3.41 | WeakRef ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakref) |
 | 19.3.42 | WeakSet ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakset) |
 
 ## Support
@@ -71,7 +71,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| FinalizationRegistry constructible global baseline | Supported with Limitations | [`FinalizationRegistry_Cleanup_Order.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) | Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus register/unregister/toStringTag baseline behavior. js2il does not yet expose a full first-class `globalThis.FinalizationRegistry` constructor/prototype object, and deterministic cleanup in tests uses the non-standard global `gc()` helper. |
+| FinalizationRegistry constructible global baseline | Supported with Limitations | [`FinalizationRegistry_Cleanup_Order.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) | Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus register/unregister/toStringTag baseline behavior. js2il does not yet expose a full first-class `globalThis.FinalizationRegistry` constructor/prototype object, and deterministic cleanup in tests uses a host-opt-in non-standard global `gc()` helper. |
 
 ### 19.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function))
 
@@ -119,7 +119,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| WeakRef constructible global baseline | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js) | Supports `new WeakRef(target)` in construct positions plus `deref()` and kept-object behavior. js2il does not yet expose a full first-class `globalThis.WeakRef` constructor/prototype object, and deterministic collection in tests uses the non-standard global `gc()` helper. |
+| WeakRef constructible global baseline | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js) | Supports `new WeakRef(target)` in construct positions plus `deref()` and kept-object behavior. js2il does not yet expose a full first-class `globalThis.WeakRef` constructor/prototype object, and deterministic collection in tests uses a host-opt-in non-standard global `gc()` helper. |
 
 ### 19.3.42 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakset))
 
