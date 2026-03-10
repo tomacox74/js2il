@@ -6,8 +6,8 @@ It is intentionally **implementation-oriented** (what JS2IL emits today) and **n
 
 It complements the deeper closure ABI design in:
 
-- [docs/compiler/CapturedVariables_ScopesABI.md](compiler/CapturedVariables_ScopesABI.md)
-- [docs/compiler/TwoPhaseCompilationPipeline.md](compiler/TwoPhaseCompilationPipeline.md)
+- [docs/compiler/CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md)
+- [docs/compiler/TwoPhaseCompilationPipeline.md](TwoPhaseCompilationPipeline.md)
 
 ## Index
 
@@ -200,10 +200,10 @@ Examples:
 
 Where this fits in the codebase:
 
-- The orchestration is in [Js2IL/JsMethodCompiler.cs](../Js2IL/JsMethodCompiler.cs) (`TryLowerASTToLIR`)
-- Intrinsic normalization: [Js2IL/IR/LIR/LIRIntrinsicNormalization.cs](../Js2IL/IR/LIR/LIRIntrinsicNormalization.cs)
-- Type normalization: [Js2IL/IR/LIR/LIRTypeNormalization.cs](../Js2IL/IR/LIR/LIRTypeNormalization.cs)
-- Tests/examples of normalization behavior: [Js2IL.Tests/LIRIntrinsicNormalizationTests.cs](../Js2IL.Tests/LIRIntrinsicNormalizationTests.cs)
+- The orchestration is in [Js2IL/JsMethodCompiler.cs](../../Js2IL/JsMethodCompiler.cs) (`TryLowerASTToLIR`)
+- Intrinsic normalization: [Js2IL/IR/LIR/LIRIntrinsicNormalization.cs](../../Js2IL/IR/LIR/LIRIntrinsicNormalization.cs)
+- Type normalization: [Js2IL/IR/LIR/LIRTypeNormalization.cs](../../Js2IL/IR/LIR/LIRTypeNormalization.cs)
+- Tests/examples of normalization behavior: [Js2IL.Tests/LIRIntrinsicNormalizationTests.cs](../../Js2IL.Tests/LIRIntrinsicNormalizationTests.cs)
 
 ---
 
@@ -280,7 +280,7 @@ Ordering (ideal/current direction):
 - `scopes[0]` = global/module scope instance
 - increasing indices move inward toward the callee’s nearest lexical ancestor
 
-This is specified in detail in [docs/compiler/CapturedVariables_ScopesABI.md](compiler/CapturedVariables_ScopesABI.md).
+This is specified in detail in [docs/compiler/CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md).
 
 ---
 
@@ -443,11 +443,11 @@ A typical shape of emitted artifacts:
 <a id="related-implementation-references"></a>
 ## Related implementation references
 
-- Closure ABI and scopes-array conventions: [docs/compiler/CapturedVariables_ScopesABI.md](compiler/CapturedVariables_ScopesABI.md)
-- Two-phase compilation and callable identity/token preallocation: [docs/compiler/TwoPhaseCompilationPipeline.md](compiler/TwoPhaseCompilationPipeline.md)
-- Module init + scope/class nesting: [Js2IL/JsMethodCompiler.cs](../Js2IL/JsMethodCompiler.cs) (`TryCompileMainMethod`, `EstablishModuleNesting`)
-- IR lowering + normalization (AST→HIR→LIR→IL): [Js2IL/JsMethodCompiler.cs](../Js2IL/JsMethodCompiler.cs) (`TryLowerASTToLIR`), [Js2IL/IR/LIR/LIRIntrinsicNormalization.cs](../Js2IL/IR/LIR/LIRIntrinsicNormalization.cs), [Js2IL/IR/LIR/LIRTypeNormalization.cs](../Js2IL/IR/LIR/LIRTypeNormalization.cs)
-- Scope type generation: [Js2IL/Services/TypeGenerator.cs](../Js2IL/Services/TypeGenerator.cs)
-- Class emission + `_scopes`: [Js2IL/Services/ILGenerators/ClassesGenerator.cs](../Js2IL/Services/ILGenerators/ClassesGenerator.cs)
-- Value sentinels (`undefined` vs `null`): [JavaScriptRuntime/TypeUtilities.cs](../JavaScriptRuntime/TypeUtilities.cs), [JavaScriptRuntime/JsNull.cs](../JavaScriptRuntime/JsNull.cs)
-- Scope naming behavior: [Js2IL.Tests/ScopeNamingTests.cs](../Js2IL.Tests/ScopeNamingTests.cs)
+- Closure ABI and scopes-array conventions: [docs/compiler/CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md)
+- Two-phase compilation and callable identity/token preallocation: [docs/compiler/TwoPhaseCompilationPipeline.md](TwoPhaseCompilationPipeline.md)
+- Module init + scope/class nesting: [Js2IL/JsMethodCompiler.cs](../../Js2IL/JsMethodCompiler.cs) (`TryCompileMainMethod`, `EstablishModuleNesting`)
+- IR lowering + normalization (AST→HIR→LIR→IL): [Js2IL/JsMethodCompiler.cs](../../Js2IL/JsMethodCompiler.cs) (`TryLowerASTToLIR`), [Js2IL/IR/LIR/LIRIntrinsicNormalization.cs](../../Js2IL/IR/LIR/LIRIntrinsicNormalization.cs), [Js2IL/IR/LIR/LIRTypeNormalization.cs](../../Js2IL/IR/LIR/LIRTypeNormalization.cs)
+- Scope type generation: [Js2IL/Services/TypeGenerator.cs](../../Js2IL/Services/TypeGenerator.cs)
+- Class emission + `_scopes`: [Js2IL/Services/ILGenerators/ClassesGenerator.cs](../../Js2IL/Services/ILGenerators/ClassesGenerator.cs)
+- Value sentinels (`undefined` vs `null`): [JavaScriptRuntime/TypeUtilities.cs](../../JavaScriptRuntime/TypeUtilities.cs), [JavaScriptRuntime/JsNull.cs](../../JavaScriptRuntime/JsNull.cs)
+- Scope naming behavior: [Js2IL.Tests/ScopeNamingTests.cs](../../Js2IL.Tests/ScopeNamingTests.cs)

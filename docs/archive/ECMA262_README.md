@@ -12,11 +12,11 @@ This directory contains comprehensive analysis and prioritization of ECMA-262 fe
 ### For Developers
 - 🎯 [Feature Status Quick Reference](./ECMA262FeatureStatus.md) - Quick lookup for what's supported
 - 📋 [Full Technical Roadmap](./FeatureImplementationRoadmap.md) - Detailed implementation guide
-- 📊 [ECMA-262 Coverage Index](./ECMA262/Index.md) - Complete specification coverage
+- 📊 [ECMA-262 Coverage Index](../ECMA262/Index.md) - Complete specification coverage
 
 ### For Stakeholders
 - 📈 [Executive Summary](./ECMA262FeaturePriority.md) - Business impact and priorities
-- 📉 [Visual Roadmap](./ECMA262FeatureRoadmap.visual.txt) - ASCII art diagrams and timelines
+- 📉 [Visual Roadmap](../ECMA262FeatureRoadmap.visual.txt) - ASCII art diagrams and timelines
 
 ---
 
@@ -232,7 +232,7 @@ This directory contains comprehensive analysis and prioritization of ECMA-262 fe
 4. Assess risk
 
 ### For Presentations
-1. Use [Visual Roadmap](./ECMA262FeatureRoadmap.visual.txt)
+1. Use [Visual Roadmap](../ECMA262FeatureRoadmap.visual.txt)
 2. Reference diagrams and charts
 3. Show phase breakdown
 
@@ -260,12 +260,12 @@ This directory contains comprehensive analysis and prioritization of ECMA-262 fe
 ## Related Documentation
 
 ### In This Repository
-- [Async/Await Implementation](./AsyncAwait_ThreeWay_Comparison.md)
-- [Prototype Chain Support](./PrototypeChainSupport.md)
-- [Type Mapping](./JavaScriptToDotNetTypeMapping.md)
-- [NPM Package Imports](./NpmPackageImports.md)
-- [.NET hosting (library mode)](./hosting/Index.md) (design: [DotNetLibraryHosting.md](./DotNetLibraryHosting.md))
-- [Node.js Support](./nodejs/NodeSupport.md)
+- [Async/Await Implementation](../compiler/AsyncAwait_ThreeWay_Comparison.md)
+- [Prototype Chain Support](../compiler/PrototypeChainSupport.md)
+- [Type Mapping](../compiler/JavaScriptToDotNetTypeMapping.md)
+- [NPM Package Imports](../compiler/NpmPackageImports.md)
+- [.NET hosting (library mode)](../hosting/Index.md) (design: [DotNetLibraryHosting.md](../runtime/DotNetLibraryHosting.md))
+- [Node.js Support](../nodejs/NodeSupport.md)
 
 ### External References
 - [ECMA-262 Specification](https://tc39.es/ecma262/)
@@ -312,7 +312,7 @@ Rest/Spread parameters are **CRITICAL** priority. They enable:
 Yes! This is a living document. Partner feedback may shift priorities.
 
 ### What about [specific feature]?
-Check the [Feature Status](./ECMA262FeatureStatus.md) quick reference or [ECMA-262 Index](./ECMA262/Index.md) for complete coverage.
+Check the [Feature Status](./ECMA262FeatureStatus.md) quick reference or [ECMA-262 Index](../ECMA262/Index.md) for complete coverage.
 
 ---
 

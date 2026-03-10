@@ -11,4 +11,4 @@ This directory contains the .NET hosting surface for running JS2IL-compiled Java
 ## Documentation
 
 - User guide: [`docs/hosting/Index.md`](../../docs/hosting/Index.md)
-- Design doc (implementation reference): [`docs/DotNetLibraryHosting.md`](../../docs/DotNetLibraryHosting.md)
+- Design doc (implementation reference): [`docs/runtime/DotNetLibraryHosting.md`](../../docs/runtime/DotNetLibraryHosting.md)

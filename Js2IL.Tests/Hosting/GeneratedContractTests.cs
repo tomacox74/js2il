@@ -20,7 +20,7 @@ public class GeneratedContractTests
             rootModuleName: "hosting",
             scriptResourcePath: "Hosting_TypedExports.js");
 
-        // Entry-module exports contract naming per docs/DotNetLibraryHosting.md:
+        // Entry-module exports contract naming per docs/runtime/DotNetLibraryHosting.md:
         //   Js2IL.<AssemblyName>.I<AssemblyName>Exports
         var contractType = module.Assembly.GetType("Js2IL.hosting.IHostingExports", throwOnError: true)!;
 

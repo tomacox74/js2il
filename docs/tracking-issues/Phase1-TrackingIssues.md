@@ -409,8 +409,8 @@ function useCustomHook(...deps) {
 ## Notes
 
 - These issues track **Phase 1** of the ECMA-262 Feature Implementation Roadmap
-- See `docs/FeatureImplementationRoadmap.md` for complete context
-- See `docs/ECMA262FeaturePriority.md` for executive summary
+- See `docs/archive/FeatureImplementationRoadmap.md` for complete context
+- See `docs/archive/ECMA262FeaturePriority.md` for executive summary
 - Total estimated effort: **4-6 weeks**
 - Impact: Unlocks ~60% of modern JavaScript patterns
 

@@ -483,7 +483,7 @@ internal sealed class ModuleExportsContractEmitter
 
     private static (string Namespace, string ExportsInterfaceName) GetExportsContractName(string assemblyName, string moduleId, bool isRootModule)
     {
-        // See docs/DotNetLibraryHosting.md "Naming generated export contracts for nested modules".
+        // See docs/runtime/DotNetLibraryHosting.md "Naming generated export contracts for nested modules".
         var rootNamespace = $"Js2IL.{assemblyName}";
 
         if (isRootModule)

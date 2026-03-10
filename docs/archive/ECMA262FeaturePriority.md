@@ -289,7 +289,7 @@ Based on:
 Yes! This is a living document. If partners have urgent needs, we can re-prioritize. However, rest/spread should remain first as they're foundational.
 
 ### What about [Feature X]?
-See the [full roadmap](./FeatureImplementationRoadmap.md) for all 22 features analyzed, or consult the [ECMA-262 Index](./ECMA262/Index.md) for complete coverage status.
+See the [full roadmap](./FeatureImplementationRoadmap.md) for all 22 features analyzed, or consult the [ECMA-262 Index](../ECMA262/Index.md) for complete coverage status.
 
 ### How long will this take?
 - **Phase 1**: 4-6 weeks (foundational)
@@ -303,8 +303,8 @@ See the [full roadmap](./FeatureImplementationRoadmap.md) for all 22 features an
 ## Related Documents
 
 - 📋 [Full Implementation Roadmap](./FeatureImplementationRoadmap.md) - Detailed analysis of all features
-- 📊 [ECMA-262 Coverage Index](./ECMA262/Index.md) - Complete specification coverage
-- 🏗️ [Copilot Instructions](.github/copilot-instructions.md) - Development workflows
+- 📊 [ECMA-262 Coverage Index](../ECMA262/Index.md) - Complete specification coverage
+- 🏗️ [Copilot Instructions](../../.github/copilot-instructions.md) - Development workflows
 
 ---
 
