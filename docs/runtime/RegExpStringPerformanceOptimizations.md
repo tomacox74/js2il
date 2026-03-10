@@ -60,7 +60,6 @@ Key pieces:
   - `Object.defineProperty(...)`
   - `Object.setPrototypeOf(...)`
   - `__proto__`
-  - RegExp prototype observation paths
 
 This preserves JavaScript override semantics while keeping the built-in path lean.
 
@@ -80,7 +79,6 @@ Several supporting optimizations reduce object creation on common RegExp flows:
 
 - `Regex.EnumerateMatches(...)` / match-bounds helpers for cheaper index/length-based operations
 - conservative simple-literal RegExp detection so common literal cases can use string operations directly
-- cached prepared `Regex` instances keyed by pattern and options
 
 These were secondary wins compared to the split fix, but they improved the broader runtime path and helped the benchmark before the final hotspot was addressed.
 

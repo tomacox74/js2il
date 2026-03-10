@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
@@ -35,8 +34,6 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, object?, object> SplitSymbolDelegate = SplitSymbolMethod;
         internal static readonly ExpandoObject Prototype = CreatePrototype();
         private static WellKnownSymbolFastPathFlags _prototypeWellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
-        private static readonly ConcurrentDictionary<(string Pattern, RegexOptions Options), Regex> RegexCache = new();
-
         private readonly Regex _regex;
         private readonly bool _global;
         private readonly bool _sticky;
@@ -75,7 +72,7 @@ namespace JavaScriptRuntime
             try
             {
                 var preparedPattern = PreparePatternForDotNetRegex(_source, _unicode, _dotAll);
-                _regex = GetOrCreateCachedRegex(preparedPattern, parsedFlags.ToRegexOptions());
+                _regex = new Regex(preparedPattern, parsedFlags.ToRegexOptions());
             }
             catch (RegexParseException ex)
             {
@@ -228,11 +225,6 @@ namespace JavaScriptRuntime
         {
             var regExp = GetCurrentThisRegExp("split");
             return JavaScriptRuntime.String.SplitWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp, limit);
-        }
-
-        private static Regex GetOrCreateCachedRegex(string preparedPattern, RegexOptions options)
-        {
-            return RegexCache.GetOrAdd((preparedPattern, options), static key => new Regex(key.Pattern, key.Options));
         }
 
         private static ExpandoObject CreatePrototype()

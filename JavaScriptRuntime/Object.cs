@@ -829,11 +829,6 @@ namespace JavaScriptRuntime
                 return null;
             }
 
-            if (obj is JavaScriptRuntime.RegExp || JavaScriptRuntime.RegExp.IsIntrinsicPrototypeTarget(obj))
-            {
-                JavaScriptRuntime.RegExp.InvalidateAllPrototypeWellKnownSymbolFastPaths();
-            }
-
             return prototype;
         }
 
