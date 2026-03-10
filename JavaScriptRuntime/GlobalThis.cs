@@ -333,6 +333,15 @@ namespace JavaScriptRuntime
             });
         }
 
+        private static bool ShouldExposeGc()
+        {
+            var serviceProvider = ServiceProvider;
+            return serviceProvider != null
+                && serviceProvider.TryResolve<GlobalThisOptions>(out var options)
+                && options != null
+                && options.ExposeGc;
+        }
+
         private void SeedGlobalObjectIfMissing()
         {
             var dict = (IDictionary<string, object?>)this;
@@ -393,6 +402,12 @@ namespace JavaScriptRuntime
 
             dict.TryAdd(nameof(GlobalThis.clearInterval), (Func<object, object?>)clearInterval);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.clearInterval), dict[nameof(GlobalThis.clearInterval)]);
+
+            if (ShouldExposeGc())
+            {
+                dict.TryAdd(nameof(GlobalThis.gc), (Func<object?>)gc);
+                DefineNonEnumerableDataProperty(nameof(GlobalThis.gc), dict[nameof(GlobalThis.gc)]);
+            }
 
             dict.TryAdd(nameof(GlobalThis.parseInt), (Func<object?, object?, double>)parseInt);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.parseInt), dict[nameof(GlobalThis.parseInt)]);
@@ -503,6 +518,24 @@ namespace JavaScriptRuntime
         public static object? clearInterval(object handle)
         {
             return GetTimers().clearInterval(handle);
+        }
+
+        /// <summary>
+        /// Host/testing helper that forces a .NET GC and queues any resulting FinalizationRegistry cleanup jobs.
+        /// This is intentionally non-standard and exists so tests can drive weak-reference cleanup deterministically.
+        /// </summary>
+        public static object? gc()
+        {
+            var serviceProvider = _serviceProvider.Value;
+            if (serviceProvider == null
+                || !serviceProvider.IsRegistered<JavaScriptRuntime.EngineCore.IFinalizationRegistryHost>())
+            {
+                return null;
+            }
+
+            serviceProvider.Resolve<JavaScriptRuntime.EngineCore.IFinalizationRegistryHost>()
+                .CollectAndQueueCleanupJobs(forceCollection: true);
+            return null;
         }
 
         /// <summary>

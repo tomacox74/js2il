@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "9.12",
   "title": "CleanupFinalizationRegistry ( finalizationRegistry )",
-  "status": "Not Yet Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#CleanupFinalizationRegistry",
   "parent": {
     "clause": "9"
@@ -13,9 +13,13 @@
       {
         "clause": "9.12",
         "feature": "CleanupFinalizationRegistry ( finalizationRegistry )",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#CleanupFinalizationRegistry",
-        "notes": "Depends on WeakRef/FinalizationRegistry machinery, which is not currently implemented."
+        "testScripts": [
+          "Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js",
+          "Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js"
+        ],
+        "notes": "Collected registrations are converted into host cleanup jobs and invoke the cleanup callback with held values when drained. Timing remains host/.NET-GC dependent unless tests explicitly force collection with a host-opt-in non-standard global `gc()` helper."
       }
     ]
   }

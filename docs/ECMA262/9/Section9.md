@@ -4,7 +4,7 @@ Covers executable code, environments, realms, and execution contexts that underp
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-09T07:34:42Z
+> Last generated (UTC): 2026-03-09T23:42:36Z
 
 _This section is split into subsection documents for readability._
 
@@ -26,8 +26,8 @@ _This section is split into subsection documents for readability._
 | 9.6 | Agents | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-agents) | [Section9_6.md](Section9_6.md) |
 | 9.7 | Agent Clusters | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-agent-clusters) | [Section9_7.md](Section9_7.md) |
 | 9.8 | Forward Progress | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-forward-progress) | [Section9_8.md](Section9_8.md) |
-| 9.9 | Processing Model of WeakRef and FinalizationRegistry Targets | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakref-processing-model) | [Section9_9.md](Section9_9.md) |
-| 9.10 | ClearKeptObjects ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#ClearKeptObjects) | [Section9_10.md](Section9_10.md) |
-| 9.11 | AddToKeptObjects ( value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#AddToKeptObjects) | [Section9_11.md](Section9_11.md) |
-| 9.12 | CleanupFinalizationRegistry ( finalizationRegistry ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#CleanupFinalizationRegistry) | [Section9_12.md](Section9_12.md) |
-| 9.13 | CanBeHeldWeakly ( v ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#CanBeHeldWeakly) | [Section9_13.md](Section9_13.md) |
+| 9.9 | Processing Model of WeakRef and FinalizationRegistry Targets | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakref-processing-model) | [Section9_9.md](Section9_9.md) |
+| 9.10 | ClearKeptObjects ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#ClearKeptObjects) | [Section9_10.md](Section9_10.md) |
+| 9.11 | AddToKeptObjects ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#AddToKeptObjects) | [Section9_11.md](Section9_11.md) |
+| 9.12 | CleanupFinalizationRegistry ( finalizationRegistry ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#CleanupFinalizationRegistry) | [Section9_12.md](Section9_12.md) |
+| 9.13 | CanBeHeldWeakly ( v ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#CanBeHeldWeakly) | [Section9_13.md](Section9_13.md) |

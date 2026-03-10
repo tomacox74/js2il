@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "26.2",
   "title": "FinalizationRegistry Objects",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry-objects",
   "parent": {
     "clause": "26"
@@ -12,55 +12,55 @@
     {
       "clause": "26.2.1",
       "title": "The FinalizationRegistry Constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry-constructor"
     },
     {
       "clause": "26.2.1.1",
       "title": "FinalizationRegistry ( cleanupCallback )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry-cleanup-callback"
     },
     {
       "clause": "26.2.2",
       "title": "Properties of the FinalizationRegistry Constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-finalization-registry-constructor"
     },
     {
       "clause": "26.2.2.1",
       "title": "FinalizationRegistry.prototype",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry.prototype"
     },
     {
       "clause": "26.2.3",
       "title": "Properties of the FinalizationRegistry Prototype Object",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-finalization-registry-prototype-object"
     },
     {
       "clause": "26.2.3.1",
       "title": "FinalizationRegistry.prototype.constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry.prototype.constructor"
     },
     {
       "clause": "26.2.3.2",
       "title": "FinalizationRegistry.prototype.register ( target , heldValue [ , unregisterToken ] )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry.prototype.register"
     },
     {
       "clause": "26.2.3.3",
       "title": "FinalizationRegistry.prototype.unregister ( unregisterToken )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry.prototype.unregister"
     },
     {
       "clause": "26.2.3.4",
       "title": "FinalizationRegistry.prototype [ %Symbol.toStringTag% ]",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry.prototype-%symbol.tostringtag%"
     },
     {
@@ -69,5 +69,20 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-finalization-registry-instances"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "26.2",
+        "feature": "FinalizationRegistry constructor, register/unregister, and cleanup callback baseline",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-finalization-registry-objects",
+        "testScripts": [
+          "Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js",
+          "Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js"
+        ],
+        "notes": "Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus `register(target, heldValue, [unregisterToken])`, `unregister(token)`, and `%Symbol.toStringTag%`. Cleanup callbacks are queued through a host-managed finalization queue and become deterministic in tests when a host-opt-in non-standard global `gc()` helper forces collection. js2il does not yet expose a full first-class `FinalizationRegistry` constructor/prototype object on `globalThis`, and cleanup timing otherwise depends on .NET GC plus event-loop checkpoints."
+      }
+    ]
+  }
 }

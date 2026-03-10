@@ -42,7 +42,7 @@ internal struct ImmediateEntry : IEquatable<ImmediateEntry>
 ///
 /// The event loop/message pump is responsible for draining and executing work.
 /// </summary>
-public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IIOScheduler
+public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, ICleanupJobScheduler, IIOScheduler
 {
     private long _nextTimerId = 0;
     private long _nextImmediateId = 0;
@@ -61,6 +61,7 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IIOSch
     private readonly PriorityQueue<TimerEntry, long> _timers = new();
 
     private readonly Queue<Action> _micro = new();
+    private readonly Queue<Action> _cleanup = new();
 
     private readonly ITickSource _tickSource;
     private readonly IWaitHandle _wakeup;
@@ -76,6 +77,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IIOSch
         lock (_micro)
         {
             if (_micro.Count > 0) return true;
+        }
+
+        lock (_cleanup)
+        {
+            if (_cleanup.Count > 0) return true;
         }
 
         lock (_nextTickLock)
@@ -104,6 +110,11 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IIOSch
         lock (_micro)
         {
             if (_micro.Count > 0) return true;
+        }
+
+        lock (_cleanup)
+        {
+            if (_cleanup.Count > 0) return true;
         }
 
         lock (_nextTickLock)
@@ -162,6 +173,14 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IIOSch
         }
     }
 
+    internal int GetCleanupJobCountSnapshot(int max)
+    {
+        lock (_cleanup)
+        {
+            return System.Math.Min(_cleanup.Count, max);
+        }
+    }
+
     internal bool TryDequeueNextTick(out Action? callback)
     {
         lock (_nextTickLock)
@@ -206,6 +225,21 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IIOSch
             if (_micro.Count > 0)
             {
                 callback = _micro.Dequeue();
+                return true;
+            }
+        }
+
+        callback = null;
+        return false;
+    }
+
+    internal bool TryDequeueCleanupJob(out Action? callback)
+    {
+        lock (_cleanup)
+        {
+            if (_cleanup.Count > 0)
+            {
+                callback = _cleanup.Dequeue();
                 return true;
             }
         }
@@ -384,6 +418,16 @@ public sealed class NodeSchedulerState : IScheduler, IMicrotaskScheduler, IIOSch
         lock (_micro)
         {
             _micro.Enqueue(task);
+        }
+
+        _wakeup.Set();
+    }
+
+    void ICleanupJobScheduler.QueueCleanupJob(Action task)
+    {
+        lock (_cleanup)
+        {
+            _cleanup.Enqueue(task);
         }
 
         _wakeup.Set();

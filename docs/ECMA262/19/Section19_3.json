@@ -24,7 +24,7 @@
     {
       "clause": "19.3.3",
       "title": "ArrayBuffer ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-arraybuffer"
     },
     {
@@ -78,7 +78,7 @@
     {
       "clause": "19.3.12",
       "title": "FinalizationRegistry ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-finalization-registry"
     },
     {
@@ -252,7 +252,7 @@
     {
       "clause": "19.3.41",
       "title": "WeakRef ( . . . )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakref"
     },
     {
@@ -345,6 +345,17 @@
         "notes": "Implements new Map() constructor and core prototype methods: set, get, has, delete, clear, size property, keys, values, and entries. Uses SameValueZero semantics for key equality. Does not support constructor with iterable argument or forEach method. Iterator support is basic - does not implement full iterator protocol with Symbol.iterator."
       },
       {
+        "clause": "19.3.12",
+        "feature": "FinalizationRegistry constructible global baseline",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-finalization-registry",
+        "testScripts": [
+          "Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js",
+          "Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js"
+        ],
+        "notes": "Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus register/unregister/toStringTag baseline behavior. js2il does not yet expose a full first-class `globalThis.FinalizationRegistry` constructor/prototype object, and deterministic cleanup in tests uses a host-opt-in non-standard global `gc()` helper."
+      },
+      {
         "clause": "19.3.40",
         "feature": "WeakMap constructor and core prototype methods",
         "status": "Supported with Limitations",
@@ -356,6 +367,16 @@
           "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js"
         ],
         "notes": "Implements new WeakMap() constructor and core prototype methods: set, get, has, delete. Keys must be objects (non-null reference types). Uses ConditionalWeakTable to allow garbage collection of keys. Does not support constructor with iterable argument. Does not implement full object-type validation."
+      },
+      {
+        "clause": "19.3.41",
+        "feature": "WeakRef constructible global baseline",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakref",
+        "testScripts": [
+          "Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js"
+        ],
+        "notes": "Supports `new WeakRef(target)` in construct positions plus `deref()` and kept-object behavior. js2il does not yet expose a full first-class `globalThis.WeakRef` constructor/prototype object, and deterministic collection in tests uses a host-opt-in non-standard global `gc()` helper."
       },
       {
         "clause": "19.3.42",
