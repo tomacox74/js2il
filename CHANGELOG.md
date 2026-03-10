@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.29 - 2026-03-10
+
 - runtime/spec/tests/docs: add a host-safe WeakRef / FinalizationRegistry baseline for issue #781 with `WeakRef.deref()` kept-object semantics, `FinalizationRegistry.register` / `unregister` cleanup queue integration, a non-standard deterministic `gc()` test hook, focused execution/generator coverage, and refreshed ECMA-262 tracking.
 - quality/tooling/workflows: expand the nightly real-world canary smoke corpus for issue #583 with additional bounded benchmark cases (`dromaeo-object-string-modern`, `dromaeo-object-regexp-modern`, `dromaeo-3d-cube-modern`, `dromaeo-core-eval-modern`) while keeping the fast PR gate unchanged.
 - runtime/tests/docs: add a focused Node `crypto` baseline for issue #790 by implementing synchronous `createHash(...)` hashing (md5/sha1/sha256/sha384/sha512), `randomBytes(size)` returning `Buffer`, a minimal `crypto.getRandomValues` / `crypto.webcrypto.getRandomValues` bridge for supported buffer/typed-array shapes, focused execution/generator coverage, and refreshed Node tracking/module docs.
