@@ -31,6 +31,7 @@ public sealed class Symbol
     private static readonly Symbol _unscopables = new Symbol("Symbol.unscopables");
 
     private readonly long _id;
+    private readonly string _debugId;
 
     public string? Description { get; }
     // JS-surface members intentionally use ECMAScript casing for dynamic member lookup.
@@ -39,12 +40,14 @@ public sealed class Symbol
     public Symbol()
     {
         _id = System.Threading.Interlocked.Increment(ref _nextId);
+        _debugId = $"Symbol({_id})";
         Description = null;
     }
 
     public Symbol(object? description)
     {
         _id = System.Threading.Interlocked.Increment(ref _nextId);
+        _debugId = $"Symbol({_id})";
 
         // JS: undefined => no description; otherwise ToString.
         if (description is null)
@@ -172,5 +175,5 @@ public sealed class Symbol
     }
 
     // Useful for debugging, but keep ToString() JS-like.
-    public string DebugId => $"Symbol({_id})";
+    public string DebugId => _debugId;
 }

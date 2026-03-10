@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,10 +10,30 @@ namespace JavaScriptRuntime
     [IntrinsicObject("RegExp", IntrinsicCallKind.ConstructorLike)]
     public sealed class RegExp
     {
+        [Flags]
+        private enum WellKnownSymbolFastPathFlags
+        {
+            None = 0,
+            Match = 1,
+            Replace = 2,
+            Search = 4,
+            Split = 8,
+            All = Match | Replace | Search | Split
+        }
+
         private const string DotPattern = "(?:[^\n\r\u2028\u2029])";
         private const string UnicodeDotPattern = "(?:[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\n\r\u2028\u2029])";
         private const string UnicodeDotAllPattern = "(?:[\uD800-\uDBFF][\uDC00-\uDFFF]|[\\s\\S])";
-
+        private static readonly string MatchSymbolPropertyKey = Symbol.match.DebugId;
+        private static readonly string ReplaceSymbolPropertyKey = Symbol.replace.DebugId;
+        private static readonly string SearchSymbolPropertyKey = Symbol.search.DebugId;
+        private static readonly string SplitSymbolPropertyKey = Symbol.split.DebugId;
+        private static readonly Func<object?, object> MatchSymbolDelegate = MatchSymbolMethod;
+        private static readonly Func<object?, object?, object> ReplaceSymbolDelegate = ReplaceSymbolMethod;
+        private static readonly Func<object?, object> SearchSymbolDelegate = SearchSymbolMethod;
+        private static readonly Func<object?, object?, object> SplitSymbolDelegate = SplitSymbolMethod;
+        internal static readonly ExpandoObject Prototype = CreatePrototype();
+        private static WellKnownSymbolFastPathFlags _prototypeWellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
         private readonly Regex _regex;
         private readonly bool _global;
         private readonly bool _sticky;
@@ -20,6 +41,8 @@ namespace JavaScriptRuntime
         private readonly bool _unicode;
         private readonly bool _hasIndices;
         private readonly string _source;
+        private readonly string? _simpleLiteralPattern;
+        private WellKnownSymbolFastPathFlags _wellKnownSymbolFastPathFlags;
 
         // Minimal support for RegExp.prototype.lastIndex (used heavily by parsers).
         public double lastIndex { get; set; }
@@ -44,6 +67,7 @@ namespace JavaScriptRuntime
             _dotAll = parsedFlags.DotAll;
             _unicode = parsedFlags.Unicode;
             _hasIndices = parsedFlags.HasIndices;
+            _simpleLiteralPattern = TryGetSimpleLiteralPattern(_source, parsedFlags);
 
             try
             {
@@ -60,12 +84,15 @@ namespace JavaScriptRuntime
             }
 
             lastIndex = 0;
+            _wellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
             InitializeIntrinsicSurface();
         }
 
         internal Regex Regex => _regex;
         internal bool Global => _global;
         internal bool Sticky => _sticky;
+        internal bool IsEmptySplitPattern => _source.Length == 0 || string.Equals(_source, "(?:)", StringComparison.Ordinal);
+        internal string? SimpleLiteralPattern => _simpleLiteralPattern;
         private bool UsesLastIndexSemantics => _global || _sticky;
 
         public string source => _source;
@@ -99,12 +126,22 @@ namespace JavaScriptRuntime
         {
             var s = DotNet2JSConversions.ToString(input) ?? string.Empty;
 
-            if (!TryMatch(s, out var match))
+            if (!UsesLastIndexSemantics)
+            {
+                if (_simpleLiteralPattern is string literalPattern)
+                {
+                    return s.IndexOf(literalPattern, StringComparison.Ordinal) >= 0;
+                }
+
+                return _regex.IsMatch(s);
+            }
+
+            if (!TryGetMatchBounds(s, out var matchIndex, out var matchLength))
             {
                 return false;
             }
 
-            UpdateLastIndexAfterSuccess(s, match);
+            UpdateLastIndexAfterSuccess(s, matchIndex, matchLength);
             return true;
         }
 
@@ -156,6 +193,149 @@ namespace JavaScriptRuntime
             return JavaScriptRuntime.String.SplitWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, this, limit);
         }
 
+        private static RegExp GetCurrentThisRegExp(string wellKnownSymbolName)
+        {
+            if (RuntimeServices.GetCurrentThis() is not RegExp regExp)
+            {
+                throw new TypeError($"RegExp.prototype[@@{wellKnownSymbolName}] called on incompatible receiver");
+            }
+
+            return regExp;
+        }
+
+        private static object MatchSymbolMethod(object? input)
+        {
+            var regExp = GetCurrentThisRegExp("match");
+            return JavaScriptRuntime.String.MatchWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp);
+        }
+
+        private static object ReplaceSymbolMethod(object? input, object? replacement)
+        {
+            var regExp = GetCurrentThisRegExp("replace");
+            return JavaScriptRuntime.String.ReplaceWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp, replacement);
+        }
+
+        private static object SearchSymbolMethod(object? input)
+        {
+            var regExp = GetCurrentThisRegExp("search");
+            return JavaScriptRuntime.String.SearchWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp);
+        }
+
+        private static object SplitSymbolMethod(object? input, object? limit)
+        {
+            var regExp = GetCurrentThisRegExp("split");
+            return JavaScriptRuntime.String.SplitWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp, limit);
+        }
+
+        private static ExpandoObject CreatePrototype()
+        {
+            var prototype = new ExpandoObject();
+            DefineSymbolMethod(prototype, MatchSymbolPropertyKey, MatchSymbolDelegate);
+            DefineSymbolMethod(prototype, ReplaceSymbolPropertyKey, ReplaceSymbolDelegate);
+            DefineSymbolMethod(prototype, SearchSymbolPropertyKey, SearchSymbolDelegate);
+            DefineSymbolMethod(prototype, SplitSymbolPropertyKey, SplitSymbolDelegate);
+            return prototype;
+        }
+
+        private bool HasIntrinsicWellKnownSymbolFastPath(WellKnownSymbolFastPathFlags flag)
+        {
+            return (_wellKnownSymbolFastPathFlags & flag) != 0
+                && (_prototypeWellKnownSymbolFastPathFlags & flag) != 0;
+        }
+
+        internal bool CanUseEnumerateMatchesFastPath => !_sticky && !_unicode;
+
+        internal bool TryInvokeIntrinsicWellKnownSymbol(Symbol symbol, string input, out object? result)
+        {
+            if (ReferenceEquals(symbol, Symbol.match) && HasIntrinsicWellKnownSymbolFastPath(WellKnownSymbolFastPathFlags.Match))
+            {
+                result = JavaScriptRuntime.String.MatchWithRegExp(input, this);
+                return true;
+            }
+
+            if (ReferenceEquals(symbol, Symbol.search) && HasIntrinsicWellKnownSymbolFastPath(WellKnownSymbolFastPathFlags.Search))
+            {
+                result = JavaScriptRuntime.String.SearchWithRegExp(input, this);
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
+        internal bool TryInvokeIntrinsicWellKnownSymbol(Symbol symbol, string input, object? arg1, out object? result)
+        {
+            if (ReferenceEquals(symbol, Symbol.replace) && HasIntrinsicWellKnownSymbolFastPath(WellKnownSymbolFastPathFlags.Replace))
+            {
+                result = JavaScriptRuntime.String.ReplaceWithRegExp(input, this, arg1);
+                return true;
+            }
+
+            if (ReferenceEquals(symbol, Symbol.split) && HasIntrinsicWellKnownSymbolFastPath(WellKnownSymbolFastPathFlags.Split))
+            {
+                result = JavaScriptRuntime.String.SplitWithRegExp(input, this, arg1);
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
+        internal void InvalidateIntrinsicWellKnownSymbolFastPath(string propertyKey)
+        {
+            if (string.Equals(propertyKey, MatchSymbolPropertyKey, StringComparison.Ordinal))
+            {
+                _wellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Match;
+            }
+            else if (string.Equals(propertyKey, ReplaceSymbolPropertyKey, StringComparison.Ordinal))
+            {
+                _wellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Replace;
+            }
+            else if (string.Equals(propertyKey, SearchSymbolPropertyKey, StringComparison.Ordinal))
+            {
+                _wellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Search;
+            }
+            else if (string.Equals(propertyKey, SplitSymbolPropertyKey, StringComparison.Ordinal))
+            {
+                _wellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Split;
+            }
+        }
+
+        internal void InvalidateAllIntrinsicWellKnownSymbolFastPaths()
+        {
+            _wellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.None;
+        }
+
+        internal static bool IsIntrinsicPrototypeTarget(object target)
+        {
+            return ReferenceEquals(target, Prototype);
+        }
+
+        internal static void InvalidatePrototypeWellKnownSymbolFastPath(string propertyKey)
+        {
+            if (string.Equals(propertyKey, MatchSymbolPropertyKey, StringComparison.Ordinal))
+            {
+                _prototypeWellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Match;
+            }
+            else if (string.Equals(propertyKey, ReplaceSymbolPropertyKey, StringComparison.Ordinal))
+            {
+                _prototypeWellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Replace;
+            }
+            else if (string.Equals(propertyKey, SearchSymbolPropertyKey, StringComparison.Ordinal))
+            {
+                _prototypeWellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Search;
+            }
+            else if (string.Equals(propertyKey, SplitSymbolPropertyKey, StringComparison.Ordinal))
+            {
+                _prototypeWellKnownSymbolFastPathFlags &= ~WellKnownSymbolFastPathFlags.Split;
+            }
+        }
+
+        internal static void InvalidateAllPrototypeWellKnownSymbolFastPaths()
+        {
+            _prototypeWellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.None;
+        }
+
         public string toString()
         {
             return "/" + _source + "/" + flags;
@@ -181,17 +361,73 @@ namespace JavaScriptRuntime
             return DotNet2JSConversions.ToString(flags) ?? string.Empty;
         }
 
+        private static string? TryGetSimpleLiteralPattern(string source, ParsedFlags parsedFlags)
+        {
+            if (source.Length == 0
+                || parsedFlags.IgnoreCase
+                || parsedFlags.Sticky
+                || parsedFlags.Unicode
+                || parsedFlags.HasIndices)
+            {
+                return null;
+            }
+
+            foreach (var ch in source)
+            {
+                switch (ch)
+                {
+                    case '\\':
+                    case '.':
+                    case '^':
+                    case '$':
+                    case '*':
+                    case '+':
+                    case '?':
+                    case '(':
+                    case ')':
+                    case '[':
+                    case ']':
+                    case '{':
+                    case '}':
+                    case '|':
+                        return null;
+                }
+            }
+
+            return source;
+        }
+
         private static ParsedFlags ParseFlags(string flags)
         {
             var parsed = new ParsedFlags();
-            var seen = new HashSet<char>();
+            var seenFlags = 0;
 
             foreach (var ch in flags)
             {
-                if (!seen.Add(ch))
+                var flagBit = ch switch
+                {
+                    'd' => 1 << 0,
+                    'g' => 1 << 1,
+                    'i' => 1 << 2,
+                    'm' => 1 << 3,
+                    's' => 1 << 4,
+                    'u' => 1 << 5,
+                    'v' => 1 << 6,
+                    'y' => 1 << 7,
+                    _ => -1
+                };
+
+                if (flagBit < 0)
                 {
                     throw new SyntaxError($"Invalid flags supplied to RegExp constructor '{flags}'");
                 }
+
+                if ((seenFlags & flagBit) != 0)
+                {
+                    throw new SyntaxError($"Invalid flags supplied to RegExp constructor '{flags}'");
+                }
+
+                seenFlags |= flagBit;
 
                 switch (ch)
                 {
@@ -218,8 +454,6 @@ namespace JavaScriptRuntime
                     case 'y':
                         parsed.Sticky = true;
                         break;
-                    default:
-                        throw new SyntaxError($"Invalid flags supplied to RegExp constructor '{flags}'");
                 }
             }
 
@@ -244,6 +478,11 @@ namespace JavaScriptRuntime
 
         private static string RewriteUnicodeCodePointEscapes(string pattern)
         {
+            if (pattern.IndexOf(@"\u{", StringComparison.Ordinal) < 0)
+            {
+                return pattern;
+            }
+
             var builder = new StringBuilder(pattern.Length);
 
             for (int i = 0; i < pattern.Length; i++)
@@ -300,6 +539,11 @@ namespace JavaScriptRuntime
 
         private static string RewriteDots(string pattern, string replacement)
         {
+            if (pattern.IndexOf('.') < 0)
+            {
+                return pattern;
+            }
+
             var builder = new StringBuilder(pattern.Length);
             var insideCharacterClass = false;
 
@@ -346,15 +590,12 @@ namespace JavaScriptRuntime
 
         private void InitializeIntrinsicSurface()
         {
-            DefineSymbolMethod(Symbol.match, new Func<object?, object>(matchSymbol));
-            DefineSymbolMethod(Symbol.replace, new Func<object?, object?, object>(replaceSymbol));
-            DefineSymbolMethod(Symbol.search, new Func<object?, object>(searchSymbol));
-            DefineSymbolMethod(Symbol.split, new Func<object?, object?, object>(splitSymbol));
+            PrototypeChain.SetPrototype(this, Prototype);
         }
 
-        private void DefineSymbolMethod(Symbol symbol, Delegate method)
+        private static void DefineSymbolMethod(object target, string symbolPropertyKey, Delegate method)
         {
-            PropertyDescriptorStore.DefineOrUpdate(this, symbol.DebugId, new JsPropertyDescriptor
+            PropertyDescriptorStore.DefineOrUpdate(target, symbolPropertyKey, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
@@ -387,7 +628,7 @@ namespace JavaScriptRuntime
             return indices;
         }
 
-        private bool TryMatch(string input, out Match match)
+        internal bool TryMatch(string input, out Match match)
         {
             var startAt = 0;
             if (!TryGetMatchStart(input, out startAt))
@@ -409,6 +650,68 @@ namespace JavaScriptRuntime
             }
 
             return true;
+        }
+
+        internal bool TryGetMatchBounds(string input, out int matchIndex, out int matchLength)
+        {
+            matchIndex = 0;
+            matchLength = 0;
+
+            if (_simpleLiteralPattern is string literalPattern)
+            {
+                var literalStartAt = 0;
+                if (!TryGetMatchStart(input, out literalStartAt))
+                {
+                    return false;
+                }
+
+                var literalIndex = input.IndexOf(literalPattern, literalStartAt, StringComparison.Ordinal);
+                if (literalIndex < 0)
+                {
+                    if (UsesLastIndexSemantics)
+                    {
+                        lastIndex = 0;
+                    }
+
+                    return false;
+                }
+
+                matchIndex = literalIndex;
+                matchLength = literalPattern.Length;
+                return true;
+            }
+
+            if (!CanUseEnumerateMatchesFastPath)
+            {
+                if (!TryMatch(input, out var match))
+                {
+                    return false;
+                }
+
+                matchIndex = match.Index;
+                matchLength = match.Length;
+                return true;
+            }
+
+            var startAt = 0;
+            if (!TryGetMatchStart(input, out startAt))
+            {
+                return false;
+            }
+
+            foreach (var match in _regex.EnumerateMatches(input.AsSpan(), startAt))
+            {
+                matchIndex = match.Index;
+                matchLength = match.Length;
+                return true;
+            }
+
+            if (UsesLastIndexSemantics)
+            {
+                lastIndex = 0;
+            }
+
+            return false;
         }
 
         private bool TryGetMatchStart(string input, out int startAt)
@@ -441,17 +744,22 @@ namespace JavaScriptRuntime
             return true;
         }
 
-        private void UpdateLastIndexAfterSuccess(string input, Match match)
+        internal void UpdateLastIndexAfterSuccess(string input, Match match)
+        {
+            UpdateLastIndexAfterSuccess(input, match.Index, match.Length);
+        }
+
+        internal void UpdateLastIndexAfterSuccess(string input, int matchIndex, int matchLength)
         {
             if (!UsesLastIndexSemantics)
             {
                 return;
             }
 
-            int nextIndex = match.Index + match.Length;
-            if (match.Length == 0)
+            int nextIndex = matchIndex + matchLength;
+            if (matchLength == 0)
             {
-                nextIndex = AdvanceStringIndex(input, match.Index);
+                nextIndex = AdvanceStringIndex(input, matchIndex);
             }
 
             lastIndex = nextIndex;
