@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.8.30 - 2026-03-10
+
 - perf/runtime/benchmarks: recover issue #833's `dromaeo-object-regexp` regression by caching hot symbol/property-key lookups, fast-pathing intrinsic RegExp `@@match`/`@@search`/`@@replace`/`@@split` dispatch behind instance/prototype override invalidation, moving well-known symbol methods onto a shared RegExp prototype, and adding a JS-correct empty-RegExp split fast path with lighter result construction; local non-modern phased execute results improved from about `671.7 ms` to `239.6 ms`.
 
 ## v0.8.29 - 2026-03-10
