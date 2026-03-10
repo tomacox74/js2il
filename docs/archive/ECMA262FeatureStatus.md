@@ -349,7 +349,7 @@ Phase 4 (4-6 weeks):  Advanced features    🟢 MEDIUM
 ## NEED A FEATURE NOT LISTED?
 
 1. Check the [full roadmap](./FeatureImplementationRoadmap.md) for detailed analysis
-2. Review the [ECMA-262 Index](./ECMA262/Index.md) for complete coverage status
+2. Review the [ECMA-262 Index](../ECMA262/Index.md) for complete coverage status
 3. File an issue if you need a specific feature prioritized
 
 ---

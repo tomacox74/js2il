@@ -184,10 +184,10 @@ Feature PRs are not ready to merge until docs are synchronized:
 - **[TriageScoreboard.md](./TriageScoreboard.md)**: Active prioritization and weekly execution board
 - **[NodeGapPopularityBacklog.md](./NodeGapPopularityBacklog.md)**: Persisted holistic gap analysis + popularity-weighted Node backlog snapshot
 - **[ECMA262TopMissingBacklog.md](./ECMA262TopMissingBacklog.md)**: Top 10 unsupported/incomplete ECMA-262 features ranked for tracking issue creation
-- **[FeatureImplementationRoadmap.md](../FeatureImplementationRoadmap.md)**: Complete technical roadmap
-- **[ECMA262FeaturePriority.md](../ECMA262FeaturePriority.md)**: Executive summary
-- **[ECMA262FeatureStatus.md](../ECMA262FeatureStatus.md)**: Quick reference
-- **[ECMA262_README.md](../ECMA262_README.md)**: Documentation index
+- **[FeatureImplementationRoadmap.md](../archive/FeatureImplementationRoadmap.md)**: Complete technical roadmap
+- **[ECMA262FeaturePriority.md](../archive/ECMA262FeaturePriority.md)**: Executive summary
+- **[ECMA262FeatureStatus.md](../archive/ECMA262FeatureStatus.md)**: Quick reference
+- **[ECMA262_README.md](../archive/ECMA262_README.md)**: Documentation index
 
 ---
 
@@ -224,9 +224,9 @@ Feature PRs are not ready to merge until docs are synchronized:
 If you have questions about:
 - **What to implement now**: See [TriageScoreboard.md](./TriageScoreboard.md)
 - **What was originally planned**: See the phase tracking docs
-- **How to implement**: See `docs/FeatureImplementationRoadmap.md`
-- **Why we're implementing**: See `docs/ECMA262FeaturePriority.md`
-- **Current status**: See `docs/ECMA262FeatureStatus.md`
+- **How to implement**: See `docs/archive/FeatureImplementationRoadmap.md`
+- **Why we're implementing**: See `docs/archive/ECMA262FeaturePriority.md`
+- **Current status**: See `docs/archive/ECMA262FeatureStatus.md`
 
 ---
 

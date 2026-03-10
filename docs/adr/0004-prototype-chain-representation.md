@@ -7,7 +7,7 @@
 
 JS2IL currently supports dynamic property access primarily via runtime helpers (e.g. `JavaScriptRuntime.Object`), but does not model ECMAScript `[[Prototype]]`.
 
-We want to add support for prototype chaining and inheritance, using [docs/PrototypeChainSupport.md](../PrototypeChainSupport.md) as the long-term guide.
+We want to add support for prototype chaining and inheritance, using [docs/compiler/PrototypeChainSupport.md](../compiler/PrototypeChainSupport.md) as the long-term guide.
 
 A near-term goal (Issue #504) is to support:
 
@@ -44,7 +44,7 @@ We defer introducing a full `IJsObject` / `JsOrdinaryObject` runtime object mode
 
 ### Why not introduce `IJsObject` immediately
 
-A dedicated JS object model is aligned with the long-term design in [docs/PrototypeChainSupport.md](../PrototypeChainSupport.md), but it requires multiple coupled features to be useful:
+A dedicated JS object model is aligned with the long-term design in [docs/compiler/PrototypeChainSupport.md](../compiler/PrototypeChainSupport.md), but it requires multiple coupled features to be useful:
 
 - property descriptors (enumerable/configurable/writable)
 - getters/setters

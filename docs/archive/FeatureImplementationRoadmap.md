@@ -641,10 +641,10 @@ Quick reference for status terminology used in ECMA-262 docs:
 
 ## Appendix B: Related Documentation
 
-- [ECMA-262 Index](./ECMA262/Index.md)
-- [Prototype Chain Support](./PrototypeChainSupport.md)
-- [Async/Await Implementation](./AsyncAwait_ThreeWay_Comparison.md)
-- [Type Mapping](./JavaScriptToDotNetTypeMapping.md)
+- [ECMA-262 Index](../ECMA262/Index.md)
+- [Prototype Chain Support](../compiler/PrototypeChainSupport.md)
+- [Async/Await Implementation](../compiler/AsyncAwait_ThreeWay_Comparison.md)
+- [Type Mapping](../compiler/JavaScriptToDotNetTypeMapping.md)
 
 ---
 

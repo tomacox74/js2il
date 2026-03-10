@@ -1,6 +1,6 @@
 # Hosting Compiled JavaScript as a .NET Library (design)
 
-> **Looking for the user guide?** Start here: [`docs/hosting/Index.md`](hosting/Index.md)
+> **Looking for the user guide?** Start here: [`docs/hosting/Index.md`](../hosting/Index.md)
 >
 > This document is kept as an implementation-oriented design/reference.
 
@@ -561,7 +561,7 @@ Open question: whether some exceptions should permanently fault a runtime instan
 
 ### Related docs
 
-- [JavaScriptToDotNetTypeMapping.md](JavaScriptToDotNetTypeMapping.md)
-- [compiler/CapturedVariables_ScopesABI.md](compiler/CapturedVariables_ScopesABI.md)
-- [compiler/TwoPhaseCompilationPipeline.md](compiler/TwoPhaseCompilationPipeline.md)
-- [nodejs/NodeSupport.md](nodejs/NodeSupport.md)
+- [JavaScriptToDotNetTypeMapping.md](../compiler/JavaScriptToDotNetTypeMapping.md)
+- [compiler/CapturedVariables_ScopesABI.md](../compiler/CapturedVariables_ScopesABI.md)
+- [compiler/TwoPhaseCompilationPipeline.md](../compiler/TwoPhaseCompilationPipeline.md)
+- [nodejs/NodeSupport.md](../nodejs/NodeSupport.md)

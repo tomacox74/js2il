@@ -2,7 +2,7 @@
 
 JS2IL can compile a JavaScript module into a normal .NET assembly and let a .NET application **load that compiled module as a library**, then call `module.exports` from C#.
 
-This page is the **canonical user documentation** for hosting. The older document [`docs/DotNetLibraryHosting.md`](../DotNetLibraryHosting.md) is kept as a design/implementation reference.
+This page is the **canonical user documentation** for hosting. The older document [`docs/runtime/DotNetLibraryHosting.md`](../runtime/DotNetLibraryHosting.md) is kept as a design/implementation reference.
 
 ## What hosting gives you
 
