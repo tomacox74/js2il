@@ -221,7 +221,7 @@ namespace JavaScriptRuntime.CommonJS
             }
 
             var dirName = Path.GetDirectoryName(moduleFilename) ?? string.Empty;
-            var module = new Module(canonicalId, canonicalId, parentModule, moduleRequire);
+            var module = new Module(canonicalId, moduleFilename, parentModule, moduleRequire);
             _modules[cacheKey] = module;
             _instances[cacheKey] = module.exports ?? new object();
 
