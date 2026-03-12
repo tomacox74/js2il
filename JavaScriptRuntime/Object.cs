@@ -2705,10 +2705,9 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (target is System.Dynamic.ExpandoObject exp)
+            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, name, out _))
             {
-                var dict = (IDictionary<string, object?>)exp;
-                return dict.ContainsKey(name);
+                return true;
             }
 
             if (target is IDictionary<string, object?> dictGeneric)
@@ -2855,6 +2854,11 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, propName, out descriptor!))
+            {
+                return true;
+            }
+
             // Default descriptors for existing properties (no attribute fidelity yet).
             if (target is System.Dynamic.ExpandoObject exp)
             {
@@ -2936,6 +2940,12 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, propName, out var delegateMetadataDesc))
+            {
+                value = delegateMetadataDesc.Value;
+                return true;
+            }
+
             // ExpandoObject properties
             if (target is System.Dynamic.ExpandoObject exp)
             {
@@ -2953,21 +2963,6 @@ namespace JavaScriptRuntime
             {
                 value = null;
                 return false;
-            }
-
-            // Delegate-backed functions behave like JS Function objects and must have a default
-            // `.prototype` property (used heavily by real-world libraries like domino).
-            // We model this lazily so existing tests that don't touch it don't pay for allocation.
-            if (target is Delegate del && string.Equals(propName, "length", StringComparison.Ordinal))
-            {
-                value = JavaScriptRuntime.Function.GetLength(del);
-                return true;
-            }
-
-            if (target is Delegate delName && string.Equals(propName, "name", StringComparison.Ordinal))
-            {
-                value = JavaScriptRuntime.Function.GetName(delName);
-                return true;
             }
 
             if (target is Delegate delPrototype && string.Equals(propName, "prototype", StringComparison.Ordinal))

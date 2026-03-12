@@ -3,30 +3,33 @@
 This file captures a point-in-time prioritized list of open issues/PRs and the current active item being addressed.
 
 Synced to:
-- Repo: `master` @ `32464d03` (state when branch `copilot/gh-792-http-stack-baseline` was created)
-- Active branch: `copilot/gh-792-http-stack-baseline` @ `3dda9252` (open PR #840 for issue #792)
-- GitHub: open issues/PRs state as of 2026-03-12 (refreshed after PR #840 opened)
+- Repo: `master` @ `8a06e00f` (state when branch `copilot/gh-727-function-descriptor-metadata` was created)
+- Active branch: `copilot/gh-727-function-descriptor-metadata` @ `f69ae43c` (open PR #843 for issue #727)
+- GitHub: open issues/PRs state as of 2026-03-12 (refreshed after PR #840 merged and PR #843 opened)
 
 ## Current active item
-**Issue #792** (OPEN; active work is now on `copilot/gh-792-http-stack-baseline`, PR #840 is open):
-- https://github.com/tomacox74/js2il/issues/792
-- https://github.com/tomacox74/js2il/pull/840
-
-Rationale:
-- PR #839 remains open for issue #791, but the next planned implementation slice in the triage has now been executed and is in review as PR #840.
-- PR #840 adds the scoped networking baseline for `node:net` / `node:http`, plus explicit `node:https` / `node:tls` diagnostics and focused docs/tests.
-- This is now the highest-ranked active Node compatibility implementation item; the remaining next-step work shifts back to the long-running spec/runtime backlog once review lands.
-
-## Recommended next item after #792
-**Issue #727** (OPEN):
+**Issue #727** (OPEN; active work is now on `copilot/gh-727-function-descriptor-metadata`, PR #843 is open):
 - https://github.com/tomacox74/js2il/issues/727
+- https://github.com/tomacox74/js2il/pull/843
 
 Rationale:
-- With #792 now in review, the next ranked unfinished implementation item becomes the descriptor-backed function metadata work in #727.
-- The remaining higher-priority open items (#772 and #790) still look like hygiene or scope-clarification follow-up rather than fresh implementation slices.
-- The open PRs for #781, #791, and #792 already cover the current Node compatibility review queue.
+- PR #840 for issue #792 has merged, clearing the previous active triage item.
+- Issue #727 is now implemented and in review as PR #843, covering descriptor-backed own-property behavior for function `length` / `name`.
+- With the current Function metadata slice in review, the next likely follow-up is the adjacent bound-function semantics work in #728.
+
+## Recommended next item after #727
+**Issue #728** (OPEN):
+- https://github.com/tomacox74/js2il/issues/728
+
+Rationale:
+- With #727 now in review, the next ranked unfinished implementation item becomes the bound-function semantics follow-up in #728.
+- It is the most direct continuation of the same Function-object compatibility surface, covering constructor/new-target and metadata edge cases intentionally left out of #727.
+- The remaining higher-priority open item #772 still looks like hygiene or scope-clarification follow-up rather than a fresh implementation slice.
 
 ## Recently completed since the previous snapshot
+- **#792** (priority:low) node: add http/https/net/tls baseline plan (client/server skeleton) — CLOSED via PR #840 on 2026-03-12
+  - https://github.com/tomacox74/js2il/issues/792
+  - https://github.com/tomacox74/js2il/pull/840
 - **#583** (priority:medium) Quality: add real-world canary corpus smoke tests (bounded) for ecosystem stability — CLOSED via PR #830 on 2026-03-09
   - https://github.com/tomacox74/js2il/issues/583
   - https://github.com/tomacox74/js2il/pull/830
@@ -78,50 +81,44 @@ Rationale:
 - https://github.com/tomacox74/js2il/issues/772
 - https://github.com/tomacox74/js2il/commit/78edaae01b2b3da4560068b12314005a4c40387a
 
-**Issue #790 is still OPEN even though PR #829 merged the crypto baseline into `master`.** It should be closed or explicitly re-scoped:
-- https://github.com/tomacox74/js2il/issues/790
-- https://github.com/tomacox74/js2il/pull/829
-
-## Top 10 open issues after the current active item (excluding #772 and #790, which currently look like hygiene follow-up)
+## Top 10 open issues after the current active item (excluding #772, which currently looks like hygiene follow-up)
 (Heuristic ranking using `priority:*` labels + module/spec/perf keywords in titles/labels; recommendation-only.)
 
-1. #727 Function length/name should be descriptor-backed own properties
-   - https://github.com/tomacox74/js2il/issues/727
-2. #728 Complete bound function semantics for constructor/new-target and metadata
+1. #728 Complete bound function semantics for constructor/new-target and metadata
    - https://github.com/tomacox74/js2il/issues/728
-3. #419 Hosting: support mutable CommonJS exports (Node-like)
+2. #419 Hosting: support mutable CommonJS exports (Node-like)
    - https://github.com/tomacox74/js2il/issues/419
-4. #439 Hosting: publish referenceable library/build NuGet package
+3. #439 Hosting: publish referenceable library/build NuGet package
    - https://github.com/tomacox74/js2il/issues/439
-5. #451 perf(il): expand typed temps/locals to reduce casts/boxing
-       - https://github.com/tomacox74/js2il/issues/451
-6. #737 perf: callsite-based typed parameter specialization for non-exported functions
-       - https://github.com/tomacox74/js2il/issues/737
-7. #738 perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations
-       - https://github.com/tomacox74/js2il/issues/738
-8. #740 perf(prime): keep sieve loop math in typed locals with fallback
-     - https://github.com/tomacox74/js2il/issues/740
-9. #742 perf(prime): trim timing/config coercion overhead in main path
-     - https://github.com/tomacox74/js2il/issues/742
-10. #743 perf(prime): add Prime perf acceptance gate and reporting
-     - https://github.com/tomacox74/js2il/issues/743
+4. #451 perf(il): expand typed temps/locals to reduce casts/boxing
+        - https://github.com/tomacox74/js2il/issues/451
+5. #737 perf: callsite-based typed parameter specialization for non-exported functions
+        - https://github.com/tomacox74/js2il/issues/737
+6. #738 perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations
+        - https://github.com/tomacox74/js2il/issues/738
+7. #740 perf(prime): keep sieve loop math in typed locals with fallback
+      - https://github.com/tomacox74/js2il/issues/740
+8. #742 perf(prime): trim timing/config coercion overhead in main path
+      - https://github.com/tomacox74/js2il/issues/742
+9. #743 perf(prime): add Prime perf acceptance gate and reporting
+      - https://github.com/tomacox74/js2il/issues/743
+10. #746 perf: make dromaeo-object-regexp faster than Jint prepared
+     - https://github.com/tomacox74/js2il/issues/746
 
 ## Remaining open issues
-11. #746 perf: make dromaeo-object-regexp faster than Jint prepared
-    - https://github.com/tomacox74/js2il/issues/746
-12. #747 perf(regexp): cache Regex instances by source+flags
-    - https://github.com/tomacox74/js2il/issues/747
-13. #748 perf(dispatch): add RegExp fast paths in Object.CallMember1/2
-    - https://github.com/tomacox74/js2il/issues/748
-14. #768 Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)
-    - https://github.com/tomacox74/js2il/issues/768
+11. #747 perf(regexp): cache Regex instances by source+flags
+     - https://github.com/tomacox74/js2il/issues/747
+12. #748 perf(dispatch): add RegExp fast paths in Object.CallMember1/2
+     - https://github.com/tomacox74/js2il/issues/748
+13. #768 Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)
+     - https://github.com/tomacox74/js2il/issues/768
 
 ## Open PRs (for context)
-- **#840** `feat(node): add http and net loopback baseline` — OPEN
-  - https://github.com/tomacox74/js2il/pull/840
+- **#843** `fix(function): descriptor-back length and name metadata` — OPEN
+  - https://github.com/tomacox74/js2il/pull/843
 
 ## Label/metadata gaps (as of this snapshot)
 - Open issues: 19
 - Open PRs: 1
-- 14 open issues are missing `priority:*` labels.
+- 17 open issues are missing `priority:*` labels.
 - No current open issues carry `lane:*` labels (19 missing).
