@@ -107,7 +107,7 @@ namespace JavaScriptRuntime.Node
         {
             private readonly HttpServer _server;
             private readonly NetSocket _socket;
-            private readonly StringBuilder _buffer = new();
+            private readonly MemoryStream _buffer = new();
             private bool _requestEmitted;
 
             public HttpServerConnectionState(HttpServer server, NetSocket socket)
@@ -119,7 +119,8 @@ namespace JavaScriptRuntime.Node
                 {
                     if (args.Length > 0)
                     {
-                        _buffer.Append(NodeNetworkingCommon.CoerceToText(args[0]));
+                        var bytes = NodeNetworkingCommon.CoerceToBytes(args[0]);
+                        _buffer.Write(bytes, 0, bytes.Length);
                         TryEmitRequest(isEndOfStream: false);
                     }
 
@@ -140,7 +141,7 @@ namespace JavaScriptRuntime.Node
                     return;
                 }
 
-                if (!HttpWireParser.TryParseRequest(_buffer.ToString(), isEndOfStream, out var parsed))
+                if (!HttpWireParser.TryParseRequest(_buffer.ToArray(), isEndOfStream, out var parsed))
                 {
                     return;
                 }
@@ -283,7 +284,7 @@ namespace JavaScriptRuntime.Node
 
         public HttpServerResponse writeHead(object? statusCode, object? arg1, object? arg2)
         {
-            this.statusCode = NodeNetworkingCommon.CoercePort(statusCode, defaultValue: 200);
+            this.statusCode = NodeNetworkingCommon.CoerceHttpStatusCode(statusCode, defaultValue: 200);
 
             if (arg1 is string statusText)
             {
@@ -396,7 +397,7 @@ namespace JavaScriptRuntime.Node
         private readonly HttpRequestOptions _options;
         private readonly NetSocket _socket;
         private readonly MemoryStream _body = new();
-        private readonly StringBuilder _responseBuffer = new();
+        private readonly MemoryStream _responseBuffer = new();
         private bool _started;
         private bool _responseEmitted;
 
@@ -413,7 +414,8 @@ namespace JavaScriptRuntime.Node
             {
                 if (args.Length > 0)
                 {
-                    _responseBuffer.Append(NodeNetworkingCommon.CoerceToText(args[0]));
+                    var bytes = NodeNetworkingCommon.CoerceToBytes(args[0]);
+                    _responseBuffer.Write(bytes, 0, bytes.Length);
                     TryEmitResponse(isEndOfStream: false);
                 }
 
@@ -551,7 +553,7 @@ namespace JavaScriptRuntime.Node
                 return;
             }
 
-            if (!HttpWireParser.TryParseResponse(_responseBuffer.ToString(), isEndOfStream, out var parsed))
+            if (!HttpWireParser.TryParseResponse(_responseBuffer.ToArray(), isEndOfStream, out var parsed))
             {
                 return;
             }
@@ -627,7 +629,16 @@ namespace JavaScriptRuntime.Node
 
         private static void ApplyUrl(HttpRequestOptions options, string urlText)
         {
-            var uri = new Uri(urlText, UriKind.Absolute);
+            Uri uri;
+            try
+            {
+                uri = new Uri(urlText, UriKind.Absolute);
+            }
+            catch (UriFormatException ex)
+            {
+                throw new TypeError($"Invalid URL '{urlText}' for node:http request.", ex);
+            }
+
             if (!string.Equals(uri.Scheme, "http", StringComparison.OrdinalIgnoreCase))
             {
                 throw new Error("Only http:// URLs are supported by node:http in the current baseline.");
@@ -674,7 +685,7 @@ namespace JavaScriptRuntime.Node
 
     internal static class HttpWireParser
     {
-        internal static bool TryParseRequest(string raw, bool isEndOfStream, out HttpParsedRequest? parsed)
+        internal static bool TryParseRequest(byte[] raw, bool isEndOfStream, out HttpParsedRequest? parsed)
         {
             parsed = null;
             if (!TrySplitMessage(raw, out var startLine, out var headers, out var body, isEndOfStream, treatMissingLengthAsComplete: true))
@@ -697,7 +708,7 @@ namespace JavaScriptRuntime.Node
             return true;
         }
 
-        internal static bool TryParseResponse(string raw, bool isEndOfStream, out HttpParsedResponse? parsed)
+        internal static bool TryParseResponse(byte[] raw, bool isEndOfStream, out HttpParsedResponse? parsed)
         {
             parsed = null;
             if (!TrySplitMessage(raw, out var startLine, out var headers, out var body, isEndOfStream, treatMissingLengthAsComplete: false))
@@ -734,7 +745,7 @@ namespace JavaScriptRuntime.Node
         }
 
         private static bool TrySplitMessage(
-            string raw,
+            byte[] raw,
             out string startLine,
             out Dictionary<string, string> headers,
             out string body,
@@ -745,13 +756,13 @@ namespace JavaScriptRuntime.Node
             headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             body = string.Empty;
 
-            var headerEnd = raw.IndexOf("\r\n\r\n", StringComparison.Ordinal);
+            var headerEnd = IndexOfHeaderTerminator(raw);
             if (headerEnd < 0)
             {
                 return false;
             }
 
-            var headerSection = raw.Substring(0, headerEnd);
+            var headerSection = Encoding.ASCII.GetString(raw, 0, headerEnd);
             var headerLines = headerSection.Split(new[] { "\r\n" }, StringSplitOptions.None);
             if (headerLines.Length == 0)
             {
@@ -780,16 +791,17 @@ namespace JavaScriptRuntime.Node
             var contentLength = 0;
             var hasContentLength = headers.TryGetValue("content-length", out var contentLengthText)
                 && int.TryParse(contentLengthText, out contentLength);
-            var payload = raw.Substring(headerEnd + 4);
+            var payloadOffset = headerEnd + 4;
+            var payloadByteCount = raw.Length - payloadOffset;
 
             if (hasContentLength)
             {
-                if (payload.Length < contentLength && !isEndOfStream)
+                if (payloadByteCount < contentLength)
                 {
                     return false;
                 }
 
-                body = payload.Substring(0, System.Math.Min(contentLength, payload.Length));
+                body = Encoding.UTF8.GetString(raw, payloadOffset, contentLength);
                 return true;
             }
 
@@ -798,8 +810,24 @@ namespace JavaScriptRuntime.Node
                 return false;
             }
 
-            body = payload;
+            body = Encoding.UTF8.GetString(raw, payloadOffset, payloadByteCount);
             return true;
+        }
+
+        private static int IndexOfHeaderTerminator(byte[] raw)
+        {
+            for (var i = 0; i <= raw.Length - 4; i++)
+            {
+                if (raw[i] == '\r'
+                    && raw[i + 1] == '\n'
+                    && raw[i + 2] == '\r'
+                    && raw[i + 3] == '\n')
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
     }
 

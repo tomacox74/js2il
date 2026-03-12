@@ -127,6 +127,42 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        internal static int CoerceHttpStatusCode(object? value, int defaultValue = 200)
+        {
+            if (value == null || value is JsNull)
+            {
+                return defaultValue;
+            }
+
+            double number;
+            try
+            {
+                number = TypeUtilities.ToNumber(value);
+            }
+            catch (Exception ex)
+            {
+                throw new TypeError("HTTP status code must be a number.", ex);
+            }
+
+            if (double.IsNaN(number) || double.IsInfinity(number))
+            {
+                throw new TypeError("HTTP status code must be a finite number.");
+            }
+
+            if (number != System.Math.Truncate(number))
+            {
+                throw new RangeError("HTTP status code must be an integer.");
+            }
+
+            var statusCode = (int)number;
+            if (statusCode < 100 || statusCode > 999)
+            {
+                throw new RangeError("HTTP status code must be between 100 and 999.");
+            }
+
+            return statusCode;
+        }
+
         internal static string CoerceHost(string? host)
         {
             if (string.IsNullOrWhiteSpace(host))
@@ -166,13 +202,6 @@ namespace JavaScriptRuntime.Node
             throw new Error($"Unable to resolve host '{host}'.");
         }
 
-        internal static int AllocateEphemeralPort(IPAddress address)
-        {
-            using var probe = new TcpListener(address, 0);
-            probe.Start();
-            return ((IPEndPoint)probe.LocalEndpoint).Port;
-        }
-
         internal static void ScheduleOnEventLoop(Action action)
             => ScheduleOnEventLoop(null, action);
 
@@ -192,6 +221,24 @@ namespace JavaScriptRuntime.Node
             }
 
             action();
+        }
+
+        internal static void ScheduleImmediateOnEventLoop(NodeSchedulerState? scheduler, Action action)
+        {
+            try
+            {
+                var targetScheduler = scheduler ?? GlobalThis.ServiceProvider?.Resolve<NodeSchedulerState>();
+                if (targetScheduler != null)
+                {
+                    ((IScheduler)targetScheduler).ScheduleImmediate(action);
+                    return;
+                }
+            }
+            catch
+            {
+            }
+
+            ScheduleOnEventLoop(scheduler, action);
         }
 
         internal static PromiseWithResolvers CreateIoPromise(Action<object?>? onSuccess = null, Action<object?>? onError = null)
@@ -326,6 +373,32 @@ namespace JavaScriptRuntime.Node
         }
     }
 
+    internal sealed class Utf8ChunkDecoder
+    {
+        private readonly Decoder _decoder = Encoding.UTF8.GetDecoder();
+
+        internal string Decode(byte[] bytes, int count, bool flush)
+        {
+            if (count < 0 || count > bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
+            var charBufferLength = Encoding.UTF8.GetMaxCharCount(count + 4);
+            var chars = new char[charBufferLength];
+            var written = _decoder.GetChars(bytes, 0, count, chars, 0, flush);
+            if (written == 0)
+            {
+                return string.Empty;
+            }
+
+            return new string(chars, 0, written);
+        }
+
+        internal string Flush()
+            => Decode(System.Array.Empty<byte>(), 0, flush: true);
+    }
+
     public sealed class NetServer : EventEmitter
     {
         private readonly object? _options;
@@ -368,11 +441,6 @@ namespace JavaScriptRuntime.Node
 
             _host = NodeNetworkingCommon.CoerceHost(host);
             var bindAddress = NodeNetworkingCommon.ResolveAddress(_host);
-            if (port == 0)
-            {
-                port = NodeNetworkingCommon.AllocateEphemeralPort(bindAddress);
-            }
-
             _listener = new TcpListener(bindAddress, port);
             _listener.Start();
             _port = ((IPEndPoint)_listener.LocalEndpoint).Port;
@@ -605,6 +673,7 @@ namespace JavaScriptRuntime.Node
         private bool _destroyRequested;
         private IIOScheduler? _ioScheduler;
         private NodeSchedulerState? _nodeScheduler;
+        private readonly Utf8ChunkDecoder _textDecoder = new();
 
         private IIOScheduler IoScheduler => _ioScheduler
             ??= GlobalThis.ServiceProvider?.Resolve<IIOScheduler>()
@@ -781,9 +850,21 @@ namespace JavaScriptRuntime.Node
             {
                 _stream.Write(bytes, 0, bytes.Length);
             }
+            catch (ObjectDisposedException ex)
+            {
+                HandleStreamWriteException(ex);
+            }
+            catch (IOException ex)
+            {
+                HandleStreamWriteException(ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                HandleStreamWriteException(ex);
+            }
             catch (Exception ex)
             {
-                emit("error", ex as Error ?? new Error(ex.Message, ex));
+                HandleStreamWriteException(ex);
             }
         }
 
@@ -846,20 +927,10 @@ namespace JavaScriptRuntime.Node
                         break;
                     }
 
-                    var text = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    NodeNetworkingCommon.ScheduleOnEventLoop(_nodeScheduler, () =>
-                    {
-                        try
-                        {
-                            push(text);
-                        }
-                        catch (Exception ex)
-                        {
-                            emit("error", ex as Error ?? new Error(ex.Message, ex));
-                        }
-                    });
+                    EmitReadChunk(_textDecoder.Decode(buffer, bytesRead, flush: false), immediate: false);
                 }
 
+                EmitReadChunk(_textDecoder.Flush(), immediate: true);
                 IoScheduler.EndIo(lifetimePromise, null, isError: false);
             }
             catch (ObjectDisposedException) when (_destroyRequested)
@@ -879,6 +950,34 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        private void EmitReadChunk(string text, bool immediate)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            void Deliver()
+            {
+                try
+                {
+                    push(text);
+                }
+                catch (Exception ex)
+                {
+                    emit("error", ex as Error ?? new Error(ex.Message, ex));
+                }
+            }
+
+            if (immediate)
+            {
+                NodeNetworkingCommon.ScheduleImmediateOnEventLoop(_nodeScheduler, Deliver);
+                return;
+            }
+
+            NodeNetworkingCommon.ScheduleOnEventLoop(_nodeScheduler, Deliver);
+        }
+
         private void FlushPendingWrites()
         {
             if (!_canWriteToStream || _stream == null)
@@ -886,11 +985,46 @@ namespace JavaScriptRuntime.Node
                 return;
             }
 
-            while (_pendingWrites.Count > 0)
+            while (_pendingWrites.Count > 0 && !_destroyRequested)
             {
-                var bytes = _pendingWrites.Dequeue();
-                _stream.Write(bytes, 0, bytes.Length);
+                var bytes = _pendingWrites.Peek();
+                try
+                {
+                    _stream.Write(bytes, 0, bytes.Length);
+                    _pendingWrites.Dequeue();
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    HandleStreamWriteException(ex);
+                    break;
+                }
+                catch (IOException ex)
+                {
+                    HandleStreamWriteException(ex);
+                    break;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    HandleStreamWriteException(ex);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    HandleStreamWriteException(ex);
+                    break;
+                }
             }
+        }
+
+        private void HandleStreamWriteException(Exception ex)
+        {
+            _canWriteToStream = false;
+            if (_destroyRequested)
+            {
+                return;
+            }
+
+            destroy(ex as Error ?? new Error(ex.Message, ex));
         }
 
         private void CloseOutputSide()
