@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using Js2IL.Runtime;
 
 namespace JavaScriptRuntime
 {
@@ -144,12 +145,14 @@ namespace JavaScriptRuntime
         public static Func<object[], object?[], object?> Bind(Delegate target, object? thisArg, object?[] boundArgs)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
-            boundArgs ??= System.Array.Empty<object?>();
+            boundArgs = boundArgs is null || boundArgs.Length == 0
+                ? System.Array.Empty<object?>()
+                : boundArgs.ToArray();
 
             // Return a callable delegate that supports arbitrary JS arg counts.
             // Signature uses a trailing object[] parameter which Closure.InvokeWithArgs treats
             // as a params-array.
-            return (Func<object[], object?[], object?>)((scopes, runtimeArgs) =>
+            Func<object[], object?[], object?> boundDelegate = (scopes, runtimeArgs) =>
             {
                 runtimeArgs ??= System.Array.Empty<object?>();
                 var finalArgs = boundArgs.Length == 0
@@ -165,20 +168,40 @@ namespace JavaScriptRuntime
                 {
                     RuntimeServices.SetCurrentThis(prevThis);
                 }
-            });
+            };
+
+            Closure.TrackFunctionPrototypeBoundDelegate(boundDelegate, target, boundArgs);
+            return boundDelegate;
         }
 
-        public static object? Construct(Delegate constructor, object[]? args)
+        public static object? Construct(Delegate constructor, object?[]? args)
         {
             if (constructor is null) throw new ArgumentNullException(nameof(constructor));
+            return Construct(constructor, args, constructor);
+        }
 
+        private static object? Construct(Delegate constructor, object?[]? args, object? newTarget)
+        {
+            if (constructor is null) throw new ArgumentNullException(nameof(constructor));
             // JS `new` semantics for function constructors:
             // 1) Create a new instance object
             // 2) Set its [[Prototype]] to ctor.prototype when available
             // 3) Invoke the constructor with `this` bound to the instance
             // 4) If ctor returns an object, use that; otherwise return the instance
 
-            var callArgs = args ?? System.Array.Empty<object>();
+            var callArgs = args ?? System.Array.Empty<object?>();
+
+            if (Closure.TryGetFunctionPrototypeBoundMetadata(constructor, out var boundTarget, out var boundArgs))
+            {
+                var finalArgs = boundArgs.Length == 0
+                    ? callArgs
+                    : boundArgs.Concat(callArgs).ToArray();
+                var effectiveNewTarget = ReferenceEquals(newTarget, constructor)
+                    ? boundTarget
+                    : newTarget;
+                return Construct(boundTarget, finalArgs, effectiveNewTarget);
+            }
+
             var instance = new System.Dynamic.ExpandoObject();
 
             // Default proto: ctor.prototype when it is an object or null; otherwise undefined.
@@ -192,7 +215,7 @@ namespace JavaScriptRuntime
             var previousThis = RuntimeServices.SetCurrentThis(instance);
             try
             {
-                var result = Closure.InvokeWithArgsWithNewTarget(constructor, System.Array.Empty<object>(), constructor, callArgs);
+                var result = Closure.InvokeWithArgsWithNewTarget(constructor, System.Array.Empty<object>(), newTarget, callArgs);
                 return TypeUtilities.IsConstructorReturnOverride(result) ? result : instance;
             }
             finally
@@ -204,7 +227,8 @@ namespace JavaScriptRuntime
         private static Delegate ResolveFunctionTarget(Delegate target)
         {
             var current = target;
-            while (Closure.TryGetBoundTarget(current, out var original))
+            while (Closure.TryGetBoundTarget(current, out var original)
+                && !Closure.IsFunctionPrototypeBoundDelegate(current))
             {
                 current = original;
             }
@@ -212,50 +236,45 @@ namespace JavaScriptRuntime
             return current;
         }
 
-        private static bool IsJs2IlFunctionDelegate(Type delegateType)
-        {
-            if (JsFuncDelegates.IsJsFuncDelegateType(delegateType))
-            {
-                return true;
-            }
-
-            return delegateType.Name.StartsWith("JsFunc", StringComparison.Ordinal);
-        }
-
         public static double GetLength(Delegate target)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
             var resolvedTarget = ResolveFunctionTarget(target);
-            var ps = resolvedTarget.Method.GetParameters();
 
-            // JS-compiled functions use JsFunc* delegates and always include an implicit
-            // newTarget parameter (plus scopes for captured closures).
-            if (IsJs2IlFunctionDelegate(resolvedTarget.GetType()))
+            if (Closure.TryGetFunctionPrototypeBoundMetadata(resolvedTarget, out var boundTarget, out var boundArgs))
             {
-                var implicitParams = 1; // newTarget
-                if (ps.Length > 0 && ps[0].ParameterType == typeof(object[]))
-                {
-                    implicitParams++; // scopes
-                }
-
-                return global::System.Math.Max(0, ps.Length - implicitParams);
+                return global::System.Math.Max(0, GetLength(boundTarget) - boundArgs.Length);
             }
 
-            if (ps.Length == 2
-                && ps[0].ParameterType == typeof(object[])
-                && ps[1].ParameterType == typeof(object[]))
-            {
-                return 0;
-            }
+            var invoke = resolvedTarget.GetType().GetMethod("Invoke")
+                ?? throw new ArgumentException($"Delegate type '{resolvedTarget.GetType()}' does not define Invoke().", nameof(target));
+            var parameters = invoke.GetParameters();
+            var abi = JsCallableScopeAbiResolver.Resolve(resolvedTarget);
+            bool hasScopes = abi.HasExplicitScopePayload;
+            bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind);
+            int jsParamStart = hasScopes
+                ? (hasNewTarget ? 2 : 1)
+                : (hasNewTarget ? 1 : 0);
+            int expectedJsParamCount = parameters.Length - jsParamStart;
+            bool hasParamsArray = expectedJsParamCount > 0
+                && (
+                    Attribute.IsDefined(parameters[^1], typeof(ParamArrayAttribute))
+                    || (parameters[^1].ParameterType.IsArray && parameters[^1].ParameterType.GetElementType() == typeof(object))
+                );
 
-            var start = (ps.Length > 0 && ps[0].ParameterType == typeof(object[])) ? 1 : 0;
-            return global::System.Math.Max(0, ps.Length - start);
+            return global::System.Math.Max(0, hasParamsArray ? expectedJsParamCount - 1 : expectedJsParamCount);
         }
 
         public static string GetName(Delegate target)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
             var resolvedTarget = ResolveFunctionTarget(target);
+
+            if (Closure.TryGetFunctionPrototypeBoundMetadata(resolvedTarget, out var boundTarget, out _))
+            {
+                return "bound " + GetName(boundTarget);
+            }
+
             var name = resolvedTarget.Method.Name;
 
             if (string.Equals(name, "__js_call__", StringComparison.Ordinal))

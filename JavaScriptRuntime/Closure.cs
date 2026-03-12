@@ -39,14 +39,26 @@ namespace JavaScriptRuntime
             BindingFlags.NonPublic | BindingFlags.Static)
             ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeWithArgsWithThis(...).");
 
+        private enum BoundDelegateKind
+        {
+            ScopeBinding,
+            FunctionPrototypeBind
+        }
+
         private sealed class BoundDelegateMetadata
         {
-            public BoundDelegateMetadata(Delegate target)
+            public BoundDelegateMetadata(Delegate target, BoundDelegateKind kind, object?[]? boundArgs = null)
             {
                 Target = target;
+                Kind = kind;
+                BoundArgs = boundArgs ?? System.Array.Empty<object?>();
             }
 
             public Delegate Target { get; }
+
+            public BoundDelegateKind Kind { get; }
+
+            public object?[] BoundArgs { get; }
         }
 
         private sealed class DelegateInvokeMetadata
@@ -432,7 +444,8 @@ namespace JavaScriptRuntime
             object[] boundScopes,
             object? boundThis,
             bool captureLexicalNewTarget,
-            object? lexicalNewTarget)
+            object? lexicalNewTarget,
+            BoundDelegateKind kind)
         {
             var delegateType = target.GetType();
             var invoke = delegateType.GetMethod("Invoke")
@@ -501,7 +514,7 @@ namespace JavaScriptRuntime
             }
 
             var boundDelegate = Expression.Lambda(delegateType, body, lambdaParameters).Compile();
-            _boundDelegates.Add(boundDelegate, new BoundDelegateMetadata(target));
+            _boundDelegates.Add(boundDelegate, new BoundDelegateMetadata(target, kind));
             return boundDelegate;
         }
 
@@ -532,7 +545,7 @@ namespace JavaScriptRuntime
                 throw new ArgumentException("Expected a delegate for closure binding", nameof(target));
             }
 
-            return CreateBoundDelegate(del, boundScopes, boundThis: null, captureLexicalNewTarget: false, lexicalNewTarget: null);
+            return CreateBoundDelegate(del, boundScopes, boundThis: null, captureLexicalNewTarget: false, lexicalNewTarget: null, BoundDelegateKind.ScopeBinding);
         }
 
         // Bind an arrow function delegate to a fixed scopes array AND a fixed lexical 'this'.
@@ -549,7 +562,7 @@ namespace JavaScriptRuntime
             }
 
             var lexicalNewTarget = RuntimeServices.GetCurrentNewTarget();
-            return CreateBoundDelegate(del, boundScopes, boundThis, captureLexicalNewTarget: true, lexicalNewTarget);
+            return CreateBoundDelegate(del, boundScopes, boundThis, captureLexicalNewTarget: true, lexicalNewTarget, BoundDelegateKind.ScopeBinding);
         }
 
         internal static bool TryGetBoundTarget(Delegate boundDelegate, out Delegate target)
@@ -562,6 +575,36 @@ namespace JavaScriptRuntime
 
             target = null!;
             return false;
+        }
+
+        internal static bool IsFunctionPrototypeBoundDelegate(Delegate boundDelegate)
+        {
+            return _boundDelegates.TryGetValue(boundDelegate, out var metadata)
+                && metadata.Kind == BoundDelegateKind.FunctionPrototypeBind;
+        }
+
+        internal static bool TryGetFunctionPrototypeBoundMetadata(Delegate boundDelegate, out Delegate target, out object?[] boundArgs)
+        {
+            if (_boundDelegates.TryGetValue(boundDelegate, out var metadata)
+                && metadata.Kind == BoundDelegateKind.FunctionPrototypeBind)
+            {
+                target = metadata.Target;
+                boundArgs = metadata.BoundArgs;
+                return true;
+            }
+
+            target = null!;
+            boundArgs = null!;
+            return false;
+        }
+
+        internal static void TrackFunctionPrototypeBoundDelegate(Delegate boundDelegate, Delegate target, object?[] boundArgs)
+        {
+            if (boundDelegate is null) throw new ArgumentNullException(nameof(boundDelegate));
+            if (target is null) throw new ArgumentNullException(nameof(target));
+            if (boundArgs is null) throw new ArgumentNullException(nameof(boundArgs));
+
+            _boundDelegates.Add(boundDelegate, new BoundDelegateMetadata(target, BoundDelegateKind.FunctionPrototypeBind, boundArgs));
         }
 
         private static object InvokeWithArgsCore(object target, object[] scopes, object? newTarget, object?[] args)

@@ -2,7 +2,7 @@
 
 > **Last Updated**: 2026-03-12
 > Purpose: capture the highest-value unsupported or still-incomplete ECMA-262 features to drive issue execution planning.
-> Source basis: current branch/runtime/compiler state (including open PR #843), current `docs\ECMA262\**\Section*.json` status tracking, and targeted behavior checks.
+> Source basis: current branch/runtime/compiler state (including open PR #844), current `docs\ECMA262\**\Section*.json` status tracking, and targeted behavior checks.
 
 ## Current state changes since the previous draft
 
@@ -15,7 +15,8 @@
 - **Issue #779 is no longer backlog work.** PR #824 is merged on `master`, issue #779 is closed, and the symbol ecosystem audit landed with runtime/tests/docs updates.
 - **Issue #780 is no longer backlog work.** PR #825 is merged, issue #780 is closed, and Array iterator methods / `Array.prototype[Symbol.iterator]` are now on `master`.
 - **Issue #781 is no longer backlog work.** PR #831 is merged, issue #781 is closed, and WeakRef / FinalizationRegistry are no longer one of the top missing ECMA-262 features in the current codebase.
-- **Issue #727 is no longer backlog work on the current branch.** PR #843 implements descriptor-backed `Function` instance `.length` / `.name` own-property behavior, so the remaining work is review/merge rather than new backlog planning.
+- **Issue #727 is no longer backlog work.** PR #843 is merged, issue #727 is closed, and descriptor-backed `Function` instance `.length` / `.name` behavior is now on `master`.
+- **Issue #728 is no longer backlog work on the current branch.** PR #844 implements the bound-function constructor/new-target and metadata follow-up, so the remaining work is review/merge rather than new backlog planning.
 - **Issue #772 still reads more like close-or-rescope hygiene than a top missing implementation gap.** Static `import` / `export` lowering plus live-binding and cycle coverage already exist for common cases, so the remaining work needs sharper scoping if the issue stays open.
 
 ## Ranking Criteria
@@ -29,10 +30,9 @@
 
 | Rank | Backlog item | Primary spec areas | Current status signal |
 |---:|---|---|---|
-| 1 | [Complete bound function constructor/new-target + metadata semantics](https://github.com/tomacox74/js2il/issues/728) | 20.2.3.2, 10.2.x | Supported with Limitations |
-| 2 | [Re-scope or close the remaining ES module semantics issue](https://github.com/tomacox74/js2il/issues/772) | 16.2.x | Supported with Limitations / likely issue hygiene unless broader module-record semantics are still required |
+| 1 | [Re-scope or close the remaining ES module semantics issue](https://github.com/tomacox74/js2il/issues/772) | 16.2.x | Supported with Limitations / likely issue hygiene unless broader module-record semantics are still required |
 
-No third tracked ECMA-262 issue currently stands above these two; additional spec backlog work likely needs fresh issue scoping rather than carrying forward active-review #727 or landed #781 work.
+No second tracked ECMA-262 issue currently stands above this one; additional spec backlog work likely needs fresh issue scoping rather than carrying forward active-review #844 or landed #727 / #781 work.
 
 ## TypedArray follow-up note
 
@@ -64,14 +64,7 @@ No third tracked ECMA-262 issue currently stands above these two; additional spe
 
 ## Issue-ready backlog stubs
 
-## Issue 1: Complete Bound Function Semantics ([#728](https://github.com/tomacox74/js2il/issues/728))
-- Suggested labels: `enhancement`, `spec:ecma-262`, `priority:medium`
-- Minimum acceptance:
-  - Preserve bound constructor / `new.target` semantics
-  - Align bound-function metadata and prototype behavior with the spec
-  - Add focused coverage for constructor calls, metadata, and reflection
-
-## Issue 2: Re-scope ES Module Semantics Gaps ([#772](https://github.com/tomacox74/js2il/issues/772))
+## Issue 1: Re-scope ES Module Semantics Gaps ([#772](https://github.com/tomacox74/js2il/issues/772))
 - Suggested labels: `enhancement`, `spec:ecma-262`, `modules`, `commonjs`, `priority:medium`
 - Current reality:
   - Static `import` / `export` lowering already exists
