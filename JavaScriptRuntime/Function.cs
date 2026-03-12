@@ -275,6 +275,47 @@ namespace JavaScriptRuntime
             return string.IsNullOrEmpty(name) ? string.Empty : name;
         }
 
+        internal static bool TryEnsureOwnMetadataPropertyDescriptor(Delegate target, string propName, out JsPropertyDescriptor descriptor)
+        {
+            if (target is null) throw new ArgumentNullException(nameof(target));
+
+            if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
+            {
+                return true;
+            }
+
+            if (string.Equals(propName, "length", StringComparison.Ordinal))
+            {
+                descriptor = new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = false,
+                    Value = GetLength(target)
+                };
+                PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
+                return true;
+            }
+
+            if (string.Equals(propName, "name", StringComparison.Ordinal))
+            {
+                descriptor = new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = false,
+                    Value = GetName(target)
+                };
+                PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
+                return true;
+            }
+
+            descriptor = null!;
+            return false;
+        }
+
         private static bool IsSyntheticDynamicFunctionDeclaringTypeName(string? declaringTypeName)
         {
             const string prefix = "<>DynamicFunction_L";

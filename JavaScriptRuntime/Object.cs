@@ -2693,51 +2693,6 @@ namespace JavaScriptRuntime
             return DotNet2JSConversions.ToString(key);
         }
 
-        private static bool TryEnsureDelegateMetadataOwnPropertyDescriptor(object target, string propName, out JsPropertyDescriptor descriptor)
-        {
-            if (target is not Delegate del)
-            {
-                descriptor = null!;
-                return false;
-            }
-
-            if (PropertyDescriptorStore.TryGetOwn(del, propName, out descriptor!))
-            {
-                return true;
-            }
-
-            if (string.Equals(propName, "length", StringComparison.Ordinal))
-            {
-                descriptor = new JsPropertyDescriptor
-                {
-                    Kind = JsPropertyDescriptorKind.Data,
-                    Enumerable = false,
-                    Configurable = true,
-                    Writable = false,
-                    Value = JavaScriptRuntime.Function.GetLength(del)
-                };
-                PropertyDescriptorStore.DefineOrUpdate(del, propName, descriptor);
-                return true;
-            }
-
-            if (string.Equals(propName, "name", StringComparison.Ordinal))
-            {
-                descriptor = new JsPropertyDescriptor
-                {
-                    Kind = JsPropertyDescriptorKind.Data,
-                    Enumerable = false,
-                    Configurable = true,
-                    Writable = false,
-                    Value = JavaScriptRuntime.Function.GetName(del)
-                };
-                PropertyDescriptorStore.DefineOrUpdate(del, propName, descriptor);
-                return true;
-            }
-
-            descriptor = null!;
-            return false;
-        }
-
         private static bool HasOwnProperty(object target, string name)
         {
             if (target is null || target is JsNull)
@@ -2750,7 +2705,7 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (TryEnsureDelegateMetadataOwnPropertyDescriptor(target, name, out _))
+            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, name, out _))
             {
                 return true;
             }
@@ -2905,7 +2860,7 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (TryEnsureDelegateMetadataOwnPropertyDescriptor(target, propName, out descriptor!))
+            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, propName, out descriptor!))
             {
                 return true;
             }
@@ -2991,7 +2946,7 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (TryEnsureDelegateMetadataOwnPropertyDescriptor(target, propName, out var delegateMetadataDesc))
+            if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, propName, out var delegateMetadataDesc))
             {
                 value = delegateMetadataDesc.Value;
                 return true;
