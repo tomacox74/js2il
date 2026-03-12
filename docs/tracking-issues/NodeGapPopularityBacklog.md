@@ -1,6 +1,6 @@
 # Node Gap Popularity Backlog
 
-> **Last Updated**: 2026-03-09  
+> **Last Updated**: 2026-03-12  
 > Purpose: Persist a holistic, popularity-weighted view of missing functionality so triage context is not lost between sessions.
 > Scope: Node.js compatibility first, with adjacent ECMA impacts called out where they block common Node workloads.
 
@@ -18,7 +18,7 @@
 - Node docs track **13 modules** (11 currently `partial`, 2 `completed`) and **14 globals** (**14 `supported`**, **0 `partial`**).
 - Major blockers currently documented:
   - CommonJS `require(id)` supports compile-time `node_modules` package resolution via `package.json` `main` and a minimal `exports` subset, but the runtime does not probe the filesystem (packages must be discovered at compile time).
-  - ESM `import.meta.url` is not implemented.
+  - Node ESM loader semantics remain partial (`.mjs`, `type: module`, and broader package `exports` / `imports` handling), although `import.meta.url` is now available for compiled modules as a deterministic `file://` URL.
 
 ## Ranking Criteria
 
@@ -39,7 +39,7 @@
 | 6 | [Expand `child_process` beyond sync (spawn/exec/execFile, stdio pipes)](https://github.com/tomacox74/js2il/issues/788) | `child_process` | Merged (PR #827) |
 | 7 | [Implement `url`/`querystring` baseline (URL, URLSearchParams, parse/stringify)](https://github.com/tomacox74/js2il/issues/789) | `url`, `querystring` | Merged (PR #828) |
 | 8 | [Implement `crypto` minimum practical subset (createHash, randomBytes, webcrypto bridge)](https://github.com/tomacox74/js2il/issues/790) | `crypto` | In progress on `copilot/gh-790-crypto-minimum-subset` |
-| 9 | [Add ESM interop baseline (`import.meta.url` + Node-style ESM resolution plan)](https://github.com/tomacox74/js2il/issues/791) | ESM loader/interop | Not Yet Supported |
+| 9 | [Add ESM interop baseline (`import.meta.url` + Node-style ESM resolution plan)](https://github.com/tomacox74/js2il/issues/791) | ESM loader/interop | In review (PR #839) |
 | 10 | [Add `http`/`https`/`net`/`tls` baseline plan (client/server skeleton)](https://github.com/tomacox74/js2il/issues/792) | networking | Not Yet Supported |
 
 ## Issue-ready Backlog Stubs
@@ -102,8 +102,9 @@
 
 ## Issue 9: Add Node ESM Interop Baseline ([#791](https://github.com/tomacox74/js2il/issues/791))
 - Suggested labels: `enhancement`, `modules`, `commonjs`, `priority:low`
+- Status: in review (PR #839): https://github.com/tomacox74/js2il/pull/839
 - Minimum acceptance:
-  - `import.meta.url` exists for compiled modules with clear, documented constraints
+  - `import.meta.url` exists for compiled modules with deterministic `file://` semantics and clear, documented constraints
   - Note: deeper ECMA-262 ESM semantics are tracked separately (see [#772](https://github.com/tomacox74/js2il/issues/772))
 
 ## Issue 10: Add HTTP Stack Baseline Plan ([#792](https://github.com/tomacox74/js2il/issues/792))

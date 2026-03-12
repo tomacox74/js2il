@@ -3,28 +3,28 @@
 This file captures a point-in-time prioritized list of open issues/PRs and the current active item being addressed.
 
 Synced to:
-- Repo: `master` @ `6cb37ca3` (post-merge state through PR #830 / issue #583 landing)
-- Active branch: `copilot/gh-781-weakref-finalizationregistry-baseline` @ `34d76c09` (open PR #831 for issue #781)
-- GitHub: open issues/PRs state as of 2026-03-09 (refreshed after PR #831 opened)
+- Repo: `master` @ `eb268c9e` (state when PR #839 for issue #791 was opened)
+- Active branch: `copilot/gh-791-esm-interop-baseline` @ `cd770908` (open PR #839 for issue #791)
+- GitHub: open issues/PRs state as of 2026-03-12 (refreshed after PR #839 opened)
 
 ## Current active item
-**Issue #781** (OPEN; active work is now on `copilot/gh-781-weakref-finalizationregistry-baseline`, PR #831 is open):
-- https://github.com/tomacox74/js2il/issues/781
-- https://github.com/tomacox74/js2il/pull/831
-
-Rationale:
-- #583 landed via PR #830, so #781 is now the next ranked unfinished item.
-- PR #831 already carries the WeakRef / FinalizationRegistry baseline, so the remaining work is review/merge plus any review-driven follow-up.
-- This is now the highest-ranked open issue in the current triage list once the canary follow-up closed.
-
-## Recommended next item after #781
-**Issue #791** (OPEN):
+**Issue #791** (OPEN; active work is now on `copilot/gh-791-esm-interop-baseline`, PR #839 is open):
 - https://github.com/tomacox74/js2il/issues/791
+- https://github.com/tomacox74/js2il/pull/839
 
 Rationale:
-- Once PR #831 lands, #791 becomes the next ranked unfinished item in the list.
-- It is the next concrete Node compatibility item ahead of the broader networking plan in #792.
-- It remains a scoped follow-up after the more runtime-heavy WeakRef landing.
+- PR #831 remains open for issue #781, but the next planned implementation slice in the triage has now been executed and is in review as PR #839.
+- PR #839 adds the scoped ESM interop baseline (`import.meta.url` file URL semantics plus focused docs/tests), so the remaining work is review/merge plus any follow-up on broader Node loader behavior.
+- This is now the highest-ranked active Node compatibility item ahead of the broader networking plan in #792.
+
+## Recommended next item after #791
+**Issue #792** (OPEN):
+- https://github.com/tomacox74/js2il/issues/792
+
+Rationale:
+- Once PR #839 lands, #792 becomes the next ranked unfinished item in the list.
+- It is the next explicit Node platform planning item after the scoped ESM interop baseline.
+- The remaining higher-priority open items (#772 and #790) still look like hygiene or scope-clarification follow-up rather than fresh implementation slices.
 
 ## Recently completed since the previous snapshot
 - **#583** (priority:medium) Quality: add real-world canary corpus smoke tests (bounded) for ecosystem stability — CLOSED via PR #830 on 2026-03-09
@@ -85,47 +85,47 @@ Rationale:
 ## Top 10 open issues after the current active item (excluding #772 and #790, which currently look like hygiene follow-up)
 (Heuristic ranking using `priority:*` labels + module/spec/perf keywords in titles/labels; recommendation-only.)
 
-1. #791 (priority:low) node: add ESM interop baseline (import.meta.url + Node-style ESM resolution plan)
-   - https://github.com/tomacox74/js2il/issues/791
-2. #792 (priority:low) node: add http/https/net/tls baseline plan (client/server skeleton)
+1. #792 (priority:low) node: add http/https/net/tls baseline plan (client/server skeleton)
    - https://github.com/tomacox74/js2il/issues/792
-3. #727 Function length/name should be descriptor-backed own properties
+2. #727 Function length/name should be descriptor-backed own properties
    - https://github.com/tomacox74/js2il/issues/727
-4. #728 Complete bound function semantics for constructor/new-target and metadata
+3. #728 Complete bound function semantics for constructor/new-target and metadata
    - https://github.com/tomacox74/js2il/issues/728
-5. #419 Hosting: support mutable CommonJS exports (Node-like)
+4. #419 Hosting: support mutable CommonJS exports (Node-like)
    - https://github.com/tomacox74/js2il/issues/419
-6. #439 Hosting: publish referenceable library/build NuGet package
+5. #439 Hosting: publish referenceable library/build NuGet package
    - https://github.com/tomacox74/js2il/issues/439
-7. #451 perf(il): expand typed temps/locals to reduce casts/boxing
+6. #451 perf(il): expand typed temps/locals to reduce casts/boxing
       - https://github.com/tomacox74/js2il/issues/451
-8. #737 perf: callsite-based typed parameter specialization for non-exported functions
+7. #737 perf: callsite-based typed parameter specialization for non-exported functions
       - https://github.com/tomacox74/js2il/issues/737
-9. #738 perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations
+8. #738 perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations
       - https://github.com/tomacox74/js2il/issues/738
-10. #740 perf(prime): keep sieve loop math in typed locals with fallback
+9. #740 perf(prime): keep sieve loop math in typed locals with fallback
     - https://github.com/tomacox74/js2il/issues/740
+10. #742 perf(prime): trim timing/config coercion overhead in main path
+    - https://github.com/tomacox74/js2il/issues/742
 
 ## Remaining open issues
-11. #742 perf(prime): trim timing/config coercion overhead in main path
-    - https://github.com/tomacox74/js2il/issues/742
-12. #743 perf(prime): add Prime perf acceptance gate and reporting
+11. #743 perf(prime): add Prime perf acceptance gate and reporting
     - https://github.com/tomacox74/js2il/issues/743
-13. #746 perf: make dromaeo-object-regexp faster than Jint prepared
+12. #746 perf: make dromaeo-object-regexp faster than Jint prepared
     - https://github.com/tomacox74/js2il/issues/746
-14. #747 perf(regexp): cache Regex instances by source+flags
+13. #747 perf(regexp): cache Regex instances by source+flags
     - https://github.com/tomacox74/js2il/issues/747
-15. #748 perf(dispatch): add RegExp fast paths in Object.CallMember1/2
+14. #748 perf(dispatch): add RegExp fast paths in Object.CallMember1/2
     - https://github.com/tomacox74/js2il/issues/748
-16. #768 Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)
+15. #768 Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)
     - https://github.com/tomacox74/js2il/issues/768
 
 ## Open PRs (for context)
 - **#831** `feat(ecma262): add WeakRef cleanup baseline` — OPEN
   - https://github.com/tomacox74/js2il/pull/831
+- **#839** `feat(node): add import.meta.url file URL baseline` — OPEN
+  - https://github.com/tomacox74/js2il/pull/839
 
 ## Label/metadata gaps (as of this snapshot)
 - Open issues: 19
-- Open PRs: 1
+- Open PRs: 2
 - 14 open issues are missing `priority:*` labels.
 - No current open issues carry `lane:*` labels (19 missing).
