@@ -172,6 +172,12 @@ namespace Js2IL.Tests.Function
         public Task Function_Bind_ThisBinding_IgnoresCallReceiver() { var testName = nameof(Function_Bind_ThisBinding_IgnoresCallReceiver); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_Bind_Metadata_LengthNameAndPrototype() { var testName = nameof(Function_Bind_Metadata_LengthNameAndPrototype); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Bind_Construct_NewTargetAndPrototype() { var testName = nameof(Function_Bind_Construct_NewTargetAndPrototype); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_ApplyBind_DominoPushAll() { var testName = nameof(Function_ApplyBind_DominoPushAll); return ExecutionTest(testName); }
 
         [Fact]

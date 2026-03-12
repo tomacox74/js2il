@@ -168,10 +168,12 @@
         "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.bind",
         "testScripts": [
           "Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Bind_Construct_NewTargetAndPrototype.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Bind_Metadata_LengthNameAndPrototype.js",
           "Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js",
           "Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js"
         ],
-        "notes": "Implemented for delegate-backed function values via Function.prototype and the runtime member-call dispatcher. Supports binding this and partial application of arguments. Bound functions are modeled as delegates and do not currently implement full spec metadata (length/name/prototype)."
+        "notes": "Implemented for delegate-backed function values via Function.prototype and the runtime member-call dispatcher. Supports binding this and partial application of arguments, routes `new` on bound constructors through the target function with spec-aligned `new.target` rewriting, derives bound `length` / `name` metadata from the target, and keeps bound functions from surfacing an own `prototype` property. Full exotic-function edge cases beyond the current delegate-backed model are not implemented."
       },
       {
         "clause": "20.2.3.3",
@@ -230,11 +232,13 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function-instances-length",
         "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Bind_Construct_NewTargetAndPrototype.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Bind_Metadata_LengthNameAndPrototype.js",
           "Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js",
           "Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_DescriptorOwnProperties.js",
           "Js2IL.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js"
         ],
-        "notes": "Delegate-backed functions expose a numeric length property derived from CLR delegate method signatures, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Function-constructor-created callables use the parsed parameter list to set `.length`. Exact ECMA-262 length metadata rules are not fully implemented."
+        "notes": "Delegate-backed functions expose a numeric length property derived from ABI-aware callable parameter counting, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Bound functions compute `.length` as `max(target.length - boundArgsCount, 0)`. Function-constructor-created callables use the parsed parameter list to set `.length`. Exact ECMA-262 length metadata rules are not fully implemented."
       },
       {
         "clause": "20.2.4.2",
@@ -242,11 +246,13 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function-instances-name",
         "testScripts": [
+          "Js2IL.Tests/Function/JavaScript/Function_Bind_Construct_NewTargetAndPrototype.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Bind_Metadata_LengthNameAndPrototype.js",
           "Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js",
           "Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_DescriptorOwnProperties.js",
           "Js2IL.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js"
         ],
-        "notes": "Delegate-backed functions expose a string name property based on the underlying CLR method name, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Function-constructor-created callables default to `anonymous`. Exact SetFunctionName behavior is not implemented."
+        "notes": "Delegate-backed functions expose a string name property based on the underlying CLR method name, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Bound functions prefix that name with `bound ` for each bind layer. Function-constructor-created callables default to `anonymous`. Exact SetFunctionName behavior is not implemented."
       }
     ]
   }

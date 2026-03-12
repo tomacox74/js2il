@@ -2965,7 +2965,9 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (target is Delegate delPrototype && string.Equals(propName, "prototype", StringComparison.Ordinal))
+            if (target is Delegate delPrototype
+                && !Closure.IsFunctionPrototypeBoundDelegate(delPrototype)
+                && string.Equals(propName, "prototype", StringComparison.Ordinal))
             {
                 var protoObj = new JsObject();
                 PropertyDescriptorStore.DefineOrUpdate(delPrototype, "prototype", new JsPropertyDescriptor
