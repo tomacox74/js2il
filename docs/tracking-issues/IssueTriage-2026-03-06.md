@@ -117,15 +117,11 @@ Rationale:
     - https://github.com/tomacox74/js2il/issues/768
 
 ## Open PRs (for context)
-- **#831** `feat(ecma262): add WeakRef cleanup baseline` — OPEN
-  - https://github.com/tomacox74/js2il/pull/831
-- **#839** `feat(node): add import.meta.url file URL baseline` — OPEN
-  - https://github.com/tomacox74/js2il/pull/839
 - **#840** `feat(node): add http and net loopback baseline` — OPEN
   - https://github.com/tomacox74/js2il/pull/840
 
 ## Label/metadata gaps (as of this snapshot)
 - Open issues: 19
-- Open PRs: 3
+- Open PRs: 1
 - 14 open issues are missing `priority:*` labels.
 - No current open issues carry `lane:*` labels (19 missing).
