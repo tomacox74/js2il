@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-08T21:51:25Z
+> Last generated (UTC): 2026-03-12T16:26:43Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -84,13 +84,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Function instance length property | Supported with Limitations | [`Function_Instance_Length_Name_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js)<br>[`Function_Constructor_Call_Length_Name.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js) | Delegate-backed functions expose a numeric length property derived from CLR delegate method signatures. Function-constructor-created callables use the parsed parameter list to set `.length`. Exact ECMA-262 length metadata rules are not fully implemented. |
+| Function instance length property | Supported with Limitations | [`Function_Instance_Length_Name_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js)<br>[`Function_Instance_Length_Name_DescriptorOwnProperties.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_DescriptorOwnProperties.js)<br>[`Function_Constructor_Call_Length_Name.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js) | Delegate-backed functions expose a numeric length property derived from CLR delegate method signatures, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Function-constructor-created callables use the parsed parameter list to set `.length`. Exact ECMA-262 length metadata rules are not fully implemented. |
 
 ### 20.2.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances-name))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Function instance name property | Supported with Limitations | [`Function_Instance_Length_Name_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js)<br>[`Function_Constructor_New_ConstantString_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js) | Delegate-backed functions expose a string name property based on the underlying CLR method name. Function-constructor-created callables default to `anonymous`. Exact SetFunctionName behavior is not implemented. |
+| Function instance name property | Supported with Limitations | [`Function_Instance_Length_Name_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js)<br>[`Function_Instance_Length_Name_DescriptorOwnProperties.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_DescriptorOwnProperties.js)<br>[`Function_Constructor_New_ConstantString_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js) | Delegate-backed functions expose a string name property based on the underlying CLR method name, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Function-constructor-created callables default to `anonymous`. Exact SetFunctionName behavior is not implemented. |
 
 ### 20.2.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances-prototype))
 

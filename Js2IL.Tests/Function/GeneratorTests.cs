@@ -157,6 +157,9 @@ namespace Js2IL.Tests.Function
         public Task Function_Instance_Length_Name_Basic() { var testName = nameof(Function_Instance_Length_Name_Basic); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_Instance_Length_Name_DescriptorOwnProperties() { var testName = nameof(Function_Instance_Length_Name_DescriptorOwnProperties); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_Constructor_New_ConstantString_Basic() { var testName = nameof(Function_Constructor_New_ConstantString_Basic); return GenerateTest(testName); }
 
         [Fact]
