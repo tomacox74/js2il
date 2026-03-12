@@ -4,14 +4,14 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-03-12T05:51:16Z`
+**Generated:** `2026-03-12T08:19:09Z`
 
 ## Summary
 
-- **Modules:** 13
+- **Modules:** 17
 - **Globals:** 14
   - Supported: 14
-  - Partial: 11
+  - Partial: 13
 
 ## Modules
 
@@ -22,12 +22,16 @@
 | [events](events.md) | completed | [Node.js](https://nodejs.org/api/events.html) |
 | [fs](fs.md) | partial | [Node.js](https://nodejs.org/api/fs.html) |
 | [fs/promises](fs_promises.md) | partial | [Node.js](https://nodejs.org/api/fs.html#fspromisesapi) |
+| [http](http.md) | partial | [Node.js](https://nodejs.org/api/http.html) |
+| [https](https.md) | not-supported | [Node.js](https://nodejs.org/api/https.html) |
+| [net](net.md) | partial | [Node.js](https://nodejs.org/api/net.html) |
 | [os](os.md) | partial | [Node.js](https://nodejs.org/api/os.html) |
 | [path](path.md) | partial | [Node.js](https://nodejs.org/api/path.html) |
 | [perf_hooks](perf_hooks.md) | partial | [Node.js](https://nodejs.org/api/perf_hooks.html) |
 | [process](process.md) | completed | [Node.js](https://nodejs.org/api/process.html) |
 | [querystring](querystring.md) | partial | [Node.js](https://nodejs.org/api/querystring.html) |
 | [stream](stream.md) | partial | [Node.js](https://nodejs.org/api/stream.html) |
+| [tls](tls.md) | not-supported | [Node.js](https://nodejs.org/api/tls.html) |
 | [url](url.md) | partial | [Node.js](https://nodejs.org/api/url.html) |
 | [util](util.md) | partial | [Node.js](https://nodejs.org/api/util.html) |
 
@@ -55,5 +59,6 @@
 - Buffer core APIs for binary workflows are implemented, including from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes, array-like indexing, and binary read/write methods for Int8/16/32, UInt8/16/32, FloatLE/BE, and DoubleLE/BE with utf8/hex/base64 encodings.
 - crypto currently implements a focused synchronous subset only: createHash (md5/sha1/sha256/sha384/sha512), randomBytes, and getRandomValues for Buffer/Uint8Array/Int32Array; callback-style APIs, HMAC/cipher/key operations, and webcrypto.subtle are not implemented.
 - events module implements full core EventEmitter listener lifecycle APIs, events.errorMonitor behavior, and async helper APIs (events.on/events.once); advanced features such as captureRejections and newListener/removeListener event semantics are not yet implemented.
+- Networking is currently a focused IPv4 loopback baseline: node:net supports createServer/connect/socket basics, and node:http supports HTTP/1.1 createServer/get/request with UTF-8 text body chunks, Content-Length framing, and connection-close completion. Chunked transfer encoding, keep-alive/agents, advanced socket controls, node:https, and node:tls are not implemented yet.
 - CommonJS globals (__dirname/__filename) are supported; require() supports compiled local modules, implemented core modules, and compile-time node_modules package.json main plus a minimal exports subset; import.meta.url is available for compiled modules as a deterministic file:// URL, but full Node ESM loader/resolution semantics (.mjs, type: module, package exports/imports, live bindings) remain partial.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.
