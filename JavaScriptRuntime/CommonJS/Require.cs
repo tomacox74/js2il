@@ -213,9 +213,14 @@ namespace JavaScriptRuntime.CommonJS
                 JavaScriptRuntime.ObjectRuntime.SetProperty(moduleRequire, "main", _mainModule);
             }
 
+            var moduleFilename = GetCompiledModuleFilename(canonicalId);
             RuntimeServices.RegisterModuleRequire(canonicalId, moduleRequire);
+            if (!string.Equals(moduleFilename, canonicalId, StringComparison.OrdinalIgnoreCase))
+            {
+                RuntimeServices.RegisterModuleRequire(moduleFilename, moduleRequire);
+            }
 
-            var dirName = GetDirectoryNameForwardSlash(canonicalId);
+            var dirName = Path.GetDirectoryName(moduleFilename) ?? string.Empty;
             var module = new Module(canonicalId, canonicalId, parentModule, moduleRequire);
             _modules[cacheKey] = module;
             _instances[cacheKey] = module.exports ?? new object();
@@ -242,7 +247,7 @@ namespace JavaScriptRuntime.CommonJS
             _currentParentModule = module;
             try
             {
-                moduleDelegate(module.exports, moduleRequire, module, canonicalId, dirName);
+                moduleDelegate(module.exports, moduleRequire, module, moduleFilename, dirName);
             }
             finally
             {
@@ -252,6 +257,28 @@ namespace JavaScriptRuntime.CommonJS
 
             _instances[cacheKey] = module.exports!;
             return module.exports;
+        }
+
+        private string GetCompiledModuleFilename(string canonicalId)
+        {
+            var normalizedId = Normalize(canonicalId);
+            if (string.IsNullOrWhiteSpace(normalizedId))
+            {
+                return canonicalId;
+            }
+
+            if (Path.IsPathRooted(normalizedId))
+            {
+                return Path.GetFullPath(normalizedId);
+            }
+
+            var mainFilename = _mainModule?.filename;
+            var baseDirectory = string.IsNullOrWhiteSpace(mainFilename)
+                ? Path.GetFullPath(".")
+                : Path.GetDirectoryName(Path.GetFullPath(mainFilename)) ?? Path.GetFullPath(".");
+
+            var relativePath = normalizedId.Replace('/', Path.DirectorySeparatorChar);
+            return Path.GetFullPath(Path.Combine(baseDirectory, relativePath));
         }
 
         private static string NormalizeModuleIdKey(string keyOrId)

@@ -70,5 +70,12 @@ namespace Js2IL.Tests.Import
             var testName = nameof(Import_Namespace_FromCjs_Stable);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task Import_ImportMeta_Url()
+        {
+            var testName = nameof(Import_ImportMeta_Url);
+            return GenerateTest(testName);
+        }
     }
 }

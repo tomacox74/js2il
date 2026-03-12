@@ -1,7 +1,7 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2026-02-09T22:29:45Z`
+Generated: `2026-03-12T05:51:17Z`
 
 
 ## Modules
@@ -130,6 +130,16 @@ Implementation:
 | exit() | function | supported | [docs](https://nodejs.org/api/process.html#processexitcode) |
 | exit(code) | function | supported | [docs](https://nodejs.org/api/process.html#process_exit_code) |
 | exitCode | property | supported | [docs](https://nodejs.org/api/process.html#processexitcode) |
+| platform | property | supported | [docs](https://nodejs.org/api/process.html#processplatform) |
+| versions.node | property | supported | [docs](https://nodejs.org/api/process.html#processversions) |
+| versions.v8 | property | supported | [docs](https://nodejs.org/api/process.html#processversions) |
+| versions.modules | property | supported | [docs](https://nodejs.org/api/process.html#processversions) |
+| versions.js2il | property | supported | [docs](https://nodejs.org/api/process.html#processversions) |
+| versions.dotnet | property | supported | [docs](https://nodejs.org/api/process.html#processversions) |
+| env | property | supported | [docs](https://nodejs.org/api/process.html#processenv) |
+| chdir(directory) | function | supported | [docs](https://nodejs.org/api/process.html#processchdirdirectory) |
+| cwd() | function | supported | [docs](https://nodejs.org/api/process.html#processcwd) |
+| nextTick(callback, ...args) | function | supported | [docs](https://nodejs.org/api/process.html#processnexttickcallback-args) |
 
 Tests:
 - `argv`
@@ -141,6 +151,26 @@ Tests:
   - `Js2IL.Tests.Node.ProcessAdditionalTests.Process_Exit_Code_Sets_ExitCode` (`Js2IL.Tests/Node/ProcessAdditionalTests.cs`)
 - `exitCode`
   - `Js2IL.Tests.Node.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment` (`Js2IL.Tests/Node/ProcessExitCodeTests.cs`)
+- `platform`
+  - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `versions.node`
+  - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `versions.v8`
+  - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `versions.modules`
+  - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `versions.js2il`
+  - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `versions.dotnet`
+  - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `env`
+  - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `chdir(directory)`
+  - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `cwd()`
+  - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `nextTick(callback, ...args)`
+  - `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 
 ## Globals
@@ -294,5 +324,5 @@ Tests:
 ## Limitations
 
 - No Buffer support yet; fs APIs operate on UTF-8 text only.
-- CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; ESM import.meta.url is not.
+- CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; import.meta.url is available for compiled modules as a deterministic file:// URL, but full Node ESM loader/resolution semantics (.mjs, type: module, package exports/imports, live bindings) remain partial.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.

@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-12T05:51:17Z
 
 JS2IL supports the common Left-Hand-Side Expression forms used throughout the test suite (property access, function calls, `new`, `super`, and core meta-property behavior for `new.target` / `import.meta` in CommonJS-hosted scripts).
 
@@ -104,6 +104,6 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| import.meta host object (CommonJS limitation) | Supported with Limitations | [`CommonJS_ImportMeta_Basic.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_ImportMeta_Basic.js) | CommonJS-hosted scripts expose a host-defined import.meta object with stable identity per module URL/path key and a `url` property when available. This is not full ESM module-record semantics. |
+| import.meta host object (CommonJS limitation) | Supported with Limitations | [`CommonJS_ImportMeta_Basic.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_ImportMeta_Basic.js) | CommonJS-hosted and compiled-module scripts expose a host-defined import.meta object with stable identity per module URL key and a deterministic `file://` `url` for compiled modules. This is not full ESM module-record semantics. |
 | new.target in function/constructor call paths | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js) | `new.target` is propagated through function call/new invocation ABI. Normal calls observe undefined; constructor calls observe a defined newTarget value. Arrow functions capture lexical newTarget. |
 

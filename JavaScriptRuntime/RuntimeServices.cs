@@ -66,7 +66,7 @@ public class RuntimeServices
 
     public static object GetImportMeta(object? moduleIdOrPath)
     {
-        var url = moduleIdOrPath?.ToString() ?? string.Empty;
+        var url = GetImportMetaUrl(moduleIdOrPath);
         var meta = _importMetaByUrl.GetOrAdd(url, static key =>
         {
             var exp = new ExpandoObject();
@@ -79,6 +79,34 @@ public class RuntimeServices
         });
 
         return meta;
+    }
+
+    private static string GetImportMetaUrl(object? moduleIdOrPath)
+    {
+        var key = moduleIdOrPath?.ToString() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return string.Empty;
+        }
+
+        if (Path.IsPathRooted(key))
+        {
+            var fullPath = Path.GetFullPath(key);
+            var builder = new UriBuilder
+            {
+                Scheme = Uri.UriSchemeFile,
+                Host = string.Empty,
+                Path = fullPath,
+            };
+            return builder.Uri.AbsoluteUri;
+        }
+
+        if (Uri.TryCreate(key, UriKind.Absolute, out var absoluteUri))
+        {
+            return absoluteUri.AbsoluteUri;
+        }
+
+        return key;
     }
 
     /// <summary>
