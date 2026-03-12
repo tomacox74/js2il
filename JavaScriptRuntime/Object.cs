@@ -2710,12 +2710,6 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (target is System.Dynamic.ExpandoObject exp)
-            {
-                var dict = (IDictionary<string, object?>)exp;
-                return dict.ContainsKey(name);
-            }
-
             if (target is IDictionary<string, object?> dictGeneric)
             {
                 return dictGeneric.ContainsKey(name);
