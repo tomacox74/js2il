@@ -3,30 +3,33 @@
 This file captures a point-in-time prioritized list of open issues/PRs and the current active item being addressed.
 
 Synced to:
-- Repo: `master` @ `8a06e00f` (state when branch `copilot/gh-727-function-descriptor-metadata` was created)
-- Active branch: `copilot/gh-727-function-descriptor-metadata` @ `f69ae43c` (open PR #843 for issue #727)
-- GitHub: open issues/PRs state as of 2026-03-12 (refreshed after PR #840 merged and PR #843 opened)
+- Repo: `master` @ `d443c42e` (state when branch `copilot/gh-728-bound-function-semantics` was created)
+- Active branch: `copilot/gh-728-bound-function-semantics` @ `49b6c416` (open PR #844 for issue #728)
+- GitHub: open issues/PRs state as of 2026-03-12 (refreshed after PR #843 merged and PR #844 opened)
 
 ## Current active item
-**Issue #727** (OPEN; active work is now on `copilot/gh-727-function-descriptor-metadata`, PR #843 is open):
-- https://github.com/tomacox74/js2il/issues/727
-- https://github.com/tomacox74/js2il/pull/843
-
-Rationale:
-- PR #840 for issue #792 has merged, clearing the previous active triage item.
-- Issue #727 is now implemented and in review as PR #843, covering descriptor-backed own-property behavior for function `length` / `name`.
-- With the current Function metadata slice in review, the next likely follow-up is the adjacent bound-function semantics work in #728.
-
-## Recommended next item after #727
-**Issue #728** (OPEN):
+**Issue #728** (OPEN; active work is now on `copilot/gh-728-bound-function-semantics`, PR #844 is open):
 - https://github.com/tomacox74/js2il/issues/728
+- https://github.com/tomacox74/js2il/pull/844
 
 Rationale:
-- With #727 now in review, the next ranked unfinished implementation item becomes the bound-function semantics follow-up in #728.
-- It is the most direct continuation of the same Function-object compatibility surface, covering constructor/new-target and metadata edge cases intentionally left out of #727.
+- PR #843 for issue #727 has merged, clearing the previous active Function metadata item.
+- Issue #728 is now implemented and in review as PR #844, covering bound constructor/new-target behavior plus bound `length` / `name` / `prototype` semantics.
+- With the current Function follow-up in review, the next likely fresh implementation slice shifts back to the general runtime/hosting backlog.
+
+## Recommended next item after #728
+**Issue #419** (OPEN):
+- https://github.com/tomacox74/js2il/issues/419
+
+Rationale:
+- With #728 now in review, the next ranked unfinished implementation item becomes mutable CommonJS exports in #419.
+- It is the next concrete implementation slice in the ranked backlog once the adjacent Function-object follow-up is no longer the active review item.
 - The remaining higher-priority open item #772 still looks like hygiene or scope-clarification follow-up rather than a fresh implementation slice.
 
 ## Recently completed since the previous snapshot
+- **#727** (priority:medium) Function length/name should be descriptor-backed own properties — CLOSED via PR #843 on 2026-03-12
+  - https://github.com/tomacox74/js2il/issues/727
+  - https://github.com/tomacox74/js2il/pull/843
 - **#792** (priority:low) node: add http/https/net/tls baseline plan (client/server skeleton) — CLOSED via PR #840 on 2026-03-12
   - https://github.com/tomacox74/js2il/issues/792
   - https://github.com/tomacox74/js2il/pull/840
@@ -84,41 +87,39 @@ Rationale:
 ## Top 10 open issues after the current active item (excluding #772, which currently looks like hygiene follow-up)
 (Heuristic ranking using `priority:*` labels + module/spec/perf keywords in titles/labels; recommendation-only.)
 
-1. #728 Complete bound function semantics for constructor/new-target and metadata
-   - https://github.com/tomacox74/js2il/issues/728
-2. #419 Hosting: support mutable CommonJS exports (Node-like)
+1. #419 Hosting: support mutable CommonJS exports (Node-like)
    - https://github.com/tomacox74/js2il/issues/419
-3. #439 Hosting: publish referenceable library/build NuGet package
+2. #439 Hosting: publish referenceable library/build NuGet package
    - https://github.com/tomacox74/js2il/issues/439
-4. #451 perf(il): expand typed temps/locals to reduce casts/boxing
+3. #451 perf(il): expand typed temps/locals to reduce casts/boxing
         - https://github.com/tomacox74/js2il/issues/451
-5. #737 perf: callsite-based typed parameter specialization for non-exported functions
+4. #737 perf: callsite-based typed parameter specialization for non-exported functions
         - https://github.com/tomacox74/js2il/issues/737
-6. #738 perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations
+5. #738 perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations
         - https://github.com/tomacox74/js2il/issues/738
-7. #740 perf(prime): keep sieve loop math in typed locals with fallback
+6. #740 perf(prime): keep sieve loop math in typed locals with fallback
       - https://github.com/tomacox74/js2il/issues/740
-8. #742 perf(prime): trim timing/config coercion overhead in main path
+7. #742 perf(prime): trim timing/config coercion overhead in main path
       - https://github.com/tomacox74/js2il/issues/742
-9. #743 perf(prime): add Prime perf acceptance gate and reporting
+8. #743 perf(prime): add Prime perf acceptance gate and reporting
       - https://github.com/tomacox74/js2il/issues/743
-10. #746 perf: make dromaeo-object-regexp faster than Jint prepared
+9. #746 perf: make dromaeo-object-regexp faster than Jint prepared
      - https://github.com/tomacox74/js2il/issues/746
+10. #747 perf(regexp): cache Regex instances by source+flags
+     - https://github.com/tomacox74/js2il/issues/747
 
 ## Remaining open issues
-11. #747 perf(regexp): cache Regex instances by source+flags
-     - https://github.com/tomacox74/js2il/issues/747
-12. #748 perf(dispatch): add RegExp fast paths in Object.CallMember1/2
+11. #748 perf(dispatch): add RegExp fast paths in Object.CallMember1/2
      - https://github.com/tomacox74/js2il/issues/748
-13. #768 Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)
+12. #768 Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)
      - https://github.com/tomacox74/js2il/issues/768
 
 ## Open PRs (for context)
-- **#843** `fix(function): descriptor-back length and name metadata` — OPEN
-  - https://github.com/tomacox74/js2il/pull/843
+- **#844** `fix(function): complete bound function semantics` — OPEN
+  - https://github.com/tomacox74/js2il/pull/844
 
 ## Label/metadata gaps (as of this snapshot)
-- Open issues: 19
+- Open issues: 18
 - Open PRs: 1
-- 17 open issues are missing `priority:*` labels.
-- No current open issues carry `lane:*` labels (19 missing).
+- 16 open issues are missing `priority:*` labels.
+- No current open issues carry `lane:*` labels (18 missing).
