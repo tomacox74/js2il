@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - runtime/tests/docs: add the issue #791 Node ESM interop baseline by normalizing compiled-module `import.meta.url` to deterministic `file://` URLs, adding focused CommonJS/Import coverage for cross-module URL resolution, and refreshing the related Node and ECMA-262 tracking docs (PR #839).
+- runtime/tests/docs: add the issue #792 networking baseline by implementing minimal `node:net` TCP loopback primitives (`createServer`, `connect`, `Socket`/`Server`) plus a narrow `node:http` HTTP/1.1 server/client slice (`createServer`, `request`, `get`, `IncomingMessage`, `ServerResponse`) with focused execution/generator coverage and explicit `node:https` / `node:tls` runtime diagnostics.
 
 ## v0.8.30 - 2026-03-10
 
