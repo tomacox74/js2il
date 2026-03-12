@@ -15,7 +15,7 @@
 
 ## Current Baseline (Snapshot)
 
-- Node docs track **13 modules** (11 currently `partial`, 2 `completed`) and **14 globals** (**14 `supported`**, **0 `partial`**).
+- Node docs track **17 modules** (**13 `partial`**, **2 `completed`**, **2 `not-supported`**) and **14 globals** (**14 `supported`**, **0 `partial`**).
 - Major blockers currently documented:
   - CommonJS `require(id)` supports compile-time `node_modules` package resolution via `package.json` `main` and a minimal `exports` subset, but the runtime does not probe the filesystem (packages must be discovered at compile time).
   - Node ESM loader semantics remain partial (`.mjs`, `type: module`, and broader package `exports` / `imports` handling), although `import.meta.url` is now available for compiled modules as a deterministic `file://` URL.
@@ -40,7 +40,7 @@
 | 7 | [Implement `url`/`querystring` baseline (URL, URLSearchParams, parse/stringify)](https://github.com/tomacox74/js2il/issues/789) | `url`, `querystring` | Merged (PR #828) |
 | 8 | [Implement `crypto` minimum practical subset (createHash, randomBytes, webcrypto bridge)](https://github.com/tomacox74/js2il/issues/790) | `crypto` | In progress on `copilot/gh-790-crypto-minimum-subset` |
 | 9 | [Add ESM interop baseline (`import.meta.url` + Node-style ESM resolution plan)](https://github.com/tomacox74/js2il/issues/791) | ESM loader/interop | In review (PR #839) |
-| 10 | [Add `http`/`https`/`net`/`tls` baseline plan (client/server skeleton)](https://github.com/tomacox74/js2il/issues/792) | networking | Not Yet Supported |
+| 10 | [Add `http`/`https`/`net`/`tls` baseline plan (client/server skeleton)](https://github.com/tomacox74/js2il/issues/792) | networking | In review (PR #840) |
 
 ## Issue-ready Backlog Stubs
 
@@ -109,8 +109,11 @@
 
 ## Issue 10: Add HTTP Stack Baseline Plan ([#792](https://github.com/tomacox74/js2il/issues/792))
 - Suggested labels: `enhancement`, `modules`, `priority:low`
+- Status: in review (PR #840): https://github.com/tomacox74/js2il/pull/840
 - Minimum acceptance:
-  - A staged plan + initial docs for http/https/net/tls modules (even if stubbed)
+  - Minimal `node:net` loopback support via `createServer`, `connect`/`createConnection`, and EventEmitter-backed `Server` / `Socket` lifecycles
+  - Minimal `node:http` loopback support via `createServer`, `request`, `get`, `IncomingMessage`, and `ServerResponse`
+  - Explicit `node:https` / `node:tls` diagnostics and docs for deferred TLS functionality
 
 ## Internal Demand Signals (Repo-local)
 
