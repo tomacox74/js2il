@@ -4,7 +4,7 @@
 /*
  * bumpVersion.js
  * Automates version bumping across CHANGELOG.md, src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj,
- * and src/JavaScriptRuntime/JavaScriptRuntime.csproj.
+ * src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj.
  * Usage examples:
  *   node scripts/bumpVersion.js patch
  *   node scripts/bumpVersion.js minor
@@ -18,8 +18,8 @@
  * - Moves content under '## Unreleased' (excluding placeholder lines like '_Nothing yet._')
  *   into a new section '## vX.Y.Z - YYYY-MM-DD' above the previous releases.
  * - If Unreleased is empty and you request a bump, it still creates an empty release section unless --skip-empty.
- * - Updates <Version> in src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj, and
- *   src/JavaScriptRuntime/JavaScriptRuntime.csproj
+ * - Updates <Version> in src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj,
+ *   src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
  *   (adds if not present).
  * - Writes files only if actual changes differ.
  * - Prints next steps (commit, tag).
@@ -31,6 +31,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const CSPROJ_PATH = path.join(ROOT, 'src', 'Cli', 'Js2IL.csproj');
 const CORE_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.Core', 'Js2IL.Core.csproj');
+const SDK_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.SDK', 'Js2IL.SDK.csproj');
 const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'src', 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
 
@@ -108,6 +109,7 @@ function perform() {
   const skipEmpty = process.argv.includes('--skip-empty');
   const csprojText = readFile(CSPROJ_PATH);
   const coreCsprojText = readFile(CORE_CSPROJ_PATH);
+  const sdkCsprojText = readFile(SDK_CSPROJ_PATH);
   const runtimeCsprojText = readFile(RUNTIME_CSPROJ_PATH);
   const changelogText = readFile(CHANGELOG_PATH);
 
@@ -124,9 +126,11 @@ function perform() {
     console.log('Unreleased is empty and --skip-empty specified; only bumping csproj version.');
     const newCsproj = updateCsprojVersion(csprojText, newVersion);
     const newCoreCsproj = updateCsprojVersion(coreCsprojText, newVersion);
+    const newSdkCsproj = updateCsprojVersion(sdkCsprojText, newVersion);
     const newRuntimeCsproj = updateCsprojVersion(runtimeCsprojText, newVersion);
     writeFile(CSPROJ_PATH, newCsproj);
     writeFile(CORE_CSPROJ_PATH, newCoreCsproj);
+    writeFile(SDK_CSPROJ_PATH, newSdkCsproj);
     writeFile(RUNTIME_CSPROJ_PATH, newRuntimeCsproj);
     return;
   }
@@ -139,17 +143,19 @@ function perform() {
   const updatedChangelog = before + newUnreleased + releaseSection + after;
   const updatedCsproj = updateCsprojVersion(csprojText, newVersion);
   const updatedCoreCsproj = updateCsprojVersion(coreCsprojText, newVersion);
+  const updatedSdkCsproj = updateCsprojVersion(sdkCsprojText, newVersion);
   const updatedRuntimeCsproj = updateCsprojVersion(runtimeCsprojText, newVersion);
 
   writeFile(CHANGELOG_PATH, updatedChangelog);
   writeFile(CSPROJ_PATH, updatedCsproj);
   writeFile(CORE_CSPROJ_PATH, updatedCoreCsproj);
+  writeFile(SDK_CSPROJ_PATH, updatedSdkCsproj);
   writeFile(RUNTIME_CSPROJ_PATH, updatedRuntimeCsproj);
 
   console.log(`Bumped version: ${currentVersion} -> ${newVersion}`);
-  console.log('Updated CHANGELOG.md, src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj');
+  console.log('Updated CHANGELOG.md, src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj, src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj');
   console.log('\nNext steps:');
-  console.log(`  git add CHANGELOG.md src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj`);
+  console.log(`  git add CHANGELOG.md src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/Js2IL.SDK/Js2IL.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj`);
   console.log(`  git commit -m "chore(release): cut ${newVersion}"`);
   console.log(`  git tag -a v${newVersion} -m "Release ${newVersion}"`);
   console.log('  git push && git push --tags');
