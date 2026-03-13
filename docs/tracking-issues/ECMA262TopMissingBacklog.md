@@ -1,77 +1,41 @@
 # ECMA-262 Top Missing Features Backlog
 
-> **Last Updated**: 2026-03-12
-> Purpose: capture the highest-value unsupported or still-incomplete ECMA-262 features to drive issue execution planning.
-> Source basis: current branch/runtime/compiler state (including open PR #844), current `docs\ECMA262\**\Section*.json` status tracking, and targeted behavior checks.
+> **Last Updated**: 2026-03-13
+> Purpose: capture the highest-impact ECMA-262 gaps still marked missing or materially incomplete in `docs\ECMA262`.
+> Source basis: current `docs\ECMA262\**\Section*.json` tracking only; this pass intentionally avoids stale issue / PR history.
 
-## Current state changes since the previous draft
+## How this pass was filtered
 
-- **Issue #773 is no longer backlog work.** ArrayBuffer and DataView are implemented and documented, so the old "typed arrays need ArrayBuffer/DataView foundation" item is stale.
-- **Issue #774 is no longer backlog work.** PR #818 is merged, issue #774 is closed, and typed arrays are no longer one of the top missing ECMA-262 features in the current codebase.
-- **Issue #775 is no longer backlog work.** PR #819 landed the modern RegExp parity pass, so this item should not remain in the ranked missing-features list.
-- **Issue #776 is no longer backlog work.** PR #821 landed the ordinary object invariant work on `master`, closing the descriptor/key-ordering gap that this backlog previously ranked near the top.
-- **Issue #777 is no longer backlog work.** PR #822 is merged, issue #777 is closed, and object integrity semantics are now documented on `master`.
-- **Issue #778 is no longer backlog work.** PR #823 is merged, issue #778 is closed, and the staged Function-constructor support has landed on `master`.
-- **Issue #779 is no longer backlog work.** PR #824 is merged on `master`, issue #779 is closed, and the symbol ecosystem audit landed with runtime/tests/docs updates.
-- **Issue #780 is no longer backlog work.** PR #825 is merged, issue #780 is closed, and Array iterator methods / `Array.prototype[Symbol.iterator]` are now on `master`.
-- **Issue #781 is no longer backlog work.** PR #831 is merged, issue #781 is closed, and WeakRef / FinalizationRegistry are no longer one of the top missing ECMA-262 features in the current codebase.
-- **Issue #727 is no longer backlog work.** PR #843 is merged, issue #727 is closed, and descriptor-backed `Function` instance `.length` / `.name` behavior is now on `master`.
-- **Issue #728 is no longer backlog work on the current branch.** PR #844 implements the bound-function constructor/new-target and metadata follow-up, so the remaining work is review/merge rather than new backlog planning.
-- **Issue #772 still reads more like close-or-rescope hygiene than a top missing implementation gap.** Static `import` / `export` lowering plus live-binding and cycle coverage already exist for common cases, so the remaining work needs sharper scoping if the issue stays open.
-
-## Ranking Criteria
-
-- Real-world unblock impact (npm/tooling/runtime compatibility)
-- Breadth of spec surface still missing
-- Dependency leverage (enables multiple later features)
-- Testability and rollout feasibility
+- Included items that are still marked `Not Yet Supported`, plus a few materially incomplete user-visible surfaces where the docs describe a large missing feature family.
+- Collapsed closely related clauses into a single backlog item when the docs describe one missing surface (for example, iterator helpers).
+- De-prioritized deprecated or low-value gaps (`with`, `debugger`) and metadata-only constructor/prototype parity where the underlying syntax/runtime behavior already works.
 
 ## Current ranked backlog (recommended order)
 
-| Rank | Backlog item | Primary spec areas | Current status signal |
-|---:|---|---|---|
-| 1 | [Re-scope or close the remaining ES module semantics issue](https://github.com/tomacox74/js2il/issues/772) | 16.2.x | Supported with Limitations / likely issue hygiene unless broader module-record semantics are still required |
+| Rank | Issue | Missing feature | Key tracked clauses | Why it is still top-10 |
+|---:|---|---|---|---|
+| 1 | [#857](https://github.com/tomacox74/js2il/issues/857) | Full ECMA module record / linking / evaluation model | [`16.2 Modules`](../ECMA262/16/Section16_2.md) - `16.2.1` | Static `import` / `export` lowering exists, but the docs still mark the real module-record/link/evaluate model as `Not Yet Supported`; this is the largest remaining ESM compatibility gap. |
+| 2 | [#858](https://github.com/tomacox74/js2il/issues/858) | Getter/setter method definitions in objects and classes | [`15.4 Method Definitions`](../ECMA262/15/Section15_4.md) - `15.4.1` | Accessors are still validator-rejected, so common object/class API patterns using `get` / `set` remain unavailable. |
+| 3 | [#859](https://github.com/tomacox74/js2il/issues/859) | Remaining modern class element forms | [`15.7 Class Definitions`](../ECMA262/15/Section15_7.md) - `15.7.1`, `15.7.10`, `15.7.11` | Computed method names, computed field names, private methods, and static blocks are all still marked `Not Yet Supported`. |
+| 4 | [#860](https://github.com/tomacox74/js2il/issues/860) | Temporal dead zone (TDZ) enforcement for lexical bindings | [`14.2 Block`](../ECMA262/14/Section14_2.md) - `14.2.3`; [`14.3 Declarations`](../ECMA262/14/Section14_3.md) - `14.3.1.2` | `let` / `const` scopes work, but the docs still mark TDZ behavior as missing and even call out a currently skipped TDZ test. |
+| 5 | [#861](https://github.com/tomacox74/js2il/issues/861) | Keyed collections as first-class JS constructor / prototype surfaces | [`24.1 Map`](../ECMA262/24/Section24_1.md) - `24.1.2.2`; [`24.2 Set`](../ECMA262/24/Section24_2.md) - `24.2.3.1`; [`24.3 WeakMap`](../ECMA262/24/Section24_3.md) - `24.3.2.1`; [`24.4 WeakSet`](../ECMA262/24/Section24_4.md) - `24.4.2.1` | The runtime can construct these collections in narrow cases, but the docs still mark the JS-visible constructor values / `.prototype` surfaces as missing, which breaks reflective and prototype-based code. |
+| 6 | [#862](https://github.com/tomacox74/js2il/issues/862) | Map/Set iterable construction and prototype completion | [`24.1 Map`](../ECMA262/24/Section24_1.md) - `24.1.1.1`, `24.1.3.5`, `24.1.3.14`; [`24.2 Set`](../ECMA262/24/Section24_2.md) - `24.2.2.1`, `24.2.4.2`, `24.2.4.4`, `24.2.4.5` | `new Map(iterable)`, `new Set(iterable)`, `Map.prototype.forEach`, `Map.prototype[@@iterator]`, the missing core Set members, and the ES2025 Set algebra methods are all still not supported. |
+| 7 | [#863](https://github.com/tomacox74/js2il/issues/863) | Advanced proxy traps and revocation | [`10.5 Proxy internal methods`](../ECMA262/10/Section10_5.md) - `10.5.10`; [`28.2 Proxy Objects`](../ECMA262/28/Section28_2.md) - `28.2.2.1` | JS2IL currently supports the get/set/has happy path, but delete/ownKeys/apply/construct/prototype traps and `Proxy.revocable` are still missing. |
+| 8 | [#864](https://github.com/tomacox74/js2il/issues/864) | String prototype object, string iterator, and missing modern string APIs | [`22.1 String Objects`](../ECMA262/22/Section22_1.md) - `22.1.2.3`, `22.1.3.1`, `22.1.3.14`, `22.1.3.20`, `22.1.3.36`, `22.1.5` | The docs still mark the real `String.prototype` object, string iteration, and many common APIs (`fromCodePoint`, `raw`, `at`, `codePointAt`, `matchAll`, `padStart` / `padEnd`, `replaceAll`, well-formed Unicode helpers) as missing. |
+| 9 | [#865](https://github.com/tomacox74/js2il/issues/865) | Iterator helpers plus the `Iterator` / `AsyncIterator` constructor surfaces | [`27.1 Iteration`](../ECMA262/27/Section27_1.md) - `27.1.2`, `27.1.3`, `27.1.4` | `for..of` and `for await..of` work, but the new iterator-helper family and the public `Iterator` / `AsyncIterator` objects are still entirely marked `Not Yet Supported`. |
+| 10 | [#866](https://github.com/tomacox74/js2il/issues/866) | Arguments exotic objects / mapped `arguments` semantics | [`10.4 Built-in Exotic Objects`](../ECMA262/10/Section10_4.md) - `10.4.4` | Functions currently materialize `arguments` as plain arrays, so mapped/unmapped arguments objects and their aliasing semantics are still missing. |
 
-No second tracked ECMA-262 issue currently stands above this one; additional spec backlog work likely needs fresh issue scoping rather than carrying forward active-review #844 or landed #727 / #781 work.
+## Notable next-tier gaps
 
-## TypedArray follow-up note
+- **TypedArray constructor / prototype fidelity and remaining methods**: [`23.2 TypedArray Objects`](../ECMA262/23/Section23_2.md) and [`10.4.5 TypedArray Exotic Objects`](../ECMA262/10/Section10_4.md) are still `Incomplete`, but the docs now track a substantial supported subset for `Int32Array`, `Uint8Array`, and `Float64Array`.
+- **Uint8Array base64 / hex extensions**: [`23.3 Uint8Array Objects`](../ECMA262/23/Section23_3.md) is still `Not Yet Supported`.
+- **Promise follow-up surface**: [`27.2 Promise Objects`](../ECMA262/27/Section27_2.md) still has gaps such as `HostPromiseRejectionTracker`, `Promise.try`, and `Symbol.species`.
+- **Function-constructor intrinsics for generator / async function families**: [`27.3`](../ECMA262/27/Section27_3.md), [`27.4`](../ECMA262/27/Section27_4.md), and [`27.7`](../ECMA262/27/Section27_7.md) still miss constructor / prototype parity even though the underlying syntax is mostly supported.
 
-- PR #818 is merged and issue #774 is closed.
-- Remaining typed-array gaps are follow-up polish items rather than one of the top missing features:
-  - constructor/prototype metadata fidelity (`%TypedArray%.prototype`, `.constructor`, static `BYTES_PER_ELEMENT`)
-  - detached-buffer semantics and species hooks
-  - broader family parity beyond the currently targeted `Int32Array`, `Uint8Array`, and `Float64Array`
+## Intentionally de-prioritized missing items
 
-## Object integrity status note
+- [`14.11 The with Statement`](../ECMA262/14/Section14_11.md)
+- [`14.16 The debugger Statement`](../ECMA262/14/Section14_16.md)
 
-- PR #822 is merged and issue #777 is closed, so object integrity work is no longer backlog planning material.
-
-## Symbol ecosystem status note
-
-- PR #824 is merged and issue #779 is closed, so symbol ecosystem work is no longer backlog planning material.
-- If additional symbol follow-up is needed, it should likely narrow to the remaining well-known-symbol hooks (`Symbol.hasInstance`, `Symbol.species`, `Symbol.toPrimitive`) rather than reopen the completed #779 landing scope.
-
-## Array iterator status note
-
-- PR #825 is merged and issue #780 is closed, so array iterator work is no longer backlog planning material.
-- If any follow-up is needed, it should narrow to iterator metadata/fidelity (for example `%ArrayIteratorPrototype%[%Symbol.toStringTag%]` and more exotic edge cases) rather than re-ranking #780 as a top missing feature.
-
-## WeakRef / FinalizationRegistry status note
-
-- PR #831 is merged and issue #781 is closed.
-- The docs now mark the relevant host-cleanup and object sections as `Supported with Limitations` rather than `Not Yet Supported`.
-- Any remaining follow-up is fidelity polish, not top-backlog scoping.
-
-## Issue-ready backlog stubs
-
-## Issue 1: Re-scope ES Module Semantics Gaps ([#772](https://github.com/tomacox74/js2il/issues/772))
-- Suggested labels: `enhancement`, `spec:ecma-262`, `modules`, `commonjs`, `priority:medium`
-- Current reality:
-  - Static `import` / `export` lowering already exists
-  - Live import bindings and cyclic coverage exist for common cases
-  - The original issue wording now looks broader than the remaining codebase gap
-- Minimum acceptance:
-  - Either close the issue as effectively fulfilled, or re-scope it to the specific module-record / linking / evaluation semantics still missing
-  - If kept open, document the exact unsupported behavior still intended (rather than the already-landed lowering work)
-  - Add or refresh targeted tests only for the remaining unsupported semantics
+These are still marked unsupported, but they are low-value or intentionally rejected compared with the ten gaps above.
 
