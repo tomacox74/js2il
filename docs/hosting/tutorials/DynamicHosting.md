@@ -48,10 +48,13 @@ Console.WriteLine((string)exports.getTitle(win));
 
 ## Member writes
 
-- The **exports object itself** is read-only via the hosting API.
-- But objects returned from exports are dynamic value proxies that support setting members:
+- The **exports object itself** is mutable via the hosting API.
+- Writes are marshalled to the owning script thread, just like reads and calls.
+- Objects returned from exports are also dynamic value proxies that support setting members:
 
 ```csharp
+exports.mutableValue = 123; // writes module.exports.mutableValue on the script thread
+
 dynamic obj = exports.getSomeObject();
 obj.count = 123; // marshalled to the script thread
 ```

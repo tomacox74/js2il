@@ -3,30 +3,33 @@
 This file captures a point-in-time prioritized list of open issues/PRs and the current active item being addressed.
 
 Synced to:
-- Repo: `master` @ `d443c42e` (state when branch `copilot/gh-728-bound-function-semantics` was created)
-- Active branch: `copilot/gh-728-bound-function-semantics` @ `49b6c416` (open PR #844 for issue #728)
-- GitHub: open issues/PRs state as of 2026-03-12 (refreshed after PR #843 merged and PR #844 opened)
+- Repo: `master` @ `e73f7e94` (state when branch `copilot/gh-419-mutable-commonjs-exports` was created)
+- Active branch: `copilot/gh-419-mutable-commonjs-exports` @ `2ea6b8c6` (open PR #851 for issue #419)
+- GitHub: open issues/PRs state as of 2026-03-13 (refreshed after PR #844 merged, issue #439 was decomposed into subissues #845-#850, and PR #851 opened)
 
 ## Current active item
-**Issue #728** (OPEN; active work is now on `copilot/gh-728-bound-function-semantics`, PR #844 is open):
-- https://github.com/tomacox74/js2il/issues/728
-- https://github.com/tomacox74/js2il/pull/844
-
-Rationale:
-- PR #843 for issue #727 has merged, clearing the previous active Function metadata item.
-- Issue #728 is now implemented and in review as PR #844, covering bound constructor/new-target behavior plus bound `length` / `name` / `prototype` semantics.
-- With the current Function follow-up in review, the next likely fresh implementation slice shifts back to the general runtime/hosting backlog.
-
-## Recommended next item after #728
-**Issue #419** (OPEN):
+**Issue #419** (OPEN; active work is now on `copilot/gh-419-mutable-commonjs-exports`, PR #851 is open):
 - https://github.com/tomacox74/js2il/issues/419
+- https://github.com/tomacox74/js2il/pull/851
 
 Rationale:
-- With #728 now in review, the next ranked unfinished implementation item becomes mutable CommonJS exports in #419.
-- It is the next concrete implementation slice in the ranked backlog once the adjacent Function-object follow-up is no longer the active review item.
+- PR #844 for issue #728 has merged, clearing the previous Function follow-up item.
+- Issue #419 is now implemented and in review as PR #851, covering mutable `module.exports` access through both typed and dynamic hosting proxies while preserving script-thread marshalling.
+- With the current hosting mutable-exports work in review, the next likely fresh implementation slice shifts to the packaging migration work now decomposed under issue #439.
+
+## Recommended next item after #419
+**Issue #845** (OPEN):
+- https://github.com/tomacox74/js2il/issues/845
+
+Rationale:
+- Issue #439 is now an umbrella tracker rather than a single executable slice; the new concrete starting point is subissue #845.
+- #845 extracts `Js2IL.Core` / `Js2IL.Compiler.dll`, which is the first dependency in the now-broken-down hosting/package migration.
 - The remaining higher-priority open item #772 still looks like hygiene or scope-clarification follow-up rather than a fresh implementation slice.
 
 ## Recently completed since the previous snapshot
+- **#728** (priority:medium) Complete bound function semantics for constructor/new-target and metadata — CLOSED via PR #844 on 2026-03-12
+  - https://github.com/tomacox74/js2il/issues/728
+  - https://github.com/tomacox74/js2il/pull/844
 - **#727** (priority:medium) Function length/name should be descriptor-backed own properties — CLOSED via PR #843 on 2026-03-12
   - https://github.com/tomacox74/js2il/issues/727
   - https://github.com/tomacox74/js2il/pull/843
@@ -80,46 +83,65 @@ Rationale:
   - https://github.com/tomacox74/js2il/pull/813
 
 ## Triage notes
+**Issue #439 is now an umbrella packaging migration tracker** and should generally be executed through its subissues (`#845`-`#850`) rather than as a single large PR:
+- https://github.com/tomacox74/js2il/issues/439
+- https://github.com/tomacox74/js2il/issues/845
+- https://github.com/tomacox74/js2il/issues/846
+- https://github.com/tomacox74/js2il/issues/847
+- https://github.com/tomacox74/js2il/issues/848
+- https://github.com/tomacox74/js2il/issues/849
+- https://github.com/tomacox74/js2il/issues/850
+
 **Issue #772 is still OPEN but appears mostly implemented in `master`** (commit `78edaae0` and later master updates). It should be closed or explicitly re-scoped:
 - https://github.com/tomacox74/js2il/issues/772
 - https://github.com/tomacox74/js2il/commit/78edaae01b2b3da4560068b12314005a4c40387a
 
-## Top 10 open issues after the current active item (excluding #772, which currently looks like hygiene follow-up)
+## Top 10 open issues after the current active item (excluding #772, which currently looks like hygiene follow-up, and treating #439 as an umbrella tracker rather than the next direct execution slice)
 (Heuristic ranking using `priority:*` labels + module/spec/perf keywords in titles/labels; recommendation-only.)
 
-1. #419 Hosting: support mutable CommonJS exports (Node-like)
-   - https://github.com/tomacox74/js2il/issues/419
-2. #439 Hosting: publish referenceable library/build NuGet package
-   - https://github.com/tomacox74/js2il/issues/439
-3. #451 perf(il): expand typed temps/locals to reduce casts/boxing
-        - https://github.com/tomacox74/js2il/issues/451
-4. #737 perf: callsite-based typed parameter specialization for non-exported functions
-        - https://github.com/tomacox74/js2il/issues/737
-5. #738 perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations
-        - https://github.com/tomacox74/js2il/issues/738
-6. #740 perf(prime): keep sieve loop math in typed locals with fallback
-      - https://github.com/tomacox74/js2il/issues/740
-7. #742 perf(prime): trim timing/config coercion overhead in main path
-      - https://github.com/tomacox74/js2il/issues/742
-8. #743 perf(prime): add Prime perf acceptance gate and reporting
-      - https://github.com/tomacox74/js2il/issues/743
-9. #746 perf: make dromaeo-object-regexp faster than Jint prepared
-     - https://github.com/tomacox74/js2il/issues/746
-10. #747 perf(regexp): cache Regex instances by source+flags
-     - https://github.com/tomacox74/js2il/issues/747
+1. #845 Hosting/NuGet: create Js2IL.Core and extract Js2IL.Compiler.dll
+   - https://github.com/tomacox74/js2il/issues/845
+2. #451 perf(il): expand typed temps/locals to reduce casts/boxing
+   - https://github.com/tomacox74/js2il/issues/451
+3. #737 perf: callsite-based typed parameter specialization for non-exported functions
+   - https://github.com/tomacox74/js2il/issues/737
+4. #738 perf(prime): close PrimeJavaScript gap with spec-safe hot-path optimizations
+   - https://github.com/tomacox74/js2il/issues/738
+5. #740 perf(prime): keep sieve loop math in typed locals with fallback
+   - https://github.com/tomacox74/js2il/issues/740
+6. #742 perf(prime): trim timing/config coercion overhead in main path
+   - https://github.com/tomacox74/js2il/issues/742
+7. #743 perf(prime): add Prime perf acceptance gate and reporting
+   - https://github.com/tomacox74/js2il/issues/743
+8. #746 perf: make dromaeo-object-regexp faster than Jint prepared
+   - https://github.com/tomacox74/js2il/issues/746
+9. #747 perf(regexp): cache Regex instances by source+flags
+   - https://github.com/tomacox74/js2il/issues/747
+10. #748 perf(dispatch): add RegExp fast paths in Object.CallMember1/2
+    - https://github.com/tomacox74/js2il/issues/748
 
 ## Remaining open issues
-11. #748 perf(dispatch): add RegExp fast paths in Object.CallMember1/2
-     - https://github.com/tomacox74/js2il/issues/748
-12. #768 Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)
-     - https://github.com/tomacox74/js2il/issues/768
+11. #768 Perf: devirtualize calls to const/arrow function bindings (dromaeo-object-regexp-modern)
+    - https://github.com/tomacox74/js2il/issues/768
+12. #439 Hosting/NuGet: migrate compiler packaging to js2il + Js2IL.Core + Js2IL.SDK (umbrella tracker)
+    - https://github.com/tomacox74/js2il/issues/439
+13. #846 Hosting/NuGet: create Js2IL.SDK MSBuild task package
+    - https://github.com/tomacox74/js2il/issues/846
+14. #847 Hosting/NuGet: migrate hosting samples and docs to Js2IL.SDK
+    - https://github.com/tomacox74/js2il/issues/847
+15. #848 Hosting/NuGet: publish js2il, Js2IL.Core, and Js2IL.SDK in release builds
+    - https://github.com/tomacox74/js2il/issues/848
+16. #849 Hosting/NuGet: configure nuget.org pages for Js2IL.Core and Js2IL.SDK
+    - https://github.com/tomacox74/js2il/issues/849
+17. #850 Hosting/NuGet: add Core/SDK restore and post-publish smoke validation
+    - https://github.com/tomacox74/js2il/issues/850
 
 ## Open PRs (for context)
-- **#844** `fix(function): complete bound function semantics` — OPEN
-  - https://github.com/tomacox74/js2il/pull/844
+- **#851** `fix(hosting): support mutable CommonJS exports` — OPEN
+  - https://github.com/tomacox74/js2il/pull/851
 
 ## Label/metadata gaps (as of this snapshot)
-- Open issues: 18
+- Open issues: 23
 - Open PRs: 1
-- 16 open issues are missing `priority:*` labels.
-- No current open issues carry `lane:*` labels (18 missing).
+- 21 open issues are missing `priority:*` labels.
+- No current open issues carry `lane:*` labels (23 missing).

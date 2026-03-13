@@ -376,13 +376,14 @@ The return value of `LoadModule(moduleId)` is whatever the module assigned to `m
 
 In practice there are two common shapes:
 
-- **Typed per-module interface**: e.g. `I<DisplayName>Exports` (read-only surface)
+- **Typed per-module interface**: e.g. `I<DisplayName>Exports` (read/write proxy surface)
 - **Typed object graph**: an exports interface plus additional interfaces for nested objects/instances
 
-Exports are read-only:
+Exports are mutable through the hosting proxies:
 
-- Exported values can be read, but cannot be changed via the hosting API (no exported setters).
+- Exported values can be read and written through the hosting API.
 - Exported functions can be invoked.
+- Reads, writes, and calls are marshalled onto the owning script thread.
 
 #### Contract interfaces vs proxy classes
 

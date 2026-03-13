@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
+using Js2IL.Runtime;
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -64,6 +65,75 @@ public class ModuleLoadTests
     }
 
     [Fact]
+    public void JsEngine_LoadModule_Dynamic_AllowsMutatingExportsObject()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingMutable");
+        dynamic exports = exportsObj;
+
+        Assert.Equal(0.0, (double)exports.mutableValue);
+
+        exports.mutableValue = 12;
+
+        Assert.Equal(12.0, (double)exports.mutableValue);
+        Assert.Equal(12.0, (double)exports.readMutableValue());
+
+        exports.hostValue = 27;
+
+        Assert.Equal(27.0, (double)exports.hostValue);
+        Assert.Equal(27.0, (double)exports.readExport("hostValue"));
+    }
+
+    public interface IImmutableExports : IDisposable
+    {
+        double LockedValue { get; set; }
+        double ReadLockedValue();
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Typed_WhenHostMutatesImmutableExport_ThrowsJsInvocationException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("immutableExports", "immutableExports.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IImmutableExports>(module.Assembly, "immutableExports");
+
+        var ex = Assert.Throws<JsInvocationException>(() => exports.LockedValue = 2);
+        Assert.Equal("immutableExports", ex.ModuleId);
+        Assert.Equal("LockedValue", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("TypeError", jsError.JsName);
+        Assert.Contains("read only property", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
+
+        Assert.Equal(1.0, exports.LockedValue);
+        Assert.Equal(1.0, exports.ReadLockedValue());
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Dynamic_WhenHostMutatesImmutableExport_ThrowsJsInvocationException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("immutableExports", "immutableExports.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "immutableExports");
+        dynamic exports = exportsObj;
+
+        var ex = Assert.Throws<JsInvocationException>(() =>
+        {
+            exports.lockedValue = 2;
+        });
+
+        Assert.Equal("immutableExports", ex.ModuleId);
+        Assert.Equal("lockedValue", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("TypeError", jsError.JsName);
+        Assert.Contains("read only property", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
+
+        Assert.Equal(1.0, (double)exports.lockedValue);
+        Assert.Equal(1.0, (double)exports.readLockedValue());
+    }
+
+    [Fact]
     public void JsEngine_LoadModule_Dynamic_AllowsNestedMemberAccess_OnReturnedObjects()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("nestedReturn", "nestedReturn.js");
@@ -109,6 +179,24 @@ public class ModuleLoadTests
         // Validate cross-thread marshalling: calls from any host thread should execute on the script thread.
         var result = await Task.Run(() => exports.Add(1, 2));
         Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public async Task JsEngine_LoadModule_Dynamic_AllowsMutatingExports_FromAnotherThread()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingMutable");
+        dynamic exports = exportsObj;
+
+        var result = await Task.Run(() =>
+        {
+            exports.mutableValue = 19;
+            return (double)exports.readMutableValue();
+        });
+
+        Assert.Equal(19.0, result);
+        Assert.Equal(19.0, (double)exports.mutableValue);
     }
 
     [Fact]

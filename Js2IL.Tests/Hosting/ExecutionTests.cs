@@ -31,6 +31,34 @@ public class ExecutionTests
     }
 
     [Fact]
+    public void TypedExports_PropertySetter_MutatesExports()
+    {
+        using var exports = LoadExports(out _);
+
+        Assert.Equal(0, exports.MutableValue);
+
+        exports.MutableValue = 42;
+
+        Assert.Equal(42, exports.MutableValue);
+        Assert.Equal(42, exports.ReadMutableValue());
+    }
+
+    [Fact]
+    public async Task TypedExports_PropertySetter_FromAnotherThread_Marshals()
+    {
+        using var exports = LoadExports(out _);
+
+        var result = await Task.Run(() =>
+        {
+            exports.MutableValue = 77;
+            return exports.ReadMutableValue();
+        });
+
+        Assert.Equal(77, result);
+        Assert.Equal(77, exports.MutableValue);
+    }
+
+    [Fact]
     public void TypedExports_InvocationError_Propagates()
     {
         using var exports = LoadExports(out _);
@@ -129,7 +157,11 @@ public interface IHostingExports : IDisposable
 {
     string Version { get; }
 
+    double MutableValue { get; set; }
+
     double Add(double x, double y);
+
+    double ReadMutableValue();
 
     void Fail();
 

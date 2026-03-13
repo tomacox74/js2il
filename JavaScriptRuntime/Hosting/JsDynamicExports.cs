@@ -120,6 +120,16 @@ internal sealed class JsDynamicExports : DynamicObject, IDisposable
 
     public override bool TrySetMember(SetMemberBinder binder, object? value)
     {
-        throw new NotSupportedException("Exports are read-only via the hosting API.");
+        try
+        {
+            _runtime.Invoke(() => ExportMemberResolver.SetExportMember(_runtime.Exports, binder.Name, value));
+            return true;
+        }
+        catch (Exception ex)
+        {
+            var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, _runtime, memberName: binder.Name, contractType: null);
+            ExceptionDispatchInfo.Capture(translated).Throw();
+            throw;
+        }
     }
 }

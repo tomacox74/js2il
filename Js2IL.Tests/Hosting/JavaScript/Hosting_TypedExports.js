@@ -27,10 +27,22 @@ function createCounter(start) {
     return new Counter(start);
 }
 
+function readMutableValue() {
+    return module.exports.mutableValue;
+}
+
+function readExport(name) {
+    return module.exports[name];
+}
+
 const version = "1.2.3";
+let mutableValue = 0;
 
 module.exports = {
     version,
+    mutableValue,
+    readMutableValue,
+    readExport,
     add,
     fail,
     Counter,

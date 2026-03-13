@@ -69,7 +69,18 @@ internal class JsExportsProxy : DispatchProxy
 
             if (targetMethod.Name.StartsWith("set_", StringComparison.Ordinal))
             {
-                throw new NotSupportedException("Exports are read-only via the hosting API.");
+                var name = targetMethod.Name.Substring(4);
+                try
+                {
+                    runtime.Invoke(() => ExportMemberResolver.SetExportMember(runtime.Exports, name, args is { Length: > 0 } ? args[0] : null));
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    var translated = JsHostingExceptionTranslator.TranslateProxyCall(ex, runtime, memberName: name, contractType: targetMethod.DeclaringType);
+                    ExceptionDispatchInfo.Capture(translated).Throw();
+                    throw;
+                }
             }
         }
 
