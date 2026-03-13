@@ -9,7 +9,7 @@
 - Current support inventory: `docs/nodejs/Index.md`
 - Stated limitations: `docs/nodejs/NodeLimitations.json`
 - Module-level coverage: `docs/nodejs/*.json`
-- Runtime module footprint: `JavaScriptRuntime/Node/*`
+- Runtime module footprint: `src/JavaScriptRuntime/Node/*`
 - Internal demand signals: `require(...)` usage across `Js2IL.Tests/**/*.js` and `samples/**/*.js`
 - ECMA tracking breadth: `docs/ECMA262/Index.md`
 

@@ -31,9 +31,9 @@ const cp = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
-const CSPROJ_PATH = path.join(ROOT, 'Cli', 'Js2IL.csproj');
-const CORE_CSPROJ_PATH = path.join(ROOT, 'Js2IL.Core', 'Js2IL.Core.csproj');
-const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
+const CSPROJ_PATH = path.join(ROOT, 'src', 'Cli', 'Js2IL.csproj');
+const CORE_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.Core', 'Js2IL.Core.csproj');
+const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'src', 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 
 function sleep(ms) {
   // Synchronous sleep without additional deps.

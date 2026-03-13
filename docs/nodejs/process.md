@@ -11,10 +11,10 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/Process.cs`
-- `JavaScriptRuntime/GlobalThis.cs`
-- `JavaScriptRuntime/Engine/NodeSchedulerState.cs`
-- `JavaScriptRuntime/Engine/NodeEventLoopPump.cs`
+- `src/JavaScriptRuntime/Node/Process.cs`
+- `src/JavaScriptRuntime/GlobalThis.cs`
+- `src/JavaScriptRuntime/Engine/NodeSchedulerState.cs`
+- `src/JavaScriptRuntime/Engine/NodeEventLoopPump.cs`
 
 ## APIs
 

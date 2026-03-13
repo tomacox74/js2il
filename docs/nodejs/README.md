@@ -72,7 +72,7 @@ See `ModuleDoc.schema.json` for the complete schema definition.
   "status": "partial",
   "docsUrl": "https://nodejs.org/api/path.html",
   "nodeVersionTarget": "22.x LTS",
-  "implementation": "JavaScriptRuntime/Node/Path.cs",
+  "implementation": "src/JavaScriptRuntime/Node/Path.cs",
   "apis": [
     {
       "name": "join(...parts)",
@@ -100,7 +100,7 @@ See `ModuleDoc.schema.json` for the complete schema definition.
   "status": "supported",
   "docsUrl": "https://nodejs.org/api/modules.html#dirname",
   "nodeVersionTarget": "22.x LTS",
-  "implementation": "JavaScriptRuntime/Node/GlobalVariables.cs",
+  "implementation": "src/JavaScriptRuntime/Node/GlobalVariables.cs",
   "tests": [
     {
       "name": "Js2IL.Tests.Node.ExecutionTests.Global___dirname_PrintsDirectory",

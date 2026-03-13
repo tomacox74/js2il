@@ -71,7 +71,12 @@ namespace Js2IL.Tests
                 string? projectPath = null;
                 while (!string.IsNullOrEmpty(dir))
                 {
-                    var candidate = Path.Combine(dir, "Cli", "Js2IL.csproj");
+                    var candidate = Path.Combine(dir, "src", "Cli", "Js2IL.csproj");
+                    if (!File.Exists(candidate))
+                    {
+                        candidate = Path.Combine(dir, "Cli", "Js2IL.csproj");
+                    }
+
                     if (File.Exists(candidate))
                     {
                         projectPath = candidate;

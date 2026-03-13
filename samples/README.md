@@ -10,5 +10,5 @@ These samples demonstrate consuming **compiled** JavaScript modules as a .NET li
 
 Each sample is split into two parts:
 
-- `compiler/` – an MSBuild `.proj` that invokes the `js2il` compiler. In a repo checkout it defaults to `dotnet run --project Cli/Js2IL.csproj`, falling back to the global `js2il` tool when the local project is not available.
+- `compiler/` – an MSBuild `.proj` that invokes the `js2il` compiler. In a repo checkout it defaults to `dotnet run --project src/Cli/Js2IL.csproj`, falling back to the global `js2il` tool when the local project is not available.
 - `host/` – a C# console app that loads the compiled module DLL and calls into it using `Js2IL.Runtime` hosting APIs

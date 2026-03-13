@@ -11,8 +11,8 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/Http.cs`
-- `JavaScriptRuntime/Node/Net.cs`
+- `src/JavaScriptRuntime/Node/Http.cs`
+- `src/JavaScriptRuntime/Node/Net.cs`
 
 ## Notes
 

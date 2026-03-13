@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/Buffer.cs`
+- `src/JavaScriptRuntime/Node/Buffer.cs`
 
 ## Notes
 

@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/Path.cs`
+- `src/JavaScriptRuntime/Node/Path.cs`
 
 ## APIs
 

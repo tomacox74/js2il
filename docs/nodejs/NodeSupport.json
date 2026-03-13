@@ -5,7 +5,7 @@
     {
       "name": "child_process",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/ChildProcess.cs",
+      "implementation": "src/JavaScriptRuntime/Node/ChildProcess.cs",
       "docs": "https://nodejs.org/api/child_process.html",
       "apis": [
         {
@@ -27,7 +27,7 @@
     {
       "name": "fs/promises",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/FSPromises.cs",
+      "implementation": "src/JavaScriptRuntime/Node/FSPromises.cs",
       "docs": "https://nodejs.org/api/fs.html#fspromisesapi",
       "apis": [
         {
@@ -63,7 +63,7 @@
     {
       "name": "os",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/OS.cs",
+      "implementation": "src/JavaScriptRuntime/Node/OS.cs",
       "docs": "https://nodejs.org/api/os.html",
       "apis": [
         {
@@ -83,7 +83,7 @@
     {
       "name": "fs",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/FS.cs",
+      "implementation": "src/JavaScriptRuntime/Node/FS.cs",
       "docs": "https://nodejs.org/api/fs.html",
       "apis": [
         {
@@ -206,7 +206,7 @@
     {
       "name": "path",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/Path.cs",
+      "implementation": "src/JavaScriptRuntime/Node/Path.cs",
       "docs": "https://nodejs.org/api/path.html",
       "apis": [
         {
@@ -289,7 +289,7 @@
     {
       "name": "perf_hooks",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/PerfHooks.cs",
+      "implementation": "src/JavaScriptRuntime/Node/PerfHooks.cs",
       "docs": "https://nodejs.org/api/perf_hooks.html",
       "apis": [
         {
@@ -320,8 +320,8 @@
       "name": "process",
       "status": "partial",
       "implementation": [
-        "JavaScriptRuntime/Node/Process.cs",
-        "JavaScriptRuntime/GlobalVariables.cs"
+        "src/JavaScriptRuntime/Node/Process.cs",
+        "src/JavaScriptRuntime/GlobalVariables.cs"
       ],
       "docs": "https://nodejs.org/api/process.html",
       "apis": [
@@ -517,7 +517,7 @@
     {
       "name": "__dirname",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Node/GlobalVariables.cs",
+      "implementation": "src/JavaScriptRuntime/Node/GlobalVariables.cs",
       "docs": "https://nodejs.org/api/modules.html#dirname",
       "tests": [
         {
@@ -533,7 +533,7 @@
     {
       "name": "__filename",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Node/GlobalVariables.cs",
+      "implementation": "src/JavaScriptRuntime/Node/GlobalVariables.cs",
       "docs": "https://nodejs.org/api/modules.html#filename",
       "tests": [
         {
@@ -549,7 +549,7 @@
     {
       "name": "require(id)",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/CommonJS/Require.cs, JavaScriptRuntime/CommonJS/ModuleContext.cs, JavaScriptRuntime/CommonJS/ModuleName.cs, JavaScriptRuntime/CommonJS/Module.cs",
+      "implementation": "src/JavaScriptRuntime/CommonJS/Require.cs, src/JavaScriptRuntime/CommonJS/ModuleContext.cs, src/JavaScriptRuntime/CommonJS/ModuleName.cs, src/JavaScriptRuntime/CommonJS/Module.cs",
       "docs": "https://nodejs.org/api/modules.html#requireid",
       "notes": "Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require). Does not implement node_modules/package.json resolution (future plan: use package.json main/exports and module-type detection to support npm packages directly).",
       "tests": [
@@ -606,7 +606,7 @@
     {
       "name": "console.log",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Console.cs",
+      "implementation": "src/JavaScriptRuntime/Console.cs",
       "docs": "https://nodejs.org/api/console.html#consolelogdata-args",
       "tests": [
         {
@@ -618,7 +618,7 @@
     {
       "name": "console.error",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Console.cs",
+      "implementation": "src/JavaScriptRuntime/Console.cs",
       "docs": "https://nodejs.org/api/console.html#consoleerrordata-args",
       "notes": "Writes to stderr.",
       "tests": [
@@ -631,7 +631,7 @@
     {
       "name": "console.warn",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Console.cs",
+      "implementation": "src/JavaScriptRuntime/Console.cs",
       "docs": "https://nodejs.org/api/console.html#consolewarndata-args",
       "notes": "Writes to stderr.",
       "tests": [
@@ -644,7 +644,7 @@
     {
       "name": "setTimeout",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs",
       "docs": "https://nodejs.org/api/timers.html#settimeoutcallback-delay-args",
       "notes": "Schedules a callback to be executed after a specified delay in milliseconds. Returns a timer handle that can be used with clearTimeout.",
       "tests": [
@@ -665,7 +665,7 @@
     {
       "name": "clearTimeout",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs",
       "docs": "https://nodejs.org/api/timers.html#cleartimeouttimeout",
       "notes": "Cancels a timer that was previously created with setTimeout. Returns undefined (null in .NET).",
       "tests": [
@@ -682,7 +682,7 @@
     {
       "name": "setImmediate",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSchedulerState.cs, JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs, src/JavaScriptRuntime/Engine/NodeSchedulerState.cs, src/JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
       "docs": "https://nodejs.org/api/timers.html#setimmediatecallback-args",
       "notes": "Schedules a callback to run on the next event loop iteration. Callbacks execute in FIFO order. Nested setImmediate calls run on the next iteration. Returns a handle that can be used with clearImmediate.",
       "tests": [
@@ -711,7 +711,7 @@
     {
       "name": "clearImmediate",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSchedulerState.cs, JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs, src/JavaScriptRuntime/Engine/NodeSchedulerState.cs, src/JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
       "docs": "https://nodejs.org/api/timers.html#clearimmediateimmediate",
       "notes": "Cancels an immediate that was previously created with setImmediate. Returns undefined (null in .NET).",
       "tests": [
@@ -724,7 +724,7 @@
     {
       "name": "setInterval",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSchedulerState.cs, JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs, src/JavaScriptRuntime/Engine/NodeSchedulerState.cs, src/JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
       "docs": "https://nodejs.org/api/timers.html#setintervalcallback-delay-args",
       "notes": "Schedules a callback to run repeatedly with the specified delay in milliseconds. Returns a handle that can be used with clearInterval. Supports additional arguments passed to the callback.",
       "tests": [
@@ -737,7 +737,7 @@
     {
       "name": "clearInterval",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSchedulerState.cs, JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs, src/JavaScriptRuntime/Engine/NodeSchedulerState.cs, src/JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
       "docs": "https://nodejs.org/api/timers.html#clearintervaltimeout",
       "notes": "Cancels a repeating timer that was previously created with setInterval. Returns undefined (null in .NET).",
       "tests": [
@@ -750,7 +750,7 @@
     {
       "name": "Promise",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Promise.cs, JavaScriptRuntime/Engine/EngineCore.cs",
+      "implementation": "src/JavaScriptRuntime/Promise.cs, src/JavaScriptRuntime/Engine/EngineCore.cs",
       "docs": "https://nodejs.org/api/globals.html#promise",
       "notes": "Promise/A+ compliant implementation with microtask scheduling via IMicrotaskScheduler. Supports constructor, Promise.resolve(), Promise.reject(), then(), catch(), and finally(). Includes proper handling of returned Promises in handlers and chaining semantics.",
       "tests": [

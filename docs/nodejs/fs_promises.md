@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/FSPromises.cs`
+- `src/JavaScriptRuntime/Node/FSPromises.cs`
 
 ## APIs
 

@@ -40,7 +40,7 @@ Non-goals (initially):
   - ensure PE includes the correct debug directory entry
 
 Expected code touchpoints (names may vary):
-- `Compiler/Compiler.cs`, `Compiler/CompilerOptions.cs`, possibly `Compiler/Program.cs`
+- `src/Compiler/Compiler.cs`, `src/Compiler/CompilerOptions.cs`, possibly `src/Compiler/Program.cs`
 - IL/metadata writer services (the stage that currently creates `PEBuilder`)
 
 ### 3) Mapping JavaScript Source Locations

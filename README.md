@@ -126,7 +126,7 @@ Local development note
 - You can still run from source during development:
 
 ```powershell
-dotnet run --project .\Js2IL -- .\tests\simple.js .\out
+dotnet run --project .\src\Cli -- .\tests\simple.js .\out
 ```
 
 ## Release Workflow
@@ -184,11 +184,11 @@ npm run release:major  # For major version (0.x.y -> x+1.0.0)
 ```
 
 What the script does:
-- Reads current version from `Cli/Js2IL.csproj`
+- Reads current version from `src/Cli/Js2IL.csproj`
 - Extracts the `## Unreleased` section from `CHANGELOG.md`
 - Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` with that content
 - Resets the `## Unreleased` section to placeholder
-- Updates the `<Version>` in `Cli/Js2IL.csproj`, `Js2IL.Core/Js2IL.Core.csproj`, and `JavaScriptRuntime/JavaScriptRuntime.csproj`
+- Updates the `<Version>` in `src/Cli/Js2IL.csproj`, `src/Js2IL.Core/Js2IL.Core.csproj`, and `src/JavaScriptRuntime/JavaScriptRuntime.csproj`
 
 #### 3. Validate the Packed Tool
 
@@ -203,7 +203,7 @@ npm run diff:test:canary:packed
 Commit the changes on the release branch:
 
 ```powershell
-git add CHANGELOG.md Cli/Js2IL.csproj Js2IL.Core/Js2IL.Core.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+git add CHANGELOG.md src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
 git commit -m "chore(release): cut v0.x.y"
 ```
 

@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/Events.cs, JavaScriptRuntime/Node/EventEmitter.cs`
+- `src/JavaScriptRuntime/Node/Events.cs, src/JavaScriptRuntime/Node/EventEmitter.cs`
 
 ## Notes
 

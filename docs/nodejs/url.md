@@ -11,8 +11,8 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/Url.cs`
-- `JavaScriptRuntime/Node/UrlQueryHelpers.cs`
+- `src/JavaScriptRuntime/Node/Url.cs`
+- `src/JavaScriptRuntime/Node/UrlQueryHelpers.cs`
 
 ## Notes
 

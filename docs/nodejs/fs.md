@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/FS.cs`
+- `src/JavaScriptRuntime/Node/FS.cs`
 
 ## APIs
 

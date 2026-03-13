@@ -49,9 +49,9 @@ These goals drive choices made.  And their ranking above should be clear. For ex
 - **Runtime**: Provides `MemberReferenceHandle` cache for JavaScriptRuntime helper methods.
 
 ### Critical Files
-- `Compiler/Services/ILGenerators/MethodBuilder.cs`: `CreateLocalVariableSignature()` - centralizes local sig creation
-- `Compiler/SymbolTable/`: Scope tree infrastructure with free variable analysis
-- `JavaScriptRuntime/`: Runtime library (Array, Object, Operators, Math, String, Closure helpers)
+- `src/Compiler/Services/ILGenerators/MethodBuilder.cs`: `CreateLocalVariableSignature()` - centralizes local sig creation
+- `src/Compiler/SymbolTable/`: Scope tree infrastructure with free variable analysis
+- `src/JavaScriptRuntime/`: Runtime library (Array, Object, Operators, Math, String, Closure helpers)
 
 ## Development Workflows
 - the typical pattern for adding support for javascript and node features is to add tests first under JS2IL.Tests/*area*/ExecutionTests and GeneratorTests
@@ -103,7 +103,7 @@ These goals drive choices made.  And their ranking above should be clear. For ex
 ```powershell
 dotnet build                                    # Debug build
 dotnet publish -c Release                       # Release build
-dotnet run --project Cli -- input.js output  # Run from source
+dotnet run --project src/Cli -- input.js output  # Run from source
 js2il input.js output                           # Installed tool
 ```
 
@@ -176,7 +176,7 @@ Follow these steps IN ORDER:
    # OR
    npm run release:major  # For major version (0.x.y -> x+1.0.0)
    ```
-   This updates CHANGELOG.md, Cli/Js2IL.csproj, Js2IL.Core/Js2IL.Core.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj
+   This updates CHANGELOG.md, src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
 
 3. **Validate packaged smoke tests** (on the release branch):
    ```powershell
@@ -185,7 +185,7 @@ Follow these steps IN ORDER:
 
 4. **Commit version bump** (on the release branch):
    ```powershell
-   git add CHANGELOG.md Cli/Js2IL.csproj Js2IL.Core/Js2IL.Core.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+   git add CHANGELOG.md src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
    git commit -m "chore(release): cut v0.x.y"
    ```
 
@@ -270,7 +270,7 @@ All `NotSupportedException` thrown via `ILEmitHelpers.ThrowNotSupported()` with 
 - **v0.1.6**: Dynamic property access, Math intrinsic, Int32Array, compound assignments
 
 ## Node.js Interop
-Modules discovered via `[NodeModule]` attribute (e.g., `fs`, `path`, `perf_hooks`). Module instances typed via `RuntimeIntrinsicType` for direct callvirt (avoids reflection). See `JavaScriptRuntime/Node/` for implementations.
+Modules discovered via `[NodeModule]` attribute (e.g., `fs`, `path`, `perf_hooks`). Module instances typed via `RuntimeIntrinsicType` for direct callvirt (avoids reflection). See `src/JavaScriptRuntime/Node/` for implementations.
 
 ## Tools
 - use ilspycmd to inspect generated assemblies
