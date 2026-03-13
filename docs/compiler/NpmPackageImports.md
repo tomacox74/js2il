@@ -34,7 +34,7 @@ The **core requirement** is to resolve module IDs to physical JavaScript files a
    - `JsEngine.LoadModule(moduleId)` should support package IDs (e.g. `turndown`, `@mixmark-io/domino`).
 
 ## Current State (relevant code)
-- Compile-time module graph loading: `Js2IL/ModuleLoader.cs`
+- Compile-time module graph loading: `Compiler/ModuleLoader.cs`
   - Today it only follows `require()` dependencies for specifiers starting with `.` or `/`.
 - Module id conventions and sanitization: `JavaScriptRuntime/CommonJS/ModuleName.cs`
 - Runtime require: `JavaScriptRuntime/CommonJS/Require.cs`
@@ -291,3 +291,4 @@ These fixtures are good candidates for future end-to-end tests like:
   - Plan baseline: support `require`/`node`/`default` conditions.
 - Maximum encoded type name length (very deep subpaths) and any need for shortening.
   - If needed, introduce a reversible encoding for common cases and fall back to `hash + embedded metadata` for extreme paths.
+

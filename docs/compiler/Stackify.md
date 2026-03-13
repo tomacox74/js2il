@@ -53,7 +53,7 @@ This is what Stackify decides.
 
 Stackify operates over the **LIR** (low-level IR) for a method (`MethodBodyIR`).
 
-In [Js2IL/IL/LIRToILCompiler.cs](../../Js2IL/IL/LIRToILCompiler.cs), the compiler does:
+In [Compiler/IL/LIRToILCompiler.cs](../../Compiler/IL/LIRToILCompiler.cs), the compiler does:
 
 1. Various pre-passes (e.g. peephole optimizations)
 2. `Stackify.Analyze(MethodBody)`
@@ -526,3 +526,4 @@ Even if Stackify’s analysis says “stackable”, emission still needs to be c
 - Verify that stackified temps are marked non-materialized via `MarkStackifiableTemps` in `LIRToILCompiler`.
 - Confirm that non-materialized temps don’t get IL locals allocated (`TempLocalAllocator.Allocate`).
 - If you see unexpected `pop` emissions, it often means a temp got marked non-materialized but the surrounding instruction sequence didn’t actually consume the value as expected.
+

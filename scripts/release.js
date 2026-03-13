@@ -30,7 +30,7 @@ const cp = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
-const CSPROJ_PATH = path.join(ROOT, 'Js2IL', 'Js2IL.csproj');
+const CSPROJ_PATH = path.join(ROOT, 'Compiler', 'Js2IL.csproj');
 const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 
 function sleep(ms) {

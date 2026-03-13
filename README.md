@@ -183,7 +183,7 @@ npm run release:major  # For major version (0.x.y -> x+1.0.0)
 ```
 
 What the script does:
-- Reads current version from `Js2IL/Js2IL.csproj`
+- Reads current version from `Compiler/Js2IL.csproj`
 - Extracts the `## Unreleased` section from `CHANGELOG.md`
 - Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` with that content
 - Resets the `## Unreleased` section to placeholder
@@ -194,7 +194,7 @@ What the script does:
 Commit the changes on the release branch:
 
 ```powershell
-git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+git add CHANGELOG.md Compiler/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
 git commit -m "chore(release): cut v0.x.y"
 ```
 
