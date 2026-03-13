@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.0 - 2026-03-13
+
 - packaging/compiler/layout: implement issue #845 by extracting the reusable compiler into `Js2IL.Compiler.dll`, adding the referenceable `Js2IL.Core` package, wiring the `js2il` tool to consume the new compiler assembly while staying self-contained, splitting the repo layout into `src\Compiler\` sources plus a thin `src\Cli\` tool project, and updating solution/tests/workflows/scripts/samples to follow the new paths.
 - release/tooling/workflows: strengthen pre-release confidence for the repackaged `js2il` tool by teaching version bumps to update `Js2IL.Core`, adding packaged-tool canary commands that pack and locally install `js2il` before running smoke suites, and wiring the release automation plus `canary-smoke` workflow to validate the actual nupkg instead of a source-run build.
 - hosting/runtime/tests/docs: add issue #419 mutable CommonJS exports support by making typed and dynamic hosting exports proxies write through to `module.exports` on the owning script thread, adding focused hosting coverage for root-exports mutation, and updating the hosting docs to reflect the new read/write behavior.
