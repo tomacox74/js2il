@@ -5,6 +5,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <!-- Tool packages cannot be self-contained/single-file/trimmed -->
     <SelfContained>false</SelfContained>
     <PublishSingleFile>false</PublishSingleFile>
@@ -27,20 +28,16 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <!-- Expose internals to test project -->
   <ItemGroup>
-    <InternalsVisibleTo Include="Js2IL.Tests" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Acornima" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.1" />
     <PackageReference Include="PowerArgs" Version="4.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JavaScriptRuntime\JavaScriptRuntime.csproj" />
+    <ProjectReference Include="..\Js2IL.Core\Js2IL.Core.csproj" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
   </ItemGroup>
 
   <!-- Include consumer README from docs as package root README.md -->
@@ -48,7 +45,7 @@
     <None Include="..\docs\NuGet.README.md" Pack="true" PackagePath="README.md" />
     <None Include="..\docs\ECMA262\Index.md" Pack="true" PackagePath="docs/ECMA262/Index.md" />
     <None Include="..\icon.jpg" Pack="true" PackagePath="" />
-        <None Include="..\samples\**\*"
+    <None Include="..\samples\**\*"
           Exclude="..\samples\**\bin\**;..\samples\**\obj\**;..\samples\**\out\**;..\samples\**\out2\**;..\samples\**\node_modules\**"
           Pack="true"
           PackagePath="samples/%(RecursiveDir)%(Filename)%(Extension)" />
