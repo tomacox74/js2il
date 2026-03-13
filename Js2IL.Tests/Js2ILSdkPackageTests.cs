@@ -83,7 +83,7 @@ public class Js2ILSdkPackageTests
 
             var build = RunProcess(
                 fileName: "dotnet",
-                arguments: "build .\\Consumer.csproj --nologo --ignore-failed-sources",
+                arguments: "build Consumer.csproj --nologo --ignore-failed-sources",
                 workingDirectory: projectDir,
                 timeoutSeconds: 180);
 
@@ -101,7 +101,7 @@ public class Js2ILSdkPackageTests
 
             var run = RunProcess(
                 fileName: "dotnet",
-                arguments: "run --no-build --project .\\Consumer.csproj --nologo",
+                arguments: "run --no-build --project Consumer.csproj --nologo",
                 workingDirectory: projectDir,
                 timeoutSeconds: 180);
 
