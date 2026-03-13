@@ -139,6 +139,17 @@ internal static class ExportMemberResolver
         return value;
     }
 
+    public static void SetExportMember(object? exports, string contractName, object? value)
+    {
+        if (exports == null)
+        {
+            throw new InvalidOperationException("Module exports is null.");
+        }
+
+        var targetName = ResolveExportWriteName(exports, contractName);
+        _ = JavaScriptRuntime.ObjectRuntime.SetItem(exports, targetName, NormalizeArg(value));
+    }
+
     public static IEnumerable<string> GetNameCandidates(string contractName)
     {
         yield return contractName;
@@ -151,6 +162,38 @@ internal static class ExportMemberResolver
                 span[0] = char.ToLowerInvariant(span[0]);
             });
         }
+    }
+
+    private static string ResolveExportWriteName(object exports, string contractName)
+    {
+        string? fallback = null;
+
+        foreach (var candidate in GetNameCandidates(contractName))
+        {
+            fallback = candidate;
+            if (HasExportMember(exports, candidate))
+            {
+                return candidate;
+            }
+        }
+
+        return fallback ?? contractName;
+    }
+
+    private static bool HasExportMember(object exports, string candidate)
+    {
+        if (exports is IDictionary<string, object?> dict && dict.ContainsKey(candidate))
+        {
+            return true;
+        }
+
+        var type = exports.GetType();
+        if (type.GetProperty(candidate, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) != null)
+        {
+            return true;
+        }
+
+        return type.GetField(candidate, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) != null;
     }
 
     public static object? InvokeJsDelegate(Delegate d, object?[] args)

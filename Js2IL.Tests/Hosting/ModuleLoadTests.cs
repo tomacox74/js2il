@@ -64,6 +64,27 @@ public class ModuleLoadTests
     }
 
     [Fact]
+    public void JsEngine_LoadModule_Dynamic_AllowsMutatingExportsObject()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingMutable");
+        dynamic exports = exportsObj;
+
+        Assert.Equal(0.0, (double)exports.mutableValue);
+
+        exports.mutableValue = 12;
+
+        Assert.Equal(12.0, (double)exports.mutableValue);
+        Assert.Equal(12.0, (double)exports.readMutableValue());
+
+        exports.hostValue = 27;
+
+        Assert.Equal(27.0, (double)exports.hostValue);
+        Assert.Equal(27.0, (double)exports.readExport("hostValue"));
+    }
+
+    [Fact]
     public void JsEngine_LoadModule_Dynamic_AllowsNestedMemberAccess_OnReturnedObjects()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("nestedReturn", "nestedReturn.js");
@@ -109,6 +130,24 @@ public class ModuleLoadTests
         // Validate cross-thread marshalling: calls from any host thread should execute on the script thread.
         var result = await Task.Run(() => exports.Add(1, 2));
         Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public async Task JsEngine_LoadModule_Dynamic_AllowsMutatingExports_FromAnotherThread()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingMutable");
+        dynamic exports = exportsObj;
+
+        var result = await Task.Run(() =>
+        {
+            exports.mutableValue = 19;
+            return (double)exports.readMutableValue();
+        });
+
+        Assert.Equal(19.0, result);
+        Assert.Equal(19.0, (double)exports.mutableValue);
     }
 
     [Fact]

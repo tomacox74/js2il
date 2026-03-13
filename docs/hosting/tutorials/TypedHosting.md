@@ -71,11 +71,16 @@ At runtime, the hosting layer resolves members using these candidates:
 
 This is why `exports.Version` maps to `module.exports.version`.
 
-## Read-only exports
+## Mutable exports
 
-Exports are intentionally **read-only** from the typed hosting API:
+Typed hosting supports both export reads and export writes:
 
-- `get_Foo` is supported
-- `set_Foo` is **not** supported (throws)
+- `get_Foo` reads `module.exports.foo`
+- `set_Foo(value)` writes back through to `module.exports.foo`
 
-This keeps the contract surface stable and avoids “write-through” surprises.
+Both paths are marshalled onto the owning script thread, so host-side mutation stays thread-affine with the rest of the runtime.
+
+Name matching for setters follows the same contract-to-JavaScript rules as getters:
+
+- exact member name (`MutableValue`)
+- first-letter-lowercased (`mutableValue`)
