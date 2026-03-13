@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/Crypto.cs`
+- `src/JavaScriptRuntime/Node/Crypto.cs`
 
 ## Notes
 

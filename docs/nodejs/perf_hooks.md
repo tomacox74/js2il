@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/PerfHooks.cs`
+- `src/JavaScriptRuntime/Node/PerfHooks.cs`
 
 ## APIs
 

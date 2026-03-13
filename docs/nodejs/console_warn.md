@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Console.cs`
+- `src/JavaScriptRuntime/Console.cs`
 
 ## Notes
 

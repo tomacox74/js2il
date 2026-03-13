@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Promise.cs, JavaScriptRuntime/Engine/EngineCore.cs`
+- `src/JavaScriptRuntime/Promise.cs, src/JavaScriptRuntime/Engine/EngineCore.cs`
 
 ## Notes
 

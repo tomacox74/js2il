@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/OS.cs`
+- `src/JavaScriptRuntime/Node/OS.cs`
 
 ## APIs
 

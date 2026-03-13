@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs`
+- `src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs`
 
 ## Notes
 

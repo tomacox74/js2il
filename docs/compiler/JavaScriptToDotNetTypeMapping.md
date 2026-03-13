@@ -200,9 +200,9 @@ Examples:
 
 Where this fits in the codebase:
 
-- The orchestration is in [Compiler/JsMethodCompiler.cs](../../Compiler/JsMethodCompiler.cs) (`TryLowerASTToLIR`)
-- Intrinsic normalization: [Compiler/IR/LIR/LIRIntrinsicNormalization.cs](../../Compiler/IR/LIR/LIRIntrinsicNormalization.cs)
-- Type normalization: [Compiler/IR/LIR/LIRTypeNormalization.cs](../../Compiler/IR/LIR/LIRTypeNormalization.cs)
+- The orchestration is in [src/Compiler/JsMethodCompiler.cs](../../src/Compiler/JsMethodCompiler.cs) (`TryLowerASTToLIR`)
+- Intrinsic normalization: [src/Compiler/IR/LIR/LIRIntrinsicNormalization.cs](../../src/Compiler/IR/LIR/LIRIntrinsicNormalization.cs)
+- Type normalization: [src/Compiler/IR/LIR/LIRTypeNormalization.cs](../../src/Compiler/IR/LIR/LIRTypeNormalization.cs)
 - Tests/examples of normalization behavior: [Js2IL.Tests/LIRIntrinsicNormalizationTests.cs](../../Js2IL.Tests/LIRIntrinsicNormalizationTests.cs)
 
 ---
@@ -445,10 +445,10 @@ A typical shape of emitted artifacts:
 
 - Closure ABI and scopes-array conventions: [docs/compiler/CapturedVariables_ScopesABI.md](CapturedVariables_ScopesABI.md)
 - Two-phase compilation and callable identity/token preallocation: [docs/compiler/TwoPhaseCompilationPipeline.md](TwoPhaseCompilationPipeline.md)
-- Module init + scope/class nesting: [Compiler/JsMethodCompiler.cs](../../Compiler/JsMethodCompiler.cs) (`TryCompileMainMethod`, `EstablishModuleNesting`)
-- IR lowering + normalization (AST→HIR→LIR→IL): [Compiler/JsMethodCompiler.cs](../../Compiler/JsMethodCompiler.cs) (`TryLowerASTToLIR`), [Compiler/IR/LIR/LIRIntrinsicNormalization.cs](../../Compiler/IR/LIR/LIRIntrinsicNormalization.cs), [Compiler/IR/LIR/LIRTypeNormalization.cs](../../Compiler/IR/LIR/LIRTypeNormalization.cs)
-- Scope type generation: [Compiler/Services/TypeGenerator.cs](../../Compiler/Services/TypeGenerator.cs)
-- Class emission + `_scopes`: [Compiler/Services/ILGenerators/ClassesGenerator.cs](../../Compiler/Services/ILGenerators/ClassesGenerator.cs)
-- Value sentinels (`undefined` vs `null`): [JavaScriptRuntime/TypeUtilities.cs](../../JavaScriptRuntime/TypeUtilities.cs), [JavaScriptRuntime/JsNull.cs](../../JavaScriptRuntime/JsNull.cs)
+- Module init + scope/class nesting: [src/Compiler/JsMethodCompiler.cs](../../src/Compiler/JsMethodCompiler.cs) (`TryCompileMainMethod`, `EstablishModuleNesting`)
+- IR lowering + normalization (AST→HIR→LIR→IL): [src/Compiler/JsMethodCompiler.cs](../../src/Compiler/JsMethodCompiler.cs) (`TryLowerASTToLIR`), [src/Compiler/IR/LIR/LIRIntrinsicNormalization.cs](../../src/Compiler/IR/LIR/LIRIntrinsicNormalization.cs), [src/Compiler/IR/LIR/LIRTypeNormalization.cs](../../src/Compiler/IR/LIR/LIRTypeNormalization.cs)
+- Scope type generation: [src/Compiler/Services/TypeGenerator.cs](../../src/Compiler/Services/TypeGenerator.cs)
+- Class emission + `_scopes`: [src/Compiler/Services/ILGenerators/ClassesGenerator.cs](../../src/Compiler/Services/ILGenerators/ClassesGenerator.cs)
+- Value sentinels (`undefined` vs `null`): [src/JavaScriptRuntime/TypeUtilities.cs](../../src/JavaScriptRuntime/TypeUtilities.cs), [src/JavaScriptRuntime/JsNull.cs](../../src/JavaScriptRuntime/JsNull.cs)
 - Scope naming behavior: [Js2IL.Tests/ScopeNamingTests.cs](../../Js2IL.Tests/ScopeNamingTests.cs)
 

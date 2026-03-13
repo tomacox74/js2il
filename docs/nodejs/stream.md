@@ -11,12 +11,12 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/Stream.cs`
-- `JavaScriptRuntime/Node/Readable.cs`
-- `JavaScriptRuntime/Node/Writable.cs`
-- `JavaScriptRuntime/Node/Duplex.cs`
-- `JavaScriptRuntime/Node/Transform.cs`
-- `JavaScriptRuntime/Node/PassThrough.cs`
+- `src/JavaScriptRuntime/Node/Stream.cs`
+- `src/JavaScriptRuntime/Node/Readable.cs`
+- `src/JavaScriptRuntime/Node/Writable.cs`
+- `src/JavaScriptRuntime/Node/Duplex.cs`
+- `src/JavaScriptRuntime/Node/Transform.cs`
+- `src/JavaScriptRuntime/Node/PassThrough.cs`
 
 ## Notes
 

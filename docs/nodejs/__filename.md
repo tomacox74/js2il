@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/GlobalVariables.cs`
+- `src/JavaScriptRuntime/Node/GlobalVariables.cs`
 
 ## Tests
 

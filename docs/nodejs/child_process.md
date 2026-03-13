@@ -11,7 +11,7 @@
 
 ## Implementation
 
-- `JavaScriptRuntime/Node/ChildProcess.cs`
+- `src/JavaScriptRuntime/Node/ChildProcess.cs`
 
 ## Notes
 

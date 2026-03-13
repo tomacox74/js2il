@@ -279,15 +279,15 @@ If this investigation turns into follow-up work, the next steps should be:
 
 ## Evidence used
 
-- `Compiler/IR/LIR/HIRToLIRLowerer.ExpressionCall.cs`
-- `Compiler/IR/LIR/LIRMemberCallNormalization.cs`
-- `Compiler/IL/LIRToILCompiler.InstructionEmission.Calls.cs`
-- `Compiler/IL/LIRToILCompiler.TypedCalls.cs`
-- `JavaScriptRuntime/Object.cs`
-- `JavaScriptRuntime/ObjectRuntime.cs`
-- `JavaScriptRuntime/Hosting/JsDynamicValueProxy.cs`
-- `JavaScriptRuntime/Hosting/JsDynamicExports.cs`
-- `JavaScriptRuntime/GlobalThis.cs`
+- `src/Compiler/IR/LIR/HIRToLIRLowerer.ExpressionCall.cs`
+- `src/Compiler/IR/LIR/LIRMemberCallNormalization.cs`
+- `src/Compiler/IL/LIRToILCompiler.InstructionEmission.Calls.cs`
+- `src/Compiler/IL/LIRToILCompiler.TypedCalls.cs`
+- `src/JavaScriptRuntime/Object.cs`
+- `src/JavaScriptRuntime/ObjectRuntime.cs`
+- `src/JavaScriptRuntime/Hosting/JsDynamicValueProxy.cs`
+- `src/JavaScriptRuntime/Hosting/JsDynamicExports.cs`
+- `src/JavaScriptRuntime/GlobalThis.cs`
 - `docs/compiler/Prototypes_SupportDesign.md`
 - `docs/compiler/PrototypeChainSupport.md`
 - Local benchmark runs generated from `tests/performance/Benchmarks/LateBoundDispatchBenchmarks.cs` via `dotnet run -c Release --project .\tests\performance\Benchmarks\Benchmarks.csproj -- --dispatch`

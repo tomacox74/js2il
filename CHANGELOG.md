@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-- packaging/compiler/layout: implement issue #845 by extracting the reusable compiler into `Js2IL.Compiler.dll`, adding the referenceable `Js2IL.Core` package, wiring the `js2il` tool to consume the new compiler assembly while staying self-contained, splitting the repo layout into `Compiler\` sources plus a thin `Cli\` tool project, and updating solution/tests/workflows/scripts/samples to follow the new paths.
+- packaging/compiler/layout: implement issue #845 by extracting the reusable compiler into `Js2IL.Compiler.dll`, adding the referenceable `Js2IL.Core` package, wiring the `js2il` tool to consume the new compiler assembly while staying self-contained, splitting the repo layout into `src\Compiler\` sources plus a thin `src\Cli\` tool project, and updating solution/tests/workflows/scripts/samples to follow the new paths.
 - release/tooling/workflows: strengthen pre-release confidence for the repackaged `js2il` tool by teaching version bumps to update `Js2IL.Core`, adding packaged-tool canary commands that pack and locally install `js2il` before running smoke suites, and wiring the release automation plus `canary-smoke` workflow to validate the actual nupkg instead of a source-run build.
 - hosting/runtime/tests/docs: add issue #419 mutable CommonJS exports support by making typed and dynamic hosting exports proxies write through to `module.exports` on the owning script thread, adding focused hosting coverage for root-exports mutation, and updating the hosting docs to reflect the new read/write behavior.
 - runtime/spec/tests/docs: complete the issue #728 bound-function baseline by tracking `Function.prototype.bind` metadata for `length` / `name`, routing `new` on bound constructors through target/new-target semantics and target prototypes, suppressing bound-function own `prototype`, adding focused Function execution/generator coverage, and refreshing ECMA-262 tracking.
@@ -142,8 +142,8 @@ All notable changes to this project are documented here.
 
 ## v0.8.13 - 2026-02-16
 
-- Compiler/TwoPhase: fix Linux Domino regression introduced by scopes-ABI optimization where nested function-expression callbacks could fail scope-slot mapping (`callerScopesSource=None`) during HIR→LIR lowering.
-- Compiler/design: make symbol-table free-variable analysis the resilient source of truth for callable scopes requirements (recursive descendant callable/class propagation), and simplify TwoPhase `ComputeRequiresScopesParameter` to consume that semantic signal plus ABI policy.
+- src/Compiler/TwoPhase: fix Linux Domino regression introduced by scopes-ABI optimization where nested function-expression callbacks could fail scope-slot mapping (`callerScopesSource=None`) during HIR→LIR lowering.
+- src/Compiler/design: make symbol-table free-variable analysis the resilient source of truth for callable scopes requirements (recursive descendant callable/class propagation), and simplify TwoPhase `ComputeRequiresScopesParameter` to consume that semantic signal plus ABI policy.
 
 ## v0.8.12 - 2026-02-16
 
@@ -171,7 +171,7 @@ All notable changes to this project are documented here.
 ## v0.8.10 - 2026-02-13
 
 - IL/Performance: stackify typed numeric arithmetic ops (`LIR*Number`) when operands are inlineable, reducing temp-local materialization and emitted IL noise in arithmetic-heavy code.
-- Compiler/type-inference: improve Prime sieve numeric inference (typed-array reads + numeric locals like `q`/`step`/`start`) to keep hot-loop values unboxed and reduce `ToNumber(object)` overhead.
+- src/Compiler/type-inference: improve Prime sieve numeric inference (typed-array reads + numeric locals like `q`/`step`/`start`) to keep hot-loop values unboxed and reduce `ToNumber(object)` overhead.
 - Credits: @tomacox74.
 
 ## v0.8.9 - 2026-02-13
@@ -186,7 +186,7 @@ All notable changes to this project are documented here.
 - Runtime/spec: implement `String.prototype.repeat`, `trim`, `trimStart`, `trimEnd`, `slice`, and `indexOf` (unblocks turndown/domino).
 - IR/codegen: fix boxed-number arithmetic lowering/materialization (notably `-`, `*`, `/`, `%`) to prevent numeric corruption in real-world parsers.
 - CommonJS/runtime: set `require.main` to the entry module for Node-compatible `require.main === module` checks.
-- Compiler/type-inference: add type inference for `Array.prototype.some()` return values, enabling proper unboxed boolean comparisons (completes fix for #358).
+- src/Compiler/type-inference: add type inference for `Array.prototype.some()` return values, enabling proper unboxed boolean comparisons (completes fix for #358).
 
 ## v0.8.7 - 2026-02-11
 
@@ -225,7 +225,7 @@ All notable changes to this project are documented here.
 - Runtime/spec: expose standard global builtins and numeric helpers (`String`, `Number`, `Function`, `parseFloat`, `isFinite`) (fixes #528).
 - Runtime/spec: support `globalThis` identifier (ECMA-262 §19.1.1) as a first-class global value (fixes #532).
 - Runtime/validator: expose host timer APIs as first-class global function values (`setTimeout`, `clearTimeout`, `setInterval`, `clearInterval`) so DOM polyfills (e.g., domino WindowTimers) validate and compile successfully (fixes #534).
-- Compiler/validator: add `--strictMode=Warn|Ignore` to relax missing top-level `"use strict";` directive prologues for CommonJS modules (fixes #531).
+- src/Compiler/validator: add `--strictMode=Warn|Ignore` to relax missing top-level `"use strict";` directive prologues for CommonJS modules (fixes #531).
 - Functions/spec: implement minimal implicit `arguments` binding for non-arrow functions (including lexical capture from nested arrow functions) and preserve full call-site arguments only when needed; mapped-arguments aliasing and full Arguments Exotic Object behaviors are not implemented.
 - Docs(ecma262): update Sections 10.2 and 13.2 status/notes for `arguments` binding and arrow lexical capture.
 
@@ -655,7 +655,7 @@ _Note: This is experimental infrastructure. Full feature parity with the legacy 
   - Test infrastructure updated to use `ServiceContainer` with per-test `ConsoleOutputSinks` instead of static setters
   - Enables thread-safe per-test Console isolation, removing static state blocking parallel execution
   - **Breaking Change**: Tests must configure Console via dependency injection rather than static methods
-- **CommonJS module identity**: Compiler/runtime now use stable path-based module ids for generated type names to avoid basename collisions (e.g., `./b` vs `./helpers/b`).
+- **CommonJS module identity**: src/Compiler/runtime now use stable path-based module ids for generated type names to avoid basename collisions (e.g., `./b` vs `./helpers/b`).
 - **Console array formatting**: Strings in console arrays now quoted with single quotes and special characters escaped to match Node.js output.
 ### Added
 - **CommonJS regression tests**: Added execution + generator coverage for nested name conflicts, relative-from-module requires, and shared-dependency caching.
@@ -726,7 +726,7 @@ _Note: This is experimental infrastructure. Full feature parity with the legacy 
 - **Binary operator type coercion**: Fixed strict equality (`===`) comparisons in logical OR patterns (e.g., `id === 1024 || id === 2047`) when comparing captured/boxed variables to numeric literals. The IL generator now correctly applies `ToNumber` conversion when the variable type is `Unknown` (boxed in scope fields), preventing incorrect direct `object`-to-`double` `ceq` comparisons that would always fail. Added regression test `BinaryOperator_StrictEqualCapturedVariable`.
 
 ### Changed
-- **Runtime organization**: Reordered members in `JavaScriptRuntime/Promise.cs` to follow StyleCop conventions (nested types, fields, constructors, public methods, private methods)
+- **Runtime organization**: Reordered members in `src/JavaScriptRuntime/Promise.cs` to follow StyleCop conventions (nested types, fields, constructors, public methods, private methods)
 - **Test organization**: Alphabetically sorted test methods in `BinaryOperator` and `Promise` test classes for consistency
 
 ### Documentation
@@ -897,7 +897,7 @@ Added
 	Notes: JS ToNumber coercion, correct NaN/±Infinity propagation, and signed zero (-0) preservation where applicable.
 	- GetItem(object, double index): indexer for Int32Array
 	- GetLength(object): length for Int32Array
-	- Compiler/Runtime: dynamic object property assignment (obj.prop = value) for non-computed MemberExpressions. Emitter now lowers to JavaScriptRuntime.Object.SetProperty for dynamic objects; typed property setters/fields are used when available. Supports ExpandoObject (object literal) and reflection-backed host objects; arrays/typed arrays ignore arbitrary dot properties. New Literals tests cover generator and execution for property assignment.
+	- src/Compiler/Runtime: dynamic object property assignment (obj.prop = value) for non-computed MemberExpressions. Emitter now lowers to JavaScriptRuntime.Object.SetProperty for dynamic objects; typed property setters/fields are used when available. Supports ExpandoObject (object literal) and reflection-backed host objects; arrays/typed arrays ignore arbitrary dot properties. New Literals tests cover generator and execution for property assignment.
 	- Compiler: object literals now support Identifier, StringLiteral, and NumericLiteral property keys. Numeric keys are coerced to strings using invariant culture (JS ToPropertyKey semantics) during IL emission.
 	- Runtime Object: GetItem(object, double index) supports ExpandoObject (object literal) by coercing the numeric index to a string property name and returning its value (null to model undefined when absent).
 	- Runtime: Math intrinsic ([IntrinsicObject("Math")]) — implemented the full function set:

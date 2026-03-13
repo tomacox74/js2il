@@ -147,10 +147,10 @@ node .\scripts\runPhasedBenchmarkScenario.js dromaeo-object-regexp
 
 ## Key files
 
-- `JavaScriptRuntime\String.cs`
-- `JavaScriptRuntime\RegExp.cs`
-- `JavaScriptRuntime\Object.cs`
-- `JavaScriptRuntime\Symbol.cs`
+- `src\JavaScriptRuntime\String.cs`
+- `src\JavaScriptRuntime\RegExp.cs`
+- `src\JavaScriptRuntime\Object.cs`
+- `src\JavaScriptRuntime\Symbol.cs`
 - `Js2IL.Tests\String\JavaScript\String_RegExp_SymbolDispatch_RegExpOverride.js`
 - `Js2IL.Tests\String\JavaScript\String_RegExp_SymbolDispatch_RegExpPrototypeOverride.js`
 - `Js2IL.Tests\String\JavaScript\String_Split_Regex_Empty.js`

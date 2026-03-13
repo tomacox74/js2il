@@ -34,12 +34,12 @@ The **core requirement** is to resolve module IDs to physical JavaScript files a
    - `JsEngine.LoadModule(moduleId)` should support package IDs (e.g. `turndown`, `@mixmark-io/domino`).
 
 ## Current State (relevant code)
-- Compile-time module graph loading: `Compiler/ModuleLoader.cs`
+- Compile-time module graph loading: `src/Compiler/ModuleLoader.cs`
   - Today it only follows `require()` dependencies for specifiers starting with `.` or `/`.
-- Module id conventions and sanitization: `JavaScriptRuntime/CommonJS/ModuleName.cs`
-- Runtime require: `JavaScriptRuntime/CommonJS/Require.cs`
+- Module id conventions and sanitization: `src/JavaScriptRuntime/CommonJS/ModuleName.cs`
+- Runtime require: `src/JavaScriptRuntime/CommonJS/Require.cs`
   - Bare specifiers are treated as **Node core modules** only.
-- Host module loading: `JavaScriptRuntime/Hosting/JsEngine.cs`, `JavaScriptRuntime/Hosting/JsRuntimeInstance.cs`
+- Host module loading: `src/JavaScriptRuntime/Hosting/JsEngine.cs`, `src/JavaScriptRuntime/Hosting/JsRuntimeInstance.cs`
 - Assembly module-id manifest: `Js2IL.Runtime.JsCompiledModuleAttribute`
 
 ## Design Overview

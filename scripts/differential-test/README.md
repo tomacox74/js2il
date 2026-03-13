@@ -114,7 +114,7 @@ source** path (generated) so you can reproduce it locally:
 ```sh
 # Re-run a single failing program
 node   scripts/differential-test/corpus/loop-for.js
-dotnet Cli/bin/Release/net10.0/Js2IL.dll scripts/differential-test/corpus/loop-for.js -o /tmp/out
+dotnet src/Cli/bin/Release/net10.0/Js2IL.dll scripts/differential-test/corpus/loop-for.js -o /tmp/out
 dotnet /tmp/out/loop-for.dll
 ```
 

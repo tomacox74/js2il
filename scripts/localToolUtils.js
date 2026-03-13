@@ -36,7 +36,7 @@ function packToolPackage({ packDir = defaultPackDir } = {}) {
   const resolvedPackDir = resolveRepoPath(packDir);
   removeDir(resolvedPackDir);
   console.log(`Packing js2il to ${resolvedPackDir} ...`);
-  run(`dotnet pack Cli -c Release -o "${resolvedPackDir}"`);
+  run(`dotnet pack src/Cli -c Release -o "${resolvedPackDir}"`);
   return resolvedPackDir;
 }
 

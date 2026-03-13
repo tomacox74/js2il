@@ -16,7 +16,7 @@
     <ModulePdb>$([System.IO.Path]::Combine('$(ModuleOutputDir)','$(ModuleName).pdb'))</ModulePdb>
 
     <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\..\'))</RepoRoot>
-    <LocalJavaScriptRuntimeProject>$(RepoRoot)JavaScriptRuntime\JavaScriptRuntime.csproj</LocalJavaScriptRuntimeProject>
+    <LocalJavaScriptRuntimeProject>$(RepoRoot)src\JavaScriptRuntime\JavaScriptRuntime.csproj</LocalJavaScriptRuntimeProject>
 
     <!-- In a repo checkout, prefer local runtime/compiler; allow opting out via UseLocalJs2ILProject=false. -->
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJavaScriptRuntimeProject)')">true</UseLocalJs2ILProject>
