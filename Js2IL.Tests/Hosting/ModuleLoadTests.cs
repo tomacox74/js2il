@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
+using Js2IL.Runtime;
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -82,6 +83,54 @@ public class ModuleLoadTests
 
         Assert.Equal(27.0, (double)exports.hostValue);
         Assert.Equal(27.0, (double)exports.readExport("hostValue"));
+    }
+
+    public interface IImmutableExports : IDisposable
+    {
+        double LockedValue { get; set; }
+        double ReadLockedValue();
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Typed_WhenHostMutatesImmutableExport_ThrowsJsInvocationException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("immutableExports", "immutableExports.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IImmutableExports>(module.Assembly, "immutableExports");
+
+        var ex = Assert.Throws<JsInvocationException>(() => exports.LockedValue = 2);
+        Assert.Equal("immutableExports", ex.ModuleId);
+        Assert.Equal("LockedValue", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("TypeError", jsError.JsName);
+        Assert.Contains("read only property", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
+
+        Assert.Equal(1.0, exports.LockedValue);
+        Assert.Equal(1.0, exports.ReadLockedValue());
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Dynamic_WhenHostMutatesImmutableExport_ThrowsJsInvocationException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("immutableExports", "immutableExports.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "immutableExports");
+        dynamic exports = exportsObj;
+
+        var ex = Assert.Throws<JsInvocationException>(() =>
+        {
+            exports.lockedValue = 2;
+        });
+
+        Assert.Equal("immutableExports", ex.ModuleId);
+        Assert.Equal("lockedValue", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("TypeError", jsError.JsName);
+        Assert.Contains("read only property", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
+
+        Assert.Equal(1.0, (double)exports.lockedValue);
+        Assert.Equal(1.0, (double)exports.readLockedValue());
     }
 
     [Fact]
