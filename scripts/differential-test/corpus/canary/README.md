@@ -9,6 +9,8 @@ This corpus complements the differential corpus with bounded smoke cases that va
 | `pr` | Small PR gate with fast ecosystem/tooling canaries | `npm run diff:test:canary` |
 | `expanded` | Additional nightly coverage layered on top of the PR gate | `npm run diff:test:canary:nightly` |
 
+For package-level validation before releases, run the same suites through a freshly packed local tool with `npm run diff:test:canary:packed` or `npm run diff:test:canary:nightly:packed`.
+
 ## Cases
 
 | Suite | Case | Why it matters |
@@ -27,4 +29,4 @@ This corpus complements the differential corpus with bounded smoke cases that va
 1. Add a `.js` entry script to the appropriate suite directory.
 2. Add a sibling `.expected.txt` file with the exact expected stdout.
 3. Keep the script bounded and deterministic so it is safe for CI.
-4. Validate locally with the matching `npm run diff:test:canary*` command.
+4. Validate locally with the matching `npm run diff:test:canary*` command. Use the `:packed` variants when you want to exercise the actual packed tool.

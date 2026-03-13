@@ -279,10 +279,10 @@ If this investigation turns into follow-up work, the next steps should be:
 
 ## Evidence used
 
-- `Js2IL/IR/LIR/HIRToLIRLowerer.ExpressionCall.cs`
-- `Js2IL/IR/LIR/LIRMemberCallNormalization.cs`
-- `Js2IL/IL/LIRToILCompiler.InstructionEmission.Calls.cs`
-- `Js2IL/IL/LIRToILCompiler.TypedCalls.cs`
+- `Compiler/IR/LIR/HIRToLIRLowerer.ExpressionCall.cs`
+- `Compiler/IR/LIR/LIRMemberCallNormalization.cs`
+- `Compiler/IL/LIRToILCompiler.InstructionEmission.Calls.cs`
+- `Compiler/IL/LIRToILCompiler.TypedCalls.cs`
 - `JavaScriptRuntime/Object.cs`
 - `JavaScriptRuntime/ObjectRuntime.cs`
 - `JavaScriptRuntime/Hosting/JsDynamicValueProxy.cs`
@@ -291,3 +291,4 @@ If this investigation turns into follow-up work, the next steps should be:
 - `docs/compiler/Prototypes_SupportDesign.md`
 - `docs/compiler/PrototypeChainSupport.md`
 - Local benchmark runs generated from `tests/performance/Benchmarks/LateBoundDispatchBenchmarks.cs` via `dotnet run -c Release --project .\tests\performance\Benchmarks\Benchmarks.csproj -- --dispatch`
+

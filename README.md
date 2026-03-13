@@ -151,6 +151,7 @@ What it does:
 - Validates you're on a clean, up-to-date `master`
 - Creates `release/<version>` branch
 - Runs the existing `scripts/bumpVersion.js` to update `CHANGELOG.md` + project versions
+- Runs `npm run diff:test:canary:packed` so the release candidate is smoke-tested as a packed tool before the release commit is created
 - Commits, pushes, and opens a PR
 - With `--merge`: waits for CI checks (if configured), merges the PR, then creates the GitHub release/tag using the `CHANGELOG.md` section
 
@@ -183,22 +184,30 @@ npm run release:major  # For major version (0.x.y -> x+1.0.0)
 ```
 
 What the script does:
-- Reads current version from `Js2IL/Js2IL.csproj`
+- Reads current version from `Cli/Js2IL.csproj`
 - Extracts the `## Unreleased` section from `CHANGELOG.md`
 - Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` with that content
 - Resets the `## Unreleased` section to placeholder
-- Updates the `<Version>` in both `Js2IL.csproj` and `JavaScriptRuntime.csproj`
+- Updates the `<Version>` in `Cli/Js2IL.csproj`, `Js2IL.Core/Js2IL.Core.csproj`, and `JavaScriptRuntime/JavaScriptRuntime.csproj`
 
-#### 3. Commit Version Bump
+#### 3. Validate the Packed Tool
+
+Before committing, run the PR canary suite against a freshly packed local tool:
+
+```powershell
+npm run diff:test:canary:packed
+```
+
+#### 4. Commit Version Bump
 
 Commit the changes on the release branch:
 
 ```powershell
-git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+git add CHANGELOG.md Cli/Js2IL.csproj Js2IL.Core/Js2IL.Core.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
 git commit -m "chore(release): cut v0.x.y"
 ```
 
-#### 4. Push and Create PR
+#### 5. Push and Create PR
 
 Push the release branch and create a pull request:
 
@@ -207,7 +216,7 @@ git push -u origin release/0.x.y
 gh pr create --title "chore(release): Release v0.x.y" --base master --head release/0.x.y
 ```
 
-#### 5. Merge and Create Release
+#### 6. Merge and Create Release
 
 After the PR is merged:
 

@@ -9,9 +9,10 @@
  *  2) Compute next version (patch/minor/major)
  *  3) Create release/<version> branch
  *  4) Run version bump (CHANGELOG + csproj versions)
- *  5) Commit
- *  6) Push + open PR
- *  7) Optionally wait for checks, merge PR, and create GitHub release/tag
+ *  5) Run packaged smoke tests
+ *  6) Commit
+ *  7) Push + open PR
+ *  8) Optionally wait for checks, merge PR, and create GitHub release/tag
  *
  * Usage:
  *   node scripts/release.js patch
@@ -30,7 +31,8 @@ const cp = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
-const CSPROJ_PATH = path.join(ROOT, 'Js2IL', 'Js2IL.csproj');
+const CSPROJ_PATH = path.join(ROOT, 'Cli', 'Js2IL.csproj');
+const CORE_CSPROJ_PATH = path.join(ROOT, 'Js2IL.Core', 'Js2IL.Core.csproj');
 const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 
 function sleep(ms) {
@@ -363,8 +365,11 @@ function main() {
   if (args.skipEmpty) bumpArgs.push('--skip-empty');
   run(`node scripts/bumpVersion.js ${bumpArgs.join(' ')}`, args);
 
+  // Validate the packaged tool before the release commit is created.
+  run('npm run diff:test:canary:packed', args);
+
   // Commit
-  run(`git add "${path.relative(ROOT, CHANGELOG_PATH)}" "${path.relative(ROOT, CSPROJ_PATH)}" "${path.relative(ROOT, RUNTIME_CSPROJ_PATH)}"`, args);
+  run(`git add "${path.relative(ROOT, CHANGELOG_PATH)}" "${path.relative(ROOT, CSPROJ_PATH)}" "${path.relative(ROOT, CORE_CSPROJ_PATH)}" "${path.relative(ROOT, RUNTIME_CSPROJ_PATH)}"`, args);
   run(`git commit -m "chore(release): cut v${nextVersion}"`, args);
 
   // Push + PR

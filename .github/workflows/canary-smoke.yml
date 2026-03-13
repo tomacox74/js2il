@@ -50,12 +50,9 @@ jobs:
           dotnet restore
           npm ci
 
-      - name: Build JS2IL (Release)
-        run: dotnet build Js2IL/Js2IL.csproj --no-restore -c Release
-
-      - name: Run PR canary suite
+      - name: Run PR canary suite against packed tool
         run: |
-          npm run diff:test:canary -- \
+          npm run diff:test:canary:packed -- \
             --output artifacts/canary-pr \
             --verbose
 
@@ -93,12 +90,9 @@ jobs:
           dotnet restore
           npm ci
 
-      - name: Build JS2IL (Release)
-        run: dotnet build Js2IL/Js2IL.csproj --no-restore -c Release
-
-      - name: Run nightly canary suite
+      - name: Run nightly canary suite against packed tool
         run: |
-          npm run diff:test:canary:nightly -- \
+          npm run diff:test:canary:nightly:packed -- \
             --output artifacts/canary-nightly \
             --verbose
 

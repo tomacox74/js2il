@@ -23,6 +23,10 @@ const COLORS = {
 
 const c = (color, text) => `${COLORS[color] || ''}${text}${COLORS.reset}`;
 
+function truthy(value) {
+  return value === 'true' || value === '1' || value === 'yes';
+}
+
 function parseArgs(argv) {
   const args = {
     suite: 'pr',
@@ -69,6 +73,11 @@ function parseArgs(argv) {
 
     if ((a === '--js2il' || a === '-j') && argv[i + 1]) {
       args.js2il = argv[++i];
+      continue;
+    }
+
+    if (!a.startsWith('-') && !args.output) {
+      args.output = a;
       continue;
     }
 
@@ -340,6 +349,23 @@ function printResult(result, verbose) {
 
 async function main() {
   const args = parseArgs(process.argv);
+
+  if (!args.output &&
+      typeof process.env.npm_config_output === 'string' &&
+      process.env.npm_config_output.trim() &&
+      process.env.npm_config_output !== 'true' &&
+      process.env.npm_config_output !== 'false') {
+    args.output = process.env.npm_config_output.trim();
+  }
+
+  if (!args.js2il && typeof process.env.npm_config_js2il === 'string' && process.env.npm_config_js2il.trim()) {
+    args.js2il = process.env.npm_config_js2il.trim();
+  }
+
+  if (!args.verbose && (process.env.npm_config_loglevel === 'verbose' || truthy(process.env.npm_config_verbose))) {
+    args.verbose = true;
+  }
+
   if (args.help) {
     usage();
     return;

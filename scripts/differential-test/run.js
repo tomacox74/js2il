@@ -71,9 +71,9 @@ function parseArgs(argv) {
  * Locate the JS2IL binary.  Priority:
  *   1. --js2il <path> argument
  *   2. JS2IL_DLL env var
- *   3. Built DLL at Js2IL/bin/{Release,Debug}/net10.0/Js2IL.dll
+ *   3. Built DLL at Cli/bin/{Release,Debug}/net10.0/Js2IL.dll
  *   4. `js2il` global tool on PATH
- *   5. `dotnet run --project Js2IL/Js2IL.csproj`
+ *   5. `dotnet run --project Cli/Js2IL.csproj`
  *
  * Returns { type: 'dll'|'exec'|'run', path: string }
  */
@@ -91,7 +91,7 @@ function findJs2IL(override) {
     }
 
     for (const cfg of ['Release', 'Debug']) {
-        const dll = path.join(repoRoot, 'Js2IL', 'bin', cfg, 'net10.0', 'Js2IL.dll');
+        const dll = path.join(repoRoot, 'Cli', 'bin', cfg, 'net10.0', 'Js2IL.dll');
         if (fs.existsSync(dll)) return { type: 'dll', path: dll };
     }
 
@@ -103,7 +103,7 @@ function findJs2IL(override) {
     }
 
     // Fall back to dotnet run
-    const proj = path.join(repoRoot, 'Js2IL', 'Js2IL.csproj');
+    const proj = path.join(repoRoot, 'Cli', 'Js2IL.csproj');
     return { type: 'run', path: proj };
 }
 

@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AssemblyName>Js2IL.Compiler</AssemblyName>
+    <RootNamespace>Js2IL</RootNamespace>
+    <PackageId>Js2IL.Core</PackageId>
+    <Version>0.8.30</Version>
+    <Authors>tomacox74</Authors>
+    <Company></Company>
+    <Description>Reusable js2il compiler library for programmatic JavaScript-to-.NET compilation.</Description>
+    <RepositoryUrl>https://github.com/tomacox74/js2il</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.jpg</PackageIcon>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>javascript;js;il;ecma-335;dotnet;compiler;library</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Js2IL.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Acornima" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JavaScriptRuntime\JavaScriptRuntime.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Compiler\**\*.cs"
+             Exclude="..\Compiler\bin\**\*;..\Compiler\obj\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\docs\Js2IL.Core.NuGet.README.md" Pack="true" PackagePath="README.md" />
+    <None Include="..\icon.jpg" Pack="true" PackagePath="" />
+  </ItemGroup>
+</Project>

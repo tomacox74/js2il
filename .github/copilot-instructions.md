@@ -49,8 +49,8 @@ These goals drive choices made.  And their ranking above should be clear. For ex
 - **Runtime**: Provides `MemberReferenceHandle` cache for JavaScriptRuntime helper methods.
 
 ### Critical Files
-- `Js2IL/Services/ILGenerators/MethodBuilder.cs`: `CreateLocalVariableSignature()` - centralizes local sig creation
-- `Js2IL/SymbolTable/`: Scope tree infrastructure with free variable analysis
+- `Compiler/Services/ILGenerators/MethodBuilder.cs`: `CreateLocalVariableSignature()` - centralizes local sig creation
+- `Compiler/SymbolTable/`: Scope tree infrastructure with free variable analysis
 - `JavaScriptRuntime/`: Runtime library (Array, Object, Operators, Math, String, Closure helpers)
 
 ## Development Workflows
@@ -103,7 +103,7 @@ These goals drive choices made.  And their ranking above should be clear. For ex
 ```powershell
 dotnet build                                    # Debug build
 dotnet publish -c Release                       # Release build
-dotnet run --project Js2IL -- input.js output  # Run from source
+dotnet run --project Cli -- input.js output  # Run from source
 js2il input.js output                           # Installed tool
 ```
 
@@ -176,15 +176,20 @@ Follow these steps IN ORDER:
    # OR
    npm run release:major  # For major version (0.x.y -> x+1.0.0)
    ```
-   This updates CHANGELOG.md, Js2IL/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj
+   This updates CHANGELOG.md, Cli/Js2IL.csproj, Js2IL.Core/Js2IL.Core.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj
 
-3. **Commit version bump** (on the release branch):
+3. **Validate packaged smoke tests** (on the release branch):
    ```powershell
-   git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+   npm run diff:test:canary:packed
+   ```
+
+4. **Commit version bump** (on the release branch):
+   ```powershell
+   git add CHANGELOG.md Cli/Js2IL.csproj Js2IL.Core/Js2IL.Core.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
    git commit -m "chore(release): cut v0.x.y"
    ```
 
-4. **Push release branch and create PR**:
+5. **Push release branch and create PR**:
    ```powershell
    git push -u origin release/0.x.y
    gh pr create --title "chore(release): Release v0.x.y" --body-file <release-notes.md> --base master --head release/0.x.y
@@ -318,3 +323,4 @@ Remove-Item body.json -ErrorAction SilentlyContinue
 - **BOM issues**: `Out-File -Encoding utf8` adds BOM which breaks JSON parsing
 - **`WriteAllText` works**: Writes UTF-8 without BOM, handles escaping correctly
 - Thread IDs have format `PRRT_kwDO...` (Pull Request Review Thread)
+

@@ -39,7 +39,7 @@ jobs:
         run: dotnet test js2il.sln -c Release --no-build --verbosity normal
 
       - name: Pack tool
-        run: dotnet pack Js2IL/Js2IL.csproj -c Release -o out -p:ContinuousIntegrationBuild=true -p:Version=${{ env.VERSION }}
+        run: dotnet pack Cli/Js2IL.csproj -c Release -o out -p:ContinuousIntegrationBuild=true -p:Version=${{ env.VERSION }}
 
       - name: Publish to NuGet
         env:
