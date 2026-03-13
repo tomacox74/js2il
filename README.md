@@ -187,14 +187,14 @@ What the script does:
 - Extracts the `## Unreleased` section from `CHANGELOG.md`
 - Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` with that content
 - Resets the `## Unreleased` section to placeholder
-- Updates the `<Version>` in both `Js2IL.csproj` and `JavaScriptRuntime.csproj`
+- Updates the `<Version>` in `Cli/Js2IL.csproj`, `Js2IL.Core/Js2IL.Core.csproj`, and `JavaScriptRuntime/JavaScriptRuntime.csproj`
 
 #### 3. Commit Version Bump
 
 Commit the changes on the release branch:
 
 ```powershell
-git add CHANGELOG.md Cli/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+git add CHANGELOG.md Cli/Js2IL.csproj Js2IL.Core/Js2IL.Core.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
 git commit -m "chore(release): cut v0.x.y"
 ```
 

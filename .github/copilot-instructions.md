@@ -176,11 +176,11 @@ Follow these steps IN ORDER:
    # OR
    npm run release:major  # For major version (0.x.y -> x+1.0.0)
    ```
-   This updates CHANGELOG.md, Cli/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj
+   This updates CHANGELOG.md, Cli/Js2IL.csproj, Js2IL.Core/Js2IL.Core.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj
 
 3. **Commit version bump** (on the release branch):
    ```powershell
-   git add CHANGELOG.md Cli/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+   git add CHANGELOG.md Cli/Js2IL.csproj Js2IL.Core/Js2IL.Core.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
    git commit -m "chore(release): cut v0.x.y"
    ```
 
