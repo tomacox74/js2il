@@ -188,7 +188,7 @@ What the script does:
 - Extracts the `## Unreleased` section from `CHANGELOG.md`
 - Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` with that content
 - Resets the `## Unreleased` section to placeholder
-- Updates the `<Version>` in `src/Cli/Js2IL.csproj`, `src/Js2IL.Core/Js2IL.Core.csproj`, and `src/JavaScriptRuntime/JavaScriptRuntime.csproj`
+- Updates the `<Version>` in `src/Cli/Js2IL.csproj`, `src/Js2IL.Core/Js2IL.Core.csproj`, `src/Js2IL.SDK/Js2IL.SDK.csproj`, and `src/JavaScriptRuntime/JavaScriptRuntime.csproj`
 
 #### 3. Validate the Packed Tool
 
@@ -203,7 +203,7 @@ npm run diff:test:canary:packed
 Commit the changes on the release branch:
 
 ```powershell
-git add CHANGELOG.md src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
+git add CHANGELOG.md src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/Js2IL.SDK/Js2IL.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
 git commit -m "chore(release): cut v0.x.y"
 ```
 

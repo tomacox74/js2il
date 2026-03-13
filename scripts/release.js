@@ -33,6 +33,7 @@ const ROOT = path.resolve(__dirname, '..');
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
 const CSPROJ_PATH = path.join(ROOT, 'src', 'Cli', 'Js2IL.csproj');
 const CORE_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.Core', 'Js2IL.Core.csproj');
+const SDK_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.SDK', 'Js2IL.SDK.csproj');
 const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'src', 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 
 function sleep(ms) {
@@ -369,7 +370,7 @@ function main() {
   run('npm run diff:test:canary:packed', args);
 
   // Commit
-  run(`git add "${path.relative(ROOT, CHANGELOG_PATH)}" "${path.relative(ROOT, CSPROJ_PATH)}" "${path.relative(ROOT, CORE_CSPROJ_PATH)}" "${path.relative(ROOT, RUNTIME_CSPROJ_PATH)}"`, args);
+  run(`git add "${path.relative(ROOT, CHANGELOG_PATH)}" "${path.relative(ROOT, CSPROJ_PATH)}" "${path.relative(ROOT, CORE_CSPROJ_PATH)}" "${path.relative(ROOT, SDK_CSPROJ_PATH)}" "${path.relative(ROOT, RUNTIME_CSPROJ_PATH)}"`, args);
   run(`git commit -m "chore(release): cut v${nextVersion}"`, args);
 
   // Push + PR
