@@ -73,7 +73,7 @@ function parseArgs(argv) {
  *   2. JS2IL_DLL env var
  *   3. Built DLL at Js2IL/bin/{Release,Debug}/net10.0/Js2IL.dll
  *   4. `js2il` global tool on PATH
- *   5. `dotnet run --project Compiler/Js2IL.csproj`
+ *   5. `dotnet run --project Cli/Js2IL.csproj`
  *
  * Returns { type: 'dll'|'exec'|'run', path: string }
  */
@@ -103,7 +103,7 @@ function findJs2IL(override) {
     }
 
     // Fall back to dotnet run
-    const proj = path.join(repoRoot, 'Compiler', 'Js2IL.csproj');
+    const proj = path.join(repoRoot, 'Cli', 'Js2IL.csproj');
     return { type: 'run', path: proj };
 }
 

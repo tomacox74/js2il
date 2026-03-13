@@ -3,7 +3,7 @@
 
 /*
  * bumpVersion.js
- * Automates version bumping across CHANGELOG.md, Compiler/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj.
+ * Automates version bumping across CHANGELOG.md, Cli/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj.
  * Usage examples:
  *   node scripts/bumpVersion.js patch
  *   node scripts/bumpVersion.js minor
@@ -26,7 +26,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const CSPROJ_PATH = path.join(ROOT, 'Compiler', 'Js2IL.csproj');
+const CSPROJ_PATH = path.join(ROOT, 'Cli', 'Js2IL.csproj');
 const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
 
@@ -140,7 +140,7 @@ function perform() {
   console.log(`Bumped version: ${currentVersion} -> ${newVersion}`);
   console.log('Updated CHANGELOG.md, Js2IL.csproj, and JavaScriptRuntime.csproj');
   console.log('\nNext steps:');
-  console.log(`  git add CHANGELOG.md Compiler/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj`);
+  console.log(`  git add CHANGELOG.md Cli/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj`);
   console.log(`  git commit -m "chore(release): cut ${newVersion}"`);
   console.log(`  git tag -a v${newVersion} -m "Release ${newVersion}"`);
   console.log('  git push && git push --tags');

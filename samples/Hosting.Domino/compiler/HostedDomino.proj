@@ -10,7 +10,7 @@
     <OutputDir Condition="'$(OutputDir)' == ''">$(MSBuildThisFileDirectory)out</OutputDir>
 
     <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\'))</RepoRoot>
-    <LocalJs2ILProject>$(RepoRoot)Compiler\Js2IL.csproj</LocalJs2ILProject>
+    <LocalJs2ILProject>$(RepoRoot)Cli\Js2IL.csproj</LocalJs2ILProject>
 
     <!-- In a repo checkout, prefer the local compiler; allow opting out via UseLocalJs2ILProject=false. -->
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJs2ILProject)')">true</UseLocalJs2ILProject>

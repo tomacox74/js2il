@@ -103,7 +103,7 @@ These goals drive choices made.  And their ranking above should be clear. For ex
 ```powershell
 dotnet build                                    # Debug build
 dotnet publish -c Release                       # Release build
-dotnet run --project Compiler -- input.js output  # Run from source
+dotnet run --project Cli -- input.js output  # Run from source
 js2il input.js output                           # Installed tool
 ```
 
@@ -176,11 +176,11 @@ Follow these steps IN ORDER:
    # OR
    npm run release:major  # For major version (0.x.y -> x+1.0.0)
    ```
-   This updates CHANGELOG.md, Compiler/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj
+   This updates CHANGELOG.md, Cli/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj
 
 3. **Commit version bump** (on the release branch):
    ```powershell
-   git add CHANGELOG.md Compiler/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+   git add CHANGELOG.md Cli/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
    git commit -m "chore(release): cut v0.x.y"
    ```
 

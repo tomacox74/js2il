@@ -6,7 +6,7 @@
     <OutputDir>$([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)','out'))</OutputDir>
 
     <RepoRoot>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildThisFileDirectory)','..','..','..'))))</RepoRoot>
-    <LocalJs2ILProject>$([System.IO.Path]::Combine('$(RepoRoot)','Compiler','Js2IL.csproj'))</LocalJs2ILProject>
+    <LocalJs2ILProject>$([System.IO.Path]::Combine('$(RepoRoot)','Cli','Js2IL.csproj'))</LocalJs2ILProject>
 
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJs2ILProject)')">true</UseLocalJs2ILProject>
     <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And !Exists('$(LocalJs2ILProject)')">false</UseLocalJs2ILProject>

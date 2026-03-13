@@ -31,7 +31,7 @@ function removeDir(dirPath) {
 
 try {
   console.log(`Packing js2il to ${packDir} ...`);
-  run('dotnet pack Compiler -c Release -o "' + packDir + '"');
+  run('dotnet pack Cli -c Release -o "' + packDir + '"');
 
   console.log('Uninstalling existing global js2il (if any)...');
   try {
