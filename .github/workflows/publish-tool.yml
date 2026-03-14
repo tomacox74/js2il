@@ -1,4 +1,4 @@
-name: Publish js2il tool
+name: Publish compiler packages
 
 on:
   push:
@@ -38,18 +38,41 @@ jobs:
       - name: Test
         run: dotnet test js2il.sln -c Release --no-build --verbosity normal
 
-      - name: Pack tool
-        run: dotnet pack src/Cli/Js2IL.csproj -c Release -o out -p:ContinuousIntegrationBuild=true -p:Version=${{ env.VERSION }}
+      - name: Pack compiler packages
+        shell: pwsh
+        run: |
+          if (Test-Path out) {
+            Remove-Item out -Recurse -Force
+          }
 
-      - name: Publish to NuGet
+          $projects = @(
+            'src/Cli/Js2IL.csproj',
+            'src/Js2IL.Core/Js2IL.Core.csproj',
+            'src/Js2IL.SDK/Js2IL.SDK.csproj'
+          )
+
+          foreach ($project in $projects) {
+            dotnet pack $project -c Release -o out -p:ContinuousIntegrationBuild=true -p:Version=${{ env.VERSION }}
+          }
+
+      - name: Publish compiler packages to NuGet
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         shell: pwsh
         run: |
-          $pkg = Get-ChildItem -Path out -Filter *.nupkg | Select-Object -First 1
-          if (-not $pkg) {
-            Write-Error "No package found in 'out'"
-            exit 1
+          $packageNames = @(
+            "js2il.$env:VERSION.nupkg",
+            "Js2IL.Core.$env:VERSION.nupkg",
+            "Js2IL.SDK.$env:VERSION.nupkg"
+          )
+
+          foreach ($packageName in $packageNames) {
+            $pkgPath = Join-Path 'out' $packageName
+            if (-not (Test-Path $pkgPath)) {
+              Write-Error "Expected package not found: $pkgPath"
+              exit 1
+            }
+
+            Write-Host "Pushing $packageName to $env:NUGET_SERVER"
+            dotnet nuget push --source "$env:NUGET_SERVER" --api-key "$env:NUGET_API_KEY" "$pkgPath" --skip-duplicate
           }
-          Write-Host "Pushing $($pkg.Name) to $env:NUGET_SERVER"
-          dotnet nuget push --source "$env:NUGET_SERVER" --api-key "$env:NUGET_API_KEY" "$($pkg.FullName)" --skip-duplicate

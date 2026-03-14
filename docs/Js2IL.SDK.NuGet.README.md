@@ -13,6 +13,8 @@ It imports MSBuild props/targets, invokes `Js2IL.Core` in-process, and exposes t
 - `Js2IL.Core`
   - Use this when you need the compiler as a reusable .NET library.
 
+Official releases publish `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When validating a local feed for SDK consumers, also pack `JavaScriptRuntime` into that feed because host projects reference it directly.
+
 ## Install
 
 ```xml
@@ -101,7 +103,7 @@ dotnet build .\js2il_sdk_pkg\samples\Hosting.Basic\host
 dotnet run --project .\js2il_sdk_pkg\samples\Hosting.Basic\host
 ```
 
-If you are validating a locally packed prerelease feed instead of NuGet.org, override `Js2ILPackageVersion` (or the individual `Js2ILSdkPackageVersion` / `JavaScriptRuntimePackageVersion` properties) when building the sample.
+If you are validating a locally packed prerelease feed instead of NuGet.org, pack `JavaScriptRuntime`, `Js2IL.Core`, and `Js2IL.SDK` into the same feed, then override `Js2ILPackageVersion` (or the individual `Js2ILSdkPackageVersion` / `JavaScriptRuntimePackageVersion` properties) when building the sample.
 
 ## Repo hosting sample pattern
 
