@@ -6,12 +6,14 @@ It imports MSBuild props/targets, invokes `Js2IL.Core` in-process, and exposes t
 
 ## Which package should I use?
 
-- `Js2IL.SDK`
+- [`Js2IL.SDK`](https://www.nuget.org/packages/Js2IL.SDK)
   - Use this when your project should compile JavaScript during `dotnet build`.
-- `js2il`
+- [`js2il`](https://www.nuget.org/packages/js2il)
   - Use this when you want the standalone CLI/global tool for manual compilation.
-- `Js2IL.Core`
+- [`Js2IL.Core`](https://www.nuget.org/packages/Js2IL.Core)
   - Use this when you need the compiler as a reusable .NET library.
+- [`JavaScriptRuntime`](https://www.nuget.org/packages/JavaScriptRuntime)
+  - Use this when your host application needs the runtime support library used by compiled modules.
 
 Official releases publish `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When validating a local feed for SDK consumers, also pack `JavaScriptRuntime` into that feed because host projects reference it directly.
 
@@ -111,3 +113,9 @@ If you are validating a locally packed prerelease feed instead of NuGet.org, pac
   - The host project references `Js2IL.SDK` directly and declares a `Js2ILCompile` item that points at `compiler\JavaScript\*.js`.
 - `samples\Hosting.Domino`
   - The host project keeps `npm ci`, then compiles the restored entry file under `compiler\node_modules\@mixmark-io\domino\lib\index.js` with `RootModuleId="@mixmark-io/domino"` so `JsEngine.LoadModule(..., "@mixmark-io/domino")` continues to work.
+
+## Links
+
+- Hosting docs: https://github.com/tomacox74/js2il/blob/master/docs/hosting/Index.md
+- Source, issues, docs: https://github.com/tomacox74/js2il
+- License: Apache-2.0

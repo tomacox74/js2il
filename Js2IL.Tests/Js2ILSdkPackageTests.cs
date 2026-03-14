@@ -22,10 +22,8 @@ public class Js2ILSdkPackageTests
             var sdkPackagePath = Path.Combine(feedDir, $"Js2IL.SDK.{packageVersion}.nupkg");
             Assert.True(File.Exists(sdkPackagePath), $"Expected package was not produced: {sdkPackagePath}");
 
-            using var archive = ZipFile.OpenRead(sdkPackagePath);
-            var entryNames = archive.Entries
-                .Select(entry => entry.FullName)
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var package = ReadPackedPackage(sdkPackagePath);
+            var entryNames = package.EntryNames;
 
             Assert.Contains("build/Js2IL.SDK.props", entryNames);
             Assert.Contains("build/Js2IL.SDK.targets", entryNames);
@@ -47,21 +45,32 @@ public class Js2ILSdkPackageTests
             Assert.DoesNotContain("samples/Hosting.Domino/compiler/HostedDomino.proj", entryNames);
             Assert.DoesNotContain(entryNames, name => name.Contains("/js2il/", StringComparison.OrdinalIgnoreCase));
 
-            var nuspecEntry = archive.Entries.Single(entry => entry.FullName.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase));
-            using var nuspecStream = nuspecEntry.Open();
-            var nuspec = XDocument.Load(nuspecStream);
-            XNamespace ns = nuspec.Root!.Name.Namespace;
+            AssertPackagePageMetadata(
+                package,
+                expectedId: "Js2IL.SDK",
+                expectedDescription: "MSBuild SDK package for compiling JavaScript sources into .NET assemblies during dotnet build.",
+                expectedProjectUrl: "https://github.com/tomacox74/js2il/blob/master/docs/hosting/Index.md",
+                requiredTags:
+                [
+                    "compiler",
+                    "msbuild",
+                    "sdk",
+                    "hosting"
+                ],
+                requiredReadmeLinks:
+                [
+                    "https://www.nuget.org/packages/js2il",
+                    "https://www.nuget.org/packages/Js2IL.Core",
+                    "https://www.nuget.org/packages/Js2IL.SDK",
+                    "https://www.nuget.org/packages/JavaScriptRuntime"
+                ]);
 
-            var dependencyIds = nuspec
-                .Descendants(ns + "dependency")
-                .Select(element => (string?)element.Attribute("id"))
-                .Where(id => !string.IsNullOrWhiteSpace(id))
-                .Cast<string>()
-                .ToArray();
+            var dependencyIds = GetDependencyIds(package.Nuspec);
 
             Assert.Contains("Js2IL.Core", dependencyIds, StringComparer.Ordinal);
             Assert.DoesNotContain("js2il", dependencyIds, StringComparer.OrdinalIgnoreCase);
 
+            using var archive = ZipFile.OpenRead(sdkPackagePath);
             var targetsEntry = archive.GetEntry("build/Js2IL.SDK.targets");
             Assert.NotNull(targetsEntry);
             using var targetsReader = new StreamReader(targetsEntry!.Open());
@@ -94,12 +103,60 @@ public class Js2ILSdkPackageTests
             var toolPackagePath = Path.Combine(feedDir, $"js2il.{packageVersion}.nupkg");
             Assert.True(File.Exists(toolPackagePath), $"Expected package was not produced: {toolPackagePath}");
 
-            using var archive = ZipFile.OpenRead(toolPackagePath);
-            var entryNames = archive.Entries
-                .Select(entry => entry.FullName)
-                .ToArray();
+            var package = ReadPackedPackage(toolPackagePath);
+            var entryNames = package.EntryNames.ToArray();
 
             Assert.DoesNotContain(entryNames, name => name.StartsWith("samples/", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains("README.md", entryNames);
+            Assert.Contains("icon.jpg", entryNames);
+            Assert.Contains("https://www.nuget.org/packages/Js2IL.Core", package.ReadmeText, StringComparison.Ordinal);
+            Assert.Contains("https://www.nuget.org/packages/Js2IL.SDK", package.ReadmeText, StringComparison.Ordinal);
+        }
+        finally
+        {
+            try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
+        }
+    }
+
+    [Fact]
+    public void Pack_Js2ILCore_ContainsReadmeIconAndDiscoverabilityMetadata()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), "js2il-sdk-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            var repoRoot = FindRepoRoot();
+            var feedDir = Path.Combine(tempRoot, "feed");
+            Directory.CreateDirectory(feedDir);
+
+            var packageVersion = PackLocalFeed(repoRoot, feedDir);
+            var corePackagePath = Path.Combine(feedDir, $"Js2IL.Core.{packageVersion}.nupkg");
+            Assert.True(File.Exists(corePackagePath), $"Expected package was not produced: {corePackagePath}");
+
+            var package = ReadPackedPackage(corePackagePath);
+
+            AssertPackagePageMetadata(
+                package,
+                expectedId: "Js2IL.Core",
+                expectedDescription: "Reusable js2il compiler library for embedding JavaScript-to-.NET compilation in custom .NET tools and hosts.",
+                expectedProjectUrl: "https://github.com/tomacox74/js2il/blob/master/docs/hosting/Index.md",
+                requiredTags:
+                [
+                    "compiler",
+                    "library",
+                    "hosting"
+                ],
+                requiredReadmeLinks:
+                [
+                    "https://www.nuget.org/packages/js2il",
+                    "https://www.nuget.org/packages/Js2IL.Core",
+                    "https://www.nuget.org/packages/Js2IL.SDK",
+                    "https://www.nuget.org/packages/JavaScriptRuntime"
+                ]);
+
+            var dependencyIds = GetDependencyIds(package.Nuspec);
+            Assert.Contains("JavaScriptRuntime", dependencyIds, StringComparer.Ordinal);
         }
         finally
         {
@@ -392,6 +449,103 @@ public class Js2ILSdkPackageTests
         return version!;
     }
 
+    private static PackedPackage ReadPackedPackage(string packagePath)
+    {
+        using var archive = ZipFile.OpenRead(packagePath);
+
+        var entryNames = archive.Entries
+            .Select(entry => entry.FullName)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var nuspecEntry = archive.Entries.Single(entry => entry.FullName.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase));
+        using var nuspecStream = nuspecEntry.Open();
+        var nuspec = XDocument.Load(nuspecStream);
+
+        var readmeEntry = archive.GetEntry("README.md");
+        Assert.NotNull(readmeEntry);
+
+        using var readmeReader = new StreamReader(readmeEntry!.Open());
+        var readmeText = readmeReader.ReadToEnd();
+
+        return new PackedPackage(entryNames, readmeText, nuspec);
+    }
+
+    private static void AssertPackagePageMetadata(
+        PackedPackage package,
+        string expectedId,
+        string expectedDescription,
+        string expectedProjectUrl,
+        string[] requiredTags,
+        string[] requiredReadmeLinks)
+    {
+        Assert.Contains("README.md", package.EntryNames);
+        Assert.Contains("icon.jpg", package.EntryNames);
+
+        Assert.Equal(expectedId, GetMetadataValue(package.Nuspec, "id"));
+        Assert.Equal(expectedDescription, GetMetadataValue(package.Nuspec, "description"));
+        Assert.Equal("README.md", GetMetadataValue(package.Nuspec, "readme"));
+        Assert.Equal("icon.jpg", GetMetadataValue(package.Nuspec, "icon"));
+        Assert.Equal(expectedProjectUrl, GetMetadataValue(package.Nuspec, "projectUrl"));
+        Assert.Equal("https://github.com/tomacox74/js2il", GetRepositoryUrl(package.Nuspec));
+        Assert.Equal("git", GetRepositoryType(package.Nuspec));
+
+        var tags = GetMetadataValue(package.Nuspec, "tags");
+        foreach (var tag in requiredTags)
+        {
+            Assert.Contains(tag, tags, StringComparison.OrdinalIgnoreCase);
+        }
+
+        foreach (var link in requiredReadmeLinks)
+        {
+            Assert.Contains(link, package.ReadmeText, StringComparison.Ordinal);
+        }
+    }
+
+    private static string[] GetDependencyIds(XDocument nuspec)
+    {
+        XNamespace ns = nuspec.Root!.Name.Namespace;
+        return nuspec
+            .Descendants(ns + "dependency")
+            .Select(element => (string?)element.Attribute("id"))
+            .Where(id => !string.IsNullOrWhiteSpace(id))
+            .Cast<string>()
+            .ToArray();
+    }
+
+    private static string GetMetadataValue(XDocument nuspec, string elementName)
+    {
+        XNamespace ns = nuspec.Root!.Name.Namespace;
+        var value = nuspec
+            .Descendants(ns + elementName)
+            .Select(element => element.Value)
+            .FirstOrDefault();
+
+        Assert.False(string.IsNullOrWhiteSpace(value), $"Could not find <{elementName}> in nuspec.");
+        return value!;
+    }
+
+    private static string GetRepositoryUrl(XDocument nuspec)
+    {
+        XNamespace ns = nuspec.Root!.Name.Namespace;
+        var repository = nuspec.Descendants(ns + "repository").FirstOrDefault();
+        Assert.NotNull(repository);
+
+        var url = (string?)repository!.Attribute("url");
+        Assert.False(string.IsNullOrWhiteSpace(url), "Could not find repository url in nuspec.");
+        return url!;
+    }
+
+    private static string GetRepositoryType(XDocument nuspec)
+    {
+        XNamespace ns = nuspec.Root!.Name.Namespace;
+        var repository = nuspec.Descendants(ns + "repository").FirstOrDefault();
+        Assert.NotNull(repository);
+
+        var type = (string?)repository!.Attribute("type");
+        Assert.False(string.IsNullOrWhiteSpace(type), "Could not find repository type in nuspec.");
+        return type!;
+    }
+
     private static string FindRepoRoot()
     {
         var start = new DirectoryInfo(Path.GetDirectoryName(typeof(Js2ILSdkPackageTests).Assembly.Location)!);
@@ -433,4 +587,6 @@ public class Js2ILSdkPackageTests
         var stdErr = stderrTask.GetAwaiter().GetResult();
         return (process.ExitCode, stdOut, stdErr);
     }
+
+    private sealed record PackedPackage(HashSet<string> EntryNames, string ReadmeText, XDocument Nuspec);
 }
