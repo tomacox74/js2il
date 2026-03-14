@@ -81,11 +81,12 @@ function updateCsprojVersion(text, newVersion) {
 }
 
 function updateSamplesPropsVersion(text, newVersion) {
-  if(!text.includes('<Js2ILPackageVersion>')) {
+  const pattern = /<Js2ILPackageVersion\b([^>]*)>[^<]+<\/Js2ILPackageVersion>/;
+  if(!pattern.test(text)) {
     throw new Error('Could not find <Js2ILPackageVersion> in samples/Directory.Build.props');
   }
 
-  return text.replace(/<Js2ILPackageVersion>[^<]+<\/Js2ILPackageVersion>/, `<Js2ILPackageVersion>${newVersion}<\/Js2ILPackageVersion>`);
+  return text.replace(pattern, `<Js2ILPackageVersion$1>${newVersion}<\/Js2ILPackageVersion>`);
 }
 
 function extractUnreleased(changelog) {

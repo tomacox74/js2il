@@ -4,10 +4,15 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.1 - 2026-03-14
+
 - packaging/hosting/tests/docs: add the new `Js2IL.SDK` NuGet package for issue #846, shipping an in-process MSBuild task plus `build\Js2IL.SDK.props` / `.targets` so host projects can declare `Js2ILCompile` items, compile JavaScript during `dotnet build`, and consume the generated module assembly without shelling out to the `js2il` tool.
 - packaging/hosting/samples/docs: migrate the hosting samples for issue #847 from the legacy `compiler\*.proj` shell-out flow onto direct `Js2IL.SDK` usage, move packaged sample content from the `js2il` tool nupkg into the `Js2IL.SDK` nupkg, and clarify when to use `js2il`, `Js2IL.Core`, and `Js2IL.SDK`.
 - release/tooling/docs: close issue #848 by teaching tagged release builds to pack and publish coordinated `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` packages, adding a `npm run release:validate` gate that pairs packed-tool canaries with local SDK package-consumption tests, and staging `samples/Directory.Build.props` so release commits preserve aligned package versions.
 - packaging/nuget/docs/tests: close issue #849 by expanding the packaged `Js2IL.Core` / `Js2IL.SDK` README copy, cross-linking the `js2il`, `Js2IL.Core`, and `Js2IL.SDK` package pages, adding package-project URLs/tags for discoverability, and asserting the shipped nuspec/readme metadata in focused package tests before first publish.
+- release/tooling: fix `scripts/bumpVersion.js` so release cuts still update `samples/Directory.Build.props` after the shared `Js2ILPackageVersion` property gained a `Condition=...` attribute.
 
 ## v0.9.0 - 2026-03-13
 
