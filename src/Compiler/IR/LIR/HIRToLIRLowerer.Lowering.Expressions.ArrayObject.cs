@@ -216,7 +216,7 @@ public sealed partial class HIRToLIRLowerer
         var boxedValue = EnsureObject(valueTemp);
         var defineResult = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            IntrinsicName: "Object",
+            IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
             MethodName: "DefineObjectLiteralDataProperty",
             Arguments: new List<TempVariable> { boxedTarget, boxedKey, boxedValue },
             Result: defineResult));
@@ -250,7 +250,7 @@ public sealed partial class HIRToLIRLowerer
         var boxedSetter = EnsureObject(setterTemp);
         var defineResult = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            IntrinsicName: "Object",
+            IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
             MethodName: "DefineObjectLiteralAccessorProperty",
             Arguments: new List<TempVariable> { boxedTarget, boxedKey, boxedGetter, boxedSetter },
             Result: defineResult));

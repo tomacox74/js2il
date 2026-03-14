@@ -3877,7 +3877,7 @@ namespace JavaScriptRuntime
 
         public static object SpreadIntoObjectLiteral(object target, object? source)
         {
-            return CopyEnumerableOwnProperties(target, source, (key, value) => DefineObjectLiteralDataProperty(target, key, value));
+            return CopyEnumerableOwnProperties(target, source, (key, value) => ObjectRuntime.DefineObjectLiteralDataProperty(target, key, value));
         }
 
         private static void SetSpreadTargetProperty(object target, string key, object? value)
@@ -4387,78 +4387,6 @@ namespace JavaScriptRuntime
             SetProperty(obj!, key, value);
         }
 
-        public static object DefineObjectLiteralDataProperty(object target, object? prop, object? value)
-        {
-            if (target is null || target is JsNull)
-            {
-                throw new TypeError("Cannot convert undefined or null to object");
-            }
-
-            var key = ToPropertyKeyString(prop);
-            InvalidateRegExpWellKnownSymbolFastPath(target, key);
-
-            if (target is IDictionary<string, object?> dict)
-            {
-                dict[key] = value;
-            }
-
-            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Value = value,
-                Writable = true,
-                Enumerable = true,
-                Configurable = true
-            });
-
-            return target;
-        }
-
-        public static object DefineObjectLiteralAccessorProperty(object target, object? prop, object? getter, object? setter)
-        {
-            if (target is null || target is JsNull)
-            {
-                throw new TypeError("Cannot convert undefined or null to object");
-            }
-
-            if (getter is not null && getter is not JsNull && getter is not Delegate)
-            {
-                throw new TypeError("Getter must be a function");
-            }
-
-            if (setter is not null && setter is not JsNull && setter is not Delegate)
-            {
-                throw new TypeError("Setter must be a function");
-            }
-
-            var key = ToPropertyKeyString(prop);
-            InvalidateRegExpWellKnownSymbolFastPath(target, key);
-
-            object? existingGetter = null;
-            object? existingSetter = null;
-            if (PropertyDescriptorStore.TryGetOwn(target, key, out var existing) && existing.Kind == JsPropertyDescriptorKind.Accessor)
-            {
-                existingGetter = existing.Get;
-                existingSetter = existing.Set;
-            }
-
-            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Accessor,
-                Enumerable = true,
-                Configurable = true,
-                Get = getter is null || getter is JsNull ? existingGetter : getter,
-                Set = setter is null || setter is JsNull ? existingSetter : setter
-            });
-
-            if (target is IDictionary<string, object?> dict && !dict.ContainsKey(key))
-            {
-                dict[key] = null;
-            }
-
-            return target;
-        }
-
         /// <summary>
         /// Dynamic property assignment used when the compiler cannot bind a static setter.
         /// Supports:
@@ -4667,7 +4595,7 @@ namespace JavaScriptRuntime
             return value;
         }
 
-        private static void InvalidateRegExpWellKnownSymbolFastPath(object target, string propertyKey)
+        internal static void InvalidateRegExpWellKnownSymbolFastPath(object target, string propertyKey)
         {
             if (target is JavaScriptRuntime.RegExp regexp)
             {
