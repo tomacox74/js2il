@@ -31,10 +31,10 @@ dotnet tool uninstall --global js2il
   - The MSBuild/NuGet integration for host projects that should compile JavaScript during `dotnet build`.
 - [`Js2IL.Core`](https://www.nuget.org/packages/Js2IL.Core)
   - The reusable compiler library for custom tooling, build tasks, or other programmatic .NET integration.
-- [`JavaScriptRuntime`](https://www.nuget.org/packages/JavaScriptRuntime)
+- [`Js2IL.Runtime`](https://www.nuget.org/packages/Js2IL.Runtime)
   - The runtime support library used by generated assemblies and .NET hosting scenarios.
 
-Official releases publish `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When you mix these packages in one workflow, keep the versions aligned.
+Official releases publish `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When you mix these packages in one workflow, keep the versions aligned.
 
 ## Usage
 

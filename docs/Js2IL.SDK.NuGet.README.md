@@ -12,21 +12,21 @@ It imports MSBuild props/targets, invokes `Js2IL.Core` in-process, and exposes t
   - Use this when you want the standalone CLI/global tool for manual compilation.
 - [`Js2IL.Core`](https://www.nuget.org/packages/Js2IL.Core)
   - Use this when you need the compiler as a reusable .NET library.
-- [`JavaScriptRuntime`](https://www.nuget.org/packages/JavaScriptRuntime)
+- [`Js2IL.Runtime`](https://www.nuget.org/packages/Js2IL.Runtime)
   - Use this when your host application needs the runtime support library used by compiled modules.
 
-Official releases publish `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When validating a local feed for SDK consumers, also pack `JavaScriptRuntime` into that feed because host projects reference it directly.
+Official releases publish `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When validating a local feed for SDK consumers, also pack `Js2IL.Runtime` into that feed because host projects reference it directly.
 
 ## Install
 
 ```xml
 <ItemGroup>
   <PackageReference Include="Js2IL.SDK" Version="VERSION" />
-  <PackageReference Include="JavaScriptRuntime" Version="VERSION" />
+  <PackageReference Include="Js2IL.Runtime" Version="VERSION" />
 </ItemGroup>
 ```
 
-`JavaScriptRuntime` is still the package your host references for `Js2IL.Runtime.JsEngine` and the runtime support assembly.
+`Js2IL.Runtime` is the package your host references for `Js2IL.Runtime.JsEngine` and the runtime support assembly.
 
 ## Basic usage
 
@@ -38,7 +38,7 @@ Official releases publish `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL
 
   <ItemGroup>
     <PackageReference Include="Js2IL.SDK" Version="VERSION" />
-    <PackageReference Include="JavaScriptRuntime" Version="VERSION" />
+    <PackageReference Include="Js2IL.Runtime" Version="VERSION" />
 
     <Js2ILCompile Include="JavaScript\HostedMathModule.js" />
   </ItemGroup>
@@ -105,7 +105,7 @@ dotnet build .\js2il_sdk_pkg\samples\Hosting.Basic\host
 dotnet run --project .\js2il_sdk_pkg\samples\Hosting.Basic\host
 ```
 
-If you are validating a locally packed prerelease feed instead of NuGet.org, pack `JavaScriptRuntime`, `Js2IL.Core`, and `Js2IL.SDK` into the same feed, then override `Js2ILPackageVersion` (or the individual `Js2ILSdkPackageVersion` / `JavaScriptRuntimePackageVersion` properties) when building the sample.
+If you are validating a locally packed prerelease feed instead of NuGet.org, pack `Js2IL.Runtime`, `Js2IL.Core`, and `Js2IL.SDK` into the same feed, then override `Js2ILPackageVersion` (or the individual `Js2ILSdkPackageVersion` / `Js2ILRuntimePackageVersion` properties) when building the sample. The legacy `JavaScriptRuntimePackageVersion` property is still accepted as an alias.
 
 ## Repo hosting sample pattern
 

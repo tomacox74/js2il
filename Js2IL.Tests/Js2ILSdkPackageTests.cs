@@ -62,13 +62,14 @@ public class Js2ILSdkPackageTests
                     "https://www.nuget.org/packages/js2il",
                     "https://www.nuget.org/packages/Js2IL.Core",
                     "https://www.nuget.org/packages/Js2IL.SDK",
-                    "https://www.nuget.org/packages/JavaScriptRuntime"
+                    "https://www.nuget.org/packages/Js2IL.Runtime"
                 ]);
 
             var dependencyIds = GetDependencyIds(package.Nuspec);
 
             Assert.Contains("Js2IL.Core", dependencyIds, StringComparer.Ordinal);
             Assert.DoesNotContain("js2il", dependencyIds, StringComparer.OrdinalIgnoreCase);
+            Assert.Contains("<PackageReference Include=\"Js2IL.Runtime\" Version=\"VERSION\" />", package.ReadmeText, StringComparison.Ordinal);
 
             using var archive = ZipFile.OpenRead(sdkPackagePath);
             var targetsEntry = archive.GetEntry("build/Js2IL.SDK.targets");
@@ -111,6 +112,7 @@ public class Js2ILSdkPackageTests
             Assert.Contains("icon.jpg", entryNames);
             Assert.Contains("https://www.nuget.org/packages/Js2IL.Core", package.ReadmeText, StringComparison.Ordinal);
             Assert.Contains("https://www.nuget.org/packages/Js2IL.SDK", package.ReadmeText, StringComparison.Ordinal);
+            Assert.Contains("https://www.nuget.org/packages/Js2IL.Runtime", package.ReadmeText, StringComparison.Ordinal);
         }
         finally
         {
@@ -152,11 +154,56 @@ public class Js2ILSdkPackageTests
                     "https://www.nuget.org/packages/js2il",
                     "https://www.nuget.org/packages/Js2IL.Core",
                     "https://www.nuget.org/packages/Js2IL.SDK",
-                    "https://www.nuget.org/packages/JavaScriptRuntime"
+                    "https://www.nuget.org/packages/Js2IL.Runtime"
                 ]);
 
             var dependencyIds = GetDependencyIds(package.Nuspec);
-            Assert.Contains("JavaScriptRuntime", dependencyIds, StringComparer.Ordinal);
+            Assert.Contains("Js2IL.Runtime", dependencyIds, StringComparer.Ordinal);
+        }
+        finally
+        {
+            try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
+        }
+    }
+
+    [Fact]
+    public void Pack_Js2ILRuntime_ContainsReadmeIconAndDiscoverabilityMetadata()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), "js2il-sdk-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            var repoRoot = FindRepoRoot();
+            var feedDir = Path.Combine(tempRoot, "feed");
+            Directory.CreateDirectory(feedDir);
+
+            var packageVersion = PackLocalFeed(repoRoot, feedDir);
+            var runtimePackagePath = Path.Combine(feedDir, $"Js2IL.Runtime.{packageVersion}.nupkg");
+            Assert.True(File.Exists(runtimePackagePath), $"Expected package was not produced: {runtimePackagePath}");
+
+            var package = ReadPackedPackage(runtimePackagePath);
+
+            AssertPackagePageMetadata(
+                package,
+                expectedId: "Js2IL.Runtime",
+                expectedDescription: "Runtime support library for executing and hosting JS2IL-compiled assemblies from .NET.",
+                expectedProjectUrl: "https://github.com/tomacox74/js2il/blob/master/docs/hosting/Index.md",
+                requiredTags:
+                [
+                    "runtime",
+                    "hosting"
+                ],
+                requiredReadmeLinks:
+                [
+                    "https://www.nuget.org/packages/js2il",
+                    "https://www.nuget.org/packages/Js2IL.Core",
+                    "https://www.nuget.org/packages/Js2IL.SDK",
+                    "https://www.nuget.org/packages/Js2IL.Runtime"
+                ]);
+
+            Assert.Contains("<PackageReference Include=\"Js2IL.Runtime\" Version=\"VERSION\" />", package.ReadmeText, StringComparison.Ordinal);
+            Assert.Contains("JavaScriptRuntime.dll", package.ReadmeText, StringComparison.Ordinal);
         }
         finally
         {
@@ -349,7 +396,7 @@ public class Js2ILSdkPackageTests
 
               <ItemGroup>
                 <PackageReference Include="Js2IL.SDK" Version="{{packageVersion}}" />
-                <PackageReference Include="JavaScriptRuntime" Version="{{packageVersion}}" />
+                <PackageReference Include="Js2IL.Runtime" Version="{{packageVersion}}" />
 
                 <Js2ILCompile Include="JavaScript\HostedMathModule.js"
                               OutputDirectory="$(BaseIntermediateOutputPath)\js2il-custom\HostedMathModule"
@@ -411,10 +458,10 @@ public class Js2ILSdkPackageTests
 
         foreach (var relativeProjectPath in new[]
                  {
-                     Path.Combine("src", "JavaScriptRuntime", "JavaScriptRuntime.csproj"),
+                      Path.Combine("src", "JavaScriptRuntime", "JavaScriptRuntime.csproj"),
                       Path.Combine("src", "Js2IL.Core", "Js2IL.Core.csproj"),
                       Path.Combine("src", "Js2IL.SDK", "Js2IL.SDK.csproj")
-                  })
+                   })
         {
             PackProject(repoRoot, relativeProjectPath, feedDir, packageVersion);
         }

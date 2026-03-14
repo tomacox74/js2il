@@ -204,7 +204,7 @@ Follow these steps IN ORDER:
    gh release create v0.x.y --title "v0.x.y" --notes-file release-notes.md --target master
    ```
 
-GitHub Actions (`.github/workflows/publish-tool.yml`) builds, tests, packs, and publishes `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` to NuGet when the release tag is created. The legacy `.github/workflows/release.yml` workflow still uploads the published binaries as an artifact bundle.
+GitHub Actions (`.github/workflows/publish-tool.yml`) builds, tests, packs, and publishes `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` to NuGet when the release tag is created. The legacy `.github/workflows/release.yml` workflow still uploads the published binaries as an artifact bundle.
 
 ## Project Conventions
 

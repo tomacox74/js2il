@@ -14,10 +14,10 @@ The primary entry points are the existing `Js2IL.Compiler`, `Js2IL.CompilerOptio
   - Use this when your project should compile JavaScript during `dotnet build`.
 - [`js2il`](https://www.nuget.org/packages/js2il)
   - Use this when you want the command-line tool for manual or ad-hoc compilation.
-- [`JavaScriptRuntime`](https://www.nuget.org/packages/JavaScriptRuntime)
+- [`Js2IL.Runtime`](https://www.nuget.org/packages/Js2IL.Runtime)
   - Use this when your host application needs the runtime support library used by generated assemblies.
 
-Official releases publish `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. Keep the versions aligned when you mix them in one workflow.
+Official releases publish `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. Keep the versions aligned when you mix them in one workflow.
 
 ## Install
 

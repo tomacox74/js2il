@@ -1,6 +1,6 @@
 # API: JsEngine
 
-Namespace: `Js2IL.Runtime` (assembly: `JavaScriptRuntime.dll` / NuGet package: `JavaScriptRuntime`)
+Namespace: `Js2IL.Runtime` (assembly: `JavaScriptRuntime.dll` / NuGet package: `Js2IL.Runtime`)
 
 `JsEngine` is the public entry point for hosting compiled JS2IL assemblies.
 
