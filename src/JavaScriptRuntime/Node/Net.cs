@@ -685,7 +685,7 @@ namespace JavaScriptRuntime.Node
 
         public bool connecting => _connectInProgress && !_connected;
 
-        public bool destroyed => _destroyRequested || _closeEmitted;
+        public override bool destroyed => _destroyRequested || _closeEmitted;
 
         public string remoteAddress => TryGetRemoteEndpoint()?.Address.ToString() ?? string.Empty;
 
@@ -731,12 +731,12 @@ namespace JavaScriptRuntime.Node
             return this;
         }
 
-        public void destroy()
+        public override void destroy()
         {
             destroy(null);
         }
 
-        public void destroy(object? error)
+        public override void destroy(object? error)
         {
             if (_destroyRequested)
             {
@@ -1055,8 +1055,6 @@ namespace JavaScriptRuntime.Node
                 return;
             }
 
-            _closeEmitted = true;
-
             try
             {
                 push(null);
@@ -1065,6 +1063,7 @@ namespace JavaScriptRuntime.Node
             {
             }
 
+            _closeEmitted = true;
             emit("close", hadError);
 
             try
