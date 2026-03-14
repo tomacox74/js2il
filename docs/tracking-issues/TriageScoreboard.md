@@ -50,7 +50,7 @@ Goal: improve language/runtime correctness where breakage is common.
 - [ ] `Object.hasOwn` and `Object.is`
 - [ ] `Array.from`, `Array.prototype.forEach`, `every`, `some`, `includes`
 - [ ] Remaining Symbol/well-known-symbol gaps affecting iterator semantics
-- [ ] TDZ and getter/setter edge-case completeness
+- [ ] TDZ and remaining modern class edge-case completeness
 
 ### Lane C — Issue Throughput + Reliability Hygiene
 

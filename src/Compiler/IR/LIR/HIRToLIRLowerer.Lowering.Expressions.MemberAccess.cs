@@ -73,14 +73,31 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
+            if (_classRegistry == null
+                || !_classRegistry.TryGetStaticField(registryClassName, propAccessExpr.PropertyName, out _))
+            {
+                goto LowerGenericPropertyAccess;
+            }
+
             _methodBodyIR.Instructions.Add(new LIRLoadUserClassStaticField(
                 RegistryClassName: registryClassName,
                 FieldName: propAccessExpr.PropertyName,
                 Result: resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            if (!_classRegistry.TryGetStaticFieldClrType(registryClassName, propAccessExpr.PropertyName, out var staticFieldClrType))
+            {
+                staticFieldClrType = typeof(object);
+            }
+            var storageKind = (staticFieldClrType == typeof(double)
+                || staticFieldClrType == typeof(bool)
+                || staticFieldClrType == typeof(JavaScriptRuntime.JsNull))
+                ? ValueStorageKind.UnboxedValue
+                : ValueStorageKind.Reference;
+            DefineTempStorage(resultTempVar, new ValueStorage(storageKind, staticFieldClrType));
             return true;
         }
 
+    LowerGenericPropertyAccess:
         // Lower the object expression
         if (!TryLowerExpression(propAccessExpr.Object, out var objectTemp))
         {
