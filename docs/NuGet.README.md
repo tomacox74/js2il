@@ -25,12 +25,14 @@ dotnet tool uninstall --global js2il
 
 ## Which package should I use?
 
-- `js2il`
+- [`js2il`](https://www.nuget.org/packages/js2il)
   - The global CLI tool for ad-hoc/manual JavaScript compilation from a terminal.
-- `Js2IL.SDK`
+- [`Js2IL.SDK`](https://www.nuget.org/packages/Js2IL.SDK)
   - The MSBuild/NuGet integration for host projects that should compile JavaScript during `dotnet build`.
-- `Js2IL.Core`
+- [`Js2IL.Core`](https://www.nuget.org/packages/Js2IL.Core)
   - The reusable compiler library for custom tooling, build tasks, or other programmatic .NET integration.
+- [`JavaScriptRuntime`](https://www.nuget.org/packages/JavaScriptRuntime)
+  - The runtime support library used by generated assemblies and .NET hosting scenarios.
 
 Official releases publish `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When you mix these packages in one workflow, keep the versions aligned.
 
@@ -106,7 +108,8 @@ The `js2il` tool package no longer carries the hosted C# samples. Those samples 
 See:
 
 - the repo `samples\` directory
-- `Js2IL.SDK` package README: `https://github.com/tomacox74/js2il/blob/master/docs/Js2IL.SDK.NuGet.README.md`
+- `Js2IL.SDK` package page: `https://www.nuget.org/packages/Js2IL.SDK`
+- `Js2IL.Core` package page: `https://www.nuget.org/packages/Js2IL.Core`
 
 ## Links
 
