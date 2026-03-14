@@ -2,8 +2,10 @@
 
   <PropertyGroup>
     <Js2ILPackageVersion Condition="'$(Js2ILPackageVersion)' == ''">0.9.1</Js2ILPackageVersion>
-    <JavaScriptRuntimePackageVersion Condition="'$(JavaScriptRuntimePackageVersion)' == ''">$(Js2ILPackageVersion)</JavaScriptRuntimePackageVersion>
-    <Js2ILSdkPackageVersion Condition="'$(Js2ILSdkPackageVersion)' == ''">$(JavaScriptRuntimePackageVersion)</Js2ILSdkPackageVersion>
+    <JavaScriptRuntimePackageVersion Condition="'$(JavaScriptRuntimePackageVersion)' == '' and '$(Js2ILRuntimePackageVersion)' != ''">$(Js2ILRuntimePackageVersion)</JavaScriptRuntimePackageVersion>
+    <JavaScriptRuntimePackageVersion Condition="'$(JavaScriptRuntimePackageVersion)' == '' and '$(Js2ILRuntimePackageVersion)' == ''">$(Js2ILPackageVersion)</JavaScriptRuntimePackageVersion>
+    <Js2ILRuntimePackageVersion Condition="'$(Js2ILRuntimePackageVersion)' == ''">$(JavaScriptRuntimePackageVersion)</Js2ILRuntimePackageVersion>
+    <Js2ILSdkPackageVersion Condition="'$(Js2ILSdkPackageVersion)' == ''">$(Js2ILRuntimePackageVersion)</Js2ILSdkPackageVersion>
   </PropertyGroup>
 
 </Project>
