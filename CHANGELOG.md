@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - docs/samples/workflows: close issue #850 and umbrella #439 by aligning the hosting sample docs and release smoke workflows with the `Js2IL.Runtime` package name and documenting the coordinated restore/build/post-publish validation matrix for the packaged hosting flow.
+- node/esm/tests/docs: close issue #869 by resolving static ESM package requests with import-aware `package.json` `exports` / `imports` conditions, preserving require-mode package aliases for CommonJS parity, adding mixed CJS/ESM `node_modules` coverage plus resolver diagnostics, and refreshing the Node loader docs/triage snapshot (PR #888).
 
 ## v0.9.2 - 2026-03-14
 

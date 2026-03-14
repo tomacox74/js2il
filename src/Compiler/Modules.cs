@@ -46,7 +46,19 @@ public sealed class ModuleDefinition
     /// </summary>
     public bool IsPackageModule { get; set; }
 
+    /// <summary>
+    /// Compile-time resolved JavaScript module dependencies that should be loaded for this module.
+    /// </summary>
+    public List<ModuleDependency> Dependencies { get; } = new();
+
     public SymbolTable? SymbolTable { get; set; }
+}
+
+public sealed class ModuleDependency
+{
+    public required string ResolvedPath { get; set; }
+
+    public string? RequestedAliasModuleId { get; set; }
 }
 
 public sealed class Modules
