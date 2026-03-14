@@ -2767,38 +2767,28 @@ namespace JavaScriptRuntime
         {
             var expectedName = $"{prefix}_{name}";
             var methodFlags = bindingFlags & ~BindingFlags.IgnoreCase;
+            MethodInfo? ignoreCaseMatch = null;
 
             foreach (var method in type.GetMethods(methodFlags))
             {
-                if (!string.Equals(method.Name, expectedName, StringComparison.Ordinal))
-                {
-                    continue;
-                }
-
                 if (method.GetParameters().Length != parameterCount)
                 {
                     continue;
                 }
 
-                return method;
-            }
-
-            foreach (var method in type.GetMethods(methodFlags))
-            {
-                if (!string.Equals(method.Name, expectedName, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(method.Name, expectedName, StringComparison.Ordinal))
                 {
-                    continue;
+                    return method;
                 }
 
-                if (method.GetParameters().Length != parameterCount)
+                if (ignoreCaseMatch == null
+                    && string.Equals(method.Name, expectedName, StringComparison.OrdinalIgnoreCase))
                 {
-                    continue;
+                    ignoreCaseMatch = method;
                 }
-
-                return method;
             }
 
-            return null;
+            return ignoreCaseMatch;
         }
 
         private static bool TryGetClrMemberValue(Type type, object? instance, string name, BindingFlags bindingFlags, out object? result)

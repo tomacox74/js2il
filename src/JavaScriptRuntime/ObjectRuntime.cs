@@ -23,31 +23,25 @@ namespace JavaScriptRuntime
             => Object.SetProperty(obj, name, value);
 
         public static object DefineObjectLiteralDataProperty(object target, object? prop, object? value)
-        {
-            if (target is null || target is JsNull)
-            {
-                throw new TypeError("Cannot convert undefined or null to object");
-            }
+            => DefineObjectLiteralDataPropertyCore(
+                target,
+                Object.ToPropertyKeyString(prop),
+                value,
+                static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue));
 
-            var key = Object.ToPropertyKeyString(prop);
-            Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
+        public static object DefineObjectLiteralDataProperty(object target, string prop, double value)
+            => DefineObjectLiteralDataPropertyCore(
+                target,
+                prop,
+                value,
+                static (jsObject, key, numberValue) => jsObject.SetNumber(key, numberValue));
 
-            if (target is IDictionary<string, object?> dict)
-            {
-                dict[key] = value;
-            }
-
-            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Value = value,
-                Writable = true,
-                Enumerable = true,
-                Configurable = true
-            });
-
-            return target;
-        }
+        public static object DefineObjectLiteralDataProperty(object target, string prop, bool value)
+            => DefineObjectLiteralDataPropertyCore(
+                target,
+                prop,
+                value,
+                static (jsObject, key, boolValue) => jsObject.SetBoolean(key, boolValue));
 
         public static object DefineObjectLiteralAccessorProperty(object target, object? prop, object? getter, object? setter)
         {
@@ -90,6 +84,40 @@ namespace JavaScriptRuntime
             {
                 dict[key] = null;
             }
+
+            return target;
+        }
+
+        private static object DefineObjectLiteralDataPropertyCore<TValue>(
+            object target,
+            string key,
+            TValue value,
+            Action<JsObject, string, TValue> setJsObjectValue)
+        {
+            if (target is null || target is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
+
+            if (target is JsObject jsObject)
+            {
+                setJsObjectValue(jsObject, key, value);
+            }
+            else if (target is IDictionary<string, object?> dict)
+            {
+                dict[key] = value;
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = value,
+                Writable = true,
+                Enumerable = true,
+                Configurable = true
+            });
 
             return target;
         }

@@ -212,13 +212,22 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var boxedTarget = EnsureObject(targetTemp);
-        var boxedKey = EnsureObject(keyTemp);
-        var boxedValue = EnsureObject(valueTemp);
+        var keyStorage = GetTempStorage(keyTemp);
+        var valueStorage = GetTempStorage(valueTemp);
+        var keyArg = keyStorage.Kind == ValueStorageKind.Reference && keyStorage.ClrType == typeof(string)
+            ? keyTemp
+            : EnsureObject(keyTemp);
+        var valueArg = keyStorage.Kind == ValueStorageKind.Reference
+            && keyStorage.ClrType == typeof(string)
+            && valueStorage.Kind == ValueStorageKind.UnboxedValue
+            && (valueStorage.ClrType == typeof(double) || valueStorage.ClrType == typeof(bool))
+                ? valueTemp
+                : EnsureObject(valueTemp);
         var defineResult = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
             MethodName: "DefineObjectLiteralDataProperty",
-            Arguments: new List<TempVariable> { boxedTarget, boxedKey, boxedValue },
+            Arguments: new List<TempVariable> { boxedTarget, keyArg, valueArg },
             Result: defineResult));
         DefineTempStorage(defineResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
