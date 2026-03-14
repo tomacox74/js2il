@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.Loader;
@@ -41,7 +42,24 @@ internal static class ClrMetadataConsistencyValidator
 
     private static void ValidateLoadableByClrOrThrow(byte[] peBytes)
     {
+        var runtimeAssembly = typeof(JavaScriptRuntime.Object).Assembly;
+        var runtimeAssemblyPath = runtimeAssembly.Location;
+        var runtimeAssemblyName = runtimeAssembly.GetName().Name;
         var alc = new AssemblyLoadContext("Js2IL_MetadataValidation", isCollectible: true);
+
+        Assembly? ResolveValidationDependency(AssemblyLoadContext context, AssemblyName assemblyName)
+        {
+            if (!string.Equals(assemblyName.Name, runtimeAssemblyName, StringComparison.Ordinal)
+                || string.IsNullOrWhiteSpace(runtimeAssemblyPath)
+                || !File.Exists(runtimeAssemblyPath))
+            {
+                return null;
+            }
+
+            return context.LoadFromAssemblyPath(runtimeAssemblyPath);
+        }
+
+        alc.Resolving += ResolveValidationDependency;
         try
         {
             using var ms = new MemoryStream(peBytes, writable: false);
@@ -53,6 +71,7 @@ internal static class ClrMetadataConsistencyValidator
         }
         finally
         {
+            alc.Resolving -= ResolveValidationDependency;
             alc.Unload();
         }
     }

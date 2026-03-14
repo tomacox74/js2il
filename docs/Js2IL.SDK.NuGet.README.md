@@ -4,6 +4,15 @@
 
 It imports MSBuild props/targets, invokes `Js2IL.Core` in-process, and exposes the generated module assembly back to the host project as a normal MSBuild output.
 
+## Which package should I use?
+
+- `Js2IL.SDK`
+  - Use this when your project should compile JavaScript during `dotnet build`.
+- `js2il`
+  - Use this when you want the standalone CLI/global tool for manual compilation.
+- `Js2IL.Core`
+  - Use this when you need the compiler as a reusable .NET library.
+
 ## Install
 
 ```xml
@@ -71,9 +80,32 @@ After `Js2ILCompile` runs, the package populates:
   - ItemSpec is every generated file
   - Metadata includes `Kind` (`Assembly`, `AssemblyPdb`, `RuntimeConfig`, `RuntimeAssembly`, `RuntimePdb`)
 
-## Migration notes for the existing hosting samples
+## Bundled hosting samples
+
+This package ships the repo hosting samples under `samples/` so the packaged samples exercise the same MSBuild/NuGet flow end users consume.
+
+To validate a sample from the `.nupkg`:
+
+```powershell
+# Download the package (replace VERSION)
+$version = "VERSION"
+$url = "https://api.nuget.org/v3-flatcontainer/js2il.sdk/$version/js2il.sdk.$version.nupkg"
+Invoke-WebRequest -Uri $url -OutFile "Js2IL.SDK.$version.nupkg"
+
+# Extract it (a .nupkg is a zip; Expand-Archive expects a .zip extension)
+Copy-Item "Js2IL.SDK.$version.nupkg" "Js2IL.SDK.$version.zip" -Force
+Expand-Archive -Path "Js2IL.SDK.$version.zip" -DestinationPath "js2il_sdk_pkg" -Force
+
+# Build + run a sample
+dotnet build .\js2il_sdk_pkg\samples\Hosting.Basic\host
+dotnet run --project .\js2il_sdk_pkg\samples\Hosting.Basic\host
+```
+
+If you are validating a locally packed prerelease feed instead of NuGet.org, override `Js2ILPackageVersion` (or the individual `Js2ILSdkPackageVersion` / `JavaScriptRuntimePackageVersion` properties) when building the sample.
+
+## Repo hosting sample pattern
 
 - `samples\Hosting.Basic` and `samples\Hosting.Typed`
-  - Replace the separate `compiler\*.proj` file and manual `Reference HintPath=...` wiring with a `PackageReference` to `Js2IL.SDK` plus a `Js2ILCompile` item in the host project.
+  - The host project references `Js2IL.SDK` directly and declares a `Js2ILCompile` item that points at `compiler\JavaScript\*.js`.
 - `samples\Hosting.Domino`
-  - Keep `npm ci`, then point `Js2ILCompile` at the restored entry file under `node_modules` and set `RootModuleId="@mixmark-io/domino"` so `JsEngine.LoadModule(..., "@mixmark-io/domino")` continues to work.
+  - The host project keeps `npm ci`, then compiles the restored entry file under `compiler\node_modules\@mixmark-io\domino\lib\index.js` with `RootModuleId="@mixmark-io/domino"` so `JsEngine.LoadModule(..., "@mixmark-io/domino")` continues to work.
