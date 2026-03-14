@@ -5,7 +5,7 @@ This sample demonstrates compiling and hosting a real npm package: `@mixmark-io/
 It is split into two parts:
 
 - `compiler/` – the npm manifest/lock file plus restored package contents consumed during build.
-- `host/` – a C# console app that restores `Js2IL.SDK` + `JavaScriptRuntime`, runs `npm ci`, compiles the package entry into a .NET assembly, and parses an included HTML document.
+- `host/` – a C# console app that restores `Js2IL.SDK` + `Js2IL.Runtime`, runs `npm ci`, compiles the package entry into a .NET assembly, and parses an included HTML document.
 
 ## Prerequisites
 
