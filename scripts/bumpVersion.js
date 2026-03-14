@@ -134,7 +134,7 @@ function perform() {
   const { body, start, end } = extractUnreleased(changelogText);
   const hasRealContent = body.split(/\r?\n/).some(l => l.trim().length && !isPlaceholder(l));
   if(!hasRealContent && skipEmpty) {
-    console.log('Unreleased is empty and --skip-empty specified; only bumping csproj version.');
+    console.log('Unreleased is empty and --skip-empty specified; only bumping csproj versions and samples/Directory.Build.props.');
     const newCsproj = updateCsprojVersion(csprojText, newVersion);
     const newCoreCsproj = updateCsprojVersion(coreCsprojText, newVersion);
     const newSdkCsproj = updateCsprojVersion(sdkCsprojText, newVersion);
