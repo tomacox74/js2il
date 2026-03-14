@@ -32,7 +32,7 @@ dotnet tool uninstall --global js2il
 - `Js2IL.Core`
   - The reusable compiler library for custom tooling, build tasks, or other programmatic .NET integration.
 
-Official releases publish `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When you mix these packages in one workflow, keep the versions aligned.
+Official releases publish `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When you mix these packages in one workflow, keep the versions aligned.
 
 ## Usage
 

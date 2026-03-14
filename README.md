@@ -120,7 +120,7 @@ dotnet publish -c Release
 ## Release pipeline
 
 
-When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/publish-tool.yml` to build/test the solution, then pack and publish the coordinated compiler package set: `js2il`, `Js2IL.Core`, and `Js2IL.SDK`.
+When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/publish-tool.yml` to build/test the solution, then pack and publish the coordinated NuGet package set: `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK`.
 
 The legacy `.github/workflows/release.yml` workflow still produces a published artifact bundle, but NuGet publishing happens in `.github/workflows/publish-tool.yml`.
 
@@ -233,7 +233,7 @@ git pull
 gh release create v0.x.y --title "v0.x.y" --notes "See CHANGELOG.md for details" --target master
 ```
 
-This creates the tag and triggers the GitHub Actions workflow (`.github/workflows/release.yml`) which builds and publishes to NuGet.
+This creates the tag and triggers the GitHub Actions release workflows. `.github/workflows/publish-tool.yml` builds/tests and publishes `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` to NuGet, while `.github/workflows/release.yml` continues to upload the published binaries as an artifact bundle.
 
 ### Manual Version Override
 

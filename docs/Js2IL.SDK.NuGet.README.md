@@ -13,7 +13,7 @@ It imports MSBuild props/targets, invokes `Js2IL.Core` in-process, and exposes t
 - `Js2IL.Core`
   - Use this when you need the compiler as a reusable .NET library.
 
-Official releases publish `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When validating a local feed for SDK consumers, also pack `JavaScriptRuntime` into that feed because host projects reference it directly.
+Official releases publish `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When validating a local feed for SDK consumers, also pack `JavaScriptRuntime` into that feed because host projects reference it directly.
 
 ## Install
 

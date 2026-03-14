@@ -1,4 +1,4 @@
-name: Publish compiler packages
+name: Publish coordinated packages
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
         run: |
           $tag = "$env:GITHUB_REF_NAME"
           if ($tag.StartsWith('v')) { $version = $tag.Substring(1) } else { $version = $tag }
-          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Restore
         run: dotnet restore js2il.sln
@@ -38,7 +38,7 @@ jobs:
       - name: Test
         run: dotnet test js2il.sln -c Release --no-build --verbosity normal
 
-      - name: Pack compiler packages
+      - name: Pack coordinated packages
         shell: pwsh
         run: |
           if (Test-Path out) {
@@ -46,6 +46,7 @@ jobs:
           }
 
           $projects = @(
+            'src/JavaScriptRuntime/JavaScriptRuntime.csproj',
             'src/Cli/Js2IL.csproj',
             'src/Js2IL.Core/Js2IL.Core.csproj',
             'src/Js2IL.SDK/Js2IL.SDK.csproj'
@@ -55,12 +56,13 @@ jobs:
             dotnet pack $project -c Release -o out -p:ContinuousIntegrationBuild=true -p:Version=${{ env.VERSION }}
           }
 
-      - name: Publish compiler packages to NuGet
+      - name: Publish coordinated packages to NuGet
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         shell: pwsh
         run: |
           $packageNames = @(
+            "JavaScriptRuntime.$env:VERSION.nupkg",
             "js2il.$env:VERSION.nupkg",
             "Js2IL.Core.$env:VERSION.nupkg",
             "Js2IL.SDK.$env:VERSION.nupkg"
