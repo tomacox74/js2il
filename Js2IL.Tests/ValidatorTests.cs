@@ -87,6 +87,36 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_ObjectLiteral_AccessorDefinitions_ReturnsValid()
+    {
+        var js = @"
+            const obj = {
+                get value() { return this._value; },
+                set value(v) { this._value = v; }
+            };
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_Class_AccessorDefinitions_ReturnsValid()
+    {
+        var js = @"
+            class Counter {
+                get value() { return this._value; }
+                set value(v) { this._value = v; }
+            }
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_MultipleIssues_ReturnsAllErrorsAndWarnings()
     {
         // Arrange
@@ -623,33 +653,33 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_Getter_ReportsError()
+    public void Validate_Getter_ReturnsValid()
     {
         var js = "const obj = { get foo() { return 42; } };";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Getter"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_Setter_ReportsError()
+    public void Validate_Setter_ReturnsValid()
     {
         var js = "const obj = { set foo(v) { this._foo = v; } };";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Setter"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_ClassGetter_ReportsError()
+    public void Validate_ClassGetter_ReturnsValid()
     {
         var js = "class Foo { get bar() { return 42; } }";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Getter"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]

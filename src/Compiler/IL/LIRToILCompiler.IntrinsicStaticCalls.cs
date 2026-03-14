@@ -314,6 +314,7 @@ internal sealed partial class LIRToILCompiler
             .Where(mi => mi.GetParameters().Length == argCount)
             .Where(mi => AreIntrinsicArgumentsCompatible(arguments, mi.GetParameters()))
             .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
+            .ThenByDescending(mi => GetIntrinsicSpecificityScore(arguments, mi.GetParameters()))
             .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
             .FirstOrDefault();
         if (compatible != null)
@@ -332,6 +333,61 @@ internal sealed partial class LIRToILCompiler
         }
 
         return methods.FirstOrDefault(IsParamsObjectArrayOverload);
+    }
+
+    private int GetIntrinsicSpecificityScore(
+        IReadOnlyList<TempVariable> arguments,
+        System.Reflection.ParameterInfo[] parameters)
+    {
+        int score = 0;
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            var parameterType = parameters[i].ParameterType;
+            if (parameterType == typeof(object))
+            {
+                continue;
+            }
+
+            var storage = GetTempStorage(arguments[i]);
+            var clrType = storage.ClrType;
+
+            if (parameterType == typeof(string)
+                && storage.Kind == ValueStorageKind.Reference
+                && clrType == typeof(string))
+            {
+                score += 4;
+                continue;
+            }
+
+            if (parameterType == typeof(double) && clrType == typeof(double))
+            {
+                score += 4;
+                continue;
+            }
+
+            if (parameterType == typeof(bool) && clrType == typeof(bool))
+            {
+                score += 4;
+                continue;
+            }
+
+            if (!parameterType.IsValueType
+                && storage.Kind == ValueStorageKind.Reference
+                && clrType != null
+                && clrType != typeof(object)
+                && parameterType.IsAssignableFrom(clrType))
+            {
+                score += clrType == parameterType ? 4 : 2;
+                continue;
+            }
+
+            if (storage.Kind == ValueStorageKind.UnboxedValue && clrType == parameterType)
+            {
+                score += 4;
+            }
+        }
+
+        return score;
     }
 
     private bool AreIntrinsicArgumentsCompatible(

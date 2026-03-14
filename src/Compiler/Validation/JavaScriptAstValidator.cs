@@ -1557,17 +1557,6 @@ public class JavaScriptAstValidator : IAstValidator
                 result.IsValid = false;
             }
 
-            // Check for getters and setters
-            if (prop.Kind == PropertyKind.Get)
-            {
-                result.Errors.Add($"Getter properties are not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-            }
-            else if (prop.Kind == PropertyKind.Set)
-            {
-                result.Errors.Add($"Setter properties are not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-            }
         }
     }
 
@@ -1589,18 +1578,6 @@ public class JavaScriptAstValidator : IAstValidator
                 return;
             }
 
-            // Check for getters and setters in classes
-            if (method.Kind == PropertyKind.Get)
-            {
-                result.Errors.Add($"Getter methods in classes are not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-            }
-            else if (method.Kind == PropertyKind.Set)
-            {
-                result.Errors.Add($"Setter methods in classes are not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-            }
-            // Static methods are supported
         }
     }
 

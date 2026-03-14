@@ -2208,20 +2208,48 @@ class HIRMethodBuilder
 
                     if (property is MethodDefinition methodDef)
                     {
-                        // Method definition member: { m() { ... } }
-                        // Represented as a property whose value is a function expression.
-                        if (methodDef.Kind != PropertyKind.Init)
-                        {
-                            // getters/setters are not supported
-                            return false;
-                        }
-
                         if (methodDef.Value is not Acornima.Ast.Expression methodValueExpression)
                         {
                             return false;
                         }
 
                         if (!TryParseExpression(methodValueExpression, out var methodValueHir))
+                        {
+                            return false;
+                        }
+
+                        if (methodDef.Kind == PropertyKind.Get || methodDef.Kind == PropertyKind.Set)
+                        {
+                            var getterValue = methodDef.Kind == PropertyKind.Get ? methodValueHir : null;
+                            var setterValue = methodDef.Kind == PropertyKind.Set ? methodValueHir : null;
+
+                            if (methodDef.Computed)
+                            {
+                                if (methodDef.Key is not Acornima.Ast.Expression methodKeyExpression)
+                                {
+                                    return false;
+                                }
+                                if (!TryParseExpression(methodKeyExpression, out var accessorKeyExprHir))
+                                {
+                                    return false;
+                                }
+
+                                objectMembers.Add(new HIRObjectComputedAccessorProperty(accessorKeyExprHir!, getterValue, setterValue));
+                            }
+                            else
+                            {
+                                if (!TryGetNonComputedPropertyName(methodDef.Key, out var methodName))
+                                {
+                                    return false;
+                                }
+
+                                objectMembers.Add(new HIRObjectAccessorProperty(methodName!, getterValue, setterValue));
+                            }
+
+                            continue;
+                        }
+
+                        if (methodDef.Kind != PropertyKind.Init)
                         {
                             return false;
                         }
@@ -2240,20 +2268,7 @@ class HIRMethodBuilder
                         }
                         else
                         {
-                            string? methodName = null;
-                            if (methodDef.Key is Identifier methodKeyId)
-                            {
-                                methodName = methodKeyId.Name;
-                            }
-                            else if (methodDef.Key is StringLiteral strLit)
-                            {
-                                methodName = strLit.Value;
-                            }
-                            else if (methodDef.Key is NumericLiteral numLit)
-                            {
-                                methodName = numLit.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                            }
-                            else
+                            if (!TryGetNonComputedPropertyName(methodDef.Key, out var methodName))
                             {
                                 return false;
                             }
@@ -2270,9 +2285,46 @@ class HIRMethodBuilder
                         return false;
                     }
 
+                    if (objProp.Kind == PropertyKind.Get || objProp.Kind == PropertyKind.Set)
+                    {
+                        if (objProp.Value is not Acornima.Ast.Expression accessorValueExpression)
+                        {
+                            return false;
+                        }
+                        if (!TryParseExpression(accessorValueExpression, out var accessorValueExpr))
+                        {
+                            return false;
+                        }
+
+                        var getterValue = objProp.Kind == PropertyKind.Get ? accessorValueExpr : null;
+                        var setterValue = objProp.Kind == PropertyKind.Set ? accessorValueExpr : null;
+
+                        if (objProp.Computed)
+                        {
+                            if (objProp.Key is not Acornima.Ast.Expression accessorKeyExpression)
+                            {
+                                return false;
+                            }
+                            if (!TryParseExpression(accessorKeyExpression, out var accessorKeyExpr))
+                            {
+                                return false;
+                            }
+
+                            objectMembers.Add(new HIRObjectComputedAccessorProperty(accessorKeyExpr!, getterValue, setterValue));
+                            continue;
+                        }
+
+                        if (!TryGetNonComputedPropertyName(objProp.Key, out var accessorName))
+                        {
+                            return false;
+                        }
+
+                        objectMembers.Add(new HIRObjectAccessorProperty(accessorName!, getterValue, setterValue));
+                        continue;
+                    }
+
                     if (objProp.Kind != PropertyKind.Init)
                     {
-                        // getters/setters are not supported
                         return false;
                     }
 
@@ -2302,20 +2354,7 @@ class HIRMethodBuilder
                     }
 
                     // Determine property key name
-                    string? propName = null;
-                    if (objProp.Key is Identifier keyId)
-                    {
-                        propName = keyId.Name;
-                    }
-                    else if (objProp.Key is StringLiteral strLit)
-                    {
-                        propName = strLit.Value;
-                    }
-                    else if (objProp.Key is NumericLiteral numLit)
-                    {
-                        propName = numLit.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                    }
-                    else
+                    if (!TryGetNonComputedPropertyName(objProp.Key, out var propName))
                     {
                         return false;
                     }
@@ -2338,6 +2377,28 @@ class HIRMethodBuilder
 
             // Handle other expression types as needed
             default:
+                return false;
+        }
+    }
+
+    private static bool TryGetNonComputedPropertyName(Node? keyNode, out string? propertyName)
+    {
+        switch (keyNode)
+        {
+            case Identifier keyId:
+                propertyName = keyId.Name;
+                return true;
+
+            case StringLiteral strLit:
+                propertyName = strLit.Value;
+                return true;
+
+            case NumericLiteral numLit:
+                propertyName = numLit.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                return true;
+
+            default:
+                propertyName = null;
                 return false;
         }
     }

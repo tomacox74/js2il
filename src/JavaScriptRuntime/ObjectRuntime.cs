@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace JavaScriptRuntime
 {
@@ -20,6 +21,106 @@ namespace JavaScriptRuntime
 
         public static object? SetProperty(object obj, string name, object? value)
             => Object.SetProperty(obj, name, value);
+
+        public static object DefineObjectLiteralDataProperty(object target, object? prop, object? value)
+            => DefineObjectLiteralDataPropertyCore(
+                target,
+                Object.ToPropertyKeyString(prop),
+                value,
+                static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue));
+
+        public static object DefineObjectLiteralDataProperty(object target, string prop, double value)
+            => DefineObjectLiteralDataPropertyCore(
+                target,
+                prop,
+                value,
+                static (jsObject, key, numberValue) => jsObject.SetNumber(key, numberValue));
+
+        public static object DefineObjectLiteralDataProperty(object target, string prop, bool value)
+            => DefineObjectLiteralDataPropertyCore(
+                target,
+                prop,
+                value,
+                static (jsObject, key, boolValue) => jsObject.SetBoolean(key, boolValue));
+
+        public static object DefineObjectLiteralAccessorProperty(object target, object? prop, object? getter, object? setter)
+        {
+            if (target is null || target is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (getter is not null && getter is not JsNull && getter is not Delegate)
+            {
+                throw new TypeError("Getter must be a function");
+            }
+
+            if (setter is not null && setter is not JsNull && setter is not Delegate)
+            {
+                throw new TypeError("Setter must be a function");
+            }
+
+            var key = Object.ToPropertyKeyString(prop);
+            Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
+
+            object? existingGetter = null;
+            object? existingSetter = null;
+            if (PropertyDescriptorStore.TryGetOwn(target, key, out var existing) && existing.Kind == JsPropertyDescriptorKind.Accessor)
+            {
+                existingGetter = existing.Get;
+                existingSetter = existing.Set;
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = true,
+                Configurable = true,
+                Get = getter is null || getter is JsNull ? existingGetter : getter,
+                Set = setter is null || setter is JsNull ? existingSetter : setter
+            });
+
+            if (target is IDictionary<string, object?> dict && !dict.ContainsKey(key))
+            {
+                dict[key] = null;
+            }
+
+            return target;
+        }
+
+        private static object DefineObjectLiteralDataPropertyCore<TValue>(
+            object target,
+            string key,
+            TValue value,
+            Action<JsObject, string, TValue> setJsObjectValue)
+        {
+            if (target is null || target is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
+
+            if (target is JsObject jsObject)
+            {
+                setJsObjectValue(jsObject, key, value);
+            }
+            else if (target is IDictionary<string, object?> dict)
+            {
+                dict[key] = value;
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = value,
+                Writable = true,
+                Enumerable = true,
+                Configurable = true
+            });
+
+            return target;
+        }
 
         public static bool HasPropertyIn(object? key, object? obj)
             => Object.HasPropertyIn(key, obj);

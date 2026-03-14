@@ -63,6 +63,42 @@ public sealed class HIRObjectComputedProperty : HIRObjectMember
 }
 
 /// <summary>
+/// Represents a single non-computed accessor property in an object literal, e.g., { get x() { ... } }.
+/// Getter and setter are tracked independently so adjacent definitions can be merged by lowering/runtime.
+/// </summary>
+public sealed class HIRObjectAccessorProperty : HIRObjectMember
+{
+    public HIRObjectAccessorProperty(string key, HIRExpression? getter, HIRExpression? setter)
+    {
+        Key = key;
+        Getter = getter;
+        Setter = setter;
+    }
+
+    public string Key { get; init; }
+    public HIRExpression? Getter { get; init; }
+    public HIRExpression? Setter { get; init; }
+}
+
+/// <summary>
+/// Represents a computed accessor property in an object literal, e.g., { get [expr]() { ... } }.
+/// Getter and setter are tracked independently so adjacent definitions can be merged by lowering/runtime.
+/// </summary>
+public sealed class HIRObjectComputedAccessorProperty : HIRObjectMember
+{
+    public HIRObjectComputedAccessorProperty(HIRExpression keyExpression, HIRExpression? getter, HIRExpression? setter)
+    {
+        KeyExpression = keyExpression;
+        Getter = getter;
+        Setter = setter;
+    }
+
+    public HIRExpression KeyExpression { get; init; }
+    public HIRExpression? Getter { get; init; }
+    public HIRExpression? Setter { get; init; }
+}
+
+/// <summary>
 /// Represents a spread member in an object literal, e.g., { ...x }.
 /// </summary>
 public sealed class HIRObjectSpreadProperty : HIRObjectMember

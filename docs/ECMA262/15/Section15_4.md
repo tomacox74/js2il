@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-14T21:26:23Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -24,12 +24,6 @@
 
 Feature-level support tracking with test script references.
 
-### 15.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-method-definitions-static-semantics-early-errors))
-
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Getter/setter method definitions (get x() / set x(v)) | Not Yet Supported |  | Getters/setters are currently rejected by the validator in both object literals and classes. |
-
 ### 15.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-definemethod))
 
 | Feature name | Status | Test scripts | Notes |
@@ -41,6 +35,7 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Async/generator methods (class elements) | Supported with Limitations | [`Async_ClassMethod_SimpleAwait.js`](../../../Js2IL.Tests/Async/JavaScript/Async_ClassMethod_SimpleAwait.js)<br>[`Generator_ClassMethod_SimpleYield.js`](../../../Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_SimpleYield.js) | Async and generator methods are supported as class elements; broader async/generator limitations are tracked under Async Function Definitions / Generator Function Definitions. |
-| Class instance/static method definitions | Supported with Limitations | [`Classes_ClassWithMethod_HelloWorld.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js)<br>[`Classes_ClassWithStaticMethod_HelloWorld.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js) | Covers instance/static methods and super method calls. Limitations are tracked under Class Definitions (e.g., getters/setters, computed method names, and private methods are rejected). |
+| Class instance/static method definitions | Supported with Limitations | [`Classes_ClassWithMethod_HelloWorld.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js)<br>[`Classes_ClassWithStaticMethod_HelloWorld.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js) | Covers instance/static methods and super method calls. Limitations are tracked under Class Definitions (for example computed method names and private methods/accessors remain unsupported). |
+| Getter/setter method definitions (get x() / set x(v)) | Supported with Limitations | [`ObjectLiteral_AccessorDefinitions.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectLiteral_AccessorDefinitions.js)<br>[`Classes_AccessorMethods_InstanceAndStatic.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js)<br>`Js2IL.Tests/ValidatorTests.cs` | Object literal getters/setters now lower through descriptor-backed property definition helpers, preserving accessor/data replacement behavior across duplicate keys and spread overwrites. Identifier-named class instance/static accessors compile and dispatch through the existing runtime property/accessor surface with correct this binding for normal property reads/writes. Computed/private class accessors remain part of the broader unsupported computed/private class element gap. |
 | Object literal method definition (shorthand method) | Supported | [`ObjectLiteral_ShorthandAndMethod.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js)<br>[`Function_ObjectLiteralMethod_ThisBinding.js`](../../../Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js) | Supports method syntax in object literals and correct this binding when called as obj.m(). |
 
