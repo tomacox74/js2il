@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.Loader;
@@ -32,16 +34,54 @@ internal static class ClrMetadataConsistencyValidator
             // that would surface as BadImageFormatException later at runtime.
             ValidateLoadableByClrOrThrow(peBytes);
         }
-        catch (Exception ex) when (ex is BadImageFormatException or InvalidOperationException or IOException)
+        catch (Exception ex) when (ex is BadImageFormatException or InvalidOperationException or IOException or ReflectionTypeLoadException)
         {
             var prefix = string.IsNullOrWhiteSpace(label) ? string.Empty : $"[{label}] ";
-            throw new InvalidOperationException(prefix + "CLR metadata consistency validation failed: " + ex.Message, ex);
+            var message = ex is ReflectionTypeLoadException reflectionTypeLoadException
+                ? FormatTypeLoadFailureMessage(reflectionTypeLoadException)
+                : ex.Message;
+            throw new InvalidOperationException(prefix + "CLR metadata consistency validation failed: " + message, ex);
         }
+    }
+
+    internal static string FormatTypeLoadFailureMessage(ReflectionTypeLoadException ex)
+    {
+        if (ex.LoaderExceptions is not { Length: > 0 })
+        {
+            return ex.Message;
+        }
+
+        var loaderMessages = ex.LoaderExceptions
+            .Where(static loaderException => loaderException is not null)
+            .Select(static loaderException => loaderException!.Message)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        return loaderMessages.Length == 0
+            ? ex.Message
+            : ex.Message + " Loader exceptions: " + string.Join(" | ", loaderMessages);
     }
 
     private static void ValidateLoadableByClrOrThrow(byte[] peBytes)
     {
+        var runtimeAssembly = typeof(JavaScriptRuntime.Object).Assembly;
+        var runtimeAssemblyPath = runtimeAssembly.Location;
+        var runtimeAssemblyName = runtimeAssembly.GetName().Name;
         var alc = new AssemblyLoadContext("Js2IL_MetadataValidation", isCollectible: true);
+
+        Assembly? ResolveValidationDependency(AssemblyLoadContext context, AssemblyName assemblyName)
+        {
+            if (!string.Equals(assemblyName.Name, runtimeAssemblyName, StringComparison.Ordinal)
+                || string.IsNullOrWhiteSpace(runtimeAssemblyPath)
+                || !File.Exists(runtimeAssemblyPath))
+            {
+                return null;
+            }
+
+            return context.LoadFromAssemblyPath(runtimeAssemblyPath);
+        }
+
+        alc.Resolving += ResolveValidationDependency;
         try
         {
             using var ms = new MemoryStream(peBytes, writable: false);
@@ -53,6 +93,7 @@ internal static class ClrMetadataConsistencyValidator
         }
         finally
         {
+            alc.Resolving -= ResolveValidationDependency;
             alc.Unload();
         }
     }

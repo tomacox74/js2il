@@ -7,40 +7,19 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <JavaScriptRuntimePackageVersion Condition="'$(JavaScriptRuntimePackageVersion)' == ''">0.7.3</JavaScriptRuntimePackageVersion>
     <ModuleName>HostedCounterModule</ModuleName>
-    <CompilerDir>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','..','compiler'))))</CompilerDir>
-    <ModuleProj>$([System.IO.Path]::Combine('$(CompilerDir)','HostedCounterModule.proj'))</ModuleProj>
-    <ModuleDll>$([System.IO.Path]::Combine('$(CompilerDir)','out','$(ModuleName).dll'))</ModuleDll>
-
-    <RepoRoot>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','..','..','..'))))</RepoRoot>
-    <LocalJavaScriptRuntimeProject>$([System.IO.Path]::Combine('$(RepoRoot)','src','JavaScriptRuntime','JavaScriptRuntime.csproj'))</LocalJavaScriptRuntimeProject>
-
-    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJavaScriptRuntimeProject)')">true</UseLocalJs2ILProject>
-    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And !Exists('$(LocalJavaScriptRuntimeProject)')">false</UseLocalJs2ILProject>
-    <UseLocalJs2ILProjectLower>$([System.String]::Copy('$(UseLocalJs2ILProject)').ToLowerInvariant())</UseLocalJs2ILProjectLower>
+    <ModuleSource>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','..','compiler','JavaScript','HostedCounterModule.js'))))</ModuleSource>
+    <ModuleOutputDirectory>obj\$(Configuration)\$(TargetFramework)\js2il\$(ModuleName)</ModuleOutputDirectory>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(LocalJavaScriptRuntimeProject)"
-              Condition="'$(UseLocalJs2ILProjectLower)' == 'true' And Exists('$(LocalJavaScriptRuntimeProject)')" />
-    <PackageReference Include="JavaScriptRuntime" Version="$(JavaScriptRuntimePackageVersion)"
-            Condition="'$(UseLocalJs2ILProjectLower)' != 'true' Or !Exists('$(LocalJavaScriptRuntimeProject)')" />
+    <PackageReference Include="Js2IL.SDK" Version="$(Js2ILSdkPackageVersion)" />
+    <PackageReference Include="JavaScriptRuntime" Version="$(JavaScriptRuntimePackageVersion)" />
+
+    <Js2ILCompile Include="$(ModuleSource)"
+                  OutputDirectory="$(ModuleOutputDirectory)"
+                  RootModuleId="$(ModuleName)"
+                  CopyToOutputDirectory="true" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="$(ModuleName)">
-      <HintPath>$(ModuleDll)</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <Target Name="BuildHostedModule" BeforeTargets="ResolveAssemblyReferences">
-    <MSBuild Projects="$(ModuleProj)" Targets="Build" Properties="UseLocalJs2ILProject=$(UseLocalJs2ILProject)" />
-  </Target>
-
-  <Target Name="CopyHostedModuleToOutput" AfterTargets="Build" DependsOnTargets="BuildHostedModule"
-          Inputs="$(ModuleDll)" Outputs="$(TargetDir)$(ModuleName).dll">
-    <Copy SourceFiles="$(ModuleDll)" DestinationFiles="$(TargetDir)$(ModuleName).dll" SkipUnchangedFiles="true" />
-  </Target>
 
 </Project>

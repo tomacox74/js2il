@@ -7,23 +7,20 @@ Typed hosting sample demonstrating:
 
 ## Layout
 
-- `compiler/` – MSBuild `.proj` that runs `js2il` to produce `out/HostedCounterModule.dll`
-- `host/` – C# console app that loads the compiled assembly and calls exports
+- `compiler/JavaScript/` – source JS module compiled by the host project
+- `host/` – C# console app that restores `Js2IL.SDK` + `JavaScriptRuntime`, builds the JS module, and calls exports
 
 ## Prerequisites
 
 - .NET 10 SDK
-- `js2il` installed as a global tool:
-
-```powershell
-dotnet tool install --global js2il --version 0.7.3
-```
 
 ## Build
 
 ```powershell
 dotnet build .\host
 ```
+
+This restores the NuGet packages, compiles `compiler\JavaScript\HostedCounterModule.js`, and copies the generated module outputs next to the host executable.
 
 ## Run
 

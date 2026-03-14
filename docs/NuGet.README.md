@@ -23,6 +23,15 @@ Uninstall:
 dotnet tool uninstall --global js2il
 ```
 
+## Which package should I use?
+
+- `js2il`
+  - The global CLI tool for ad-hoc/manual JavaScript compilation from a terminal.
+- `Js2IL.SDK`
+  - The MSBuild/NuGet integration for host projects that should compile JavaScript during `dotnet build`.
+- `Js2IL.Core`
+  - The reusable compiler library for custom tooling, build tasks, or other programmatic .NET integration.
+
 ## Usage
 
 ```powershell
@@ -88,26 +97,14 @@ Notes:
 - Use `-v` to print diagnostics to the console, or `--diagnostic-file <path>` to capture diagnostics to a file.
 - File an issue with a minimal JS sample if you suspect a bug.
 
-## Samples
+## Hosting samples
 
-This package ships a small set of C# hosting samples under `samples/`.
+The `js2il` tool package no longer carries the hosted C# samples. Those samples now ship with `Js2IL.SDK`, because they are intended to validate the MSBuild/NuGet integration path that hosting consumers use in real projects.
 
-To validate the samples from the `.nupkg`:
+See:
 
-```powershell
-# Download the package (replace VERSION)
-$version = "VERSION"
-$url = "https://api.nuget.org/v3-flatcontainer/js2il/$version/js2il.$version.nupkg"
-Invoke-WebRequest -Uri $url -OutFile "js2il.$version.nupkg"
-
-# Extract it (a .nupkg is a zip; Expand-Archive expects a .zip extension)
-Copy-Item "js2il.$version.nupkg" "js2il.$version.zip" -Force
-Expand-Archive -Path "js2il.$version.zip" -DestinationPath "js2il_pkg" -Force
-
-# Build + run a sample
-dotnet build .\js2il_pkg\samples\Hosting.Basic\host
-dotnet run --project .\js2il_pkg\samples\Hosting.Basic\host
-```
+- the repo `samples\` directory
+- `Js2IL.SDK` package README: `https://github.com/tomacox74/js2il/blob/master/docs/Js2IL.SDK.NuGet.README.md`
 
 ## Links
 

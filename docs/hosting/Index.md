@@ -14,6 +14,8 @@ This page is the **canonical user documentation** for hosting. The older documen
   - **Dynamic**: use `dynamic` with `JsEngine.LoadModule(Assembly, moduleId)`.
 - Stable hosting exception types (`JsModuleLoadException`, `JsInvocationException`, etc.).
 
+For build-integrated host projects, start with the `Js2IL.SDK` NuGet package and declare one or more `Js2ILCompile` items in your `.csproj`.
+
 ## Quick start (typed)
 
 When contracts are generated into the compiled module assembly (default), the easiest pattern is:
@@ -69,7 +71,7 @@ Console.WriteLine((double)exports.add(1, 2));
 
 ## Samples
 
-The repo includes runnable samples:
+The repo includes runnable `Js2IL.SDK`-based samples:
 
 - `samples/Hosting.Basic`
 - `samples/Hosting.Typed`

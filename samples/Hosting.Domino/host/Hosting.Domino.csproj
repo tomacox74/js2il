@@ -7,45 +7,30 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <JavaScriptRuntimePackageVersion Condition="'$(JavaScriptRuntimePackageVersion)' == ''">0.7.3</JavaScriptRuntimePackageVersion>
-
-    <ModuleName>index</ModuleName>
-    <ModuleProj>$(MSBuildProjectDirectory)\..\compiler\HostedDomino.proj</ModuleProj>
-    <ModuleOutputDir>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','$(BaseIntermediateOutputPath)','HostedDomino'))))</ModuleOutputDir>
-    <ModuleDll>$([System.IO.Path]::Combine('$(ModuleOutputDir)','$(ModuleName).dll'))</ModuleDll>
-    <ModulePdb>$([System.IO.Path]::Combine('$(ModuleOutputDir)','$(ModuleName).pdb'))</ModulePdb>
-
-    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\..\'))</RepoRoot>
-    <LocalJavaScriptRuntimeProject>$(RepoRoot)src\JavaScriptRuntime\JavaScriptRuntime.csproj</LocalJavaScriptRuntimeProject>
-
-    <!-- In a repo checkout, prefer local runtime/compiler; allow opting out via UseLocalJs2ILProject=false. -->
-    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And Exists('$(LocalJavaScriptRuntimeProject)')">true</UseLocalJs2ILProject>
-    <UseLocalJs2ILProject Condition="'$(UseLocalJs2ILProject)' == '' And !Exists('$(LocalJavaScriptRuntimeProject)')">false</UseLocalJs2ILProject>
-
-    <UseLocalJs2ILProjectLower>$([System.String]::Copy('$(UseLocalJs2ILProject)').ToLowerInvariant())</UseLocalJs2ILProjectLower>
+    <DominoCompilerDir>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','..','compiler'))))</DominoCompilerDir>
+    <ModuleSource>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(DominoCompilerDir)','node_modules','@mixmark-io','domino','lib','index.js'))))</ModuleSource>
+    <ModuleOutputDirectory>obj\$(Configuration)\$(TargetFramework)\js2il\domino</ModuleOutputDirectory>
+    <Js2ILStrictMode>Ignore</Js2ILStrictMode>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(LocalJavaScriptRuntimeProject)"
-                      Condition="'$(UseLocalJs2ILProjectLower)' == 'true' And Exists('$(LocalJavaScriptRuntimeProject)')" />
-    <PackageReference Include="JavaScriptRuntime" Version="$(JavaScriptRuntimePackageVersion)"
-                      Condition="'$(UseLocalJs2ILProjectLower)' != 'true' Or !Exists('$(LocalJavaScriptRuntimeProject)')" />
-  </ItemGroup>
+    <PackageReference Include="Js2IL.SDK" Version="$(Js2ILSdkPackageVersion)" />
+    <PackageReference Include="JavaScriptRuntime" Version="$(JavaScriptRuntimePackageVersion)" />
 
-  <ItemGroup>
     <Content Include="sample.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+
+    <Js2ILCompile Include="$(ModuleSource)"
+                  OutputDirectory="$(ModuleOutputDirectory)"
+                  RootModuleId="@mixmark-io/domino"
+                  CopyToOutputDirectory="true" />
   </ItemGroup>
 
-  <Target Name="BuildHostedModule" BeforeTargets="Build">
-    <MSBuild Projects="$(ModuleProj)" Targets="Build" Properties="UseLocalJs2ILProject=$(UseLocalJs2ILProject);OutputDir=$(ModuleOutputDir)" />
-  </Target>
-
-  <Target Name="CopyHostedModuleToOutput" AfterTargets="Build" DependsOnTargets="BuildHostedModule"
-          Inputs="$(ModuleDll);$(ModulePdb)" Outputs="$(TargetDir)$(ModuleName).dll;$(TargetDir)$(ModuleName).pdb">
-    <Copy SourceFiles="$(ModuleDll)" DestinationFiles="$(TargetDir)$(ModuleName).dll" SkipUnchangedFiles="true" />
-    <Copy Condition="Exists('$(ModulePdb)')" SourceFiles="$(ModulePdb)" DestinationFiles="$(TargetDir)$(ModuleName).pdb" SkipUnchangedFiles="true" />
+  <Target Name="NpmRestore"
+          BeforeTargets="Js2ILCompile"
+          Condition="'$(SkipNpmRestore)' != 'true'">
+    <Exec WorkingDirectory="$(DominoCompilerDir)" Command="npm ci" />
   </Target>
 
 </Project>

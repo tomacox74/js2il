@@ -7,7 +7,7 @@ namespace Js2IL.Tests;
 public class Js2ILSdkPackageTests
 {
     [Fact]
-    public void Pack_Js2ILSdk_ContainsBuildAssetsAndCoreDependency()
+    public void Pack_Js2ILSdk_ContainsBuildAssetsSamplesAndCoreDependency()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "js2il-sdk-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempRoot);
@@ -34,6 +34,18 @@ public class Js2ILSdkPackageTests
             Assert.Contains("tasks/net10.0/JavaScriptRuntime.dll", entryNames);
             Assert.Contains("README.md", entryNames);
             Assert.Contains("icon.jpg", entryNames);
+            Assert.Contains("samples/Directory.Build.props", entryNames);
+            Assert.Contains("samples/Hosting.Basic/host/Hosting.Basic.csproj", entryNames);
+            Assert.Contains("samples/Hosting.Basic/compiler/JavaScript/HostedMathModule.js", entryNames);
+            Assert.DoesNotContain("samples/Hosting.Basic/compiler/HostedMathModule.proj", entryNames);
+            Assert.Contains("samples/Hosting.Typed/host/Hosting.Typed.csproj", entryNames);
+            Assert.Contains("samples/Hosting.Typed/compiler/JavaScript/HostedCounterModule.js", entryNames);
+            Assert.DoesNotContain("samples/Hosting.Typed/compiler/HostedCounterModule.proj", entryNames);
+            Assert.Contains("samples/Hosting.Domino/host/Hosting.Domino.csproj", entryNames);
+            Assert.Contains("samples/Hosting.Domino/compiler/package.json", entryNames);
+            Assert.Contains("samples/Hosting.Domino/compiler/package-lock.json", entryNames);
+            Assert.DoesNotContain("samples/Hosting.Domino/compiler/HostedDomino.proj", entryNames);
+            Assert.DoesNotContain(entryNames, name => name.Contains("/js2il/", StringComparison.OrdinalIgnoreCase));
 
             var nuspecEntry = archive.Entries.Single(entry => entry.FullName.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase));
             using var nuspecStream = nuspecEntry.Open();
@@ -57,6 +69,37 @@ public class Js2ILSdkPackageTests
             Assert.Contains("Js2ILCompile", targetsText, StringComparison.Ordinal);
             Assert.Contains("ReferenceOutputAssembly", targetsText, StringComparison.Ordinal);
             Assert.Contains("RootModuleId", targetsText, StringComparison.Ordinal);
+        }
+        finally
+        {
+            try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
+        }
+    }
+
+    [Fact]
+    public void Pack_Js2ILTool_DoesNotShipHostingSamples()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), "js2il-sdk-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            var repoRoot = FindRepoRoot();
+            var feedDir = Path.Combine(tempRoot, "feed");
+            Directory.CreateDirectory(feedDir);
+
+            var packageVersion = CreateLocalTestPackageVersion(ReadPackageVersion(Path.Combine(repoRoot, "src", "Cli", "Js2IL.csproj")));
+            PackProject(repoRoot, Path.Combine("src", "Cli", "Js2IL.csproj"), feedDir, packageVersion);
+
+            var toolPackagePath = Path.Combine(feedDir, $"js2il.{packageVersion}.nupkg");
+            Assert.True(File.Exists(toolPackagePath), $"Expected package was not produced: {toolPackagePath}");
+
+            using var archive = ZipFile.OpenRead(toolPackagePath);
+            var entryNames = archive.Entries
+                .Select(entry => entry.FullName)
+                .ToArray();
+
+            Assert.DoesNotContain(entryNames, name => name.StartsWith("samples/", StringComparison.OrdinalIgnoreCase));
         }
         finally
         {
@@ -120,20 +163,120 @@ public class Js2ILSdkPackageTests
         }
     }
 
+    [Fact]
+    public void Build_ExtractedHostingBasicSample_WithLocalJs2ILSdkPackage_CompilesAndRuns()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), "js2il-sdk-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            var repoRoot = FindRepoRoot();
+            var feedDir = Path.Combine(tempRoot, "feed");
+            var extractDir = Path.Combine(tempRoot, "sdk-package");
+            Directory.CreateDirectory(feedDir);
+
+            var packageVersion = PackLocalFeed(repoRoot, feedDir);
+            var sdkPackagePath = Path.Combine(feedDir, $"Js2IL.SDK.{packageVersion}.nupkg");
+            Assert.True(File.Exists(sdkPackagePath), $"Expected package was not produced: {sdkPackagePath}");
+
+            ZipFile.ExtractToDirectory(sdkPackagePath, extractDir);
+            WriteNuGetConfig(extractDir, feedDir);
+
+            var hostDir = Path.Combine(extractDir, "samples", "Hosting.Basic", "host");
+            var build = RunProcess(
+                fileName: "dotnet",
+                arguments: $"build Hosting.Basic.csproj -c Release --nologo --ignore-failed-sources -p:Js2ILPackageVersion={packageVersion}",
+                workingDirectory: hostDir,
+                timeoutSeconds: 180);
+
+            Assert.True(
+                build.ExitCode == 0,
+                $"dotnet build failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{build.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{build.StdErr}");
+
+            var generatedDir = Path.Combine(hostDir, "obj", "Release", "net10.0", "js2il", "HostedMathModule");
+            Assert.True(File.Exists(Path.Combine(generatedDir, "HostedMathModule.dll")), $"Missing generated module dll in '{generatedDir}'.");
+            Assert.False(Directory.Exists(Path.Combine(hostDir, "js2il")), $"Expected generated outputs to stay under obj, but found '{Path.Combine(hostDir, "js2il")}'.");
+
+            var run = RunProcess(
+                fileName: "dotnet",
+                arguments: $"run --project Hosting.Basic.csproj -c Release --no-build --nologo -p:Js2ILPackageVersion={packageVersion}",
+                workingDirectory: hostDir,
+                timeoutSeconds: 180);
+
+            Assert.True(
+                run.ExitCode == 0,
+                $"dotnet run failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{run.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{run.StdErr}");
+
+            var output = run.StdOut.Replace("\r", string.Empty, StringComparison.Ordinal);
+            Assert.Contains("version=", output, StringComparison.Ordinal);
+            Assert.Contains("1+2=", output, StringComparison.Ordinal);
+        }
+        finally
+        {
+            try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
+        }
+    }
+
+    [Fact]
+    public void Build_ExtractedHostingTypedSample_WithLocalJs2ILSdkPackage_CompilesAndRuns()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), "js2il-sdk-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            var repoRoot = FindRepoRoot();
+            var feedDir = Path.Combine(tempRoot, "feed");
+            var extractDir = Path.Combine(tempRoot, "sdk-package");
+            Directory.CreateDirectory(feedDir);
+
+            var packageVersion = PackLocalFeed(repoRoot, feedDir);
+            var sdkPackagePath = Path.Combine(feedDir, $"Js2IL.SDK.{packageVersion}.nupkg");
+            Assert.True(File.Exists(sdkPackagePath), $"Expected package was not produced: {sdkPackagePath}");
+
+            ZipFile.ExtractToDirectory(sdkPackagePath, extractDir);
+            WriteNuGetConfig(extractDir, feedDir);
+
+            var hostDir = Path.Combine(extractDir, "samples", "Hosting.Typed", "host");
+            var build = RunProcess(
+                fileName: "dotnet",
+                arguments: $"build Hosting.Typed.csproj -c Release --nologo --ignore-failed-sources -p:Js2ILPackageVersion={packageVersion}",
+                workingDirectory: hostDir,
+                timeoutSeconds: 180);
+
+            Assert.True(
+                build.ExitCode == 0,
+                $"dotnet build failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{build.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{build.StdErr}");
+
+            var generatedDir = Path.Combine(hostDir, "obj", "Release", "net10.0", "js2il", "HostedCounterModule");
+            Assert.True(File.Exists(Path.Combine(generatedDir, "HostedCounterModule.dll")), $"Missing generated module dll in '{generatedDir}'.");
+
+            var run = RunProcess(
+                fileName: "dotnet",
+                arguments: $"run --project Hosting.Typed.csproj -c Release --no-build --nologo -p:Js2ILPackageVersion={packageVersion}",
+                workingDirectory: hostDir,
+                timeoutSeconds: 180);
+
+            Assert.True(
+                run.ExitCode == 0,
+                $"dotnet run failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{run.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{run.StdErr}");
+
+            var output = run.StdOut.Replace("\r", string.Empty, StringComparison.Ordinal);
+            Assert.Contains("version=", output, StringComparison.Ordinal);
+            Assert.Contains("add(1,2)=", output, StringComparison.Ordinal);
+            Assert.Contains("counter.add(5)=", output, StringComparison.Ordinal);
+            Assert.Contains("created.add(1)=", output, StringComparison.Ordinal);
+        }
+        finally
+        {
+            try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
+        }
+    }
+
     private static void WriteConsumerProject(string projectDir, string feedDir, string packageVersion)
     {
-        File.WriteAllText(
-            Path.Combine(projectDir, "NuGet.Config"),
-            $$"""
-            <?xml version="1.0" encoding="utf-8"?>
-            <configuration>
-              <packageSources>
-                <clear />
-                <add key="local" value="{{feedDir}}" />
-                <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-              </packageSources>
-            </configuration>
-            """);
+        WriteNuGetConfig(projectDir, feedDir);
 
         File.WriteAllText(
             Path.Combine(projectDir, "Consumer.csproj"),
@@ -189,6 +332,22 @@ public class Js2ILSdkPackageTests
             """);
     }
 
+    private static void WriteNuGetConfig(string directory, string feedDir)
+    {
+        File.WriteAllText(
+            Path.Combine(directory, "NuGet.Config"),
+            $$"""
+            <?xml version="1.0" encoding="utf-8"?>
+            <configuration>
+              <packageSources>
+                <clear />
+                <add key="local" value="{{feedDir}}" />
+                <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+              </packageSources>
+            </configuration>
+            """);
+    }
+
     private static string PackLocalFeed(string repoRoot, string feedDir)
     {
         var packageVersion = CreateLocalTestPackageVersion(ReadPackageVersion(Path.Combine(repoRoot, "src", "Js2IL.SDK", "Js2IL.SDK.csproj")));
@@ -196,23 +355,28 @@ public class Js2ILSdkPackageTests
         foreach (var relativeProjectPath in new[]
                  {
                      Path.Combine("src", "JavaScriptRuntime", "JavaScriptRuntime.csproj"),
-                     Path.Combine("src", "Js2IL.Core", "Js2IL.Core.csproj"),
-                     Path.Combine("src", "Js2IL.SDK", "Js2IL.SDK.csproj")
-                 })
+                      Path.Combine("src", "Js2IL.Core", "Js2IL.Core.csproj"),
+                      Path.Combine("src", "Js2IL.SDK", "Js2IL.SDK.csproj")
+                  })
         {
-            var fullProjectPath = Path.Combine(repoRoot, relativeProjectPath);
-            var pack = RunProcess(
-                fileName: "dotnet",
-                arguments: $"pack \"{fullProjectPath}\" -c Release -o \"{feedDir}\" --nologo -p:Version={packageVersion}",
-                workingDirectory: repoRoot,
-                timeoutSeconds: 180);
-
-            Assert.True(
-                pack.ExitCode == 0,
-                $"dotnet pack failed for '{relativeProjectPath}'.{Environment.NewLine}STDOUT:{Environment.NewLine}{pack.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{pack.StdErr}");
+            PackProject(repoRoot, relativeProjectPath, feedDir, packageVersion);
         }
 
         return packageVersion;
+    }
+
+    private static void PackProject(string repoRoot, string relativeProjectPath, string feedDir, string packageVersion)
+    {
+        var fullProjectPath = Path.Combine(repoRoot, relativeProjectPath);
+        var pack = RunProcess(
+            fileName: "dotnet",
+            arguments: $"pack \"{fullProjectPath}\" -c Release -o \"{feedDir}\" --nologo -p:Version={packageVersion}",
+            workingDirectory: repoRoot,
+            timeoutSeconds: 180);
+
+        Assert.True(
+            pack.ExitCode == 0,
+            $"dotnet pack failed for '{relativeProjectPath}'.{Environment.NewLine}STDOUT:{Environment.NewLine}{pack.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{pack.StdErr}");
     }
 
     private static string CreateLocalTestPackageVersion(string baseVersion)
