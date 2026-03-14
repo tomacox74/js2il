@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.2 - 2026-03-14
+
 - packaging/runtime/docs/tests: rename the runtime NuGet package from `JavaScriptRuntime` to `Js2IL.Runtime`, add first-class package metadata/readme coverage for its package page, and update the SDK samples/docs/workflow/package tests to reference the new package ID while keeping the runtime assembly name `JavaScriptRuntime.dll`.
 
 ## v0.9.1 - 2026-03-14
