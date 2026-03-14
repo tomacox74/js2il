@@ -4,16 +4,17 @@ This file captures a point-in-time recommended ordering for all currently open G
 
 Synced to:
 - Repo: `master` @ `d76084b1`
-- Active branch at snapshot creation: `master` @ `d76084b1`
+- Active branch at latest update: `issue-869-esm-loader-parity` @ `31cb0376`
 - GitHub: open issues state as of 2026-03-14
 - Open issues: 34
-- Open PRs: 0
+- Open PRs: 1
 
 ## What changed since the previous snapshot
 
 - PR [#851](https://github.com/tomacox74/js2il/pull/851) merged on 2026-03-13 and closed [#419](https://github.com/tomacox74/js2il/issues/419), so the prior "current active item" is no longer active.
 - The main source of drift is new backlog-derived issues: the refreshed ECMA-262 backlog created [#857](https://github.com/tomacox74/js2il/issues/857)-[#866](https://github.com/tomacox74/js2il/issues/866), and the refreshed Node backlog created [#869](https://github.com/tomacox74/js2il/issues/869)-[#877](https://github.com/tomacox74/js2il/issues/877).
 - Current issue mix is now 10 Node.js issues, 11 ECMA-262 issues, 11 performance issues, and 2 investigation issues.
+- PR [#888](https://github.com/tomacox74/js2il/pull/888) is now open to implement [#869](https://github.com/tomacox74/js2il/issues/869); treat that issue as the active in-review item rather than the next unclaimed pick.
 
 ## Ranking method
 
@@ -24,15 +25,16 @@ Synced to:
 
 ## Recommended next picks
 
-- **Primary next item:** [#869](https://github.com/tomacox74/js2il/issues/869) `node: implement full ESM loader and package resolution parity`
-- **Best bounded parallel win:** [#858](https://github.com/tomacox74/js2il/issues/858) `ECMA-262: support getter/setter method definitions in object literals and classes`
-- **Best infrastructure track:** [#872](https://github.com/tomacox74/js2il/issues/872) `node: expand stream lifecycle and helper parity`
+- **Active review item:** [#869](https://github.com/tomacox74/js2il/issues/869) `node: implement full ESM loader and package resolution parity` via PR [#888](https://github.com/tomacox74/js2il/pull/888)
+- **Primary next item:** [#858](https://github.com/tomacox74/js2il/issues/858) `ECMA-262: support getter/setter method definitions in object literals and classes`
+- **Best bounded parallel win:** [#872](https://github.com/tomacox74/js2il/issues/872) `node: expand stream lifecycle and helper parity`
+- **Best infrastructure track:** [#772](https://github.com/tomacox74/js2il/issues/772) `ECMA-262: ES Modules live bindings & module records (beyond current lowering)`
 
 ## Recommended order
 
 ### Tier 1 - Current execution slice
 
-1. **[#869](https://github.com/tomacox74/js2il/issues/869)** `node: implement full ESM loader and package resolution parity` - Biggest ecosystem unblocker; modern `.mjs` / `"type": "module"` packages still fail without it.
+1. **[#869](https://github.com/tomacox74/js2il/issues/869)** `node: implement full ESM loader and package resolution parity` - PR [#888](https://github.com/tomacox74/js2il/pull/888) is open; if it lands as proposed this issue should be closure-ready.
 2. **[#858](https://github.com/tomacox74/js2il/issues/858)** `ECMA-262: support getter/setter method definitions in object literals and classes` - High-frequency syntax gap with existing runtime plumbing already in place.
 3. **[#872](https://github.com/tomacox74/js2il/issues/872)** `node: expand stream lifecycle and helper parity` - Shared Node substrate for `net`, `http`, `fs`, `zlib`, and `child_process`.
 4. **[#772](https://github.com/tomacox74/js2il/issues/772)** `ECMA-262: ES Modules live bindings & module records (beyond current lowering)` - Pragmatic live-binding and cycle correctness should follow loader parity immediately.
@@ -87,4 +89,4 @@ Synced to:
 
 - 23 of 34 open issues are missing `priority:*` labels.
 - 34 of 34 open issues are missing `lane:*` labels.
-- With no open PRs at snapshot time, this ranked list is the clearest current execution picture until the next feature branch opens.
+- With PR [#888](https://github.com/tomacox74/js2il/pull/888) now open for [#869](https://github.com/tomacox74/js2il/issues/869), this ranked list should treat that issue as the active in-review item rather than still-unclaimed work.
