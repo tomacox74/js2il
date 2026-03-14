@@ -20,6 +20,7 @@
     "release:major": "node scripts/bumpVersion.js major",
     "release:version": "node scripts/bumpVersion.js",
     "release:cut": "node scripts/release.js",
+    "release:validate": "npm run diff:test:canary:packed && dotnet test ./Js2IL.Tests/Js2IL.Tests.csproj -c Release --filter \"FullyQualifiedName~Js2ILSdkPackageTests\" --nologo",
     "diff:test": "node scripts/differential-test/run.js",
     "diff:test:generate": "node scripts/differential-test/run.js --generate 50 --seed 42",
     "diff:test:canary": "node scripts/differential-test/runCanarySuites.js --suite pr --timeout 20 --compile-timeout 60",

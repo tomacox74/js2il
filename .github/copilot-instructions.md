@@ -176,16 +176,16 @@ Follow these steps IN ORDER:
    # OR
    npm run release:major  # For major version (0.x.y -> x+1.0.0)
    ```
-   This updates CHANGELOG.md, src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
+   This updates CHANGELOG.md, samples/Directory.Build.props, src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj, src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
 
-3. **Validate packaged smoke tests** (on the release branch):
+3. **Validate the coordinated release package set** (on the release branch):
    ```powershell
-   npm run diff:test:canary:packed
+   npm run release:validate
    ```
 
 4. **Commit version bump** (on the release branch):
    ```powershell
-   git add CHANGELOG.md src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
+   git add CHANGELOG.md samples/Directory.Build.props src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/Js2IL.SDK/Js2IL.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
    git commit -m "chore(release): cut v0.x.y"
    ```
 
@@ -204,7 +204,7 @@ Follow these steps IN ORDER:
    gh release create v0.x.y --title "v0.x.y" --notes-file release-notes.md --target master
    ```
 
-GitHub Actions (`.github/workflows/release.yml`) builds and publishes to NuGet when the release is created.
+GitHub Actions (`.github/workflows/publish-tool.yml`) builds, tests, packs, and publishes `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` to NuGet when the release tag is created. The legacy `.github/workflows/release.yml` workflow still uploads the published binaries as an artifact bundle.
 
 ## Project Conventions
 

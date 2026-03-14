@@ -120,7 +120,9 @@ dotnet publish -c Release
 ## Release pipeline
 
 
-When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/release.yml` to build the solution in Release mode and upload the published files as an artifact.
+When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/publish-tool.yml` to build/test the solution, then pack and publish the coordinated NuGet package set: `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK`.
+
+The legacy `.github/workflows/release.yml` workflow still produces a published artifact bundle, but NuGet publishing happens in `.github/workflows/publish-tool.yml`.
 
 Local development note
 - You can still run from source during development:
@@ -151,7 +153,7 @@ What it does:
 - Validates you're on a clean, up-to-date `master`
 - Creates `release/<version>` branch
 - Runs the existing `scripts/bumpVersion.js` to update `CHANGELOG.md` + project versions
-- Runs `npm run diff:test:canary:packed` so the release candidate is smoke-tested as a packed tool before the release commit is created
+- Runs `npm run release:validate` so the release candidate is validated as a coordinated package set before the release commit is created
 - Commits, pushes, and opens a PR
 - With `--merge`: waits for CI checks (if configured), merges the PR, then creates the GitHub release/tag using the `CHANGELOG.md` section
 
@@ -190,13 +192,18 @@ What the script does:
 - Resets the `## Unreleased` section to placeholder
 - Updates `samples/Directory.Build.props` plus the `<Version>` in `src/Cli/Js2IL.csproj`, `src/Js2IL.Core/Js2IL.Core.csproj`, `src/Js2IL.SDK/Js2IL.SDK.csproj`, and `src/JavaScriptRuntime/JavaScriptRuntime.csproj`
 
-#### 3. Validate the Packed Tool
+#### 3. Validate the Release Package Set
 
-Before committing, run the PR canary suite against a freshly packed local tool:
+Before committing, validate the coordinated package set:
 
 ```powershell
-npm run diff:test:canary:packed
+npm run release:validate
 ```
+
+This command currently does two things:
+
+- runs the PR canary suite against a freshly packed local `js2il` tool
+- runs the focused `Js2ILSdkPackageTests` suite, which packs `JavaScriptRuntime`, `Js2IL.Core`, and `Js2IL.SDK` into a local feed and verifies the SDK consumption path
 
 #### 4. Commit Version Bump
 
@@ -226,7 +233,7 @@ git pull
 gh release create v0.x.y --title "v0.x.y" --notes "See CHANGELOG.md for details" --target master
 ```
 
-This creates the tag and triggers the GitHub Actions workflow (`.github/workflows/release.yml`) which builds and publishes to NuGet.
+This creates the tag and triggers the GitHub Actions release workflows. `.github/workflows/publish-tool.yml` builds/tests and publishes `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` to NuGet, while `.github/workflows/release.yml` continues to upload the published binaries as an artifact bundle.
 
 ### Manual Version Override
 
