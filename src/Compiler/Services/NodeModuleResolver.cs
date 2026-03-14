@@ -1,10 +1,17 @@
-using System.Text.Json;
+using System;
 using System.Linq;
+using System.Text.Json;
 
 namespace Js2IL.Services;
 
+public enum ModuleResolutionMode
+{
+    Require,
+    Import
+}
+
 /// <summary>
-/// Resolves CommonJS module specifiers to concrete JavaScript module files at compile time.
+/// Resolves CommonJS and ESM module specifiers to concrete JavaScript module files at compile time.
 ///
 /// This mirrors Node.js module resolution rules as closely as practical for JS2IL,
 /// and supports <c>.js</c>, <c>.mjs</c>, and <c>.cjs</c> targets.
@@ -13,6 +20,7 @@ public sealed class NodeModuleResolver
 {
     private readonly IFileSystem _fileSystem;
     private static readonly string[] KnownScriptExtensions = [".js", ".mjs", ".cjs"];
+    private static readonly string[] SupportedConditionNames = ["import", "require", "node", "default"];
 
     public NodeModuleResolver(IFileSystem fileSystem)
     {
@@ -20,6 +28,9 @@ public sealed class NodeModuleResolver
     }
 
     public bool TryResolve(string specifier, string baseDirectory, out string resolvedPath, out string? error)
+        => TryResolve(specifier, baseDirectory, ModuleResolutionMode.Require, out resolvedPath, out error);
+
+    public bool TryResolve(string specifier, string baseDirectory, ModuleResolutionMode resolutionMode, out string resolvedPath, out string? error)
     {
         resolvedPath = string.Empty;
         error = null;
@@ -38,6 +49,11 @@ public sealed class NodeModuleResolver
 
         var normalizedSpecifier = NormalizeSpecifier(specifier);
 
+        if (normalizedSpecifier.StartsWith("#", StringComparison.Ordinal))
+        {
+            return TryResolvePackageImports(normalizedSpecifier, baseDirectory, resolutionMode, out resolvedPath, out error);
+        }
+
         // Relative/absolute filesystem-like requests.
         if (IsPathLikeSpecifier(normalizedSpecifier))
         {
@@ -46,7 +62,7 @@ public sealed class NodeModuleResolver
         }
 
         // Bare specifier: treat as npm package id (potentially with subpath).
-        if (!TryResolveBarePackageSpecifier(normalizedSpecifier, baseDirectory, out resolvedPath, out error))
+        if (!TryResolveBarePackageSpecifier(normalizedSpecifier, baseDirectory, resolutionMode, out resolvedPath, out error))
         {
             return false;
         }
@@ -83,7 +99,7 @@ public sealed class NodeModuleResolver
         return new string(chars);
     }
 
-    private bool TryResolveBarePackageSpecifier(string specifier, string baseDirectory, out string resolvedPath, out string? error)
+    private bool TryResolveBarePackageSpecifier(string specifier, string baseDirectory, ModuleResolutionMode resolutionMode, out string resolvedPath, out string? error)
     {
         resolvedPath = string.Empty;
         error = null;
@@ -114,10 +130,17 @@ public sealed class NodeModuleResolver
             if (!string.IsNullOrEmpty(packageSubpath))
             {
                 // First try package.json exports (if present).
-                if (_fileSystem.FileExists(packageJsonPath)
-                    && TryResolvePackageExports(packageRoot, packageJsonPath, packageSubpath, out resolvedPath, out error))
+                if (_fileSystem.FileExists(packageJsonPath))
                 {
-                    return true;
+                    if (TryResolvePackageExports(packageRoot, packageJsonPath, packageSubpath, resolutionMode, out resolvedPath, out error))
+                    {
+                        return true;
+                    }
+
+                    if (error != null)
+                    {
+                        return false;
+                    }
                 }
 
                 // Fallback: treat subpath as a filesystem path within package root.
@@ -132,10 +155,17 @@ public sealed class NodeModuleResolver
             }
 
             // Package root entry resolution.
-            if (_fileSystem.FileExists(packageJsonPath)
-                && TryResolvePackageEntryFromPackageJson(packageRoot, packageJsonPath, out resolvedPath, out error))
+            if (_fileSystem.FileExists(packageJsonPath))
             {
-                return true;
+                if (TryResolvePackageEntryFromPackageJson(packageRoot, packageJsonPath, resolutionMode, out resolvedPath, out error))
+                {
+                    return true;
+                }
+
+                if (error != null)
+                {
+                    return false;
+                }
             }
 
             // Fallback: <packageRoot>/index.(js|mjs|cjs)
@@ -184,7 +214,7 @@ public sealed class NodeModuleResolver
         // 3) Directory: package.json -> entry, then index.(js|mjs|cjs)
         var packageJson = Path.Combine(requestPath, "package.json");
         if (_fileSystem.FileExists(packageJson)
-            && TryResolvePackageEntryFromPackageJson(requestPath, packageJson, out resolvedPath, out error))
+            && TryResolvePackageEntryFromPackageJson(requestPath, packageJson, ModuleResolutionMode.Require, out resolvedPath, out error))
         {
             return true;
         }
@@ -224,7 +254,7 @@ public sealed class NodeModuleResolver
         return true;
     }
 
-    private bool TryResolvePackageEntryFromPackageJson(string packageRoot, string packageJsonPath, out string resolvedPath, out string? error)
+    private bool TryResolvePackageEntryFromPackageJson(string packageRoot, string packageJsonPath, ModuleResolutionMode resolutionMode, out string resolvedPath, out string? error)
     {
         resolvedPath = string.Empty;
         error = null;
@@ -236,11 +266,16 @@ public sealed class NodeModuleResolver
             var root = doc.RootElement;
 
             // Prefer exports if present.
-            if (root.TryGetProperty("exports", out var exportsElement)
-                && TryResolveExportsTarget(exportsElement, subpathKey: ".", out var targetRel)
-                && TryResolveExportsTargetPath(packageRoot, targetRel, out resolvedPath, out error))
+            if (root.TryGetProperty("exports", out var exportsElement))
             {
-                return true;
+                if (TryResolvePackageMapTarget(exportsElement, requestKey: ".", mapName: "exports", resolutionMode, out var targetRel, out error)
+                    && TryResolveExportsTargetPath(packageRoot, targetRel, out resolvedPath, out error))
+                {
+                    return true;
+                }
+
+                error ??= $"Package root export '.' is not defined in '{packageJsonPath}'.";
+                return false;
             }
 
             if (root.TryGetProperty("main", out var mainElement) && mainElement.ValueKind == JsonValueKind.String)
@@ -266,7 +301,7 @@ public sealed class NodeModuleResolver
         return false;
     }
 
-    private bool TryResolvePackageExports(string packageRoot, string packageJsonPath, string packageSubpath, out string resolvedPath, out string? error)
+    private bool TryResolvePackageExports(string packageRoot, string packageJsonPath, string packageSubpath, ModuleResolutionMode resolutionMode, out string resolvedPath, out string? error)
     {
         resolvedPath = string.Empty;
         error = null;
@@ -285,61 +320,106 @@ public sealed class NodeModuleResolver
                 return false;
             }
 
-            if (TryResolveExportsTarget(exportsElement, exportsKey, out var targetRel))
+            if (TryResolvePackageMapTarget(exportsElement, exportsKey, "exports", resolutionMode, out var targetRel, out error))
             {
                 return TryResolveExportsTargetPath(packageRoot, targetRel, out resolvedPath, out error);
             }
+
+            error ??= $"Package export '{exportsKey}' is not defined in '{packageJsonPath}'.";
+            return false;
         }
         catch (Exception ex)
         {
             error = $"Failed to read/parse package.json '{packageJsonPath}': {ex.Message}";
             return false;
         }
+    }
 
+    private bool TryResolvePackageImports(string specifier, string baseDirectory, ModuleResolutionMode resolutionMode, out string resolvedPath, out string? error)
+    {
+        resolvedPath = string.Empty;
+        error = null;
+
+        foreach (var dir in WalkUpDirectories(baseDirectory))
+        {
+            var packageJsonPath = Path.Combine(dir, "package.json");
+            if (!_fileSystem.FileExists(packageJsonPath))
+            {
+                continue;
+            }
+
+            try
+            {
+                var json = _fileSystem.ReadAllText(packageJsonPath);
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+
+                if (!root.TryGetProperty("imports", out var importsElement))
+                {
+                    error = $"Cannot resolve package imports specifier '{specifier}' from '{baseDirectory}': nearest package.json '{packageJsonPath}' does not define \"imports\".";
+                    return false;
+                }
+
+                if (TryResolvePackageMapTarget(importsElement, specifier, "imports", resolutionMode, out var targetRel, out error))
+                {
+                    return TryResolveImportsTargetPath(dir, targetRel, out resolvedPath, out error);
+                }
+
+                if (error == null)
+                {
+                    error = $"Package imports specifier '{specifier}' is not defined in '{packageJsonPath}'.";
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                error = $"Failed to read/parse package.json '{packageJsonPath}': {ex.Message}";
+                return false;
+            }
+        }
+
+        error = $"Cannot resolve package imports specifier '{specifier}' from '{baseDirectory}': no containing package.json found.";
         return false;
     }
 
-    private bool TryResolveExportsTarget(JsonElement exportsElement, string subpathKey, out string target)
+    private static bool TryResolvePackageMapTarget(JsonElement mapElement, string requestKey, string mapName, ModuleResolutionMode resolutionMode, out string target, out string? error)
     {
         target = string.Empty;
+        error = null;
 
-        // exports can be:
-        // - string: shorthand for '.'
-        // - object: either subpath map (keys starting with '.') or conditional map
-        // - array: try entries in order
-        switch (exportsElement.ValueKind)
+        switch (mapElement.ValueKind)
         {
             case JsonValueKind.String:
-                if (subpathKey == ".")
+                if (string.Equals(mapName, "exports", StringComparison.Ordinal) && requestKey == ".")
                 {
-                    target = exportsElement.GetString() ?? string.Empty;
+                    target = mapElement.GetString() ?? string.Empty;
                     return !string.IsNullOrWhiteSpace(target);
                 }
+
                 return false;
 
             case JsonValueKind.Array:
-                foreach (var entry in exportsElement.EnumerateArray())
+                foreach (var entry in mapElement.EnumerateArray())
                 {
-                    if (TryResolveExportsTarget(entry, subpathKey, out target))
+                    if (TryResolvePackageMapTarget(entry, requestKey, mapName, resolutionMode, out target, out error))
                     {
                         return true;
                     }
                 }
+
                 return false;
 
             case JsonValueKind.Object:
-                // If there is an explicit subpath entry, prefer that.
-                if (LooksLikeSubpathMap(exportsElement))
+                if (LooksLikePackageRequestMap(mapElement, mapName))
                 {
-                    if (exportsElement.TryGetProperty(subpathKey, out var subpathEntry))
+                    if (mapElement.TryGetProperty(requestKey, out var exactEntry))
                     {
-                        return TryResolveConditionalExports(subpathEntry, out target);
+                        return TryResolvePackageMapEntry(exactEntry, requestKey, mapName, resolutionMode, out target, out error);
                     }
 
-                    // Very small subset of pattern support: "./*".
-                    // If present, substitute the single '*' with the requested subpath remainder.
-                    if (TryResolveSubpathPattern(exportsElement, subpathKey, out var patternEntry, out var wildcardValue)
-                        && TryResolveConditionalExports(patternEntry, out var patternTarget))
+                    if (TryResolveSpecifierPattern(mapElement, requestKey, out var patternEntry, out var wildcardValue)
+                        && TryResolvePackageMapEntry(patternEntry, requestKey, mapName, resolutionMode, out var patternTarget, out error))
                     {
                         target = patternTarget.Replace("*", wildcardValue, StringComparison.Ordinal);
                         return !string.IsNullOrWhiteSpace(target);
@@ -348,10 +428,9 @@ public sealed class NodeModuleResolver
                     return false;
                 }
 
-                // Conditional exports for '.'
-                if (subpathKey == ".")
+                if (string.Equals(mapName, "exports", StringComparison.Ordinal) && requestKey == ".")
                 {
-                    return TryResolveConditionalExports(exportsElement, out target);
+                    return TryResolvePackageMapEntry(mapElement, requestKey, mapName, resolutionMode, out target, out error);
                 }
 
                 return false;
@@ -361,18 +440,50 @@ public sealed class NodeModuleResolver
         }
     }
 
-    private static bool LooksLikeSubpathMap(JsonElement obj)
+    private static bool TryResolvePackageMapEntry(JsonElement entry, string requestKey, string mapName, ModuleResolutionMode resolutionMode, out string target, out string? error)
     {
-        return obj.EnumerateObject().Any(p => p.Name.StartsWith(".", StringComparison.Ordinal));
+        target = string.Empty;
+        error = null;
+
+        switch (entry.ValueKind)
+        {
+            case JsonValueKind.String:
+                target = entry.GetString() ?? string.Empty;
+                return !string.IsNullOrWhiteSpace(target);
+
+            case JsonValueKind.Array:
+                foreach (var element in entry.EnumerateArray())
+                {
+                    if (TryResolvePackageMapEntry(element, requestKey, mapName, resolutionMode, out target, out error))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+
+            case JsonValueKind.Object:
+                return TryResolveConditionalPackageTarget(entry, requestKey, mapName, resolutionMode, out target, out error);
+
+            default:
+                error = $"Unsupported package.json {mapName} entry shape for '{requestKey}'.";
+                return false;
+        }
     }
 
-    private static bool TryResolveSubpathPattern(JsonElement exportsObj, string subpathKey, out JsonElement patternEntry, out string wildcardValue)
+    private static bool LooksLikePackageRequestMap(JsonElement obj, string mapName)
+    {
+        var prefix = string.Equals(mapName, "imports", StringComparison.Ordinal) ? "#" : ".";
+        return obj.EnumerateObject().Any(p => p.Name.StartsWith(prefix, StringComparison.Ordinal));
+    }
+
+    private static bool TryResolveSpecifierPattern(JsonElement mapObject, string requestKey, out JsonElement patternEntry, out string wildcardValue)
     {
         patternEntry = default;
         wildcardValue = string.Empty;
 
-        // Only support single '*' patterns like "./*".
-        foreach (var prop in exportsObj.EnumerateObject().Where(p => p.Name.Contains('*')))
+        // Only support single '*' patterns.
+        foreach (var prop in mapObject.EnumerateObject().Where(p => p.Name.Contains('*')))
         {
             var key = prop.Name;
             var starIndex = key.IndexOf('*', StringComparison.Ordinal);
@@ -384,12 +495,12 @@ public sealed class NodeModuleResolver
             var prefix = key.Substring(0, starIndex);
             var suffix = key.Substring(starIndex + 1);
 
-            if (!subpathKey.StartsWith(prefix, StringComparison.Ordinal) || !subpathKey.EndsWith(suffix, StringComparison.Ordinal))
+            if (!requestKey.StartsWith(prefix, StringComparison.Ordinal) || !requestKey.EndsWith(suffix, StringComparison.Ordinal))
             {
                 continue;
             }
 
-            wildcardValue = subpathKey.Substring(prefix.Length, subpathKey.Length - prefix.Length - suffix.Length);
+            wildcardValue = requestKey.Substring(prefix.Length, requestKey.Length - prefix.Length - suffix.Length);
             patternEntry = prop.Value;
             return true;
         }
@@ -397,44 +508,46 @@ public sealed class NodeModuleResolver
         return false;
     }
 
-    private static bool TryResolveConditionalExports(JsonElement entry, out string target)
+    private static bool TryResolveConditionalPackageTarget(JsonElement entry, string requestKey, string mapName, ModuleResolutionMode resolutionMode, out string target, out string? error)
     {
         target = string.Empty;
+        error = null;
 
-        // In CommonJS require() mode, Node evaluates conditions.
-        // Implement minimal priority: require -> node -> default.
-        if (entry.ValueKind == JsonValueKind.String)
-        {
-            target = entry.GetString() ?? string.Empty;
-            return !string.IsNullOrWhiteSpace(target);
-        }
+        var priorities = resolutionMode == ModuleResolutionMode.Import
+            ? new[] { "import", "node", "default" }
+            : new[] { "require", "node", "default" };
 
-        if (entry.ValueKind == JsonValueKind.Array)
+        foreach (var priority in priorities)
         {
-            foreach (var e in entry.EnumerateArray())
-            {
-                if (TryResolveConditionalExports(e, out target))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        if (entry.ValueKind != JsonValueKind.Object)
-        {
-            return false;
-        }
-
-        var priorities = new[] { "require", "node", "default" };
-        foreach (var p in priorities)
-        {
-            if (entry.TryGetProperty(p, out var v) && TryResolveConditionalExports(v, out target))
+            if (entry.TryGetProperty(priority, out var value)
+                && TryResolvePackageMapEntry(value, requestKey, mapName, resolutionMode, out target, out error))
             {
                 return true;
             }
         }
 
+        var conditionKeys = entry.EnumerateObject()
+            .Select(p => p.Name)
+            .Where(name => !name.StartsWith(".", StringComparison.Ordinal) && !name.StartsWith("#", StringComparison.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        if (conditionKeys.Length == 0)
+        {
+            return false;
+        }
+
+        var unsupportedConditions = conditionKeys
+            .Where(name => !SupportedConditionNames.Contains(name, StringComparer.Ordinal))
+            .ToArray();
+
+        if (unsupportedConditions.Length > 0)
+        {
+            error = $"Unsupported package.json {mapName} conditions for '{requestKey}': {string.Join(", ", unsupportedConditions)}. Supported conditions: import, require, node, default.";
+            return false;
+        }
+
+        error = $"No matching package.json {mapName} conditions for '{requestKey}' in {DescribeResolutionMode(resolutionMode)} mode. Supported conditions: {string.Join(", ", priorities)}.";
         return false;
     }
 
@@ -453,6 +566,30 @@ public sealed class NodeModuleResolver
         if (!trimmed.StartsWith("./", StringComparison.Ordinal))
         {
             error = $"Unsupported package.json exports target '{targetRel}' (expected relative path starting with './').";
+            return false;
+        }
+
+        var rel = trimmed.Substring(2);
+        var combined = Path.Combine(packageRoot, rel.Replace('/', Path.DirectorySeparatorChar));
+
+        return TryResolveAsFileOrDirectory(combined, out resolvedPath, out error);
+    }
+
+    private bool TryResolveImportsTargetPath(string packageRoot, string targetRel, out string resolvedPath, out string? error)
+    {
+        resolvedPath = string.Empty;
+        error = null;
+
+        if (string.IsNullOrWhiteSpace(targetRel))
+        {
+            return false;
+        }
+
+        // Keep the first closure slice deterministic: resolve only package-local targets.
+        var trimmed = targetRel.Trim();
+        if (!trimmed.StartsWith("./", StringComparison.Ordinal))
+        {
+            error = $"Unsupported package.json imports target '{targetRel}' (expected relative path starting with './').";
             return false;
         }
 
@@ -547,4 +684,7 @@ public sealed class NodeModuleResolver
         packageName = s.Substring(0, slash);
         packageSubpath = s.Substring(slash + 1);
     }
+
+    private static string DescribeResolutionMode(ModuleResolutionMode resolutionMode)
+        => resolutionMode == ModuleResolutionMode.Import ? "import" : "require";
 }

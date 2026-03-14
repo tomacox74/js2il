@@ -20,6 +20,31 @@ public class NodeModulesExecutionTests
         return VerifyWithSnapshot(output);
     }
 
+    [Fact]
+    public Task CommonJS_Require_NodeModules_DualMode_Exports_Imports_TypeModule_And_MjsEntry()
+    {
+        using var project = NodeModulesTestProjectSupport.CreateDualModeExportsImportsProject();
+        var compiled = NodeModulesTestProjectSupport.Compile(project);
+        if (!compiled.Success || string.IsNullOrWhiteSpace(compiled.AssemblyPath))
+        {
+            throw new InvalidOperationException("Compilation failed.\nErrors:\n" + compiled.Logger.Errors);
+        }
+
+        var output = NodeModulesTestProjectSupport.ExecuteGeneratedAssembly(compiled.AssemblyPath);
+        return VerifyWithSnapshot(output);
+    }
+
+    [Fact]
+    public void CommonJS_Require_NodeModules_UnsupportedConditions_ReportDiagnostic()
+    {
+        using var project = NodeModulesTestProjectSupport.CreateUnsupportedExportsConditionsProject();
+        var compiled = NodeModulesTestProjectSupport.Compile(project);
+
+        Assert.False(compiled.Success);
+        Assert.Contains("Unsupported package.json exports conditions", compiled.Logger.Errors);
+        Assert.Contains("Supported conditions: import, require, node, default", compiled.Logger.Errors);
+    }
+
     private string CompileAndRunTempProject()
     {
         var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "Issue783", Guid.NewGuid().ToString("N"));

@@ -89,31 +89,11 @@ public class ModuleLoader
             }
 
             // Continue walking the dependency graph even if this module failed validation.
-            // Dependency extraction must be best-effort to avoid crashing when validation failed.
-            foreach (var dep in GetModuleDependenciesBestEffort(module))
+            // Module dependencies are resolved before validation so we can still load the rest
+            // of the graph and report adjacent errors in one compiler run.
+            foreach (var dep in module.Dependencies)
             {
-                // Skip Node built-in modules that are provided by the runtime.
-                // (We do not compile their sources.)
-                if (!dep.StartsWith(".", StringComparison.Ordinal)
-                    && !dep.StartsWith("/", StringComparison.Ordinal)
-                    && JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleType(dep, out _))
-                {
-                    continue;
-                }
-
-                var baseDir = Path.GetDirectoryName(module.Path) ?? ".";
-                if (!_moduleResolver.TryResolve(dep, baseDir, out var resolvedDepPath, out var resolveError))
-                {
-                    hadAnyErrors = true;
-                    diagnostics.AddParseError(
-                        module.Path,
-                        $"Failed to resolve require('{dep}') from '{module.Path}': {resolveError}");
-                    continue;
-                }
-
-                // Track alias module ids for bare specifiers (e.g. require('pkg') -> canonical pkg/lib/index).
-                var aliasId = TryNormalizeBareAlias(dep);
-                LoadRecursive(resolvedDepPath, aliasId);
+                LoadRecursive(dep.ResolvedPath, dep.RequestedAliasModuleId);
             }
         }
 
@@ -197,6 +177,28 @@ public class ModuleLoader
             return false;
         }
 
+        if (!TryResolveAndRewriteModuleRequests(jsSource, ast, modulePath, rootModulePath, out var moduleDependencies, out var requestRewrittenSource, out var requestRewriteError))
+        {
+            module = null;
+            diagnostics.AddParseError(modulePath, requestRewriteError ?? "Failed to resolve module requests.");
+            return false;
+        }
+
+        if (!string.Equals(jsSource, requestRewrittenSource, StringComparison.Ordinal))
+        {
+            jsSource = requestRewrittenSource;
+            try
+            {
+                ast = _parser.ParseJavaScript(jsSource, sourceFileForDebugging);
+            }
+            catch (Exception ex)
+            {
+                module = null;
+                diagnostics.AddParseError(modulePath, $"Failed to parse module-request-rewritten source: {ex.Message}");
+                return false;
+            }
+        }
+
         if (!TryRewriteStaticModuleSyntax(jsSource, ast, out var rewrittenSource, out var rewriteError))
         {
             module = null;
@@ -262,6 +264,8 @@ public class ModuleLoader
             IsPackageModule = isPackageModule,
             Ast = ast
         };
+
+        module.Dependencies.AddRange(moduleDependencies);
 
         // For local modules, preserve existing manifest-like ids for host discovery.
         // (This is distinct from CLR name and distinct from package canonical ids.)
@@ -409,6 +413,109 @@ function __js2il_esm_export(name, getter) {
             sb.Insert(edit.Start, edit.Replacement);
         }
         return sb.ToString();
+    }
+
+    private bool TryResolveAndRewriteModuleRequests(
+        string source,
+        Acornima.Ast.Program ast,
+        string modulePath,
+        string rootModulePath,
+        out List<ModuleDependency> dependencies,
+        out string rewrittenSource,
+        out string? error)
+    {
+        var resolvedDependencies = new List<ModuleDependency>();
+        rewrittenSource = source;
+        string? localError = null;
+
+        var baseDirectory = Path.GetDirectoryName(modulePath) ?? ".";
+        var edits = new List<TextEdit>();
+        var succeeded = true;
+
+        bool TryHandleRequest(StringLiteral literal, ModuleResolutionMode resolutionMode, string operationDescription)
+        {
+            var specifier = literal.Value;
+            if (string.IsNullOrWhiteSpace(specifier) || IsBuiltInModuleSpecifier(specifier))
+            {
+                return true;
+            }
+
+            if (!_moduleResolver.TryResolve(specifier, baseDirectory, resolutionMode, out var resolvedPath, out var resolveError))
+            {
+                localError = $"Failed to resolve {operationDescription} from '{modulePath}': {resolveError}";
+                return false;
+            }
+
+            string? requestedAliasModuleId = null;
+            var runtimeSpecifier = specifier;
+            if (specifier.StartsWith("#", StringComparison.Ordinal)
+                || (resolutionMode == ModuleResolutionMode.Import && IsBarePackageSpecifier(specifier)))
+            {
+                runtimeSpecifier = ComputeCanonicalModuleId(resolvedPath, rootModulePath);
+                if (!string.Equals(runtimeSpecifier, specifier, StringComparison.Ordinal))
+                {
+                    edits.Add(new TextEdit(literal.Start, literal.End, CreateJsStringLiteral(runtimeSpecifier)));
+                }
+            }
+            else if (resolutionMode == ModuleResolutionMode.Require && IsBarePackageSpecifier(specifier))
+            {
+                requestedAliasModuleId = TryNormalizeBareAlias(specifier);
+            }
+
+            resolvedDependencies.Add(new ModuleDependency
+            {
+                ResolvedPath = resolvedPath,
+                RequestedAliasModuleId = requestedAliasModuleId
+            });
+            return true;
+        }
+
+        _parser.VisitAst(ast, node =>
+        {
+            if (!succeeded)
+            {
+                return;
+            }
+
+            switch (node)
+            {
+                case ImportDeclaration { Source: StringLiteral sourceLiteral }:
+                    succeeded = TryHandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"import '{sourceLiteral.Value}'");
+                    break;
+
+                case ExportNamedDeclaration { Source: StringLiteral sourceLiteral }:
+                    succeeded = TryHandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"export-from '{sourceLiteral.Value}'");
+                    break;
+
+                case ExportAllDeclaration { Source: StringLiteral sourceLiteral }:
+                    succeeded = TryHandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"export-all-from '{sourceLiteral.Value}'");
+                    break;
+
+                case ImportExpression importExpression when importExpression.Source is StringLiteral sourceLiteral:
+                    succeeded = TryHandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"import('{sourceLiteral.Value}')");
+                    break;
+
+                case CallExpression callExpression
+                    when callExpression.Callee is Identifier { Name: "require" }
+                         && callExpression.Arguments.Count == 1
+                         && callExpression.Arguments[0] is StringLiteral sourceLiteral:
+                    succeeded = TryHandleRequest(sourceLiteral, ModuleResolutionMode.Require, $"require('{sourceLiteral.Value}')");
+                    break;
+            }
+        });
+
+        if (!succeeded)
+        {
+            dependencies = new List<ModuleDependency>();
+            rewrittenSource = source;
+            error = localError;
+            return false;
+        }
+
+        dependencies = resolvedDependencies;
+        rewrittenSource = ApplyTextEdits(source, edits);
+        error = null;
+        return true;
     }
 
     private static string CreateExportGetterLine(string exportName, string valueExpression)
@@ -1617,6 +1724,11 @@ function __js2il_esm_export(name, getter) {
             .Replace("\n", "\\n", StringComparison.Ordinal);
     }
 
+    private static string CreateJsStringLiteral(string value)
+    {
+        return $"\"{EscapeJsString(value)}\"";
+    }
+
     private static bool IsDirectivePrologueStatement(Statement statement)
     {
         return statement is ExpressionStatement { Expression: Literal literal } && literal.Value is string;
@@ -1671,6 +1783,44 @@ function __js2il_esm_export(name, getter) {
         s = TrimKnownModuleExtension(s);
 
         return s;
+    }
+
+    private static bool IsBuiltInModuleSpecifier(string specifier)
+    {
+        if (string.IsNullOrWhiteSpace(specifier))
+        {
+            return false;
+        }
+
+        return JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleType(specifier, out _);
+    }
+
+    private static bool IsBarePackageSpecifier(string specifier)
+    {
+        if (string.IsNullOrWhiteSpace(specifier))
+        {
+            return false;
+        }
+
+        var normalized = specifier.Trim().Replace('\\', '/');
+        if (normalized.StartsWith("#", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        if (normalized.StartsWith("./", StringComparison.Ordinal)
+            || normalized.StartsWith("../", StringComparison.Ordinal)
+            || normalized.StartsWith("/", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        if (Path.IsPathRooted(normalized))
+        {
+            return false;
+        }
+
+        return !normalized.StartsWith("node:", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string TrimKnownModuleExtension(string value)
