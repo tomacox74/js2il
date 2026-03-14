@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- docs/samples/workflows: close issue #850 and umbrella #439 by aligning the hosting sample docs and release smoke workflows with the `Js2IL.Runtime` package name and documenting the coordinated restore/build/post-publish validation matrix for the packaged hosting flow.
 
 ## v0.9.2 - 2026-03-14
 

@@ -130,7 +130,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:JavaScriptRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:Js2ILRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
@@ -142,7 +142,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:JavaScriptRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:Js2ILRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
@@ -154,7 +154,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:JavaScriptRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:Js2ILRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output

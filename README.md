@@ -205,6 +205,10 @@ This command currently does two things:
 - runs the PR canary suite against a freshly packed local `js2il` tool
 - runs the focused `Js2ILSdkPackageTests` suite, which packs `Js2IL.Runtime`, `Js2IL.Core`, and `Js2IL.SDK` into a local feed and verifies the SDK consumption path
 
+After the GitHub release is published, the `windows-smoke` and `linux-smoke` workflows install the tagged `js2il` tool from NuGet and build/run the `Hosting.Domino`, `Hosting.Basic`, and `Hosting.Typed` samples against the matching `Js2IL.SDK` / `Js2IL.Runtime` version.
+
+For the full restore/build/post-publish validation matrix used to close issues `#850` and `#439`, see [docs/hosting/PackagingValidation.md](docs/hosting/PackagingValidation.md).
+
 #### 4. Commit Version Bump
 
 Commit the changes on the release branch:

@@ -7,7 +7,7 @@ Minimal end-to-end hosting sample:
 ## Layout
 
 - `compiler/JavaScript/` – source JS module compiled by the host project
-- `host/` – C# console app that restores `Js2IL.SDK` + `JavaScriptRuntime`, builds the JS module, and calls exports
+- `host/` – C# console app that restores `Js2IL.SDK` + `Js2IL.Runtime`, builds the JS module, and calls exports
 
 ## Prerequisites
 

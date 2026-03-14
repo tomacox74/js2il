@@ -11,6 +11,6 @@ These samples demonstrate consuming **compiled** JavaScript modules as a .NET li
 Each sample is split into two parts:
 
 - `compiler/` – the JavaScript source inputs consumed during `dotnet build`. `Hosting.Domino` also keeps its npm manifest/lock file here so the host project can restore the package before compiling it.
-- `host/` – a C# console app that restores `Js2IL.SDK` and `JavaScriptRuntime`, compiles the JavaScript input via `Js2ILCompile`, and calls into the resulting module assembly using `Js2IL.Runtime` hosting APIs.
+- `host/` – a C# console app that restores `Js2IL.SDK` and `Js2IL.Runtime`, compiles the JavaScript input via `Js2ILCompile`, and calls into the resulting module assembly using `Js2IL.Runtime` hosting APIs.
 
 No separate `js2il` CLI shell-out project is required.
