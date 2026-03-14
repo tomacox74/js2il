@@ -932,7 +932,7 @@
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested private auto ansi beforefieldinit Block_L84C46
+			.class nested private auto ansi beforefieldinit Block_L85C26
 				extends [System.Runtime]System.Object
 			{
 				// Methods
@@ -948,9 +948,9 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L84C46::.ctor
+				} // end of method Block_L85C26::.ctor
 
-			} // end of class Block_L84C46
+			} // end of class Block_L85C26
 
 
 			// Methods
@@ -984,66 +984,68 @@
 			)
 			// Method begins at RVA 0x28f8
 			// Header size: 12
-			// Code size: 132 (0x84)
+			// Code size: 131 (0x83)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] bool,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-				[3] string
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+				[2] object,
+				[3] bool,
+				[4] string
 			)
 
-			IL_0000: ldarg.1
-			IL_0001: ldstr "includes"
-			IL_0006: ldstr "<Js2ILPackageVersion>"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0017: ldc.i4.0
-			IL_0018: ceq
-			IL_001a: stloc.1
-			IL_001b: ldloc.1
-			IL_001c: brfalse IL_0045
+			IL_0000: ldstr "<Js2ILPackageVersion\\b([^>]*)>[^<]+<\\/Js2ILPackageVersion>"
+			IL_0005: ldstr ""
+			IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_000f: stloc.1
+			IL_0010: ldloc.1
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldarg.1
+			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
+			IL_0019: stloc.2
+			IL_001a: ldloc.2
+			IL_001b: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0020: ldc.i4.0
+			IL_0021: ceq
+			IL_0023: stloc.3
+			IL_0024: ldloc.3
+			IL_0025: brfalse IL_004e
 
-			IL_0021: ldstr "Could not find <Js2ILPackageVersion> in samples/Directory.Build.props"
-			IL_0026: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_0030: dup
-			IL_0031: isinst [System.Runtime]System.Exception
-			IL_0036: dup
-			IL_0037: brtrue IL_0043
+			IL_002a: ldstr "Could not find <Js2ILPackageVersion> in samples/Directory.Build.props"
+			IL_002f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0034: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_0039: dup
+			IL_003a: isinst [System.Runtime]System.Exception
+			IL_003f: dup
+			IL_0040: brtrue IL_004c
 
-			IL_003c: pop
-			IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0042: throw
+			IL_0045: pop
+			IL_0046: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_004b: throw
 
-			IL_0043: pop
-			IL_0044: throw
+			IL_004c: pop
+			IL_004d: throw
 
-			IL_0045: ldstr "<Js2ILPackageVersion>[^<]+<\\/Js2ILPackageVersion>"
-			IL_004a: ldstr ""
-			IL_004f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_0054: stloc.2
-			IL_0055: ldarg.2
-			IL_0056: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_005b: stloc.3
-			IL_005c: ldstr "<Js2ILPackageVersion>"
-			IL_0061: ldloc.3
-			IL_0062: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0067: stloc.3
-			IL_0068: ldloc.3
-			IL_0069: ldstr "</Js2ILPackageVersion>"
-			IL_006e: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0073: stloc.3
-			IL_0074: ldarg.1
-			IL_0075: ldstr "replace"
-			IL_007a: ldloc.2
-			IL_007b: ldloc.3
-			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0081: stloc.0
-			IL_0082: ldloc.0
-			IL_0083: ret
+			IL_004e: ldarg.2
+			IL_004f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0054: stloc.s 4
+			IL_0056: ldstr "<Js2ILPackageVersion$1>"
+			IL_005b: ldloc.s 4
+			IL_005d: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0062: stloc.s 4
+			IL_0064: ldloc.s 4
+			IL_0066: ldstr "</Js2ILPackageVersion>"
+			IL_006b: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0070: stloc.s 4
+			IL_0072: ldarg.1
+			IL_0073: ldstr "replace"
+			IL_0078: ldloc.0
+			IL_0079: ldloc.s 4
+			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0080: stloc.2
+			IL_0081: ldloc.2
+			IL_0082: ret
 		} // end of method updateSamplesPropsVersion::__js_call__
 
 	} // end of class updateSamplesPropsVersion
@@ -1056,7 +1058,7 @@
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested private auto ansi beforefieldinit Block_L98C23
+			.class nested private auto ansi beforefieldinit Block_L99C23
 				extends [System.Runtime]System.Object
 			{
 				// Methods
@@ -1072,9 +1074,9 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L98C23::.ctor
+				} // end of method Block_L99C23::.ctor
 
-			} // end of class Block_L98C23
+			} // end of class Block_L99C23
 
 
 			// Methods
@@ -1351,7 +1353,7 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L112C44
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L113C44
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
@@ -1443,9 +1445,9 @@
 
 				IL_0054: ldloc.s 5
 				IL_0056: ret
-			} // end of method ArrowFunction_L112C44::__js_call__
+			} // end of method ArrowFunction_L113C44::__js_call__
 
-		} // end of class ArrowFunction_L112C44
+		} // end of class ArrowFunction_L113C44
 
 		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
@@ -1527,7 +1529,7 @@
 			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 			IL_0064: stloc.s 4
 			IL_0066: ldnull
-			IL_0067: ldftn object Modules.Compile_Scripts_BumpVersion/generateReleaseSection/ArrowFunction_L112C44::__js_call__(object[], object, object)
+			IL_0067: ldftn object Modules.Compile_Scripts_BumpVersion/generateReleaseSection/ArrowFunction_L113C44::__js_call__(object[], object, object)
 			IL_006d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 			IL_0072: ldc.i4.2
 			IL_0073: newarr [System.Runtime]System.Object
@@ -1610,7 +1612,7 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L135C51
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L136C51
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
@@ -1700,15 +1702,15 @@
 
 				IL_0049: ldloc.s 5
 				IL_004b: ret
-			} // end of method ArrowFunction_L135C51::__js_call__
+			} // end of method ArrowFunction_L136C51::__js_call__
 
-		} // end of class ArrowFunction_L135C51
+		} // end of class ArrowFunction_L136C51
 
 		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested private auto ansi beforefieldinit Block_L129C36
+			.class nested private auto ansi beforefieldinit Block_L130C36
 				extends [System.Runtime]System.Object
 			{
 				// Methods
@@ -1724,11 +1726,11 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L129C36::.ctor
+				} // end of method Block_L130C36::.ctor
 
-			} // end of class Block_L129C36
+			} // end of class Block_L130C36
 
-			.class nested private auto ansi beforefieldinit Block_L136C35
+			.class nested private auto ansi beforefieldinit Block_L137C35
 				extends [System.Runtime]System.Object
 			{
 				// Methods
@@ -1744,9 +1746,9 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L136C35::.ctor
+				} // end of method Block_L137C35::.ctor
 
-			} // end of class Block_L136C35
+			} // end of class Block_L137C35
 
 
 			// Methods
@@ -2069,7 +2071,7 @@
 			IL_02a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 			IL_02a7: stloc.s 30
 			IL_02a9: ldnull
-			IL_02aa: ldftn object Modules.Compile_Scripts_BumpVersion/perform/ArrowFunction_L135C51::__js_call__(object[], object, object)
+			IL_02aa: ldftn object Modules.Compile_Scripts_BumpVersion/perform/ArrowFunction_L136C51::__js_call__(object[], object, object)
 			IL_02b0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
 			IL_02b5: ldc.i4.2
 			IL_02b6: newarr [System.Runtime]System.Object
@@ -2562,7 +2564,7 @@
 			e2 80 a6 00 00
 		)
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L179C4
+		.class nested private auto ansi beforefieldinit Block_L180C4
 			extends [System.Runtime]System.Object
 		{
 			// Methods
@@ -2578,11 +2580,11 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L179C4::.ctor
+			} // end of method Block_L180C4::.ctor
 
-		} // end of class Block_L179C4
+		} // end of class Block_L180C4
 
-		.class nested private auto ansi beforefieldinit Block_L179C29
+		.class nested private auto ansi beforefieldinit Block_L180C29
 			extends [System.Runtime]System.Object
 		{
 			// Methods
@@ -2598,9 +2600,9 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L179C29::.ctor
+			} // end of method Block_L180C29::.ctor
 
-		} // end of class Block_L179C29
+		} // end of class Block_L180C29
 
 
 		// Fields
