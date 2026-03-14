@@ -58,7 +58,7 @@ public sealed class NodeModuleResolver
         if (IsPathLikeSpecifier(normalizedSpecifier))
         {
             var requestPath = ToAbsolutePath(normalizedSpecifier, baseDirectory);
-            return TryResolveAsFileOrDirectory(requestPath, out resolvedPath, out error);
+            return TryResolveAsFileOrDirectory(requestPath, resolutionMode, out resolvedPath, out error);
         }
 
         // Bare specifier: treat as npm package id (potentially with subpath).
@@ -145,7 +145,7 @@ public sealed class NodeModuleResolver
 
                 // Fallback: treat subpath as a filesystem path within package root.
                 var subpathPath = Path.Combine(packageRoot, packageSubpath.Replace('/', Path.DirectorySeparatorChar));
-                if (TryResolveAsFileOrDirectory(subpathPath, out resolvedPath, out error))
+                if (TryResolveAsFileOrDirectory(subpathPath, resolutionMode, out resolvedPath, out error))
                 {
                     return true;
                 }
@@ -187,7 +187,7 @@ public sealed class NodeModuleResolver
         return false;
     }
 
-    private bool TryResolveAsFileOrDirectory(string requestPath, out string resolvedPath, out string? error)
+    private bool TryResolveAsFileOrDirectory(string requestPath, ModuleResolutionMode resolutionMode, out string resolvedPath, out string? error)
     {
         resolvedPath = string.Empty;
         error = null;
@@ -214,7 +214,7 @@ public sealed class NodeModuleResolver
         // 3) Directory: package.json -> entry, then index.(js|mjs|cjs)
         var packageJson = Path.Combine(requestPath, "package.json");
         if (_fileSystem.FileExists(packageJson)
-            && TryResolvePackageEntryFromPackageJson(requestPath, packageJson, ModuleResolutionMode.Require, out resolvedPath, out error))
+            && TryResolvePackageEntryFromPackageJson(requestPath, packageJson, resolutionMode, out resolvedPath, out error))
         {
             return true;
         }
@@ -269,7 +269,7 @@ public sealed class NodeModuleResolver
             if (root.TryGetProperty("exports", out var exportsElement))
             {
                 if (TryResolvePackageMapTarget(exportsElement, requestKey: ".", mapName: "exports", resolutionMode, out var targetRel, out error)
-                    && TryResolveExportsTargetPath(packageRoot, targetRel, out resolvedPath, out error))
+                    && TryResolveExportsTargetPath(packageRoot, targetRel, resolutionMode, out resolvedPath, out error))
                 {
                     return true;
                 }
@@ -284,7 +284,7 @@ public sealed class NodeModuleResolver
                 if (!string.IsNullOrWhiteSpace(main))
                 {
                     var mainPath = Path.Combine(packageRoot, main.Replace('/', Path.DirectorySeparatorChar));
-                    if (TryResolveAsFileOrDirectory(mainPath, out resolvedPath, out error))
+                    if (TryResolveAsFileOrDirectory(mainPath, resolutionMode, out resolvedPath, out error))
                     {
                         return true;
                     }
@@ -322,7 +322,7 @@ public sealed class NodeModuleResolver
 
             if (TryResolvePackageMapTarget(exportsElement, exportsKey, "exports", resolutionMode, out var targetRel, out error))
             {
-                return TryResolveExportsTargetPath(packageRoot, targetRel, out resolvedPath, out error);
+                return TryResolveExportsTargetPath(packageRoot, targetRel, resolutionMode, out resolvedPath, out error);
             }
 
             error ??= $"Package export '{exportsKey}' is not defined in '{packageJsonPath}'.";
@@ -362,7 +362,7 @@ public sealed class NodeModuleResolver
 
                 if (TryResolvePackageMapTarget(importsElement, specifier, "imports", resolutionMode, out var targetRel, out error))
                 {
-                    return TryResolveImportsTargetPath(dir, targetRel, out resolvedPath, out error);
+                    return TryResolveImportsTargetPath(dir, targetRel, resolutionMode, out resolvedPath, out error);
                 }
 
                 if (error == null)
@@ -519,10 +519,19 @@ public sealed class NodeModuleResolver
 
         foreach (var priority in priorities)
         {
-            if (entry.TryGetProperty(priority, out var value)
-                && TryResolvePackageMapEntry(value, requestKey, mapName, resolutionMode, out target, out error))
+            if (!entry.TryGetProperty(priority, out var value))
+            {
+                continue;
+            }
+
+            if (TryResolvePackageMapEntry(value, requestKey, mapName, resolutionMode, out target, out error))
             {
                 return true;
+            }
+
+            if (error != null)
+            {
+                return false;
             }
         }
 
@@ -537,21 +546,30 @@ public sealed class NodeModuleResolver
             return false;
         }
 
-        var unsupportedConditions = conditionKeys
-            .Where(name => !SupportedConditionNames.Contains(name, StringComparer.Ordinal))
+        var supportedConditions = conditionKeys
+            .Where(name => SupportedConditionNames.Contains(name, StringComparer.Ordinal))
             .ToArray();
 
-        if (unsupportedConditions.Length > 0)
+        if (supportedConditions.Length > 0)
         {
-            error = $"Unsupported package.json {mapName} conditions for '{requestKey}': {string.Join(", ", unsupportedConditions)}. Supported conditions: import, require, node, default.";
+            var ignoredUnsupportedConditions = conditionKeys
+                .Where(name => !SupportedConditionNames.Contains(name, StringComparer.Ordinal))
+                .ToArray();
+
+            error = $"No matching package.json {mapName} conditions for '{requestKey}' in {DescribeResolutionMode(resolutionMode)} mode. Available supported conditions: {string.Join(", ", supportedConditions)}.";
+            if (ignoredUnsupportedConditions.Length > 0)
+            {
+                error += $" Ignored unsupported conditions: {string.Join(", ", ignoredUnsupportedConditions)}.";
+            }
+
             return false;
         }
 
-        error = $"No matching package.json {mapName} conditions for '{requestKey}' in {DescribeResolutionMode(resolutionMode)} mode. Supported conditions: {string.Join(", ", priorities)}.";
+        error = $"Unsupported package.json {mapName} conditions for '{requestKey}': {string.Join(", ", conditionKeys)}. Supported conditions: import, require, node, default.";
         return false;
     }
 
-    private bool TryResolveExportsTargetPath(string packageRoot, string targetRel, out string resolvedPath, out string? error)
+    private bool TryResolveExportsTargetPath(string packageRoot, string targetRel, ModuleResolutionMode resolutionMode, out string resolvedPath, out string? error)
     {
         resolvedPath = string.Empty;
         error = null;
@@ -572,10 +590,10 @@ public sealed class NodeModuleResolver
         var rel = trimmed.Substring(2);
         var combined = Path.Combine(packageRoot, rel.Replace('/', Path.DirectorySeparatorChar));
 
-        return TryResolveAsFileOrDirectory(combined, out resolvedPath, out error);
+        return TryResolveAsFileOrDirectory(combined, resolutionMode, out resolvedPath, out error);
     }
 
-    private bool TryResolveImportsTargetPath(string packageRoot, string targetRel, out string resolvedPath, out string? error)
+    private bool TryResolveImportsTargetPath(string packageRoot, string targetRel, ModuleResolutionMode resolutionMode, out string resolvedPath, out string? error)
     {
         resolvedPath = string.Empty;
         error = null;
@@ -596,7 +614,7 @@ public sealed class NodeModuleResolver
         var rel = trimmed.Substring(2);
         var combined = Path.Combine(packageRoot, rel.Replace('/', Path.DirectorySeparatorChar));
 
-        return TryResolveAsFileOrDirectory(combined, out resolvedPath, out error);
+        return TryResolveAsFileOrDirectory(combined, resolutionMode, out resolvedPath, out error);
     }
 
     private static string NormalizeSpecifier(string specifier)

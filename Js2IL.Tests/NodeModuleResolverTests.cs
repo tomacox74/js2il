@@ -115,6 +115,37 @@ public class NodeModuleResolverTests
     }
 
     [Fact]
+    public void Resolve_PathLikeDirectory_UsesImportAndRequireConditions()
+    {
+        var fs = new MockFileSystem();
+        var resolver = new NodeModuleResolver(fs);
+
+        var projectDir = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "proj"));
+        var moduleDir = Path.Combine(projectDir, "dir");
+        var packageJson = Path.Combine(moduleDir, "package.json");
+        var importEntry = Path.Combine(moduleDir, "esm", "index.js");
+        var requireEntry = Path.Combine(moduleDir, "cjs", "index.cjs");
+
+        fs.AddFile(
+            packageJson,
+            "{"
+            + "\"name\":\"dir-entry\","
+            + "\"exports\":{"
+            + "\".\":{\"import\":\"./esm/index.js\",\"require\":\"./cjs/index.cjs\"}"
+            + "}"
+            + "}"
+        );
+        fs.AddFile(importEntry, "export default 'esm';");
+        fs.AddFile(requireEntry, "\"use strict\"; module.exports = 'cjs';");
+
+        Assert.True(resolver.TryResolve("./dir", projectDir, ModuleResolutionMode.Import, out var importResolved, out var importError), importError);
+        Assert.Equal(Path.GetFullPath(importEntry), importResolved);
+
+        Assert.True(resolver.TryResolve("./dir", projectDir, ModuleResolutionMode.Require, out var requireResolved, out var requireError), requireError);
+        Assert.Equal(Path.GetFullPath(requireEntry), requireResolved);
+    }
+
+    [Fact]
     public void Resolve_PackageImports_UsesNearestPackageJsonAndConditions()
     {
         var fs = new MockFileSystem();
@@ -183,5 +214,37 @@ public class NodeModuleResolverTests
         Assert.False(ok);
         Assert.Contains("Unsupported package.json imports conditions", error);
         Assert.Contains("Supported conditions: import, require, node, default", error);
+    }
+
+    [Fact]
+    public void Resolve_PackageImports_WithSupportedAndUnsupportedConditions_ReportsNoMatchingSupportedCondition()
+    {
+        var fs = new MockFileSystem();
+        var resolver = new NodeModuleResolver(fs);
+
+        var projectDir = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "proj"));
+        var packageRoot = Path.Combine(projectDir, "packages", "app");
+        var packageJson = Path.Combine(packageRoot, "package.json");
+        var requireShared = Path.Combine(packageRoot, "cjs", "shared.cjs");
+        var baseDirectory = Path.Combine(packageRoot, "src");
+
+        fs.AddFile(
+            packageJson,
+            "{"
+            + "\"name\":\"app\","
+            + "\"imports\":{"
+            + "\"#shared\":{\"require\":\"./cjs/shared.cjs\",\"browser\":\"./browser.js\"}"
+            + "}"
+            + "}"
+        );
+        fs.AddFile(requireShared, "\"use strict\"; module.exports = 'cjs-shared';");
+
+        var ok = resolver.TryResolve("#shared", baseDirectory, ModuleResolutionMode.Import, out _, out var error);
+
+        Assert.False(ok);
+        Assert.Contains("No matching package.json imports conditions", error);
+        Assert.Contains("Available supported conditions: require", error);
+        Assert.Contains("Ignored unsupported conditions: browser", error);
+        Assert.DoesNotContain("Unsupported package.json imports conditions", error);
     }
 }

@@ -25,9 +25,17 @@ internal sealed class TempNodeModulesProject : IDisposable
 
     public void Dispose()
     {
+        if (!Directory.Exists(Root))
+        {
+            return;
+        }
+
         try
         {
             Directory.Delete(Root, recursive: true);
+        }
+        catch (DirectoryNotFoundException)
+        {
         }
         catch (IOException)
         {

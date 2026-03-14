@@ -97,4 +97,34 @@ public class ModuleLoaderTests
         Assert.True(string.IsNullOrWhiteSpace(logger.Errors));
         Assert.Contains("requires strict mode", logger.Warnings, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void LoadModules_RequestResolutionFailures_ReportAllErrors_AndStillWalkResolvedDependencies()
+    {
+        var fileSystem = new MockFileSystem();
+        var logger = new TestLogger();
+        var options = new CompilerOptions { Verbose = false };
+        var resolver = new NodeModuleResolver(fileSystem);
+        var loader = new ModuleLoader(options, fileSystem, resolver, logger);
+
+        var rootPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "root.js"));
+        var okPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rootPath)!, "ok.js"));
+
+        fileSystem.AddFile(
+            rootPath,
+            "\"use strict\";\n"
+            + "require('./ok');\n"
+            + "require('./missingA');\n"
+            + "require('./missingB');\n"
+        );
+        fileSystem.AddFile(okPath, "module.exports = 1;\n");
+
+        var modules = loader.LoadModules(rootPath);
+
+        Assert.Null(modules);
+        Assert.Contains("require('./missingA')", logger.Errors);
+        Assert.Contains("require('./missingB')", logger.Errors);
+        Assert.Contains(Path.GetFileName(okPath), logger.Errors, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("requires strict mode", logger.Errors, StringComparison.OrdinalIgnoreCase);
+    }
 }

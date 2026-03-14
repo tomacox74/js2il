@@ -177,11 +177,13 @@ public class ModuleLoader
             return false;
         }
 
-        if (!TryResolveAndRewriteModuleRequests(jsSource, ast, modulePath, rootModulePath, out var moduleDependencies, out var requestRewrittenSource, out var requestRewriteError))
+        var requestResolutionOk = TryResolveAndRewriteModuleRequests(jsSource, ast, modulePath, rootModulePath, out var moduleDependencies, out var requestRewrittenSource, out var requestRewriteErrors);
+        if (!requestResolutionOk)
         {
-            module = null;
-            diagnostics.AddParseError(modulePath, requestRewriteError ?? "Failed to resolve module requests.");
-            return false;
+            foreach (var requestRewriteError in requestRewriteErrors)
+            {
+                diagnostics.AddParseError(modulePath, requestRewriteError);
+            }
         }
 
         if (!string.Equals(jsSource, requestRewrittenSource, StringComparison.Ordinal))
@@ -321,7 +323,7 @@ public class ModuleLoader
             diagnostics.AddWarnings(module.ModuleId, modulePath, validationResult.Warnings);
         }
 
-        return true;
+        return requestResolutionOk;
     }
 
     private static readonly string EsModuleInteropPrelude =
@@ -422,28 +424,27 @@ function __js2il_esm_export(name, getter) {
         string rootModulePath,
         out List<ModuleDependency> dependencies,
         out string rewrittenSource,
-        out string? error)
+        out List<string> errors)
     {
         var resolvedDependencies = new List<ModuleDependency>();
         rewrittenSource = source;
-        string? localError = null;
+        var localErrors = new List<string>();
 
         var baseDirectory = Path.GetDirectoryName(modulePath) ?? ".";
         var edits = new List<TextEdit>();
-        var succeeded = true;
 
-        bool TryHandleRequest(StringLiteral literal, ModuleResolutionMode resolutionMode, string operationDescription)
+        void HandleRequest(StringLiteral literal, ModuleResolutionMode resolutionMode, string operationDescription)
         {
             var specifier = literal.Value;
             if (string.IsNullOrWhiteSpace(specifier) || IsBuiltInModuleSpecifier(specifier))
             {
-                return true;
+                return;
             }
 
             if (!_moduleResolver.TryResolve(specifier, baseDirectory, resolutionMode, out var resolvedPath, out var resolveError))
             {
-                localError = $"Failed to resolve {operationDescription} from '{modulePath}': {resolveError}";
-                return false;
+                localErrors.Add($"Failed to resolve {operationDescription} from '{modulePath}': {resolveError}");
+                return;
             }
 
             string? requestedAliasModuleId = null;
@@ -467,55 +468,41 @@ function __js2il_esm_export(name, getter) {
                 ResolvedPath = resolvedPath,
                 RequestedAliasModuleId = requestedAliasModuleId
             });
-            return true;
         }
 
         _parser.VisitAst(ast, node =>
         {
-            if (!succeeded)
-            {
-                return;
-            }
-
             switch (node)
             {
                 case ImportDeclaration { Source: StringLiteral sourceLiteral }:
-                    succeeded = TryHandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"import '{sourceLiteral.Value}'");
+                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"import '{sourceLiteral.Value}'");
                     break;
 
                 case ExportNamedDeclaration { Source: StringLiteral sourceLiteral }:
-                    succeeded = TryHandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"export-from '{sourceLiteral.Value}'");
+                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"export-from '{sourceLiteral.Value}'");
                     break;
 
                 case ExportAllDeclaration { Source: StringLiteral sourceLiteral }:
-                    succeeded = TryHandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"export-all-from '{sourceLiteral.Value}'");
+                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"export-all-from '{sourceLiteral.Value}'");
                     break;
 
                 case ImportExpression importExpression when importExpression.Source is StringLiteral sourceLiteral:
-                    succeeded = TryHandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"import('{sourceLiteral.Value}')");
+                    HandleRequest(sourceLiteral, ModuleResolutionMode.Import, $"import('{sourceLiteral.Value}')");
                     break;
 
                 case CallExpression callExpression
                     when callExpression.Callee is Identifier { Name: "require" }
                          && callExpression.Arguments.Count == 1
                          && callExpression.Arguments[0] is StringLiteral sourceLiteral:
-                    succeeded = TryHandleRequest(sourceLiteral, ModuleResolutionMode.Require, $"require('{sourceLiteral.Value}')");
+                    HandleRequest(sourceLiteral, ModuleResolutionMode.Require, $"require('{sourceLiteral.Value}')");
                     break;
             }
         });
 
-        if (!succeeded)
-        {
-            dependencies = new List<ModuleDependency>();
-            rewrittenSource = source;
-            error = localError;
-            return false;
-        }
-
         dependencies = resolvedDependencies;
         rewrittenSource = ApplyTextEdits(source, edits);
-        error = null;
-        return true;
+        errors = localErrors;
+        return localErrors.Count == 0;
     }
 
     private static string CreateExportGetterLine(string exportName, string valueExpression)
