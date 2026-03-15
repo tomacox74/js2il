@@ -414,9 +414,10 @@ namespace JavaScriptRuntime.Node
             => Decode(System.Array.Empty<byte>(), 0, flush: true);
     }
 
-    public sealed class NetServer : EventEmitter
+    public class NetServer : EventEmitter
     {
         private readonly object? _options;
+        private readonly Func<NetSocket>? _socketFactory;
         private readonly object _sync = new();
         private readonly List<NetSocket> _connections = new();
         private readonly bool _allowHalfOpen;
@@ -436,8 +437,14 @@ namespace JavaScriptRuntime.Node
                 ?? throw new InvalidOperationException("NodeSchedulerState is not available for net.");
 
         public NetServer(object? options = null)
+            : this(options, null)
+        {
+        }
+
+        internal NetServer(object? options, Func<NetSocket>? socketFactory)
         {
             _options = options;
+            _socketFactory = socketFactory;
             _allowHalfOpen = NodeNetworkingCommon.CoerceBoolean(
                 NodeNetworkingCommon.TryGetOption(options, "allowHalfOpen"),
                 defaultValue: false);
@@ -563,8 +570,19 @@ namespace JavaScriptRuntime.Node
                         continue;
                     }
 
-                    var socket = new NetSocket(_allowHalfOpen);
+                    var socket = _socketFactory?.Invoke() ?? new NetSocket(_allowHalfOpen);
                     socket.AttachSchedulers(ioScheduler, nodeScheduler);
+                    try
+                    {
+                        await socket.AttachAcceptedClientAsync(client).ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        var error = ex as Error ?? new Error(ex.Message, ex);
+                        NodeNetworkingCommon.ScheduleOnEventLoop(nodeScheduler, () => emit("error", error));
+                        continue;
+                    }
+
                     lock (_sync)
                     {
                         _connections.Add(socket);
@@ -579,8 +597,6 @@ namespace JavaScriptRuntime.Node
 
                         return null;
                     }));
-
-                    socket.AttachClient(client);
                     NodeNetworkingCommon.ScheduleOnEventLoop(nodeScheduler, () =>
                     {
                         emit("connection", socket);
@@ -679,13 +695,13 @@ namespace JavaScriptRuntime.Node
         }
     }
 
-    public sealed class NetSocket : Duplex
+    public class NetSocket : Duplex
     {
         private readonly Queue<byte[]> _pendingWrites = new();
         private readonly bool _allowHalfOpen;
         private readonly object _timeoutSync = new();
         private TcpClient? _client;
-        private NetworkStream? _stream;
+        private System.IO.Stream? _stream;
         private bool _connectInProgress;
         private bool _connected;
         private bool _canWriteToStream;
@@ -746,6 +762,12 @@ namespace JavaScriptRuntime.Node
         {
             _allowHalfOpen = allowHalfOpen;
         }
+
+        protected virtual Task<System.IO.Stream> CreateClientStreamAsync(TcpClient client, string host, int port)
+            => Task.FromResult<System.IO.Stream>(client.GetStream());
+
+        protected virtual Task<System.IO.Stream> CreateAcceptedStreamAsync(TcpClient client)
+            => Task.FromResult<System.IO.Stream>(client.GetStream());
 
         public NetSocket connect(object[] args)
         {
@@ -921,8 +943,43 @@ namespace JavaScriptRuntime.Node
 
         internal void AttachClient(TcpClient client)
         {
+            AttachConnectedStream(client, client.GetStream());
+        }
+
+        internal async Task AttachAcceptedClientAsync(TcpClient client)
+        {
+            System.IO.Stream? stream = null;
+            try
+            {
+                stream = await CreateAcceptedStreamAsync(client).ConfigureAwait(false);
+                AttachConnectedStream(client, stream);
+            }
+            catch
+            {
+                try
+                {
+                    stream?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    client.Dispose();
+                }
+                catch
+                {
+                }
+
+                throw;
+            }
+        }
+
+        protected void AttachConnectedStream(TcpClient client, System.IO.Stream stream)
+        {
             _client = client;
-            _stream = client.GetStream();
+            _stream = stream;
             _connected = true;
             _connectInProgress = false;
             _canWriteToStream = false;
@@ -999,15 +1056,25 @@ namespace JavaScriptRuntime.Node
         private async Task ConnectAsync(string host, int port, PromiseWithResolvers connectPromise)
         {
             TcpClient? client = null;
+            System.IO.Stream? stream = null;
             try
             {
                 client = new TcpClient(AddressFamily.InterNetwork);
                 await client.ConnectAsync(NodeNetworkingCommon.ResolveAddress(host), port).ConfigureAwait(false);
-                AttachClient(client);
+                stream = await CreateClientStreamAsync(client, host, port).ConfigureAwait(false);
+                AttachConnectedStream(client, stream);
                 IoScheduler.EndIo(connectPromise, null, isError: false);
             }
             catch (Exception ex)
             {
+                try
+                {
+                    stream?.Dispose();
+                }
+                catch
+                {
+                }
+
                 try
                 {
                     client?.Dispose();
@@ -1042,7 +1109,7 @@ namespace JavaScriptRuntime.Node
             _ = ReadLoopAsync(_stream, lifetimePromise);
         }
 
-        private async Task ReadLoopAsync(NetworkStream stream, PromiseWithResolvers lifetimePromise)
+        private async Task ReadLoopAsync(System.IO.Stream stream, PromiseWithResolvers lifetimePromise)
         {
             var buffer = new byte[4096];
             try
@@ -1189,7 +1256,7 @@ namespace JavaScriptRuntime.Node
             TryFinalizeClose();
         }
 
-        private void ShutdownSend()
+        protected virtual void ShutdownSend()
         {
             try
             {
