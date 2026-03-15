@@ -62,7 +62,7 @@ namespace JavaScriptRuntime.Node
                 }
             }
 
-            return canAcceptMore;
+            return !_destroyed && canAcceptMore;
         }
 
         public bool write(object? chunk, object? encoding)

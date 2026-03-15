@@ -135,7 +135,7 @@ namespace JavaScriptRuntime.Node
 
                 foreach (var stream in streams)
                 {
-                    DestroyStream(stream, null);
+                    DestroyStream(stream, reason);
                 }
 
                 CleanupObservers();
@@ -172,15 +172,45 @@ namespace JavaScriptRuntime.Node
         {
             if (stream is JavaScriptRuntime.Node.Writable writable)
             {
+                if (writable.destroyed)
+                {
+                    return;
+                }
+
+                AttachPipelineErrorGuard(writable, reason);
                 writable.destroy(reason);
                 return;
             }
 
             if (stream is JavaScriptRuntime.Node.Readable readable)
             {
+                if (readable.destroyed)
+                {
+                    return;
+                }
+
+                AttachPipelineErrorGuard(readable, reason);
                 readable.destroy(reason);
                 return;
             }
+        }
+
+        private static void AttachPipelineErrorGuard(EventEmitter emitter, object? reason)
+        {
+            if (reason == null || reason is JsNull)
+            {
+                return;
+            }
+
+            Func<object[], object?[], object?> ignoreError = (_, _) => null;
+            Func<object[], object?[], object?> removeGuard = (_, _) =>
+            {
+                emitter.off("error", ignoreError);
+                return null;
+            };
+
+            emitter.on("error", ignoreError);
+            emitter.once("close", removeGuard);
         }
 
         private static void InvokeCallback(Delegate callback, params object?[] args)

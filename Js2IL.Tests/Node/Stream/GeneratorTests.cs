@@ -65,5 +65,9 @@ namespace Js2IL.Tests.Node.Stream
         [Fact]
         public Task Stream_Pipeline_Error()
             => GenerateTest(nameof(Stream_Pipeline_Error));
+
+        [Fact]
+        public Task Stream_Pipeline_Error_PropagatesToPeers()
+            => GenerateTest(nameof(Stream_Pipeline_Error_PropagatesToPeers));
     }
 }
