@@ -27,9 +27,9 @@ namespace JavaScriptRuntime.Node
                         RuntimeServices.SetCurrentThis(previousThis);
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Ignore errors in baseline
+                    destroy(ex as Error ?? new Error(ex.Message, ex));
                 }
             }
             else
@@ -51,9 +51,8 @@ namespace JavaScriptRuntime.Node
             {
                 push(null);
             }
-            catch
+            catch when (destroyed)
             {
-                // Ignore errors in baseline
             }
         }
 
