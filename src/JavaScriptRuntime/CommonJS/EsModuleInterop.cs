@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime.CommonJS
 {
@@ -7,6 +8,7 @@ namespace JavaScriptRuntime.CommonJS
     {
         private const string EsModuleProperty = "__esModule";
         private const string NamespaceCacheProperty = "__js2il_esm_namespace";
+        private static readonly ConditionalWeakTable<object, object> NamespaceSideCache = new();
 
         public static object ToDynamicImportResult(object? exports)
         {
@@ -41,8 +43,7 @@ namespace JavaScriptRuntime.CommonJS
                 DefineNamespaceGetter(namespaceObject, capturedKey, () => JavaScriptRuntime.ObjectRuntime.GetProperty(exports!, capturedKey));
             }
 
-            CacheNamespace(exports!, namespaceObject);
-            return namespaceObject;
+            return CacheNamespace(exports!, namespaceObject);
         }
 
         private static bool IsEsModuleObject(object? exports)
@@ -75,27 +76,36 @@ namespace JavaScriptRuntime.CommonJS
         private static bool TryGetCachedNamespace(object exports, out object? namespaceObject)
         {
             namespaceObject = null;
-            if (!JavaScriptRuntime.Object.hasOwn(exports, NamespaceCacheProperty))
+            if (JavaScriptRuntime.Object.hasOwn(exports, NamespaceCacheProperty))
             {
-                return false;
+                namespaceObject = JavaScriptRuntime.ObjectRuntime.GetProperty(exports, NamespaceCacheProperty);
+                if (namespaceObject is not null && namespaceObject is not JsNull)
+                {
+                    return true;
+                }
             }
 
-            namespaceObject = JavaScriptRuntime.ObjectRuntime.GetProperty(exports, NamespaceCacheProperty);
-            return namespaceObject is not null && namespaceObject is not JsNull;
+            return NamespaceSideCache.TryGetValue(exports, out namespaceObject);
         }
 
-        private static void CacheNamespace(object exports, object namespaceObject)
+        private static object CacheNamespace(object exports, object namespaceObject)
         {
-            if (!JavaScriptRuntime.Object.isExtensible(exports)
-                || JavaScriptRuntime.Object.hasOwn(exports, NamespaceCacheProperty))
+            if (JavaScriptRuntime.Object.hasOwn(exports, NamespaceCacheProperty))
             {
-                return;
+                return JavaScriptRuntime.ObjectRuntime.GetProperty(exports, NamespaceCacheProperty) ?? namespaceObject;
             }
 
-            JavaScriptRuntime.Object.defineProperty(
-                exports,
-                NamespaceCacheProperty,
-                CreateDataDescriptor(namespaceObject, enumerable: false, configurable: false, writable: false));
+            if (JavaScriptRuntime.Object.isExtensible(exports))
+            {
+                JavaScriptRuntime.Object.defineProperty(
+                    exports,
+                    NamespaceCacheProperty,
+                    CreateDataDescriptor(namespaceObject, enumerable: false, configurable: false, writable: false));
+
+                return namespaceObject;
+            }
+
+            return NamespaceSideCache.GetValue(exports, _ => namespaceObject);
         }
 
         private static object CreatePrimitiveNamespace(object? exports)

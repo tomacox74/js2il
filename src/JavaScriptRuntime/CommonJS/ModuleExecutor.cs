@@ -64,7 +64,7 @@ internal sealed class ModuleExecutor
         var moduleContext = ModuleContext.CreateModuleContext(_serviceProvider);
         var requireService = _serviceProvider.Resolve<Require>();
 
-        var fallbackMainModuleId = moduleContext.__filename.Length > 0 ? moduleContext.__filename : ".";
+        var fallbackMainModuleId = ".";
         var mainModuleId = ResolveMainModuleId(scriptEntryPoint, fallbackMainModuleId);
 
         // Create a require delegate for the main module
