@@ -123,6 +123,19 @@ public class JavaScriptAstValidator : IAstValidator
                     AllowsImportMeta = currentContext.AllowsImportMeta
                 });
             }
+            else if (node is StaticBlock)
+            {
+                contextStack.Push(new ValidationContext
+                {
+                    AllowsThis = true,
+                    AllowsSuper = currentContext.InDerivedClass,
+                    ScopeOwner = node,
+                    MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
+                    InDerivedClass = currentContext.InDerivedClass,
+                    AllowsNewTarget = false,
+                    AllowsImportMeta = currentContext.AllowsImportMeta
+                });
+            }
             
             // Push new context for class methods and constructors
             if (node is MethodDefinition methodDef)
@@ -283,8 +296,6 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.StaticBlock:
-                    result.Errors.Add($"Class static blocks are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
                     break;
 
                 case NodeType.CallExpression:
@@ -1564,14 +1575,7 @@ public class JavaScriptAstValidator : IAstValidator
     {
         if (node is MethodDefinition method)
         {
-            if (method.Key is PrivateIdentifier)
-            {
-                result.Errors.Add($"Private methods in classes are not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-                return;
-            }
-
-            if (method.Computed || method.Key is not Identifier)
+            if (!method.Computed && method.Key is not Identifier && method.Key is not PrivateIdentifier)
             {
                 result.Errors.Add($"Computed/non-identifier method names in classes are not yet supported (line {node.Location.Start.Line})");
                 result.IsValid = false;
@@ -1584,7 +1588,9 @@ public class JavaScriptAstValidator : IAstValidator
     private void ValidatePropertyDefinition(Node node, ValidationResult result)
     {
         if (node is PropertyDefinition pdef
-            && (pdef.Computed || (pdef.Key is not Identifier && pdef.Key is not PrivateIdentifier)))
+            && !pdef.Computed
+            && pdef.Key is not Identifier
+            && pdef.Key is not PrivateIdentifier)
         {
             result.Errors.Add($"Computed/non-identifier class field names are not yet supported (line {node.Location.Start.Line})");
             result.IsValid = false;

@@ -68,7 +68,7 @@ public static class HIRBuilder
 
             case Acornima.Ast.ClassDeclaration classDeclNode when callableKind == ScopesCallableKind.ClassStaticInitializer:
                 {
-                    // Synthesize a .cctor body from static field initializers.
+                    // Synthesize a .cctor body from static element initialization/evaluation.
                     if (!TryGetEnclosingClass(scope, out var enclosingClassScope, out var enclosingClassDecl))
                     {
                         method = null!;
@@ -77,38 +77,121 @@ public static class HIRBuilder
 
                     var registryClassName = GetRegistryClassName(enclosingClassScope);
                     var cctorBuilder = new HIRMethodBuilder(scope);
+                    var classTypeExpr = new HIRUserClassTypeExpression(registryClassName);
 
-                    foreach (var element in classDeclNode.Body.Body.OfType<PropertyDefinition>())
+                    foreach (var element in classDeclNode.Body.Body)
                     {
-                        if (!element.Static || element.Value == null) continue;
-
-                        if (!cctorBuilder.TryParseExpressionForPrologue((Expression)element.Value, out var hirValue) || hirValue == null)
+                        switch (element)
                         {
-                            method = null!;
-                            return false;
-                        }
-
-                        if (element.Key is PrivateIdentifier priv)
-                        {
-                            cctorBuilder.AddPrologueStatement(new HIRStoreUserClassStaticFieldStatement
+                            case PropertyDefinition propertyDefinition when propertyDefinition.Static:
                             {
-                                RegistryClassName = registryClassName,
-                                FieldName = priv.Name,
-                                IsPrivateField = true,
-                                Value = hirValue,
-                                Location = SourceLocation.FromNode(element)
-                            });
-                        }
-                        else if (element.Key is Identifier pid)
-                        {
-                            cctorBuilder.AddPrologueStatement(new HIRStoreUserClassStaticFieldStatement
+                                var propertyValueExpr = propertyDefinition.Value is Expression propertyInit
+                                    ? propertyInit
+                                    : null;
+                                HIRExpression? hirValue = propertyValueExpr != null
+                                    ? null
+                                    : new HIRLiteralExpression(JavascriptType.Undefined, null);
+
+                                if (propertyValueExpr != null
+                                    && (!cctorBuilder.TryParseExpressionForPrologue(propertyValueExpr, out hirValue) || hirValue == null))
+                                {
+                                    method = null!;
+                                    return false;
+                                }
+
+                                string? computedStaticFieldName = null;
+                                var hasResolvedStaticFieldName = propertyDefinition.Computed
+                                    && ClassElementNames.TryGetSimpleName(propertyDefinition.Key, out computedStaticFieldName)
+                                    && !string.IsNullOrWhiteSpace(computedStaticFieldName);
+
+                                if (propertyDefinition.Computed && !hasResolvedStaticFieldName)
+                                {
+                                    if (!cctorBuilder.TryParseExpressionForPrologue((Expression)propertyDefinition.Key, out var hirKey) || hirKey == null)
+                                    {
+                                        method = null!;
+                                        return false;
+                                    }
+
+                                    cctorBuilder.AddPrologueStatement(new HIRExpressionStatement(
+                                        new HIRIndexAssignmentExpression(classTypeExpr, hirKey, Acornima.Operator.Assignment, hirValue!)));
+                                    break;
+                                }
+                                else if (hasResolvedStaticFieldName)
+                                {
+                                    cctorBuilder.AddPrologueStatement(new HIRStoreUserClassStaticFieldStatement
+                                    {
+                                        RegistryClassName = registryClassName,
+                                        FieldName = computedStaticFieldName!,
+                                        IsPrivateField = false,
+                                        Value = hirValue!,
+                                        Location = SourceLocation.FromNode(propertyDefinition)
+                                    });
+                                    break;
+                                }
+
+                                if (propertyDefinition.Value == null)
+                                {
+                                    break;
+                                }
+
+                                if (propertyDefinition.Key is PrivateIdentifier priv)
+                                {
+                                    cctorBuilder.AddPrologueStatement(new HIRStoreUserClassStaticFieldStatement
+                                    {
+                                        RegistryClassName = registryClassName,
+                                        FieldName = priv.Name,
+                                        IsPrivateField = true,
+                                        Value = hirValue!,
+                                        Location = SourceLocation.FromNode(propertyDefinition)
+                                    });
+                                }
+                                else if (propertyDefinition.Key is Identifier pid)
+                                {
+                                    cctorBuilder.AddPrologueStatement(new HIRStoreUserClassStaticFieldStatement
+                                    {
+                                        RegistryClassName = registryClassName,
+                                        FieldName = pid.Name,
+                                        IsPrivateField = false,
+                                        Value = hirValue!,
+                                        Location = SourceLocation.FromNode(propertyDefinition)
+                                    });
+                                }
+                                break;
+                            }
+
+                            case MethodDefinition methodDefinition when methodDefinition.Static && methodDefinition.Computed && !ClassElementNames.TryGetSimpleName(methodDefinition.Key, out _):
                             {
-                                RegistryClassName = registryClassName,
-                                FieldName = pid.Name,
-                                IsPrivateField = false,
-                                Value = hirValue,
-                                Location = SourceLocation.FromNode(element)
-                            });
+                                if (!cctorBuilder.TryParseExpressionForPrologue((Expression)methodDefinition.Key, out var hirKey) || hirKey == null)
+                                {
+                                    method = null!;
+                                    return false;
+                                }
+
+                                if (!cctorBuilder.TryParseExpressionForPrologue((Expression)methodDefinition.Value, out var hirMethodValue) || hirMethodValue == null)
+                                {
+                                    method = null!;
+                                    return false;
+                                }
+
+                                cctorBuilder.AddPrologueStatement(new HIRExpressionStatement(
+                                    new HIRIndexAssignmentExpression(classTypeExpr, hirKey, Acornima.Operator.Assignment, hirMethodValue)));
+                                break;
+                            }
+
+                            case StaticBlock staticBlock:
+                            {
+                                if (!cctorBuilder.TryParseStatementsToList(staticBlock.Body, out var staticBlockStatements))
+                                {
+                                    method = null!;
+                                    return false;
+                                }
+
+                                foreach (var staticBlockStatement in staticBlockStatements)
+                                {
+                                    cctorBuilder.AddPrologueStatement(staticBlockStatement);
+                                }
+                                break;
+                            }
                         }
                     }
 
@@ -207,40 +290,105 @@ public static class HIRBuilder
                         });
                     }
 
-                    // Instance field initializers
-                    foreach (var element in enclosingClassDecl.Body.Body.OfType<PropertyDefinition>())
+                    // Instance element initialization in declaration order.
+                    foreach (var element in enclosingClassDecl.Body.Body)
                     {
-                        if (element.Static || element.Value == null) continue;
-
-                        // Parse initializer expression in the class scope context.
-                        var initBuilder = new HIRMethodBuilder(enclosingClassScope);
-                        if (!initBuilder.TryParseExpressionForPrologue((Expression)element.Value, out var initExpr) || initExpr == null)
+                        switch (element)
                         {
-                            method = null!;
-                            return false;
-                        }
-
-                        if (element.Key is PrivateIdentifier priv)
-                        {
-                            ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
+                            case PropertyDefinition propertyDefinition when !propertyDefinition.Static:
                             {
-                                RegistryClassName = registryClassName,
-                                FieldName = priv.Name,
-                                IsPrivateField = true,
-                                Value = initExpr,
-                                Location = SourceLocation.FromNode(element)
-                            });
-                        }
-                        else if (element.Key is Identifier pid)
-                        {
-                            ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
+                                var initBuilder = new HIRMethodBuilder(enclosingClassScope);
+                                var propertyValueExpr = propertyDefinition.Value is Expression propertyInit
+                                    ? propertyInit
+                                    : null;
+                                HIRExpression? initExpr = propertyValueExpr != null
+                                    ? null
+                                    : new HIRLiteralExpression(JavascriptType.Undefined, null);
+
+                                if (propertyValueExpr != null
+                                    && (!initBuilder.TryParseExpressionForPrologue(propertyValueExpr, out initExpr) || initExpr == null))
+                                {
+                                    method = null!;
+                                    return false;
+                                }
+
+                                string? computedInstanceFieldName = null;
+                                var hasResolvedInstanceFieldName = propertyDefinition.Computed
+                                    && ClassElementNames.TryGetSimpleName(propertyDefinition.Key, out computedInstanceFieldName)
+                                    && !string.IsNullOrWhiteSpace(computedInstanceFieldName);
+
+                                if (propertyDefinition.Computed && !hasResolvedInstanceFieldName)
+                                {
+                                    if (!initBuilder.TryParseExpressionForPrologue((Expression)propertyDefinition.Key, out var computedKeyExpr) || computedKeyExpr == null)
+                                    {
+                                        method = null!;
+                                        return false;
+                                    }
+
+                                    ctorStatements.Add(new HIRExpressionStatement(
+                                        new HIRIndexAssignmentExpression(new HIRThisExpression(), computedKeyExpr, Acornima.Operator.Assignment, initExpr!)));
+                                }
+                                else if (hasResolvedInstanceFieldName)
+                                {
+                                    ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
+                                    {
+                                        RegistryClassName = registryClassName,
+                                        FieldName = computedInstanceFieldName!,
+                                        IsPrivateField = false,
+                                        Value = initExpr!,
+                                        Location = SourceLocation.FromNode(propertyDefinition)
+                                    });
+                                }
+                                else if (propertyDefinition.Key is PrivateIdentifier priv)
+                                {
+                                    ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
+                                    {
+                                        RegistryClassName = registryClassName,
+                                        FieldName = priv.Name,
+                                        IsPrivateField = true,
+                                        Value = initExpr!,
+                                        Location = SourceLocation.FromNode(propertyDefinition)
+                                    });
+                                }
+                                else if (propertyDefinition.Key is Identifier pid)
+                                {
+                                    if (propertyDefinition.Value == null)
+                                    {
+                                        break;
+                                    }
+
+                                    ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
+                                    {
+                                        RegistryClassName = registryClassName,
+                                        FieldName = pid.Name,
+                                        IsPrivateField = false,
+                                        Value = initExpr!,
+                                        Location = SourceLocation.FromNode(propertyDefinition)
+                                    });
+                                }
+
+                                break;
+                            }
+
+                            case MethodDefinition methodDefinition when !methodDefinition.Static && methodDefinition.Computed && !ClassElementNames.TryGetSimpleName(methodDefinition.Key, out _):
                             {
-                                RegistryClassName = registryClassName,
-                                FieldName = pid.Name,
-                                IsPrivateField = false,
-                                Value = initExpr,
-                                Location = SourceLocation.FromNode(element)
-                            });
+                                var initBuilder = new HIRMethodBuilder(enclosingClassScope);
+                                if (!initBuilder.TryParseExpressionForPrologue((Expression)methodDefinition.Key, out var computedKeyExpr) || computedKeyExpr == null)
+                                {
+                                    method = null!;
+                                    return false;
+                                }
+
+                                if (!initBuilder.TryParseExpressionForPrologue((Expression)methodDefinition.Value, out var methodValueExpr) || methodValueExpr == null)
+                                {
+                                    method = null!;
+                                    return false;
+                                }
+
+                                ctorStatements.Add(new HIRExpressionStatement(
+                                    new HIRIndexAssignmentExpression(new HIRThisExpression(), computedKeyExpr, Acornima.Operator.Assignment, methodValueExpr)));
+                                break;
+                            }
                         }
                     }
 
@@ -336,38 +484,104 @@ public static class HIRBuilder
                         });
                     }
 
-                    foreach (var element in enclosingClassDecl.Body.Body.OfType<PropertyDefinition>())
+                    foreach (var element in enclosingClassDecl.Body.Body)
                     {
-                        if (element.Static || element.Value == null) continue;
-
-                        var initBuilder = new HIRMethodBuilder(enclosingClassScope);
-                        if (!initBuilder.TryParseExpressionForPrologue((Expression)element.Value, out var initExpr) || initExpr == null)
+                        switch (element)
                         {
-                            method = null!;
-                            return false;
-                        }
-
-                        if (element.Key is PrivateIdentifier priv)
-                        {
-                            initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
+                            case PropertyDefinition propertyDefinition when !propertyDefinition.Static:
                             {
-                                RegistryClassName = registryClassName,
-                                FieldName = priv.Name,
-                                IsPrivateField = true,
-                                Value = initExpr,
-                                Location = SourceLocation.FromNode(element)
-                            });
-                        }
-                        else if (element.Key is Identifier pid)
-                        {
-                            initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
+                                var initBuilder = new HIRMethodBuilder(enclosingClassScope);
+                                var propertyValueExpr = propertyDefinition.Value is Expression propertyInit
+                                    ? propertyInit
+                                    : null;
+                                HIRExpression? initExpr = propertyValueExpr != null
+                                    ? null
+                                    : new HIRLiteralExpression(JavascriptType.Undefined, null);
+
+                                if (propertyValueExpr != null
+                                    && (!initBuilder.TryParseExpressionForPrologue(propertyValueExpr, out initExpr) || initExpr == null))
+                                {
+                                    method = null!;
+                                    return false;
+                                }
+
+                                string? computedInstanceFieldName = null;
+                                var hasResolvedInstanceFieldName = propertyDefinition.Computed
+                                    && ClassElementNames.TryGetSimpleName(propertyDefinition.Key, out computedInstanceFieldName)
+                                    && !string.IsNullOrWhiteSpace(computedInstanceFieldName);
+
+                                if (propertyDefinition.Computed && !hasResolvedInstanceFieldName)
+                                {
+                                    if (!initBuilder.TryParseExpressionForPrologue((Expression)propertyDefinition.Key, out var computedKeyExpr) || computedKeyExpr == null)
+                                    {
+                                        method = null!;
+                                        return false;
+                                    }
+
+                                    initStatements.Add(new HIRExpressionStatement(
+                                        new HIRIndexAssignmentExpression(new HIRThisExpression(), computedKeyExpr, Acornima.Operator.Assignment, initExpr!)));
+                                }
+                                else if (hasResolvedInstanceFieldName)
+                                {
+                                    initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
+                                    {
+                                        RegistryClassName = registryClassName,
+                                        FieldName = computedInstanceFieldName!,
+                                        IsPrivateField = false,
+                                        Value = initExpr!,
+                                        Location = SourceLocation.FromNode(propertyDefinition)
+                                    });
+                                }
+                                else if (propertyDefinition.Key is PrivateIdentifier priv)
+                                {
+                                    initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
+                                    {
+                                        RegistryClassName = registryClassName,
+                                        FieldName = priv.Name,
+                                        IsPrivateField = true,
+                                        Value = initExpr!,
+                                        Location = SourceLocation.FromNode(propertyDefinition)
+                                    });
+                                }
+                                else if (propertyDefinition.Key is Identifier pid)
+                                {
+                                    if (propertyDefinition.Value == null)
+                                    {
+                                        break;
+                                    }
+
+                                    initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
+                                    {
+                                        RegistryClassName = registryClassName,
+                                        FieldName = pid.Name,
+                                        IsPrivateField = false,
+                                        Value = initExpr!,
+                                        Location = SourceLocation.FromNode(propertyDefinition)
+                                    });
+                                }
+
+                                break;
+                            }
+
+                            case MethodDefinition methodDefinition when !methodDefinition.Static && methodDefinition.Computed && !ClassElementNames.TryGetSimpleName(methodDefinition.Key, out _):
                             {
-                                RegistryClassName = registryClassName,
-                                FieldName = pid.Name,
-                                IsPrivateField = false,
-                                Value = initExpr,
-                                Location = SourceLocation.FromNode(element)
-                            });
+                                var initBuilder = new HIRMethodBuilder(enclosingClassScope);
+                                if (!initBuilder.TryParseExpressionForPrologue((Expression)methodDefinition.Key, out var computedKeyExpr) || computedKeyExpr == null)
+                                {
+                                    method = null!;
+                                    return false;
+                                }
+
+                                if (!initBuilder.TryParseExpressionForPrologue((Expression)methodDefinition.Value, out var methodValueExpr) || methodValueExpr == null)
+                                {
+                                    method = null!;
+                                    return false;
+                                }
+
+                                initStatements.Add(new HIRExpressionStatement(
+                                    new HIRIndexAssignmentExpression(new HIRThisExpression(), computedKeyExpr, Acornima.Operator.Assignment, methodValueExpr)));
+                                break;
+                            }
                         }
                     }
 
@@ -555,6 +769,93 @@ class HIRMethodBuilder
 
         hirExpr = CreateFunctionExpressionValue(dynamicScope, dynamicFuncExpr);
         return true;
+    }
+
+    private Scope? FindFunctionScopeForFunctionExpression(FunctionExpression funcExpr)
+    {
+        var scope = FindChildScopeForAstNode(funcExpr);
+        if (scope != null)
+        {
+            return scope;
+        }
+
+        foreach (var child in _currentScope.Children)
+        {
+            if (child.Kind != ScopeKind.Function)
+            {
+                continue;
+            }
+
+            if (ReferenceEquals(child.AstNode, funcExpr)
+                || child.AstNode is MethodDefinition methodDefinition && ReferenceEquals(methodDefinition.Value, funcExpr))
+            {
+                return child;
+            }
+        }
+
+        return null;
+    }
+
+    private bool TryGetEnclosingClassDeclaration([NotNullWhen(true)] out Scope? classScope, [NotNullWhen(true)] out ClassDeclaration? classDecl)
+    {
+        classScope = null;
+        classDecl = null;
+
+        var current = _currentScope;
+        while (current != null)
+        {
+            if (current.Kind == ScopeKind.Class && current.AstNode is ClassDeclaration declaration)
+            {
+                classScope = current;
+                classDecl = declaration;
+                return true;
+            }
+
+            current = current.Parent;
+        }
+
+        return false;
+    }
+
+    private bool TryResolvePrivateAccessorOrMethod(
+        PrivateIdentifier privateIdentifier,
+        [NotNullWhen(true)] out Scope? classScope,
+        [NotNullWhen(true)] out string? getterMethodName,
+        [NotNullWhen(true)] out string? setterMethodName,
+        [NotNullWhen(true)] out string? methodName)
+    {
+        getterMethodName = null;
+        setterMethodName = null;
+        methodName = null;
+
+        if (!TryGetEnclosingClassDeclaration(out classScope, out var classDecl))
+        {
+            return false;
+        }
+
+        foreach (var method in classDecl.Body.Body.OfType<MethodDefinition>())
+        {
+            if (method.Key is not PrivateIdentifier methodPrivateId
+                || !string.Equals(methodPrivateId.Name, privateIdentifier.Name, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (method.Kind == PropertyKind.Get)
+            {
+                getterMethodName = ClassElementNames.ManglePrivateAccessorMethodName("get", privateIdentifier.Name);
+            }
+            else if (method.Kind == PropertyKind.Set)
+            {
+                setterMethodName = ClassElementNames.ManglePrivateAccessorMethodName("set", privateIdentifier.Name);
+            }
+            else
+            {
+                methodName = ClassElementNames.ManglePrivateMethodName(privateIdentifier.Name);
+            }
+        }
+
+        return getterMethodName != null || setterMethodName != null || methodName != null;
     }
 
     public void AddPrologueStatement([In, NotNull] HIRStatement statement)
@@ -1954,6 +2255,33 @@ class HIRMethodBuilder
                         return true;
                     }
 
+                    if (memberTarget.Object is ThisExpression && !memberTarget.Computed && memberTarget.Property is PrivateIdentifier privateMemberId)
+                    {
+                        if (!TryGetEnclosingClassDeclaration(out var privateClassScope, out _))
+                        {
+                            return false;
+                        }
+
+                        if (TryResolvePrivateAccessorOrMethod(privateMemberId, out _, out _, out var setterMethodName, out _)
+                            && setterMethodName != null)
+                        {
+                            hirExpr = new HIRPrivateAccessorAssignmentExpression
+                            {
+                                SetterMethodName = setterMethodName,
+                                Value = assignValueExpr!
+                            };
+                            return true;
+                        }
+
+                        hirExpr = new HIRPrivateFieldAssignmentExpression
+                        {
+                            RegistryClassName = $"{(privateClassScope.DotNetNamespace ?? "Classes")}.{(privateClassScope.DotNetTypeName ?? privateClassScope.Name)}",
+                            FieldName = privateMemberId.Name,
+                            Value = assignValueExpr!
+                        };
+                        return true;
+                    }
+
                     if (memberTarget.Property is not Identifier memberPropId)
                     {
                         return false;
@@ -1986,12 +2314,29 @@ class HIRMethodBuilder
                 // Handle member expressions
                 HIRExpression? objectExpr;
 
-                // Private instance field access: this.#name
+                // Private instance member access: this.#name
                 if (!memberExpr.Computed && memberExpr.Object is ThisExpression && memberExpr.Property is Acornima.Ast.PrivateIdentifier ppid)
                 {
                     if (!TryGetEnclosingClassScope(_currentScope, out var classScope))
                     {
                         return false;
+                    }
+
+                    if (TryResolvePrivateAccessorOrMethod(ppid, out _, out var getterMethodName, out _, out var privateMethodName))
+                    {
+                        if (getterMethodName != null)
+                        {
+                            hirExpr = new HIRCallExpression(
+                                new HIRPropertyAccessExpression(new HIRThisExpression(), getterMethodName),
+                                Array.Empty<HIRExpression>());
+                            return true;
+                        }
+
+                        if (privateMethodName != null)
+                        {
+                            hirExpr = new HIRPropertyAccessExpression(new HIRThisExpression(), privateMethodName);
+                            return true;
+                        }
                     }
 
                     hirExpr = new HIRLoadUserClassInstanceFieldExpression
@@ -2123,7 +2468,7 @@ class HIRMethodBuilder
                     return false;
                 }
 
-                var funcScope = FindChildScopeForAstNode(funcExpr);
+                var funcScope = FindFunctionScopeForFunctionExpression(funcExpr);
                 if (funcScope == null)
                 {
                     return false;

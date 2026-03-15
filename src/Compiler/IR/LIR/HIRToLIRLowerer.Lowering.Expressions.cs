@@ -315,6 +315,50 @@ public sealed partial class HIRToLIRLowerer
                 DefineTempStorage(resultTempVar, GetPreferredFieldReadStorage(stableFieldType));
                 return true;
 
+            case HIRPrivateFieldAssignmentExpression privateFieldAssignExpr:
+                if (!TryLowerExpression(privateFieldAssignExpr.Value, out var privateFieldValueTemp))
+                {
+                    return false;
+                }
+
+                privateFieldValueTemp = EnsureObject(privateFieldValueTemp);
+                _methodBodyIR.Instructions.Add(new LIRStoreUserClassInstanceField(
+                    privateFieldAssignExpr.RegistryClassName,
+                    privateFieldAssignExpr.FieldName,
+                    IsPrivateField: true,
+                    privateFieldValueTemp));
+
+                resultTempVar = privateFieldValueTemp;
+                return true;
+
+            case HIRPrivateAccessorAssignmentExpression privateAccessorAssignExpr:
+                if (_classRegistry == null
+                    || !TryGetEnclosingClassRegistryName(out var privateAccessorClass)
+                    || privateAccessorClass == null
+                    || !_classRegistry.TryGetMethod(privateAccessorClass, privateAccessorAssignExpr.SetterMethodName, out var setterHandle, out _, out _, out _, out var hasSetterScopesParam, out _, out var setterMaxParamCount))
+                {
+                    return false;
+                }
+
+                if (!TryLowerExpression(privateAccessorAssignExpr.Value, out var privateAccessorValueTemp))
+                {
+                    return false;
+                }
+
+                var privateSetterResultTemp = CreateTempVariable();
+                DefineTempStorage(privateSetterResultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                _methodBodyIR.Instructions.Add(new LIRCallUserClassInstanceMethod(
+                    privateAccessorClass,
+                    privateAccessorAssignExpr.SetterMethodName,
+                    setterHandle,
+                    hasSetterScopesParam,
+                    setterMaxParamCount,
+                    new[] { EnsureObject(privateAccessorValueTemp) },
+                    privateSetterResultTemp));
+
+                resultTempVar = privateAccessorValueTemp;
+                return true;
+
             case HIRIndexAccessExpression indexAccessExpr:
                 return TryLowerIndexAccessExpression(indexAccessExpr, out resultTempVar);
 
