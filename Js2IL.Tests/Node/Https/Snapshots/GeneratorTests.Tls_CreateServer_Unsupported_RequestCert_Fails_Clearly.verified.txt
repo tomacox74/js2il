@@ -1,0 +1,323 @@
+﻿// IL code: Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L6C4
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21cd
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L6C4::.ctor
+
+		} // end of class Block_L6C4
+
+		.class nested private auto ansi beforefieldinit Block_L9C16
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21d6
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L9C16::.ctor
+
+		} // end of class Block_L9C16
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x21c4
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 275 (0x113)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly/Scope,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] class [System.Runtime]System.Exception,
+			[5] object,
+			[6] object,
+			[7] object,
+			[8] object,
+			[9] object
+		)
+
+		IL_0000: newobj instance void Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.1
+		IL_0007: ldstr "node:tls"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.s 7
+		IL_0013: ldloc.s 7
+		IL_0015: stloc.1
+		IL_0016: ldarg.1
+		IL_0017: ldstr "./Tls_TestCertificates"
+		IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0021: stloc.s 7
+		IL_0023: ldloc.s 7
+		IL_0025: brfalse IL_003a
+
+		IL_002a: ldloc.s 7
+		IL_002c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0031: stloc.s 8
+		IL_0033: ldloc.s 8
+		IL_0035: brfalse IL_004b
+
+		IL_003a: ldloc.s 7
+		IL_003c: ldstr ""
+		IL_0041: ldstr "certPem"
+		IL_0046: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_004b: ldloc.s 7
+		IL_004d: ldstr "certPem"
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0057: stloc.2
+		IL_0058: ldloc.s 7
+		IL_005a: ldstr "keyPem"
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0064: stloc.3
+		.try
+		{
+			IL_0065: ldloc.1
+			IL_0066: ldstr "createServer"
+			IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0070: dup
+			IL_0071: ldstr "key"
+			IL_0076: ldloc.3
+			IL_0077: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_007c: dup
+			IL_007d: ldstr "cert"
+			IL_0082: ldloc.2
+			IL_0083: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0088: dup
+			IL_0089: ldstr "requestCert"
+			IL_008e: ldc.i4.1
+			IL_008f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0099: pop
+			IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_009f: ldstr "unexpected success"
+			IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00a9: pop
+			IL_00aa: leave IL_0112
+		} // end .try
+		catch [System.Runtime]System.Exception
+		{
+			IL_00af: stloc.s 4
+			IL_00b1: ldloc.s 4
+			IL_00b3: dup
+			IL_00b4: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00b9: dup
+			IL_00ba: brtrue IL_00d0
+
+			IL_00bf: pop
+			IL_00c0: dup
+			IL_00c1: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00c6: dup
+			IL_00c7: brtrue IL_00dd
+
+			IL_00cc: pop
+			IL_00cd: pop
+			IL_00ce: rethrow
+
+			IL_00d0: pop
+			IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00d6: stloc.s 5
+			IL_00d8: br IL_00e0
+
+			IL_00dd: pop
+			IL_00de: stloc.s 5
+
+			IL_00e0: ldloc.s 5
+			IL_00e2: stloc.s 7
+			IL_00e4: ldloc.s 7
+			IL_00e6: stloc.s 6
+			IL_00e8: ldstr "message:"
+			IL_00ed: ldloc.s 6
+			IL_00ef: ldstr "message"
+			IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00fe: stloc.s 9
+			IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0105: ldloc.s 9
+			IL_0107: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_010c: pop
+			IL_010d: leave IL_0112
+		} // end handler
+
+		IL_0112: ret
+	} // end of method Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly::__js_module_init__
+
+} // end of class Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly
+
+.class private auto ansi beforefieldinit Modules.Tls_TestCertificates
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x21df
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2180
+		// Header size: 12
+		// Code size: 56 (0x38)
+		.maxstack 8
+		.locals (
+			[0] class Modules.Tls_TestCertificates/Scope
+		)
+
+		IL_0000: newobj instance void Modules.Tls_TestCertificates/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.2
+		IL_0007: ldstr "exports"
+		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0011: dup
+		IL_0012: ldstr "certPem"
+		IL_0017: ldstr "-----BEGIN CERTIFICATE-----\nMIIC+TCCAeGgAwIBAgIIaUAevC7krmQwDQYJKoZIhvcNAQELBQAwFjEUMBIGA1UE\nAxMLanMyaWwtbG9jYWwwHhcNMjYwMzE0MjAwODM0WhcNMjcwMzE1MjAwODM0WjAW\nMRQwEgYDVQQDEwtqczJpbC1sb2NhbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC\nAQoCggEBANP5G6yPJfJHP9xJsjN4DzzfGc3OahHJ9HkJuoicHjTd0m5l9kLBs1dE\nnES1ZZAnHC3StoD5iABtyS4yYtiL5Gv7UvgqR/9YL5XvyyYj8p9h51rVQn4xaU8p\nM7ngRaBciAqwpH8+JbnCA0RA9RC5rpEJtcUGNGPGwwQ7xuBUdQrWEFTnQ/PCrvpg\nP9wlJqQF+5pGorCV3rH5P5dOYR4AVO68ulqXcjwbM3OCAInONzth8xNjWNKFWwou\nR77IBF7/oboZFGJhKPqhWP9I974M69lGA1HrUMX9AmU+tVmgjo63XvzhWIhhmCZy\nWmP9FPfUipGpBQXSCTDILxXY+6jFu1UCAwEAAaNLMEkwGgYDVR0RBBMwEYIJbG9j\nYWxob3N0hwR/AAABMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgeAMBMGA1UdJQQMMAoG\nCCsGAQUFBwMBMA0GCSqGSIb3DQEBCwUAA4IBAQC2gZkmvzdlk0JLBjRr8qtbtrMy\nd/CnwDprOe9k+BeHIdlGzzpm7vvr63DacVo7znnH7Lp/O1FYiqJRhBWdm4weZj7c\nlHy9KNC/Eyv7ieGMPb4R0BGOvEmA8kp55ohaWsySGd2MQohNzYVDVntJ8xBvt2+Y\n5eHfYDfoBYG1lJTbTv0E3UWEpR8itnTsDEtA/FBvn/Do1TvYvyB7uUPFcCt4BWom\nTJdsb+Cl9CRe8yStfbsgjkzAdgJh74xYtmk+rSbYx8DLlp++Xfdgfj7eAKZ0Rm83\ng0+a+SMF6xucjCIRjG0R9AEgL7K2vppinB2/MusGrmD0HFUhAta7miSlnymn\n-----END CERTIFICATE-----"
+		IL_001c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0021: dup
+		IL_0022: ldstr "keyPem"
+		IL_0027: ldstr "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDT+RusjyXyRz/c\nSbIzeA883xnNzmoRyfR5CbqInB403dJuZfZCwbNXRJxEtWWQJxwt0raA+YgAbcku\nMmLYi+Rr+1L4Kkf/WC+V78smI/KfYeda1UJ+MWlPKTO54EWgXIgKsKR/PiW5wgNE\nQPUQua6RCbXFBjRjxsMEO8bgVHUK1hBU50Pzwq76YD/cJSakBfuaRqKwld6x+T+X\nTmEeAFTuvLpal3I8GzNzggCJzjc7YfMTY1jShVsKLke+yARe/6G6GRRiYSj6oVj/\nSPe+DOvZRgNR61DF/QJlPrVZoI6Ot1784ViIYZgmclpj/RT31IqRqQUF0gkwyC8V\n2PuoxbtVAgMBAAECggEAYNaJIggzmb+bGRRB6OmMbI6vxynpoz7UBQfAw/AujJBa\nNj02h8DeIZwil/EW+QglA3okDj/xNeDx67zxE2S1ce9bNCx8v9aVxrXJ5R6/FLkx\nbHnI6sXACn4UN3KR3HTpYZjZTZgiu/46Z9AVJRLvASuicuQmwv5m0WRNsuZiohPc\nel2rXFnX7RLY8Few3FrqZhLV+nDGSBWSnd3TGLOi4rxcRL+V+2AITP5Aj88+FWne\ni/MS50lrNtwIsOSx0Af8gNc4KNNgwlSFfVs+BsUj45pmsgzdYC0pVs6mVdH954U0\nELEoWLSeWYS/fyo6tVmdKtz8jhQsCid2N6jJDxpQcQKBgQDs4nc3wjOUjVCi/Oka\nUqn8v2o9gTdUwjb5aIruUU5Mw6PGjP47mxhxSWUpOt8o4c5spkccTVv8wodSIoLz\nbAQjCYKuVq2yzJR3jwhnJVRaYtn/Zv1Iwwok6UwOKt23FX8f31NUB2k9HmoudZGE\n59pMo7D5wlqNK2cCM7t4pG5ptwKBgQDlFAXEoFQAENRS703Snnx2sHly/dsYaeUA\nAWh/bsEMzKxEiz+U3RYETUjPqel/yp0IlRzLHwhO2j9MPEmxyzC+DvyVuPiR3mIu\naRkIbBhGsPSqcSzmJJTdp8tp9SDdV+FyMlbF3U570ARmloqIk2l6h+09wNgWFHeB\ngYD/nWYzUwKBgQCMR4hGEtEs1Yq9GnyIRA+6RziI965mmSSpCgnMG4X825ZvDCu5\n7JzK6aXohp6EvUPa/5T4467nveMY9qsJsBu7C/TBfT8btR7utltJicesRwHFx52S\nqz2koiuR8DygITDJFR1pk4H02cAThzgHtq2F2SICpd+t3dgAa9ZHGUjxfQKBgQCO\nP7i1OLnwsIKoXWF+AFxZd4xzE6ARsPA66KTzPNs0D4SJq853qjIZycQE8AXHDRIm\nWjHfEA4gqPXVaTp55SsHWlcOwiXYrrdZCno4+Ka6fvfvPwgagWzPl3qA+W7HA+NC\n/m9TvvEVgT66VZEA7kj5hZ6UUkPcsijjin+IOz1TcQKBgHGpSDuMjSskmvnVFMtc\nD2IODSKFhbXGhvNrQk8eyTUWSOA6xmtjv1qC8m2QSL+FTIHRn5lWlH3kntL8BO1S\nKdvFqYmZ/n0gIBGimF2WI8DAVUuAxDGQgnjqWotBaiCE6cEvwy7c3JS1156zMWic\nnodqo8mDXzbUbIenGwelECRH\n-----END PRIVATE KEY-----"
+		IL_002c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
+		IL_0036: pop
+		IL_0037: ret
+	} // end of method Tls_TestCertificates::__js_module_init__
+
+} // end of class Modules.Tls_TestCertificates
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21e8
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
+.class interface public auto ansi abstract Js2IL.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly.ITlsTestCertificatesExports
+	implements [System.Runtime]System.IDisposable
+{
+	.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsModuleAttribute::.ctor(string) = (
+		01 00 14 54 6c 73 5f 54 65 73 74 43 65 72 74 69
+		66 69 63 61 74 65 73 00 00
+	)
+	// Methods
+	.method public hidebysig specialname newslot abstract virtual 
+		instance object get_CertPem () cil managed 
+	{
+	} // end of method ITlsTestCertificatesExports::get_CertPem
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance object get_KeyPem () cil managed 
+	{
+	} // end of method ITlsTestCertificatesExports::get_KeyPem
+
+	// Properties
+	.property instance object CertPem()
+	{
+		.get instance object Js2IL.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly.ITlsTestCertificatesExports::get_CertPem()
+	}
+	.property instance object KeyPem()
+	{
+		.get instance object Js2IL.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly.ITlsTestCertificatesExports::get_KeyPem()
+	}
+
+} // end of class Js2IL.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly.ITlsTestCertificatesExports
+
