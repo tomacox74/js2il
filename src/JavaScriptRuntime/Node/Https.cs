@@ -561,7 +561,7 @@ namespace JavaScriptRuntime.Node
                 var second = sourceArgs.Length > 1 ? sourceArgs[1] : null;
                 var third = sourceArgs.Length > 2 ? sourceArgs[2] : null;
 
-                if (LooksLikeOptionsObject(first))
+                if (NodeNetworkingCommon.LooksLikeOptionsObject(first))
                 {
                     optionsObject = first;
                     result.Callback = second as Delegate;
@@ -577,7 +577,7 @@ namespace JavaScriptRuntime.Node
                             result.Callback = thirdCallback;
                         }
                     }
-                    else if (LooksLikeOptionsObject(second))
+                    else if (NodeNetworkingCommon.LooksLikeOptionsObject(second))
                     {
                         optionsObject = second;
                         result.Callback = third as Delegate;
@@ -684,7 +684,7 @@ namespace JavaScriptRuntime.Node
             var first = sourceArgs[0];
             if (first is string)
             {
-                if (sourceArgs.Length > 1 && LooksLikeOptionsObject(sourceArgs[1]))
+                if (sourceArgs.Length > 1 && NodeNetworkingCommon.LooksLikeOptionsObject(sourceArgs[1]))
                 {
                     return sourceArgs[1];
                 }
@@ -692,7 +692,7 @@ namespace JavaScriptRuntime.Node
                 return null;
             }
 
-            return LooksLikeOptionsObject(first) ? first : null;
+            return NodeNetworkingCommon.LooksLikeOptionsObject(first) ? first : null;
         }
 
         private static string CoercePemOptionText(object? value, string optionName, string moduleName)
@@ -766,16 +766,5 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private static bool LooksLikeOptionsObject(object? value)
-        {
-            return value != null
-                && value is not JsNull
-                && value is not string
-                && value is not Delegate
-                && value is not double
-                && value is not int
-                && value is not long
-                && value is not short;
-        }
     }
 }

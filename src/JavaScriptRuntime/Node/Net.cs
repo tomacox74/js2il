@@ -94,6 +94,18 @@ namespace JavaScriptRuntime.Node
         internal static string? TryGetStringOption(object? options, string name)
             => TryGetOption(options, name)?.ToString();
 
+        internal static bool LooksLikeOptionsObject(object? value)
+        {
+            return value != null
+                && value is not JsNull
+                && value is not string
+                && value is not Delegate
+                && value is not double
+                && value is not int
+                && value is not long
+                && value is not short;
+        }
+
         internal static int CoercePort(object? value, int defaultValue = 0)
         {
             if (value == null || value is JsNull)
@@ -650,7 +662,7 @@ namespace JavaScriptRuntime.Node
                 return;
             }
 
-            if (LooksLikeOptionsObject(args[0]))
+            if (NodeNetworkingCommon.LooksLikeOptionsObject(args[0]))
             {
                 port = NodeNetworkingCommon.CoercePort(NodeNetworkingCommon.TryGetOption(args[0], "port"));
                 host = NodeNetworkingCommon.TryGetStringOption(args[0], "host")
@@ -680,18 +692,6 @@ namespace JavaScriptRuntime.Node
             {
                 callback = finalCallback;
             }
-        }
-
-        private static bool LooksLikeOptionsObject(object? value)
-        {
-            return value != null
-                && value is not JsNull
-                && value is not string
-                && value is not Delegate
-                && value is not double
-                && value is not int
-                && value is not long
-                && value is not short;
         }
     }
 
@@ -1485,7 +1485,7 @@ namespace JavaScriptRuntime.Node
                 throw new TypeError("The \"port\" argument must be specified.");
             }
 
-            if (LooksLikeOptionsObject(args[0]))
+            if (NodeNetworkingCommon.LooksLikeOptionsObject(args[0]))
             {
                 port = NodeNetworkingCommon.CoercePort(NodeNetworkingCommon.TryGetOption(args[0], "port"));
                 host = NodeNetworkingCommon.CoerceHost(
@@ -1522,19 +1522,6 @@ namespace JavaScriptRuntime.Node
                 throw new RangeError("The \"port\" argument must be a positive number.");
             }
         }
-
-        private static bool LooksLikeOptionsObject(object? value)
-        {
-            return value != null
-                && value is not JsNull
-                && value is not string
-                && value is not Delegate
-                && value is not double
-                && value is not int
-                && value is not long
-                && value is not short;
-        }
-
         private IPEndPoint? TryGetRemoteEndpoint()
             => _client?.Client.RemoteEndPoint as IPEndPoint;
 
