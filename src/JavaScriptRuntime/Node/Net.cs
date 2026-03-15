@@ -683,6 +683,7 @@ namespace JavaScriptRuntime.Node
     {
         private readonly Queue<byte[]> _pendingWrites = new();
         private readonly bool _allowHalfOpen;
+        private readonly object _timeoutSync = new();
         private TcpClient? _client;
         private NetworkStream? _stream;
         private bool _connectInProgress;
@@ -697,6 +698,7 @@ namespace JavaScriptRuntime.Node
         private bool _keepAliveConfigured;
         private object? _timeoutHandle;
         private double _timeoutMilliseconds;
+        private long _timeoutGeneration;
         private double _bytesRead;
         private double _bytesWritten;
         private IIOScheduler? _ioScheduler;
@@ -805,8 +807,12 @@ namespace JavaScriptRuntime.Node
                 }
             }
 
-            _timeoutMilliseconds = timeoutMilliseconds;
-            if (_timeoutMilliseconds <= 0)
+            lock (_timeoutSync)
+            {
+                _timeoutMilliseconds = timeoutMilliseconds;
+            }
+
+            if (timeoutMilliseconds <= 0)
             {
                 ClearInactivityTimeout();
                 return this;
@@ -841,7 +847,7 @@ namespace JavaScriptRuntime.Node
 
         public NetSocket setNoDelay(object? noDelay)
         {
-            throw new Error("NetSocket.setNoDelay is not implemented in the current runtime.");
+            return this;
         }
 
         public override void destroy()
@@ -851,12 +857,15 @@ namespace JavaScriptRuntime.Node
 
         public override void destroy(object? error)
         {
-            if (_destroyRequested)
+            lock (_timeoutSync)
             {
-                return;
-            }
+                if (_destroyRequested)
+                {
+                    return;
+                }
 
-            _destroyRequested = true;
+                _destroyRequested = true;
+            }
             ClearInactivityTimeout();
 
             if (error != null && error is not JsNull)
@@ -1261,13 +1270,17 @@ namespace JavaScriptRuntime.Node
 
         private void CompleteClose()
         {
-            if (_closeEmitted)
+            lock (_timeoutSync)
             {
-                return;
+                if (_closeEmitted)
+                {
+                    return;
+                }
+
+                _closeEmitted = true;
             }
 
             ClearInactivityTimeout();
-            _closeEmitted = true;
             emit("close", _hadSocketError);
 
             try
@@ -1304,36 +1317,94 @@ namespace JavaScriptRuntime.Node
 
         private void ResetInactivityTimeout()
         {
-            if (_timeoutMilliseconds <= 0 || _destroyRequested || _closeEmitted)
+            NodeSchedulerState scheduler;
+            object? previousHandle;
+            double timeoutMilliseconds;
+            long generation;
+
+            lock (_timeoutSync)
             {
-                return;
+                if (_timeoutMilliseconds <= 0 || _destroyRequested || _closeEmitted)
+                {
+                    return;
+                }
+
+                scheduler = _nodeScheduler ?? NodeScheduler;
+                previousHandle = _timeoutHandle;
+                _timeoutHandle = null;
+                timeoutMilliseconds = _timeoutMilliseconds;
+                generation = ++_timeoutGeneration;
             }
 
-            ClearInactivityTimeout();
-            _timeoutHandle = ((IScheduler)NodeScheduler).Schedule(EmitTimeout, TimeSpan.FromMilliseconds(_timeoutMilliseconds));
+            if (previousHandle != null)
+            {
+                ((IScheduler)scheduler).Cancel(previousHandle);
+            }
+ 
+            object? nextHandle = null;
+            nextHandle = ((IScheduler)scheduler).Schedule(
+                () => EmitTimeout(generation, nextHandle),
+                TimeSpan.FromMilliseconds(timeoutMilliseconds));
+
+            bool cancelNextHandle = false;
+            lock (_timeoutSync)
+            {
+                if (generation != _timeoutGeneration || _destroyRequested || _closeEmitted || _timeoutMilliseconds <= 0)
+                {
+                    cancelNextHandle = true;
+                }
+                else
+                {
+                    _timeoutHandle = nextHandle;
+                }
+            }
+
+            if (cancelNextHandle && nextHandle != null)
+            {
+                ((IScheduler)scheduler).Cancel(nextHandle);
+            }
         }
 
         private void ClearInactivityTimeout()
         {
-            if (_timeoutHandle == null || _nodeScheduler == null)
+            NodeSchedulerState? scheduler;
+            object? handle;
+            lock (_timeoutSync)
             {
+                _timeoutGeneration++;
+                handle = _timeoutHandle;
                 _timeoutHandle = null;
-                return;
+                scheduler = _nodeScheduler;
             }
 
-            ((IScheduler)NodeScheduler).Cancel(_timeoutHandle);
-            _timeoutHandle = null;
+            if (handle != null && scheduler != null)
+            {
+                ((IScheduler)scheduler).Cancel(handle);
+            }
         }
 
-        private void EmitTimeout()
+        private void EmitTimeout(long generation, object? handle)
         {
-            _timeoutHandle = null;
-            if (_destroyRequested || _closeEmitted)
+            bool shouldEmit = false;
+            lock (_timeoutSync)
             {
-                return;
+                if (generation != _timeoutGeneration || !ReferenceEquals(_timeoutHandle, handle))
+                {
+                    return;
+                }
+
+                _timeoutHandle = null;
+                _timeoutGeneration++;
+                if (!_destroyRequested && !_closeEmitted && _timeoutMilliseconds > 0)
+                {
+                    shouldEmit = true;
+                }
             }
 
-            emit("timeout");
+            if (shouldEmit)
+            {
+                emit("timeout");
+            }
         }
 
         private void ParseConnectArgs(object[] args, out int port, out string host, out Delegate? callback)

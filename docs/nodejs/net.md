@@ -15,7 +15,7 @@
 
 ## Notes
 
-Provides a focused TCP baseline for IPv4 loopback scenarios. Sockets emit Buffer chunks by default, support inherited pause()/resume()/utf8 setEncoding(), expose idle timeouts via setTimeout(), allow keepAlive enable/disable via setKeepAlive(), and honor allowHalfOpen on accepted server sockets so delayed responses can complete before local shutdown. Advanced socket controls such as setNoDelay(), keepAlive initialDelay, non-UTF-8 encodings, ref/unref, and broader non-loopback or non-IPv4 coverage are still not implemented.
+Provides a focused TCP baseline for IPv4 loopback scenarios. Sockets emit Buffer chunks by default, support inherited pause()/resume()/utf8 setEncoding(), expose idle timeouts via setTimeout(), allow keepAlive enable/disable via setKeepAlive(), accept setNoDelay() as a compatibility no-op, and honor allowHalfOpen on accepted server sockets so delayed responses can complete before local shutdown. Advanced socket controls such as keepAlive initialDelay, non-UTF-8 encodings, ref/unref, and broader non-loopback or non-IPv4 coverage are still not implemented.
 
 ## APIs
 
@@ -29,7 +29,7 @@ Provides a focused TCP baseline for IPv4 loopback scenarios. Sockets emit Buffer
 | Socket.prototype.setEncoding(encoding) | method | supported | [docs](https://nodejs.org/api/net.html#socketsetencodingencoding) |
 | Socket.prototype.setTimeout(timeout[, callback]) | method | supported | [docs](https://nodejs.org/api/net.html#socketsettimeouttimeout-callback) |
 | Socket.prototype.setKeepAlive([enable[, initialDelay]]) | method | partial | [docs](https://nodejs.org/api/net.html#socketsetkeepaliveenable-initialdelay) |
-| Socket.prototype.setNoDelay([noDelay]) | method | not-supported | [docs](https://nodejs.org/api/net.html#socketsetnodelaynodelay) |
+| Socket.prototype.setNoDelay([noDelay]) | method | partial | [docs](https://nodejs.org/api/net.html#socketsetnodelaynodelay) |
 
 ## API Details
 
@@ -75,7 +75,7 @@ EventEmitter-backed TCP server supporting listening/close lifecycles, address() 
 
 ### Socket
 
-Duplex/EventEmitter-backed TCP socket supporting connect, write, end, destroy, remote/local address properties, Buffer-by-default data events, utf8 setEncoding(), setTimeout(), setKeepAlive(enable), and allowHalfOpen delayed responses. setNoDelay() currently throws an explicit not-supported diagnostic instead of failing as a missing member.
+Duplex/EventEmitter-backed TCP socket supporting connect, write, end, destroy, remote/local address properties, Buffer-by-default data events, utf8 setEncoding(), setTimeout(), setKeepAlive(enable), setNoDelay() compatibility no-op calls, and allowHalfOpen delayed responses. Unsupported keepAlive initialDelay requests return an explicit runtime diagnostic.
 
 **Tests:**
 - `Js2IL.Tests.Node.Net.ExecutionTests.Net_CreateServer_Connect_Basic` (`Js2IL.Tests/Node/Net/ExecutionTests.cs`)
@@ -117,7 +117,7 @@ Supports enabling or disabling OS-level TCP keepAlive on the underlying socket. 
 
 ### Socket.prototype.setNoDelay([noDelay])
 
-The method exists only to surface an explicit runtime diagnostic for unsupported TCP no-delay control in the current slice.
+Accepted as a compatibility no-op so common zero-argument callers do not fail, but the current runtime does not model TCP no-delay state.
 
 **Tests:**
 - `Js2IL.Tests.Node.Net.ExecutionTests.Net_Socket_KeepAlive_And_Unsupported_Options` (`Js2IL.Tests/Node/Net/ExecutionTests.cs`)

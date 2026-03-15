@@ -11,11 +11,12 @@ server.listen(0, "127.0.0.1", function () {
   const info = server.address();
   const client = net.connect(info.port, info.address, function () {
     console.log("client keepalive same:" + (client.setKeepAlive(true) === client));
+    console.log("client nodelay same:" + (client.setNoDelay() === client));
 
     try {
-      client.setNoDelay(true);
+      client.setKeepAlive(true, 25);
     } catch (err) {
-      console.log("client nodelay:" + err.message);
+      console.log("client keepalive delay:" + err.message);
     }
   });
 

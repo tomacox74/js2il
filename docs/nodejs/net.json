@@ -7,7 +7,7 @@
   "docsUrl": "https://nodejs.org/api/net.html",
   "nodeVersionTarget": "22.x LTS",
   "implementation": "src/JavaScriptRuntime/Node/Net.cs",
-  "notes": "Provides a focused TCP baseline for IPv4 loopback scenarios. Sockets emit Buffer chunks by default, support inherited pause()/resume()/utf8 setEncoding(), expose idle timeouts via setTimeout(), allow keepAlive enable/disable via setKeepAlive(), and honor allowHalfOpen on accepted server sockets so delayed responses can complete before local shutdown. Advanced socket controls such as setNoDelay(), keepAlive initialDelay, non-UTF-8 encodings, ref/unref, and broader non-loopback or non-IPv4 coverage are still not implemented.",
+  "notes": "Provides a focused TCP baseline for IPv4 loopback scenarios. Sockets emit Buffer chunks by default, support inherited pause()/resume()/utf8 setEncoding(), expose idle timeouts via setTimeout(), allow keepAlive enable/disable via setKeepAlive(), accept setNoDelay() as a compatibility no-op, and honor allowHalfOpen on accepted server sockets so delayed responses can complete before local shutdown. Advanced socket controls such as keepAlive initialDelay, non-UTF-8 encodings, ref/unref, and broader non-loopback or non-IPv4 coverage are still not implemented.",
   "apis": [
     {
       "name": "createServer([options][, connectionListener])",
@@ -113,7 +113,7 @@
       "name": "Socket",
       "kind": "class",
       "status": "partial",
-      "notes": "Duplex/EventEmitter-backed TCP socket supporting connect, write, end, destroy, remote/local address properties, Buffer-by-default data events, utf8 setEncoding(), setTimeout(), setKeepAlive(enable), and allowHalfOpen delayed responses. setNoDelay() currently throws an explicit not-supported diagnostic instead of failing as a missing member.",
+      "notes": "Duplex/EventEmitter-backed TCP socket supporting connect, write, end, destroy, remote/local address properties, Buffer-by-default data events, utf8 setEncoding(), setTimeout(), setKeepAlive(enable), setNoDelay() compatibility no-op calls, and allowHalfOpen delayed responses. Unsupported keepAlive initialDelay requests return an explicit runtime diagnostic.",
       "docs": "https://nodejs.org/api/net.html#class-netsocket",
       "tests": [
         {
@@ -220,8 +220,8 @@
     {
       "name": "Socket.prototype.setNoDelay([noDelay])",
       "kind": "method",
-      "status": "not-supported",
-      "notes": "The method exists only to surface an explicit runtime diagnostic for unsupported TCP no-delay control in the current slice.",
+      "status": "partial",
+      "notes": "Accepted as a compatibility no-op so common zero-argument callers do not fail, but the current runtime does not model TCP no-delay state.",
       "docs": "https://nodejs.org/api/net.html#socketsetnodelaynodelay",
       "tests": [
         {
