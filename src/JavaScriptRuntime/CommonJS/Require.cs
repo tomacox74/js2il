@@ -135,6 +135,25 @@ namespace JavaScriptRuntime.CommonJS
             return RequireModule(resolved);
         }
 
+        internal bool CanResolveLocalModule(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key) || _localModulesAssembly == null)
+            {
+                return false;
+            }
+
+            var moduleIdKey = NormalizeModuleIdKey(key);
+            var map = GetCompiledModuleTypeMap();
+            if (TryResolveFromMap(map, moduleIdKey, out _, out _))
+            {
+                return true;
+            }
+
+            var legacyModuleId = ModuleName.GetModuleIdFromSpecifier(key);
+            return _localModulesAssembly.GetType($"Modules.{legacyModuleId}") != null
+                || _localModulesAssembly.GetType($"Scripts.{legacyModuleId}") != null;
+        }
+
         /// <summary>
         /// Requires a local module (user code compiled with the main script).
         /// </summary>
