@@ -1,7 +1,7 @@
 # JS2IL Triage Scoreboard
 
-> **Last Updated**: 2026-03-06  
-> **Planning Horizon**: Rolling 2 weeks  
+> **Last Updated**: 2026-03-15
+> **Planning Horizon**: Rolling 2 weeks
 > **North Star**: Real-world unblock impact
 
 This file is the working source of truth for implementation prioritization.
@@ -46,7 +46,7 @@ Goal: improve language/runtime correctness where breakage is common.
 - Low-to-medium implementation risk relative to impact
 
 **Candidate queue (rank during weekly triage)**
-- [ ] #772: ES modules live bindings / cyclic ESM graphs (pragmatic lowering)
+- [x] #772: ES modules live bindings / cyclic ESM graphs (pragmatic lowering; dynamic `import()` namespace/default interop now matches the practical static ESM path, with deeper module-record semantics remaining under #857)
 - [ ] `Object.hasOwn` and `Object.is`
 - [ ] `Array.from`, `Array.prototype.forEach`, `every`, `some`, `includes`
 - [ ] Remaining Symbol/well-known-symbol gaps affecting iterator semantics

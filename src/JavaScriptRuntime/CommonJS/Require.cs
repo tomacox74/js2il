@@ -124,6 +124,17 @@ namespace JavaScriptRuntime.CommonJS
             return RequireLocalModule(key);
         }
 
+        internal object? RequireModuleFrom(string parentModuleIdOrFilename, string specifier)
+        {
+            if (string.IsNullOrWhiteSpace(specifier))
+            {
+                throw new ReferenceError("require specifier must be a non-empty string");
+            }
+
+            var resolved = ResolveLocalSpecifier(parentModuleIdOrFilename, specifier);
+            return RequireModule(resolved);
+        }
+
         /// <summary>
         /// Requires a local module (user code compiled with the main script).
         /// </summary>

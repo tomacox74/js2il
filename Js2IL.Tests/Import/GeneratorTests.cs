@@ -72,6 +72,20 @@ namespace Js2IL.Tests.Import
         }
 
         [Fact]
+        public Task Import_DynamicImport_Esm_Namespace()
+        {
+            var testName = nameof(Import_DynamicImport_Esm_Namespace);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task Import_DynamicImport_Cjs_Namespace()
+        {
+            var testName = nameof(Import_DynamicImport_Cjs_Namespace);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task Import_ImportMeta_Url()
         {
             var testName = nameof(Import_ImportMeta_Url);

@@ -1,4 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Reflection;
+using Js2IL.Runtime;
 using JavaScriptRuntime.DependencyInjection;
 
 namespace JavaScriptRuntime.CommonJS;
@@ -15,6 +18,23 @@ internal sealed class ModuleExecutor
         _serviceProvider = serviceProvider;
     }
 
+    private static string ResolveMainModuleId(ModuleMainDelegate scriptEntryPoint, string fallbackModuleId)
+    {
+        var declaringTypeName = scriptEntryPoint.Method.DeclaringType?.FullName;
+        if (string.IsNullOrWhiteSpace(declaringTypeName))
+        {
+            return fallbackModuleId;
+        }
+
+        var canonicalModuleId = scriptEntryPoint.Method.Module.Assembly
+            .GetCustomAttributes<JsCompiledModuleTypeAttribute>()
+            .Where(attr => string.Equals(attr.TypeName, declaringTypeName, StringComparison.Ordinal))
+            .Select(attr => attr.CanonicalModuleId)
+            .FirstOrDefault(id => !string.IsNullOrWhiteSpace(id));
+
+        return string.IsNullOrWhiteSpace(canonicalModuleId) ? fallbackModuleId : canonicalModuleId;
+    }
+
     /// <summary>
     /// Executes the script entry point using CommonJS module semantics.
     /// </summary>
@@ -25,6 +45,9 @@ internal sealed class ModuleExecutor
         var moduleContext = ModuleContext.CreateModuleContext(_serviceProvider);
         var requireService = _serviceProvider.Resolve<Require>();
 
+        var fallbackMainModuleId = moduleContext.__filename.Length > 0 ? moduleContext.__filename : ".";
+        var mainModuleId = ResolveMainModuleId(scriptEntryPoint, fallbackMainModuleId);
+
         // Create a require delegate for the main module
         RequireDelegate mainRequire = (moduleId) =>
         {
@@ -32,13 +55,13 @@ internal sealed class ModuleExecutor
             {
                 throw new TypeError("The \"id\" argument must be of type string.");
             }
-            return requireService.RequireModule(moduleName);
+            return requireService.RequireModuleFrom(mainModuleId, moduleName);
         };
 
         // Create the main Module object
         // Main module has id of "." in Node.js, but we use the filename for consistency
         var mainModule = new Module(
-            id: moduleContext.__filename.Length > 0 ? moduleContext.__filename : ".",
+            id: mainModuleId,
             filename: moduleContext.__filename,
             parent: null,  // Main module has no parent
             requireDelegate: mainRequire
@@ -48,6 +71,10 @@ internal sealed class ModuleExecutor
         requireService.SetMainModule(mainModule);
         JavaScriptRuntime.ObjectRuntime.SetProperty(mainRequire, "main", mainModule);
         RuntimeServices.RegisterModuleRequire(mainModule.id, mainRequire);
+        if (!string.Equals(mainModule.filename, mainModule.id, StringComparison.OrdinalIgnoreCase))
+        {
+            RuntimeServices.RegisterModuleRequire(mainModule.filename, mainRequire);
+        }
 
         // Set the main module as the current parent for require() calls
         requireService.SetCurrentParent(mainModule);

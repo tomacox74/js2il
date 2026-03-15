@@ -30,12 +30,13 @@ namespace JavaScriptRuntime.CommonJS
                     return (Promise)Promise.reject(new ReferenceError("import() requires a CommonJS module context"))!;
                 }
 
-                // Use the existing require mechanism to load the module synchronously
-                // In a real async implementation, this would be async, but for now we
-                // maintain compatibility with the existing synchronous module loader
+                // Use the existing require mechanism to load the module synchronously.
+                // Dynamic import should still surface the same pragmatic ESM namespace/default
+                // projection used by the static import/export lowering path.
                 var exports = requireDelegate(specifierStr);
-                
-                return (Promise)Promise.resolve(exports)!;
+                var importResult = EsModuleInterop.ToDynamicImportResult(exports);
+
+                return (Promise)Promise.resolve(importResult)!;
             }
             catch (Exception ex)
             {
