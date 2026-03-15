@@ -3,25 +3,23 @@
 const http = require("node:http");
 
 const server = http.createServer(function (req, res) {
-  let body = "";
   req.setEncoding("utf8");
 
+  let chunkCount = 0;
+  let body = "";
+
+  console.log("transfer:" + req.headers["transfer-encoding"]);
+
   req.on("data", function (chunk) {
+    chunkCount += 1;
+    console.log("chunk" + chunkCount + ":" + chunk);
     body += chunk;
   });
 
   req.on("end", function () {
-    console.log("server method:" + req.method);
-    console.log("server url:" + req.url);
-    console.log("server type:" + req.headers["content-type"]);
-    console.log("server body:" + body);
-
-    res.writeHead(202, {
-      "Content-Type": "text/plain",
-      "X-Body-Length": String(body.length)
-    });
-    res.write("accepted:");
-    res.end(body.toUpperCase());
+    console.log("chunkCount:" + chunkCount);
+    console.log("body:" + body);
+    res.end("ok");
   });
 });
 
@@ -31,7 +29,7 @@ server.listen(0, "127.0.0.1", function () {
     {
       host: info.address,
       port: info.port,
-      path: "/submit",
+      path: "/stream",
       method: "POST",
       headers: {
         "Content-Type": "text/plain"
@@ -39,9 +37,6 @@ server.listen(0, "127.0.0.1", function () {
     },
     function (res) {
       res.setEncoding("utf8");
-      console.log("client status:" + res.statusCode);
-      console.log("client type:" + res.headers["content-type"]);
-      console.log("client length:" + res.headers["x-body-length"]);
 
       let responseBody = "";
       res.on("data", function (chunk) {
@@ -49,13 +44,13 @@ server.listen(0, "127.0.0.1", function () {
       });
 
       res.on("end", function () {
-        console.log("client body:" + responseBody);
+        console.log("response:" + responseBody);
         server.close(function () {
           console.log("done");
         });
       });
     });
 
-  req.write("node ");
-  req.end("baseline");
+  req.write("alpha");
+  req.end("beta");
 });

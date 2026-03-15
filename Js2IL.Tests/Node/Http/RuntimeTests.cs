@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using JavaScriptRuntime;
@@ -39,6 +40,64 @@ namespace Js2IL.Tests.Node.Http
             var ok = HttpWireParser.TryParseRequest(raw, isEndOfStream: true, out _);
 
             Assert.False(ok);
+        }
+
+        [Fact]
+        public void HttpWireParser_TryParseRequest_ChunkedBody_DecodesChunks()
+        {
+            var raw = Encoding.ASCII.GetBytes(
+                "POST /submit HTTP/1.1\r\n"
+                + "Transfer-Encoding: chunked\r\n"
+                + "\r\n"
+                + "5\r\nhello\r\n"
+                + "1\r\n \r\n"
+                + "5\r\nworld\r\n"
+                + "0\r\n"
+                + "\r\n");
+
+            var parsed = default(HttpParsedRequest);
+            var ok = HttpWireParser.TryParseRequest(raw, isEndOfStream: false, out parsed);
+
+            Assert.True(ok);
+            Assert.NotNull(parsed);
+            Assert.Equal("hello world", parsed!.Body);
+            Assert.Equal("chunked", parsed.Headers["transfer-encoding"]);
+        }
+
+        [Fact]
+        public void HttpWireParser_TryParseResponse_ChunkedBody_DecodesChunks()
+        {
+            var raw = Encoding.ASCII.GetBytes(
+                "HTTP/1.1 200 OK\r\n"
+                + "Transfer-Encoding: chunked\r\n"
+                + "\r\n"
+                + "5\r\nalpha\r\n"
+                + "4\r\nbeta\r\n"
+                + "0\r\n"
+                + "\r\n");
+
+            var parsed = default(HttpParsedResponse);
+            var ok = HttpWireParser.TryParseResponse(raw, isEndOfStream: false, out parsed);
+
+            Assert.True(ok);
+            Assert.NotNull(parsed);
+            Assert.Equal("alphabeta", parsed!.Body);
+            Assert.Equal(200, parsed.StatusCode);
+        }
+
+        [Fact]
+        public void HttpRequestOptions_TryGetUnsupportedFeatureMessage_ExpectHeader_ReturnsTrue()
+        {
+            var supported = JavaScriptRuntime.Node.HttpRequestOptions.TryGetUnsupportedFeatureMessage(
+                "POST",
+                new Dictionary<string, string>
+                {
+                    ["expect"] = "100-continue",
+                },
+                out var message);
+
+            Assert.True(supported);
+            Assert.Contains("100-continue", message);
         }
 
         [Fact]
