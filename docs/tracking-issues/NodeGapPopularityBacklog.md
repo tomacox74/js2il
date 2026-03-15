@@ -80,10 +80,11 @@
 ## 4. Advanced File-system Handles and Stream APIs ([#873](https://github.com/tomacox74/js2il/issues/873))
 
 - Current signal:
-  - `fs` and `fs/promises` are good for whole-file workflows, but there is still no broad file-descriptor, FileHandle, or file-stream story.
+  - `fs` and `fs/promises` now provide a practical baseline for `open()` / `FileHandle` read-write-close workflows, `createReadStream()` / `createWriteStream()`, and practical mutation helpers such as `appendFile`, `rename`, and `unlink`.
+  - Remaining follow-on work is broader numeric file-descriptor parity, wider flag/metadata support, and the advanced `fs` surface that is still explicitly out of scope for the delivered baseline.
 - Minimum acceptance:
-  - Add `open()` / FileHandle baselines and `createReadStream()` / `createWriteStream()` so package tooling can work incrementally.
-  - Expand practical mutation APIs such as `appendFile`, `rename`, `unlink`, and basic link support with Node-like error behavior.
+  - Preserve the documented FileHandle + file-stream baseline while expanding toward raw fd APIs, wider metadata/permission support, and any additional `fs` helpers that real package tooling still requires.
+  - Keep new descriptor/stream work aligned with the shared stream subsystem and documented Node-like error behavior.
 
 ## 5. Promise-based Timers and Abort-aware Timer Helpers ([#875](https://github.com/tomacox74/js2il/issues/875))
 
