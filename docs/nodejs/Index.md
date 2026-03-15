@@ -4,7 +4,7 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-03-14T22:53:10Z`
+**Generated:** `2026-03-15T06:31:30Z`
 
 ## Summary
 
@@ -59,6 +59,6 @@
 - Buffer core APIs for binary workflows are implemented, including from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes, array-like indexing, and binary read/write methods for Int8/16/32, UInt8/16/32, FloatLE/BE, and DoubleLE/BE with utf8/hex/base64 encodings.
 - crypto currently implements a focused synchronous subset only: createHash (md5/sha1/sha256/sha384/sha512), randomBytes, and getRandomValues for Buffer/Uint8Array/Int32Array; callback-style APIs, HMAC/cipher/key operations, and webcrypto.subtle are not implemented.
 - events module implements full core EventEmitter listener lifecycle APIs, events.errorMonitor behavior, and async helper APIs (events.on/events.once); advanced features such as captureRejections and newListener/removeListener event semantics are not yet implemented.
-- Networking is currently a focused IPv4 loopback baseline: node:net supports createServer/connect/socket basics, and node:http supports HTTP/1.1 createServer/get/request with UTF-8 text body chunks, Content-Length framing, and connection-close completion. Chunked transfer encoding, keep-alive/agents, advanced socket controls, node:https, and node:tls are not implemented yet.
+- Networking is currently a focused IPv4 loopback baseline: node:net supports createServer/connect/socket basics, Buffer-based socket reads by default, inherited pause()/resume()/utf8 setEncoding(), idle timeouts via setTimeout(), keepAlive enable/disable via setKeepAlive(), and allowHalfOpen delayed-response control for accepted server sockets. node:http still supports HTTP/1.1 createServer/get/request with UTF-8 text body chunks, Content-Length framing, and connection-close completion. Chunked transfer encoding, agent/connection pooling, keepAlive initialDelay, setNoDelay, broader socket-option parity, node:https, and node:tls are not implemented yet.
 - CommonJS globals (__dirname/__filename) are supported; require() supports compiled local modules, implemented core modules, and compile-time node_modules discovery across .js/.mjs/.cjs files, package.json type=module entry graphs, and package exports/imports condition selection for import/require/node/default in the supported slice. Static import/export declarations and literal import()/require() package requests are resolved at compile time so import and require can target different package entries in one graph, and import.meta.url is available for compiled modules as a deterministic file:// URL. Runtime probing, package imports targets outside package-local relative paths (./...), custom loaders/hooks, and broader Node loader semantics beyond the documented slice remain unsupported.
 - Only a small subset of Node is implemented to support tests; many APIs are unimplemented.

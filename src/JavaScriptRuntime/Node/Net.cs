@@ -127,6 +127,21 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        internal static bool CoerceBoolean(object? value, bool defaultValue = false)
+        {
+            if (value == null || value is JsNull)
+            {
+                return defaultValue;
+            }
+
+            if (value is bool boolean)
+            {
+                return boolean;
+            }
+
+            return TypeUtilities.ToBoolean(value);
+        }
+
         internal static int CoerceHttpStatusCode(object? value, int defaultValue = 200)
         {
             if (value == null || value is JsNull)
@@ -404,6 +419,7 @@ namespace JavaScriptRuntime.Node
         private readonly object? _options;
         private readonly object _sync = new();
         private readonly List<NetSocket> _connections = new();
+        private readonly bool _allowHalfOpen;
         private TcpListener? _listener;
         private bool _closingRequested;
         private string _host = "127.0.0.1";
@@ -422,6 +438,9 @@ namespace JavaScriptRuntime.Node
         public NetServer(object? options = null)
         {
             _options = options;
+            _allowHalfOpen = NodeNetworkingCommon.CoerceBoolean(
+                NodeNetworkingCommon.TryGetOption(options, "allowHalfOpen"),
+                defaultValue: false);
         }
 
         public bool listening => _listener != null;
@@ -544,7 +563,7 @@ namespace JavaScriptRuntime.Node
                         continue;
                     }
 
-                    var socket = new NetSocket();
+                    var socket = new NetSocket(_allowHalfOpen);
                     socket.AttachSchedulers(ioScheduler, nodeScheduler);
                     lock (_sync)
                     {
@@ -663,17 +682,25 @@ namespace JavaScriptRuntime.Node
     public sealed class NetSocket : Duplex
     {
         private readonly Queue<byte[]> _pendingWrites = new();
+        private readonly bool _allowHalfOpen;
         private TcpClient? _client;
         private NetworkStream? _stream;
         private bool _connectInProgress;
         private bool _connected;
         private bool _canWriteToStream;
         private bool _outputClosed;
+        private bool _readSideEnded;
         private bool _closeEmitted;
         private bool _destroyRequested;
+        private bool _hadSocketError;
+        private bool _keepAliveEnabled;
+        private bool _keepAliveConfigured;
+        private object? _timeoutHandle;
+        private double _timeoutMilliseconds;
+        private double _bytesRead;
+        private double _bytesWritten;
         private IIOScheduler? _ioScheduler;
         private NodeSchedulerState? _nodeScheduler;
-        private readonly Utf8ChunkDecoder _textDecoder = new();
 
         private IIOScheduler IoScheduler => _ioScheduler
             ??= GlobalThis.ServiceProvider?.Resolve<IIOScheduler>()
@@ -687,6 +714,8 @@ namespace JavaScriptRuntime.Node
 
         public override bool destroyed => _destroyRequested || _closeEmitted;
 
+        public bool allowHalfOpen => _allowHalfOpen;
+
         public string remoteAddress => TryGetRemoteEndpoint()?.Address.ToString() ?? string.Empty;
 
         public double remotePort => TryGetRemoteEndpoint()?.Port ?? 0;
@@ -694,6 +723,27 @@ namespace JavaScriptRuntime.Node
         public string localAddress => TryGetLocalEndpoint()?.Address.ToString() ?? string.Empty;
 
         public double localPort => TryGetLocalEndpoint()?.Port ?? 0;
+
+        public double bytesRead => _bytesRead;
+
+        public double bytesWritten => _bytesWritten;
+
+        public NetSocket()
+            : this((object?)null)
+        {
+        }
+
+        public NetSocket(object? options)
+        {
+            _allowHalfOpen = NodeNetworkingCommon.CoerceBoolean(
+                NodeNetworkingCommon.TryGetOption(options, "allowHalfOpen"),
+                defaultValue: false);
+        }
+
+        internal NetSocket(bool allowHalfOpen)
+        {
+            _allowHalfOpen = allowHalfOpen;
+        }
 
         public NetSocket connect(object[] args)
         {
@@ -731,6 +781,69 @@ namespace JavaScriptRuntime.Node
             return this;
         }
 
+        public NetSocket setTimeout(object? timeout)
+            => setTimeout(timeout, null);
+
+        public NetSocket setTimeout(object? timeout, object? callback)
+        {
+            if (callback is Delegate del)
+            {
+                once("timeout", del);
+            }
+
+            double timeoutMilliseconds;
+            if (timeout == null || timeout is JsNull)
+            {
+                timeoutMilliseconds = 0;
+            }
+            else
+            {
+                timeoutMilliseconds = TypeUtilities.ToNumber(timeout);
+                if (double.IsNaN(timeoutMilliseconds) || timeoutMilliseconds < 0)
+                {
+                    timeoutMilliseconds = 0;
+                }
+            }
+
+            _timeoutMilliseconds = timeoutMilliseconds;
+            if (_timeoutMilliseconds <= 0)
+            {
+                ClearInactivityTimeout();
+                return this;
+            }
+
+            ResetInactivityTimeout();
+            return this;
+        }
+
+        public NetSocket setKeepAlive(object? enable)
+            => setKeepAlive(enable, null);
+
+        public NetSocket setKeepAlive(object? enable, object? initialDelay)
+        {
+            if (initialDelay != null && initialDelay is not JsNull)
+            {
+                var delayMilliseconds = TypeUtilities.ToNumber(initialDelay);
+                if (!double.IsNaN(delayMilliseconds) && !double.IsInfinity(delayMilliseconds) && delayMilliseconds != 0)
+                {
+                    throw new Error("NetSocket.setKeepAlive currently supports enable/disable only; initialDelay is not implemented.");
+                }
+            }
+
+            _keepAliveEnabled = NodeNetworkingCommon.CoerceBoolean(enable, defaultValue: false);
+            _keepAliveConfigured = true;
+            ApplyKeepAliveOption();
+            return this;
+        }
+
+        public NetSocket setNoDelay()
+            => setNoDelay(null);
+
+        public NetSocket setNoDelay(object? noDelay)
+        {
+            throw new Error("NetSocket.setNoDelay is not implemented in the current runtime.");
+        }
+
         public override void destroy()
         {
             destroy(null);
@@ -744,9 +857,11 @@ namespace JavaScriptRuntime.Node
             }
 
             _destroyRequested = true;
+            ClearInactivityTimeout();
 
             if (error != null && error is not JsNull)
             {
+                _hadSocketError = true;
                 NodeNetworkingCommon.ScheduleOnEventLoop(_nodeScheduler, () => emit("error", error));
             }
 
@@ -768,7 +883,7 @@ namespace JavaScriptRuntime.Node
 
             if (_client == null && !_connectInProgress)
             {
-                NodeNetworkingCommon.ScheduleOnEventLoop(_nodeScheduler, () => FinalizeReadableSide(hadError: false));
+                NodeNetworkingCommon.ScheduleOnEventLoop(_nodeScheduler, () => FinalizeReadableSide(hadError: _hadSocketError));
             }
         }
 
@@ -802,6 +917,7 @@ namespace JavaScriptRuntime.Node
             _connected = true;
             _connectInProgress = false;
             _canWriteToStream = false;
+            ApplyKeepAliveOption();
         }
 
         internal void AttachSchedulers(IIOScheduler ioScheduler, NodeSchedulerState nodeScheduler)
@@ -830,6 +946,7 @@ namespace JavaScriptRuntime.Node
             }
 
             StartReadLoop();
+            ResetInactivityTimeout();
         }
 
         protected override void InvokeWrite(object? chunk)
@@ -849,6 +966,8 @@ namespace JavaScriptRuntime.Node
             try
             {
                 _stream.Write(bytes, 0, bytes.Length);
+                _bytesWritten += bytes.Length;
+                ResetInactivityTimeout();
             }
             catch (ObjectDisposedException ex)
             {
@@ -927,10 +1046,13 @@ namespace JavaScriptRuntime.Node
                         break;
                     }
 
-                    EmitReadChunk(_textDecoder.Decode(buffer, bytesRead, flush: false), immediate: false);
+                    var chunkBytes = new byte[bytesRead];
+                    System.Buffer.BlockCopy(buffer, 0, chunkBytes, 0, bytesRead);
+                    _bytesRead += bytesRead;
+                    ResetInactivityTimeout();
+                    EmitReadChunk(new Buffer(chunkBytes), immediate: false);
                 }
 
-                EmitReadChunk(_textDecoder.Flush(), immediate: true);
                 IoScheduler.EndIo(lifetimePromise, null, isError: false);
             }
             catch (ObjectDisposedException) when (_destroyRequested)
@@ -943,6 +1065,7 @@ namespace JavaScriptRuntime.Node
             }
             catch (Exception ex)
             {
+                _hadSocketError = true;
                 IoScheduler.EndIo(
                     lifetimePromise,
                     ex as Error ?? new Error(ex.Message, ex),
@@ -950,9 +1073,19 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private void EmitReadChunk(string text, bool immediate)
+        private void EmitReadChunk(object? chunk, bool immediate)
         {
-            if (string.IsNullOrEmpty(text))
+            if (chunk == null || chunk is JsNull)
+            {
+                return;
+            }
+
+            if (chunk is string text && text.Length == 0)
+            {
+                return;
+            }
+
+            if (chunk is Buffer buffer && buffer.length == 0)
             {
                 return;
             }
@@ -961,10 +1094,11 @@ namespace JavaScriptRuntime.Node
             {
                 try
                 {
-                    push(text);
+                    push(chunk);
                 }
                 catch (Exception ex)
                 {
+                    _hadSocketError = true;
                     emit("error", ex as Error ?? new Error(ex.Message, ex));
                 }
             }
@@ -1024,17 +1158,26 @@ namespace JavaScriptRuntime.Node
                 return;
             }
 
+            _hadSocketError = true;
             destroy(ex as Error ?? new Error(ex.Message, ex));
         }
 
         private void CloseOutputSide()
         {
+            if (_outputClosed)
+            {
+                TryFinalizeClose();
+                return;
+            }
+
             _outputClosed = true;
             if (_canWriteToStream)
             {
                 FlushPendingWrites();
                 ShutdownSend();
             }
+
+            TryFinalizeClose();
         }
 
         private void ShutdownSend()
@@ -1050,9 +1193,21 @@ namespace JavaScriptRuntime.Node
 
         private void FinalizeReadableSide(bool hadError)
         {
-            if (_closeEmitted)
+            if (_readSideEnded)
             {
+                if (hadError)
+                {
+                    _hadSocketError = true;
+                }
+
+                TryFinalizeClose();
                 return;
+            }
+
+            _readSideEnded = true;
+            if (hadError)
+            {
+                _hadSocketError = true;
             }
 
             try
@@ -1063,8 +1218,57 @@ namespace JavaScriptRuntime.Node
             {
             }
 
+            if (!_allowHalfOpen && !_outputClosed && !_destroyRequested)
+            {
+                NodeNetworkingCommon.ScheduleImmediateOnEventLoop(_nodeScheduler, () =>
+                {
+                    if (_closeEmitted || _outputClosed || _destroyRequested)
+                    {
+                        TryFinalizeClose();
+                        return;
+                    }
+
+                    CloseOutputSide();
+                });
+                return;
+            }
+
+            TryFinalizeClose();
+        }
+
+        private void TryFinalizeClose()
+        {
+            if (_closeEmitted)
+            {
+                return;
+            }
+
+            if (!_destroyRequested)
+            {
+                if (!_readSideEnded)
+                {
+                    return;
+                }
+
+                if (!_outputClosed)
+                {
+                    return;
+                }
+            }
+
+            CompleteClose();
+        }
+
+        private void CompleteClose()
+        {
+            if (_closeEmitted)
+            {
+                return;
+            }
+
+            ClearInactivityTimeout();
             _closeEmitted = true;
-            emit("close", hadError);
+            emit("close", _hadSocketError);
 
             try
             {
@@ -1086,6 +1290,50 @@ namespace JavaScriptRuntime.Node
             _client = null;
             _connected = false;
             _canWriteToStream = false;
+        }
+
+        private void ApplyKeepAliveOption()
+        {
+            if (!_keepAliveConfigured || _client == null)
+            {
+                return;
+            }
+
+            _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, _keepAliveEnabled);
+        }
+
+        private void ResetInactivityTimeout()
+        {
+            if (_timeoutMilliseconds <= 0 || _destroyRequested || _closeEmitted)
+            {
+                return;
+            }
+
+            ClearInactivityTimeout();
+            _timeoutHandle = ((IScheduler)NodeScheduler).Schedule(EmitTimeout, TimeSpan.FromMilliseconds(_timeoutMilliseconds));
+        }
+
+        private void ClearInactivityTimeout()
+        {
+            if (_timeoutHandle == null || _nodeScheduler == null)
+            {
+                _timeoutHandle = null;
+                return;
+            }
+
+            ((IScheduler)NodeScheduler).Cancel(_timeoutHandle);
+            _timeoutHandle = null;
+        }
+
+        private void EmitTimeout()
+        {
+            _timeoutHandle = null;
+            if (_destroyRequested || _closeEmitted)
+            {
+                return;
+            }
+
+            emit("timeout");
         }
 
         private void ParseConnectArgs(object[] args, out int port, out string host, out Delegate? callback)
