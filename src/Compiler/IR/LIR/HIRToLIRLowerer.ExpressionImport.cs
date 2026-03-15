@@ -5,6 +5,96 @@ namespace Js2IL.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private static Scope? GetRootScope(Scope? scope)
+    {
+        if (scope == null)
+        {
+            return null;
+        }
+
+        var root = scope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        return root;
+    }
+
+    private static BindingInfo? TryResolveBinding(Scope? scope, string name)
+    {
+        var current = scope;
+        while (current != null)
+        {
+            if (current.Bindings.TryGetValue(name, out var binding))
+            {
+                return binding;
+            }
+
+            current = current.UsesGlobalScopeSemantics ? null : current.Parent;
+        }
+
+        return null;
+    }
+
+    private bool TryLowerCurrentModuleId(out TempVariable currentModuleIdTemp)
+    {
+        var root = GetRootScope(_scope);
+        if (!string.IsNullOrWhiteSpace(root?.ModuleId))
+        {
+            currentModuleIdTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(root.ModuleId!, currentModuleIdTemp));
+            DefineTempStorage(currentModuleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            return true;
+        }
+
+        var filenameBinding = TryResolveBinding(_scope, "__filename");
+        if (filenameBinding != null
+            && TryLowerExpression(new HIRVariableExpression(new Symbol(filenameBinding)), out currentModuleIdTemp))
+        {
+            currentModuleIdTemp = EnsureObject(currentModuleIdTemp);
+            return true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(root?.AstNode.Location.SourceFile))
+        {
+            currentModuleIdTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(root.AstNode.Location.SourceFile, currentModuleIdTemp));
+            DefineTempStorage(currentModuleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            return true;
+        }
+
+        currentModuleIdTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(string.Empty, currentModuleIdTemp));
+        DefineTempStorage(currentModuleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        return true;
+    }
+
+    private bool TryLowerCurrentModulePath(out TempVariable currentModulePathTemp)
+    {
+        var filenameBinding = TryResolveBinding(_scope, "__filename");
+        if (filenameBinding != null
+            && TryLowerExpression(new HIRVariableExpression(new Symbol(filenameBinding)), out currentModulePathTemp))
+        {
+            currentModulePathTemp = EnsureObject(currentModulePathTemp);
+            return true;
+        }
+
+        var root = GetRootScope(_scope);
+        if (!string.IsNullOrWhiteSpace(root?.AstNode.Location.SourceFile))
+        {
+            currentModulePathTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(root.AstNode.Location.SourceFile, currentModulePathTemp));
+            DefineTempStorage(currentModulePathTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            return true;
+        }
+
+        currentModulePathTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstUndefined(currentModulePathTemp));
+        DefineTempStorage(currentModulePathTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
     private bool TryLowerImportExpression(HIRImportExpression importExpr, out TempVariable resultTempVar)
     {
         resultTempVar = CreateTempVariable();
@@ -15,42 +105,9 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        // Get the current module ID for relative path resolution
-        // In CommonJS wrapper, __filename is available as a parameter
-        var currentModuleIdTemp = CreateTempVariable();
-        
-        // Try to load __filename from the CommonJS wrapper environment.
-        // Resolve through the scope chain (it may be declared on a parent scope).
-        if (_scope != null)
+        if (!TryLowerCurrentModuleId(out var currentModuleIdTemp))
         {
-            var filenameSymbol = _scope.FindSymbol("__filename");
-            if (filenameSymbol != null)
-            {
-                var filenameExpr = new HIRVariableExpression(filenameSymbol);
-
-                if (!TryLowerExpression(filenameExpr, out var loweredModuleIdTemp))
-                {
-                    // Fallback: use empty string if __filename loading fails
-                    _methodBodyIR.Instructions.Add(new LIRConstString(string.Empty, currentModuleIdTemp));
-                    DefineTempStorage(currentModuleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-                }
-                else
-                {
-                    currentModuleIdTemp = loweredModuleIdTemp;
-                }
-            }
-            else
-            {
-                // Fallback: use empty string for module ID
-                _methodBodyIR.Instructions.Add(new LIRConstString(string.Empty, currentModuleIdTemp));
-                DefineTempStorage(currentModuleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-            }
-        }
-        else
-        {
-            // Fallback: use empty string for module ID
-            _methodBodyIR.Instructions.Add(new LIRConstString(string.Empty, currentModuleIdTemp));
-            DefineTempStorage(currentModuleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            return false;
         }
 
         // Emit the import call

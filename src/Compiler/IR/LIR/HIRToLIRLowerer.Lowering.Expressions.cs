@@ -145,20 +145,9 @@ public sealed partial class HIRToLIRLowerer
             case HIRImportMetaExpression:
                 {
                     TempVariable moduleIdTemp;
-                    var filenameSymbol = _scope?.FindSymbol("__filename");
-                    if (filenameSymbol != null)
+                    if (!TryLowerCurrentModulePath(out moduleIdTemp))
                     {
-                        if (!TryLowerExpression(new HIRVariableExpression(filenameSymbol), out moduleIdTemp))
-                        {
-                            return false;
-                        }
-                        moduleIdTemp = EnsureObject(moduleIdTemp);
-                    }
-                    else
-                    {
-                        moduleIdTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRConstUndefined(moduleIdTemp));
-                        DefineTempStorage(moduleIdTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        return false;
                     }
 
                     resultTempVar = CreateTempVariable();

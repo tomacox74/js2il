@@ -4,9 +4,9 @@
 
 [Back to Section16](Section16.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-15T07:52:32Z
 
-JS2IL supports a practical subset of static module syntax by lowering top-level `import` / `export` declarations to the existing CommonJS runtime model. This enables mixed CJS/ESM-style graphs for common patterns, but does not implement full ECMA-262 module-record/linking/evaluation semantics.
+JS2IL supports a practical subset of module syntax by lowering top-level `import` / `export` declarations to the existing CommonJS runtime model and aligning literal dynamic `import()` with the same pragmatic namespace/default interop surface. This enables mixed CJS/ESM-style graphs for common patterns, but does not implement full ECMA-262 module-record/linking/evaluation semantics.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -85,12 +85,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Full module record/linking/evaluation model | Not Yet Supported |  | Current implementation does not model full ECMA-262 module records, host hooks, or spec-accurate cyclic linking/evaluation semantics. |
+| Full module record/linking/evaluation model | Not Yet Supported |  | Current implementation does not model full ECMA-262 module records, host hooks, or spec-accurate cyclic linking/evaluation semantics. That deeper follow-on remains tracked separately from the practical static/dynamic interop surface. |
 
 ### 16.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-imports))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
+| Dynamic import() namespace/default interop | Supported with Limitations | [`Import_DynamicImport_Esm_Namespace.js`](../../../Js2IL.Tests/Import/JavaScript/Import_DynamicImport_Esm_Namespace.js)<br>[`Import_DynamicImport_Cjs_Namespace.js`](../../../Js2IL.Tests/Import/JavaScript/Import_DynamicImport_Cjs_Namespace.js) | Literal dynamic `import()` requests resolve through the existing CommonJS loader but now return the same pragmatic namespace/default projection used by the static ESM lowering. ESM-lowered modules resolve to their export object directly; CommonJS-style modules resolve to a cached synthetic namespace object that exposes `default`, `module.exports`, and getter-backed enumerable export keys. Full ECMA-262 module-record linking/evaluation semantics remain out of scope and are tracked separately. |
 | Top-level static import declarations | Supported with Limitations | [`Import_StaticImport_FromCjs.js`](../../../Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js)<br>[`Import_LiveBindings_Named.js`](../../../Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named.js)<br>[`Import_LiveBindings_Cycle.js`](../../../Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js)<br>[`Import_Namespace_Esm_Basic.js`](../../../Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js)<br>[`Import_Namespace_FromCjs_Stable.js`](../../../Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js) | Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls, and imported identifier reads are rewritten to live reads to better match ESM semantics. Namespace imports from ESM return the module export object; namespace imports from CommonJS return a cached synthetic namespace object whose properties forward through to the underlying exports (live values for keys present at namespace creation time). Imported bindings are treated as immutable; assignment/update/destructuring writes and `delete` of an imported binding are rejected at compile time. In this MVP, static import/export declarations must appear before non-directive top-level statements. |
 
 ### 16.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-exports))
