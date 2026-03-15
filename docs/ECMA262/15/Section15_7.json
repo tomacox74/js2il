@@ -5,7 +5,7 @@
   "title": "Class Definitions",
   "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
-  "intro": "JS2IL supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), and public/private instance/static fields with initializers. Limitations: class static blocks are not supported; class getters/setters are rejected; computed method/field names and private methods are rejected.",
+  "intro": "JS2IL supports class declarations/expressions, methods (including async and generator methods), identifier-named instance/static accessors, constructors (including derived constructors with super calls), and public/private instance/static fields with initializers. Limitations: class static blocks are not supported; computed method/field names and private methods/accessors are rejected.",
   "parent": {
     "clause": "15"
   },
@@ -301,6 +301,16 @@
       },
       {
         "clause": "15.7.1",
+        "feature": "Identifier-named class instance/static accessors (get x() / set x(v))",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "Js2IL.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js"
+        ],
+        "notes": "Identifier-named instance and static accessors compile and dispatch correctly for normal property reads/writes, including accessor this binding and static access through the class object. Computed class accessors, private accessors, and static blocks remain unsupported."
+      },
+      {
+        "clause": "15.7.1",
         "feature": "Class inheritance via extends (class B extends A)",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
@@ -332,7 +342,7 @@
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
         ],
-        "notes": "JS2IL supports constructors, identifier-named methods, and identifier/private-identifier fields. Limitations: class accessors, private methods, computed names, and static blocks are not supported."
+        "notes": "JS2IL supports constructors, identifier-named methods/accessors, and identifier/private-identifier fields. Limitations: computed names, private methods/accessors, and static blocks are not supported."
       },
       {
         "clause": "15.7.3",
@@ -402,7 +412,7 @@
         "testScripts": [
           "Js2IL.Tests/ValidatorTests.cs"
         ],
-        "notes": "Validator rejects private methods; JS2IL currently supports private fields, but not private methods/accessors."
+        "notes": "Validator rejects private methods and private accessors; JS2IL currently supports private fields, but not private methods/accessors."
       },
       {
         "clause": "15.7.1",

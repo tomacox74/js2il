@@ -76,3 +76,7 @@ The repo includes runnable `Js2IL.SDK`-based samples:
 - `samples/Hosting.Basic`
 - `samples/Hosting.Typed`
 - `samples/Hosting.Domino`
+
+## Validation and release smoke
+
+- [Hosting/NuGet package validation](PackagingValidation.md)

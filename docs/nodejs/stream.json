@@ -16,10 +16,60 @@
   ],
   "apis": [
     {
+      "name": "pipeline(...streams[, callback])",
+      "kind": "function",
+      "status": "partial",
+      "notes": "Supports callback-oriented pipeline chaining across the current EventEmitter-backed Readable/Duplex -> Writable/Duplex stream classes. On the first observed stream error or premature close, the helper tears down the remaining streams and invokes the callback with that error. The official node:stream/promises surface and AbortSignal-aware variants are not implemented yet.",
+      "docs": "https://nodejs.org/api/stream.html#streampipelinesource-transforms-destination-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Pipeline_Basic",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Pipeline_Basic",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Pipeline_Error",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Pipeline_Error",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "finished(stream[, callback])",
+      "kind": "function",
+      "status": "partial",
+      "notes": "Supports callback-oriented completion/error observation for the current Readable, Writable, Duplex, Transform, and PassThrough implementations by monitoring end, finish, error, and premature close signals. Omitting the callback returns a Promise-backed observer from the same runtime path, but node:stream/promises is still out of scope.",
+      "docs": "https://nodejs.org/api/stream.html#streamfinishedstream-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Finished_Callback_Basic",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Finished_Callback_Basic",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Finished_Callback_DestroyError",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Finished_Callback_DestroyError",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
       "name": "Readable",
       "kind": "class",
       "status": "partial",
-      "notes": "Basic Readable stream implementation. Supports push(), read(), pipe(), and the readable property. Emits 'data', 'end', and 'error' events via EventEmitter inheritance. pipe() includes a minimal backpressure integration: when destination.write(...) returns false, pipe() pauses forwarding and resumes on the destination 'drain' event.",
+      "notes": "Readable streams now support push(), read(), pipe(), pause(), resume(), destroy(), destroyed, readable, readableEncoding, and setEncoding('utf8'/'utf-8'). The current setEncoding() slice is UTF-8-only and covers buffered and flowing string decoding for Buffer/byte[] backed chunks. pipe() keeps the minimal backpressure integration: when destination.write(...) returns false, forwarding pauses until the destination emits drain.",
       "docs": "https://nodejs.org/api/stream.html#class-streamreadable",
       "tests": [
         {
@@ -45,6 +95,22 @@
         {
           "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Pipe_Backpressure_Basic",
           "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Readable_Pause_Resume",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Readable_Pause_Resume",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Readable_SetEncoding_Utf8",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Readable_SetEncoding_Utf8",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
         }
       ]
     },
@@ -52,7 +118,7 @@
       "name": "Writable",
       "kind": "class",
       "status": "partial",
-      "notes": "Basic Writable stream implementation. Supports write(), end(), and the writable property. Emits 'drain', 'finish', and 'error' events via EventEmitter inheritance. Includes a minimal highWaterMark field (default 16) used to influence the boolean return of write(...) for backpressure signaling; encoding and callback handling are still baseline/ignored.",
+      "notes": "Writable streams support write(), end(), destroy(), destroyed, writable, and the current highWaterMark field. write() still treats encoding/callback parameters as baseline no-ops, but drain/finish ordering is now queued deterministically and _write exceptions propagate as stream error/close teardown instead of being swallowed silently.",
       "docs": "https://nodejs.org/api/stream.html#class-streamwritable",
       "tests": [
         {
@@ -78,6 +144,22 @@
         {
           "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Pipe_Backpressure_Basic",
           "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Writable_Drain_Finish_Order",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Writable_Drain_Finish_Order",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Writable_Destroy_Error",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Writable_Destroy_Error",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
         }
       ]
     },
@@ -85,7 +167,7 @@
       "name": "Duplex",
       "kind": "class",
       "status": "partial",
-      "notes": "Minimal Duplex stream implementation (Readable + Writable). Intended primarily as a base class for Transform and PassThrough in the current baseline.",
+      "notes": "Duplex combines the new readable-side lifecycle controls (pause/resume, UTF-8 setEncoding, destroy/destroyed, pipe backpressure) with the Writable behavior above. In the current runtime it primarily acts as the base for Transform, PassThrough, and NetSocket-style consumers.",
       "docs": "https://nodejs.org/api/stream.html#class-streamduplex",
       "tests": [
         {
@@ -95,6 +177,14 @@
         {
           "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_PassThrough_Basic",
           "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Pipeline_Basic",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Pipeline_Basic",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
         }
       ]
     },
@@ -102,7 +192,7 @@
       "name": "Transform",
       "kind": "class",
       "status": "partial",
-      "notes": "Minimal Transform stream implementation. Supports a user-provided _transform function for chunk mapping; when the writable side ends, the readable side is ended by pushing null.",
+      "notes": "Transform streams support a user-provided _transform function for chunk mapping. Throwing from _transform now destroys the stream and surfaces the error through pipeline()/finished()/EventEmitter listeners instead of swallowing it silently.",
       "docs": "https://nodejs.org/api/stream.html#class-streamtransform",
       "tests": [
         {
@@ -112,6 +202,14 @@
         {
           "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Transform_Basic",
           "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Pipeline_Error",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Pipeline_Error",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
         }
       ]
     },
@@ -119,7 +217,7 @@
       "name": "PassThrough",
       "kind": "class",
       "status": "partial",
-      "notes": "Minimal PassThrough implementation (identity Transform).",
+      "notes": "PassThrough remains the identity Transform, now participating in the same lifecycle/helper surface as Duplex/Transform.",
       "docs": "https://nodejs.org/api/stream.html#class-streampassthrough",
       "tests": [
         {
@@ -129,9 +227,17 @@
         {
           "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_PassThrough_Basic",
           "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Pipeline_Basic",
+          "file": "Js2IL.Tests/Node/Stream/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.Stream.GeneratorTests.Stream_Pipeline_Basic",
+          "file": "Js2IL.Tests/Node/Stream/GeneratorTests.cs"
         }
       ]
     }
   ],
-  "notes": "Expanded the initial stream baseline to include minimal Duplex/Transform/PassThrough classes and basic pipe() backpressure behavior (pause on write()==false, resume on drain). Many Node.js stream features are still not implemented (objectMode, encoding/setEncoding, pause()/resume() APIs, pipeline/finished helpers, full Writable buffering semantics, cork/uncork, and complex error/teardown edge cases)."
+  "notes": "The stream baseline now includes lifecycle controls and helpers that are useful to higher-level Node modules: pause()/resume(), UTF-8 setEncoding(), destroy()/destroyed, callback-style pipeline(...), callback-style finished(...), and deterministic writable drain/finish/error teardown. Important gaps remain: objectMode, cork()/uncork(), richer write() callback semantics, AbortSignal support, node:stream/promises, binary/socket-oriented encoding breadth, and the more complex teardown/buffering edge cases that full Node parity requires."
 }

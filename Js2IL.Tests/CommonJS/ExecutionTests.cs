@@ -47,6 +47,20 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_EntryModule_ParentTraversal()
+        {
+            // Repro for packed canary entry wrappers that require("../shared/...") from the root entry module.
+            // The entry module must preserve parent-traversal ids when they already exist in the compiled manifest.
+            return ExecutionTest(
+                "CommonJS_Require_EntryModule_ParentTraversal/wrappers/entry",
+                preferOutOfProc: true,
+                additionalScripts: new[]
+                {
+                    "CommonJS_Require_EntryModule_ParentTraversal/shared/helper"
+                });
+        }
+
+        [Fact]
         public Task CommonJS_Require_SharedDependency_ExecutedOnce()
         {
             // a requires b and c

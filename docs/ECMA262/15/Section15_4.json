@@ -54,11 +54,16 @@
         "notes": "Supports method syntax in object literals and correct this binding when called as obj.m()."
       },
       {
-        "clause": "15.4.1",
+        "clause": "15.4.5",
         "feature": "Getter/setter method definitions (get x() / set x(v))",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
-        "notes": "Getters/setters are currently rejected by the validator in both object literals and classes."
+        "testScripts": [
+          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_AccessorDefinitions.js",
+          "Js2IL.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js",
+          "Js2IL.Tests/ValidatorTests.cs"
+        ],
+        "notes": "Object literal getters/setters now lower through descriptor-backed property definition helpers, preserving accessor/data replacement behavior across duplicate keys and spread overwrites. Identifier-named class instance/static accessors compile and dispatch through the existing runtime property/accessor surface with correct this binding for normal property reads/writes. Computed/private class accessors remain part of the broader unsupported computed/private class element gap."
       },
       {
         "clause": "15.4.4",
@@ -81,7 +86,7 @@
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
           "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
         ],
-        "notes": "Covers instance/static methods and super method calls. Limitations are tracked under Class Definitions (e.g., getters/setters, computed method names, and private methods are rejected)."
+        "notes": "Covers instance/static methods and super method calls. Limitations are tracked under Class Definitions (for example computed method names and private methods/accessors remain unsupported)."
       },
       {
         "clause": "15.4.5",

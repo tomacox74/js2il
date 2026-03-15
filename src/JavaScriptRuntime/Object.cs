@@ -2730,14 +2730,130 @@ namespace JavaScriptRuntime
 
             try
             {
-                var type = target.GetType();
-                return type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) != null
-                    || type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) != null;
+                if (target is Type staticType)
+                {
+                    return HasClrMember(staticType, name, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase);
+                }
+
+                return HasClrMember(target.GetType(), name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
             }
             catch
             {
                 return false;
             }
+        }
+
+        private static bool HasClrMember(Type type, string name, BindingFlags bindingFlags)
+        {
+            return FindClrProperty(type, name, bindingFlags) != null
+                || FindClrField(type, name, bindingFlags) != null
+                || FindAccessorMethod(type, "get", name, bindingFlags, parameterCount: 0) != null
+                || FindAccessorMethod(type, "set", name, bindingFlags, parameterCount: 1) != null;
+        }
+
+        private static PropertyInfo? FindClrProperty(Type type, string name, BindingFlags bindingFlags)
+        {
+            var exactFlags = bindingFlags & ~BindingFlags.IgnoreCase;
+            return type.GetProperty(name, exactFlags) ?? type.GetProperty(name, bindingFlags);
+        }
+
+        private static FieldInfo? FindClrField(Type type, string name, BindingFlags bindingFlags)
+        {
+            var exactFlags = bindingFlags & ~BindingFlags.IgnoreCase;
+            return type.GetField(name, exactFlags) ?? type.GetField(name, bindingFlags);
+        }
+
+        private static MethodInfo? FindAccessorMethod(Type type, string prefix, string name, BindingFlags bindingFlags, int parameterCount)
+        {
+            var expectedName = $"{prefix}_{name}";
+            var methodFlags = bindingFlags & ~BindingFlags.IgnoreCase;
+            MethodInfo? ignoreCaseMatch = null;
+
+            foreach (var method in type.GetMethods(methodFlags))
+            {
+                if (method.GetParameters().Length != parameterCount)
+                {
+                    continue;
+                }
+
+                if (string.Equals(method.Name, expectedName, StringComparison.Ordinal))
+                {
+                    return method;
+                }
+
+                if (ignoreCaseMatch == null
+                    && string.Equals(method.Name, expectedName, StringComparison.OrdinalIgnoreCase))
+                {
+                    ignoreCaseMatch = method;
+                }
+            }
+
+            return ignoreCaseMatch;
+        }
+
+        private static bool TryGetClrMemberValue(Type type, object? instance, string name, BindingFlags bindingFlags, out object? result)
+        {
+            var prop = FindClrProperty(type, name, bindingFlags);
+            if (prop != null && prop.CanRead)
+            {
+                result = prop.GetValue(instance);
+                return true;
+            }
+
+            var field = FindClrField(type, name, bindingFlags);
+            if (field != null)
+            {
+                result = field.GetValue(instance);
+                return true;
+            }
+
+            var getter = FindAccessorMethod(type, "get", name, bindingFlags, parameterCount: 0);
+            if (getter != null)
+            {
+                result = getter.Invoke(instance, System.Array.Empty<object>());
+                return true;
+            }
+
+            var baseType = type.BaseType;
+            if (baseType != null && baseType != typeof(object))
+            {
+                return TryGetClrMemberValue(baseType, instance, name, bindingFlags, out result);
+            }
+
+            result = null;
+            return false;
+        }
+
+        private static bool TrySetClrMemberValue(Type type, object? instance, string name, object? value, BindingFlags bindingFlags)
+        {
+            var prop = FindClrProperty(type, name, bindingFlags);
+            if (prop != null && prop.CanWrite)
+            {
+                prop.SetValue(instance, value);
+                return true;
+            }
+
+            var field = FindClrField(type, name, bindingFlags);
+            if (field != null)
+            {
+                field.SetValue(instance, value);
+                return true;
+            }
+
+            var setter = FindAccessorMethod(type, "set", name, bindingFlags, parameterCount: 1);
+            if (setter != null)
+            {
+                setter.Invoke(instance, new object?[] { value });
+                return true;
+            }
+
+            var baseType = type.BaseType;
+            if (baseType != null && baseType != typeof(object))
+            {
+                return TrySetClrMemberValue(baseType, instance, name, value, bindingFlags);
+            }
+
+            return false;
         }
 
         private static bool HasOwnPropertyForPropertyLookup(object target, string name)
@@ -2992,35 +3108,19 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            static bool TryGetValue(Type type, object instance, string name, out object? result)
-            {
-                var prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public);
-                if (prop != null && prop.CanRead)
-                {
-                    result = prop.GetValue(instance);
-                    return true;
-                }
-
-                var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public);
-                if (field != null)
-                {
-                    result = field.GetValue(instance);
-                    return true;
-                }
-
-                var baseType = type.BaseType;
-                if (baseType != null && baseType != typeof(object))
-                {
-                    return TryGetValue(baseType, instance, name, out result);
-                }
-
-                result = null;
-                return false;
-            }
-
             try
             {
-                return TryGetValue(target.GetType(), target, propName, out value);
+                if (target is Type staticType)
+                {
+                    return TryGetClrMemberValue(staticType, instance: null, propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase, out value);
+                }
+
+                return TryGetClrMemberValue(target.GetType(), target, propName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase, out value);
+            }
+            catch (TargetInvocationException tie) when (tie.InnerException != null)
+            {
+                ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
+                throw;
             }
             catch
             {
@@ -3762,36 +3862,30 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object SpreadInto(object target, object? source)
         {
+            return CopyEnumerableOwnProperties(target, source, (key, value) => SetSpreadTargetProperty(target, key, value));
+        }
+
+        public static object SpreadIntoObjectLiteral(object target, object? source)
+        {
+            return CopyEnumerableOwnProperties(target, source, (key, value) => ObjectRuntime.DefineObjectLiteralDataProperty(target, key, value));
+        }
+
+        private static void SetSpreadTargetProperty(object target, string key, object? value)
+        {
+            if (target is IDictionary<string, object?> dict)
+            {
+                dict[key] = value;
+                return;
+            }
+
+            SetProperty(target, key, value);
+        }
+
+        private static object CopyEnumerableOwnProperties(object target, object? source, Action<string, object?> setOwnProperty)
+        {
             if (target is null)
             {
                 throw new ArgumentNullException(nameof(target));
-            }
-
-            // Fast-path: object literals are JsObject or ExpandoObject targets. For object spread, we want
-            // CreateDataProperty semantics (define/overwrite an own data property) and must not
-            // route through prototype setters.
-            IDictionary<string, object?>? targetExpandoDict = null;
-            if (target is JsObject || target is System.Dynamic.ExpandoObject)
-            {
-                targetExpandoDict = (IDictionary<string, object?>)target;
-            }
-
-            static void SetOwn(IDictionary<string, object?>? expandoDict, object targetObj, string key, object? value)
-            {
-                if (expandoDict is not null)
-                {
-                    expandoDict[key] = value;
-                    return;
-                }
-
-                if (targetObj is IDictionary<string, object?> dict)
-                {
-                    dict[key] = value;
-                    return;
-                }
-
-                // Fallback: best-effort for non-dynamic targets.
-                SetProperty(targetObj, key, value);
             }
 
             // Per object spread semantics: null/undefined are skipped.
@@ -3806,7 +3900,7 @@ namespace JavaScriptRuntime
                 var srcSeen = new HashSet<string>(StringComparer.Ordinal);
                 EnumerateOwnEnumerableProperties(jsObjSource, srcSeen, (key, value) =>
                 {
-                    SetOwn(targetExpandoDict, target, key, value);
+                    setOwnProperty(key, value);
                 }, includeEncodedSymbolKeys: true);
                 return target;
             }
@@ -3822,7 +3916,7 @@ namespace JavaScriptRuntime
                         continue;
                     }
 
-                    SetOwn(targetExpandoDict, target, kvp.Key, kvp.Value);
+                    setOwnProperty(kvp.Key, kvp.Value);
                 }
                 return target;
             }
@@ -3837,7 +3931,7 @@ namespace JavaScriptRuntime
                         continue;
                     }
 
-                    SetOwn(targetExpandoDict, target, kvp.Key, kvp.Value);
+                    setOwnProperty(kvp.Key, kvp.Value);
                 }
                 return target;
             }
@@ -3847,7 +3941,7 @@ namespace JavaScriptRuntime
             {
                 for (int i = 0; i < s.Length; i++)
                 {
-                    SetOwn(targetExpandoDict, target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), s[i].ToString());
+                    setOwnProperty(i.ToString(System.Globalization.CultureInfo.InvariantCulture), s[i].ToString());
                 }
                 return target;
             }
@@ -3857,7 +3951,7 @@ namespace JavaScriptRuntime
             {
                 for (int i = 0; i < arr.Count; i++)
                 {
-                    SetOwn(targetExpandoDict, target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), arr[i]);
+                    setOwnProperty(i.ToString(System.Globalization.CultureInfo.InvariantCulture), arr[i]);
                 }
                 return target;
             }
@@ -3868,7 +3962,7 @@ namespace JavaScriptRuntime
                 var len = (int)typedArray.length;
                 for (int i = 0; i < len; i++)
                 {
-                    SetOwn(targetExpandoDict, target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), typedArray[(double)i]);
+                    setOwnProperty(i.ToString(System.Globalization.CultureInfo.InvariantCulture), typedArray[(double)i]);
                 }
                 return target;
             }
@@ -3879,11 +3973,11 @@ namespace JavaScriptRuntime
                 var type = source.GetType();
                 foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => p.CanRead))
                 {
-                    SetOwn(targetExpandoDict, target, p.Name, p.GetValue(source));
+                    setOwnProperty(p.Name, p.GetValue(source));
                 }
                 foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
                 {
-                    SetOwn(targetExpandoDict, target, f.Name, f.GetValue(source));
+                    setOwnProperty(f.Name, f.GetValue(source));
                 }
             }
             catch (AmbiguousMatchException)
@@ -4446,19 +4540,22 @@ namespace JavaScriptRuntime
             // Reflection fallback: settable property or public field
             try
             {
-                var type = obj.GetType();
-                var prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-                if (prop != null && prop.CanWrite)
+                if (obj is Type staticType)
                 {
-                    prop.SetValue(obj, value);
+                    if (TrySetClrMemberValue(staticType, instance: null, name, value, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase))
+                    {
+                        return value;
+                    }
+                }
+                else if (TrySetClrMemberValue(obj.GetType(), obj, name, value, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase))
+                {
                     return value;
                 }
-                var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-                if (field != null)
-                {
-                    field.SetValue(obj, value);
-                    return value;
-                }
+            }
+            catch (TargetInvocationException tie) when (tie.InnerException != null)
+            {
+                ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
+                throw;
             }
             catch
             {
@@ -4488,7 +4585,7 @@ namespace JavaScriptRuntime
             return value;
         }
 
-        private static void InvalidateRegExpWellKnownSymbolFastPath(object target, string propertyKey)
+        internal static void InvalidateRegExpWellKnownSymbolFastPath(object target, string propertyKey)
         {
             if (target is JavaScriptRuntime.RegExp regexp)
             {

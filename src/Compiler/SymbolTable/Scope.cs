@@ -21,6 +21,7 @@ public class Scope
     /// The name of the scope (used as the class name in .NET codegen).
     /// </summary>
     public string Name { get; }
+    public string? ModuleId { get; set; }
     public Scope? Parent { get; }
     public List<Scope> Children { get; } = new();
     public Dictionary<string, BindingInfo> Bindings { get; } = new();
@@ -176,6 +177,7 @@ public class Scope
     public Scope(string name, ScopeKind kind, Scope? parent, Node astNode)
     {
         Name = name;
+        ModuleId = parent?.ModuleId;
         Kind = kind;
         Parent = parent;
         AstNode = astNode;

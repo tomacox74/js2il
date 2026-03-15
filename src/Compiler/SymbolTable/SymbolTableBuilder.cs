@@ -50,7 +50,10 @@ namespace Js2IL.SymbolTables
         public void Build(ModuleDefinition module)
         {
             _currentModulePath = module.Path;
-            var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast);
+            var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast)
+            {
+                ModuleId = module.ModuleId
+            };
 
             AddModuleBuiltInParameters(globalScope, module.Ast);
 
