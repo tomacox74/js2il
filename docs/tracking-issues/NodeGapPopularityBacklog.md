@@ -15,12 +15,13 @@
 
 ## Current Baseline (Snapshot)
 
-- Node docs currently track **17 modules** (**13 `partial`**, **2 `completed`**, **2 `not-supported`**) and **14 globals** (**14 `supported`**).
+- Node docs currently track **18 modules** (**14 `partial`**, **2 `completed`**, **2 `not-supported`**) and **14 globals** (**14 `supported`**).
 - Recent work already landed enough that these items no longer belong at the top of the remaining backlog:
   - Node ESM loader/package-resolution parity issue [#869](https://github.com/tomacox74/js2il/issues/869)
   - Stream lifecycle/helper parity issue [#872](https://github.com/tomacox74/js2il/issues/872)
   - Net socket parity and binary data handling issue [#874](https://github.com/tomacox74/js2il/issues/874)
   - `path`, `fs`, `util`, `child_process`, `url`, `querystring`, and loopback `net` / `http` baselines
+  - `timers/promises` now has a documented Promise-based baseline for `setTimeout(...)` / `setImmediate(...)` plus abort-aware one-shot cancellation.
 - The most important documented blockers now are:
   - `https` and `tls` are explicit diagnostic-only stubs.
   - `http` now has streamed Buffer-based `IncomingMessage` bodies, chunked request/response framing, forwarded server `connection` events, and a sequential keep-alive `http.Agent` baseline, but it still lacks secure transport and advanced protocol features.
@@ -48,9 +49,8 @@
 | 1 | [TLS and HTTPS support](https://github.com/tomacox74/js2il/issues/870) | `tls`, `https` | [#870](https://github.com/tomacox74/js2il/issues/870) | `not-supported` | Secure networking is still completely absent, which blocks common SDKs, package clients, webhook consumers, and real-world service integrations. |
 | 2 | [Practical crypto expansion](https://github.com/tomacox74/js2il/issues/790) | `crypto`, `webcrypto` | [#790](https://github.com/tomacox74/js2il/issues/790) | `partial` | Hashing and random bytes are no longer the main gap; modern auth, signing, and secure protocol code needs a broader cryptographic surface. |
 | 3 | [Advanced file-system handles and stream APIs](https://github.com/tomacox74/js2il/issues/873) | `fs`, `fs/promises` | [#873](https://github.com/tomacox74/js2il/issues/873) | `partial` | Whole-file APIs exist, but package managers, bundlers, and tooling often need `open`, FileHandle, append/rename/unlink, and file streams. |
-| 4 | [Promise-based timers and Abort-aware timer helpers](https://github.com/tomacox74/js2il/issues/875) | `timers/promises` | [#875](https://github.com/tomacox74/js2il/issues/875) | Not yet tracked in `docs/nodejs` | Timer globals are already solid and heavily exercised; the promise module is a high-value next layer for modern async Node code. |
-| 5 | [Compression support](https://github.com/tomacox74/js2il/issues/876) | `zlib` | [#876](https://github.com/tomacox74/js2il/issues/876) | Not yet tracked in `docs/nodejs` | Compression is a practical missing piece for HTTP interoperability, packaging flows, and many real Node dependencies. |
-| 6 | [Advanced child-process IPC and process-control parity](https://github.com/tomacox74/js2il/issues/877) | `child_process` | [#877](https://github.com/tomacox74/js2il/issues/877) | `partial` | The current spawn/exec baseline is useful, but many toolchains still need `fork()`, richer stdio semantics, IPC, and stronger signal/env behavior. |
+| 4 | [Compression support](https://github.com/tomacox74/js2il/issues/876) | `zlib` | [#876](https://github.com/tomacox74/js2il/issues/876) | Not yet tracked in `docs/nodejs` | Compression is a practical missing piece for HTTP interoperability, packaging flows, and many real Node dependencies. |
+| 5 | [Advanced child-process IPC and process-control parity](https://github.com/tomacox74/js2il/issues/877) | `child_process` | [#877](https://github.com/tomacox74/js2il/issues/877) | `partial` | The current spawn/exec baseline is useful, but many toolchains still need `fork()`, richer stdio semantics, IPC, and stronger signal/env behavior. |
 
 ## Linked Issue Briefs
 
@@ -85,15 +85,7 @@
   - Add `open()` / FileHandle baselines and `createReadStream()` / `createWriteStream()` so package tooling can work incrementally.
   - Expand practical mutation APIs such as `appendFile`, `rename`, `unlink`, and basic link support with Node-like error behavior.
 
-## 5. Promise-based Timers and Abort-aware Timer Helpers ([#875](https://github.com/tomacox74/js2il/issues/875))
-
-- Current signal:
-  - Timer globals are supported and well-tested, but the `timers/promises` module is not part of the current Node docs inventory.
-- Minimum acceptance:
-  - Add `setTimeout`, `setImmediate`, and `setInterval` promise helpers with the cancellation semantics Node developers expect.
-  - Cover ordering and interaction with `process.nextTick`, Promise microtasks, and existing timer globals.
-
-## 6. Compression Support ([#876](https://github.com/tomacox74/js2il/issues/876))
+## 5. Compression Support ([#876](https://github.com/tomacox74/js2il/issues/876))
 
 - Current signal:
   - There is currently no tracked `zlib` surface even though HTTP and tooling scenarios will keep encountering compression requirements.
@@ -101,7 +93,7 @@
   - Add a practical gzip/deflate baseline for common synchronous or streaming workflows.
   - Ensure the initial slice composes cleanly with the HTTP and stream work rather than living as a disconnected utility.
 
-## 7. Advanced Child-process IPC and Process-control Parity ([#877](https://github.com/tomacox74/js2il/issues/877))
+## 6. Advanced Child-process IPC and Process-control Parity ([#877](https://github.com/tomacox74/js2il/issues/877))
 
 - Current signal:
   - `docs/nodejs/child_process.json` now covers `spawn`, `exec`, `execFile`, and sync variants, but not `fork()`, IPC, or richer stdio/process semantics.
@@ -113,7 +105,7 @@
 
 - **Track A (application networking):** [#871](https://github.com/tomacox74/js2il/issues/871) (active review via PR [#897](https://github.com/tomacox74/js2il/pull/897)) -> [#870](https://github.com/tomacox74/js2il/issues/870)
 - **Track B (I/O and file primitives):** [#873](https://github.com/tomacox74/js2il/issues/873)
-- **Track C (platform APIs):** [#790](https://github.com/tomacox74/js2il/issues/790), [#875](https://github.com/tomacox74/js2il/issues/875), [#876](https://github.com/tomacox74/js2il/issues/876), and [#877](https://github.com/tomacox74/js2il/issues/877)
+- **Track C (platform APIs):** [#790](https://github.com/tomacox74/js2il/issues/790), [#876](https://github.com/tomacox74/js2il/issues/876), and [#877](https://github.com/tomacox74/js2il/issues/877)
 
 This ordering keeps shared infrastructure (`stream`, `net`) ahead of the higher-level modules that depend on it.
 

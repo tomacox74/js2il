@@ -944,6 +944,11 @@ public class JavaScriptAstValidator : IAstValidator
                                         break;
                                     }
 
+                                    if (GlobalThisPropertyNames.Value.Contains(name))
+                                    {
+                                        break;
+                                    }
+
                                     ReportMissingGlobal(name, id, calledAsFunction: true);
                                     break;
                                 }
