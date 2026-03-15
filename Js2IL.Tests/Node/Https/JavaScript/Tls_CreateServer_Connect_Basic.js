@@ -5,7 +5,6 @@ const { certPem, keyPem } = require('./Tls_TestCertificates');
 
 const server = tls.createServer({ key: keyPem, cert: certPem }, (socket) => {
   socket.setEncoding('utf8');
-  console.log('server secure:' + socket.encrypted + ':' + socket.authorized);
   socket.end('pong');
 });
 
