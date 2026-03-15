@@ -17,6 +17,7 @@ server.listen(0, "127.0.0.1", function () {
   console.log("server ready:" + info.address + ":" + (info.port > 0));
 
   http.get("http://" + info.address + ":" + info.port + "/hello?name=js2il", function (res) {
+    res.setEncoding("utf8");
     console.log("status:" + res.statusCode);
     console.log("answer:" + res.headers["x-answer"]);
 
