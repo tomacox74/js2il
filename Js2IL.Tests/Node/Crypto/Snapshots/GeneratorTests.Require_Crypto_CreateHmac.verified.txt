@@ -1,0 +1,163 @@
+﻿// IL code: Require_Crypto_CreateHmac
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Require_Crypto_CreateHmac
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2167
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 267 (0x10b)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Require_Crypto_CreateHmac/Scope,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
+			[6] bool,
+			[7] object
+		)
+
+		IL_0000: newobj instance void Modules.Require_Crypto_CreateHmac/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.1
+		IL_0007: ldstr "crypto"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.s 4
+		IL_0013: ldloc.s 4
+		IL_0015: stloc.1
+		IL_0016: ldloc.1
+		IL_0017: ldstr "createHmac"
+		IL_001c: ldstr "sha256"
+		IL_0021: ldstr "key"
+		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_002b: stloc.s 4
+		IL_002d: ldloc.s 4
+		IL_002f: stloc.2
+		IL_0030: ldloc.2
+		IL_0031: ldstr "update"
+		IL_0036: ldstr "a"
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0040: pop
+		IL_0041: ldstr "bc"
+		IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_004b: stloc.s 5
+		IL_004d: ldloc.2
+		IL_004e: ldstr "update"
+		IL_0053: ldloc.s 5
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_005a: pop
+		IL_005b: ldloc.2
+		IL_005c: ldstr "digest"
+		IL_0061: ldstr "hex"
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_006b: stloc.s 4
+		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0072: ldstr "hmac sha256 hex:"
+		IL_0077: ldloc.s 4
+		IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_007e: pop
+		IL_007f: ldstr "key"
+		IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_0089: stloc.s 5
+		IL_008b: ldloc.1
+		IL_008c: ldstr "createHmac"
+		IL_0091: ldstr "sha1"
+		IL_0096: ldloc.s 5
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_009d: stloc.s 4
+		IL_009f: ldloc.s 4
+		IL_00a1: ldstr "update"
+		IL_00a6: ldstr "abc"
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b0: stloc.s 4
+		IL_00b2: ldloc.s 4
+		IL_00b4: ldstr "digest"
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00be: stloc.s 4
+		IL_00c0: ldloc.s 4
+		IL_00c2: stloc.3
+		IL_00c3: ldloc.3
+		IL_00c4: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
+		IL_00c9: stloc.s 6
+		IL_00cb: ldloc.s 6
+		IL_00cd: box [System.Runtime]System.Boolean
+		IL_00d2: stloc.s 7
+		IL_00d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d9: ldstr "hmac buffer:"
+		IL_00de: ldloc.s 7
+		IL_00e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00e5: pop
+		IL_00e6: ldloc.3
+		IL_00e7: ldstr "toString"
+		IL_00ec: ldstr "hex"
+		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f6: stloc.s 4
+		IL_00f8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00fd: ldstr "hmac sha1 hex:"
+		IL_0102: ldloc.s 4
+		IL_0104: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0109: pop
+		IL_010a: ret
+	} // end of method Require_Crypto_CreateHmac::__js_module_init__
+
+} // end of class Modules.Require_Crypto_CreateHmac
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2170
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Require_Crypto_CreateHmac::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

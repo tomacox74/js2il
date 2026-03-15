@@ -20,6 +20,16 @@ namespace JavaScriptRuntime.Node
             return new Hash(ResolveHashAlgorithm(text));
         }
 
+        public Hmac createHmac(object? algorithm, object? key)
+        {
+            if (algorithm is not string text)
+            {
+                throw new TypeError("The \"algorithm\" argument must be of type string");
+            }
+
+            return new Hmac(ResolveHashAlgorithm(text), CoerceBytes(key, null));
+        }
+
         public Buffer randomBytes(object? size)
         {
             var length = CoerceSize(size, "size");
@@ -46,10 +56,29 @@ namespace JavaScriptRuntime.Node
                     return (byte[])arrayBuffer.RawBytes.Clone();
                 case TypedArrayBase typedArray:
                     return CopyTypedArrayBytes(typedArray);
+                case DataView dataView:
+                    return CopyDataViewBytes(dataView);
                 case string text:
                     return Buffer.from(text, encoding).ToByteArray();
                 default:
                     return Buffer.from(DotNet2JSConversions.ToString(value), encoding).ToByteArray();
+            }
+        }
+
+        internal static byte[] CoerceBufferSourceBytes(object? value, string argumentName)
+        {
+            switch (value)
+            {
+                case Buffer buffer:
+                    return buffer.ToByteArray();
+                case ArrayBuffer arrayBuffer:
+                    return (byte[])arrayBuffer.RawBytes.Clone();
+                case TypedArrayBase typedArray:
+                    return CopyTypedArrayBytes(typedArray);
+                case DataView dataView:
+                    return CopyDataViewBytes(dataView);
+                default:
+                    throw new TypeError($"The \"{argumentName}\" argument must be an instance of ArrayBuffer, Buffer, TypedArray, or DataView");
             }
         }
 
@@ -71,21 +100,61 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        private static HashAlgorithmName ResolveHashAlgorithm(string algorithm)
+        internal static HashAlgorithmName ResolveWebCryptoDigestAlgorithm(object? algorithm)
+            => ResolveHashAlgorithm(
+                GetAlgorithmName(algorithm, "algorithm"),
+                allowMd5: false,
+                static () => new NotSupportedError("Unrecognized algorithm name"));
+
+        internal static HmacImportParameters ResolveHmacImportParameters(object? algorithm)
         {
-            var normalized = algorithm
-                .Trim()
-                .Replace("-", string.Empty, StringComparison.Ordinal)
-                .ToLowerInvariant();
+            if (algorithm is null || algorithm is JsNull)
+            {
+                throw new TypeError("The \"algorithm\" argument must be a string or object with a string \"name\" property");
+            }
+
+            var algorithmName = GetAlgorithmName(algorithm, "algorithm");
+            if (!string.Equals(NormalizeAlgorithmName(algorithmName), "hmac", StringComparison.Ordinal))
+            {
+                throw new NotSupportedError("Unrecognized algorithm name");
+            }
+
+            var hashValue = JavaScriptRuntime.ObjectRuntime.GetProperty(algorithm, "hash");
+            if (hashValue is null || hashValue is JsNull)
+            {
+                throw new TypeError("The HMAC algorithm requires a hash property");
+            }
+
+            var hashName = GetAlgorithmName(hashValue, "algorithm.hash");
+            return new HmacImportParameters(
+                ResolveHashAlgorithm(hashName, allowMd5: false, static () => new NotSupportedError("Unrecognized algorithm name")),
+                CanonicalizeWebCryptoHashName(hashName));
+        }
+
+        internal static void EnsureHmacAlgorithm(object? algorithm)
+        {
+            var algorithmName = GetAlgorithmName(algorithm, "algorithm");
+            if (!string.Equals(NormalizeAlgorithmName(algorithmName), "hmac", StringComparison.Ordinal))
+            {
+                throw new NotSupportedError("Unrecognized algorithm name");
+            }
+        }
+
+        private static HashAlgorithmName ResolveHashAlgorithm(string algorithm)
+            => ResolveHashAlgorithm(algorithm, allowMd5: true, static () => new Error("Digest method not supported"));
+
+        private static HashAlgorithmName ResolveHashAlgorithm(string algorithm, bool allowMd5, Func<Error> unsupportedErrorFactory)
+        {
+            var normalized = NormalizeAlgorithmName(algorithm);
 
             return normalized switch
             {
-                "md5" => HashAlgorithmName.MD5,
+                "md5" when allowMd5 => HashAlgorithmName.MD5,
                 "sha1" => HashAlgorithmName.SHA1,
                 "sha256" => HashAlgorithmName.SHA256,
                 "sha384" => HashAlgorithmName.SHA384,
                 "sha512" => HashAlgorithmName.SHA512,
-                _ => throw new Error("Digest method not supported"),
+                _ => throw unsupportedErrorFactory(),
             };
         }
 
@@ -124,6 +193,43 @@ namespace JavaScriptRuntime.Node
                 || value is ushort;
         }
 
+        private static string NormalizeAlgorithmName(string algorithm)
+            => algorithm
+                .Trim()
+                .Replace("-", string.Empty, StringComparison.Ordinal)
+                .ToLowerInvariant();
+
+        private static string GetAlgorithmName(object? algorithm, string argumentName)
+        {
+            if (algorithm is string text)
+            {
+                return text;
+            }
+
+            if (algorithm != null && algorithm is not JsNull)
+            {
+                var name = JavaScriptRuntime.ObjectRuntime.GetProperty(algorithm, "name");
+                if (name is string nameText)
+                {
+                    return nameText;
+                }
+            }
+
+            throw new TypeError($"The \"{argumentName}\" argument must be a string or object with a string \"name\" property");
+        }
+
+        private static string CanonicalizeWebCryptoHashName(string algorithm)
+        {
+            return NormalizeAlgorithmName(algorithm) switch
+            {
+                "sha1" => "SHA-1",
+                "sha256" => "SHA-256",
+                "sha384" => "SHA-384",
+                "sha512" => "SHA-512",
+                _ => throw new NotSupportedError("Unrecognized algorithm name"),
+            };
+        }
+
         private static byte[] CopyTypedArrayBytes(TypedArrayBase typedArray)
         {
             var byteOffset = (int)typedArray.byteOffset;
@@ -135,6 +241,20 @@ namespace JavaScriptRuntime.Node
 
             var copy = new byte[byteLength];
             global::System.Buffer.BlockCopy(typedArray.buffer.RawBytes, byteOffset, copy, 0, byteLength);
+            return copy;
+        }
+
+        private static byte[] CopyDataViewBytes(DataView dataView)
+        {
+            var byteOffset = (int)dataView.byteOffset;
+            var byteLength = (int)dataView.byteLength;
+            if (byteLength == 0)
+            {
+                return global::System.Array.Empty<byte>();
+            }
+
+            var copy = new byte[byteLength];
+            global::System.Buffer.BlockCopy(dataView.buffer.RawBytes, byteOffset, copy, 0, byteLength);
             return copy;
         }
 
@@ -154,6 +274,7 @@ namespace JavaScriptRuntime.Node
 
             RandomNumberGenerator.Fill(typedArray.buffer.RawBytes.AsSpan(byteOffset, byteLength));
         }
+
     }
 
     public sealed class Hash
@@ -204,12 +325,299 @@ namespace JavaScriptRuntime.Node
         }
     }
 
+    public sealed class Hmac
+    {
+        private IncrementalHash? _incrementalHash;
+
+        internal Hmac(HashAlgorithmName algorithmName, byte[] key)
+        {
+            _incrementalHash = IncrementalHash.CreateHMAC(algorithmName, key);
+        }
+
+        public Hmac update(object? data)
+            => update(data, null);
+
+        public Hmac update(object? data, object? inputEncoding)
+        {
+            EnsureNotDigested();
+            _incrementalHash!.AppendData(Crypto.CoerceBytes(data, inputEncoding));
+            return this;
+        }
+
+        public object digest()
+            => digest(null);
+
+        public object digest(object? outputEncoding)
+        {
+            EnsureNotDigested();
+
+            var hmac = _incrementalHash!;
+            var bytes = hmac.GetHashAndReset();
+            hmac.Dispose();
+            _incrementalHash = null;
+
+            if (outputEncoding == null || outputEncoding is JsNull)
+            {
+                return Buffer.FromBytes(bytes);
+            }
+
+            return Buffer.FromBytes(bytes).toString(outputEncoding);
+        }
+
+        private void EnsureNotDigested()
+        {
+            if (_incrementalHash == null)
+            {
+                throw new Error("Digest already called");
+            }
+        }
+    }
+
     public sealed class WebCryptoBridge
     {
+        private readonly SubtleCrypto _subtle = new();
+
+        public object subtle => _subtle;
+
         public object getRandomValues(object? target)
         {
             Crypto.FillRandomValues(target);
             return target!;
+        }
+    }
+
+    public sealed class SubtleCrypto
+    {
+        public object digest(object? algorithm, object? data)
+        {
+            try
+            {
+                var algorithmName = Crypto.ResolveWebCryptoDigestAlgorithm(algorithm);
+                var bytes = Crypto.CoerceBufferSourceBytes(data, "data");
+                using var hash = IncrementalHash.CreateHash(algorithmName);
+                hash.AppendData(bytes);
+                return Promise.resolve(new ArrayBuffer(hash.GetHashAndReset(), cloneBuffer: false))!;
+            }
+            catch (Error ex)
+            {
+                return Promise.reject(ex)!;
+            }
+        }
+
+        public object importKey(object? format, object? keyData, object? algorithm, object? extractable, object? keyUsages)
+        {
+            try
+            {
+                if (format is not string formatText)
+                {
+                    throw new TypeError("The \"format\" argument must be of type string");
+                }
+
+                if (!string.Equals(formatText, "raw", StringComparison.Ordinal))
+                {
+                    throw new NotSupportedError("Only raw secret keys are currently supported");
+                }
+
+                var importParameters = Crypto.ResolveHmacImportParameters(algorithm);
+                var keyBytes = Crypto.CoerceBufferSourceBytes(keyData, "keyData");
+                var usages = ParseKeyUsages(keyUsages);
+                var key = new CryptoKey(
+                    keyBytes,
+                    importParameters.HashAlgorithmName,
+                    importParameters.HashName,
+                    TypeUtilities.ToBoolean(extractable),
+                    usages);
+                return Promise.resolve(key)!;
+            }
+            catch (Error ex)
+            {
+                return Promise.reject(ex)!;
+            }
+        }
+
+        public object sign(object? algorithm, object? key, object? data)
+        {
+            try
+            {
+                Crypto.EnsureHmacAlgorithm(algorithm);
+                var cryptoKey = RequireHmacKey(key, "sign");
+                var bytes = Crypto.CoerceBufferSourceBytes(data, "data");
+                using var hmac = IncrementalHash.CreateHMAC(cryptoKey.HashAlgorithmName, cryptoKey.KeyBytes);
+                hmac.AppendData(bytes);
+                return Promise.resolve(new ArrayBuffer(hmac.GetHashAndReset(), cloneBuffer: false))!;
+            }
+            catch (Error ex)
+            {
+                return Promise.reject(ex)!;
+            }
+        }
+
+        public object verify(object? algorithm, object? key, object? signature, object? data)
+        {
+            try
+            {
+                Crypto.EnsureHmacAlgorithm(algorithm);
+                var cryptoKey = RequireHmacKey(key, "verify");
+                var signatureBytes = Crypto.CoerceBufferSourceBytes(signature, "signature");
+                var bytes = Crypto.CoerceBufferSourceBytes(data, "data");
+                using var hmac = IncrementalHash.CreateHMAC(cryptoKey.HashAlgorithmName, cryptoKey.KeyBytes);
+                hmac.AppendData(bytes);
+                var expected = hmac.GetHashAndReset();
+                return Promise.resolve(CryptographicOperations.FixedTimeEquals(signatureBytes, expected))!;
+            }
+            catch (Error ex)
+            {
+                return Promise.reject(ex)!;
+            }
+        }
+
+        private static CryptoKey RequireHmacKey(object? key, string requiredUsage)
+        {
+            if (key is not CryptoKey cryptoKey)
+            {
+                throw new TypeError("The \"key\" argument must be a CryptoKey");
+            }
+
+            if (!cryptoKey.SupportsUsage(requiredUsage))
+            {
+                throw new InvalidAccessError("Key does not support the requested operation");
+            }
+
+            return cryptoKey;
+        }
+
+        private static string[] ParseKeyUsages(object? keyUsages)
+        {
+            if (keyUsages is null || keyUsages is JsNull)
+            {
+                return global::System.Array.Empty<string>();
+            }
+
+            if (keyUsages is not System.Collections.IEnumerable enumerable || keyUsages is string)
+            {
+                throw new TypeError("The \"keyUsages\" argument must be an iterable of strings");
+            }
+
+            var usages = new System.Collections.Generic.List<string>();
+            foreach (var usage in enumerable)
+            {
+                if (usage is not string usageText)
+                {
+                    throw new TypeError("The \"keyUsages\" argument must contain only strings");
+                }
+
+                var normalized = usageText.Trim().ToLowerInvariant();
+                switch (normalized)
+                {
+                    case "sign":
+                    case "verify":
+                        if (!usages.Contains(normalized))
+                        {
+                            usages.Add(normalized);
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedError("Only HMAC \"sign\" and \"verify\" key usages are supported");
+                }
+            }
+
+            return usages.ToArray();
+        }
+    }
+
+    public sealed class CryptoKey
+    {
+        private readonly HmacKeyAlgorithm _algorithm;
+        private readonly JavaScriptRuntime.Array _usages;
+
+        internal CryptoKey(byte[] keyBytes, HashAlgorithmName hashAlgorithmName, string hashName, bool extractable, string[] usages)
+        {
+            KeyBytes = (byte[])keyBytes.Clone();
+            HashAlgorithmName = hashAlgorithmName;
+            _algorithm = new HmacKeyAlgorithm(hashName, keyBytes.Length * 8);
+            _usages = new JavaScriptRuntime.Array(usages);
+            this.extractable = extractable;
+        }
+
+        internal byte[] KeyBytes { get; }
+
+        internal HashAlgorithmName HashAlgorithmName { get; }
+
+        public string type => "secret";
+
+        public object algorithm => _algorithm;
+
+        public bool extractable { get; }
+
+        public object usages => _usages;
+
+        internal bool SupportsUsage(string usage)
+        {
+            foreach (var item in _usages)
+            {
+                if (item is string usageText && string.Equals(usageText, usage, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    public sealed class HmacKeyAlgorithm
+    {
+        private readonly HashAlgorithmDescriptor _hash;
+
+        internal HmacKeyAlgorithm(string hashName, int lengthBits)
+        {
+            _hash = new HashAlgorithmDescriptor(hashName);
+            length = lengthBits;
+        }
+
+        public string name => "HMAC";
+
+        public object hash => _hash;
+
+        public double length { get; }
+    }
+
+    public sealed class HashAlgorithmDescriptor
+    {
+        internal HashAlgorithmDescriptor(string hashName)
+        {
+            name = hashName;
+        }
+
+        public string name { get; }
+    }
+
+    internal readonly struct HmacImportParameters
+    {
+        internal HmacImportParameters(HashAlgorithmName hashAlgorithmName, string hashName)
+        {
+            HashAlgorithmName = hashAlgorithmName;
+            HashName = hashName;
+        }
+
+        internal HashAlgorithmName HashAlgorithmName { get; }
+
+        internal string HashName { get; }
+    }
+
+    internal sealed class NotSupportedError : Error
+    {
+        internal NotSupportedError(string? message) : base(message)
+        {
+            Name = "NotSupportedError";
+        }
+    }
+
+    internal sealed class InvalidAccessError : Error
+    {
+        internal InvalidAccessError(string? message) : base(message)
+        {
+            Name = "InvalidAccessError";
         }
     }
 }
