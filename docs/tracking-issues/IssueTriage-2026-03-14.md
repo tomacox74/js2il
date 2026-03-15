@@ -1,4 +1,4 @@
-# Issue triage snapshot (2026-03-15)
+# Issue triage snapshot (2026-03-14)
 
 This file captures a point-in-time recommended ordering for all currently open GitHub issues.
 

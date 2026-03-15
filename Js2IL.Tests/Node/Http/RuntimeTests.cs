@@ -88,7 +88,7 @@ namespace Js2IL.Tests.Node.Http
         [Fact]
         public void HttpRequestOptions_TryGetUnsupportedFeatureMessage_ExpectHeader_ReturnsTrue()
         {
-            var supported = JavaScriptRuntime.Node.HttpRequestOptions.TryGetUnsupportedFeatureMessage(
+            var hasUnsupportedFeature = JavaScriptRuntime.Node.HttpRequestOptions.TryGetUnsupportedFeatureMessage(
                 "POST",
                 new Dictionary<string, string>
                 {
@@ -96,7 +96,7 @@ namespace Js2IL.Tests.Node.Http
                 },
                 out var message);
 
-            Assert.True(supported);
+            Assert.True(hasUnsupportedFeature);
             Assert.Contains("100-continue", message);
         }
 

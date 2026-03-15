@@ -28,7 +28,7 @@ Provides a practical HTTP/1.1 baseline on top of the runtime's node:net transpor
 | IncomingMessage | class | partial | [docs](https://nodejs.org/api/http.html#class-httpincomingmessage) |
 | ServerResponse | class | partial | [docs](https://nodejs.org/api/http.html#class-httpserverresponse) |
 | Server | class | partial | [docs](https://nodejs.org/api/http.html#class-httpserver) |
-| Agent | class | supported | [docs](https://nodejs.org/api/http.html#class-httpagent) |
+| Agent | class | partial | [docs](https://nodejs.org/api/http.html#class-httpagent) |
 
 ## API Details
 
