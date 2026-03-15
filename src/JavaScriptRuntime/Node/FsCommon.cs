@@ -162,7 +162,7 @@ namespace JavaScriptRuntime.Node
         {
             var spec = ResolveOpenSpec(flags, defaultFlags);
             var stream = OpenFileStream(path, spec.NormalizedFlags, defaultFlags, FileShare.ReadWrite);
-            return new FileHandle(path, spec.NormalizedFlags, stream, spec.Append, NextFileDescriptor(), scheduler);
+            return new FileHandle(path, stream, spec.Append, NextFileDescriptor(), scheduler);
         }
 
         internal static async Task CompleteOpenFileHandleAsync(IIOScheduler scheduler, string path, object? flags, PromiseWithResolvers promiseWithResolvers)

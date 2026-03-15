@@ -162,7 +162,7 @@ namespace JavaScriptRuntime.Node
             => createWriteStream(file, null);
 
         public object createWriteStream(object file, object? options)
-            => new FileWriteStream(file, options, IoScheduler);
+            => new FileWriteStream(file, options);
 
         // Callback-style async APIs (Node-style error-first callbacks).
 

@@ -15,13 +15,12 @@ namespace JavaScriptRuntime.Node
         private FileStream? _stream;
         private bool _closed;
 
-        internal FileHandle(string path, string flags, FileStream stream, bool append, int fileDescriptor, IIOScheduler ioScheduler)
+        internal FileHandle(string path, FileStream stream, bool append, int fileDescriptor, IIOScheduler ioScheduler)
         {
             _path = path;
             _append = append;
             _stream = stream;
             fd = fileDescriptor;
-            _ = flags;
             _ioScheduler = ioScheduler;
         }
 
@@ -451,13 +450,12 @@ namespace JavaScriptRuntime.Node
         private bool _closed;
         private bool _closeQueued;
 
-        internal FileWriteStream(object? path, object? options, IIOScheduler ioScheduler)
+        internal FileWriteStream(object? path, object? options)
         {
             _path = path?.ToString() ?? string.Empty;
             _flags = FsCommon.GetOption(options, "flags");
             _encoding = FsCommon.GetOption(options, "encoding");
             highWaterMark = FsCommon.GetIntOption(options, "highWaterMark", 16);
-            _ = ioScheduler;
 
             try
             {
