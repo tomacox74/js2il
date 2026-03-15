@@ -498,7 +498,7 @@ namespace JavaScriptRuntime.Node
                 throw new TypeError("The \"keyUsages\" argument must be an iterable of strings");
             }
 
-            var usages = new System.Collections.Generic.List<string>();
+            var usages = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
             foreach (var usage in enumerable)
             {
                 if (usage is not string usageText)
@@ -511,10 +511,7 @@ namespace JavaScriptRuntime.Node
                 {
                     case "sign":
                     case "verify":
-                        if (!usages.Contains(normalized))
-                        {
-                            usages.Add(normalized);
-                        }
+                        usages.Add(normalized);
                         break;
                     default:
                         throw new NotSupportedError("Only HMAC \"sign\" and \"verify\" key usages are supported");
@@ -532,7 +529,7 @@ namespace JavaScriptRuntime.Node
 
         internal CryptoKey(byte[] keyBytes, HashAlgorithmName hashAlgorithmName, string hashName, bool extractable, string[] usages)
         {
-            KeyBytes = (byte[])keyBytes.Clone();
+            KeyBytes = keyBytes;
             HashAlgorithmName = hashAlgorithmName;
             _algorithm = new HmacKeyAlgorithm(hashName, keyBytes.Length * 8);
             _usages = new JavaScriptRuntime.Array(usages);
