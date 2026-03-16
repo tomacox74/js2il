@@ -63,10 +63,10 @@
 ## 2. Practical Crypto Expansion ([#790](https://github.com/tomacox74/js2il/issues/790))
 
 - Current signal:
-  - `docs/nodejs/crypto.json` supports `createHash`, `randomBytes`, and `getRandomValues`, but not the broader crypto surface real apps use.
-- Minimum acceptance:
-  - Add a practical next slice such as `createHmac`, key-derivation APIs, signing/verification, or an initial `webcrypto.subtle` digest/import/sign subset.
-  - Keep the slice explicitly documented and test-backed rather than exposing broad placeholders with silent gaps.
+  - The selected closure slice is `createHmac(...)` plus a minimal `webcrypto.subtle` baseline for `digest(...)`, raw-key `importKey(...)`, and HMAC `sign(...)` / `verify(...)`.
+- Documentation boundary:
+  - Keep the delivered algorithm matrix explicit: Node `createHash` / `createHmac` for md5, sha1, sha256, sha384, sha512 and Web Crypto `digest` / HMAC raw import/sign/verify for SHA-1, SHA-256, SHA-384, and SHA-512.
+  - Continue to document remaining exclusions such as pbkdf2Sync, ciphers, asymmetric/X.509 flows, advanced key export/import, and the broader Web Crypto matrix rather than exposing broad placeholders with silent gaps.
 
 ## 3. Advanced File-system Handles and Stream APIs ([#873](https://github.com/tomacox74/js2il/issues/873))
 
