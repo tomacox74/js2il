@@ -127,4 +127,89 @@ public class ModuleLoaderTests
         Assert.Contains(Path.GetFileName(okPath), logger.Errors, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("requires strict mode", logger.Errors, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void LoadModules_StaticModuleSyntax_CreatesExplicitModuleRecordMetadata()
+    {
+        var fileSystem = new MockFileSystem();
+        var logger = new TestLogger();
+        var options = new CompilerOptions { Verbose = false };
+        var resolver = new NodeModuleResolver(fileSystem);
+        var loader = new ModuleLoader(options, fileSystem, resolver, logger);
+
+        var rootPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "root.mjs"));
+        var depPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rootPath)!, "dep.mjs"));
+
+        fileSystem.AddFile(rootPath, """
+"use strict";
+import { value as importedValue } from "./dep.mjs";
+export { importedValue as renamed };
+""");
+        fileSystem.AddFile(depPath, """
+"use strict";
+export const value = 1;
+""");
+
+        var modules = loader.LoadModules(rootPath);
+
+        Assert.NotNull(modules);
+        var record = modules!.rootModule.ModuleRecord;
+        Assert.NotNull(record);
+        Assert.Contains(record!.RequestedModules, request => request.Specifier == "./dep.mjs");
+        Assert.Contains(record.ImportEntries, entry =>
+            entry.Kind == ModuleImportKind.Named
+            && entry.ModuleRequest == "./dep.mjs"
+            && entry.LocalName == "importedValue"
+            && entry.ImportName == "value");
+        Assert.Contains(record.LocalExportEntries, entry =>
+            entry.Kind == ModuleExportKind.Local
+            && entry.ExportName == "renamed"
+            && entry.LocalName == "importedValue");
+    }
+
+    [Fact]
+    public void LinkModules_CyclicGraph_TracksLinkAndEvaluationPhases()
+    {
+        var fileSystem = new MockFileSystem();
+        var logger = new TestLogger();
+        var options = new CompilerOptions { Verbose = false };
+        var resolver = new NodeModuleResolver(fileSystem);
+        var loader = new ModuleLoader(options, fileSystem, resolver, logger);
+
+        var rootPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "main.mjs"));
+        var aPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rootPath)!, "a.mjs"));
+        var bPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rootPath)!, "b.mjs"));
+
+        fileSystem.AddFile(rootPath, """
+"use strict";
+import { aValue } from "./a.mjs";
+console.log(aValue);
+""");
+        fileSystem.AddFile(aPath, """
+"use strict";
+import { bValue } from "./b.mjs";
+export const aValue = "a";
+export function readB() { return bValue; }
+""");
+        fileSystem.AddFile(bPath, """
+"use strict";
+import { aValue } from "./a.mjs";
+export const bValue = "b";
+export function readA() { return aValue; }
+""");
+
+        var modules = loader.LoadModules(rootPath);
+
+        Assert.NotNull(modules);
+        Assert.True(loader.LinkModules(modules!, logger));
+        Assert.True(loader.PlanModuleEvaluation(modules!, logger));
+
+        var aModule = modules!._modules[aPath];
+        var bModule = modules._modules[bPath];
+        Assert.Equal(ModuleLinkPhase.Linked, aModule.ModuleRecord!.LinkPhase);
+        Assert.Equal(ModuleLinkPhase.Linked, bModule.ModuleRecord!.LinkPhase);
+        Assert.Equal(ModuleEvaluationPhase.Evaluated, aModule.ModuleRecord.EvaluationPhase);
+        Assert.Equal(ModuleEvaluationPhase.Evaluated, bModule.ModuleRecord.EvaluationPhase);
+        Assert.Equal(aModule.ModuleRecord.EvaluationComponent, bModule.ModuleRecord.EvaluationComponent);
+    }
 }

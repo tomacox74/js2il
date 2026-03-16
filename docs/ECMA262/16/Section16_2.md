@@ -4,9 +4,9 @@
 
 [Back to Section16](Section16.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-15T19:08:25Z
+> Last generated (UTC): 2026-03-16T00:20:51Z
 
-JS2IL supports a practical subset of module syntax by lowering top-level `import` / `export` declarations to the existing CommonJS runtime model and aligning literal dynamic `import()` with the same pragmatic namespace/default interop surface. Namespace objects, re-exports, and common cyclic/live-binding cases work via getter-based interop. This enables mixed CJS/ESM-style graphs for common patterns, but JS2IL does not implement full ECMA-262 module records, host hooks, top-level `await` / async-module evaluation, or import attributes.
+JS2IL supports a practical subset of module syntax by lowering top-level `import` / `export` declarations to the existing CommonJS runtime model and aligning literal dynamic `import()` with the same pragmatic namespace/default interop surface. The compiler now also builds explicit module-record metadata, performs separate link/evaluation planning passes, and resolves re-export graphs with cycle/ambiguity checks before IL generation. Namespace objects, re-exports, and common cyclic/live-binding cases work via getter-based interop, but host loading hooks, top-level `await` / async-module evaluation, and import attributes remain unsupported.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -19,30 +19,30 @@ JS2IL supports a practical subset of module syntax by lowering top-level `import
 | 16.2.1 | Module Semantics | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-module-semantics) |
 | 16.2.1.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-module-semantics-static-semantics-early-errors) |
 | 16.2.1.2 | Static Semantics: ImportedLocalNames ( importEntries ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-importedlocalnames) |
-| 16.2.1.3 | ModuleRequest Records | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-modulerequest-record) |
-| 16.2.1.3.1 | ModuleRequestsEqual ( left , right ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ModuleRequestsEqual) |
+| 16.2.1.3 | ModuleRequest Records | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-modulerequest-record) |
+| 16.2.1.3.1 | ModuleRequestsEqual ( left , right ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ModuleRequestsEqual) |
 | 16.2.1.4 | Static Semantics: ModuleRequests | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-modulerequests) |
-| 16.2.1.5 | Abstract Module Records | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-abstract-module-records) |
-| 16.2.1.5.1 | EvaluateModuleSync ( module ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-EvaluateModuleSync) |
-| 16.2.1.6 | Cyclic Module Records | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-cyclic-module-records) |
-| 16.2.1.6.1 | Implementation of Module Record Abstract Methods | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-cyclic-module-record-module-record-methods) |
+| 16.2.1.5 | Abstract Module Records | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-abstract-module-records) |
+| 16.2.1.5.1 | EvaluateModuleSync ( module ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-EvaluateModuleSync) |
+| 16.2.1.6 | Cyclic Module Records | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-cyclic-module-records) |
+| 16.2.1.6.1 | Implementation of Module Record Abstract Methods | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-cyclic-module-record-module-record-methods) |
 | 16.2.1.6.1.1 | LoadRequestedModules ( [ hostDefined ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-LoadRequestedModules) |
 | 16.2.1.6.1.1.1 | InnerModuleLoading ( state , module ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-InnerModuleLoading) |
 | 16.2.1.6.1.1.2 | ContinueModuleLoading ( state , moduleCompletion ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ContinueModuleLoading) |
-| 16.2.1.6.1.2 | Link ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-moduledeclarationlinking) |
-| 16.2.1.6.1.2.1 | InnerModuleLinking ( module , stack , index ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-InnerModuleLinking) |
-| 16.2.1.6.1.3 | Evaluate ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-moduleevaluation) |
-| 16.2.1.6.1.3.1 | InnerModuleEvaluation ( module , stack , index ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-innermoduleevaluation) |
+| 16.2.1.6.1.2 | Link ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-moduledeclarationlinking) |
+| 16.2.1.6.1.2.1 | InnerModuleLinking ( module , stack , index ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-InnerModuleLinking) |
+| 16.2.1.6.1.3 | Evaluate ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-moduleevaluation) |
+| 16.2.1.6.1.3.1 | InnerModuleEvaluation ( module , stack , index ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-innermoduleevaluation) |
 | 16.2.1.6.1.3.2 | ExecuteAsyncModule ( module ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-execute-async-module) |
 | 16.2.1.6.1.3.3 | GatherAvailableAncestors ( module , execList ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-gather-available-ancestors) |
 | 16.2.1.6.1.3.4 | AsyncModuleExecutionFulfilled ( module ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-async-module-execution-fulfilled) |
 | 16.2.1.6.1.3.5 | AsyncModuleExecutionRejected ( module , error ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-async-module-execution-rejected) |
 | 16.2.1.6.2 | Example Cyclic Module Record Graphs | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-example-cyclic-module-record-graphs) |
-| 16.2.1.7 | Source Text Module Records | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-source-text-module-records) |
+| 16.2.1.7 | Source Text Module Records | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-source-text-module-records) |
 | 16.2.1.7.1 | ParseModule ( sourceText , realm , hostDefined ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-parsemodule) |
-| 16.2.1.7.2 | Implementation of Module Record Abstract Methods | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-source-text-module-record-module-record-methods) |
-| 16.2.1.7.2.1 | GetExportedNames ( [ exportStarSet ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-getexportednames) |
-| 16.2.1.7.2.2 | ResolveExport ( exportName [ , resolveSet ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-resolveexport) |
+| 16.2.1.7.2 | Implementation of Module Record Abstract Methods | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-source-text-module-record-module-record-methods) |
+| 16.2.1.7.2.1 | GetExportedNames ( [ exportStarSet ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-getexportednames) |
+| 16.2.1.7.2.2 | ResolveExport ( exportName [ , resolveSet ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-resolveexport) |
 | 16.2.1.7.3 | Implementation of Cyclic Module Record Abstract Methods | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-source-text-module-record-cyclic-module-record-methods) |
 | 16.2.1.7.3.1 | InitializeEnvironment ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-source-text-module-record-initialize-environment) |
 | 16.2.1.7.3.2 | ExecuteModule ( [ capability ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-source-text-module-record-execute-module) |
@@ -85,7 +85,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Full module record/linking/evaluation model | Not Yet Supported |  | Current implementation parses module source with `ParseScript` plus a rewrite pass; it does not model full ECMA-262 module records, host hooks, or spec-accurate cyclic link/evaluate algorithms. That deeper follow-on remains tracked separately from the practical static/dynamic interop surface. |
+| Full module record/linking/evaluation model | Supported with Limitations | [`Import_LiveBindings_Cycle.js`](../../../Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js)<br>[`Import_ExportStarFrom.js`](../../../Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js)<br>[`Import_ExportStarFromMultiHop.js`](../../../Js2IL.Tests/Import/JavaScript/Import_ExportStarFromMultiHop.js) | JS2IL now materializes explicit module-record metadata, performs a separate graph-based linking pass, and plans evaluation order/components before IL generation. This covers module-request records, graph-driven `GetExportedNames` / `ResolveExport`, common cyclic graphs, and link-time ambiguity/missing-export diagnostics for the supported static ESM subset. The runtime still executes through the CommonJS-oriented host model, so host loading hooks, true `ParseModule`, top-level `await`, and async-module algorithms remain unsupported. |
 
 ### 16.2.1.12 ([tc39.es](https://tc39.es/ecma262/#sec-AllImportAttributesSupported))
 
@@ -103,18 +103,18 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Module body evaluation via CommonJS require and export getters | Supported with Limitations | [`Import_RequireEsmModule.js`](../../../Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule.js)<br>[`Import_LiveBindings_Cycle.js`](../../../Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js)<br>[`Import_ExportStarFrom.js`](../../../Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js) | Module bodies evaluate through generated CommonJS `require(...)` calls and getter-based export wiring. Common cyclic/live-binding cases are covered, but async module execution, top-level `await`, and spec-accurate linking/evaluation ordering are not implemented. |
+| Module body evaluation via CommonJS require and export getters | Supported with Limitations | [`Import_RequireEsmModule.js`](../../../Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule.js)<br>[`Import_LiveBindings_Cycle.js`](../../../Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js)<br>[`Import_ExportStarFrom.js`](../../../Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js) | Module bodies still evaluate through generated CommonJS `require(...)` calls and getter-based export wiring, but the compiler now plans evaluation order/components from the linked module graph before code generation. Common cyclic/live-binding cases and multi-hop re-export chains are covered for the supported static ESM subset. Async module execution and top-level `await` remain unsupported. |
 
 ### 16.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-imports))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Dynamic import() namespace/default interop | Supported with Limitations | [`Import_DynamicImport_Esm_Namespace.js`](../../../Js2IL.Tests/Import/JavaScript/Import_DynamicImport_Esm_Namespace.js)<br>[`Import_DynamicImport_Cjs_Namespace.js`](../../../Js2IL.Tests/Import/JavaScript/Import_DynamicImport_Cjs_Namespace.js) | Literal dynamic `import()` requests resolve through the existing CommonJS loader but now return the same pragmatic namespace/default projection used by the static ESM lowering. ESM-lowered modules resolve to their export object directly; CommonJS-style modules resolve to a cached synthetic namespace object that exposes `default`, `module.exports`, and getter-backed enumerable export keys. Full ECMA-262 module-record linking/evaluation semantics remain out of scope and are tracked separately. |
-| Top-level static import declarations | Supported with Limitations | [`Import_StaticImport_FromCjs.js`](../../../Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js)<br>[`Import_LiveBindings_Named.js`](../../../Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named.js)<br>[`Import_LiveBindings_Cycle.js`](../../../Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js)<br>[`Import_Namespace_Esm_Basic.js`](../../../Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js)<br>[`Import_Namespace_FromCjs_Stable.js`](../../../Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js) | Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls, and imported identifier reads are rewritten to live reads to better match ESM semantics. Namespace imports from ESM return the module export object; namespace imports from CommonJS return a cached synthetic namespace object whose properties forward through to the underlying exports (live values for keys present at namespace creation time). Imported bindings are treated as immutable; assignment/update/destructuring writes and `delete` of an imported binding are rejected at compile time. In this MVP, static import/export declarations must appear at top level and before non-directive top-level statements, and `with` clauses / import attributes are rejected. |
+| Top-level static import declarations | Supported with Limitations | [`Import_StaticImport_FromCjs.js`](../../../Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js)<br>[`Import_LiveBindings_Named.js`](../../../Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named.js)<br>[`Import_LiveBindings_Cycle.js`](../../../Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js)<br>[`Import_Namespace_Esm_Basic.js`](../../../Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js)<br>[`Import_Namespace_FromCjs_Stable.js`](../../../Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js) | Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls, and imported identifier reads are rewritten to live reads to better match ESM semantics. Namespace imports from ESM return the module export object; namespace imports from CommonJS return a cached synthetic namespace object whose properties forward through to the underlying exports (live values for keys present at namespace creation time). Imported bindings are treated as immutable; assignment/update/destructuring writes and `delete` of an imported binding are rejected at compile time. The compiler now validates ESM named/default imports against the linked module graph and reports missing or ambiguous re-export chains during linking. Static import/export declarations must still appear at top level and before non-directive top-level statements, and `with` clauses / import attributes are rejected. |
 
 ### 16.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-exports))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Top-level export declarations | Supported with Limitations | `Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule_Lib.mjs`<br>`Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named_Lib.mjs`<br>`Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle_A.mjs`<br>`Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle_B.mjs`<br>[`Import_ExportNamedFrom.js`](../../../Js2IL.Tests/Import/JavaScript/Import_ExportNamedFrom.js)<br>[`Import_ExportStarFrom.js`](../../../Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js)<br>`Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic_Lib.mjs`<br>`Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable_Lib.cjs` | Supported forms include named/default exports, `export ... from`, and `export *` re-exports. Exports are projected through CommonJS `exports` with getter-based wiring; export getters are installed before generated import `require(...)` calls to improve behavior for common cyclic graphs, but this is not a spec-accurate SourceTextModuleRecord link/evaluate implementation. |
+| Top-level export declarations | Supported with Limitations | `Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule_Lib.mjs`<br>`Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named_Lib.mjs`<br>`Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle_A.mjs`<br>`Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle_B.mjs`<br>[`Import_ExportNamedFrom.js`](../../../Js2IL.Tests/Import/JavaScript/Import_ExportNamedFrom.js)<br>[`Import_ExportStarFrom.js`](../../../Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js)<br>`Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic_Lib.mjs`<br>`Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable_Lib.cjs` | Supported forms include named/default exports, `export ... from`, and `export *` re-exports. Exports are projected through CommonJS `exports` with getter-based wiring, and the compiler now tracks explicit module export records so that named re-exports, multi-hop `export *` chains, and ambiguity failures are driven by the module graph instead of only by rewrite order. Export getters are still emitted into the existing CommonJS-oriented runtime, so host hooks, async module execution, and full SourceTextModuleRecord environment semantics remain out of scope. |
 

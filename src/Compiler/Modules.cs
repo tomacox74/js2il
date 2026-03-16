@@ -1,5 +1,6 @@
 using Acornima.Ast;
 using Js2IL.SymbolTables;
+using System;
 using System.Collections.Generic;
 
 namespace Js2IL;
@@ -51,14 +52,120 @@ public sealed class ModuleDefinition
     /// </summary>
     public List<ModuleDependency> Dependencies { get; } = new();
 
+    /// <summary>
+    /// Explicit module-record metadata extracted before static import/export lowering.
+    /// This is used for graph-driven link/evaluate planning.
+    /// </summary>
+    public ModuleRecord? ModuleRecord { get; set; }
+
     public SymbolTable? SymbolTable { get; set; }
 }
 
 public sealed class ModuleDependency
 {
+    public required string Request { get; set; }
+
     public required string ResolvedPath { get; set; }
 
     public string? RequestedAliasModuleId { get; set; }
+}
+
+public enum ModuleLinkPhase
+{
+    Unlinked,
+    Linking,
+    Linked,
+    LinkError
+}
+
+public enum ModuleEvaluationPhase
+{
+    Unevaluated,
+    Evaluating,
+    Evaluated,
+    EvaluationError
+}
+
+public enum ModuleImportKind
+{
+    SideEffect,
+    Default,
+    Named,
+    Namespace
+}
+
+public enum ModuleExportKind
+{
+    Local,
+    Default,
+    Indirect,
+    Star,
+    Namespace
+}
+
+public sealed class ModuleRequestRecord
+{
+    public required string Specifier { get; set; }
+
+    public required string ResolvedPath { get; set; }
+}
+
+public sealed class ModuleImportEntry
+{
+    public required ModuleImportKind Kind { get; set; }
+
+    public required string ModuleRequest { get; set; }
+
+    public string? LocalName { get; set; }
+
+    public string? ImportName { get; set; }
+}
+
+public sealed class ModuleExportEntry
+{
+    public required ModuleExportKind Kind { get; set; }
+
+    public required string ExportName { get; set; }
+
+    public string? LocalName { get; set; }
+
+    public string? ModuleRequest { get; set; }
+}
+
+public sealed class ModuleResolvedExport
+{
+    public required string ExportName { get; set; }
+
+    public required ModuleDefinition TargetModule { get; set; }
+
+    public required string BindingName { get; set; }
+
+    public required ModuleExportKind Kind { get; set; }
+}
+
+public sealed class ModuleRecord
+{
+    public List<ModuleRequestRecord> RequestedModules { get; } = new();
+
+    public List<ModuleImportEntry> ImportEntries { get; } = new();
+
+    public List<ModuleExportEntry> LocalExportEntries { get; } = new();
+
+    public List<ModuleExportEntry> IndirectExportEntries { get; } = new();
+
+    public List<ModuleExportEntry> StarExportEntries { get; } = new();
+
+    public Dictionary<string, ModuleResolvedExport> ResolvedExports { get; } = new(StringComparer.Ordinal);
+
+    public List<string> LinkErrors { get; } = new();
+
+    public ModuleLinkPhase LinkPhase { get; set; } = ModuleLinkPhase.Unlinked;
+
+    public ModuleEvaluationPhase EvaluationPhase { get; set; } = ModuleEvaluationPhase.Unevaluated;
+
+    public int EvaluationOrder { get; set; } = -1;
+
+    public int EvaluationComponent { get; set; } = -1;
 }
 
 public sealed class Modules

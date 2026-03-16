@@ -1,5 +1,6 @@
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
@@ -31,7 +32,45 @@ console.log(x);
         Assert.Contains("Cannot delete import binding 'x'", ex.Message);
     }
 
-    private static void Compile(string entrySource, string libSource)
+    [Fact]
+    public void Import_MissingNamedExport_ShouldFailLinkPhase()
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() => Compile("""
+"use strict";
+import { missing } from "./lib.mjs";
+console.log(missing);
+""", libSource: """
+"use strict";
+export const present = 1;
+"""));
+
+        Assert.Contains("does not export 'missing'", ex.Message);
+    }
+
+    [Fact]
+    public void Import_AmbiguousStarReExport_ShouldFailLinkPhase()
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() => Compile(
+            """
+"use strict";
+import { shared } from "./lib.mjs";
+console.log(shared);
+""",
+            libSource: """
+"use strict";
+export * from "./a.mjs";
+export * from "./b.mjs";
+""",
+            additionalFiles: new Dictionary<string, string>
+            {
+                ["a.mjs"] = "\"use strict\";\nexport const shared = 'a';\n",
+                ["b.mjs"] = "\"use strict\";\nexport const shared = 'b';\n"
+            }));
+
+        Assert.Contains("exports 'shared' ambiguously", ex.Message);
+    }
+
+    private static void Compile(string entrySource, string libSource, Dictionary<string, string>? additionalFiles = null)
     {
         var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "ImportRewriteErrors", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
@@ -42,6 +81,20 @@ console.log(x);
         var mockFileSystem = new MockFileSystem();
         mockFileSystem.AddFile(entryPath, entrySource, null);
         mockFileSystem.AddFile(libPath, libSource, null);
+        if (additionalFiles != null)
+        {
+            foreach (var (relativePath, source) in additionalFiles)
+            {
+                var absolutePath = Path.Combine(root, relativePath);
+                var absoluteDirectory = Path.GetDirectoryName(absolutePath);
+                if (!string.IsNullOrWhiteSpace(absoluteDirectory))
+                {
+                    Directory.CreateDirectory(absoluteDirectory);
+                }
+
+                mockFileSystem.AddFile(absolutePath, source, null);
+            }
+        }
 
         var options = new CompilerOptions
         {
