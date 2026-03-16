@@ -47,6 +47,11 @@ namespace Js2IL.Tests.Node.TimersPromises
                 var immediateCause = Assert.IsType<AbortError>(immediateError.cause);
                 Assert.Equal("AbortError", immediateCause.name);
                 Assert.Equal("This operation was aborted", immediateCause.message);
+
+                var intervalPromise = Assert.IsType<JavaScriptRuntime.Promise>(timersPromises.setInterval(0, "interval-value"));
+                var intervalError = Assert.IsType<Error>(CaptureRejection(intervalPromise, eventLoop));
+                Assert.Equal("Error", intervalError.name);
+                Assert.Equal("node:timers/promises.setInterval is not supported yet.", intervalError.message);
             }
             finally
             {

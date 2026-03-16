@@ -15,7 +15,7 @@ namespace JavaScriptRuntime.Node
                 ?? throw new InvalidOperationException("IScheduler is not available for timers/promises.");
         }
 
-        public object? setTimeout(object delay, object? value = null, object? options = null)
+        public Promise setTimeout(object delay, object? value = null, object? options = null)
         {
             var deferred = Promise.withResolvers();
             object? signal;
@@ -94,7 +94,7 @@ namespace JavaScriptRuntime.Node
             return deferred.promise;
         }
 
-        public object? setImmediate(object? value = null, object? options = null)
+        public Promise setImmediate(object? value = null, object? options = null)
         {
             var deferred = Promise.withResolvers();
             object? signal;
@@ -173,12 +173,12 @@ namespace JavaScriptRuntime.Node
             return deferred.promise;
         }
 
-        public object? setInterval(object? delay = null, object? value = null, object? options = null)
+        public Promise setInterval(object? delay = null, object? value = null, object? options = null)
         {
             _ = delay;
             _ = value;
             _ = options;
-            return Promise.reject(new Error("node:timers/promises.setInterval is not supported yet."));
+            return (Promise)Promise.reject(new Error("node:timers/promises.setInterval is not supported yet."))!;
         }
 
         private static double CoerceDelay(object? delay)
