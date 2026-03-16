@@ -68,12 +68,6 @@ public sealed class Js2ILCompileTask : Microsoft.Build.Utilities.Task
             }
         }
 
-        if (!File.Exists(sourcePath))
-        {
-            Log.LogError($"Js2IL source '{sourcePath}' does not exist.");
-            return false;
-        }
-
         if (!TryGetRequiredMetadata(source, "ResolvedOutputDirectory", out var outputDirectory))
         {
             return false;
@@ -234,7 +228,13 @@ public sealed class Js2ILCompileTask : Microsoft.Build.Utilities.Task
         }
 
         var extension = Path.GetExtension(trimmed);
-        return !KnownJavaScriptSourceExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase);
+        if (!string.IsNullOrEmpty(extension)
+            && KnownJavaScriptSourceExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private bool EnsureDiagnosticDirectoryExists(string? diagnosticFilePath)

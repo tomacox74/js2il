@@ -562,7 +562,7 @@ public class Js2ILSdkPackageTests
             var compiledModulePath = Path.Combine(AppContext.BaseDirectory, "index.dll");
             var asm = Assembly.LoadFrom(compiledModulePath);
             var moduleIds = JsEngine.GetModuleIds(asm);
-            Console.WriteLine($"hasModuleId={moduleIds.Contains("@scope/pkg", StringComparer.Ordinal)}");
+            Console.WriteLine($"hasModuleId={moduleIds.Contains("@scope/pkg")}");
 
             using dynamic exports = JsEngine.LoadModule(asm, moduleId: "@scope/pkg");
             Console.WriteLine($"value={exports.value}");
