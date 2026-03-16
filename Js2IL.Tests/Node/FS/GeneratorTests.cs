@@ -51,6 +51,10 @@ namespace Js2IL.Tests.Node.FS
             nameof(FSPromises_Open_Read_Write_Close));
 
         [Fact]
+        public Task FSPromises_Open_ExplicitPosition_DoesNotMoveOffset() => GenerateTest(
+            nameof(FSPromises_Open_ExplicitPosition_DoesNotMoveOffset));
+
+        [Fact]
         public Task FS_Open_Callback_FileHandle() => GenerateTest(
             nameof(FS_Open_Callback_FileHandle));
 
@@ -73,6 +77,10 @@ namespace Js2IL.Tests.Node.FS
         [Fact]
         public Task FSPromises_Append_Rename_Unlink() => GenerateTest(
             nameof(FSPromises_Append_Rename_Unlink));
+
+        [Fact]
+        public Task FSPromises_Rename_ExistingDirectory_Rejects() => GenerateTest(
+            nameof(FSPromises_Rename_ExistingDirectory_Rejects));
 
         [Fact]
         public Task FS_Append_Rename_Unlink_Callback() => GenerateTest(

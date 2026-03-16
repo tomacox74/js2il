@@ -246,6 +246,17 @@ namespace Js2IL.Tests.Node.FS
                 });
 
         [Fact]
+        public Task FSPromises_Open_ExplicitPosition_DoesNotMoveOffset()
+            => ExecutionTest(
+                nameof(FSPromises_Open_ExplicitPosition_DoesNotMoveOffset),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
         public Task FS_Open_Callback_FileHandle()
             => ExecutionTest(
                 nameof(FS_Open_Callback_FileHandle),
@@ -304,6 +315,17 @@ namespace Js2IL.Tests.Node.FS
         public Task FSPromises_Append_Rename_Unlink()
             => ExecutionTest(
                 nameof(FSPromises_Append_Rename_Unlink),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_Rename_ExistingDirectory_Rejects()
+            => ExecutionTest(
+                nameof(FSPromises_Rename_ExistingDirectory_Rejects),
                 configureSettings: s =>
                 {
                     s.AddScrubber(sb => sb.Replace('\\', '/'));

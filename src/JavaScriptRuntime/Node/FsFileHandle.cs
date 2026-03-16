@@ -117,13 +117,10 @@ namespace JavaScriptRuntime.Node
             try
             {
                 var stream = GetOpenStream();
-                if (position.HasValue)
-                {
-                    stream.Position = position.Value;
-                }
-
                 var temp = new byte[length];
-                var bytesRead = await stream.ReadAsync(temp, 0, length).ConfigureAwait(false);
+                var bytesRead = position.HasValue
+                    ? await RandomAccess.ReadAsync(stream.SafeFileHandle, temp.AsMemory(0, length), position.Value).ConfigureAwait(false)
+                    : await stream.ReadAsync(temp, 0, length).ConfigureAwait(false);
                 if (bytesRead > 0)
                 {
                     temp.AsSpan(0, bytesRead).CopyTo(buffer.AsWritableSpan().Slice(offset, bytesRead));
@@ -145,15 +142,6 @@ namespace JavaScriptRuntime.Node
             try
             {
                 var stream = GetOpenStream();
-                if (_append)
-                {
-                    stream.Seek(0, SeekOrigin.End);
-                }
-                else if (position.HasValue)
-                {
-                    stream.Position = position.Value;
-                }
-
                 byte[] bytes;
                 object? resultBuffer = data;
                 if (data is Buffer buffer)
@@ -173,7 +161,20 @@ namespace JavaScriptRuntime.Node
                     bytes = textEncoding.GetBytes(text);
                 }
 
-                await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                if (_append)
+                {
+                    stream.Seek(0, SeekOrigin.End);
+                    await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                }
+                else if (position.HasValue)
+                {
+                    await RandomAccess.WriteAsync(stream.SafeFileHandle, bytes.AsMemory(0, bytes.Length), position.Value).ConfigureAwait(false);
+                }
+                else
+                {
+                    await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                }
+
                 await stream.FlushAsync().ConfigureAwait(false);
 
                 dynamic result = new ExpandoObject();
@@ -333,7 +334,7 @@ namespace JavaScriptRuntime.Node
                     throw new Error("Path must be a non-empty string");
                 }
 
-                _stream = FsCommon.OpenFileStream(_path, _flags, defaultFlags: "r", share: FileShare.ReadWrite);
+                _stream = FsCommon.OpenFileStream(_path, _flags, defaultFlags: "r", share: FsCommon.NodeFileShare);
                 if (_start.HasValue)
                 {
                     _stream.Position = _start.Value;
@@ -395,10 +396,13 @@ namespace JavaScriptRuntime.Node
 
                 if (!destroyed)
                 {
-                    push(null);
                     CloseStream();
-                    EmitCloseOnce();
-                    NodeNetworkingCommon.ScheduleOnEventLoop(CompleteIo);
+                    push(null);
+                    NodeNetworkingCommon.ScheduleOnEventLoop(() =>
+                    {
+                        EmitCloseOnce();
+                        CompleteIo();
+                    });
                 }
             }
             catch (Exception ex)
@@ -461,7 +465,7 @@ namespace JavaScriptRuntime.Node
             {
                 var spec = FsCommon.ResolveOpenSpec(_flags, defaultFlags: "w");
                 _append = spec.Append;
-                _stream = FsCommon.OpenFileStream(_path, spec.NormalizedFlags, defaultFlags: "w", share: FileShare.Read);
+                _stream = FsCommon.OpenFileStream(_path, spec.NormalizedFlags, defaultFlags: "w", share: FsCommon.NodeFileShare);
             }
             catch (Exception ex)
             {

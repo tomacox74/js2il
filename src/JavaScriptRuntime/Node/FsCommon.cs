@@ -11,6 +11,7 @@ namespace JavaScriptRuntime.Node
     internal static class FsCommon
     {
         private static int _nextFileDescriptor = 17;
+        internal const FileShare NodeFileShare = FileShare.ReadWrite | FileShare.Delete;
 
         internal static bool GetBooleanOption(object? options, string propertyName)
         {
@@ -139,7 +140,7 @@ namespace JavaScriptRuntime.Node
             };
         }
 
-        internal static FileStream OpenFileStream(string path, object? flags, string defaultFlags = "r", FileShare share = FileShare.ReadWrite)
+        internal static FileStream OpenFileStream(string path, object? flags, string defaultFlags = "r", FileShare share = NodeFileShare)
         {
             var spec = ResolveOpenSpec(flags, defaultFlags);
             var stream = new FileStream(
@@ -158,10 +159,40 @@ namespace JavaScriptRuntime.Node
             return stream;
         }
 
+        internal static byte[] ReadAllBytesShared(string path)
+        {
+            using var stream = OpenFileStream(path, "r", share: NodeFileShare);
+            using var memory = new MemoryStream();
+            stream.CopyTo(memory);
+            return memory.ToArray();
+        }
+
+        internal static string ReadAllTextShared(string path, System.Text.Encoding encoding)
+        {
+            using var stream = OpenFileStream(path, "r", share: NodeFileShare);
+            using var reader = new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks: true);
+            return reader.ReadToEnd();
+        }
+
+        internal static async Task<byte[]> ReadAllBytesSharedAsync(string path)
+        {
+            await using var stream = OpenFileStream(path, "r", share: NodeFileShare);
+            using var memory = new MemoryStream();
+            await stream.CopyToAsync(memory).ConfigureAwait(false);
+            return memory.ToArray();
+        }
+
+        internal static async Task<string> ReadAllTextSharedAsync(string path, System.Text.Encoding encoding)
+        {
+            await using var stream = OpenFileStream(path, "r", share: NodeFileShare);
+            using var reader = new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks: true);
+            return await reader.ReadToEndAsync().ConfigureAwait(false);
+        }
+
         internal static FileHandle CreateFileHandle(string path, object? flags, IIOScheduler scheduler, string defaultFlags = "r")
         {
             var spec = ResolveOpenSpec(flags, defaultFlags);
-            var stream = OpenFileStream(path, spec.NormalizedFlags, defaultFlags, FileShare.ReadWrite);
+            var stream = OpenFileStream(path, spec.NormalizedFlags, defaultFlags, NodeFileShare);
             return new FileHandle(path, stream, spec.Append, NextFileDescriptor(), scheduler);
         }
 
@@ -182,7 +213,7 @@ namespace JavaScriptRuntime.Node
         {
             try
             {
-                var content = await File.ReadAllTextAsync(path, textEncoding).ConfigureAwait(false);
+                var content = await ReadAllTextSharedAsync(path, textEncoding).ConfigureAwait(false);
                 scheduler.EndIo(promiseWithResolvers, content, isError: false);
             }
             catch (Exception ex)
@@ -195,7 +226,7 @@ namespace JavaScriptRuntime.Node
         {
             try
             {
-                var bytes = await File.ReadAllBytesAsync(path).ConfigureAwait(false);
+                var bytes = await ReadAllBytesSharedAsync(path).ConfigureAwait(false);
                 var buffer = Buffer.FromBytes(bytes);
                 scheduler.EndIo(promiseWithResolvers, buffer, isError: false);
             }
@@ -235,7 +266,7 @@ namespace JavaScriptRuntime.Node
         {
             try
             {
-                await using var stream = OpenFileStream(path, "a", share: FileShare.ReadWrite);
+                await using var stream = OpenFileStream(path, "a", share: NodeFileShare);
                 await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
                 await stream.FlushAsync().ConfigureAwait(false);
                 scheduler.EndIo(promiseWithResolvers, null, isError: false);
@@ -250,7 +281,7 @@ namespace JavaScriptRuntime.Node
         {
             try
             {
-                await using var stream = OpenFileStream(path, "a", share: FileShare.ReadWrite);
+                await using var stream = OpenFileStream(path, "a", share: NodeFileShare);
                 var bytes = encoding.GetBytes(text);
                 await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
                 await stream.FlushAsync().ConfigureAwait(false);
@@ -309,9 +340,9 @@ namespace JavaScriptRuntime.Node
 
                     if (Directory.Exists(sourcePath))
                     {
-                        if (Directory.Exists(destinationPath))
+                        if (Directory.Exists(destinationPath) || File.Exists(destinationPath))
                         {
-                            Directory.Delete(destinationPath, recursive: true);
+                            throw new IOException("Destination already exists.");
                         }
 
                         Directory.Move(sourcePath, destinationPath);
@@ -406,6 +437,11 @@ namespace JavaScriptRuntime.Node
             if (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
                 return new Error($"ENOENT: no such file or directory, rename '{sourcePath}' -> '{destinationPath}'", ex);
+            }
+
+            if (Directory.Exists(sourcePath) && (Directory.Exists(destinationPath) || File.Exists(destinationPath)))
+            {
+                return new Error($"EPERM: operation not permitted, rename '{sourcePath}' -> '{destinationPath}'", ex);
             }
 
             if (ex is UnauthorizedAccessException)

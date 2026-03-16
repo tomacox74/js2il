@@ -117,10 +117,10 @@ namespace JavaScriptRuntime.Node
 
             if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
             {
-                return System.IO.File.ReadAllText(path, textEncoding!);
+                return FsCommon.ReadAllTextShared(path, textEncoding!);
             }
 
-            return Buffer.FromBytes(System.IO.File.ReadAllBytes(path));
+            return Buffer.FromBytes(FsCommon.ReadAllBytesShared(path));
         }
 
         // Overload supporting Node-style encoding option: 'utf8'
