@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.4 - 2026-03-16
+
 - compiler/runtime/tests: fix computed class elements follow-up gaps by treating non-literal computed names as runtime keys, preserving receiver semantics for `obj[key]()`, and aligning private accessor edge cases for class expressions plus getter-only/setter-only access.
 - compiler/runtime/spec/tests/docs: close issue #772 by lowering dynamic `import()` against canonical compiled-module ids, aligning the entry-module `require` context with the emitted module manifest, returning the same pragmatic ESM/CJS namespace-default projection from dynamic `import()` as the static ESM lowering, adding focused Import execution/generator coverage, and refreshing ECMA-262 tracking while leaving full module-record semantics to issue #857.
 - node/net/tests/docs: close issue #874 by emitting `Buffer` socket reads by default, keeping UTF-8 text mode opt-in via `setEncoding()`, adding `setTimeout()` / `setKeepAlive()` baselines plus `allowHalfOpen` delayed-response handling, keeping `setNoDelay()` as a compatibility no-op, and refreshing focused Node `net` coverage and tracking docs.
