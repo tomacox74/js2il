@@ -117,10 +117,10 @@ namespace JavaScriptRuntime.Node
 
             if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
             {
-                return System.IO.File.ReadAllText(path, textEncoding!);
+                return FsCommon.ReadAllTextShared(path, textEncoding!);
             }
 
-            return Buffer.FromBytes(System.IO.File.ReadAllBytes(path));
+            return Buffer.FromBytes(FsCommon.ReadAllBytesShared(path));
         }
 
         // Overload supporting Node-style encoding option: 'utf8'
@@ -152,7 +152,63 @@ namespace JavaScriptRuntime.Node
             return null!; // JS: undefined
         }
 
+        public object createReadStream(object file)
+            => createReadStream(file, null);
+
+        public object createReadStream(object file, object? options)
+            => new FileReadStream(file, options, IoScheduler);
+
+        public object createWriteStream(object file)
+            => createWriteStream(file, null);
+
+        public object createWriteStream(object file, object? options)
+            => new FileWriteStream(file, options);
+
         // Callback-style async APIs (Node-style error-first callbacks).
+
+        public object open(object[] args)
+        {
+            var srcArgs = args ?? System.Array.Empty<object>();
+            if (srcArgs.Length < 2)
+            {
+                throw new TypeError("The \"callback\" argument must be of type function");
+            }
+
+            var file = srcArgs[0];
+            object? flags = null;
+
+            var cbArg = srcArgs[srcArgs.Length - 1];
+            if (cbArg is not Delegate callback)
+            {
+                throw new TypeError("The \"callback\" argument must be of type function");
+            }
+
+            if (srcArgs.Length > 2)
+            {
+                flags = srcArgs[1];
+            }
+
+            var path = file?.ToString() ?? string.Empty;
+            var promiseWithResolvers = CreateCallbackPromiseWithResolvers(callback);
+            IoScheduler.BeginIo();
+
+            try
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    IoScheduler.EndIo(promiseWithResolvers, new Error("Path must be a non-empty string"), isError: true);
+                    return null!;
+                }
+
+                _ = FsCommon.CompleteOpenFileHandleAsync(IoScheduler, path, flags, promiseWithResolvers);
+                return null!;
+            }
+            catch (Exception ex)
+            {
+                IoScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateOpenError(path, ex), isError: true);
+                return null!;
+            }
+        }
 
         public object readFile(object[] args)
         {
@@ -276,6 +332,79 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        public object appendFile(object[] args)
+        {
+            var srcArgs = args ?? System.Array.Empty<object>();
+            if (srcArgs.Length < 3)
+            {
+                throw new TypeError("The \"callback\" argument must be of type function");
+            }
+
+            var file = srcArgs[0];
+            var content = srcArgs[1];
+            object? options = null;
+
+            var cbArg = srcArgs[srcArgs.Length - 1];
+            if (cbArg is not Delegate callback)
+            {
+                throw new TypeError("The \"callback\" argument must be of type function");
+            }
+
+            if (srcArgs.Length > 3)
+            {
+                options = srcArgs[2];
+            }
+
+            var path = file?.ToString() ?? string.Empty;
+            var promiseWithResolvers = CreateCallbackPromiseWithResolvers(callback);
+            IoScheduler.BeginIo();
+
+            try
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    IoScheduler.EndIo(promiseWithResolvers, new Error("Path must be a non-empty string"), isError: true);
+                    return null!;
+                }
+
+                if (content == null || content is JsNull)
+                {
+                    IoScheduler.EndIo(
+                        promiseWithResolvers,
+                        new TypeError("The \"data\" argument must be of type string or Buffer or TypedArray or DataView. Received null"),
+                        isError: true);
+                    return null!;
+                }
+
+                if (content is Buffer buffer)
+                {
+                    _ = FsCommon.CompleteAppendFileBytesAsync(IoScheduler, path, buffer.ToByteArray(), promiseWithResolvers);
+                    return null!;
+                }
+
+                if (content is byte[] bytes)
+                {
+                    _ = FsCommon.CompleteAppendFileBytesAsync(IoScheduler, path, bytes, promiseWithResolvers);
+                    return null!;
+                }
+
+                var text = content?.ToString() ?? string.Empty;
+                if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
+                {
+                    _ = FsCommon.CompleteAppendFileTextAsync(IoScheduler, path, text, textEncoding!, promiseWithResolvers);
+                    return null!;
+                }
+
+                _ = FsCommon.CompleteAppendFileTextAsync(IoScheduler, path, text, FsEncodingOptions.Utf8NoBom, promiseWithResolvers);
+                return null!;
+            }
+            catch (Exception ex)
+            {
+                IoScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateWriteFileError(path, ex), isError: true);
+                return null!;
+            }
+        }
+
         public object copyFile(object[] args)
         {
             var srcArgs = args ?? System.Array.Empty<object>();
@@ -310,6 +439,80 @@ namespace JavaScriptRuntime.Node
             catch (Exception ex)
             {
                 IoScheduler.EndIo(promiseWithResolvers, new Error(ex.Message, ex), isError: true);
+                return null!;
+            }
+        }
+
+        public object rename(object[] args)
+        {
+            var srcArgs = args ?? System.Array.Empty<object>();
+            if (srcArgs.Length < 3)
+            {
+                throw new TypeError("The \"callback\" argument must be of type function");
+            }
+
+            var oldPath = srcArgs[0]?.ToString() ?? string.Empty;
+            var newPath = srcArgs[1]?.ToString() ?? string.Empty;
+            var cbArg = srcArgs[srcArgs.Length - 1];
+            if (cbArg is not Delegate callback)
+            {
+                throw new TypeError("The \"callback\" argument must be of type function");
+            }
+
+            var promiseWithResolvers = CreateCallbackPromiseWithResolvers(callback);
+            IoScheduler.BeginIo();
+
+            try
+            {
+                if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath))
+                {
+                    IoScheduler.EndIo(promiseWithResolvers, new Error("oldPath and newPath must be non-empty strings"), isError: true);
+                    return null!;
+                }
+
+                _ = FsCommon.CompleteRenameAsync(IoScheduler, oldPath, newPath, promiseWithResolvers);
+                return null!;
+            }
+            catch (Exception ex)
+            {
+                IoScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateRenameError(oldPath, newPath, ex), isError: true);
+                return null!;
+            }
+        }
+
+        public object unlink(object[] args)
+        {
+            var srcArgs = args ?? System.Array.Empty<object>();
+            if (srcArgs.Length < 2)
+            {
+                throw new TypeError("The \"callback\" argument must be of type function");
+            }
+
+            var file = srcArgs[0];
+            var cbArg = srcArgs[srcArgs.Length - 1];
+            if (cbArg is not Delegate callback)
+            {
+                throw new TypeError("The \"callback\" argument must be of type function");
+            }
+
+            var path = file?.ToString() ?? string.Empty;
+            var promiseWithResolvers = CreateCallbackPromiseWithResolvers(callback);
+            IoScheduler.BeginIo();
+
+            try
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    IoScheduler.EndIo(promiseWithResolvers, new Error("Path must be a non-empty string"), isError: true);
+                    return null!;
+                }
+
+                _ = FsCommon.CompleteUnlinkAsync(IoScheduler, path, promiseWithResolvers);
+                return null!;
+            }
+            catch (Exception ex)
+            {
+                IoScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateUnlinkError(path, ex), isError: true);
                 return null!;
             }
         }

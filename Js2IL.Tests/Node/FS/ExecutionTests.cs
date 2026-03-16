@@ -235,6 +235,116 @@ namespace Js2IL.Tests.Node.FS
                 });
 
         [Fact]
+        public Task FSPromises_Open_Read_Write_Close()
+            => ExecutionTest(
+                nameof(FSPromises_Open_Read_Write_Close),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_Open_ExplicitPosition_DoesNotMoveOffset()
+            => ExecutionTest(
+                nameof(FSPromises_Open_ExplicitPosition_DoesNotMoveOffset),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FS_Open_Callback_FileHandle()
+            => ExecutionTest(
+                nameof(FS_Open_Callback_FileHandle),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FS_CreateReadStream_Basic()
+            => ExecutionTest(
+                nameof(FS_CreateReadStream_Basic),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FS_CreateReadStream_Missing_Error()
+            => ExecutionTest(
+                nameof(FS_CreateReadStream_Missing_Error),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FS_CreateWriteStream_Basic()
+            => ExecutionTest(
+                nameof(FS_CreateWriteStream_Basic),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FS_CreateWriteStream_Missing_Error()
+            => ExecutionTest(
+                nameof(FS_CreateWriteStream_Missing_Error),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_Append_Rename_Unlink()
+            => ExecutionTest(
+                nameof(FSPromises_Append_Rename_Unlink),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_Rename_ExistingDirectory_Rejects()
+            => ExecutionTest(
+                nameof(FSPromises_Rename_ExistingDirectory_Rejects),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FS_Append_Rename_Unlink_Callback()
+            => ExecutionTest(
+                nameof(FS_Append_Rename_Unlink_Callback),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
         public Task FS_ReadFile_Callback_Utf8()
             => ExecutionTest(
                 nameof(FS_ReadFile_Callback_Utf8),

@@ -36,7 +36,12 @@ namespace JavaScriptRuntime.Node
 
         public HttpClientRequest request(object[] args)
         {
-            var options = HttpRequestOptions.Parse(args ?? System.Array.Empty<object>(), defaultMethod: "GET");
+            var options = HttpRequestOptions.Parse(
+                args ?? System.Array.Empty<object>(),
+                defaultMethod: "GET",
+                scheme: "http",
+                defaultPort: 80,
+                moduleName: "node:http");
             options.Agent ??= _globalAgent;
 
             if (options.Agent is bool agentBoolean)
@@ -233,7 +238,7 @@ namespace JavaScriptRuntime.Node
                 if (args.Length > 0 && args[0] is NetSocket socket)
                 {
                     emit("connection", socket);
-                    _ = new HttpServerConnectionState(this, socket);
+                    _ = new HttpServerConnectionState(this, socket, "node:http");
                 }
 
                 return null;
@@ -262,19 +267,21 @@ namespace JavaScriptRuntime.Node
             return this;
         }
 
-        private sealed class HttpServerConnectionState
+        internal sealed class HttpServerConnectionState
         {
-            private readonly HttpServer _server;
+            private readonly EventEmitter _server;
             private readonly NetSocket _socket;
+            private readonly string _moduleName;
             private readonly HttpMessageStreamDecoder _decoder = new(HttpMessageKind.Request);
             private HttpIncomingMessage? _activeRequest;
             private HttpServerResponse? _activeResponse;
             private bool _closed;
 
-            public HttpServerConnectionState(HttpServer server, NetSocket socket)
+            public HttpServerConnectionState(EventEmitter server, NetSocket socket, string moduleName)
             {
                 _server = server;
                 _socket = socket;
+                _moduleName = moduleName;
 
                 _socket.on("data", (Func<object[], object?[], object?>)((scopes, args) =>
                 {
@@ -342,7 +349,7 @@ namespace JavaScriptRuntime.Node
                     return;
                 }
 
-                if (HttpRequestOptions.TryGetUnsupportedFeatureMessage(head.Method, head.Headers, out var unsupportedMessage))
+                if (HttpRequestOptions.TryGetUnsupportedFeatureMessage(head.Method, head.Headers, _moduleName, out var unsupportedMessage))
                 {
                     WriteSimpleErrorResponse(501, "Not Implemented", unsupportedMessage);
                     _closed = true;
@@ -797,6 +804,7 @@ namespace JavaScriptRuntime.Node
     {
         private readonly HttpRequestOptions _options;
         private readonly HttpAgent? _agent;
+        private readonly Func<NetSocket>? _socketFactory;
         private readonly HttpMessageStreamDecoder _responseDecoder = new(HttpMessageKind.Response);
         private readonly List<byte[]> _pendingBodyChunks = new();
         private readonly Func<object[], object?[], object?> _onSocketConnect;
@@ -819,6 +827,7 @@ namespace JavaScriptRuntime.Node
         {
             _options = options;
             _agent = options.Agent as HttpAgent;
+            _socketFactory = options.SocketFactory;
 
             _onSocketConnect = (scopes, args) =>
             {
@@ -954,7 +963,7 @@ namespace JavaScriptRuntime.Node
                 return;
             }
 
-            if (HttpRequestOptions.TryGetUnsupportedFeatureMessage(_options.Method, _options.Headers, out var unsupportedMessage))
+            if (HttpRequestOptions.TryGetUnsupportedFeatureMessage(_options.Method, _options.Headers, _options.ModuleName, out var unsupportedMessage))
             {
                 throw new Error(unsupportedMessage);
             }
@@ -968,7 +977,7 @@ namespace JavaScriptRuntime.Node
             }
             else
             {
-                socket = new NetSocket();
+                socket = _socketFactory?.Invoke() ?? new NetSocket();
             }
 
             AttachSocket(socket);
@@ -1056,7 +1065,7 @@ namespace JavaScriptRuntime.Node
 
             if (!_options.Headers.ContainsKey("host"))
             {
-                _options.Headers["host"] = _options.Port == 80
+                _options.Headers["host"] = _options.Port == _options.DefaultPort
                     ? _options.Host
                     : $"{_options.Host}:{_options.Port.ToString(CultureInfo.InvariantCulture)}";
             }
@@ -1265,21 +1274,33 @@ namespace JavaScriptRuntime.Node
 
         public int Port { get; set; } = 80;
 
+        public int DefaultPort { get; set; } = 80;
+
         public string Path { get; set; } = "/";
 
         public string Method { get; set; } = "GET";
+
+        public string Scheme { get; set; } = "http";
+
+        public string ModuleName { get; set; } = "node:http";
 
         public Delegate? Callback { get; set; }
 
         public object? Agent { get; set; }
 
+        internal Func<NetSocket>? SocketFactory { get; set; }
+
         public Dictionary<string, string> Headers { get; } = new(StringComparer.OrdinalIgnoreCase);
 
-        public static HttpRequestOptions Parse(object[] args, string defaultMethod)
+        public static HttpRequestOptions Parse(object[] args, string defaultMethod, string scheme, int defaultPort, string moduleName)
         {
             var result = new HttpRequestOptions
             {
                 Method = defaultMethod,
+                Port = defaultPort,
+                DefaultPort = defaultPort,
+                Scheme = scheme,
+                ModuleName = moduleName,
             };
 
             if (args.Length == 0)
@@ -1293,7 +1314,7 @@ namespace JavaScriptRuntime.Node
 
             if (primary is string urlText)
             {
-                ApplyUrl(result, urlText);
+                ApplyUrl(result, urlText, scheme, defaultPort, moduleName);
                 if (secondary != null && secondary is not JsNull && secondary is not Delegate)
                 {
                     ApplyObjectOptions(result, secondary);
@@ -1323,29 +1344,29 @@ namespace JavaScriptRuntime.Node
             return result;
         }
 
-        internal static bool TryGetUnsupportedFeatureMessage(string method, IDictionary<string, string> headers, out string message)
+        internal static bool TryGetUnsupportedFeatureMessage(string method, IDictionary<string, string> headers, string moduleName, out string message)
         {
             if (string.Equals(method, "CONNECT", StringComparison.OrdinalIgnoreCase))
             {
-                message = "node:http CONNECT requests are not supported in the current runtime.";
+                message = $"{moduleName} CONNECT requests are not supported in the current runtime.";
                 return true;
             }
 
             if (headers.TryGetValue("upgrade", out var upgradeHeader) && !string.IsNullOrWhiteSpace(upgradeHeader))
             {
-                message = "node:http upgrade requests are not supported in the current runtime.";
+                message = $"{moduleName} upgrade requests are not supported in the current runtime.";
                 return true;
             }
 
             if (headers.TryGetValue("connection", out var connectionHeader) && HttpWireParser.HasToken(connectionHeader, "upgrade"))
             {
-                message = "node:http upgrade requests are not supported in the current runtime.";
+                message = $"{moduleName} upgrade requests are not supported in the current runtime.";
                 return true;
             }
 
             if (headers.TryGetValue("expect", out var expectHeader) && !string.IsNullOrWhiteSpace(expectHeader))
             {
-                message = "node:http Expect/100-continue flows are not supported in the current runtime.";
+                message = $"{moduleName} Expect/100-continue flows are not supported in the current runtime.";
                 return true;
             }
 
@@ -1353,7 +1374,7 @@ namespace JavaScriptRuntime.Node
             return false;
         }
 
-        private static void ApplyUrl(HttpRequestOptions options, string urlText)
+        private static void ApplyUrl(HttpRequestOptions options, string urlText, string scheme, int defaultPort, string moduleName)
         {
             Uri uri;
             try
@@ -1362,16 +1383,16 @@ namespace JavaScriptRuntime.Node
             }
             catch (UriFormatException ex)
             {
-                throw new TypeError($"Invalid URL '{urlText}' for node:http request.", ex);
+                throw new TypeError($"Invalid URL '{urlText}' for {moduleName} request.", ex);
             }
 
-            if (!string.Equals(uri.Scheme, "http", StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(uri.Scheme, scheme, StringComparison.OrdinalIgnoreCase))
             {
-                throw new Error("Only http:// URLs are supported by node:http in the current baseline.");
+                throw new Error($"Only {scheme}:// URLs are supported by {moduleName} in the current baseline.");
             }
 
             options.Host = uri.Host;
-            options.Port = uri.IsDefaultPort ? 80 : uri.Port;
+            options.Port = uri.IsDefaultPort ? defaultPort : uri.Port;
             options.Path = string.IsNullOrEmpty(uri.PathAndQuery) ? "/" : uri.PathAndQuery;
         }
 

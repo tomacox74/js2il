@@ -27,8 +27,6 @@ server.listen(0, "127.0.0.1", function () {
 
   client.on("end", function () {
     console.log("client end");
-    server.close(function () {
-      console.log("server closed");
-    });
+    server.close();
   });
 });

@@ -1917,6 +1917,11 @@ namespace Js2IL.SymbolTables
                     {
                         if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
                         {
+                            if (mdef.Computed)
+                            {
+                                CollectFreeVariables(mdef.Key, localVariables, targetVariables, result);
+                            }
+
                             // Process method body
                             if (mfunc.Body is BlockStatement mblock)
                             {
@@ -1928,10 +1933,48 @@ namespace Js2IL.SymbolTables
                         }
                         else if (element is PropertyDefinition propDef)
                         {
+                            if (propDef.Computed)
+                            {
+                                CollectFreeVariables(propDef.Key, localVariables, targetVariables, result);
+                            }
+
                             // Process field initializer expression
                             if (propDef.Value != null)
                             {
                                 CollectFreeVariables(propDef.Value, localVariables, targetVariables, result);
+                            }
+                        }
+                    }
+                    break;
+
+                case ClassExpression classExpr:
+                    foreach (var element in classExpr.Body.Body)
+                    {
+                        if (element is MethodDefinition classExprMethod && classExprMethod.Value is FunctionExpression classExprFunc)
+                        {
+                            if (classExprMethod.Computed)
+                            {
+                                CollectFreeVariables(classExprMethod.Key, localVariables, targetVariables, result);
+                            }
+
+                            if (classExprFunc.Body is BlockStatement classExprBlock)
+                            {
+                                foreach (var stmt in classExprBlock.Body)
+                                {
+                                    CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                                }
+                            }
+                        }
+                        else if (element is PropertyDefinition classExprProperty)
+                        {
+                            if (classExprProperty.Computed)
+                            {
+                                CollectFreeVariables(classExprProperty.Key, localVariables, targetVariables, result);
+                            }
+
+                            if (classExprProperty.Value != null)
+                            {
+                                CollectFreeVariables(classExprProperty.Value, localVariables, targetVariables, result);
                             }
                         }
                     }

@@ -141,6 +141,30 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        public Promise open(object file, object? flags = null, object? mode = null)
+        {
+            _ = mode;
+            var path = file?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                return (Promise)Promise.reject(new Error("Path must be a non-empty string"))!;
+            }
+
+            var promiseWithResolvers = Promise.withResolvers();
+            _ioScheduler.BeginIo();
+
+            try
+            {
+                _ = FsCommon.CompleteOpenFileHandleAsync(_ioScheduler, path, flags, promiseWithResolvers);
+                return promiseWithResolvers.promise;
+            }
+            catch (Exception ex)
+            {
+                _ioScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateOpenError(path, ex), isError: true);
+                return promiseWithResolvers.promise;
+            }
+        }
+
         public object? readFile(object file, object? options = null)
         {
             var path = file?.ToString() ?? string.Empty;
@@ -225,6 +249,100 @@ namespace JavaScriptRuntime.Node
             catch (Exception ex)
             {
                 _ioScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateWriteFileError(path, ex), isError: true);
+                return promiseWithResolvers.promise;
+            }
+        }
+
+        public Promise appendFile(object file, object? content, object? options = null)
+        {
+            var path = file?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                return (Promise)Promise.reject(new Error("Path must be a non-empty string"))!;
+            }
+
+            if (content == null || content is JsNull)
+            {
+                return (Promise)Promise.reject(new TypeError("The \"data\" argument must be of type string or Buffer or TypedArray or DataView. Received null"))!;
+            }
+
+            var promiseWithResolvers = Promise.withResolvers();
+            _ioScheduler.BeginIo();
+
+            try
+            {
+                if (content is Buffer buffer)
+                {
+                    _ = FsCommon.CompleteAppendFileBytesAsync(_ioScheduler, path, buffer.ToByteArray(), promiseWithResolvers);
+                    return promiseWithResolvers.promise;
+                }
+
+                if (content is byte[] bytes)
+                {
+                    _ = FsCommon.CompleteAppendFileBytesAsync(_ioScheduler, path, bytes, promiseWithResolvers);
+                    return promiseWithResolvers.promise;
+                }
+
+                var text = content?.ToString() ?? string.Empty;
+                if (FsEncodingOptions.TryGetTextEncoding(options, out var textEncoding))
+                {
+                    _ = FsCommon.CompleteAppendFileTextAsync(_ioScheduler, path, text, textEncoding!, promiseWithResolvers);
+                    return promiseWithResolvers.promise;
+                }
+
+                _ = FsCommon.CompleteAppendFileTextAsync(_ioScheduler, path, text, FsEncodingOptions.Utf8NoBom, promiseWithResolvers);
+                return promiseWithResolvers.promise;
+            }
+            catch (Exception ex)
+            {
+                _ioScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateWriteFileError(path, ex), isError: true);
+                return promiseWithResolvers.promise;
+            }
+        }
+
+        public Promise rename(object oldPath, object newPath)
+        {
+            var source = oldPath?.ToString() ?? string.Empty;
+            var destination = newPath?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(destination))
+            {
+                return (Promise)Promise.reject(new Error("oldPath and newPath must be non-empty strings"))!;
+            }
+
+            var promiseWithResolvers = Promise.withResolvers();
+            _ioScheduler.BeginIo();
+
+            try
+            {
+                _ = FsCommon.CompleteRenameAsync(_ioScheduler, source, destination, promiseWithResolvers);
+                return promiseWithResolvers.promise;
+            }
+            catch (Exception ex)
+            {
+                _ioScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateRenameError(source, destination, ex), isError: true);
+                return promiseWithResolvers.promise;
+            }
+        }
+
+        public Promise unlink(object file)
+        {
+            var path = file?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                return (Promise)Promise.reject(new Error("Path must be a non-empty string"))!;
+            }
+
+            var promiseWithResolvers = Promise.withResolvers();
+            _ioScheduler.BeginIo();
+
+            try
+            {
+                _ = FsCommon.CompleteUnlinkAsync(_ioScheduler, path, promiseWithResolvers);
+                return promiseWithResolvers.promise;
+            }
+            catch (Exception ex)
+            {
+                _ioScheduler.EndIo(promiseWithResolvers, FsCommon.TranslateUnlinkError(path, ex), isError: true);
                 return promiseWithResolvers.promise;
             }
         }

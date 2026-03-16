@@ -1,0 +1,280 @@
+﻿// IL code: TimersPromises_SetImmediate_AwaitsValue
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.TimersPromises_SetImmediate_AwaitsValue
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit main
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [JavaScriptRuntime]JavaScriptRuntime.AsyncScope
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 32 53 63 6f 70 65 20 5f 61 77 61 69 74 65
+				64 31 3d 7b 5f 61 77 61 69 74 65 64 31 7d 2c 20
+				5f 61 77 61 69 74 65 64 32 3d 7b 5f 61 77 61 69
+				74 65 64 32 7d 00 00
+			)
+			// Fields
+			.field public object _awaited1
+			.field public object _awaited2
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21b3
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object newTarget,
+				object timersPromises
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 02 00 00 00 00 00
+			)
+			// Method begins at RVA 0x209c
+			// Header size: 12
+			// Code size: 258 (0x102)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.TimersPromises_SetImmediate_AwaitsValue/main/Scope,
+				[1] object,
+				[2] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: isinst Modules.TimersPromises_SetImmediate_AwaitsValue/main/Scope
+			IL_0008: dup
+			IL_0009: brtrue IL_0045
+
+			IL_000e: pop
+			IL_000f: newobj instance void Modules.TimersPromises_SetImmediate_AwaitsValue/main/Scope::.ctor()
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: ldarg.0
+			IL_0017: call object[] [JavaScriptRuntime]JavaScriptRuntime.Promise::PrependScopeToArray(object, object[])
+			IL_001c: starg.s scopes
+			IL_001e: ldloc.0
+			IL_001f: ldnull
+			IL_0020: ldftn object Modules.TimersPromises_SetImmediate_AwaitsValue/main::__js_call__(object[], object, object)
+			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+			IL_002b: ldarg.0
+			IL_002c: ldc.i4.1
+			IL_002d: newarr [System.Runtime]System.Object
+			IL_0032: dup
+			IL_0033: ldc.i4.0
+			IL_0034: ldarg.2
+			IL_0035: stelem.ref
+			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindMoveNext(object, object[], object[])
+			IL_003b: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_0040: br IL_0046
+
+			IL_0045: stloc.0
+
+			IL_0046: ldloc.0
+			IL_0047: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_004c: brtrue IL_005d
+
+			IL_0051: ldloc.0
+			IL_0052: ldc.i4.1
+			IL_0053: newarr [System.Runtime]System.Object
+			IL_0058: stfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+
+			IL_005d: ldloc.0
+			IL_005e: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0063: ldc.i4.0
+			IL_0064: ble.s IL_0071
+
+			IL_0066: ldloc.0
+			IL_0067: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_006c: dup
+			IL_006d: ldc.i4.0
+			IL_006e: ldelem.ref
+			IL_006f: stloc.1
+			IL_0070: pop
+
+			IL_0071: ldloc.0
+			IL_0072: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0077: switch (IL_0084, IL_00c2)
+
+			IL_0084: ldarg.2
+			IL_0085: ldstr "setImmediate"
+			IL_008a: ldstr "immediate-value"
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0094: stloc.2
+			IL_0095: ldloc.0
+			IL_0096: ldc.i4.1
+			IL_0097: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_009c: ldloc.0
+			IL_009d: ldloc.2
+			IL_009e: ldarg.0
+			IL_009f: ldc.i4.1
+			IL_00a0: ldloc.0
+			IL_00a1: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_00a6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+			IL_00ab: ldloc.0
+			IL_00ac: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_00b1: dup
+			IL_00b2: ldc.i4.0
+			IL_00b3: ldloc.1
+			IL_00b4: stelem.ref
+			IL_00b5: pop
+			IL_00b6: ldloc.0
+			IL_00b7: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_00bc: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_00c1: ret
+
+			IL_00c2: ldloc.0
+			IL_00c3: ldfld object Modules.TimersPromises_SetImmediate_AwaitsValue/main/Scope::_awaited1
+			IL_00c8: stloc.2
+			IL_00c9: ldloc.2
+			IL_00ca: stloc.1
+			IL_00cb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00d0: ldloc.1
+			IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00d6: pop
+			IL_00d7: ldloc.0
+			IL_00d8: ldc.i4.m1
+			IL_00d9: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_00de: ldloc.0
+			IL_00df: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_00e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+			IL_00e9: ldarg.0
+			IL_00ea: ldc.i4.1
+			IL_00eb: newarr [System.Runtime]System.Object
+			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_00f5: pop
+			IL_00f6: ldloc.0
+			IL_00f7: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_00fc: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_0101: ret
+		} // end of method main::__js_call__
+
+	} // end of class main
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 11 53 63 6f 70 65 20 6d 61 69 6e 3d 7b 6d
+			61 69 6e 7d 00 00
+		)
+		// Fields
+		.field public object main
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x21aa
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 61 (0x3d)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.TimersPromises_SetImmediate_AwaitsValue/Scope,
+			[1] object,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Modules.TimersPromises_SetImmediate_AwaitsValue/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: ldftn object Modules.TimersPromises_SetImmediate_AwaitsValue/main::__js_call__(object[], object, object)
+		IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_001b: stloc.2
+		IL_001c: ldloc.2
+		IL_001d: stloc.1
+		IL_001e: ldarg.1
+		IL_001f: ldstr "node:timers/promises"
+		IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0029: stloc.2
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldloc.0
+		IL_0033: stelem.ref
+		IL_0034: ldnull
+		IL_0035: ldloc.2
+		IL_0036: call object Modules.TimersPromises_SetImmediate_AwaitsValue/main::__js_call__(object[], object, object)
+		IL_003b: pop
+		IL_003c: ret
+	} // end of method TimersPromises_SetImmediate_AwaitsValue::__js_module_init__
+
+} // end of class Modules.TimersPromises_SetImmediate_AwaitsValue
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21bc
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.TimersPromises_SetImmediate_AwaitsValue::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
