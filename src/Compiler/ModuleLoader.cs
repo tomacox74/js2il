@@ -2333,6 +2333,9 @@ function __js2il_esm_export(name, getter) {
             return ModuleExportResolution.NotFound();
         }
 
+        // CommonJS-shaped modules expose properties dynamically through the existing runtime interop,
+        // so the linker treats any requested name as potentially available instead of rejecting it
+        // with the stricter static ESM ResolveExport rules.
         if (IsDynamicExportSurface(module))
         {
             return ModuleExportResolution.Resolved(new ModuleResolvedExport
@@ -2537,6 +2540,8 @@ function __js2il_esm_export(name, getter) {
                 }
             }
 
+            // If low-link does not point back to this node's DFS index, this module is not the
+            // root of a strongly connected component yet, so leave it on the stack for its root.
             if (lowLinks[module.Path] != indices[module.Path])
             {
                 return;

@@ -55,6 +55,7 @@ public sealed class ModuleDefinition
     /// <summary>
     /// Explicit module-record metadata extracted before static import/export lowering.
     /// This is used for graph-driven link/evaluate planning.
+    /// This may remain null for legacy/common cases until the loader materializes a record.
     /// </summary>
     public ModuleRecord? ModuleRecord { get; set; }
 
