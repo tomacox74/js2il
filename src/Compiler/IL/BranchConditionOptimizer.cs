@@ -6,8 +6,8 @@ namespace Js2IL.IL;
 
 /// <summary>
 /// Optimizer for branch conditions.
-/// Inlines comparison operations directly into branch instructions when the comparison result
-/// is only used by that single branch, eliminating an unnecessary local variable.
+/// Inlines comparison operations directly into branch instructions when the result
+/// is only used by branch instructions, eliminating an unnecessary local variable.
 /// </summary>
 internal static class BranchConditionOptimizer
 {
@@ -27,8 +27,8 @@ internal static class BranchConditionOptimizer
     }
 
     /// <summary>
-    /// Marks comparison temps that are only used by branch instructions as non-materialized.
-    /// This allows us to emit the comparison inline with the branch, eliminating the local.
+    /// Marks branch-only condition temps as non-materialized.
+    /// This allows us to emit the condition inline with the branch, eliminating the local.
     /// </summary>
     public static void MarkBranchOnlyComparisonTemps(
         MethodBodyIR methodBody,
@@ -63,7 +63,7 @@ internal static class BranchConditionOptimizer
             }
         }
 
-        // Mark comparison temps that are only used once by a branch as non-materialized
+        // Mark branch-only condition temps that are only used once by a branch as non-materialized.
         if (shouldMaterializeTemp == null)
         {
             return; // Will be created fresh, no way to mark
@@ -83,7 +83,7 @@ internal static class BranchConditionOptimizer
     }
 
     /// <summary>
-    /// Returns true if the instruction is a comparison that produces a boolean result.
+    /// Returns true if the instruction can be emitted inline as a branch condition.
     /// </summary>
     public static bool IsComparisonInstruction(LIRInstruction instruction)
     {
@@ -94,7 +94,8 @@ internal static class BranchConditionOptimizer
             or LIRCompareNumberEqual
             or LIRCompareNumberNotEqual
             or LIRCompareBooleanEqual
-            or LIRCompareBooleanNotEqual;
+            or LIRCompareBooleanNotEqual
+            or LIRIsInstanceOf;
     }
 
     /// <summary>

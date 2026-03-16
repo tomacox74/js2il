@@ -17,6 +17,7 @@ internal static class LIRTypeNormalization
     {
         // Specialize IsTruthy calls regardless of whether a ClassRegistry is present.
         SpecializeIsTruthyCalls(methodBody);
+        RewriteTypeofFunctionBranchComparisons(methodBody);
 
         if (classRegistry == null)
         {
@@ -203,6 +204,91 @@ internal static class LIRTypeNormalization
         }
     }
 
+    private static void RewriteTypeofFunctionBranchComparisons(MethodBodyIR methodBody)
+    {
+        var knownTypeofOperands = new Dictionary<int, TempVariable>();
+        var knownConstStrings = new Dictionary<int, string>();
+
+        foreach (var instruction in methodBody.Instructions)
+        {
+            switch (instruction)
+            {
+                case LIRTypeof typeofInstruction when typeofInstruction.Result.Index >= 0:
+                    knownTypeofOperands[typeofInstruction.Result.Index] = typeofInstruction.Value;
+                    break;
+
+                case LIRConstString constString when constString.Result.Index >= 0:
+                    knownConstStrings[constString.Result.Index] = constString.Value;
+                    break;
+
+                case LIRCopyTemp copyTemp:
+                    if (copyTemp.Destination.Index >= 0
+                        && knownTypeofOperands.TryGetValue(copyTemp.Source.Index, out var typeofOperand))
+                    {
+                        knownTypeofOperands[copyTemp.Destination.Index] = typeofOperand;
+                    }
+
+                    if (copyTemp.Destination.Index >= 0
+                        && knownConstStrings.TryGetValue(copyTemp.Source.Index, out var constStringValue))
+                    {
+                        knownConstStrings[copyTemp.Destination.Index] = constStringValue;
+                    }
+                    break;
+            }
+        }
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            bool invertBranches;
+            TempVariable typeofSource;
+            TempVariable typeofResultTemp;
+            TempVariable constStringTemp;
+            TempVariable comparisonResult;
+
+            switch (methodBody.Instructions[i])
+            {
+                case LIRStrictEqualDynamic strictEqual:
+                    invertBranches = false;
+                    if (!TryMatchTypeofFunctionComparison(strictEqual.Left, strictEqual.Right, knownTypeofOperands, knownConstStrings, out typeofSource, out typeofResultTemp, out constStringTemp))
+                    {
+                        continue;
+                    }
+ 
+                    comparisonResult = strictEqual.Result;
+                    break;
+
+                case LIRStrictNotEqualDynamic strictNotEqual:
+                    invertBranches = true;
+                    if (!TryMatchTypeofFunctionComparison(strictNotEqual.Left, strictNotEqual.Right, knownTypeofOperands, knownConstStrings, out typeofSource, out typeofResultTemp, out constStringTemp))
+                    {
+                        continue;
+                    }
+
+                    comparisonResult = strictNotEqual.Result;
+                    break;
+
+                default:
+                    continue;
+            }
+
+            if (!TryGetBranchOnlyUses(methodBody, comparisonResult, ignoreInstructionIndex: i, out var branchUseIndices))
+            {
+                continue;
+            }
+
+            var isFunctionTemp = CreateTemp(methodBody, new ValueStorage(ValueStorageKind.Reference, typeof(Delegate)));
+            methodBody.Instructions[i] = new LIRIsInstanceOf(typeof(Delegate), typeofSource, isFunctionTemp);
+
+            foreach (var branchIndex in branchUseIndices)
+            {
+                methodBody.Instructions[branchIndex] = RewriteBranchCondition(methodBody.Instructions[branchIndex], isFunctionTemp, invertBranches);
+            }
+
+            RemoveDeadDefinitionChain(methodBody, typeofResultTemp);
+            RemoveDeadDefinitionChain(methodBody, constStringTemp);
+        }
+    }
+
     private static void CompactUnusedVariableSlots(MethodBodyIR methodBody)
     {
         int varCount = methodBody.VariableNames.Count;
@@ -347,6 +433,170 @@ internal static class LIRTypeNormalization
             }
         }
 
+        return false;
+    }
+
+    private static bool TryMatchTypeofFunctionComparison(
+        TempVariable left,
+        TempVariable right,
+        IReadOnlyDictionary<int, TempVariable> knownTypeofOperands,
+        IReadOnlyDictionary<int, string> knownConstStrings,
+        out TempVariable typeofSource,
+        out TempVariable typeofResultTemp,
+        out TempVariable constStringTemp)
+    {
+        if (TryMatchTypeofFunctionOperand(left, right, knownTypeofOperands, knownConstStrings, out typeofSource, out typeofResultTemp, out constStringTemp))
+        {
+            return true;
+        }
+
+        return TryMatchTypeofFunctionOperand(right, left, knownTypeofOperands, knownConstStrings, out typeofSource, out typeofResultTemp, out constStringTemp);
+    }
+
+    private static bool TryMatchTypeofFunctionOperand(
+        TempVariable typeofCandidate,
+        TempVariable stringCandidate,
+        IReadOnlyDictionary<int, TempVariable> knownTypeofOperands,
+        IReadOnlyDictionary<int, string> knownConstStrings,
+        out TempVariable typeofSource,
+        out TempVariable typeofResultTemp,
+        out TempVariable constStringTemp)
+    {
+        typeofSource = default;
+        typeofResultTemp = default;
+        constStringTemp = default;
+
+        if (!knownTypeofOperands.TryGetValue(typeofCandidate.Index, out typeofSource))
+        {
+            return false;
+        }
+
+        if (!knownConstStrings.TryGetValue(stringCandidate.Index, out var constString)
+            || !string.Equals(constString, "function", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        typeofResultTemp = typeofCandidate;
+        constStringTemp = stringCandidate;
+        return true;
+    }
+
+    private static bool TryGetBranchOnlyUses(MethodBodyIR methodBody, TempVariable temp, int ignoreInstructionIndex, out List<int> branchUseIndices)
+    {
+        branchUseIndices = new List<int>();
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (i == ignoreInstructionIndex)
+            {
+                continue;
+            }
+
+            var instruction = methodBody.Instructions[i];
+            var usesTemp = false;
+            foreach (var used in EnumerateTemps(instruction))
+            {
+                if (used.Index == temp.Index)
+                {
+                    usesTemp = true;
+                    break;
+                }
+            }
+
+            if (!usesTemp)
+            {
+                continue;
+            }
+
+            if (instruction is LIRBranchIfTrue or LIRBranchIfFalse)
+            {
+                branchUseIndices.Add(i);
+                continue;
+            }
+
+            branchUseIndices.Clear();
+            return false;
+        }
+
+        return branchUseIndices.Count > 0;
+    }
+
+    private static LIRInstruction RewriteBranchCondition(LIRInstruction instruction, TempVariable condition, bool invert)
+    {
+        return instruction switch
+        {
+            LIRBranchIfTrue branchIfTrue when invert => new LIRBranchIfFalse(condition, branchIfTrue.TargetLabel),
+            LIRBranchIfFalse branchIfFalse when invert => new LIRBranchIfTrue(condition, branchIfFalse.TargetLabel),
+            LIRBranchIfTrue branchIfTrue => branchIfTrue with { Condition = condition },
+            LIRBranchIfFalse branchIfFalse => branchIfFalse with { Condition = condition },
+            _ => instruction
+        };
+    }
+
+    private static TempVariable CreateTemp(MethodBodyIR methodBody, ValueStorage storage)
+    {
+        var temp = new TempVariable(methodBody.Temps.Count);
+        methodBody.Temps.Add(temp);
+        methodBody.TempStorages.Add(storage);
+        methodBody.TempVariableSlots.Add(-1);
+        return temp;
+    }
+
+    private static void RemoveDeadDefinitionChain(MethodBodyIR methodBody, TempVariable temp)
+    {
+        while (TryFindInstructionDefiningTemp(methodBody, temp, out var definitionIndex))
+        {
+            if (IsTempUsedOutside(methodBody, temp, definitionIndex))
+            {
+                return;
+            }
+
+            var instruction = methodBody.Instructions[definitionIndex];
+            TempVariable nextTemp = default;
+            bool continueChain = false;
+
+            switch (instruction)
+            {
+                case LIRCopyTemp copyTemp:
+                    nextTemp = copyTemp.Source;
+                    continueChain = true;
+                    break;
+
+                case LIRTypeof:
+                case LIRConstString:
+                    break;
+
+                default:
+                    return;
+            }
+
+            methodBody.Instructions.RemoveAt(definitionIndex);
+
+            if (!continueChain)
+            {
+                return;
+            }
+
+            temp = nextTemp;
+        }
+    }
+
+    private static bool TryFindInstructionDefiningTemp(MethodBodyIR methodBody, TempVariable temp, out int definitionIndex)
+    {
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            switch (methodBody.Instructions[i])
+            {
+                case LIRTypeof typeofInstruction when typeofInstruction.Result.Index == temp.Index:
+                case LIRConstString constString when constString.Result.Index == temp.Index:
+                case LIRCopyTemp copyTemp when copyTemp.Destination.Index == temp.Index:
+                    definitionIndex = i;
+                    return true;
+            }
+        }
+
+        definitionIndex = -1;
         return false;
     }
 

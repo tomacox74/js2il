@@ -83,4 +83,94 @@ public sealed class LIRTypeNormalizationTests
         Assert.IsType<LIRCallIsTruthyBool>(body.Instructions[1]);
         Assert.IsType<LIRCallIsTruthy>(body.Instructions[2]);
     }
+
+    [Fact]
+    public void Normalize_Rewrites_TypeofFunctionStrictEqual_BranchToIsInstanceOf()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var typeofResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var functionString = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var comparisonResult = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        int targetLabel = 7;
+
+        body.Instructions.Add(new LIRTypeof(value, typeofResult));
+        body.Instructions.Add(new LIRConstString("function", functionString));
+        body.Instructions.Add(new LIRStrictEqualDynamic(typeofResult, functionString, comparisonResult));
+        body.Instructions.Add(new LIRBranchIfFalse(comparisonResult, targetLabel));
+        body.Instructions.Add(new LIRLabel(targetLabel));
+
+        LIRTypeNormalization.Normalize(body, classRegistry: null);
+
+        Assert.Collection(
+            body.Instructions,
+            instruction =>
+            {
+                var isInstanceOf = Assert.IsType<LIRIsInstanceOf>(instruction);
+                Assert.Equal(typeof(Delegate), isInstanceOf.TargetType);
+                Assert.Equal(value, isInstanceOf.Value);
+            },
+            instruction =>
+            {
+                var branch = Assert.IsType<LIRBranchIfFalse>(instruction);
+                Assert.Equal(4, branch.Condition.Index);
+                Assert.Equal(targetLabel, branch.TargetLabel);
+            },
+            instruction => Assert.IsType<LIRLabel>(instruction));
+    }
+
+    [Fact]
+    public void Normalize_Rewrites_TypeofFunctionStrictNotEqual_BranchWithInvertedPolarity()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var typeofResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var functionString = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var comparisonResult = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        int targetLabel = 9;
+
+        body.Instructions.Add(new LIRTypeof(value, typeofResult));
+        body.Instructions.Add(new LIRConstString("function", functionString));
+        body.Instructions.Add(new LIRStrictNotEqualDynamic(typeofResult, functionString, comparisonResult));
+        body.Instructions.Add(new LIRBranchIfTrue(comparisonResult, targetLabel));
+        body.Instructions.Add(new LIRLabel(targetLabel));
+
+        LIRTypeNormalization.Normalize(body, classRegistry: null);
+
+        Assert.Collection(
+            body.Instructions,
+            instruction => Assert.IsType<LIRIsInstanceOf>(instruction),
+            instruction =>
+            {
+                var branch = Assert.IsType<LIRBranchIfFalse>(instruction);
+                Assert.Equal(4, branch.Condition.Index);
+                Assert.Equal(targetLabel, branch.TargetLabel);
+            },
+            instruction => Assert.IsType<LIRLabel>(instruction));
+    }
+
+    [Fact]
+    public void Normalize_DoesNotRewrite_TypeofFunctionStrictEqual_WhenResultUsedOutsideBranch()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var typeofResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var functionString = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var comparisonResult = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        var copiedComparison = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        int targetLabel = 11;
+
+        body.Instructions.Add(new LIRTypeof(value, typeofResult));
+        body.Instructions.Add(new LIRConstString("function", functionString));
+        body.Instructions.Add(new LIRStrictEqualDynamic(typeofResult, functionString, comparisonResult));
+        body.Instructions.Add(new LIRCopyTemp(comparisonResult, copiedComparison));
+        body.Instructions.Add(new LIRBranchIfTrue(comparisonResult, targetLabel));
+        body.Instructions.Add(new LIRLabel(targetLabel));
+
+        LIRTypeNormalization.Normalize(body, classRegistry: null);
+
+        Assert.IsType<LIRTypeof>(body.Instructions[0]);
+        Assert.IsType<LIRStrictEqualDynamic>(body.Instructions[2]);
+        Assert.IsType<LIRBranchIfTrue>(body.Instructions[4]);
+    }
 }
