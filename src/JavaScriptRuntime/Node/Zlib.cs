@@ -8,6 +8,9 @@ namespace JavaScriptRuntime.Node
     [NodeModule("zlib")]
     public sealed class Zlib
     {
+        private const string LevelTypeErrorMessage = "The \"level\" option must be a finite number between -1 and 9.";
+        private const string LevelRangeErrorMessage = "The \"level\" option must be between -1 and 9.";
+
         public Buffer gzipSync(object? data)
             => gzipSync(data, null);
 
@@ -96,20 +99,24 @@ namespace JavaScriptRuntime.Node
             }
             catch (Exception ex)
             {
-                throw new TypeError("The \"level\" option must be an integer between 0 and 9.", ex);
+                throw new TypeError(LevelTypeErrorMessage, ex);
             }
 
             if (double.IsNaN(numericLevel)
-                || double.IsInfinity(numericLevel)
-                || numericLevel != System.Math.Truncate(numericLevel)
-                || numericLevel < 0
-                || numericLevel > 9)
+                || double.IsInfinity(numericLevel))
             {
-                throw new RangeError("The \"level\" option must be an integer between 0 and 9.");
+                throw new RangeError(LevelRangeErrorMessage);
             }
 
-            return (int)numericLevel switch
+            var normalizedLevel = (int)numericLevel;
+            if (normalizedLevel < -1 || normalizedLevel > 9)
             {
+                throw new RangeError(LevelRangeErrorMessage);
+            }
+
+            return normalizedLevel switch
+            {
+                -1 => CompressionLevel.Optimal,
                 0 => CompressionLevel.NoCompression,
                 <= 3 => CompressionLevel.Fastest,
                 9 => CompressionLevel.SmallestSize,

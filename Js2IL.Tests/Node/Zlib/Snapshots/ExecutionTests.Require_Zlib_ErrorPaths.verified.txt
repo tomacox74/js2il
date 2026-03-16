@@ -1,4 +1,6 @@
-﻿gzip unsupported option threw: true
+﻿gzip level -1 roundtrip: abc
+gzip level 1.5 roundtrip: abc
+gzip unsupported option threw: true
 gzip unsupported option name: Error
 gzip unsupported option message: zlib.gzipSync does not yet support the "chunkSize" option.
 gunzip unsupported option threw: true
@@ -6,4 +8,13 @@ gunzip unsupported option name: Error
 gunzip unsupported option message: zlib.gunzipSync does not yet support the "flush" option.
 gzip bad level threw: true
 gzip bad level name: RangeError
-gzip bad level message: The "level" option must be an integer between 0 and 9.
+gzip bad level message: The "level" option must be between -1 and 9.
+gzip NaN level threw: true
+gzip NaN level name: RangeError
+gzip NaN level message: The "level" option must be between -1 and 9.
+gzip Infinity level threw: true
+gzip Infinity level name: RangeError
+gzip Infinity level message: The "level" option must be between -1 and 9.
+gunzip invalid data threw: true
+gunzip invalid data name: Error
+gunzip invalid data message length > 0: true

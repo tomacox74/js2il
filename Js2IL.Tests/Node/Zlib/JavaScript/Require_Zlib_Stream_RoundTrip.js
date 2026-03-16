@@ -4,7 +4,7 @@ const stream = require("node:stream");
 const zlib = require("node:zlib");
 
 const readable = new stream.Readable();
-const gzip = zlib.createGzip({ level: 1 });
+const gzip = zlib.createGzip({ level: -1 });
 const gunzip = zlib.createGunzip();
 const writable = new stream.Writable();
 

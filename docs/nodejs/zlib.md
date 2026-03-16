@@ -30,7 +30,7 @@ Provides a focused gzip baseline for common synchronous and Transform-stream-bas
 
 ### gzipSync(buffer[, options])
 
-Accepts Buffer, ArrayBuffer, typed-array, byte-array, and string inputs. Supports the `level` option (0-9) and returns a Buffer containing gzip-compressed bytes.
+Accepts Buffer, ArrayBuffer, typed-array, byte-array, and string inputs. Supports the `level` option in the `-1..9` range with Node-style numeric coercion/truncation and returns a Buffer containing gzip-compressed bytes.
 
 **Tests:**
 - `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_GzipSync_GunzipSync_RoundTrip` (`Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
@@ -50,7 +50,7 @@ Returns a Buffer containing the decompressed gzip payload. Deferred gunzip tunin
 
 ### createGzip([options])
 
-Returns a Transform-compatible gzip stream that buffers the current payload until end() and then emits a single compressed Buffer chunk. Supports the `level` option (0-9).
+Returns a Transform-compatible gzip stream that buffers the current payload until end() and then emits a single compressed Buffer chunk. Supports the `level` option in the `-1..9` range with Node-style numeric coercion/truncation.
 
 **Tests:**
 - `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_Stream_RoundTrip` (`Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)

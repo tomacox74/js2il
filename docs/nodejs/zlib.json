@@ -15,7 +15,7 @@
       "name": "gzipSync(buffer[, options])",
       "kind": "function",
       "status": "supported",
-      "notes": "Accepts Buffer, ArrayBuffer, typed-array, byte-array, and string inputs. Supports the `level` option (0-9) and returns a Buffer containing gzip-compressed bytes.",
+      "notes": "Accepts Buffer, ArrayBuffer, typed-array, byte-array, and string inputs. Supports the `level` option in the `-1..9` range with Node-style numeric coercion/truncation and returns a Buffer containing gzip-compressed bytes.",
       "docs": "https://nodejs.org/api/zlib.html#zlibgzipsyncbuffer-options",
       "tests": [
         {
@@ -65,7 +65,7 @@
       "name": "createGzip([options])",
       "kind": "function",
       "status": "supported",
-      "notes": "Returns a Transform-compatible gzip stream that buffers the current payload until end() and then emits a single compressed Buffer chunk. Supports the `level` option (0-9).",
+      "notes": "Returns a Transform-compatible gzip stream that buffers the current payload until end() and then emits a single compressed Buffer chunk. Supports the `level` option in the `-1..9` range with Node-style numeric coercion/truncation.",
       "docs": "https://nodejs.org/api/zlib.html#zlibcreategzipoptions",
       "tests": [
         {
