@@ -230,7 +230,7 @@ internal sealed class JsRuntimeInstance : IDisposable
             }
 
             // Configure engine services *for this thread*; the sync context/event loop are thread-affine.
-            var serviceProvider = Engine.ConfigureServiceProviderForCurrentThread(compiledAssembly);
+            var serviceProvider = Engine.ConfigureServiceProviderForCurrentThread(compiledAssembly, isHostedExecution: true);
             _serviceProvider = serviceProvider;
             _eventLoop = serviceProvider.Resolve<NodeEventLoopPump>();
 

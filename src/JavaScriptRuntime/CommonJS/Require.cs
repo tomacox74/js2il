@@ -135,6 +135,27 @@ namespace JavaScriptRuntime.CommonJS
             return RequireModule(resolved);
         }
 
+        internal object? ExecuteModuleAsMain(string parentModuleIdOrFilename, string requestedSpecifier)
+        {
+            if (string.IsNullOrWhiteSpace(requestedSpecifier))
+            {
+                throw new ReferenceError("require specifier must be a non-empty string");
+            }
+
+            var resolved = ResolveLocalSpecifier(parentModuleIdOrFilename, requestedSpecifier);
+            if (!TryResolveCompiledModule(resolved, out var canonicalId, out var typeName))
+            {
+                throw new ReferenceError($"Cannot find local module '{requestedSpecifier}' in the compiled assembly.");
+            }
+
+            return RequireCompiledModule(
+                canonicalId,
+                typeName,
+                requestKey: requestedSpecifier,
+                parentModuleOverride: null,
+                asMain: true);
+        }
+
         internal bool CanResolveLocalModule(string key)
         {
             if (string.IsNullOrWhiteSpace(key) || _localModulesAssembly == null)
@@ -162,15 +183,32 @@ namespace JavaScriptRuntime.CommonJS
             if (_localModulesAssembly == null)
                 throw new ReferenceError($"Cannot require local module '{key}': no local modules assembly provided");
 
-            // First: use compiler-emitted mapping attributes.
-            var moduleIdKey = NormalizeModuleIdKey(key);
-            var map = GetCompiledModuleTypeMap();
-            if (TryResolveFromMap(map, moduleIdKey, out var canonicalId, out var mappedTypeName))
+            if (!TryResolveCompiledModule(key, out var canonicalId, out var typeName))
             {
-                return RequireCompiledModule(canonicalId, mappedTypeName, requestKey: key);
+                var legacyModuleId = ModuleName.GetModuleIdFromSpecifier(key);
+                throw new ReferenceError($"Cannot find local module type 'Modules.{legacyModuleId}' (or legacy 'Scripts.{legacyModuleId}') in assembly");
             }
 
-            // Fallback: legacy sanitized type name lookup (Modules.<sanitized> / Scripts.<sanitized>)
+            return RequireCompiledModule(canonicalId, typeName, requestKey: key);
+        }
+
+        private bool TryResolveCompiledModule(string key, out string canonicalId, out string typeName)
+        {
+            canonicalId = string.Empty;
+            typeName = string.Empty;
+
+            if (_localModulesAssembly == null)
+            {
+                return false;
+            }
+
+            var moduleIdKey = NormalizeModuleIdKey(key);
+            var map = GetCompiledModuleTypeMap();
+            if (TryResolveFromMap(map, moduleIdKey, out canonicalId, out typeName))
+            {
+                return true;
+            }
+
             var legacyModuleId = ModuleName.GetModuleIdFromSpecifier(key);
             var moduleTypeNameCandidates = new[]
             {
@@ -178,25 +216,21 @@ namespace JavaScriptRuntime.CommonJS
                 $"Scripts.{legacyModuleId}",
             };
 
-            string? resolvedTypeName = null;
             foreach (var candidate in moduleTypeNameCandidates)
             {
                 var t = _localModulesAssembly.GetType(candidate);
                 if (t != null)
                 {
-                    resolvedTypeName = candidate;
-                    break;
+                    canonicalId = legacyModuleId;
+                    typeName = candidate;
+                    return true;
                 }
             }
 
-            if (resolvedTypeName == null)
-                throw new ReferenceError($"Cannot find local module type '{moduleTypeNameCandidates[0]}' (or legacy '{moduleTypeNameCandidates[1]}') in assembly");
-
-            // Legacy path: treat the legacyModuleId-derived key as canonical for relative resolution.
-            return RequireCompiledModule(legacyModuleId, resolvedTypeName, requestKey: key);
+            return false;
         }
 
-        private object? RequireCompiledModule(string canonicalId, string typeName, string requestKey)
+        private object? RequireCompiledModule(string canonicalId, string typeName, string requestKey, Module? parentModuleOverride = null, bool asMain = false)
         {
             if (_localModulesAssembly == null)
                 throw new ReferenceError($"Cannot require compiled module '{requestKey}': no local modules assembly provided");
@@ -204,11 +238,17 @@ namespace JavaScriptRuntime.CommonJS
             var cacheKey = "compiled:" + canonicalId;
             if (_instances.TryGetValue(cacheKey, out var existing))
             {
+                if (asMain && _modules.TryGetValue(cacheKey, out var cachedMainModule))
+                {
+                    _mainModule = cachedMainModule;
+                }
+
                 if (_modules.TryGetValue(cacheKey, out var existingModule))
                 {
-                    if (_currentParentModule != null)
+                    var parentModuleForCache = parentModuleOverride ?? _currentParentModule;
+                    if (parentModuleForCache != null && !asMain)
                     {
-                        _currentParentModule.AddChild(existingModule);
+                        parentModuleForCache.AddChild(existingModule);
                     }
 
                     return existingModule.exports;
@@ -223,7 +263,7 @@ namespace JavaScriptRuntime.CommonJS
                 throw new ReferenceError($"Cannot find compiled module type '{typeName}' in assembly");
             }
 
-            var parentModule = _currentParentModule;
+            var parentModule = parentModuleOverride ?? _currentParentModule;
 
             RequireDelegate moduleRequire = (moduleIdParam) =>
             {
@@ -238,7 +278,7 @@ namespace JavaScriptRuntime.CommonJS
 
             // Support common Node.js pattern: `if (require.main === module) { ... }`
             // Many scripts and tools rely on this to detect the entry module.
-            if (_mainModule != null)
+            if (!asMain && _mainModule != null)
             {
                 JavaScriptRuntime.ObjectRuntime.SetProperty(moduleRequire, "main", _mainModule);
             }
@@ -251,11 +291,17 @@ namespace JavaScriptRuntime.CommonJS
             }
 
             var dirName = Path.GetDirectoryName(moduleFilename) ?? string.Empty;
-            var module = new Module(canonicalId, moduleFilename, parentModule, moduleRequire);
+            var module = new Module(canonicalId, moduleFilename, asMain ? null : parentModule, moduleRequire);
+            if (asMain)
+            {
+                _mainModule = module;
+                JavaScriptRuntime.ObjectRuntime.SetProperty(moduleRequire, "main", module);
+            }
+
             _modules[cacheKey] = module;
             _instances[cacheKey] = module.exports ?? new object();
 
-            if (parentModule != null)
+            if (parentModule != null && !asMain)
             {
                 parentModule.AddChild(module);
             }
@@ -274,13 +320,25 @@ namespace JavaScriptRuntime.CommonJS
 
             var moduleDelegate = (ModuleMainDelegate)Delegate.CreateDelegate(typeof(ModuleMainDelegate), moduleEntryPoint);
 
+            var previousContext = ModuleContext.CreateModuleContext();
+            var previousDir = previousContext.__dirname;
+            var previousFile = previousContext.__filename;
+
             _currentParentModule = module;
             try
             {
+                if (asMain)
+                {
+                    ModuleContext.SetModuleContext(dirName, moduleFilename);
+                }
                 moduleDelegate(module.exports, moduleRequire, module, moduleFilename, dirName);
             }
             finally
             {
+                if (asMain)
+                {
+                    ModuleContext.SetModuleContext(previousDir, previousFile);
+                }
                 _currentParentModule = parentModule;
                 module.MarkLoaded();
             }

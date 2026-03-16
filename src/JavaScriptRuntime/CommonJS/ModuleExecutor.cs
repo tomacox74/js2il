@@ -113,4 +113,15 @@ internal sealed class ModuleExecutor
         // Mark main module as loaded
         mainModule.MarkLoaded();
     }
+
+    public void Execute([NotNull] ModuleMainDelegate scriptEntryPoint, string forkEntryModule)
+    {
+        ArgumentNullException.ThrowIfNull(scriptEntryPoint);
+        ArgumentException.ThrowIfNullOrWhiteSpace(forkEntryModule);
+
+        var requireService = _serviceProvider.Resolve<Require>();
+        var fallbackMainModuleId = ".";
+        var rootMainModuleId = ResolveMainModuleId(scriptEntryPoint, fallbackMainModuleId);
+        _ = requireService.ExecuteModuleAsMain(rootMainModuleId, forkEntryModule);
+    }
 }
