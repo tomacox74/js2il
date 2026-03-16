@@ -69,16 +69,22 @@ internal static class PortablePdbEmitter
             byte[]? sourceBytes = null;
             try
             {
-                if (File.Exists(documentId))
+                if (fileSystem.FileExists(documentId))
                 {
+                    // Use raw bytes for the concrete disk-backed file system so the checksum matches
+                    // the on-disk document exactly; in-memory test file systems only expose text.
+                    sourceBytes = fileSystem is FileSystem
+                        ? File.ReadAllBytes(documentId)
+                        : Encoding.UTF8.GetBytes(fileSystem.ReadAllText(documentId));
+                }
+                else if (File.Exists(documentId))
+                {
+                    // Some debug document ids intentionally point at a stable repo/on-disk source path
+                    // that is distinct from the compiler's logical file-system key.
                     sourceBytes = File.ReadAllBytes(documentId);
                 }
-                else if (fileSystem.FileExists(documentId))
-                {
-                    sourceBytes = Encoding.UTF8.GetBytes(fileSystem.ReadAllText(documentId));
-                }
             }
-            catch
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException)
             {
                 return false;
             }

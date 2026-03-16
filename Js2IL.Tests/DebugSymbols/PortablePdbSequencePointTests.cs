@@ -156,7 +156,7 @@ public class PortablePdbSequencePointTests
             .Where(mdi => mdi.Document == documentHandle && !mdi.SequencePointsBlob.IsNil)
             .ToList();
 
-        Assert.True(methodsForDocument.Count >= 2, "Expected both the module body and at least one nested callable to map back to the original JavaScript document.");
+        Assert.True(methodsForDocument.Count >= 2, "Expected at least two compiled methods to map back to the original JavaScript document (for example the module body plus nested callables).");
 
         var nonHiddenPoints = methodsForDocument
             .SelectMany(mdi => DecodeSequencePoints(pdbReader, mdi))
