@@ -120,7 +120,8 @@ public class Engine
         }
 
         var scheduler = serviceProvider.Resolve<NodeSchedulerState>();
-        var channel = ChildProcessIpcChannel.CreateClient(port, action => NodeNetworkingCommon.ScheduleOnEventLoop(scheduler, action));
+        var ioScheduler = serviceProvider.Resolve<IIOScheduler>();
+        var channel = ChildProcessIpcChannel.CreateClient(port, action => NodeNetworkingCommon.ScheduleImmediateOnEventLoop(scheduler, action), ioScheduler);
         channel.Start();
         serviceProvider.RegisterInstance(channel);
     }

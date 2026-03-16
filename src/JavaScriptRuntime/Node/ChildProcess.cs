@@ -314,14 +314,14 @@ namespace JavaScriptRuntime.Node
 
             if (TryGetBoolOption(options, "detached"))
             {
-                throw new NotSupportedException("child_process.fork does not support detached child processes in the current runtime.");
+                throw new Error("child_process.fork does not support detached child processes in the current runtime.");
             }
 
             var serialization = TryGetStringOption(options, "serialization");
             if (!string.IsNullOrWhiteSpace(serialization)
                 && !serialization.Equals("json", StringComparison.OrdinalIgnoreCase))
             {
-                throw new NotSupportedException("child_process.fork only supports JSON message serialization in the current runtime.");
+                throw new Error("child_process.fork only supports JSON message serialization in the current runtime.");
             }
 
             var assemblyPath = CommonJS.ModuleContext.CreateModuleContext().__filename;
@@ -340,7 +340,7 @@ namespace JavaScriptRuntime.Node
             var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.ForkDefault, allowIpc: true, apiName: "child_process.fork");
             if (!stdio.IpcEnabled)
             {
-                throw new NotSupportedException("child_process.fork requires an IPC channel. Include 'ipc' in stdio[3] or omit stdio to use the default fork configuration.");
+                throw new Error("child_process.fork requires an IPC channel. Include 'ipc' in stdio[3] or omit stdio to use the default fork configuration.");
             }
 
             var child = new ChildProcessHandle(stdio, QueueImmediate);
@@ -367,7 +367,9 @@ namespace JavaScriptRuntime.Node
                 try
                 {
                     child.Attach(process);
-                    child.AttachIpc(ChildProcessIpcChannel.CreateServer(listener, QueueImmediate));
+                    var ipcChannel = ChildProcessIpcChannel.CreateServer(listener, QueueImmediate, IoScheduler);
+                    child.AttachIpc(ipcChannel);
+                    ipcChannel.WaitUntilConnected(TimeSpan.FromSeconds(2));
                 }
                 catch
                 {
@@ -634,7 +636,7 @@ namespace JavaScriptRuntime.Node
 
         private void QueueImmediate(Action action)
         {
-            NodeNetworkingCommon.ScheduleOnEventLoop(NodeScheduler, action);
+            NodeNetworkingCommon.ScheduleImmediateOnEventLoop(NodeScheduler, action);
         }
 
         private static DiagnosticsProcessStartInfo BuildStartInfo(
@@ -896,6 +898,11 @@ namespace JavaScriptRuntime.Node
 
             if (TryCoerceArray(stdio, out var slots))
             {
+                if (!allowIpc)
+                {
+                    EnsureOnlySupportedStdioSlots(slots, apiName, firstUnsupportedIndex: 3);
+                }
+
                 return new StdioConfiguration(
                     ParseSlotMode(slots, 0, defaults.StdinMode, apiName),
                     ParseSlotMode(slots, 1, defaults.StdoutMode, apiName),
@@ -960,7 +967,7 @@ namespace JavaScriptRuntime.Node
                 }
             }
 
-            throw new NotSupportedException($"{apiName} only supports stdio values 'pipe', 'inherit', and 'ignore' for slots 0-2 in the current runtime.");
+            throw new Error($"{apiName} only supports stdio values 'pipe', 'inherit', and 'ignore' for slots 0-2 in the current runtime.");
         }
 
         private static bool ParseIpcSlot(object?[] slots, bool defaultValue, string apiName)
@@ -978,16 +985,16 @@ namespace JavaScriptRuntime.Node
 
             if (slot is string text && text.Equals("ipc", StringComparison.OrdinalIgnoreCase))
             {
-                EnsureOnlySupportedStdioSlots(slots, apiName);
+                EnsureOnlySupportedStdioSlots(slots, apiName, firstUnsupportedIndex: 4);
                 return true;
             }
 
-            throw new NotSupportedException($"{apiName} only supports 'ipc' as stdio[3] in the current runtime.");
+            throw new Error($"{apiName} only supports 'ipc' as stdio[3] in the current runtime.");
         }
 
-        private static void EnsureOnlySupportedStdioSlots(object?[] slots, string apiName)
+        private static void EnsureOnlySupportedStdioSlots(object?[] slots, string apiName, int firstUnsupportedIndex)
         {
-            for (int i = 4; i < slots.Length; i++)
+            for (int i = firstUnsupportedIndex; i < slots.Length; i++)
             {
                 var slot = slots[i];
                 if (slot == null || slot is JsNull)
@@ -995,7 +1002,9 @@ namespace JavaScriptRuntime.Node
                     continue;
                 }
 
-                throw new NotSupportedException($"{apiName} only supports stdio slots 0-2 plus an optional IPC slot at index 3 in the current runtime.");
+                throw new Error(firstUnsupportedIndex <= 3
+                    ? $"{apiName} only supports stdio slots 0-2 in the current runtime."
+                    : $"{apiName} only supports stdio slots 0-2 plus an optional IPC slot at index 3 in the current runtime.");
             }
         }
 
@@ -1122,7 +1131,7 @@ namespace JavaScriptRuntime.Node
 
             private void HandleIpcMessage(object? payload)
             {
-                QueueCallback(() => emit("message", payload));
+                emit("message", payload);
             }
 
             private void HandleIpcDisconnect()
@@ -1133,23 +1142,12 @@ namespace JavaScriptRuntime.Node
                 }
 
                 connected = false;
-                QueueCallback(() => emit("disconnect"));
+                emit("disconnect");
             }
 
             private void HandleIpcError(Exception ex)
             {
-                QueueCallback(() => emit("error", ex as Error ?? new Error(ex.Message, ex)));
-            }
-
-            private void QueueCallback(Action action)
-            {
-                if (_queueImmediate != null)
-                {
-                    _queueImmediate(action);
-                    return;
-                }
-
-                action();
+                emit("error", ex as Error ?? new Error(ex.Message, ex));
             }
 
             internal void CompleteSuccess(ProcessCompletionResult completion)
@@ -1291,7 +1289,7 @@ namespace JavaScriptRuntime.Node
                     return "SIGINT";
                 }
 
-                throw new NotSupportedException($"child.kill('{text}') is not supported in the current runtime. Supported signals are SIGTERM, SIGKILL, and SIGINT.");
+                throw new Error($"child.kill('{text}') is not supported in the current runtime. Supported signals are SIGTERM, SIGKILL, and SIGINT.");
             }
         }
 
@@ -1361,6 +1359,7 @@ namespace JavaScriptRuntime.Node
     internal sealed class ChildProcessIpcChannel : IDisposable
     {
         private readonly Action<Action> _queueImmediate;
+        private readonly IIOScheduler? _ioScheduler;
         private readonly TaskCompletionSource _connected = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly object _sync = new();
         private readonly TcpListener? _listener;
@@ -1372,16 +1371,18 @@ namespace JavaScriptRuntime.Node
         private int _disconnectSignaled;
         private bool _disposed;
 
-        private ChildProcessIpcChannel(TcpListener listener, Action<Action> queueImmediate)
+        private ChildProcessIpcChannel(TcpListener listener, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
         {
             _listener = listener;
             _queueImmediate = queueImmediate;
+            _ioScheduler = ioScheduler;
         }
 
-        private ChildProcessIpcChannel(int clientPort, Action<Action> queueImmediate)
+        private ChildProcessIpcChannel(int clientPort, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
         {
             _clientPort = clientPort;
             _queueImmediate = queueImmediate;
+            _ioScheduler = ioScheduler;
         }
 
         internal event Action<object?>? MessageReceived;
@@ -1390,11 +1391,11 @@ namespace JavaScriptRuntime.Node
 
         internal bool Connected => _connected.Task.IsCompletedSuccessfully && !_disposed;
 
-        internal static ChildProcessIpcChannel CreateServer(TcpListener listener, Action<Action> queueImmediate)
-            => new(listener, queueImmediate);
+        internal static ChildProcessIpcChannel CreateServer(TcpListener listener, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
+            => new(listener, queueImmediate, ioScheduler);
 
-        internal static ChildProcessIpcChannel CreateClient(int port, Action<Action> queueImmediate)
-            => new(port, queueImmediate);
+        internal static ChildProcessIpcChannel CreateClient(int port, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
+            => new(port, queueImmediate, ioScheduler);
 
         internal void Start()
         {
@@ -1435,6 +1436,14 @@ namespace JavaScriptRuntime.Node
         {
             SignalDisconnected();
             Dispose();
+        }
+
+        internal void WaitUntilConnected(TimeSpan timeout)
+        {
+            if (!_connected.Task.Wait(timeout))
+            {
+                throw new TimeoutException("Timed out waiting for the child_process IPC channel to connect.");
+            }
         }
 
         private async Task AcceptServerConnectionAsync(TcpListener listener)
@@ -1495,7 +1504,7 @@ namespace JavaScriptRuntime.Node
                     }
 
                     var payload = ChildProcessIpcSerializer.Deserialize(line);
-                    _queueImmediate(() => MessageReceived?.Invoke(payload));
+                    DispatchToEventLoop(payload);
                 }
             }
             catch (Exception ex)
@@ -1514,6 +1523,44 @@ namespace JavaScriptRuntime.Node
         private void EnsureConnected()
         {
             _connected.Task.GetAwaiter().GetResult();
+        }
+
+        private void DispatchToEventLoop(object? payload)
+        {
+            if (_ioScheduler != null)
+            {
+                var dispatch = CreateDispatchPromise();
+                _ioScheduler.BeginIo();
+                _ioScheduler.EndIo(dispatch, payload, isError: false);
+                return;
+            }
+
+            _queueImmediate(() => MessageReceived?.Invoke(payload));
+        }
+
+        private PromiseWithResolvers CreateDispatchPromise()
+        {
+            JsFunc1 resolve = (scopes, newTarget, value) =>
+            {
+                MessageReceived?.Invoke(value);
+                return null;
+            };
+
+            JsFunc1 reject = (scopes, newTarget, reason) =>
+            {
+                if (reason is Exception ex)
+                {
+                    Error?.Invoke(ex);
+                }
+                else if (reason != null)
+                {
+                    Error?.Invoke(new Error(reason.ToString() ?? "child_process IPC dispatch failed."));
+                }
+
+                return null;
+            };
+
+            return new PromiseWithResolvers(new Promise(), resolve, reject);
         }
 
         private void SignalDisconnected()
@@ -1625,7 +1672,7 @@ namespace JavaScriptRuntime.Node
                     }
                     return dictResult;
                 case Buffer or byte[]:
-                    throw new NotSupportedException("child_process IPC only supports JSON-serializable values in the current runtime. Buffer and binary payloads are not yet supported.");
+                    throw new Error("child_process IPC only supports JSON-serializable values in the current runtime. Buffer and binary payloads are not yet supported.");
             }
 
             if (JavaScriptRuntime.Object.GetEnumerableKeys(value) is JavaScriptRuntime.Array keys && keys.length > 0)
@@ -1645,7 +1692,7 @@ namespace JavaScriptRuntime.Node
                 return objectResult;
             }
 
-            throw new NotSupportedException($"child_process IPC only supports JSON-serializable values in the current runtime (received '{value.GetType().Name}').");
+            throw new Error($"child_process IPC only supports JSON-serializable values in the current runtime (received '{value.GetType().Name}').");
         }
     }
 }

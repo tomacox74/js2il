@@ -15,7 +15,7 @@
 
 ## Notes
 
-Provides synchronous process execution plus a minimal async ChildProcess surface with piped stdout/stderr capture, exit/close events, callback completion for exec/execFile, kill() on the returned handle, and basic stdio support for 'pipe', 'inherit', and 'ignore'.
+Provides synchronous process execution, async spawn/exec/execFile, and a documented fork baseline for compiled child modules in the current assembly. The supported slice includes JSON-only parent/child IPC (`child.on('message')`, `child.send(...)`, `process.on('message')`, `process.send(...)`), environment overlays, and basic signal/kill reporting with explicit diagnostics for unsupported detached, advanced serialization, and non-IPC stdio modes.
 
 ## APIs
 
@@ -24,6 +24,7 @@ Provides synchronous process execution plus a minimal async ChildProcess surface
 | spawn(command[, args][, options]) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processspawncommand-args-options) |
 | exec(command[, options][, callback]) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback) |
 | execFile(file[, args][, options][, callback]) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processexecfilefile-args-options-callback) |
+| fork(modulePath[, args][, options]) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processforkmodulepath-args-options) |
 | spawnSync(command, args, options) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options) |
 | execSync(command, options) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processexecsynccommand-options) |
 
@@ -55,10 +56,22 @@ Runs a file directly without an implicit shell and optionally invokes an error-f
 - `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_ExecFile_NonZero` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_ExecFile_NonZero` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
 
+### fork(modulePath[, args][, options])
+
+Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables a JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, and Node-internal IPC behaviors remain explicit unsupported diagnostics.
+
+**Tests:**
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_MessagePassing` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Kill_And_Env` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Unsupported_Options` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_MessagePassing` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Kill_And_Env` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Unsupported_Options` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+
 ### spawnSync(command, args, options)
 
-Supports cwd, shell, and stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling). Returns { status, stdout, stderr }.
+Supports cwd, shell, environment overrides, and stdio ('pipe'/'inherit'/'ignore' for the first three slots). Returns { status, stdout, stderr }.
 
 ### execSync(command, options)
 
-Supports cwd, stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling), and encoding ('utf8'). Throws an Error-like object with status/code/stdout/stderr on non-zero exit.
+Supports cwd, environment overrides, stdio ('pipe'/'inherit'/'ignore' for the first three slots), and encoding ('utf8'). Throws an Error-like object with status/code/stdout/stderr on non-zero exit.

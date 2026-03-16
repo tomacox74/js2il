@@ -50,7 +50,7 @@
 | 3 | [Advanced file-system handles and stream APIs](https://github.com/tomacox74/js2il/issues/873) | `fs`, `fs/promises` | [#873](https://github.com/tomacox74/js2il/issues/873) | `partial` | Whole-file APIs exist, but package managers, bundlers, and tooling often need `open`, FileHandle, append/rename/unlink, and file streams. |
 | 4 | [Promise-based timers and Abort-aware timer helpers](https://github.com/tomacox74/js2il/issues/875) | `timers/promises` | [#875](https://github.com/tomacox74/js2il/issues/875) | Not yet tracked in `docs/nodejs` | Timer globals are already solid and heavily exercised; the promise module is a high-value next layer for modern async Node code. |
 | 5 | [Compression support](https://github.com/tomacox74/js2il/issues/876) | `zlib` | [#876](https://github.com/tomacox74/js2il/issues/876) | Not yet tracked in `docs/nodejs` | Compression is a practical missing piece for HTTP interoperability, packaging flows, and many real Node dependencies. |
-| 6 | [Advanced child-process IPC and process-control parity](https://github.com/tomacox74/js2il/issues/877) | `child_process` | [#877](https://github.com/tomacox74/js2il/issues/877) | `partial` | The current spawn/exec baseline is useful, but many toolchains still need `fork()`, richer stdio semantics, IPC, and stronger signal/env behavior. |
+| 6 | [Advanced child-process IPC and process-control parity](https://github.com/tomacox74/js2il/issues/877) | `child_process` | [#877](https://github.com/tomacox74/js2il/issues/877) | `partial` | `fork()` with JSON IPC and supported kill/env/stdio baselines are now present, but detached process management, handle passing, and deeper Node-internal IPC semantics are still deferred. |
 
 ## Linked Issue Briefs
 
@@ -104,7 +104,7 @@
 ## 7. Advanced Child-process IPC and Process-control Parity ([#877](https://github.com/tomacox74/js2il/issues/877))
 
 - Current signal:
-  - `docs/nodejs/child_process.json` now covers `spawn`, `exec`, `execFile`, and sync variants, but not `fork()`, IPC, or richer stdio/process semantics.
+  - `docs/nodejs/child_process.json` now covers `spawn`, `exec`, `execFile`, sync variants, and a documented `fork()` baseline with JSON IPC and supported signal/env behavior. Remaining gaps are advanced serialization, detached lifecycle management, handle passing, and Node-internal IPC integrations.
 - Minimum acceptance:
   - Add `fork()` and a basic parent/child message channel.
   - Improve stdio, signal, and environment behavior enough for common build tools and test-runner patterns.
