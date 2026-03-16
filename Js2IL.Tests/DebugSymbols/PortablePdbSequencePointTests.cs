@@ -1,5 +1,7 @@
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using Xunit;
@@ -8,6 +10,9 @@ namespace Js2IL.Tests.DebugSymbols;
 
 public class PortablePdbSequencePointTests
 {
+    private static readonly Guid JavaScriptDocumentLanguage = new("3A12D0B8-C26C-11D0-B442-00A0244A1DD2");
+    private static readonly Guid Sha256DocumentHashAlgorithm = new("8829D00F-11B8-4213-878B-770E8597AC16");
+
     [Fact]
     public void SequencePoints_AreDecodedWithExpectedLineAndZeroBasedColumns()
     {
@@ -84,6 +89,83 @@ public class PortablePdbSequencePointTests
         {
             Assert.True(points[i].IlOffset >= points[i - 1].IlOffset, "Sequence point IL offsets must be non-decreasing.");
         }
+    }
+
+    [Fact]
+    public void Documents_IncludeJavaScriptMetadata_AndNestedMethodsMapBackToOriginalSource()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "PortablePdbDocumentMetadata", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(outputPath);
+
+        var jsPath = Path.Combine(outputPath, "metadata.js");
+        var dllPath = Path.Combine(outputPath, "metadata.dll");
+        var pdbPath = Path.Combine(outputPath, "metadata.pdb");
+
+        var js = "\"use strict\";\n" +
+                 "function outer(value) {\n" +
+                 "  const inner = (step) => {\n" +
+                 "    console.log(value + step);\n" +
+                 "  };\n" +
+                 "  inner(1);\n" +
+                 "}\n" +
+                 "outer(2);\n";
+
+        File.WriteAllText(jsPath, js);
+
+        var mockFs = new MockFileSystem();
+        mockFs.AddFile(jsPath, js);
+
+        var options = new CompilerOptions
+        {
+            OutputDirectory = outputPath,
+            EmitPdb = true
+        };
+
+        var logger = new TestLogger();
+        var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, logger);
+        var compiler = serviceProvider.GetRequiredService<Compiler>();
+
+        Assert.True(compiler.Compile(jsPath), $"Compilation failed. Errors: {logger.Errors}\nWarnings: {logger.Warnings}");
+        Assert.True(File.Exists(dllPath), $"Expected DLL at '{dllPath}'.");
+        Assert.True(File.Exists(pdbPath), $"Expected PDB at '{pdbPath}'.");
+
+        using var pdbStream = File.OpenRead(pdbPath);
+        using var provider = MetadataReaderProvider.FromPortablePdbStream(pdbStream);
+        var pdbReader = provider.GetMetadataReader();
+
+        var documentHandle = pdbReader.Documents
+            .FirstOrDefault(handle => string.Equals(
+                pdbReader.GetString(pdbReader.GetDocument(handle).Name),
+                jsPath,
+                StringComparison.OrdinalIgnoreCase));
+
+        Assert.False(documentHandle.IsNil, $"Expected a PDB document row for '{jsPath}'.");
+
+        var document = pdbReader.GetDocument(documentHandle);
+        Assert.False(document.Language.IsNil, "Expected the PDB document to include a language GUID.");
+        Assert.Equal(JavaScriptDocumentLanguage, pdbReader.GetGuid(document.Language));
+
+        Assert.False(document.HashAlgorithm.IsNil, "Expected the PDB document to include a checksum algorithm GUID.");
+        Assert.Equal(Sha256DocumentHashAlgorithm, pdbReader.GetGuid(document.HashAlgorithm));
+
+        var expectedHash = SHA256.HashData(Encoding.UTF8.GetBytes(js));
+        Assert.Equal(expectedHash, pdbReader.GetBlobBytes(document.Hash));
+
+        var methodsForDocument = pdbReader.MethodDebugInformation
+            .Select(handle => pdbReader.GetMethodDebugInformation(handle))
+            .Where(mdi => mdi.Document == documentHandle && !mdi.SequencePointsBlob.IsNil)
+            .ToList();
+
+        Assert.True(methodsForDocument.Count >= 2, "Expected both the module body and at least one nested callable to map back to the original JavaScript document.");
+
+        var nonHiddenPoints = methodsForDocument
+            .SelectMany(mdi => DecodeSequencePoints(pdbReader, mdi))
+            .Where(point => point.StartLine != SequencePoint.HiddenLine)
+            .ToList();
+
+        Assert.NotEmpty(nonHiddenPoints);
+        Assert.Contains(nonHiddenPoints, point => point.StartLine == 4);
+        Assert.Contains(nonHiddenPoints, point => point.StartLine > 4);
     }
 
     private static List<DecodedSequencePoint> DecodeSequencePoints(MetadataReader pdbReader, MethodDebugInformation mdi)

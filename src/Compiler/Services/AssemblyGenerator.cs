@@ -538,7 +538,8 @@ namespace Js2IL.Services
                 var pdbPath = Path.Combine(outputPath, $"{name}.pdb");
 
                 var debugRegistry = _serviceProvider.GetRequiredService<DebugSymbolRegistry>();
-                var (pdbContentId, portablePdbVersion) = PortablePdbEmitter.Emit(_metadataBuilder, debugRegistry, pdbPath, this._entryPoint);
+                var fileSystem = _serviceProvider.GetRequiredService<IFileSystem>();
+                var (pdbContentId, portablePdbVersion) = PortablePdbEmitter.Emit(_metadataBuilder, debugRegistry, fileSystem, pdbPath, this._entryPoint);
 
                 debugDirectoryBuilder = new DebugDirectoryBuilder();
                 debugDirectoryBuilder.AddCodeViewEntry(Path.GetFileName(pdbPath), pdbContentId, portablePdbVersion);

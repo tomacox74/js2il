@@ -6,20 +6,27 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 
 namespace Js2IL.DebugSymbols;
 
 internal static class PortablePdbEmitter
 {
+    private static readonly Guid JavaScriptDocumentLanguage = new("3A12D0B8-C26C-11D0-B442-00A0244A1DD2");
+    private static readonly Guid Sha256DocumentHashAlgorithm = new("8829D00F-11B8-4213-878B-770E8597AC16");
+
     public static (BlobContentId pdbContentId, ushort portablePdbVersion) Emit(
         MetadataBuilder assemblyMetadata,
         DebugSymbolRegistry debugRegistry,
+        IFileSystem fileSystem,
         string pdbPath,
         MethodDefinitionHandle entryPoint)
     {
         ArgumentNullException.ThrowIfNull(assemblyMetadata);
         ArgumentNullException.ThrowIfNull(debugRegistry);
+        ArgumentNullException.ThrowIfNull(fileSystem);
         ArgumentNullException.ThrowIfNull(pdbPath);
 
         var pdbMetadata = new MetadataBuilder();
@@ -37,16 +44,52 @@ internal static class PortablePdbEmitter
 
             // Portable PDB document name blob encoding is handled by MetadataBuilder.
             var nameHandle = pdbMetadata.GetOrAddDocumentName(documentId);
-
-            // Hash, language, and hash algorithm are currently unspecified.
             var docHandle = pdbMetadata.AddDocument(
                 name: nameHandle,
-                hashAlgorithm: default,
-                hash: default,
-                language: default);
+                hashAlgorithm: TryComputeDocumentHash(documentId, fileSystem, out var documentHash)
+                    ? pdbMetadata.GetOrAddGuid(Sha256DocumentHashAlgorithm)
+                    : default,
+                hash: documentHash is { Length: > 0 }
+                    ? pdbMetadata.GetOrAddBlob(documentHash)
+                    : default,
+                language: pdbMetadata.GetOrAddGuid(JavaScriptDocumentLanguage));
 
             documentHandleById[documentId] = docHandle;
             return docHandle;
+        }
+
+        static bool TryComputeDocumentHash(string documentId, IFileSystem fileSystem, out byte[] hash)
+        {
+            hash = Array.Empty<byte>();
+            if (string.IsNullOrWhiteSpace(documentId))
+            {
+                return false;
+            }
+
+            byte[]? sourceBytes = null;
+            try
+            {
+                if (File.Exists(documentId))
+                {
+                    sourceBytes = File.ReadAllBytes(documentId);
+                }
+                else if (fileSystem.FileExists(documentId))
+                {
+                    sourceBytes = Encoding.UTF8.GetBytes(fileSystem.ReadAllText(documentId));
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (sourceBytes is null)
+            {
+                return false;
+            }
+
+            hash = SHA256.HashData(sourceBytes);
+            return true;
         }
 
         static (int startLine, int startColumn, int endLine, int endColumn) NormalizeSpan(SourceSpan span)
