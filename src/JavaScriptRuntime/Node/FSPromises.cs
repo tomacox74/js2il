@@ -141,13 +141,13 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        public object? open(object file, object? flags = null, object? mode = null)
+        public Promise open(object file, object? flags = null, object? mode = null)
         {
             _ = mode;
             var path = file?.ToString() ?? string.Empty;
             if (string.IsNullOrEmpty(path))
             {
-                return Promise.reject(new Error("Path must be a non-empty string"));
+                return (Promise)Promise.reject(new Error("Path must be a non-empty string"))!;
             }
 
             var promiseWithResolvers = Promise.withResolvers();
@@ -253,17 +253,17 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        public object? appendFile(object file, object? content, object? options = null)
+        public Promise appendFile(object file, object? content, object? options = null)
         {
             var path = file?.ToString() ?? string.Empty;
             if (string.IsNullOrEmpty(path))
             {
-                return Promise.reject(new Error("Path must be a non-empty string"));
+                return (Promise)Promise.reject(new Error("Path must be a non-empty string"))!;
             }
 
             if (content == null || content is JsNull)
             {
-                return Promise.reject(new TypeError("The \"data\" argument must be of type string or Buffer or TypedArray or DataView. Received null"));
+                return (Promise)Promise.reject(new TypeError("The \"data\" argument must be of type string or Buffer or TypedArray or DataView. Received null"))!;
             }
 
             var promiseWithResolvers = Promise.withResolvers();
@@ -300,13 +300,13 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        public object? rename(object oldPath, object newPath)
+        public Promise rename(object oldPath, object newPath)
         {
             var source = oldPath?.ToString() ?? string.Empty;
             var destination = newPath?.ToString() ?? string.Empty;
             if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(destination))
             {
-                return Promise.reject(new Error("oldPath and newPath must be non-empty strings"));
+                return (Promise)Promise.reject(new Error("oldPath and newPath must be non-empty strings"))!;
             }
 
             var promiseWithResolvers = Promise.withResolvers();
@@ -324,12 +324,12 @@ namespace JavaScriptRuntime.Node
             }
         }
 
-        public object? unlink(object file)
+        public Promise unlink(object file)
         {
             var path = file?.ToString() ?? string.Empty;
             if (string.IsNullOrEmpty(path))
             {
-                return Promise.reject(new Error("Path must be a non-empty string"));
+                return (Promise)Promise.reject(new Error("Path must be a non-empty string"))!;
             }
 
             var promiseWithResolvers = Promise.withResolvers();
