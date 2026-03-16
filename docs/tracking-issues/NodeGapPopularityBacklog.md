@@ -3,7 +3,7 @@
 > **Last Updated**: 2026-03-16
 > Purpose: Persist a holistic, popularity-weighted view of the highest-value remaining Node.js gaps so triage context is not lost between sessions.
 > Scope: Node.js compatibility first, with adjacent ECMA and runtime work called out when they directly block common Node workloads.
-> Active review item: PR [#905](https://github.com/tomacox74/js2il/pull/905) is implementing [#875](https://github.com/tomacox74/js2il/issues/875), so the next major remaining module gaps after that baseline are [#876](https://github.com/tomacox74/js2il/issues/876) and [#877](https://github.com/tomacox74/js2il/issues/877).
+> Active review item: PR [#906](https://github.com/tomacox74/js2il/pull/906) is implementing [#876](https://github.com/tomacox74/js2il/issues/876), so the next major remaining module gap after that baseline is [#877](https://github.com/tomacox74/js2il/issues/877).
 
 ## Inputs Used
 
@@ -15,7 +15,7 @@
 
 ## Current Baseline (Snapshot)
 
-- Node docs now track **18 modules** (**16 `partial`**, **2 `completed`**, **0 `not-supported`**) and **14 globals** (**14 `supported`**).
+- Node docs now track **19 modules** (**17 `partial`**, **2 `completed`**, **0 `not-supported`**) and **14 globals** (**14 `supported`**).
 - Recent work already landed enough that these items no longer belong at the top of the remaining backlog:
   - Node ESM loader/package-resolution parity issue [#869](https://github.com/tomacox74/js2il/issues/869)
   - Stream lifecycle/helper parity issue [#872](https://github.com/tomacox74/js2il/issues/872)
@@ -24,11 +24,11 @@
   - TLS/HTTPS baseline issue [#870](https://github.com/tomacox74/js2il/issues/870)
   - Practical crypto expansion issue [#790](https://github.com/tomacox74/js2il/issues/790)
   - FileHandle and file-stream issue [#873](https://github.com/tomacox74/js2il/issues/873)
-  - `timers/promises` is in active review for a documented Promise-based baseline via PR [#905](https://github.com/tomacox74/js2il/pull/905).
+  - Promise-based timers issue [#875](https://github.com/tomacox74/js2il/issues/875)
 - The most important documented blockers now are:
-  - `node:zlib` is still completely absent from the docs/runtime inventory.
+  - `node:zlib` is still the highest-value missing module on `master`, even though PR [#906](https://github.com/tomacox74/js2il/pull/906) is actively closing that gap.
   - `child_process` still lacks `fork()`, IPC channels, and richer process-control semantics.
-  - The `timers/promises` baseline deliberately defers the async-iterator `setInterval(...)` contract and broader scheduler parity beyond the one-shot helpers.
+  - The new `timers/promises` baseline still deliberately defers the async-iterator `setInterval(...)` contract and broader scheduler parity beyond the one-shot helpers.
 
 ## Repo-local Demand Signals
 
@@ -47,29 +47,21 @@
 
 | Rank | Feature family | Primary Node area | GitHub issue | Current status signal | Why it moved up now |
 |---:|---|---|---|---|---|
-| 1 | [Compression support](https://github.com/tomacox74/js2il/issues/876) | `zlib` | [#876](https://github.com/tomacox74/js2il/issues/876) | Not yet tracked in `docs/nodejs` | Compression is a practical missing piece for HTTP interoperability, packaging flows, and many real Node dependencies. |
+| 1 | [Compression support](https://github.com/tomacox74/js2il/issues/876) | `zlib` | [#876](https://github.com/tomacox74/js2il/issues/876) | In active review via PR [#906](https://github.com/tomacox74/js2il/pull/906) | Compression is a practical missing piece for HTTP interoperability, packaging flows, and many real Node dependencies. |
 | 2 | [Advanced child-process IPC and process-control parity](https://github.com/tomacox74/js2il/issues/877) | `child_process` | [#877](https://github.com/tomacox74/js2il/issues/877) | `partial` | The current spawn/exec baseline is useful, but many toolchains still need `fork()`, richer stdio semantics, IPC, and stronger signal/env behavior. |
 
 ## In-flight Review Item
 
-## 1. Promise-based Timers and Abort-aware Timer Helpers ([#875](https://github.com/tomacox74/js2il/issues/875))
+## 1. Compression Support ([#876](https://github.com/tomacox74/js2il/issues/876))
 
 - Current signal:
-  - PR [#905](https://github.com/tomacox74/js2il/pull/905) adds a practical `node:timers/promises` baseline for Promise-based `setTimeout(...)` / `setImmediate(...)`, abort-aware one-shot cancellation, and focused ordering coverage.
+  - PR [#906](https://github.com/tomacox74/js2il/pull/906) adds a focused `node:zlib` gzip/gunzip baseline with synchronous helpers, Transform-stream composition, and explicit deferred-option diagnostics.
 - Explicit deferred areas:
-  - The async-iterator `setInterval(...)` contract remains intentionally deferred for now and should stay explicit in both diagnostics and docs.
+  - Broader zlib format coverage and deeper streaming parity beyond the initial buffered gzip/gunzip slice should remain explicitly documented.
 
 ## Linked Issue Briefs
 
-## 2. Compression Support ([#876](https://github.com/tomacox74/js2il/issues/876))
-
-- Current signal:
-  - There is currently no tracked `zlib` surface even though HTTP and tooling scenarios will keep encountering compression requirements.
-- Minimum acceptance:
-  - Add a practical gzip/deflate baseline for common synchronous or streaming workflows.
-  - Ensure the initial slice composes cleanly with the HTTP and stream work rather than living as a disconnected utility.
-
-## 3. Advanced Child-process IPC and Process-control Parity ([#877](https://github.com/tomacox74/js2il/issues/877))
+## 2. Advanced Child-process IPC and Process-control Parity ([#877](https://github.com/tomacox74/js2il/issues/877))
 
 - Current signal:
   - `docs/nodejs/child_process.json` now covers `spawn`, `exec`, `execFile`, and sync variants, but not `fork()`, IPC, or richer stdio/process semantics.
@@ -79,11 +71,10 @@
 
 ## Recommended Sequencing
 
-- **Finish the in-flight timer baseline first:** [#875](https://github.com/tomacox74/js2il/issues/875) via PR [#905](https://github.com/tomacox74/js2il/pull/905)
-- **Then deliver compression:** [#876](https://github.com/tomacox74/js2il/issues/876)
+- **Finish the in-flight compression baseline first:** [#876](https://github.com/tomacox74/js2il/issues/876) via PR [#906](https://github.com/tomacox74/js2il/pull/906)
 - **Then deepen child-process parity:** [#877](https://github.com/tomacox74/js2il/issues/877)
 
-This ordering keeps the highest-value missing module (`zlib`) ahead of the deeper process-control follow-on while preserving the current in-flight timers work.
+This ordering keeps the highest-value missing module (`zlib`) ahead of the deeper process-control follow-on while preserving explicit visibility into the deferred `timers/promises.setInterval(...)` async-iterator gap.
 
 ## Gate for Each Delivered Item
 
