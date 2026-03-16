@@ -173,7 +173,7 @@ namespace JavaScriptRuntime.Node
             return deferred.promise;
         }
 
-        public Promise setInterval(object? delay = null, object? value = null, object? options = null)
+        public object? setInterval(object? delay = null, object? value = null, object? options = null)
         {
             _ = delay;
             _ = value;
