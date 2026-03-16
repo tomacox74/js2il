@@ -9,7 +9,7 @@
   "implementation": [
     "src/JavaScriptRuntime/Node/Crypto.cs"
   ],
-  "notes": "Provides a focused practical crypto slice for hashing, secure random bytes, HMAC, and a minimal Web Crypto bridge. Supported Node algorithms are createHash/createHmac with md5, sha1, sha256, sha384, and sha512. Supported webcrypto.subtle operations are digest with SHA-1/SHA-256/SHA-384/SHA-512 plus importKey(\"raw\", ...) / sign(...) / verify(...) for HMAC keys. Unsupported algorithms, formats, and key usages fail explicitly. Ciphers, pbkdf2Sync, asymmetric sign/verify, key generation/export, X.509/TLS crypto, and the broader Web Crypto matrix remain unimplemented.",
+  "notes": "Provides a focused practical crypto slice for hashing, secure random bytes, HMAC, and a minimal Web Crypto bridge. Supported Node algorithms are createHash/createHmac with md5, sha1, sha256, sha384, and sha512. Supported webcrypto.subtle operations are digest with SHA-1/SHA-256/SHA-384/SHA-512 plus importKey(\"raw\", ...) / sign(...) / verify(...) for HMAC keys. Unsupported algorithms, formats, invalid key lengths, and unsupported key usages fail explicitly. Ciphers, pbkdf2Sync, asymmetric sign/verify, key generation/export, X.509/TLS crypto, and the broader Web Crypto matrix remain unimplemented.",
   "apis": [
     {
       "name": "createHash(algorithm)",
@@ -121,7 +121,7 @@
       "name": "webcrypto.subtle.importKey(format, keyData, algorithm, extractable, keyUsages)",
       "kind": "method",
       "status": "supported",
-      "notes": "Supports only importKey(\"raw\", keyData, { name: \"HMAC\", hash: \"SHA-1\"|\"SHA-256\"|\"SHA-384\"|\"SHA-512\" }, extractable, [\"sign\"|\"verify\", ...]) for secret keys. Unsupported formats, algorithms, and key usages reject explicitly.",
+      "notes": "Supports only importKey(\"raw\", keyData, { name: \"HMAC\", hash: \"SHA-1\"|\"SHA-256\"|\"SHA-384\"|\"SHA-512\"[, length: <exact key bit length>] }, extractable, non-empty [\"sign\"|\"verify\", ...]) for secret keys. Unsupported formats, algorithms, invalid key lengths, and unsupported key usages reject explicitly.",
       "docs": "https://nodejs.org/api/webcrypto.html#subtleimportkeyformat-keydata-algorithm-extractable-keyusages",
       "tests": [
         {

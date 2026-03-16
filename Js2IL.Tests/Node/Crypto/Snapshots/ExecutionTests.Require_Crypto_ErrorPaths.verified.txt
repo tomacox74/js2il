@@ -10,6 +10,12 @@ hmac algorithm type message: The "algorithm" argument must be of type string
 hmac algorithm unsupported threw: true
 hmac algorithm unsupported name: Error
 hmac algorithm unsupported message: Digest method not supported
+hmac key null threw: true
+hmac key null name: TypeError
+hmac key null message: The "key" argument must be of type string or an instance of ArrayBuffer, Buffer, TypedArray, or DataView. Received null
+hmac key number threw: true
+hmac key number name: TypeError
+hmac key number message: The "key" argument must be of type string or an instance of ArrayBuffer, Buffer, TypedArray, or DataView. Received type number (123)
 random size type threw: true
 random size type name: TypeError
 random size type message: The "size" argument must be of type number
@@ -20,6 +26,9 @@ digest first: ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
 digest twice threw: true
 digest twice name: Error
 digest twice message: Digest already called
+hmac update type threw: true
+hmac update type name: TypeError
+hmac update type message: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received type number (123)
 subtle digest unsupported threw: true
 subtle digest unsupported name: NotSupportedError
 subtle digest unsupported message: Unrecognized algorithm name
@@ -29,6 +38,21 @@ subtle import format message: Only raw secret keys are currently supported
 subtle import key data threw: true
 subtle import key data name: TypeError
 subtle import key data message: The "keyData" argument must be an instance of ArrayBuffer, Buffer, TypedArray, or DataView
+subtle import empty usages threw: true
+subtle import empty usages name: SyntaxError
+subtle import empty usages message: Usages cannot be empty when importing a secret key.
+subtle import invalid usage enum threw: true
+subtle import invalid usage enum name: TypeError
+subtle import invalid usage enum message: Failed to execute 'importKey' on 'SubtleCrypto': 5th argument, index 0 value 'SIGN' is not a valid enum value of type KeyUsage.
+subtle import unsupported usage threw: true
+subtle import unsupported usage name: SyntaxError
+subtle import unsupported usage message: Unsupported key usage for an HMAC key
+subtle import zero key threw: true
+subtle import zero key name: DataError
+subtle import zero key message: Zero-length key is not supported
+subtle import length mismatch threw: true
+subtle import length mismatch name: DataError
+subtle import length mismatch message: Invalid key length
 subtle sign algorithm threw: true
 subtle sign algorithm name: NotSupportedError
 subtle sign algorithm message: Unrecognized algorithm name

@@ -27,7 +27,7 @@ namespace JavaScriptRuntime.Node
                 throw new TypeError("The \"algorithm\" argument must be of type string");
             }
 
-            return new Hmac(ResolveHashAlgorithm(text), CoerceBytes(key, null));
+            return new Hmac(ResolveHashAlgorithm(text), CoerceHmacKeyBytes(key));
         }
 
         public Buffer randomBytes(object? size)
@@ -62,6 +62,52 @@ namespace JavaScriptRuntime.Node
                     return Buffer.from(text, encoding).ToByteArray();
                 default:
                     return Buffer.from(DotNet2JSConversions.ToString(value), encoding).ToByteArray();
+            }
+        }
+
+        internal static byte[] CoerceHmacKeyBytes(object? value)
+        {
+            switch (value)
+            {
+                case Buffer buffer:
+                    return buffer.ToByteArray();
+                case byte[] bytes:
+                    return (byte[])bytes.Clone();
+                case ArrayBuffer arrayBuffer:
+                    return (byte[])arrayBuffer.RawBytes.Clone();
+                case TypedArrayBase typedArray:
+                    return CopyTypedArrayBytes(typedArray);
+                case DataView dataView:
+                    return CopyDataViewBytes(dataView);
+                case string text:
+                    return Buffer.from(text).ToByteArray();
+                default:
+                    throw CreateInvalidArgumentTypeError(
+                        "key",
+                        "of type string or an instance of ArrayBuffer, Buffer, TypedArray, or DataView",
+                        value);
+            }
+        }
+
+        internal static byte[] CoerceHmacDataBytes(object? value, object? encoding)
+        {
+            switch (value)
+            {
+                case Buffer buffer:
+                    return buffer.ToByteArray();
+                case byte[] bytes:
+                    return (byte[])bytes.Clone();
+                case TypedArrayBase typedArray:
+                    return CopyTypedArrayBytes(typedArray);
+                case DataView dataView:
+                    return CopyDataViewBytes(dataView);
+                case string text:
+                    return Buffer.from(text, encoding).ToByteArray();
+                default:
+                    throw CreateInvalidArgumentTypeError(
+                        "data",
+                        "of type string or an instance of Buffer, TypedArray, or DataView",
+                        value);
             }
         }
 
@@ -126,9 +172,20 @@ namespace JavaScriptRuntime.Node
             }
 
             var hashName = GetAlgorithmName(hashValue, "algorithm.hash");
+            int? requestedLengthBits = null;
+            if (algorithm is not string)
+            {
+                var lengthValue = JavaScriptRuntime.ObjectRuntime.GetProperty(algorithm, "length");
+                if (lengthValue != null)
+                {
+                    requestedLengthBits = ParseRequestedHmacKeyLength(lengthValue);
+                }
+            }
+
             return new HmacImportParameters(
                 ResolveHashAlgorithm(hashName, allowMd5: false, static () => new NotSupportedError("Unrecognized algorithm name")),
-                CanonicalizeWebCryptoHashName(hashName));
+                CanonicalizeWebCryptoHashName(hashName),
+                requestedLengthBits);
         }
 
         internal static void EnsureHmacAlgorithm(object? algorithm)
@@ -137,6 +194,20 @@ namespace JavaScriptRuntime.Node
             if (!string.Equals(NormalizeAlgorithmName(algorithmName), "hmac", StringComparison.Ordinal))
             {
                 throw new NotSupportedError("Unrecognized algorithm name");
+            }
+        }
+
+        internal static void ValidateImportedHmacKeyLength(byte[] keyBytes, int? requestedLengthBits)
+        {
+            var actualLengthBits = checked(keyBytes.Length * 8);
+            if (actualLengthBits == 0)
+            {
+                throw new DataError("Zero-length key is not supported");
+            }
+
+            if (requestedLengthBits.HasValue && requestedLengthBits.Value != actualLengthBits)
+            {
+                throw new DataError("Invalid key length");
             }
         }
 
@@ -193,6 +264,31 @@ namespace JavaScriptRuntime.Node
                 || value is ushort;
         }
 
+        private static int ParseRequestedHmacKeyLength(object? value)
+        {
+            if (value == null)
+            {
+                throw new DataError("Invalid key length");
+            }
+
+            var number = TypeUtilities.ToNumber(value);
+            if (double.IsNaN(number)
+                || double.IsInfinity(number)
+                || number < 0
+                || global::System.Math.Truncate(number) != number
+                || number > int.MaxValue)
+            {
+                throw new DataError("Invalid key length");
+            }
+
+            if (number == 0)
+            {
+                throw new DataError("Zero-length key is not supported");
+            }
+
+            return (int)number;
+        }
+
         private static string NormalizeAlgorithmName(string algorithm)
             => algorithm
                 .Trim()
@@ -227,6 +323,25 @@ namespace JavaScriptRuntime.Node
                 "sha384" => "SHA-384",
                 "sha512" => "SHA-512",
                 _ => throw new NotSupportedError("Unrecognized algorithm name"),
+            };
+        }
+
+        private static TypeError CreateInvalidArgumentTypeError(string argumentName, string expectedDescription, object? value)
+            => new($"The \"{argumentName}\" argument must be {expectedDescription}. {FormatReceivedValue(value)}");
+
+        private static string FormatReceivedValue(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                return "Received null";
+            }
+
+            var jsType = TypeUtilities.Typeof(value);
+            return jsType switch
+            {
+                "number" or "boolean" or "bigint" or "string"
+                    => $"Received type {jsType} ({DotNet2JSConversions.ToString(value)})",
+                _ => $"Received type {jsType}",
             };
         }
 
@@ -340,7 +455,7 @@ namespace JavaScriptRuntime.Node
         public Hmac update(object? data, object? inputEncoding)
         {
             EnsureNotDigested();
-            _incrementalHash!.AppendData(Crypto.CoerceBytes(data, inputEncoding));
+            _incrementalHash!.AppendData(Crypto.CoerceHmacDataBytes(data, inputEncoding));
             return this;
         }
 
@@ -420,6 +535,7 @@ namespace JavaScriptRuntime.Node
 
                 var importParameters = Crypto.ResolveHmacImportParameters(algorithm);
                 var keyBytes = Crypto.CoerceBufferSourceBytes(keyData, "keyData");
+                Crypto.ValidateImportedHmacKeyLength(keyBytes, importParameters.RequestedLengthBits);
                 var usages = ParseKeyUsages(keyUsages);
                 var key = new CryptoKey(
                     keyBytes,
@@ -490,32 +606,50 @@ namespace JavaScriptRuntime.Node
         {
             if (keyUsages is null || keyUsages is JsNull)
             {
-                return global::System.Array.Empty<string>();
+                throw new TypeError("Failed to execute 'importKey' on 'SubtleCrypto': 5th argument can not be converted to sequence.");
             }
 
             if (keyUsages is not System.Collections.IEnumerable enumerable || keyUsages is string)
             {
-                throw new TypeError("The \"keyUsages\" argument must be an iterable of strings");
+                throw new TypeError("Failed to execute 'importKey' on 'SubtleCrypto': 5th argument can not be converted to sequence.");
             }
 
             var usages = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
+            var hasAny = false;
+            var index = 0;
             foreach (var usage in enumerable)
             {
-                if (usage is not string usageText)
+                hasAny = true;
+                var usageText = usage switch
                 {
-                    throw new TypeError("The \"keyUsages\" argument must contain only strings");
-                }
+                    null => "undefined",
+                    JsNull => "null",
+                    _ => DotNet2JSConversions.ToString(usage),
+                };
 
-                var normalized = usageText.Trim().ToLowerInvariant();
-                switch (normalized)
+                switch (usageText)
                 {
                     case "sign":
                     case "verify":
-                        usages.Add(normalized);
+                        usages.Add(usageText);
                         break;
+                    case "encrypt":
+                    case "decrypt":
+                    case "deriveKey":
+                    case "deriveBits":
+                    case "wrapKey":
+                    case "unwrapKey":
+                        throw new SyntaxError("Unsupported key usage for an HMAC key");
                     default:
-                        throw new NotSupportedError("Only HMAC \"sign\" and \"verify\" key usages are supported");
+                        throw new TypeError($"Failed to execute 'importKey' on 'SubtleCrypto': 5th argument, index {index} value '{usageText}' is not a valid enum value of type KeyUsage.");
                 }
+
+                index++;
+            }
+
+            if (!hasAny)
+            {
+                throw new SyntaxError("Usages cannot be empty when importing a secret key.");
             }
 
             return usages.ToArray();
@@ -591,15 +725,18 @@ namespace JavaScriptRuntime.Node
 
     internal readonly struct HmacImportParameters
     {
-        internal HmacImportParameters(HashAlgorithmName hashAlgorithmName, string hashName)
+        internal HmacImportParameters(HashAlgorithmName hashAlgorithmName, string hashName, int? requestedLengthBits)
         {
             HashAlgorithmName = hashAlgorithmName;
             HashName = hashName;
+            RequestedLengthBits = requestedLengthBits;
         }
 
         internal HashAlgorithmName HashAlgorithmName { get; }
 
         internal string HashName { get; }
+
+        internal int? RequestedLengthBits { get; }
     }
 
     internal sealed class NotSupportedError : Error
@@ -615,6 +752,14 @@ namespace JavaScriptRuntime.Node
         internal InvalidAccessError(string? message) : base(message)
         {
             Name = "InvalidAccessError";
+        }
+    }
+
+    internal sealed class DataError : Error
+    {
+        internal DataError(string? message) : base(message)
+        {
+            Name = "DataError";
         }
     }
 }

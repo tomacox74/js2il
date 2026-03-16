@@ -9,11 +9,14 @@ async function run() {
     const digestBytes = new Uint8Array(digest);
     console.log("digest byteLength:", digest.byteLength);
     console.log("digest hex:", Buffer.from(Array.from(digestBytes)).toString("hex"));
+    console.log("digest sha1 hex:", Buffer.from(Array.from(new Uint8Array(await subtle.digest("SHA-1", Buffer.from("abc"))))).toString("hex"));
+    console.log("digest sha384 hex:", Buffer.from(Array.from(new Uint8Array(await subtle.digest("SHA-384", Buffer.from("abc"))))).toString("hex"));
+    console.log("digest sha512 hex:", Buffer.from(Array.from(new Uint8Array(await subtle.digest("SHA-512", Buffer.from("abc"))))).toString("hex"));
 
     const key = await subtle.importKey(
         "raw",
         Buffer.from("key"),
-        { name: "HMAC", hash: "SHA-256" },
+        { name: "HMAC", hash: "SHA-256", length: 24 },
         false,
         ["sign", "verify"]);
 
