@@ -18,7 +18,17 @@ namespace JavaScriptRuntime.Node
         public object? setTimeout(object delay, object? value = null, object? options = null)
         {
             var deferred = Promise.withResolvers();
-            var signal = TryGetOption(options, "signal");
+            object? signal;
+            try
+            {
+                signal = TryGetOption(options, "signal");
+            }
+            catch (Exception ex)
+            {
+                RejectDeferred(deferred, ex);
+                return deferred.promise;
+            }
+
             var abortReason = GetAbortReason(signal);
             if (abortReason != null)
             {
@@ -27,11 +37,14 @@ namespace JavaScriptRuntime.Node
             }
 
             int settled = 0;
+            int abortRequested = 0;
             Action unregisterAbort = static () => { };
             object? handle = null;
 
-            var abortListener = new Action<object?>(_ =>
+            var abortListener = new Action<object?>(abortSignalReason =>
             {
+                System.Threading.Volatile.Write(ref abortRequested, 1);
+
                 if (System.Threading.Interlocked.Exchange(ref settled, 1) != 0)
                 {
                     return;
@@ -43,7 +56,9 @@ namespace JavaScriptRuntime.Node
                 }
 
                 unregisterAbort();
-                RejectDeferred(deferred, GetAbortReason(signal) ?? new AbortError());
+                RejectDeferred(deferred, abortSignalReason is null or JsNull
+                    ? GetAbortReason(signal) ?? new AbortError()
+                    : CreateAbortError(abortSignalReason));
             });
 
             TryRegisterAbortListener(signal, abortListener, out unregisterAbort);
@@ -58,6 +73,11 @@ namespace JavaScriptRuntime.Node
                 unregisterAbort();
                 ResolveDeferred(deferred, value);
             }, TimeSpan.FromMilliseconds(CoerceDelay(delay)));
+
+            if (System.Threading.Volatile.Read(ref abortRequested) != 0 && handle != null)
+            {
+                _scheduler.Cancel(handle);
+            }
 
             var immediateAbortReason = GetAbortReason(signal);
             if (immediateAbortReason != null && System.Threading.Interlocked.Exchange(ref settled, 1) == 0)
@@ -77,7 +97,17 @@ namespace JavaScriptRuntime.Node
         public object? setImmediate(object? value = null, object? options = null)
         {
             var deferred = Promise.withResolvers();
-            var signal = TryGetOption(options, "signal");
+            object? signal;
+            try
+            {
+                signal = TryGetOption(options, "signal");
+            }
+            catch (Exception ex)
+            {
+                RejectDeferred(deferred, ex);
+                return deferred.promise;
+            }
+
             var abortReason = GetAbortReason(signal);
             if (abortReason != null)
             {
@@ -86,11 +116,14 @@ namespace JavaScriptRuntime.Node
             }
 
             int settled = 0;
+            int abortRequested = 0;
             Action unregisterAbort = static () => { };
             object? handle = null;
 
-            var abortListener = new Action<object?>(_ =>
+            var abortListener = new Action<object?>(abortSignalReason =>
             {
+                System.Threading.Volatile.Write(ref abortRequested, 1);
+
                 if (System.Threading.Interlocked.Exchange(ref settled, 1) != 0)
                 {
                     return;
@@ -102,7 +135,9 @@ namespace JavaScriptRuntime.Node
                 }
 
                 unregisterAbort();
-                RejectDeferred(deferred, GetAbortReason(signal) ?? new AbortError());
+                RejectDeferred(deferred, abortSignalReason is null or JsNull
+                    ? GetAbortReason(signal) ?? new AbortError()
+                    : CreateAbortError(abortSignalReason));
             });
 
             TryRegisterAbortListener(signal, abortListener, out unregisterAbort);
@@ -117,6 +152,11 @@ namespace JavaScriptRuntime.Node
                 unregisterAbort();
                 ResolveDeferred(deferred, value);
             });
+
+            if (System.Threading.Volatile.Read(ref abortRequested) != 0 && handle != null)
+            {
+                _scheduler.CancelImmediate(handle);
+            }
 
             var immediateAbortReason = GetAbortReason(signal);
             if (immediateAbortReason != null && System.Threading.Interlocked.Exchange(ref settled, 1) == 0)
@@ -159,46 +199,42 @@ namespace JavaScriptRuntime.Node
                 return null;
             }
 
-            try
+            if (options is ExpandoObject expando)
             {
-                if (options is ExpandoObject expando)
+                var dict = (System.Collections.Generic.IDictionary<string, object?>)expando;
+                if (dict.TryGetValue(name, out var value))
                 {
-                    var dict = (System.Collections.Generic.IDictionary<string, object?>)expando;
-                    if (dict.TryGetValue(name, out var value))
-                    {
-                        return value;
-                    }
+                    return value;
                 }
+            }
 
-                return ObjectRuntime.GetProperty(options, name);
-            }
-            catch
-            {
-                return null;
-            }
+            return ObjectRuntime.GetProperty(options, name);
         }
 
-        private static object? GetAbortReason(object? signal)
+        private static AbortError? GetAbortReason(object? signal)
         {
             if (signal == null || signal is JsNull)
             {
                 return null;
             }
 
-            try
-            {
-                var aborted = TypeUtilities.ToBoolean(ObjectRuntime.GetProperty(signal, "aborted"));
-                if (!aborted)
-                {
-                    return null;
-                }
-
-                return new AbortError();
-            }
-            catch
+            var aborted = TypeUtilities.ToBoolean(ObjectRuntime.GetProperty(signal, "aborted"));
+            if (!aborted)
             {
                 return null;
             }
+
+            return CreateAbortError(ObjectRuntime.GetProperty(signal, "reason"));
+        }
+
+        private static AbortError CreateAbortError(object? signalReason)
+        {
+            if (signalReason == null || signalReason is JsNull)
+            {
+                return new AbortError();
+            }
+
+            return new AbortError("The operation was aborted", signalReason);
         }
 
         private static bool TryRegisterAbortListener(object? signal, Action<object?> abortListener, out Action unregister)

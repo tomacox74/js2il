@@ -20,6 +20,7 @@ namespace JavaScriptRuntime
         // JS-style aliases
         public string name => Name;
         public string message => base.Message;
+        public object? cause { get; protected set; }
         public string stack
         {
             get
@@ -40,10 +41,20 @@ namespace JavaScriptRuntime
             _constructedStack = CaptureStack();
         }
 
+        public Error(string? message, object? cause) : this(message)
+        {
+            this.cause = cause;
+        }
+
         public Error(string? message, Exception? innerException) : base(message ?? string.Empty, innerException)
         {
             Name = "Error";
             _constructedStack = CaptureStack();
+        }
+
+        public Error(string? message, Exception? innerException, object? cause) : this(message, innerException)
+        {
+            this.cause = cause;
         }
 
         protected virtual string CaptureStack()

@@ -19,6 +19,10 @@ namespace Js2IL.Tests.Node.TimersPromises
             => GenerateTest(nameof(TimersPromises_Abort_RejectsSupportedOneShotApis));
 
         [Fact]
+        public Task TimersPromises_Abort_GetterErrors_SurfaceCorrectly()
+            => GenerateTest(nameof(TimersPromises_Abort_GetterErrors_SurfaceCorrectly));
+
+        [Fact]
         public Task TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks()
             => GenerateTest(nameof(TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks));
 

@@ -104,7 +104,7 @@ namespace JavaScriptRuntime
                 }
 
                 aborted = true;
-                reason = abortReason ?? new AbortError();
+                reason = abortReason ?? new AbortError("This operation was aborted");
                 resolvedReason = reason;
                 listeners = _eventListeners.ToArray();
                 internalListeners = _internalListeners.ToArray();
@@ -140,7 +140,17 @@ namespace JavaScriptRuntime
             Name = "AbortError";
         }
 
+        public AbortError(string? message, object? cause) : base(message, cause)
+        {
+            Name = "AbortError";
+        }
+
         public AbortError(string? message, Exception? innerException) : base(message, innerException)
+        {
+            Name = "AbortError";
+        }
+
+        public AbortError(string? message, Exception? innerException, object? cause) : base(message, innerException, cause)
         {
             Name = "AbortError";
         }
