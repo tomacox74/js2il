@@ -278,13 +278,7 @@ namespace JavaScriptRuntime.CommonJS
 
             // Support common Node.js pattern: `if (require.main === module) { ... }`
             // Many scripts and tools rely on this to detect the entry module.
-            if (asMain)
-            {
-                // The current compiled module becomes the main module for this execution.
-                // This is how child_process.fork establishes a new module entrypoint within
-                // the already-compiled assembly.
-            }
-            else if (_mainModule != null)
+            if (!asMain && _mainModule != null)
             {
                 JavaScriptRuntime.ObjectRuntime.SetProperty(moduleRequire, "main", _mainModule);
             }

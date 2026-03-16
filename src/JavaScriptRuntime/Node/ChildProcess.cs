@@ -1672,7 +1672,7 @@ namespace JavaScriptRuntime.Node
                     }
                     return dictResult;
                 case Buffer or byte[]:
-                    throw new Error("child_process IPC only supports JSON-serializable values in the current runtime. Buffer and binary payloads are not yet supported.");
+                    throw new Error("child_process IPC only supports JSON-serializable values in the current runtime. Buffer (byte[]) and other binary payloads are not yet supported.");
             }
 
             if (JavaScriptRuntime.Object.GetEnumerableKeys(value) is JavaScriptRuntime.Array keys && keys.length > 0)
