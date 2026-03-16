@@ -1,4 +1,5 @@
 using Acornima.Ast;
+using Js2IL.Services;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities;
 
@@ -216,9 +217,11 @@ public sealed class CallableDiscovery
         }
         
         // Check if the class has static fields with initializers -> needs a .cctor
-        bool hasStaticFieldInits = classBody.Body.OfType<PropertyDefinition>()
-            .Any(p => p.Static && p.Value != null);
-        if (hasStaticFieldInits)
+        bool hasStaticClassEvaluation = classBody.Body.Any(element =>
+            element is StaticBlock
+            || element is PropertyDefinition propertyDefinition && propertyDefinition.Static && (propertyDefinition.Value != null || propertyDefinition.Computed)
+            || element is MethodDefinition methodDefinition && methodDefinition.Static && methodDefinition.Computed);
+        if (hasStaticClassEvaluation)
         {
             var cctorId = new CallableId
             {
@@ -233,13 +236,46 @@ public sealed class CallableDiscovery
         }
         
         // Discover methods
-        foreach (var member in classBody.Body.OfType<MethodDefinition>().Where(m => m.Key is Identifier))
+        foreach (var member in classBody.Body.OfType<MethodDefinition>())
         {
-            var methodKey = (Identifier)member.Key;
-            
-            var methodName = methodKey.Name;
-            if (methodName == "constructor") continue; // Already handled
-            
+            if (ClassElementNames.IsConstructor(member))
+            {
+                continue;
+            }
+
+            string? methodName = null;
+            var hasResolvedMethodName = ClassElementNames.TryGetPropertyName(member.Key, member.Computed, out methodName);
+
+            if (member.Computed && !hasResolvedMethodName)
+            {
+                if (member.Value is FunctionExpression computedFunc)
+                {
+                    var methodLocation = SourceLocation.FromNode(computedFunc);
+                    var computedMethodParamCount = CountJsParameters(computedFunc.Params);
+                    var dynamicMethodScope = FindMethodScope(classScope, member);
+                    var dynamicMethodHasRestParams = dynamicMethodScope?.HasRestParameters ?? false;
+
+                    _discovered.Add(new CallableId
+                    {
+                        Kind = CallableKind.FunctionExpression,
+                        DeclaringScopeName = $"{parentScopeName}/{className}",
+                        Name = (computedFunc.Id as Identifier)?.Name,
+                        Location = methodLocation,
+                        JsParamCount = computedMethodParamCount,
+                        NeedsArgumentsObject = dynamicMethodScope?.NeedsArgumentsObject ?? false,
+                        HasRestParameters = dynamicMethodHasRestParams,
+                        AstNode = computedFunc
+                    });
+                }
+
+                continue;
+            }
+
+            if (!hasResolvedMethodName || string.IsNullOrWhiteSpace(methodName))
+            {
+                continue;
+            }
+
             // Count only regular parameters (excluding rest parameters)
             var methodParamCount = (member.Value as FunctionExpression)?.Params.Count ?? 0;
             if (member.Value is FunctionExpression mfe)
@@ -266,11 +302,20 @@ public sealed class CallableDiscovery
                 kind = member.Static ? CallableKind.ClassStaticMethod : CallableKind.ClassMethod;
             }
 
+            var effectiveMethodName = member.Key is PrivateIdentifier
+                ? member.Kind switch
+                {
+                    PropertyKind.Get => ClassElementNames.ManglePrivateAccessorMethodName("get", methodName),
+                    PropertyKind.Set => ClassElementNames.ManglePrivateAccessorMethodName("set", methodName),
+                    _ => ClassElementNames.ManglePrivateMethodName(methodName)
+                }
+                : methodName;
+
             var callableName = kind switch
             {
-                CallableKind.ClassGetter or CallableKind.ClassStaticGetter => JavaScriptCallableNaming.MakeClassAccessorCallableName(className, "get", methodName),
-                CallableKind.ClassSetter or CallableKind.ClassStaticSetter => JavaScriptCallableNaming.MakeClassAccessorCallableName(className, "set", methodName),
-                _ => JavaScriptCallableNaming.MakeClassMethodCallableName(className, methodName)
+                CallableKind.ClassGetter or CallableKind.ClassStaticGetter => JavaScriptCallableNaming.MakeClassAccessorCallableName(className, "get", effectiveMethodName),
+                CallableKind.ClassSetter or CallableKind.ClassStaticSetter => JavaScriptCallableNaming.MakeClassAccessorCallableName(className, "set", effectiveMethodName),
+                _ => JavaScriptCallableNaming.MakeClassMethodCallableName(className, effectiveMethodName)
             };
             
             var methodScope = FindMethodScope(classScope, member);

@@ -581,7 +581,9 @@ public sealed partial class HIRToLIRLowerer
         // (function() { ... })(), (() => 1)(), or getFn()()).
         // Exclude property-access calls here to avoid accidentally breaking method-call semantics
         // that are handled by intrinsic/typed-member lowering below.
-        if (callExpr.Callee is not HIRVariableExpression && callExpr.Callee is not HIRPropertyAccessExpression)
+        if (callExpr.Callee is not HIRVariableExpression
+            && callExpr.Callee is not HIRPropertyAccessExpression
+            && callExpr.Callee is not HIRIndexAccessExpression)
         {
             if (!TryLowerExpression(callExpr.Callee, out var calleeTemp))
             {
@@ -602,6 +604,37 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
             _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(calleeTemp, scopesTemp, argsArrayTemp, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
+        if (callExpr.Callee is HIRIndexAccessExpression calleeIndexAccess)
+        {
+            if (!TryLowerExpression(calleeIndexAccess.Object, out var computedReceiverTemp))
+            {
+                return false;
+            }
+
+            if (!TryLowerExpression(calleeIndexAccess.Index, out var propertyKeyTemp))
+            {
+                return false;
+            }
+
+            if (!TryLowerCallArgumentsToArgsArray(callExpr.Arguments, out var computedArgsArrayTemp))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.Object),
+                nameof(JavaScriptRuntime.Object.CallComputedMember),
+                new[]
+                {
+                    EnsureObject(computedReceiverTemp),
+                    EnsureObject(propertyKeyTemp),
+                    computedArgsArrayTemp
+                },
+                resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
