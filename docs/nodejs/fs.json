@@ -6,7 +6,11 @@
   "status": "partial",
   "docsUrl": "https://nodejs.org/api/fs.html",
   "nodeVersionTarget": "22.x LTS",
-  "implementation": "src/JavaScriptRuntime/Node/FS.cs",
+  "implementation": [
+    "src/JavaScriptRuntime/Node/FS.cs",
+    "src/JavaScriptRuntime/Node/FsFileHandle.cs",
+    "src/JavaScriptRuntime/Node/FsCommon.cs"
+  ],
   "apis": [
     {
       "name": "existsSync(path)",
@@ -153,6 +157,73 @@
       ]
     },
     {
+      "name": "open(path[, flags[, mode]], callback)",
+      "kind": "function",
+      "status": "partial",
+      "notes": "Opens a file and passes back a FileHandle-like object exposing fd/read/write/close for the supported baseline. Supported flags: r, r+, w, w+, a, a+. The callback currently receives the FileHandle object instead of Node's raw numeric fd.",
+      "docs": "https://nodejs.org/api/fs.html#fsopenpath-flags-mode-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Open_Callback_FileHandle",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_Open_Callback_FileHandle",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "createReadStream(path[, options])",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Creates a Readable-backed file stream supporting utf8 encoding, highWaterMark chunking, and start/end byte ranges in the current baseline. Common failure paths surface through error/close events.",
+      "docs": "https://nodejs.org/api/fs.html#fscreatereadstreampath-options",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_CreateReadStream_Basic",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_CreateReadStream_Missing_Error",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_CreateReadStream_Basic",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_CreateReadStream_Missing_Error",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "createWriteStream(path[, options])",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Creates a Writable-backed file stream supporting string/Buffer writes, utf8 encoding, and w/w+/a/a+ style flags in the current baseline. Common failure paths surface through error/close events.",
+      "docs": "https://nodejs.org/api/fs.html#fscreatewritestreampath-options",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_CreateWriteStream_Basic",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_CreateWriteStream_Missing_Error",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_CreateWriteStream_Basic",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_CreateWriteStream_Missing_Error",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
       "name": "readFile(path[, options], callback)",
       "kind": "function",
       "status": "supported",
@@ -166,6 +237,57 @@
         {
           "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadFile_Callback_MissingFile_ENOENT",
           "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "appendFile(file, data[, options], callback)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Callback-style async appendFile; supports Buffer, byte array, or string content. Supports the same utf8 encoding baseline as writeFile.",
+      "docs": "https://nodejs.org/api/fs.html#fsappendfilepath-data-options-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Append_Rename_Unlink_Callback",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_Append_Rename_Unlink_Callback",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "rename(oldPath, newPath, callback)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Callback-style async rename for file and directory paths with Node-like ENOENT/EACCES/EIO style errors in the supported baseline.",
+      "docs": "https://nodejs.org/api/fs.html#fsrenameoldpath-newpath-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Append_Rename_Unlink_Callback",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_Append_Rename_Unlink_Callback",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "unlink(path, callback)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Callback-style async unlink for files. Directories reject with EISDIR-style errors in the supported baseline.",
+      "docs": "https://nodejs.org/api/fs.html#fsunlinkpath-callback",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Append_Rename_Unlink_Callback",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_Append_Rename_Unlink_Callback",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
         }
       ]
     },
