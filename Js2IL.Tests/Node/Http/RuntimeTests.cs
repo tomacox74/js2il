@@ -94,6 +94,7 @@ namespace Js2IL.Tests.Node.Http
                 {
                     ["expect"] = "100-continue",
                 },
+                "node:http",
                 out var message);
 
             Assert.True(hasUnsupportedFeature);
@@ -103,7 +104,7 @@ namespace Js2IL.Tests.Node.Http
         [Fact]
         public void HttpRequestOptions_Parse_InvalidUrl_ThrowsTypeError()
         {
-            var ex = Assert.Throws<TypeError>(() => JavaScriptRuntime.Node.HttpRequestOptions.Parse(new object[] { "http://[" }, "GET"));
+            var ex = Assert.Throws<TypeError>(() => JavaScriptRuntime.Node.HttpRequestOptions.Parse(new object[] { "http://[" }, "GET", "http", 80, "node:http"));
             Assert.Contains("Invalid URL", ex.Message);
         }
 
