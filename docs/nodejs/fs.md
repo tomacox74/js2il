@@ -12,6 +12,8 @@
 ## Implementation
 
 - `src/JavaScriptRuntime/Node/FS.cs`
+- `src/JavaScriptRuntime/Node/FsFileHandle.cs`
+- `src/JavaScriptRuntime/Node/FsCommon.cs`
 
 ## APIs
 
@@ -25,7 +27,13 @@
 | statSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsstatsyncpath-options) |
 | writeFileSync(path, data[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options) |
 | promises | property | supported | [docs](https://nodejs.org/api/fs.html#fspromisesapi) |
+| open(path[, flags[, mode]], callback) | function | partial | [docs](https://nodejs.org/api/fs.html#fsopenpath-flags-mode-callback) |
+| createReadStream(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fscreatereadstreampath-options) |
+| createWriteStream(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fscreatewritestreampath-options) |
 | readFile(path[, options], callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreadfilepath-options-callback) |
+| appendFile(file, data[, options], callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fsappendfilepath-data-options-callback) |
+| rename(oldPath, newPath, callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fsrenameoldpath-newpath-callback) |
+| unlink(path, callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fsunlinkpath-callback) |
 | writeFile(file, data[, options], callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fswritefilefile-data-options-callback) |
 | copyFile(src, dest[, mode], callback) | function | partial | [docs](https://nodejs.org/api/fs.html#fscopyfilesrc-dest-mode-callback) |
 | readdir(path[, options], callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirpath-options-callback) |
@@ -103,6 +111,34 @@ Exposes the fs.promises API surface (see module: fs/promises). Note: method call
 **Tests:**
 - `Js2IL.Tests.Node.FS.ExecutionTests.FS_Promises_Property` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
 
+### open(path[, flags[, mode]], callback)
+
+Opens a file and passes back a FileHandle-like object exposing fd/read/write/close for the supported baseline. Supported flags: r, r+, w, w+, a, a+. The callback currently receives the FileHandle object instead of Node's raw numeric fd.
+
+**Tests:**
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_Open_Callback_FileHandle` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_Open_Callback_FileHandle` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+
+### createReadStream(path[, options])
+
+Creates a Readable-backed file stream supporting utf8 encoding, highWaterMark chunking, and start/end byte ranges in the current baseline. Common failure paths surface through error/close events.
+
+**Tests:**
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_CreateReadStream_Basic` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_CreateReadStream_Missing_Error` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_CreateReadStream_Basic` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_CreateReadStream_Missing_Error` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+
+### createWriteStream(path[, options])
+
+Creates a Writable-backed file stream supporting string/Buffer writes, utf8 encoding, and w/w+/a/a+ style flags in the current baseline. Common failure paths surface through error/close events.
+
+**Tests:**
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_CreateWriteStream_Basic` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_CreateWriteStream_Missing_Error` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_CreateWriteStream_Basic` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_CreateWriteStream_Missing_Error` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+
 ### readFile(path[, options], callback)
 
 Callback-style async readFile; returns Buffer by default, or string when encoding option is 'utf8'/'utf-8'.
@@ -110,6 +146,30 @@ Callback-style async readFile; returns Buffer by default, or string when encodin
 **Tests:**
 - `Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadFile_Callback_Utf8` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.FS.ExecutionTests.FS_ReadFile_Callback_MissingFile_ENOENT` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+
+### appendFile(file, data[, options], callback)
+
+Callback-style async appendFile; supports Buffer, byte array, or string content. Supports the same utf8 encoding baseline as writeFile.
+
+**Tests:**
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_Append_Rename_Unlink_Callback` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_Append_Rename_Unlink_Callback` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+
+### rename(oldPath, newPath, callback)
+
+Callback-style async rename for file and directory paths with Node-like ENOENT/EACCES/EIO style errors in the supported baseline.
+
+**Tests:**
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_Append_Rename_Unlink_Callback` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_Append_Rename_Unlink_Callback` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+
+### unlink(path, callback)
+
+Callback-style async unlink for files. Directories reject with EISDIR-style errors in the supported baseline.
+
+**Tests:**
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_Append_Rename_Unlink_Callback` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_Append_Rename_Unlink_Callback` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
 
 ### writeFile(file, data[, options], callback)
 
