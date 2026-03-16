@@ -3,6 +3,7 @@ using System.Reflection;
 using JavaScriptRuntime.CommonJS;
 using JavaScriptRuntime.DependencyInjection;
 using JavaScriptRuntime.EngineCore;
+using JavaScriptRuntime.Node;
 
 namespace JavaScriptRuntime;
 
@@ -30,10 +31,20 @@ public class Engine
             var serviceProvider = ConfigureServiceProviderForCurrentThread(
                 modulesAssembly: scriptEntryPoint.Method.Module.Assembly);
 
-            // Execute the script using the CommonJS module system.
-            // Future: Add ESM support with a different executor.
             var moduleExecutor = new ModuleExecutor(serviceProvider);
-            moduleExecutor.Execute(scriptEntryPoint);
+            ConfigureChildProcessIpc(serviceProvider);
+
+            var forkEntryModule = System.Environment.GetEnvironmentVariable(ChildProcessRuntimeOptions.ForkEntryModuleEnvVar);
+            if (!string.IsNullOrWhiteSpace(forkEntryModule))
+            {
+                moduleExecutor.Execute(scriptEntryPoint, forkEntryModule);
+            }
+            else
+            {
+                // Execute the script using the CommonJS module system.
+                // Future: Add ESM support with a different executor.
+                moduleExecutor.Execute(scriptEntryPoint);
+            }
 
             // Drain microtasks and timers until no more work remains.
             RunEventLoopUntilIdle(serviceProvider.Resolve<NodeEventLoopPump>(), waitForTimers: true);
@@ -98,5 +109,19 @@ public class Engine
         {
             ctx.RunOneIteration();
         }
+    }
+
+    private static void ConfigureChildProcessIpc(ServiceContainer serviceProvider)
+    {
+        var portText = System.Environment.GetEnvironmentVariable(ChildProcessRuntimeOptions.ForkIpcPortEnvVar);
+        if (string.IsNullOrWhiteSpace(portText) || !int.TryParse(portText, out var port))
+        {
+            return;
+        }
+
+        var scheduler = serviceProvider.Resolve<NodeSchedulerState>();
+        var channel = ChildProcessIpcChannel.CreateClient(port, action => NodeNetworkingCommon.ScheduleOnEventLoop(scheduler, action));
+        channel.Start();
+        serviceProvider.RegisterInstance(channel);
     }
 }

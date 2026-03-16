@@ -2,9 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using JavaScriptRuntime;
 using JavaScriptRuntime.EngineCore;
@@ -65,7 +70,7 @@ namespace JavaScriptRuntime.Node
             var argList = CoerceArgs(args);
             var cwd = TryGetStringOption(options, "cwd");
             var shell = TryGetBoolOption(options, "shell");
-            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.SyncDefault);
+            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.SyncDefault, allowIpc: false, apiName: "child_process.spawnSync");
 
             try
             {
@@ -149,7 +154,7 @@ namespace JavaScriptRuntime.Node
             var commandText = command?.ToString() ?? string.Empty;
             var cwd = TryGetStringOption(options, "cwd");
             var encoding = TryGetStringOption(options, "encoding");
-            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.SyncDefault);
+            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.SyncDefault, allowIpc: false, apiName: "child_process.execSync");
 
             var psi = BuildStartInfo(commandText, args: System.Array.Empty<string>(), cwd, shell: true, stdio);
 
@@ -267,6 +272,138 @@ namespace JavaScriptRuntime.Node
             return StartChildProcess(file, args, options, shellOverride: false, callback: cb, suppressUnhandledError: cb != null);
         }
 
+        public object fork(object[] args)
+        {
+            var srcArgs = args ?? System.Array.Empty<object>();
+            if (srcArgs.Length == 0)
+            {
+                throw new TypeError("The \"modulePath\" argument must be a non-empty string");
+            }
+
+            var modulePath = srcArgs[0];
+            object? moduleArgs = null;
+            object? options = null;
+
+            if (srcArgs.Length > 1)
+            {
+                if (IsArgumentList(srcArgs[1]))
+                {
+                    moduleArgs = srcArgs[1];
+                }
+                else
+                {
+                    options = srcArgs[1];
+                }
+            }
+
+            if (srcArgs.Length > 2)
+            {
+                options = srcArgs[2];
+            }
+
+            return fork(modulePath, moduleArgs, options);
+        }
+
+        public object fork(object modulePath, object? args = null, object? options = null)
+        {
+            var entryModule = modulePath?.ToString() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(entryModule))
+            {
+                throw new TypeError("The \"modulePath\" argument must be a non-empty string");
+            }
+
+            if (TryGetBoolOption(options, "detached"))
+            {
+                throw new NotSupportedException("child_process.fork does not support detached child processes in the current runtime.");
+            }
+
+            var serialization = TryGetStringOption(options, "serialization");
+            if (!string.IsNullOrWhiteSpace(serialization)
+                && !serialization.Equals("json", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new NotSupportedException("child_process.fork only supports JSON message serialization in the current runtime.");
+            }
+
+            var assemblyPath = CommonJS.ModuleContext.CreateModuleContext().__filename;
+            if (string.IsNullOrWhiteSpace(assemblyPath) || !File.Exists(assemblyPath))
+            {
+                throw new Error("child_process.fork requires the current compiled assembly path to be available.");
+            }
+
+            var childArgs = new List<string>(capacity: 1 + CoerceArgs(args).Count)
+            {
+                assemblyPath
+            };
+            childArgs.AddRange(CoerceArgs(args));
+
+            var cwd = TryGetStringOption(options, "cwd");
+            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.ForkDefault, allowIpc: true, apiName: "child_process.fork");
+            if (!stdio.IpcEnabled)
+            {
+                throw new NotSupportedException("child_process.fork requires an IPC channel. Include 'ipc' in stdio[3] or omit stdio to use the default fork configuration.");
+            }
+
+            var child = new ChildProcessHandle(stdio, QueueImmediate);
+            var envOverrides = ParseEnvironmentOverrides(TryGetOption(options, "env"));
+            envOverrides[ChildProcessRuntimeOptions.ForkEntryModuleEnvVar] = entryModule;
+
+            var listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            var ipcPort = ((IPEndPoint)listener.LocalEndpoint).Port;
+            envOverrides[ChildProcessRuntimeOptions.ForkIpcPortEnvVar] = ipcPort.ToString();
+
+            try
+            {
+                var psi = BuildStartInfo(
+                    command: "dotnet",
+                    args: childArgs,
+                    cwd,
+                    shell: false,
+                    stdio,
+                    envOverrides);
+
+                var completion = CreateCompletionPromise(child, assemblyPath, callback: null, suppressUnhandledError: false);
+                var process = DiagnosticsProcess.Start(psi) ?? throw new Error("Failed to start process.");
+                try
+                {
+                    child.Attach(process);
+                    child.AttachIpc(ChildProcessIpcChannel.CreateServer(listener, QueueImmediate));
+                }
+                catch
+                {
+                    try
+                    {
+                        listener.Stop();
+                    }
+                    catch
+                    {
+                    }
+                    process.Dispose();
+                    throw;
+                }
+
+                IoScheduler.BeginIo();
+                try
+                {
+                    _ = CompleteChildProcessAsync(process, stdio, completion);
+                }
+                catch (Exception asyncStartEx)
+                {
+                    IoScheduler.EndIo(
+                        completion,
+                        asyncStartEx as Error ?? new Error(asyncStartEx.Message, asyncStartEx),
+                        isError: true);
+                }
+            }
+            catch
+            {
+                child.disconnect();
+                throw;
+            }
+
+            return child;
+        }
+
         public sealed class ChildProcessError : Error
         {
             public ChildProcessError(string command, int exitCode, string stdout, string stderr)
@@ -302,13 +439,14 @@ namespace JavaScriptRuntime.Node
             var argList = CoerceArgs(args);
             var cwd = TryGetStringOption(options, "cwd");
             var shell = shellOverride ?? TryGetBoolOption(options, "shell");
-            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.AsyncDefault);
+            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.AsyncDefault, allowIpc: false, apiName: "child_process.spawn/exec");
+            var envOverrides = ParseEnvironmentOverrides(TryGetOption(options, "env"));
             var child = new ChildProcessHandle(stdio);
             var completion = CreateCompletionPromise(child, commandText, callback, suppressUnhandledError);
 
             try
             {
-                var psi = BuildStartInfo(commandText, argList, cwd, shell, stdio);
+                var psi = BuildStartInfo(commandText, argList, cwd, shell, stdio, envOverrides);
                 var process = DiagnosticsProcess.Start(psi) ?? throw new Error("Failed to start process.");
                 try
                 {
@@ -496,7 +634,7 @@ namespace JavaScriptRuntime.Node
 
         private void QueueImmediate(Action action)
         {
-            ((IScheduler)NodeScheduler).ScheduleImmediate(action);
+            NodeNetworkingCommon.ScheduleOnEventLoop(NodeScheduler, action);
         }
 
         private static DiagnosticsProcessStartInfo BuildStartInfo(
@@ -504,7 +642,8 @@ namespace JavaScriptRuntime.Node
             IReadOnlyList<string> args,
             string? cwd,
             bool shell,
-            StdioConfiguration stdio)
+            StdioConfiguration stdio,
+            IReadOnlyDictionary<string, string?>? envOverrides = null)
         {
             var psi = new DiagnosticsProcessStartInfo
             {
@@ -518,6 +657,26 @@ namespace JavaScriptRuntime.Node
             if (!string.IsNullOrWhiteSpace(cwd))
             {
                 psi.WorkingDirectory = cwd;
+            }
+
+            if (envOverrides != null)
+            {
+                foreach (var kvp in envOverrides)
+                {
+                    if (string.IsNullOrWhiteSpace(kvp.Key))
+                    {
+                        continue;
+                    }
+
+                    if (kvp.Value == null)
+                    {
+                        _ = psi.Environment.Remove(kvp.Key);
+                    }
+                    else
+                    {
+                        psi.Environment[kvp.Key] = kvp.Value;
+                    }
+                }
             }
 
             if (shell)
@@ -660,7 +819,52 @@ namespace JavaScriptRuntime.Node
         private static bool IsArgumentList(object? value)
             => value is JavaScriptRuntime.Array || value is object[];
 
-        private static StdioConfiguration ParseStdioConfiguration(object? stdio, StdioConfiguration defaults)
+        private static Dictionary<string, string?> ParseEnvironmentOverrides(object? env)
+        {
+            var result = new Dictionary<string, string?>(StringComparer.Ordinal);
+            if (env == null || env is JsNull)
+            {
+                return result;
+            }
+
+            if (env is IDictionary<string, object?> dictionary)
+            {
+                foreach (var kvp in dictionary)
+                {
+                    result[kvp.Key] = NormalizeEnvironmentValue(kvp.Value);
+                }
+
+                return result;
+            }
+
+            if (JavaScriptRuntime.Object.GetEnumerableKeys(env) is JavaScriptRuntime.Array keys)
+            {
+                for (int i = 0; i < (int)keys.length; i++)
+                {
+                    var key = keys[i]?.ToString();
+                    if (string.IsNullOrWhiteSpace(key))
+                    {
+                        continue;
+                    }
+
+                    result[key] = NormalizeEnvironmentValue(ObjectRuntime.GetProperty(env, key));
+                }
+            }
+
+            return result;
+        }
+
+        private static string? NormalizeEnvironmentValue(object? value)
+        {
+            if (value == null || value is JsNull)
+            {
+                return null;
+            }
+
+            return value.ToString();
+        }
+
+        private static StdioConfiguration ParseStdioConfiguration(object? stdio, StdioConfiguration defaults, bool allowIpc, string apiName)
         {
             if (stdio == null || stdio is JsNull)
             {
@@ -679,6 +883,11 @@ namespace JavaScriptRuntime.Node
                     return defaults;
                 }
 
+                if (allowIpc && text.Equals("ipc", StringComparison.OrdinalIgnoreCase))
+                {
+                    return defaults.WithIpc(true);
+                }
+
                 if (text.Equals("ignore", StringComparison.OrdinalIgnoreCase))
                 {
                     return StdioConfiguration.IgnoreAll;
@@ -688,9 +897,10 @@ namespace JavaScriptRuntime.Node
             if (TryCoerceArray(stdio, out var slots))
             {
                 return new StdioConfiguration(
-                    ParseSlotMode(slots, 0, defaults.StdinMode),
-                    ParseSlotMode(slots, 1, defaults.StdoutMode),
-                    ParseSlotMode(slots, 2, defaults.StderrMode));
+                    ParseSlotMode(slots, 0, defaults.StdinMode, apiName),
+                    ParseSlotMode(slots, 1, defaults.StdoutMode, apiName),
+                    ParseSlotMode(slots, 2, defaults.StderrMode, apiName),
+                    allowIpc && ParseIpcSlot(slots, defaults.IpcEnabled, apiName));
             }
 
             return defaults;
@@ -719,7 +929,7 @@ namespace JavaScriptRuntime.Node
             return false;
         }
 
-        private static StdioMode ParseSlotMode(object?[] slots, int index, StdioMode defaultValue)
+        private static StdioMode ParseSlotMode(object?[] slots, int index, StdioMode defaultValue, string apiName)
         {
             if (index >= slots.Length)
             {
@@ -750,7 +960,43 @@ namespace JavaScriptRuntime.Node
                 }
             }
 
-            return defaultValue;
+            throw new NotSupportedException($"{apiName} only supports stdio values 'pipe', 'inherit', and 'ignore' for slots 0-2 in the current runtime.");
+        }
+
+        private static bool ParseIpcSlot(object?[] slots, bool defaultValue, string apiName)
+        {
+            if (slots.Length <= 3)
+            {
+                return defaultValue;
+            }
+
+            var slot = slots[3];
+            if (slot == null || slot is JsNull)
+            {
+                return defaultValue;
+            }
+
+            if (slot is string text && text.Equals("ipc", StringComparison.OrdinalIgnoreCase))
+            {
+                EnsureOnlySupportedStdioSlots(slots, apiName);
+                return true;
+            }
+
+            throw new NotSupportedException($"{apiName} only supports 'ipc' as stdio[3] in the current runtime.");
+        }
+
+        private static void EnsureOnlySupportedStdioSlots(object?[] slots, string apiName)
+        {
+            for (int i = 4; i < slots.Length; i++)
+            {
+                var slot = slots[i];
+                if (slot == null || slot is JsNull)
+                {
+                    continue;
+                }
+
+                throw new NotSupportedException($"{apiName} only supports stdio slots 0-2 plus an optional IPC slot at index 3 in the current runtime.");
+            }
         }
 
         internal enum StdioMode
@@ -778,16 +1024,18 @@ namespace JavaScriptRuntime.Node
 
         internal sealed class StdioConfiguration
         {
-            public static readonly StdioConfiguration SyncDefault = new(StdioMode.Inherit, StdioMode.Pipe, StdioMode.Pipe);
-            public static readonly StdioConfiguration AsyncDefault = new(StdioMode.Pipe, StdioMode.Pipe, StdioMode.Pipe);
-            public static readonly StdioConfiguration InheritAll = new(StdioMode.Inherit, StdioMode.Inherit, StdioMode.Inherit);
-            public static readonly StdioConfiguration IgnoreAll = new(StdioMode.Ignore, StdioMode.Ignore, StdioMode.Ignore);
+            public static readonly StdioConfiguration SyncDefault = new(StdioMode.Inherit, StdioMode.Pipe, StdioMode.Pipe, ipcEnabled: false);
+            public static readonly StdioConfiguration AsyncDefault = new(StdioMode.Pipe, StdioMode.Pipe, StdioMode.Pipe, ipcEnabled: false);
+            public static readonly StdioConfiguration ForkDefault = new(StdioMode.Pipe, StdioMode.Pipe, StdioMode.Pipe, ipcEnabled: true);
+            public static readonly StdioConfiguration InheritAll = new(StdioMode.Inherit, StdioMode.Inherit, StdioMode.Inherit, ipcEnabled: false);
+            public static readonly StdioConfiguration IgnoreAll = new(StdioMode.Ignore, StdioMode.Ignore, StdioMode.Ignore, ipcEnabled: false);
 
-            public StdioConfiguration(StdioMode stdinMode, StdioMode stdoutMode, StdioMode stderrMode)
+            public StdioConfiguration(StdioMode stdinMode, StdioMode stdoutMode, StdioMode stderrMode, bool ipcEnabled)
             {
                 StdinMode = stdinMode;
                 StdoutMode = stdoutMode;
                 StderrMode = stderrMode;
+                IpcEnabled = ipcEnabled;
             }
 
             public StdioMode StdinMode { get; }
@@ -795,6 +1043,11 @@ namespace JavaScriptRuntime.Node
             public StdioMode StdoutMode { get; }
 
             public StdioMode StderrMode { get; }
+
+            public bool IpcEnabled { get; }
+
+            public StdioConfiguration WithIpc(bool enabled)
+                => new(StdinMode, StdoutMode, StderrMode, enabled);
         }
 
         public sealed class ChildProcessHandle : EventEmitter
@@ -802,11 +1055,15 @@ namespace JavaScriptRuntime.Node
             private readonly Readable? _stdoutReadable;
             private readonly Readable? _stderrReadable;
             private readonly ChildProcessWritable? _stdinWritable;
+            private readonly Action<Action>? _queueImmediate;
             private DiagnosticsProcess? _process;
+            private ChildProcessIpcChannel? _ipcChannel;
             private bool _completed;
+            private string? _terminationSignal;
 
-            internal ChildProcessHandle(StdioConfiguration stdio)
+            internal ChildProcessHandle(StdioConfiguration stdio, Action<Action>? queueImmediate = null)
             {
+                _queueImmediate = queueImmediate;
                 _stdinWritable = stdio.StdinMode == StdioMode.Pipe ? new ChildProcessWritable() : null;
                 _stdoutReadable = stdio.StdoutMode == StdioMode.Pipe ? new Readable() : null;
                 _stderrReadable = stdio.StderrMode == StdioMode.Pipe ? new Readable() : null;
@@ -816,6 +1073,8 @@ namespace JavaScriptRuntime.Node
                 stderr = _stderrReadable != null ? _stderrReadable : JsNull.Null;
                 pid = JsNull.Null;
                 exitCode = JsNull.Null;
+                connected = false;
+                killed = false;
             }
 
             public object stdin { get; }
@@ -827,6 +1086,10 @@ namespace JavaScriptRuntime.Node
             public object pid { get; private set; }
 
             public object exitCode { get; private set; }
+
+            public bool connected { get; private set; }
+
+            public bool killed { get; private set; }
 
             internal void Attach(DiagnosticsProcess process)
             {
@@ -847,6 +1110,48 @@ namespace JavaScriptRuntime.Node
                 }
             }
 
+            internal void AttachIpc(ChildProcessIpcChannel channel)
+            {
+                _ipcChannel = channel;
+                channel.MessageReceived += HandleIpcMessage;
+                channel.Disconnected += HandleIpcDisconnect;
+                channel.Error += HandleIpcError;
+                connected = true;
+                channel.Start();
+            }
+
+            private void HandleIpcMessage(object? payload)
+            {
+                QueueCallback(() => emit("message", payload));
+            }
+
+            private void HandleIpcDisconnect()
+            {
+                if (!connected)
+                {
+                    return;
+                }
+
+                connected = false;
+                QueueCallback(() => emit("disconnect"));
+            }
+
+            private void HandleIpcError(Exception ex)
+            {
+                QueueCallback(() => emit("error", ex as Error ?? new Error(ex.Message, ex)));
+            }
+
+            private void QueueCallback(Action action)
+            {
+                if (_queueImmediate != null)
+                {
+                    _queueImmediate(action);
+                    return;
+                }
+
+                action();
+            }
+
             internal void CompleteSuccess(ProcessCompletionResult completion)
             {
                 if (_completed)
@@ -855,7 +1160,7 @@ namespace JavaScriptRuntime.Node
                 }
 
                 _completed = true;
-                exitCode = (double)completion.ExitCode;
+                exitCode = _terminationSignal != null ? JsNull.Null : (double)completion.ExitCode;
 
                 if (_stdoutReadable != null)
                 {
@@ -879,8 +1184,10 @@ namespace JavaScriptRuntime.Node
 
                 _stdinWritable?.CloseQuietly();
 
-                emit("exit", (double)completion.ExitCode, JsNull.Null);
-                emit("close", (double)completion.ExitCode, JsNull.Null);
+                var exitArg = _terminationSignal != null ? JsNull.Null : (object)(double)completion.ExitCode;
+                var signalArg = _terminationSignal ?? (object)JsNull.Null;
+                emit("exit", exitArg, signalArg);
+                emit("close", exitArg, signalArg);
             }
 
             internal void CompleteFailure(object? reason, bool suppressUnhandledError)
@@ -921,7 +1228,7 @@ namespace JavaScriptRuntime.Node
 
             public bool kill(object? signal)
             {
-                _ = signal;
+                var normalizedSignal = NormalizeSignal(signal);
 
                 try
                 {
@@ -930,6 +1237,8 @@ namespace JavaScriptRuntime.Node
                         return false;
                     }
 
+                    _terminationSignal = normalizedSignal;
+                    killed = true;
                     _process.Kill();
                     return true;
                 }
@@ -937,6 +1246,52 @@ namespace JavaScriptRuntime.Node
                 {
                     return false;
                 }
+            }
+
+            public bool send(object? message)
+            {
+                if (_ipcChannel == null)
+                {
+                    throw new Error("child.send() is only available for processes started with an IPC channel.");
+                }
+
+                return _ipcChannel.Send(message);
+            }
+
+            public void disconnect()
+            {
+                _ipcChannel?.Disconnect();
+            }
+
+            private static string NormalizeSignal(object? signal)
+            {
+                if (signal == null || signal is JsNull)
+                {
+                    return "SIGTERM";
+                }
+
+                var text = signal.ToString();
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    return "SIGTERM";
+                }
+
+                if (text.Equals("SIGTERM", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "SIGTERM";
+                }
+
+                if (text.Equals("SIGKILL", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "SIGKILL";
+                }
+
+                if (text.Equals("SIGINT", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "SIGINT";
+                }
+
+                throw new NotSupportedException($"child.kill('{text}') is not supported in the current runtime. Supported signals are SIGTERM, SIGKILL, and SIGINT.");
             }
         }
 
@@ -994,6 +1349,303 @@ namespace JavaScriptRuntime.Node
                     throw new Error("child.stdin is not available.", ex);
                 }
             }
+        }
+    }
+
+    internal static class ChildProcessRuntimeOptions
+    {
+        internal const string ForkEntryModuleEnvVar = "JS2IL_CHILD_PROCESS_ENTRY_MODULE";
+        internal const string ForkIpcPortEnvVar = "JS2IL_CHILD_PROCESS_IPC_PORT";
+    }
+
+    internal sealed class ChildProcessIpcChannel : IDisposable
+    {
+        private readonly Action<Action> _queueImmediate;
+        private readonly TaskCompletionSource _connected = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly object _sync = new();
+        private readonly TcpListener? _listener;
+        private readonly int? _clientPort;
+        private global::System.IO.Stream? _stream;
+        private TcpClient? _tcpClient;
+        private StreamReader? _reader;
+        private StreamWriter? _writer;
+        private int _disconnectSignaled;
+        private bool _disposed;
+
+        private ChildProcessIpcChannel(TcpListener listener, Action<Action> queueImmediate)
+        {
+            _listener = listener;
+            _queueImmediate = queueImmediate;
+        }
+
+        private ChildProcessIpcChannel(int clientPort, Action<Action> queueImmediate)
+        {
+            _clientPort = clientPort;
+            _queueImmediate = queueImmediate;
+        }
+
+        internal event Action<object?>? MessageReceived;
+        internal event Action? Disconnected;
+        internal event Action<Exception>? Error;
+
+        internal bool Connected => _connected.Task.IsCompletedSuccessfully && !_disposed;
+
+        internal static ChildProcessIpcChannel CreateServer(TcpListener listener, Action<Action> queueImmediate)
+            => new(listener, queueImmediate);
+
+        internal static ChildProcessIpcChannel CreateClient(int port, Action<Action> queueImmediate)
+            => new(port, queueImmediate);
+
+        internal void Start()
+        {
+            if (_listener != null)
+            {
+                _ = AcceptServerConnectionAsync(_listener);
+                return;
+            }
+
+            if (_clientPort.HasValue)
+            {
+                _tcpClient = new TcpClient();
+                _tcpClient.Connect(IPAddress.Loopback, _clientPort.Value);
+                _stream = _tcpClient.GetStream();
+                CompleteConnection();
+            }
+        }
+
+        internal bool Send(object? message)
+        {
+            EnsureConnected();
+
+            var payload = ChildProcessIpcSerializer.Serialize(message);
+            lock (_sync)
+            {
+                if (_disposed || _writer == null)
+                {
+                    return false;
+                }
+
+                _writer.WriteLine(payload);
+                _writer.Flush();
+                return true;
+            }
+        }
+
+        internal void Disconnect()
+        {
+            SignalDisconnected();
+            Dispose();
+        }
+
+        private async Task AcceptServerConnectionAsync(TcpListener listener)
+        {
+            try
+            {
+                _tcpClient = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
+                _stream = _tcpClient.GetStream();
+                CompleteConnection();
+            }
+            catch (Exception ex)
+            {
+                if (!_disposed)
+                {
+                    SignalError(ex);
+                    SignalDisconnected();
+                }
+            }
+        }
+
+        private void CompleteConnection()
+        {
+            lock (_sync)
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+
+                if (_stream == null)
+                {
+                    throw new InvalidOperationException("IPC stream was not initialized before completing the child_process IPC connection.");
+                }
+
+                _reader = new StreamReader(_stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, leaveOpen: true);
+                _writer = new StreamWriter(_stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), leaveOpen: true)
+                {
+                    AutoFlush = true,
+                    NewLine = "\n"
+                };
+                _connected.TrySetResult();
+            }
+
+            _ = ReadLoopAsync();
+        }
+
+        private async Task ReadLoopAsync()
+        {
+            try
+            {
+                EnsureConnected();
+                while (!_disposed && _reader != null)
+                {
+                    var line = await _reader.ReadLineAsync().ConfigureAwait(false);
+                    if (line == null)
+                    {
+                        break;
+                    }
+
+                    var payload = ChildProcessIpcSerializer.Deserialize(line);
+                    _queueImmediate(() => MessageReceived?.Invoke(payload));
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!_disposed)
+                {
+                    SignalError(ex);
+                }
+            }
+            finally
+            {
+                SignalDisconnected();
+            }
+        }
+
+        private void EnsureConnected()
+        {
+            _connected.Task.GetAwaiter().GetResult();
+        }
+
+        private void SignalDisconnected()
+        {
+            if (Interlocked.Exchange(ref _disconnectSignaled, 1) != 0)
+            {
+                return;
+            }
+
+            _queueImmediate(() => Disconnected?.Invoke());
+        }
+
+        private void SignalError(Exception ex)
+        {
+            _queueImmediate(() => Error?.Invoke(ex));
+        }
+
+        public void Dispose()
+        {
+            lock (_sync)
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+
+                _disposed = true;
+                try
+                {
+                    _writer?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    _reader?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    _stream?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    _tcpClient?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    _listener?.Stop();
+                }
+                catch
+                {
+                }
+            }
+        }
+    }
+
+    internal static class ChildProcessIpcSerializer
+    {
+        internal static string Serialize(object? value)
+            => JsonSerializer.Serialize(ToSerializableValue(value));
+
+        internal static object? Deserialize(string payload)
+            => JavaScriptRuntime.JSON.Parse(payload);
+
+        private static object? ToSerializableValue(object? value)
+        {
+            if (value == null || value is JsNull)
+            {
+                return null;
+            }
+
+            switch (value)
+            {
+                case string or bool or byte or sbyte or short or ushort or int or uint or long or ulong or float or double or decimal:
+                    return value;
+                case JavaScriptRuntime.Array array:
+                    var items = new List<object?>(checked((int)array.length));
+                    for (int i = 0; i < (int)array.length; i++)
+                    {
+                        items.Add(ToSerializableValue(array[i]));
+                    }
+                    return items;
+                case JsObject jsObject:
+                    var jsObjectResult = new Dictionary<string, object?>(StringComparer.Ordinal);
+                    foreach (var key in jsObject.GetOwnPropertyNames())
+                    {
+                        jsObjectResult[key] = ToSerializableValue(jsObject[key]);
+                    }
+                    return jsObjectResult;
+                case IDictionary<string, object?> dictionary:
+                    var dictResult = new Dictionary<string, object?>(StringComparer.Ordinal);
+                    foreach (var kvp in dictionary)
+                    {
+                        dictResult[kvp.Key] = ToSerializableValue(kvp.Value);
+                    }
+                    return dictResult;
+                case Buffer or byte[]:
+                    throw new NotSupportedException("child_process IPC only supports JSON-serializable values in the current runtime. Buffer and binary payloads are not yet supported.");
+            }
+
+            if (JavaScriptRuntime.Object.GetEnumerableKeys(value) is JavaScriptRuntime.Array keys && keys.length > 0)
+            {
+                var objectResult = new Dictionary<string, object?>(StringComparer.Ordinal);
+                for (int i = 0; i < (int)keys.length; i++)
+                {
+                    var key = keys[i]?.ToString();
+                    if (string.IsNullOrWhiteSpace(key))
+                    {
+                        continue;
+                    }
+
+                    objectResult[key] = ToSerializableValue(ObjectRuntime.GetProperty(value, key));
+                }
+
+                return objectResult;
+            }
+
+            throw new NotSupportedException($"child_process IPC only supports JSON-serializable values in the current runtime (received '{value.GetType().Name}').");
         }
     }
 }
