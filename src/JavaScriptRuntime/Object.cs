@@ -2119,6 +2119,12 @@ namespace JavaScriptRuntime
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
 
+        public static object? CallComputedMember(object receiver, object? propertyKey, object[]? args)
+        {
+            var methodName = ToPropertyKeyString(propertyKey);
+            return CallMember(receiver, methodName, args);
+        }
+
         private static bool TryGetFastDictionaryOwnValue(object receiver, string memberName, out object? value)
         {
             value = null;

@@ -276,6 +276,13 @@ public sealed partial class HIRToLIRLowerer
             case HIRAssignmentExpression assignExpr:
                 return TryLowerAssignmentExpression(assignExpr, out resultTempVar);
 
+            case HIRThrowTypeErrorExpression throwTypeErrorExpr:
+                _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError(throwTypeErrorExpr.Message));
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+
             case HIRPropertyAssignmentExpression propAssignExpr:
                 return TryLowerPropertyAssignmentExpression(propAssignExpr, out resultTempVar);
 

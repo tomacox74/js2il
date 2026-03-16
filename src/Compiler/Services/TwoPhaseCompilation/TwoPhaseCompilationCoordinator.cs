@@ -1058,7 +1058,7 @@ public sealed class TwoPhaseCompilationCoordinator
         // Methods/accessors in source order
         foreach (var member in classBody.Body.OfType<Acornima.Ast.MethodDefinition>())
         {
-            if (ClassElementNames.IsConstructor(member) || !ClassElementNames.TryGetSimpleName(member.Key, out _))
+            if (ClassElementNames.IsConstructor(member) || !ClassElementNames.TryGetPropertyName(member.Key, member.Computed, out _))
             {
                 continue;
             }

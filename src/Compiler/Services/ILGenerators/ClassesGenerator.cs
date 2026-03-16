@@ -432,7 +432,7 @@ namespace Js2IL.Services.ILGenerators
                     }
                     declaredFieldNames.Add(pname);
                 }
-                else if (pdef.Computed && ClassElementNames.TryGetSimpleName(pdef.Key, out var computedName) && !string.IsNullOrWhiteSpace(computedName))
+                else if (pdef.Computed && ClassElementNames.TryGetPropertyName(pdef.Key, computed: true, out var computedName) && !string.IsNullOrWhiteSpace(computedName))
                 {
                     var clrType = pdef.Static ? typeof(object) : TryGetStableInstanceFieldClrType(computedName!);
                     var fSig = new BlobBuilder();
@@ -709,7 +709,7 @@ namespace Js2IL.Services.ILGenerators
             // Register instance methods (tokens are preallocated in Phase 1, bodies emitted in Phase 2).
             foreach (var member in classBody.Body.OfType<Acornima.Ast.MethodDefinition>())
             {
-                if (!ClassElementNames.TryGetSimpleName(member.Key, out var memberName) || string.IsNullOrWhiteSpace(memberName))
+                if (!ClassElementNames.TryGetPropertyName(member.Key, member.Computed, out var memberName) || string.IsNullOrWhiteSpace(memberName))
                 {
                     continue;
                 }

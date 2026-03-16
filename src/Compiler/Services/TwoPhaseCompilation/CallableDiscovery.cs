@@ -238,13 +238,44 @@ public sealed class CallableDiscovery
         // Discover methods
         foreach (var member in classBody.Body.OfType<MethodDefinition>())
         {
-            if (ClassElementNames.IsConstructor(member)
-                || !ClassElementNames.TryGetSimpleName(member.Key, out var methodName)
-                || string.IsNullOrWhiteSpace(methodName))
+            if (ClassElementNames.IsConstructor(member))
             {
                 continue;
             }
-            
+
+            string? methodName = null;
+            var hasResolvedMethodName = ClassElementNames.TryGetPropertyName(member.Key, member.Computed, out methodName);
+
+            if (member.Computed && !hasResolvedMethodName)
+            {
+                if (member.Value is FunctionExpression computedFunc)
+                {
+                    var methodLocation = SourceLocation.FromNode(computedFunc);
+                    var computedMethodParamCount = CountJsParameters(computedFunc.Params);
+                    var dynamicMethodScope = FindMethodScope(classScope, member);
+                    var dynamicMethodHasRestParams = dynamicMethodScope?.HasRestParameters ?? false;
+
+                    _discovered.Add(new CallableId
+                    {
+                        Kind = CallableKind.FunctionExpression,
+                        DeclaringScopeName = $"{parentScopeName}/{className}",
+                        Name = (computedFunc.Id as Identifier)?.Name,
+                        Location = methodLocation,
+                        JsParamCount = computedMethodParamCount,
+                        NeedsArgumentsObject = dynamicMethodScope?.NeedsArgumentsObject ?? false,
+                        HasRestParameters = dynamicMethodHasRestParams,
+                        AstNode = computedFunc
+                    });
+                }
+
+                continue;
+            }
+
+            if (!hasResolvedMethodName || string.IsNullOrWhiteSpace(methodName))
+            {
+                continue;
+            }
+
             // Count only regular parameters (excluding rest parameters)
             var methodParamCount = (member.Value as FunctionExpression)?.Params.Count ?? 0;
             if (member.Value is FunctionExpression mfe)

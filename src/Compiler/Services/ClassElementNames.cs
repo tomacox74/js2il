@@ -11,16 +11,23 @@ internal static class ClassElementNames
             && string.Equals(id.Name, "constructor", StringComparison.Ordinal);
     }
 
-    public static bool TryGetSimpleName(Node? keyNode, out string? name)
+    public static bool TryGetPropertyName(Node? keyNode, bool computed, out string? name)
     {
+        if (!computed)
+        {
+            switch (keyNode)
+            {
+                case Identifier id:
+                    name = id.Name;
+                    return true;
+                case PrivateIdentifier privateId:
+                    name = privateId.Name;
+                    return true;
+            }
+        }
+
         switch (keyNode)
         {
-            case Identifier id:
-                name = id.Name;
-                return true;
-            case PrivateIdentifier privateId:
-                name = privateId.Name;
-                return true;
             case StringLiteral stringLiteral:
                 name = stringLiteral.Value;
                 return true;
@@ -28,8 +35,9 @@ internal static class ClassElementNames
                 name = numericLiteral.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
                 return true;
             case TemplateLiteral templateLiteral when templateLiteral.Expressions.Count == 0 && templateLiteral.Quasis.Count == 1:
-                name = templateLiteral.Quasis[0].Value.Cooked ?? templateLiteral.Quasis[0].Value.Raw;
-                return true;
+                var quasi = templateLiteral.Quasis[0].Value;
+                name = quasi.Cooked ?? quasi.Raw;
+                return !string.IsNullOrWhiteSpace(name);
             default:
                 name = null;
                 return false;
@@ -57,7 +65,9 @@ internal static class ClassElementNames
             };
         }
 
-        var publicName = (method.Key as Identifier)?.Name ?? "method";
+        var publicName = TryGetPropertyName(method.Key, method.Computed, out var resolvedName) && !string.IsNullOrWhiteSpace(resolvedName)
+            ? resolvedName!
+            : "method";
         return method.Kind switch
         {
             PropertyKind.Get => $"get_{publicName}",
