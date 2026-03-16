@@ -29,7 +29,8 @@ public class Engine
             // Configure per-thread services and install the Node-like synchronization context.
             // This enables timers/microtasks and other async behavior to run deterministically on this thread.
             var serviceProvider = ConfigureServiceProviderForCurrentThread(
-                modulesAssembly: scriptEntryPoint.Method.Module.Assembly);
+                modulesAssembly: scriptEntryPoint.Method.Module.Assembly,
+                isHostedExecution: false);
 
             var moduleExecutor = new ModuleExecutor(serviceProvider);
             ConfigureChildProcessIpc(serviceProvider);
@@ -58,7 +59,7 @@ public class Engine
         }
     }
 
-    internal static ServiceContainer ConfigureServiceProviderForCurrentThread(Assembly modulesAssembly)
+    internal static ServiceContainer ConfigureServiceProviderForCurrentThread(Assembly modulesAssembly, bool isHostedExecution = false)
     {
         ArgumentNullException.ThrowIfNull(modulesAssembly);
 
@@ -73,6 +74,8 @@ public class Engine
 
         // Use the test override if present; otherwise construct the default runtime container.
         var serviceProvider = _serviceProviderOverride.Value ?? RuntimeServices.BuildServiceProvider();
+
+        serviceProvider.RegisterInstance(new RuntimeExecutionContext(isHostedExecution));
 
         // Resolve scheduler/event-loop singletons via DI so other services can depend on them.
         // Note: ServiceContainer manages singleton instances per-container.
@@ -114,14 +117,20 @@ public class Engine
     private static void ConfigureChildProcessIpc(ServiceContainer serviceProvider)
     {
         var portText = System.Environment.GetEnvironmentVariable(ChildProcessRuntimeOptions.ForkIpcPortEnvVar);
+        var ipcToken = System.Environment.GetEnvironmentVariable(ChildProcessRuntimeOptions.ForkIpcTokenEnvVar);
         if (string.IsNullOrWhiteSpace(portText) || !int.TryParse(portText, out var port))
         {
             return;
         }
 
+        if (string.IsNullOrWhiteSpace(ipcToken))
+        {
+            throw new Error("child_process IPC bootstrap is missing the required authentication token.");
+        }
+
         var scheduler = serviceProvider.Resolve<NodeSchedulerState>();
         var ioScheduler = serviceProvider.Resolve<IIOScheduler>();
-        var channel = ChildProcessIpcChannel.CreateClient(port, action => NodeNetworkingCommon.ScheduleImmediateOnEventLoop(scheduler, action), ioScheduler);
+        var channel = ChildProcessIpcChannel.CreateClient(port, ipcToken, action => NodeNetworkingCommon.ScheduleImmediateOnEventLoop(scheduler, action), ioScheduler);
         channel.Start();
         serviceProvider.RegisterInstance(channel);
     }

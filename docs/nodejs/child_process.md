@@ -15,7 +15,7 @@
 
 ## Notes
 
-Provides synchronous process execution, async spawn/exec/execFile, and a documented fork baseline for compiled child modules in the current assembly. The supported slice includes JSON-only parent/child IPC (`child.on('message')`, `child.send(...)`, `process.on('message')`, `process.send(...)`), environment overlays, and basic signal/kill reporting with explicit diagnostics for unsupported detached, advanced serialization, and non-IPC stdio modes.
+Provides synchronous process execution, async spawn/exec/execFile, and a documented fork baseline for compiled child modules in the current assembly. The supported slice includes authenticated JSON-only parent/child IPC over loopback (`child.on('message')`, `child.send(...)`, `process.on('message')`, `process.send(...)`), environment overlays, and basic signal/kill reporting with explicit diagnostics for unsupported detached, advanced serialization, non-IPC stdio modes, and hosted `JsEngine` fork calls (tracked by issue #914).
 
 ## APIs
 
@@ -58,7 +58,7 @@ Runs a file directly without an implicit shell and optionally invokes an error-f
 
 ### fork(modulePath[, args][, options])
 
-Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables a JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, and Node-internal IPC behaviors remain explicit unsupported diagnostics.
+Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables an authenticated JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, deterministic `disconnect` before `exit`/`close`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, Node-internal IPC behaviors, and hosted `JsEngine` fork support remain explicit unsupported diagnostics (hosted follow-up: issue #914).
 
 **Tests:**
 - `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_MessagePassing` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)

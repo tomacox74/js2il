@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -312,6 +313,11 @@ namespace JavaScriptRuntime.Node
                 throw new TypeError("The \"modulePath\" argument must be a non-empty string");
             }
 
+            if (IsHostedRuntime())
+            {
+                throw new Error("child_process.fork is not supported when running under JsEngine hosting yet. See issue #914 for hosted fork support.");
+            }
+
             if (TryGetBoolOption(options, "detached"))
             {
                 throw new Error("child_process.fork does not support detached child processes in the current runtime.");
@@ -324,7 +330,9 @@ namespace JavaScriptRuntime.Node
                 throw new Error("child_process.fork only supports JSON message serialization in the current runtime.");
             }
 
-            var assemblyPath = CommonJS.ModuleContext.CreateModuleContext().__filename;
+            var serviceProvider = GlobalThis.ServiceProvider
+                ?? throw new InvalidOperationException("GlobalThis.ServiceProvider is not available for child_process.fork.");
+            var assemblyPath = CommonJS.ModuleContext.CreateModuleContext(serviceProvider).__filename;
             if (string.IsNullOrWhiteSpace(assemblyPath) || !File.Exists(assemblyPath))
             {
                 throw new Error("child_process.fork requires the current compiled assembly path to be available.");
@@ -346,11 +354,13 @@ namespace JavaScriptRuntime.Node
             var child = new ChildProcessHandle(stdio, QueueImmediate);
             var envOverrides = ParseEnvironmentOverrides(TryGetOption(options, "env"));
             envOverrides[ChildProcessRuntimeOptions.ForkEntryModuleEnvVar] = entryModule;
+            var ipcToken = CreateIpcAuthenticationToken();
 
             var listener = new TcpListener(IPAddress.Loopback, 0);
             listener.Start();
             var ipcPort = ((IPEndPoint)listener.LocalEndpoint).Port;
             envOverrides[ChildProcessRuntimeOptions.ForkIpcPortEnvVar] = ipcPort.ToString();
+            envOverrides[ChildProcessRuntimeOptions.ForkIpcTokenEnvVar] = ipcToken;
 
             try
             {
@@ -367,9 +377,9 @@ namespace JavaScriptRuntime.Node
                 try
                 {
                     child.Attach(process);
-                    var ipcChannel = ChildProcessIpcChannel.CreateServer(listener, QueueImmediate, IoScheduler);
+                    var ipcChannel = ChildProcessIpcChannel.CreateServer(listener, ipcToken, QueueImmediate, IoScheduler);
                     child.AttachIpc(ipcChannel);
-                    ipcChannel.WaitUntilConnected(TimeSpan.FromSeconds(2));
+                    ipcChannel.WaitUntilConnected(process);
                 }
                 catch
                 {
@@ -637,6 +647,21 @@ namespace JavaScriptRuntime.Node
         private void QueueImmediate(Action action)
         {
             NodeNetworkingCommon.ScheduleImmediateOnEventLoop(NodeScheduler, action);
+        }
+
+        private static bool IsHostedRuntime()
+        {
+            return GlobalThis.ServiceProvider != null
+                && GlobalThis.ServiceProvider.TryResolve<RuntimeExecutionContext>(out var executionContext)
+                && executionContext != null
+                && executionContext.IsHosted;
+        }
+
+        private static string CreateIpcAuthenticationToken()
+        {
+            Span<byte> tokenBytes = stackalloc byte[32];
+            RandomNumberGenerator.Fill(tokenBytes);
+            return Convert.ToHexString(tokenBytes);
         }
 
         private static DiagnosticsProcessStartInfo BuildStartInfo(
@@ -1067,6 +1092,7 @@ namespace JavaScriptRuntime.Node
             private readonly Action<Action>? _queueImmediate;
             private DiagnosticsProcess? _process;
             private ChildProcessIpcChannel? _ipcChannel;
+            private bool _ipcHandlersAttached;
             private bool _completed;
             private string? _terminationSignal;
 
@@ -1125,6 +1151,7 @@ namespace JavaScriptRuntime.Node
                 channel.MessageReceived += HandleIpcMessage;
                 channel.Disconnected += HandleIpcDisconnect;
                 channel.Error += HandleIpcError;
+                _ipcHandlersAttached = true;
                 connected = true;
                 channel.Start();
             }
@@ -1138,16 +1165,61 @@ namespace JavaScriptRuntime.Node
             {
                 if (!connected)
                 {
+                    DetachIpcHandlers();
                     return;
                 }
 
                 connected = false;
+                DetachIpcHandlers();
+                DisposeIpcChannel();
                 emit("disconnect");
             }
 
             private void HandleIpcError(Exception ex)
             {
                 emit("error", ex as Error ?? new Error(ex.Message, ex));
+            }
+
+            private void DetachIpcHandlers()
+            {
+                if (!_ipcHandlersAttached || _ipcChannel == null)
+                {
+                    return;
+                }
+
+                _ipcChannel.MessageReceived -= HandleIpcMessage;
+                _ipcChannel.Disconnected -= HandleIpcDisconnect;
+                _ipcChannel.Error -= HandleIpcError;
+                _ipcHandlersAttached = false;
+            }
+
+            private void DisposeIpcChannel()
+            {
+                try
+                {
+                    _ipcChannel?.Dispose();
+                }
+                catch
+                {
+                }
+            }
+
+            private void EnsureIpcDisconnectedBeforeCompletion()
+            {
+                if (_ipcChannel == null)
+                {
+                    return;
+                }
+
+                var wasConnected = connected;
+                connected = false;
+                DetachIpcHandlers();
+                DisposeIpcChannel();
+
+                if (wasConnected)
+                {
+                    emit("disconnect");
+                }
             }
 
             internal void CompleteSuccess(ProcessCompletionResult completion)
@@ -1181,6 +1253,7 @@ namespace JavaScriptRuntime.Node
                 }
 
                 _stdinWritable?.CloseQuietly();
+                EnsureIpcDisconnectedBeforeCompletion();
 
                 var exitArg = _terminationSignal != null ? JsNull.Null : (object)(double)completion.ExitCode;
                 var signalArg = _terminationSignal ?? (object)JsNull.Null;
@@ -1201,6 +1274,7 @@ namespace JavaScriptRuntime.Node
                 _stdoutReadable?.push(null);
                 _stderrReadable?.push(null);
                 _stdinWritable?.CloseQuietly();
+                EnsureIpcDisconnectedBeforeCompletion();
 
                 ExceptionDispatchInfo? captured = null;
                 var shouldEmitError = !suppressUnhandledError || listenerCount("error") > 0;
@@ -1354,33 +1428,42 @@ namespace JavaScriptRuntime.Node
     {
         internal const string ForkEntryModuleEnvVar = "JS2IL_CHILD_PROCESS_ENTRY_MODULE";
         internal const string ForkIpcPortEnvVar = "JS2IL_CHILD_PROCESS_IPC_PORT";
+        internal const string ForkIpcTokenEnvVar = "JS2IL_CHILD_PROCESS_IPC_TOKEN";
     }
 
     internal sealed class ChildProcessIpcChannel : IDisposable
     {
+        private const string HandshakePrefix = "__js2il_child_process_ipc__:";
         private readonly Action<Action> _queueImmediate;
         private readonly IIOScheduler? _ioScheduler;
         private readonly TaskCompletionSource _connected = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly CancellationTokenSource _disposeCancellation = new();
         private readonly object _sync = new();
         private readonly TcpListener? _listener;
         private readonly int? _clientPort;
+        private readonly string? _expectedToken;
+        private readonly string? _clientToken;
         private global::System.IO.Stream? _stream;
         private TcpClient? _tcpClient;
         private StreamReader? _reader;
         private StreamWriter? _writer;
         private int _disconnectSignaled;
+        private int _disposeSignaled;
+        private int _started;
         private bool _disposed;
 
-        private ChildProcessIpcChannel(TcpListener listener, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
+        private ChildProcessIpcChannel(TcpListener listener, string expectedToken, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
         {
             _listener = listener;
+            _expectedToken = expectedToken;
             _queueImmediate = queueImmediate;
             _ioScheduler = ioScheduler;
         }
 
-        private ChildProcessIpcChannel(int clientPort, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
+        private ChildProcessIpcChannel(int clientPort, string clientToken, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
         {
             _clientPort = clientPort;
+            _clientToken = clientToken;
             _queueImmediate = queueImmediate;
             _ioScheduler = ioScheduler;
         }
@@ -1389,16 +1472,21 @@ namespace JavaScriptRuntime.Node
         internal event Action? Disconnected;
         internal event Action<Exception>? Error;
 
-        internal bool Connected => _connected.Task.IsCompletedSuccessfully && !_disposed;
+        internal bool Connected => _connected.Task.IsCompletedSuccessfully && Volatile.Read(ref _disposeSignaled) == 0;
 
-        internal static ChildProcessIpcChannel CreateServer(TcpListener listener, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
-            => new(listener, queueImmediate, ioScheduler);
+        internal static ChildProcessIpcChannel CreateServer(TcpListener listener, string expectedToken, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
+            => new(listener, expectedToken, queueImmediate, ioScheduler);
 
-        internal static ChildProcessIpcChannel CreateClient(int port, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
-            => new(port, queueImmediate, ioScheduler);
+        internal static ChildProcessIpcChannel CreateClient(int port, string clientToken, Action<Action> queueImmediate, IIOScheduler? ioScheduler)
+            => new(port, clientToken, queueImmediate, ioScheduler);
 
         internal void Start()
         {
+            if (Interlocked.Exchange(ref _started, 1) != 0)
+            {
+                return;
+            }
+
             if (_listener != null)
             {
                 _ = AcceptServerConnectionAsync(_listener);
@@ -1407,10 +1495,8 @@ namespace JavaScriptRuntime.Node
 
             if (_clientPort.HasValue)
             {
-                _tcpClient = new TcpClient();
-                _tcpClient.Connect(IPAddress.Loopback, _clientPort.Value);
-                _stream = _tcpClient.GetStream();
-                CompleteConnection();
+                ConnectClient(_clientPort.Value, _clientToken
+                    ?? throw new InvalidOperationException("The child_process IPC client token was not initialized."));
             }
         }
 
@@ -1426,9 +1512,19 @@ namespace JavaScriptRuntime.Node
                     return false;
                 }
 
-                _writer.WriteLine(payload);
-                _writer.Flush();
-                return true;
+                try
+                {
+                    _writer.WriteLine(payload);
+                    _writer.Flush();
+                    return true;
+                }
+                catch (Exception ex) when (ex is IOException or InvalidOperationException or ObjectDisposedException)
+                {
+                    SignalError(ex);
+                    SignalDisconnected();
+                    Dispose();
+                    return false;
+                }
             }
         }
 
@@ -1438,56 +1534,262 @@ namespace JavaScriptRuntime.Node
             Dispose();
         }
 
-        internal void WaitUntilConnected(TimeSpan timeout)
+        internal void WaitUntilConnected(DiagnosticsProcess process)
         {
-            if (!_connected.Task.Wait(timeout))
+            var firstCompleted = Task.WhenAny(_connected.Task, process.WaitForExitAsync()).GetAwaiter().GetResult();
+            if (firstCompleted == _connected.Task)
             {
-                throw new TimeoutException("Timed out waiting for the child_process IPC channel to connect.");
+                _connected.Task.GetAwaiter().GetResult();
+                return;
             }
+
+            if (_connected.Task.IsCompleted)
+            {
+                _connected.Task.GetAwaiter().GetResult();
+                return;
+            }
+
+            var exitCode = process.HasExited ? process.ExitCode : (int?)null;
+            if (exitCode.HasValue)
+            {
+                throw new Error($"child_process.fork child process exited before establishing the IPC channel (exit code {exitCode.Value}).");
+            }
+
+            throw new Error("child_process.fork child process exited before establishing the IPC channel.");
         }
 
         private async Task AcceptServerConnectionAsync(TcpListener listener)
         {
-            try
+            while (!_disposed)
             {
-                _tcpClient = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
-                _stream = _tcpClient.GetStream();
-                CompleteConnection();
-            }
-            catch (Exception ex)
-            {
-                if (!_disposed)
+                TcpClient? candidateClient = null;
+                try
                 {
-                    SignalError(ex);
-                    SignalDisconnected();
+                    candidateClient = await listener.AcceptTcpClientAsync(_disposeCancellation.Token).ConfigureAwait(false);
+                    _ = AttemptAuthenticateServerClientAsync(candidateClient);
+                }
+                catch (OperationCanceledException) when (_disposed || _disposeCancellation.IsCancellationRequested)
+                {
+                    return;
+                }
+                catch (ObjectDisposedException) when (_disposed || _connected.Task.IsCompleted)
+                {
+                    return;
+                }
+                catch (SocketException) when (_disposed || _connected.Task.IsCompleted)
+                {
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    if (!_disposed)
+                    {
+                        _connected.TrySetException(ex);
+                        SignalError(ex);
+                        SignalDisconnected();
+                    }
+
+                    return;
                 }
             }
         }
 
-        private void CompleteConnection()
+        private async Task AttemptAuthenticateServerClientAsync(TcpClient? candidateClient)
         {
-            lock (_sync)
+            global::System.IO.Stream? candidateStream = null;
+            StreamReader? candidateReader = null;
+            StreamWriter? candidateWriter = null;
+            try
             {
-                if (_disposed)
+                if (candidateClient == null)
                 {
                     return;
                 }
 
-                if (_stream == null)
+                candidateStream = candidateClient.GetStream();
+                PrepareTextEndpoints(candidateStream, out candidateReader, out candidateWriter);
+
+                var handshake = await candidateReader.ReadLineAsync().WaitAsync(_disposeCancellation.Token).ConfigureAwait(false);
+                if (!IsExpectedHandshake(handshake))
                 {
-                    throw new InvalidOperationException("IPC stream was not initialized before completing the child_process IPC connection.");
+                    return;
                 }
 
-                _reader = new StreamReader(_stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, leaveOpen: true);
-                _writer = new StreamWriter(_stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), leaveOpen: true)
+                if (!TryInitializeConnectedEndpoint(candidateClient, candidateStream, candidateReader, candidateWriter))
                 {
-                    AutoFlush = true,
-                    NewLine = "\n"
-                };
+                    return;
+                }
+
+                candidateClient = null;
+                candidateStream = null;
+                candidateReader = null;
+                candidateWriter = null;
+                TryStopListener();
+                _ = ReadLoopAsync();
+            }
+            catch (OperationCanceledException) when (_disposed || _disposeCancellation.IsCancellationRequested)
+            {
+            }
+            catch
+            {
+            }
+            finally
+            {
+                try
+                {
+                    candidateWriter?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    candidateReader?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    candidateStream?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    candidateClient?.Dispose();
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private void ConnectClient(int port, string clientToken)
+        {
+            TcpClient? tcpClient = null;
+            global::System.IO.Stream? stream = null;
+            StreamReader? reader = null;
+            StreamWriter? writer = null;
+            try
+            {
+                tcpClient = new TcpClient();
+                tcpClient.Connect(IPAddress.Loopback, port);
+                stream = tcpClient.GetStream();
+                PrepareTextEndpoints(stream, out reader, out writer);
+                writer.WriteLine(BuildHandshakePayload(clientToken));
+                writer.Flush();
+
+                if (!TryInitializeConnectedEndpoint(tcpClient, stream, reader, writer))
+                {
+                    return;
+                }
+
+                tcpClient = null;
+                stream = null;
+                reader = null;
+                writer = null;
+                _ = ReadLoopAsync();
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                try
+                {
+                    writer?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    reader?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    stream?.Dispose();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    tcpClient?.Dispose();
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private bool TryInitializeConnectedEndpoint(TcpClient tcpClient, global::System.IO.Stream stream, StreamReader reader, StreamWriter writer)
+        {
+            lock (_sync)
+            {
+                if (_disposed || _connected.Task.IsCompleted)
+                {
+                    return false;
+                }
+
+                _tcpClient = tcpClient;
+                _stream = stream;
+                _reader = reader;
+                _writer = writer;
                 _connected.TrySetResult();
+                return true;
+            }
+        }
+
+        private static void PrepareTextEndpoints(global::System.IO.Stream stream, out StreamReader reader, out StreamWriter writer)
+        {
+            reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, leaveOpen: true);
+            writer = new StreamWriter(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), leaveOpen: true)
+            {
+                AutoFlush = true,
+                NewLine = "\n"
+            };
+        }
+
+        private bool IsExpectedHandshake(string? payload)
+        {
+            if (string.IsNullOrWhiteSpace(payload) || string.IsNullOrWhiteSpace(_expectedToken))
+            {
+                return false;
             }
 
-            _ = ReadLoopAsync();
+            if (!payload.StartsWith(HandshakePrefix, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            return string.Equals(payload.Substring(HandshakePrefix.Length), _expectedToken, StringComparison.Ordinal);
+        }
+
+        private static string BuildHandshakePayload(string token)
+            => HandshakePrefix + token;
+
+        private void TryStopListener()
+        {
+            try
+            {
+                _listener?.Stop();
+            }
+            catch
+            {
+            }
         }
 
         private async Task ReadLoopAsync()
@@ -1497,7 +1799,7 @@ namespace JavaScriptRuntime.Node
                 EnsureConnected();
                 while (!_disposed && _reader != null)
                 {
-                    var line = await _reader.ReadLineAsync().ConfigureAwait(false);
+                    var line = await _reader.ReadLineAsync().WaitAsync(_disposeCancellation.Token).ConfigureAwait(false);
                     if (line == null)
                     {
                         break;
@@ -1506,6 +1808,9 @@ namespace JavaScriptRuntime.Node
                     var payload = ChildProcessIpcSerializer.Deserialize(line);
                     DispatchToEventLoop(payload);
                 }
+            }
+            catch (OperationCanceledException) when (_disposed || _disposeCancellation.IsCancellationRequested)
+            {
             }
             catch (Exception ex)
             {
@@ -1517,6 +1822,7 @@ namespace JavaScriptRuntime.Node
             finally
             {
                 SignalDisconnected();
+                Dispose();
             }
         }
 
@@ -1580,13 +1886,26 @@ namespace JavaScriptRuntime.Node
 
         public void Dispose()
         {
+            if (Interlocked.Exchange(ref _disposeSignaled, 1) != 0)
+            {
+                return;
+            }
+
+            if (!_connected.Task.IsCompleted)
+            {
+                _connected.TrySetException(new ObjectDisposedException(nameof(ChildProcessIpcChannel)));
+            }
+
+            try
+            {
+                _disposeCancellation.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+
             lock (_sync)
             {
-                if (_disposed)
-                {
-                    return;
-                }
-
                 _disposed = true;
                 try
                 {
@@ -1628,6 +1947,16 @@ namespace JavaScriptRuntime.Node
                 {
                 }
             }
+
+            try
+            {
+                _disposeCancellation.Dispose();
+            }
+            catch
+            {
+            }
+
+            GC.SuppressFinalize(this);
         }
     }
 

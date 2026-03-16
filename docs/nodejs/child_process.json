@@ -7,7 +7,7 @@
   "docsUrl": "https://nodejs.org/api/child_process.html",
   "nodeVersionTarget": "22.x LTS",
   "implementation": "src/JavaScriptRuntime/Node/ChildProcess.cs",
-  "notes": "Provides synchronous process execution, async spawn/exec/execFile, and a documented fork baseline for compiled child modules in the current assembly. The supported slice includes JSON-only parent/child IPC (`child.on('message')`, `child.send(...)`, `process.on('message')`, `process.send(...)`), environment overlays, and basic signal/kill reporting with explicit diagnostics for unsupported detached, advanced serialization, and non-IPC stdio modes.",
+  "notes": "Provides synchronous process execution, async spawn/exec/execFile, and a documented fork baseline for compiled child modules in the current assembly. The supported slice includes authenticated JSON-only parent/child IPC over loopback (`child.on('message')`, `child.send(...)`, `process.on('message')`, `process.send(...)`), environment overlays, and basic signal/kill reporting with explicit diagnostics for unsupported detached, advanced serialization, non-IPC stdio modes, and hosted `JsEngine` fork calls (tracked by issue #914).",
   "apis": [
     {
       "name": "spawn(command[, args][, options])",
@@ -72,7 +72,7 @@
       "name": "fork(modulePath[, args][, options])",
       "kind": "function",
       "status": "supported",
-      "notes": "Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables a JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, and Node-internal IPC behaviors remain explicit unsupported diagnostics.",
+      "notes": "Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables an authenticated JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, deterministic `disconnect` before `exit`/`close`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, Node-internal IPC behaviors, and hosted `JsEngine` fork support remain explicit unsupported diagnostics (hosted follow-up: issue #914).",
       "docs": "https://nodejs.org/api/child_process.html#child_processforkmodulepath-args-options",
       "tests": [
         {
