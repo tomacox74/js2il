@@ -7,7 +7,7 @@ if (typeof someObject === "function") {
 }
 
 if (typeof 123 === "function") {
-    console.log("number");
+    console.log("unexpected number function");
 } else {
     console.log("not function");
 }

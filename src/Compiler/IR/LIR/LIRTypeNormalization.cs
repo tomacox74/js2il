@@ -276,12 +276,12 @@ internal static class LIRTypeNormalization
                 continue;
             }
 
-            var isFunctionTemp = CreateTemp(methodBody, new ValueStorage(ValueStorageKind.Reference, typeof(Delegate)));
-            methodBody.Instructions[i] = new LIRIsInstanceOf(typeof(Delegate), typeofSource, isFunctionTemp);
+            var delegateInstanceTemp = CreateTemp(methodBody, new ValueStorage(ValueStorageKind.Reference, typeof(Delegate)));
+            methodBody.Instructions[i] = new LIRIsInstanceOf(typeof(Delegate), typeofSource, delegateInstanceTemp);
 
             foreach (var branchIndex in branchUseIndices)
             {
-                methodBody.Instructions[branchIndex] = RewriteBranchCondition(methodBody.Instructions[branchIndex], isFunctionTemp, invertBranches);
+                methodBody.Instructions[branchIndex] = RewriteBranchCondition(methodBody.Instructions[branchIndex], delegateInstanceTemp, invertBranches);
             }
 
             RemoveDeadDefinitionChain(methodBody, typeofResultTemp);
