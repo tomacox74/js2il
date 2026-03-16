@@ -250,7 +250,7 @@ namespace Js2IL.Services.ILGenerators
             if (!classNeedsParentScopes)
             {
                 var ctor = classBody.Body.OfType<Acornima.Ast.MethodDefinition>()
-                    .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                    .FirstOrDefault(ClassElementNames.IsConstructor);
                 if (ctor?.Value is FunctionExpression ctorExpr)
                 {
                     classNeedsParentScopes = ShouldCreateMethodScopeInstance(ctorExpr, classScope);
@@ -260,7 +260,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     foreach (var method in classBody.Body
                         .OfType<Acornima.Ast.MethodDefinition>()
-                        .Where(m => m.Value is FunctionExpression && (m.Key as Identifier)?.Name != "constructor"))
+                        .Where(m => m.Value is FunctionExpression && !ClassElementNames.IsConstructor(m) && !m.Computed))
                     {
                         var funcExpr = (FunctionExpression)method.Value;
                         if (ShouldCreateMethodScopeInstance(funcExpr, classScope))
@@ -293,7 +293,7 @@ namespace Js2IL.Services.ILGenerators
                     {
                         var baseBody = baseScope.AstNode is ClassDeclaration bcd ? bcd.Body : ((ClassExpression)baseScope.AstNode).Body;
                         var baseCtor = baseBody.Body.OfType<Acornima.Ast.MethodDefinition>()
-                            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                            .FirstOrDefault(ClassElementNames.IsConstructor);
                         if (baseCtor?.Value is FunctionExpression baseCtorExpr)
                         {
                             baseNeedsParentScopes = ShouldCreateMethodScopeInstance(baseCtorExpr, baseScope);
@@ -303,7 +303,7 @@ namespace Js2IL.Services.ILGenerators
                         {
                             foreach (var method in baseBody.Body
                                 .OfType<Acornima.Ast.MethodDefinition>()
-                                .Where(m => m.Value is FunctionExpression && (m.Key as Identifier)?.Name != "constructor"))
+                                .Where(m => m.Value is FunctionExpression && !ClassElementNames.IsConstructor(m) && !m.Computed))
                             {
                                 var funcExpr = (FunctionExpression)method.Value;
                                 if (ShouldCreateMethodScopeInstance(funcExpr, baseScope))
@@ -408,7 +408,7 @@ namespace Js2IL.Services.ILGenerators
                 if (pdef.Key is Acornima.Ast.PrivateIdentifier priv)
                 {
                     var pname = priv.Name;
-                    var emittedName = ManglePrivateFieldName(pname);
+                    var emittedName = ClassElementNames.ManglePrivateFieldName(pname);
                     var clrType = pdef.Static ? typeof(object) : TryGetStableInstanceFieldClrType(pname);
                     var fSig = new BlobBuilder();
                     EncodeFieldType(new BlobEncoder(fSig), clrType, pname);
@@ -431,6 +431,31 @@ namespace Js2IL.Services.ILGenerators
                         }
                     }
                     declaredFieldNames.Add(pname);
+                }
+                else if (pdef.Computed && ClassElementNames.TryGetPropertyName(pdef.Key, computed: true, out var computedName) && !string.IsNullOrWhiteSpace(computedName))
+                {
+                    var clrType = pdef.Static ? typeof(object) : TryGetStableInstanceFieldClrType(computedName!);
+                    var fSig = new BlobBuilder();
+                    EncodeFieldType(new BlobEncoder(fSig), clrType, computedName!);
+                    var fSigHandle = _metadata.GetOrAddBlob(fSig);
+                    if (pdef.Static)
+                    {
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, computedName!, fSigHandle);
+                        _classRegistry.RegisterStaticField(registryClassName, computedName!, fh);
+                        _classRegistry.RegisterStaticFieldClrType(registryClassName, computedName!, typeof(object));
+                    }
+                    else
+                    {
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Public, computedName!, fSigHandle);
+                        _classRegistry.RegisterField(registryClassName, computedName!, fh);
+                        _classRegistry.RegisterFieldClrType(registryClassName, computedName!, clrType ?? typeof(object));
+
+                        if (TryGetStableInstanceFieldUserClassTypeHandle(computedName!, out var userFieldTypeHandle))
+                        {
+                            _classRegistry.RegisterFieldTypeHandle(registryClassName, computedName!, userFieldTypeHandle);
+                        }
+                    }
+                    declaredFieldNames.Add(computedName!);
                 }
                 else if (pdef.Key is Identifier pid)
                 {
@@ -529,7 +554,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             var ctorMemberForReturn = classBody.Body.OfType<Acornima.Ast.MethodDefinition>()
-                .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                .FirstOrDefault(ClassElementNames.IsConstructor);
 
             if (ctorMemberForReturn?.Value is FunctionExpression ctorFuncForReturn
                 && ctorFuncForReturn.Body is BlockStatement ctorBody
@@ -614,7 +639,7 @@ namespace Js2IL.Services.ILGenerators
 
             // Identify the constructor callable and use its preallocated MethodDef as the first method.
             var ctorMember = classBody.Body.OfType<Acornima.Ast.MethodDefinition>()
-                .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                .FirstOrDefault(ClassElementNames.IsConstructor);
 
             CallableId ctorCallable;
             if (ctorMember != null)
@@ -682,10 +707,14 @@ namespace Js2IL.Services.ILGenerators
             _classRegistry.RegisterConstructor(registryClassName, ctorMethodDef, ctorSig, classNeedsParentScopes, ctorMinUserParams, ctorParamCount);
 
             // Register instance methods (tokens are preallocated in Phase 1, bodies emitted in Phase 2).
-            foreach (var member in classBody.Body.OfType<Acornima.Ast.MethodDefinition>().Where(m => m.Key is Identifier))
+            foreach (var member in classBody.Body.OfType<Acornima.Ast.MethodDefinition>())
             {
-                var memberName = ((Identifier)member.Key).Name;
-                if (string.Equals(memberName, "constructor", StringComparison.Ordinal))
+                if (!ClassElementNames.TryGetPropertyName(member.Key, member.Computed, out var memberName) || string.IsNullOrWhiteSpace(memberName))
+                {
+                    continue;
+                }
+
+                if (ClassElementNames.IsConstructor(member))
                 {
                     continue;
                 }
@@ -767,12 +796,7 @@ namespace Js2IL.Services.ILGenerators
                     returnClrType = methodScope?.StableReturnClrType ?? typeof(object);
                 }
 
-                var clrName = member.Kind switch
-                {
-                    PropertyKind.Get => $"get_{memberName}",
-                    PropertyKind.Set => $"set_{memberName}",
-                    _ => memberName
-                };
+                var clrName = ClassElementNames.GetMethodRegistryName(member);
 
                 // Resumable class methods (async/generator) require the standard js2il calling convention
                 // (leading object[] scopes) so the state machine can bind/resume correctly.

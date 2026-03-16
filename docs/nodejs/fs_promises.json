@@ -6,7 +6,12 @@
   "status": "partial",
   "docsUrl": "https://nodejs.org/api/fs.html#fspromisesapi",
   "nodeVersionTarget": "22.x LTS",
-  "implementation": "src/JavaScriptRuntime/Node/FSPromises.cs",
+  "implementation": [
+    "src/JavaScriptRuntime/Node/FSPromises.cs",
+    "src/JavaScriptRuntime/Node/FsFileHandle.cs",
+    "src/JavaScriptRuntime/Node/FsCommon.cs"
+  ],
+  "notes": "The current fs/promises baseline covers whole-file helpers plus FileHandle open/read/write/close, createReadStream/createWriteStream support exposed from node:fs, and practical mutation helpers. Supported FileHandle flags are r, r+, w, w+, a, and a+.",
   "apis": [
     {
       "name": "access(path, mode)",
@@ -37,6 +42,23 @@
       "docs": "https://nodejs.org/api/fs.html#fspromisescopyfilesrc-dest-mode"
     },
     {
+      "name": "open(path[, flags[, mode]])",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Returns a Promise resolving to a FileHandle supporting fd/read/write/close in the current baseline. Supported flags: r, r+, w, w+, a, and a+.",
+      "docs": "https://nodejs.org/api/fs.html#fspromisesopenpath-flags-mode",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Open_Read_Write_Close",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Open_Read_Write_Close",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
       "name": "readFile(path, options)",
       "kind": "function",
       "status": "supported",
@@ -49,6 +71,57 @@
       "status": "supported",
       "notes": "Writes data to a file, creating or overwriting it. Supports Buffer, byte array, or string content. Supports 'utf8' encoding option.",
       "docs": "https://nodejs.org/api/fs.html#fspromiseswritefilefile-data-options"
+    },
+    {
+      "name": "appendFile(path, data[, options])",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Appends Buffer, byte array, or string content to a file using the same utf8 encoding baseline as writeFile.",
+      "docs": "https://nodejs.org/api/fs.html#fspromisesappendfilepath-data-options",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Append_Rename_Unlink",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Append_Rename_Unlink",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "rename(oldPath, newPath)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Renames files or directories with Node-like ENOENT/EACCES/EIO style errors in the supported baseline.",
+      "docs": "https://nodejs.org/api/fs.html#fspromisesrenameoldpath-newpath",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Append_Rename_Unlink",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Append_Rename_Unlink",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "unlink(path)",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Removes files with Node-like ENOENT/EISDIR/EACCES error reporting in the supported baseline.",
+      "docs": "https://nodejs.org/api/fs.html#fspromisesunlinkpath",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Append_Rename_Unlink",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Append_Rename_Unlink",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
+        }
+      ]
     },
     {
       "name": "stat(path)",

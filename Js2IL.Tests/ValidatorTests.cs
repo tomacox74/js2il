@@ -683,43 +683,53 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_ClassPrivateMethod_ReportsError()
+    public void Validate_ClassPrivateMethod_ReturnsValid()
     {
         var js = @"class Foo { #m() { return 1; } }";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Private methods"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_ClassComputedMethodName_ReportsError()
+    public void Validate_ClassComputedMethodName_ReturnsValid()
     {
         var js = @"class Foo { ['m']() { return 1; } }";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Computed/non-identifier method names"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_ClassComputedFieldName_ReportsError()
+    public void Validate_ClassComputedFieldName_ReturnsValid()
     {
         var js = @"class Foo { ['x'] = 1; }";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Computed/non-identifier class field names"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_ClassStaticBlock_ReportsError()
+    public void Validate_ClassStaticBlock_ReturnsValid()
     {
         var js = @"class Foo { static { console.log('hi'); } }";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Class static blocks"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_ClassPrivateAccessor_ReturnsValid()
+    {
+        var js = @"class Foo { get #value() { return 1; } set #value(v) { this.x = v; } read() { return this.#value; } }";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
