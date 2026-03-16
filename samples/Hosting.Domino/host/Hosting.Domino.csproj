@@ -8,7 +8,6 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <DominoCompilerDir>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','..','compiler'))))</DominoCompilerDir>
-    <ModuleSource>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(DominoCompilerDir)','node_modules','@mixmark-io','domino','lib','index.js'))))</ModuleSource>
     <ModuleOutputDirectory>obj\$(Configuration)\$(TargetFramework)\js2il\domino</ModuleOutputDirectory>
     <Js2ILStrictMode>Ignore</Js2ILStrictMode>
   </PropertyGroup>
@@ -21,9 +20,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
 
-    <Js2ILCompile Include="$(ModuleSource)"
+    <Js2ILCompile Include="@mixmark-io/domino"
                   OutputDirectory="$(ModuleOutputDirectory)"
-                  RootModuleId="@mixmark-io/domino"
+                  ModuleResolutionBaseDirectory="$(DominoCompilerDir)"
                   CopyToOutputDirectory="true" 
                   EmitPdb="true" />
   </ItemGroup>

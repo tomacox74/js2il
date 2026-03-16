@@ -77,8 +77,17 @@ public class Js2ILSdkPackageTests
             using var targetsReader = new StreamReader(targetsEntry!.Open());
             var targetsText = targetsReader.ReadToEnd();
             Assert.Contains("Js2ILCompile", targetsText, StringComparison.Ordinal);
+            Assert.Contains("ModuleResolutionBaseDirectory", targetsText, StringComparison.Ordinal);
             Assert.Contains("ReferenceOutputAssembly", targetsText, StringComparison.Ordinal);
             Assert.Contains("RootModuleId", targetsText, StringComparison.Ordinal);
+
+            var dominoSampleEntry = archive.GetEntry("samples/Hosting.Domino/host/Hosting.Domino.csproj");
+            Assert.NotNull(dominoSampleEntry);
+            using var dominoSampleReader = new StreamReader(dominoSampleEntry!.Open());
+            var dominoSampleText = dominoSampleReader.ReadToEnd();
+            Assert.Contains("<Js2ILCompile Include=\"@mixmark-io/domino\"", dominoSampleText, StringComparison.Ordinal);
+            Assert.Contains("ModuleResolutionBaseDirectory=\"$(DominoCompilerDir)\"", dominoSampleText, StringComparison.Ordinal);
+            Assert.DoesNotContain("node_modules','@mixmark-io','domino','lib','index.js", dominoSampleText, StringComparison.Ordinal);
         }
         finally
         {
@@ -268,6 +277,63 @@ public class Js2ILSdkPackageTests
     }
 
     [Fact]
+    public void Build_WithLocalJs2ILSdkPackage_CompilesPackageEntrypointByModuleId()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), "js2il-sdk-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            var repoRoot = FindRepoRoot();
+            var feedDir = Path.Combine(tempRoot, "feed");
+            var projectDir = Path.Combine(tempRoot, "consumer");
+            var compilerDir = Path.Combine(tempRoot, "compiler");
+            Directory.CreateDirectory(feedDir);
+            Directory.CreateDirectory(projectDir);
+            Directory.CreateDirectory(compilerDir);
+
+            var packageVersion = PackLocalFeed(repoRoot, feedDir);
+            WriteModuleIdConsumerProject(projectDir, compilerDir, feedDir, packageVersion);
+
+            var build = RunProcess(
+                fileName: "dotnet",
+                arguments: "build Consumer.csproj --nologo --ignore-failed-sources",
+                workingDirectory: projectDir,
+                timeoutSeconds: 180);
+
+            Assert.True(
+                build.ExitCode == 0,
+                $"dotnet build failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{build.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{build.StdErr}");
+
+            var generatedDir = Path.Combine(projectDir, "obj", "js2il-custom", "pkg");
+            Assert.True(File.Exists(Path.Combine(generatedDir, "index.dll")), $"Missing generated package module dll in '{generatedDir}'.");
+            Assert.True(File.Exists(Path.Combine(generatedDir, "index.runtimeconfig.json")), $"Missing generated package runtimeconfig in '{generatedDir}'.");
+
+            var targetDir = Path.Combine(projectDir, "bin", "Debug", "net10.0");
+            Assert.True(File.Exists(Path.Combine(targetDir, "index.dll")), $"Missing copied package module dll in '{targetDir}'.");
+
+            var run = RunProcess(
+                fileName: "dotnet",
+                arguments: "run --no-build --project Consumer.csproj --nologo",
+                workingDirectory: projectDir,
+                timeoutSeconds: 180);
+
+            Assert.True(
+                run.ExitCode == 0,
+                $"dotnet run failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{run.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{run.StdErr}");
+
+            var output = run.StdOut.Replace("\r", string.Empty, StringComparison.Ordinal);
+            Assert.Contains("hasModuleId=True", output, StringComparison.Ordinal);
+            Assert.Contains("value=42", output, StringComparison.Ordinal);
+            Assert.Contains("message=hello from package", output, StringComparison.Ordinal);
+        }
+        finally
+        {
+            try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
+        }
+    }
+
+    [Fact]
     public void Build_ExtractedHostingBasicSample_WithLocalJs2ILSdkPackage_CompilesAndRuns()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "js2il-sdk-tests", Guid.NewGuid().ToString("N"));
@@ -433,6 +499,74 @@ public class Js2ILSdkPackageTests
             using var exports = JsEngine.LoadModule<IHostedMathModuleExports>();
             Console.WriteLine($"version={exports.Version}");
             Console.WriteLine($"sum={exports.Add(1, 2)}");
+            """);
+    }
+
+    private static void WriteModuleIdConsumerProject(string projectDir, string compilerDir, string feedDir, string packageVersion)
+    {
+        WriteNuGetConfig(projectDir, feedDir);
+
+        var packageRoot = Path.Combine(compilerDir, "node_modules", "@scope", "pkg");
+        Directory.CreateDirectory(Path.Combine(packageRoot, "lib"));
+
+        File.WriteAllText(
+            Path.Combine(packageRoot, "package.json"),
+            """
+            {
+              "name": "@scope/pkg",
+              "main": "lib/index.js"
+            }
+            """);
+
+        File.WriteAllText(
+            Path.Combine(packageRoot, "lib", "index.js"),
+            """
+            "use strict";
+            module.exports = {
+              value: 42,
+              message: "hello from package"
+            };
+            """);
+
+        File.WriteAllText(
+            Path.Combine(projectDir, "Consumer.csproj"),
+            $$"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <OutputType>Exe</OutputType>
+                <TargetFramework>net10.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+                <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+              </PropertyGroup>
+
+              <ItemGroup>
+                <PackageReference Include="Js2IL.SDK" Version="{{packageVersion}}" />
+                <PackageReference Include="Js2IL.Runtime" Version="{{packageVersion}}" />
+
+                <Js2ILCompile Include="@scope/pkg"
+                              OutputDirectory="$(BaseIntermediateOutputPath)\js2il-custom\pkg"
+                              ModuleResolutionBaseDirectory="..\compiler"
+                              CopyToOutputDirectory="true" />
+              </ItemGroup>
+            </Project>
+            """);
+
+        File.WriteAllText(
+            Path.Combine(projectDir, "Program.cs"),
+            """
+            using System.Linq;
+            using System.Reflection;
+            using Js2IL.Runtime;
+
+            var compiledModulePath = Path.Combine(AppContext.BaseDirectory, "index.dll");
+            var asm = Assembly.LoadFrom(compiledModulePath);
+            var moduleIds = JsEngine.GetModuleIds(asm);
+            Console.WriteLine($"hasModuleId={moduleIds.Contains("@scope/pkg", StringComparer.Ordinal)}");
+
+            using dynamic exports = JsEngine.LoadModule(asm, moduleId: "@scope/pkg");
+            Console.WriteLine($"value={exports.value}");
+            Console.WriteLine($"message={exports.message}");
             """);
     }
 

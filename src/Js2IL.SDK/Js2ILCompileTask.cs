@@ -1,11 +1,14 @@
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
+using Js2IL.Services;
 
 namespace Js2IL.SDK.BuildTasks;
 
 public sealed class Js2ILCompileTask : Microsoft.Build.Utilities.Task
 {
+    private static readonly string[] KnownJavaScriptSourceExtensions = [".js", ".mjs", ".cjs"];
+
     [Required]
     public ITaskItem[] Sources { get; set; } = [];
 
@@ -38,7 +41,33 @@ public sealed class Js2ILCompileTask : Microsoft.Build.Utilities.Task
         List<ITaskItem> generatedAssemblies,
         List<ITaskItem> generatedOutputs)
     {
+        var sourceSpecifier = source.ItemSpec;
         var sourcePath = GetMetadataOrFallback(source, "ResolvedSourcePath", () => Path.GetFullPath(source.ItemSpec));
+        var moduleResolutionBaseDirectory = GetMetadataOrFallback(source, "ResolvedModuleResolutionBaseDirectory", () => Environment.CurrentDirectory);
+        var rootModuleId = source.GetMetadata("RootModuleId");
+
+        if (!File.Exists(sourcePath))
+        {
+            if (!LooksLikeModuleIdSpecifier(sourceSpecifier))
+            {
+                Log.LogError($"Js2IL source '{sourcePath}' does not exist.");
+                return false;
+            }
+
+            var resolver = new NodeModuleResolver(new FileSystem());
+            if (!resolver.TryResolve(sourceSpecifier, moduleResolutionBaseDirectory, out var resolvedSourcePath, out var resolutionError))
+            {
+                Log.LogError($"Js2IL could not resolve module id '{sourceSpecifier}' from '{moduleResolutionBaseDirectory}': {resolutionError}");
+                return false;
+            }
+
+            sourcePath = resolvedSourcePath;
+            if (string.IsNullOrWhiteSpace(rootModuleId))
+            {
+                rootModuleId = sourceSpecifier;
+            }
+        }
+
         if (!File.Exists(sourcePath))
         {
             Log.LogError($"Js2IL source '{sourcePath}' does not exist.");
@@ -64,7 +93,6 @@ public sealed class Js2ILCompileTask : Microsoft.Build.Utilities.Task
             return false;
         }
 
-        var rootModuleId = source.GetMetadata("RootModuleId");
         var diagnosticFilePath = source.GetMetadata("ResolvedDiagnosticFilePath");
         if (!EnsureDiagnosticDirectoryExists(diagnosticFilePath))
         {
@@ -186,6 +214,27 @@ public sealed class Js2ILCompileTask : Microsoft.Build.Utilities.Task
         }
 
         return true;
+    }
+
+    private static bool LooksLikeModuleIdSpecifier(string specifier)
+    {
+        if (string.IsNullOrWhiteSpace(specifier))
+        {
+            return false;
+        }
+
+        var trimmed = specifier.Trim();
+        if (trimmed.StartsWith("./", StringComparison.Ordinal)
+            || trimmed.StartsWith("../", StringComparison.Ordinal)
+            || trimmed.StartsWith("/", StringComparison.Ordinal)
+            || Path.IsPathRooted(trimmed)
+            || trimmed.Contains('\\'))
+        {
+            return false;
+        }
+
+        var extension = Path.GetExtension(trimmed);
+        return !KnownJavaScriptSourceExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase);
     }
 
     private bool EnsureDiagnosticDirectoryExists(string? diagnosticFilePath)

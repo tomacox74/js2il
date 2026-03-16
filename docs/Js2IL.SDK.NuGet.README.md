@@ -53,14 +53,26 @@ By default:
 
 That means a host project can compile against the generated exports contracts with no extra custom `.proj` file or CLI invocation.
 
+Package/module-id entrypoints work too. For example, to compile a restored npm package from a sibling `compiler\` directory:
+
+```xml
+<Js2ILCompile Include="@mixmark-io/domino"
+              ModuleResolutionBaseDirectory="..\compiler"
+              CopyToOutputDirectory="true" />
+```
+
+When `Include` is a module id and `RootModuleId` is not set, the SDK preserves that module id as the root module id automatically, matching the CLI `--moduleid` behavior.
+
 ## `Js2ILCompile` metadata and matching properties
 
 You can set metadata per item or apply defaults with properties:
 
 - `OutputDirectory` / `Js2ILOutputRoot`
   - Where generated files are written.
+- `ModuleResolutionBaseDirectory` / `Js2ILModuleResolutionBaseDirectory`
+  - Base directory used when `Include` is a package/module id instead of a file path. Defaults to `$(MSBuildProjectDirectory)`.
 - `RootModuleId` / `Js2ILRootModuleId`
-  - Optional module id override for the root entry module. This is the key migration knob for package-style inputs such as `@mixmark-io/domino`.
+  - Optional module id override for the root entry module. For package-style inputs such as `@mixmark-io/domino`, you usually do not need to set this because the SDK will use the module id automatically.
 - `ReferenceOutputAssembly` / `Js2ILReferenceOutputAssembly`
   - Defaults to `true`. When enabled, the generated module assembly is added to `Reference` before assembly resolution.
 - `CopyToOutputDirectory` / `Js2ILCopyToOutputDirectory`
@@ -112,7 +124,7 @@ If you are validating a locally packed prerelease feed instead of NuGet.org, pac
 - `samples\Hosting.Basic` and `samples\Hosting.Typed`
   - The host project references `Js2IL.SDK` directly and declares a `Js2ILCompile` item that points at `compiler\JavaScript\*.js`.
 - `samples\Hosting.Domino`
-  - The host project keeps `npm ci`, then compiles the restored entry file under `compiler\node_modules\@mixmark-io\domino\lib\index.js` with `RootModuleId="@mixmark-io/domino"` so `JsEngine.LoadModule(..., "@mixmark-io/domino")` continues to work.
+  - The host project keeps `npm ci`, then compiles `@mixmark-io/domino` directly while setting `ModuleResolutionBaseDirectory` to the sibling `compiler\` directory so `JsEngine.LoadModule(..., "@mixmark-io/domino")` continues to work.
 
 ## Links
 

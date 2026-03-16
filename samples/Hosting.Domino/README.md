@@ -14,7 +14,7 @@ It is split into two parts:
 
 ## Package entry resolution
 
-This sample restores domino into `compiler\node_modules`, points `Js2ILCompile` at the resolved `lib\index.js` entry file, and sets `RootModuleId="@mixmark-io/domino"` so the host can still load the package by module id.
+This sample restores domino into `compiler\node_modules`, declares `@mixmark-io/domino` directly in `Js2ILCompile`, and sets `ModuleResolutionBaseDirectory` to `compiler\` so the SDK can resolve the package entrypoint using Node-style package resolution.
 
 ## Running the sample
 
@@ -25,5 +25,5 @@ From `samples/Hosting.Domino/host`:
 This will:
 
 1. Run `npm ci` in `..\compiler` (to restore `@mixmark-io/domino`)
-2. Compile `compiler\node_modules\@mixmark-io\domino\lib\index.js` via `Js2IL.SDK` with `RootModuleId="@mixmark-io/domino"`
+2. Compile `@mixmark-io/domino` via `Js2IL.SDK`, resolving it from `..\compiler`
 3. Run the host which loads the compiled module and prints stats for `sample.html`
