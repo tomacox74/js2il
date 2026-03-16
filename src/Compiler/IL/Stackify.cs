@@ -333,11 +333,16 @@ internal static class Stackify
                 return true;
 
             // Scope field loads - side-effect free field reads, similar to parameter loads
-            case LIRLoadLeafScopeField:
-            case LIRLoadParentScopeField:
-                return true;
+            case LIRLoadLeafScopeField loadLeafScopeField:
+                return !loadLeafScopeField.Binding.RequiresTemporalDeadZoneChecks;
+            case LIRLoadParentScopeField loadParentScopeField:
+                return !loadParentScopeField.Binding.RequiresTemporalDeadZoneChecks;
 
             case LIRLoadScopeField loadScopeField:
+                if (loadScopeField.Binding.RequiresTemporalDeadZoneChecks)
+                {
+                    return false;
+                }
                 // Only inline if the scope-instance temp is stable.
                 // If the scope instance temp is backed by a variable slot that can be reassigned
                 // (e.g., per-iteration environment recreation), re-emitting the load could observe

@@ -17,6 +17,7 @@ public class RuntimeServices
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
     // NOTE: Consumers must treat scopes arrays as immutable.
     public static readonly object[] EmptyScopes = new object[1];
+    public static readonly object TemporalDeadZoneSentinel = new();
 
 #if DEBUG
     public static void AssertEmptyScopesUnmodified()

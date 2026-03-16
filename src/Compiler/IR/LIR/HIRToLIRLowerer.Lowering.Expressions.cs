@@ -346,6 +346,11 @@ public sealed partial class HIRToLIRLowerer
                         return new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate));
                     }
 
+                    if (b.RequiresTemporalDeadZoneChecks)
+                    {
+                        return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+                    }
+
                     // Propagate unboxed primitives for stable inferred types. This matches the current
                     // typed-scope-field support in TypeGenerator/VariableRegistry.
                     if (b.IsStableType)
@@ -377,6 +382,24 @@ public sealed partial class HIRToLIRLowerer
                         && b.DeclaringScope.Parameters.Contains("require")
                         && ReferenceEquals(b.DeclarationNode, b.DeclaringScope.AstNode)
                         && !b.HasWrite;
+                }
+
+                TempVariable EmitTemporalDeadZoneReferenceError(BindingInfo b)
+                {
+                    var messageTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstString($"Cannot access '{b.Name}' before initialization", messageTemp));
+                    DefineTempStorage(messageTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                    var errorTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRNewBuiltInError("ReferenceError", messageTemp, errorTemp));
+                    DefineTempStorage(errorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                    _methodBodyIR.Instructions.Add(new LIRThrow(errorTemp));
+
+                    var result = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return result;
                 }
 
                 // Per-iteration environments: if this binding lives in an active materialized scope instance
@@ -524,6 +547,12 @@ public sealed partial class HIRToLIRLowerer
                 
                 if (!_variableMap.TryGetValue(binding, out resultTempVar))
                 {
+                    if (binding.RequiresTemporalDeadZoneChecks)
+                    {
+                        resultTempVar = EmitTemporalDeadZoneReferenceError(binding);
+                        return true;
+                    }
+
                     // Intrinsic globals (e.g., console, process, Infinity, NaN) are exposed via JavaScriptRuntime.GlobalThis.
                     // If this identifier is a Global binding and maps to a GlobalThis static property, emit a load.
                     if (varExpr.Name.Kind == BindingKind.Global)

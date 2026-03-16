@@ -3,6 +3,7 @@ using Js2IL.Services;
 using Js2IL.Services.ILGenerators;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Services.VariableBindings;
+using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -83,6 +84,34 @@ internal sealed partial class LIRToILCompiler
                 : _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         ilEncoder.OpCode(ILOpCode.Stfld);
         ilEncoder.Token(fieldHandle);
+    }
+
+    private void EmitTemporalDeadZoneGuard(InstructionEncoder ilEncoder, BindingInfo binding)
+    {
+        if (!binding.RequiresTemporalDeadZoneChecks)
+        {
+            return;
+        }
+
+        var continueLabel = ilEncoder.DefineLabel();
+        var sentinelField = _memberRefRegistry.GetOrAddField(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.TemporalDeadZoneSentinel));
+        var referenceErrorCtor = _memberRefRegistry.GetOrAddConstructor(
+            typeof(JavaScriptRuntime.ReferenceError),
+            parameterTypes: new[] { typeof(string) });
+
+        ilEncoder.OpCode(ILOpCode.Dup);
+        ilEncoder.OpCode(ILOpCode.Ldsfld);
+        ilEncoder.Token(sentinelField);
+        ilEncoder.OpCode(ILOpCode.Ceq);
+        ilEncoder.Branch(ILOpCode.Brfalse_s, continueLabel);
+        ilEncoder.OpCode(ILOpCode.Pop);
+        ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString($"Cannot access '{binding.Name}' before initialization"));
+        ilEncoder.OpCode(ILOpCode.Newobj);
+        ilEncoder.Token(referenceErrorCtor);
+        ilEncoder.OpCode(ILOpCode.Throw);
+        ilEncoder.MarkLabel(continueLabel);
     }
 
     /// <summary>

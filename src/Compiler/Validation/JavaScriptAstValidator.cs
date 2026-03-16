@@ -500,25 +500,30 @@ public class JavaScriptAstValidator : IAstValidator
         // Pre-collect top-level lexical declarations (let/const/class) so missing-globals validation
         // does not report false positives for patterns that reference lexical bindings before their
         // declaration (e.g., hoisted ESM export getters created before the declaration executes).
-        foreach (var statement in ast.Body)
+        void CollectLexicalDeclarations(IEnumerable<Statement> statements, ScopeFrame target)
         {
-            switch (statement)
+            foreach (var statement in statements)
             {
-                case VariableDeclaration vd when vd.Kind != VariableDeclarationKind.Var:
-                    foreach (var decl in vd.Declarations)
-                    {
-                        if (decl?.Id != null)
+                switch (statement)
+                {
+                    case VariableDeclaration vd when vd.Kind != VariableDeclarationKind.Var:
+                        foreach (var decl in vd.Declarations)
                         {
-                            DeclarePatternNames(decl.Id, scopeStack.Peek());
+                            if (decl?.Id != null)
+                            {
+                                DeclarePatternNames(decl.Id, target);
+                            }
                         }
-                    }
-                    break;
+                        break;
 
-                case ClassDeclaration cd when cd.Id != null:
-                    scopeStack.Peek().DeclaredNames.Add(cd.Id.Name);
-                    break;
+                    case ClassDeclaration cd when cd.Id != null:
+                        target.DeclaredNames.Add(cd.Id.Name);
+                        break;
+                }
             }
         }
+
+        CollectLexicalDeclarations(ast.Body, scopeStack.Peek());
 
         static bool IsBindingPatternNode(Node n)
             => n is ObjectPattern
@@ -739,6 +744,10 @@ public class JavaScriptAstValidator : IAstValidator
                             DeclaredNames = new HashSet<string>(StringComparer.Ordinal),
                             IsFunctionScope = false
                         });
+                        if (node is BlockStatement block)
+                        {
+                            CollectLexicalDeclarations(block.Body, scopeStack.Peek());
+                        }
                         break;
 
                     case CatchClause cc:

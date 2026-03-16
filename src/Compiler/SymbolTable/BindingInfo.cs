@@ -85,6 +85,15 @@ public class BindingInfo
     /// </summary>
     public bool HasWrite { get; set; }
 
+    /// <summary>
+    /// True when accesses to this binding must respect the temporal dead zone.
+    /// This applies to lexical declarations (<c>let</c>, <c>const</c>, and class bindings modeled as <c>let</c>)
+    /// but not to parameters injected into the scope.
+    /// </summary>
+    public bool RequiresTemporalDeadZoneChecks
+        => (Kind == BindingKind.Let || Kind == BindingKind.Const)
+           && !DeclaringScope.Parameters.Contains(Name);
+
     public BindingInfo(string name, BindingKind kind, Scope declaringScope, Node declarationNode)
     {
         Name = name;

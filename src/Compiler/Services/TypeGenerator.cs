@@ -24,6 +24,7 @@ namespace Js2IL.Services
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes;
         private readonly Dictionary<string, List<FieldDefinitionHandle>> _scopeFields;
         private readonly Dictionary<string, List<string>> _scopeFieldNames;
+        private readonly Dictionary<string, List<string>> _scopeTemporalDeadZoneFieldNames;
         private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _scopeFieldHandlesByName;
         private readonly VariableRegistry _variableRegistry;
         private readonly bool _emitDebuggerDisplay;
@@ -46,6 +47,7 @@ namespace Js2IL.Services
             _scopeTypes = new Dictionary<string, TypeDefinitionHandle>();
             _scopeFields = new Dictionary<string, List<FieldDefinitionHandle>>();
             _scopeFieldNames = new Dictionary<string, List<string>>();
+            _scopeTemporalDeadZoneFieldNames = new Dictionary<string, List<string>>();
             _scopeFieldHandlesByName = new Dictionary<string, Dictionary<string, FieldDefinitionHandle>>();
             _deferredCtorStartRow = deferredCtorStartRow;
             _nextDeferredCtorRow = deferredCtorStartRow;
@@ -82,7 +84,7 @@ namespace Js2IL.Services
             foreach (var item in _deferredCtorPlan)
             {
                 var tb = new TypeBuilder(_metadataBuilder, item.Namespace, item.TypeName);
-                var actual = EmitScopeConstructor(tb, item.IsAsync, item.IsGenerator);
+                var actual = EmitScopeConstructor(tb, item.ScopeKey, item.IsAsync, item.IsGenerator);
                 if (actual != item.ExpectedCtor)
                 {
                     throw new InvalidOperationException(
@@ -107,6 +109,11 @@ namespace Js2IL.Services
             if (IsSafeInjectedCommonJsRequireBinding(scope, binding))
             {
                 return typeof(JavaScriptRuntime.CommonJS.RequireDelegate);
+            }
+
+            if (binding.RequiresTemporalDeadZoneChecks)
+            {
+                return typeof(object);
             }
 
             if (binding.IsStableType && binding.ClrType != null)
@@ -186,6 +193,8 @@ namespace Js2IL.Services
 
             _scopeFieldNames[scopeKey] = new List<string>();
             var scopeFieldNames = _scopeFieldNames[scopeKey];
+            _scopeTemporalDeadZoneFieldNames[scopeKey] = new List<string>();
+            var temporalDeadZoneFieldNames = _scopeTemporalDeadZoneFieldNames[scopeKey];
 
             if (!_scopeFieldHandlesByName.ContainsKey(scopeKey))
                 _scopeFieldHandlesByName[scopeKey] = new Dictionary<string, FieldDefinitionHandle>();
@@ -274,6 +283,11 @@ namespace Js2IL.Services
                 scopeFields.Add(fieldHandle);
                 scopeFieldNames.Add(variableName);
                 _scopeFieldHandlesByName[scopeKey][variableName] = fieldHandle;
+
+                if (binding.RequiresTemporalDeadZoneChecks)
+                {
+                    temporalDeadZoneFieldNames.Add(variableName);
+                }
             }
 
             // Add awaited result storage fields for async function scopes: _awaited1, _awaited2, etc.
@@ -562,7 +576,7 @@ namespace Js2IL.Services
         /// <summary>
         /// Creates a constructor method definition for a scope type.
         /// </summary>
-        private MethodDefinitionHandle EmitScopeConstructor(TypeBuilder tb, bool isAsync, bool isGenerator)
+        private MethodDefinitionHandle EmitScopeConstructor(TypeBuilder tb, string scopeKey, bool isAsync, bool isGenerator)
         {
             // Create constructor method signature
             var ctorSig = new BlobBuilder();
@@ -591,6 +605,30 @@ namespace Js2IL.Services
             else
             {
                 encoder.Call(_bclReferences.Object_Ctor_Ref);
+            }
+
+            if (_scopeTemporalDeadZoneFieldNames.TryGetValue(scopeKey, out var temporalDeadZoneFields))
+            {
+                var sentinelField = _bclReferences.MemberReferenceRegistry.GetOrAddField(
+                    typeof(JavaScriptRuntime.RuntimeServices),
+                    nameof(JavaScriptRuntime.RuntimeServices.TemporalDeadZoneSentinel));
+
+                foreach (var fieldName in temporalDeadZoneFields)
+                {
+                    if (!_scopeFieldHandlesByName.TryGetValue(scopeKey, out var fieldsByName)
+                        || !fieldsByName.TryGetValue(fieldName, out var fieldHandle)
+                        || fieldHandle.IsNil)
+                    {
+                        throw new InvalidOperationException(
+                            $"TypeGenerator field mapping missing TDZ field '{fieldName}' in scope '{scopeKey}'.");
+                    }
+
+                    encoder.OpCode(ILOpCode.Ldarg_0);
+                    encoder.OpCode(ILOpCode.Ldsfld);
+                    encoder.Token(sentinelField);
+                    encoder.OpCode(ILOpCode.Stfld);
+                    encoder.Token(fieldHandle);
+                }
             }
 
             encoder.OpCode(ILOpCode.Nop);
