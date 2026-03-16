@@ -120,6 +120,46 @@ public sealed class LIRTypeNormalizationTests
     }
 
     [Fact]
+    public void Normalize_Rewrites_TypeofFunctionStrictEqual_WhenTypeofAndConstantAreCopiedBeforeCompare()
+    {
+        var body = new MethodBodyIR();
+        var value = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var typeofResult = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var typeofCopy = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var functionString = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var functionStringCopy = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        var comparisonResult = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        int targetLabel = 8;
+
+        body.Instructions.Add(new LIRTypeof(value, typeofResult));
+        body.Instructions.Add(new LIRCopyTemp(typeofResult, typeofCopy));
+        body.Instructions.Add(new LIRConstString("function", functionString));
+        body.Instructions.Add(new LIRCopyTemp(functionString, functionStringCopy));
+        body.Instructions.Add(new LIRStrictEqualDynamic(typeofCopy, functionStringCopy, comparisonResult));
+        body.Instructions.Add(new LIRBranchIfTrue(comparisonResult, targetLabel));
+        body.Instructions.Add(new LIRLabel(targetLabel));
+
+        LIRTypeNormalization.Normalize(body, classRegistry: null);
+
+        Assert.Collection(
+            body.Instructions,
+            instruction =>
+            {
+                var isInstanceOf = Assert.IsType<LIRIsInstanceOf>(instruction);
+                Assert.Equal(typeof(Delegate), isInstanceOf.TargetType);
+                Assert.Equal(value, isInstanceOf.Value);
+            },
+            instruction =>
+            {
+                var branch = Assert.IsType<LIRBranchIfTrue>(instruction);
+                var conditionDef = Assert.IsType<LIRIsInstanceOf>(body.Instructions[0]);
+                Assert.Equal(conditionDef.Result, branch.Condition);
+                Assert.Equal(targetLabel, branch.TargetLabel);
+            },
+            instruction => Assert.IsType<LIRLabel>(instruction));
+    }
+
+    [Fact]
     public void Normalize_Rewrites_TypeofFunctionStrictNotEqual_BranchWithInvertedPolarity()
     {
         var body = new MethodBodyIR();

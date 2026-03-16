@@ -130,6 +130,9 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_TypeofFunctionStrictEqual() { var testName = nameof(BinaryOperator_TypeofFunctionStrictEqual); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_TypeofFunctionStrictEqual_CallableShapes() { var testName = nameof(BinaryOperator_TypeofFunctionStrictEqual_CallableShapes); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_SubNumberNumber() { var testName = nameof(BinaryOperator_SubNumberNumber); return GenerateTest(testName); }
 
         [Fact]
