@@ -5,7 +5,7 @@
   "title": "Class Definitions",
   "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
-  "intro": "JS2IL supports class declarations/expressions, methods (including async and generator methods), identifier-named instance/static accessors, constructors (including derived constructors with super calls), and public/private instance/static fields with initializers. Limitations: class static blocks are not supported; computed method/field names and private methods/accessors are rejected.",
+  "intro": "JS2IL supports class declarations/expressions, methods (including async and generator methods), constructors (including derived constructors with super calls), class static blocks, private methods/accessors, and public/private instance/static fields with initializers. Computed class field names and literal/simple computed method names are supported; arbitrary runtime-computed class method names remain limited.",
   "parent": {
     "clause": "15"
   },
@@ -61,7 +61,7 @@
     {
       "clause": "15.7.9",
       "title": "Static Semantics: ContainsArguments",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-containsarguments"
     },
     {
@@ -73,7 +73,7 @@
     {
       "clause": "15.7.11",
       "title": "Runtime Semantics: ClassStaticBlockDefinitionEvaluation",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classstaticblockdefinitionevaluation"
     },
     {
@@ -307,7 +307,7 @@
         "testScripts": [
           "Js2IL.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js"
         ],
-        "notes": "Identifier-named instance and static accessors compile and dispatch correctly for normal property reads/writes, including accessor this binding and static access through the class object. Computed class accessors, private accessors, and static blocks remain unsupported."
+        "notes": "Identifier-named instance and static accessors compile and dispatch correctly for normal property reads/writes, including accessor this binding and static access through the class object. Private accessors are compiled as hidden callable members. Computed class accessors still have limitations."
       },
       {
         "clause": "15.7.1",
@@ -342,7 +342,7 @@
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
           "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
         ],
-        "notes": "JS2IL supports constructors, identifier-named methods/accessors, and identifier/private-identifier fields. Limitations: computed names, private methods/accessors, and static blocks are not supported."
+        "notes": "JS2IL supports constructors, identifier/private-named methods and accessors, static blocks, and identifier/private-identifier fields. Literal/simple computed names are compiled onto the generated class/field surface; arbitrary runtime-computed method keys still have limitations."
       },
       {
         "clause": "15.7.3",
@@ -406,42 +406,47 @@
       },
       {
         "clause": "15.7.1",
-        "feature": "Private methods (#m() {})",
-        "status": "Not Yet Supported",
+        "feature": "Private methods and accessors (#m() {}, get #x(), set #x(v))",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/ValidatorTests.cs"
+          "Js2IL.Tests/ValidatorTests.cs",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateMethodAndAccessor_Log.js"
         ],
-        "notes": "Validator rejects private methods and private accessors; JS2IL currently supports private fields, but not private methods/accessors."
+        "notes": "Private methods and private accessors are compiled as hidden callable members distinct from private field storage, so they are not surfaced through normal property enumeration or lookup."
       },
       {
         "clause": "15.7.1",
         "feature": "Computed method names (class C { ['m']() {} })",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/ValidatorTests.cs"
+          "Js2IL.Tests/ValidatorTests.cs",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js"
         ],
-        "notes": "Only identifier-named methods are registered in the ClassRegistry."
+        "notes": "Identifier, string-literal, numeric-literal, and other simple literal computed method names compile onto the generated class surface. Arbitrary runtime-computed method keys still have limitations."
       },
       {
         "clause": "15.7.10",
         "feature": "Computed field names (class C { ['x'] = 1 })",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation",
         "testScripts": [
-          "Js2IL.Tests/ValidatorTests.cs"
+          "Js2IL.Tests/ValidatorTests.cs",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js"
         ],
-        "notes": "Only identifier/private-identifier field definitions are emitted as .NET fields."
+        "notes": "Identifier/private-identifier field definitions are emitted as CLR fields. Simple literal computed names are resolved onto the generated class surface; dynamically computed field keys still use the generic runtime property path."
       },
       {
         "clause": "15.7.11",
         "feature": "Class static blocks (static { ... })",
-        "status": "Not Yet Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classstaticblockdefinitionevaluation",
         "testScripts": [
-          "Js2IL.Tests/ValidatorTests.cs"
-        ]
+          "Js2IL.Tests/ValidatorTests.cs",
+          "Js2IL.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js"
+        ],
+        "notes": "Static blocks are emitted into the synthesized class .cctor and execute once in declaration order relative to static field initialization."
       }
     ]
   }

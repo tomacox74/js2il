@@ -3,6 +3,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Linq;
 using System.Reflection;
 using Acornima.Ast;
+using Js2IL.Services;
 using Js2IL.Services.ILGenerators;
 using Js2IL.Services.ScopesAbi;
 using Js2IL.SymbolTables;
@@ -969,13 +970,7 @@ public sealed class TwoPhaseCompilationCoordinator
                         throw new InvalidOperationException($"[TwoPhase] Class method callable missing AST node: {callable.DisplayName}");
                     }
 
-                    var memberName = (methodDef.Key as Identifier)?.Name ?? "method";
-                    var clrMethodName = methodDef.Kind switch
-                    {
-                        PropertyKind.Get => $"get_{memberName}",
-                        PropertyKind.Set => $"set_{memberName}",
-                        _ => memberName
-                    };
+                    var clrMethodName = ClassElementNames.GetMethodRegistryName(methodDef);
 
                     body = methodCompiler.CompileClassMethodBodyTwoPhase(
                         callable: callable,
@@ -1061,10 +1056,12 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         // Methods/accessors in source order
-        foreach (var member in classBody.Body.OfType<Acornima.Ast.MethodDefinition>().Where(m => m.Key is Identifier))
+        foreach (var member in classBody.Body.OfType<Acornima.Ast.MethodDefinition>())
         {
-            var methodName = ((Identifier)member.Key).Name;
-            if (methodName == "constructor") continue;
+            if (ClassElementNames.IsConstructor(member) || !ClassElementNames.TryGetPropertyName(member.Key, member.Computed, out _))
+            {
+                continue;
+            }
 
             if (_registry.TryGetCallableIdForAstNode(member, out var methodCallable))
             {
@@ -1073,9 +1070,11 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         // Static initializer (.cctor) if needed (legacy ordering: after methods)
-        bool hasStaticFieldInits = classBody.Body.OfType<Acornima.Ast.PropertyDefinition>()
-            .Any(p => p.Static && p.Value != null);
-        if (hasStaticFieldInits)
+        bool hasStaticClassEvaluation = classBody.Body.Any(element =>
+            element is Acornima.Ast.StaticBlock
+            || element is Acornima.Ast.PropertyDefinition propertyDefinition && propertyDefinition.Static && (propertyDefinition.Value != null || propertyDefinition.Computed)
+            || element is Acornima.Ast.MethodDefinition methodDefinition && methodDefinition.Static && methodDefinition.Computed);
+        if (hasStaticClassEvaluation)
         {
             var cctor = _discoveredCallables!.FirstOrDefault(c => c.Kind == CallableKind.ClassStaticInitializer && string.Equals(c.Name, className, StringComparison.Ordinal));
             if (cctor != null)

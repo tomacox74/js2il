@@ -384,6 +384,12 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Error), Error);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Error), dict[nameof(GlobalThis.Error)]);
 
+            dict.TryAdd(nameof(GlobalThis.AbortController), AbortController);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.AbortController), dict[nameof(GlobalThis.AbortController)]);
+
+            dict.TryAdd(nameof(GlobalThis.AbortSignal), AbortSignal);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.AbortSignal), dict[nameof(GlobalThis.AbortSignal)]);
+
             // Global functions exposed as delegates.
             dict.TryAdd(nameof(GlobalThis.setTimeout), (Func<object, object, object[], object>)setTimeout);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.setTimeout), dict[nameof(GlobalThis.setTimeout)]);
@@ -477,6 +483,10 @@ namespace JavaScriptRuntime
         /// access <c>Error.prototype</c>.
         /// </summary>
         public static Func<object[], object?[], object?> Error => _errorConstructorValue;
+
+        public static Type AbortController => typeof(JavaScriptRuntime.AbortController);
+
+        public static Type AbortSignal => typeof(JavaScriptRuntime.AbortSignal);
 
         /// <summary>
         /// ECMAScript global Infinity value (+∞).

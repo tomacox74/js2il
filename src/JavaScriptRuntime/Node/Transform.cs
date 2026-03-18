@@ -5,6 +5,7 @@ namespace JavaScriptRuntime.Node
     public class Transform : Duplex
     {
         private bool _readEndedPushed = false;
+        private bool _readEndQueued = false;
 
         public object? _transform = null;
 
@@ -47,6 +48,7 @@ namespace JavaScriptRuntime.Node
             }
 
             _readEndedPushed = true;
+            _readEndQueued = false;
             try
             {
                 push(null);
@@ -56,22 +58,37 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        private void QueueReadableEndAfterFinish()
+        {
+            if (_readEndedPushed || _readEndQueued || destroyed)
+            {
+                return;
+            }
+
+            _readEndQueued = true;
+            once("finish", new Func<object[], object?[], object?>((_, _) =>
+            {
+                EndReadableSide();
+                return null;
+            }));
+        }
+
         public override void end()
         {
+            QueueReadableEndAfterFinish();
             base.end();
-            EndReadableSide();
         }
 
         public override void end(object? chunk)
         {
+            QueueReadableEndAfterFinish();
             base.end(chunk);
-            EndReadableSide();
         }
 
         public override void end(object? chunk, object? callback)
         {
+            QueueReadableEndAfterFinish();
             base.end(chunk, callback);
-            EndReadableSide();
         }
     }
 }
