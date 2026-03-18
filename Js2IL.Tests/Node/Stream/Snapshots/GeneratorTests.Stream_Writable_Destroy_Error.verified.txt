@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x239e
+				// Method begins at RVA 0x2326
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,9 +42,9 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2200
+			// Method begins at RVA 0x21c4
 			// Header size: 12
-			// Code size: 46 (0x2e)
+			// Code size: 47 (0x2f)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -66,11 +66,12 @@
 			IL_0024: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 			IL_0029: throw
 
-			IL_002a: pop
-			IL_002b: throw
+			IL_002a: nop
+			IL_002b: pop
+			IL_002c: throw
 
-			IL_002c: ldnull
-			IL_002d: ret
+			IL_002d: ldnull
+			IL_002e: ret
 		} // end of method FunctionExpression_L8C18::__js_call__
 
 	} // end of class FunctionExpression_L8C18
@@ -86,7 +87,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23a7
+				// Method begins at RVA 0x232f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -113,9 +114,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x223c
+			// Method begins at RVA 0x2200
 			// Header size: 12
-			// Code size: 66 (0x42)
+			// Code size: 54 (0x36)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -124,30 +125,22 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::sequence
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'sequence' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldstr "error:"
-			IL_0022: ldarg.2
-			IL_0023: ldstr "message"
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0032: stloc.1
-			IL_0033: ldloc.0
-			IL_0034: ldstr "push"
-			IL_0039: ldloc.1
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_003f: pop
-			IL_0040: ldnull
-			IL_0041: ret
+			IL_0006: ldstr "Cannot access 'sequence' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldstr "error:"
+			IL_0016: ldarg.2
+			IL_0017: ldstr "message"
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0026: stloc.1
+			IL_0027: ldloc.0
+			IL_0028: ldstr "push"
+			IL_002d: ldloc.1
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0033: pop
+			IL_0034: ldnull
+			IL_0035: ret
 		} // end of method FunctionExpression_L12C21::__js_call__
 
 	} // end of class FunctionExpression_L12C21
@@ -163,7 +156,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b0
+				// Method begins at RVA 0x2338
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -189,9 +182,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x228c
+			// Method begins at RVA 0x2244
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 36 (0x24)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -199,24 +192,16 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::sequence
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'sequence' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldstr "push"
-			IL_0023: ldstr "finish"
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_002d: pop
-			IL_002e: ldnull
-			IL_002f: ret
+			IL_0006: ldstr "Cannot access 'sequence' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldstr "push"
+			IL_0017: ldstr "finish"
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0021: pop
+			IL_0022: ldnull
+			IL_0023: ret
 		} // end of method FunctionExpression_L16C22::__js_call__
 
 	} // end of class FunctionExpression_L16C22
@@ -232,7 +217,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b9
+				// Method begins at RVA 0x2341
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -258,9 +243,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x22c8
+			// Method begins at RVA 0x2274
 			// Header size: 12
-			// Code size: 171 (0xab)
+			// Code size: 135 (0x87)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -269,71 +254,47 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::sequence
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'sequence' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldstr "push"
-			IL_0023: ldstr "close"
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_002d: pop
-			IL_002e: ldarg.0
-			IL_002f: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::sequence
-			IL_0034: dup
-			IL_0035: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_003a: ceq
-			IL_003c: brfalse.s IL_004a
-
-			IL_003e: pop
-			IL_003f: ldstr "Cannot access 'sequence' before initialization"
-			IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0049: throw
-
-			IL_004a: stloc.0
-			IL_004b: ldloc.0
-			IL_004c: ldstr "join"
-			IL_0051: ldstr ","
-			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_005b: stloc.0
-			IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0006: ldstr "Cannot access 'sequence' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldstr "push"
+			IL_0017: ldstr "close"
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0021: pop
+			IL_0022: ldarg.0
+			IL_0023: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::sequence
+			IL_0028: ldstr "Cannot access 'sequence' before initialization"
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0032: stloc.0
+			IL_0033: ldloc.0
+			IL_0034: ldstr "join"
+			IL_0039: ldstr ","
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0043: stloc.0
+			IL_0044: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0049: ldloc.0
+			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_004f: pop
+			IL_0050: ldarg.0
+			IL_0051: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
+			IL_0056: ldstr "Cannot access 'writable' before initialization"
+			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0060: stloc.0
 			IL_0061: ldloc.0
-			IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0067: pop
-			IL_0068: ldarg.0
-			IL_0069: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
-			IL_006e: dup
-			IL_006f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0074: ceq
-			IL_0076: brfalse.s IL_0084
-
-			IL_0078: pop
-			IL_0079: ldstr "Cannot access 'writable' before initialization"
-			IL_007e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0083: throw
-
-			IL_0084: stloc.0
-			IL_0085: ldloc.0
-			IL_0086: ldstr "destroyed"
-			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0090: stloc.0
-			IL_0091: ldstr "destroyed:"
-			IL_0096: ldloc.0
-			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_009c: stloc.1
-			IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00a2: ldloc.1
-			IL_00a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00a8: pop
-			IL_00a9: ldnull
-			IL_00aa: ret
+			IL_0062: ldstr "destroyed"
+			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_006c: stloc.0
+			IL_006d: ldstr "destroyed:"
+			IL_0072: ldloc.0
+			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0078: stloc.1
+			IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_007e: ldloc.1
+			IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0084: pop
+			IL_0085: ldnull
+			IL_0086: ret
 		} // end of method FunctionExpression_L20C21::__js_call__
 
 	} // end of class FunctionExpression_L20C21
@@ -355,7 +316,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x237f
+			// Method begins at RVA 0x2307
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -387,7 +348,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 418 (0x1a2)
+		// Code size: 358 (0x166)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Writable_Destroy_Error/Scope,
@@ -421,146 +382,106 @@
 		IL_0039: stfld object Modules.Stream_Writable_Destroy_Error/Scope::sequence
 		IL_003e: ldloc.0
 		IL_003f: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
-		IL_0044: dup
-		IL_0045: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_004a: ceq
-		IL_004c: brfalse.s IL_005a
-
-		IL_004e: pop
-		IL_004f: ldstr "Cannot access 'writable' before initialization"
-		IL_0054: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0059: throw
-
-		IL_005a: stloc.2
-		IL_005b: ldnull
-		IL_005c: ldftn object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L8C18::__js_call__(object, object)
-		IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0067: stloc.3
-		IL_0068: ldloc.2
-		IL_0069: ldstr "_write"
-		IL_006e: ldloc.3
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
-		IL_0074: pop
-		IL_0075: ldloc.0
-		IL_0076: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
-		IL_007b: dup
-		IL_007c: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0081: ceq
-		IL_0083: brfalse.s IL_0091
-
-		IL_0085: pop
-		IL_0086: ldstr "Cannot access 'writable' before initialization"
-		IL_008b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0090: throw
-
-		IL_0091: stloc.3
-		IL_0092: ldc.i4.1
-		IL_0093: newarr [System.Runtime]System.Object
-		IL_0098: dup
-		IL_0099: ldc.i4.0
-		IL_009a: ldloc.0
-		IL_009b: stelem.ref
-		IL_009c: ldc.i4.0
-		IL_009d: ldelem.ref
-		IL_009e: castclass Modules.Stream_Writable_Destroy_Error/Scope
-		IL_00a3: ldftn object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L12C21::__js_call__(class Modules.Stream_Writable_Destroy_Error/Scope, object, object)
-		IL_00a9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00ae: stloc.2
-		IL_00af: ldloc.3
-		IL_00b0: ldstr "on"
-		IL_00b5: ldstr "error"
-		IL_00ba: ldloc.2
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00c0: pop
-		IL_00c1: ldloc.0
-		IL_00c2: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
-		IL_00c7: dup
-		IL_00c8: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_00cd: ceq
-		IL_00cf: brfalse.s IL_00dd
-
-		IL_00d1: pop
-		IL_00d2: ldstr "Cannot access 'writable' before initialization"
-		IL_00d7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_00dc: throw
-
-		IL_00dd: stloc.2
-		IL_00de: ldc.i4.1
-		IL_00df: newarr [System.Runtime]System.Object
-		IL_00e4: dup
-		IL_00e5: ldc.i4.0
-		IL_00e6: ldloc.0
-		IL_00e7: stelem.ref
-		IL_00e8: ldc.i4.0
-		IL_00e9: ldelem.ref
-		IL_00ea: castclass Modules.Stream_Writable_Destroy_Error/Scope
-		IL_00ef: ldftn object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L16C22::__js_call__(class Modules.Stream_Writable_Destroy_Error/Scope, object)
-		IL_00f5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00fa: stloc.3
-		IL_00fb: ldloc.2
-		IL_00fc: ldstr "on"
-		IL_0101: ldstr "finish"
-		IL_0106: ldloc.3
-		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_010c: pop
-		IL_010d: ldloc.0
-		IL_010e: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
-		IL_0113: dup
-		IL_0114: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0119: ceq
-		IL_011b: brfalse.s IL_0129
-
-		IL_011d: pop
-		IL_011e: ldstr "Cannot access 'writable' before initialization"
-		IL_0123: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0128: throw
-
-		IL_0129: stloc.3
-		IL_012a: ldc.i4.1
-		IL_012b: newarr [System.Runtime]System.Object
-		IL_0130: dup
-		IL_0131: ldc.i4.0
-		IL_0132: ldloc.0
-		IL_0133: stelem.ref
-		IL_0134: ldc.i4.0
-		IL_0135: ldelem.ref
-		IL_0136: castclass Modules.Stream_Writable_Destroy_Error/Scope
-		IL_013b: ldftn object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L20C21::__js_call__(class Modules.Stream_Writable_Destroy_Error/Scope, object)
-		IL_0141: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0146: stloc.2
-		IL_0147: ldloc.3
-		IL_0148: ldstr "on"
-		IL_014d: ldstr "close"
-		IL_0152: ldloc.2
-		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0158: pop
-		IL_0159: ldloc.0
-		IL_015a: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
-		IL_015f: dup
-		IL_0160: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0165: ceq
-		IL_0167: brfalse.s IL_0175
-
-		IL_0169: pop
-		IL_016a: ldstr "Cannot access 'writable' before initialization"
-		IL_016f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0174: throw
-
-		IL_0175: stloc.2
-		IL_0176: ldloc.2
-		IL_0177: ldstr "write"
-		IL_017c: ldstr "x"
-		IL_0181: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0186: stloc.2
-		IL_0187: ldstr "write-return:"
-		IL_018c: ldloc.2
-		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0192: stloc.s 4
-		IL_0194: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0199: ldloc.s 4
-		IL_019b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01a0: pop
-		IL_01a1: ret
+		IL_0044: ldstr "Cannot access 'writable' before initialization"
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_004e: stloc.2
+		IL_004f: ldnull
+		IL_0050: ldftn object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L8C18::__js_call__(object, object)
+		IL_0056: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_005b: stloc.3
+		IL_005c: ldloc.2
+		IL_005d: ldstr "_write"
+		IL_0062: ldloc.3
+		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
+		IL_0068: pop
+		IL_0069: ldloc.0
+		IL_006a: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
+		IL_006f: ldstr "Cannot access 'writable' before initialization"
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0079: stloc.3
+		IL_007a: ldc.i4.1
+		IL_007b: newarr [System.Runtime]System.Object
+		IL_0080: dup
+		IL_0081: ldc.i4.0
+		IL_0082: ldloc.0
+		IL_0083: stelem.ref
+		IL_0084: ldc.i4.0
+		IL_0085: ldelem.ref
+		IL_0086: castclass Modules.Stream_Writable_Destroy_Error/Scope
+		IL_008b: ldftn object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L12C21::__js_call__(class Modules.Stream_Writable_Destroy_Error/Scope, object, object)
+		IL_0091: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0096: stloc.2
+		IL_0097: ldloc.3
+		IL_0098: ldstr "on"
+		IL_009d: ldstr "error"
+		IL_00a2: ldloc.2
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00a8: pop
+		IL_00a9: ldloc.0
+		IL_00aa: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
+		IL_00af: ldstr "Cannot access 'writable' before initialization"
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00b9: stloc.2
+		IL_00ba: ldc.i4.1
+		IL_00bb: newarr [System.Runtime]System.Object
+		IL_00c0: dup
+		IL_00c1: ldc.i4.0
+		IL_00c2: ldloc.0
+		IL_00c3: stelem.ref
+		IL_00c4: ldc.i4.0
+		IL_00c5: ldelem.ref
+		IL_00c6: castclass Modules.Stream_Writable_Destroy_Error/Scope
+		IL_00cb: ldftn object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L16C22::__js_call__(class Modules.Stream_Writable_Destroy_Error/Scope, object)
+		IL_00d1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00d6: stloc.3
+		IL_00d7: ldloc.2
+		IL_00d8: ldstr "on"
+		IL_00dd: ldstr "finish"
+		IL_00e2: ldloc.3
+		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00e8: pop
+		IL_00e9: ldloc.0
+		IL_00ea: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
+		IL_00ef: ldstr "Cannot access 'writable' before initialization"
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00f9: stloc.3
+		IL_00fa: ldc.i4.1
+		IL_00fb: newarr [System.Runtime]System.Object
+		IL_0100: dup
+		IL_0101: ldc.i4.0
+		IL_0102: ldloc.0
+		IL_0103: stelem.ref
+		IL_0104: ldc.i4.0
+		IL_0105: ldelem.ref
+		IL_0106: castclass Modules.Stream_Writable_Destroy_Error/Scope
+		IL_010b: ldftn object Modules.Stream_Writable_Destroy_Error/FunctionExpression_L20C21::__js_call__(class Modules.Stream_Writable_Destroy_Error/Scope, object)
+		IL_0111: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0116: stloc.2
+		IL_0117: ldloc.3
+		IL_0118: ldstr "on"
+		IL_011d: ldstr "close"
+		IL_0122: ldloc.2
+		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0128: pop
+		IL_0129: ldloc.0
+		IL_012a: ldfld object Modules.Stream_Writable_Destroy_Error/Scope::writable
+		IL_012f: ldstr "Cannot access 'writable' before initialization"
+		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0139: stloc.2
+		IL_013a: ldloc.2
+		IL_013b: ldstr "write"
+		IL_0140: ldstr "x"
+		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_014a: stloc.2
+		IL_014b: ldstr "write-return:"
+		IL_0150: ldloc.2
+		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0156: stloc.s 4
+		IL_0158: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_015d: ldloc.s 4
+		IL_015f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0164: pop
+		IL_0165: ret
 	} // end of method Stream_Writable_Destroy_Error::__js_module_init__
 
 } // end of class Modules.Stream_Writable_Destroy_Error
@@ -572,7 +493,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23c2
+		// Method begins at RVA 0x234a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

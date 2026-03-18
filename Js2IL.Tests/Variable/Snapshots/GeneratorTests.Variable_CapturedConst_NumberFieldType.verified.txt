@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2117
+				// Method begins at RVA 0x210b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 			)
 			// Method begins at RVA 0x20c8
 			// Header size: 12
-			// Code size: 47 (0x2f)
+			// Code size: 35 (0x23)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -55,23 +55,15 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Variable_CapturedConst_NumberFieldType/Scope::NOW_UNITS_PER_SECOND
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'NOW_UNITS_PER_SECOND' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldc.r8 23
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_002c: stloc.1
-			IL_002d: ldloc.1
-			IL_002e: ret
+			IL_0006: ldstr "Cannot access 'NOW_UNITS_PER_SECOND' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldc.r8 23
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0020: stloc.1
+			IL_0021: ldloc.1
+			IL_0022: ret
 		} // end of method run::__js_call__
 
 	} // end of class run
@@ -93,7 +85,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2103
+			// Method begins at RVA 0x20f7
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -180,7 +172,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2120
+		// Method begins at RVA 0x2114
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

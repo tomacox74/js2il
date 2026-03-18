@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x227c
+				// Method begins at RVA 0x2264
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2285
+				// Method begins at RVA 0x226d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -105,7 +105,7 @@
 			)
 			// Method begins at RVA 0x21cc
 			// Header size: 12
-			// Code size: 44 (0x2c)
+			// Code size: 32 (0x20)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -113,24 +113,16 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Stream_Transform_Basic/Scope::written
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'written' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldstr "push"
-			IL_0023: ldarg.2
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0029: pop
-			IL_002a: ldnull
-			IL_002b: ret
+			IL_0006: ldstr "Cannot access 'written' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldstr "push"
+			IL_0017: ldarg.2
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_001d: pop
+			IL_001e: ldnull
+			IL_001f: ret
 		} // end of method FunctionExpression_L14C18::__js_call__
 
 	} // end of class FunctionExpression_L14C18
@@ -146,7 +138,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x228e
+				// Method begins at RVA 0x2276
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -172,9 +164,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2204
+			// Method begins at RVA 0x21f8
 			// Header size: 12
-			// Code size: 88 (0x58)
+			// Code size: 76 (0x4c)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -187,32 +179,24 @@
 			IL_000f: pop
 			IL_0010: ldarg.0
 			IL_0011: ldfld object Modules.Stream_Transform_Basic/Scope::written
-			IL_0016: dup
-			IL_0017: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_001c: ceq
-			IL_001e: brfalse.s IL_002c
-
-			IL_0020: pop
-			IL_0021: ldstr "Cannot access 'written' before initialization"
-			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_002b: throw
-
-			IL_002c: stloc.0
-			IL_002d: ldloc.0
-			IL_002e: ldstr "join"
-			IL_0033: ldstr ","
-			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_003d: stloc.0
-			IL_003e: ldstr "written:"
-			IL_0043: ldloc.0
-			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0049: stloc.1
-			IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004f: ldloc.1
-			IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0055: pop
-			IL_0056: ldnull
-			IL_0057: ret
+			IL_0016: ldstr "Cannot access 'written' before initialization"
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0020: stloc.0
+			IL_0021: ldloc.0
+			IL_0022: ldstr "join"
+			IL_0027: ldstr ","
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0031: stloc.0
+			IL_0032: ldstr "written:"
+			IL_0037: ldloc.0
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_003d: stloc.1
+			IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0043: ldloc.1
+			IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0049: pop
+			IL_004a: ldnull
+			IL_004b: ret
 		} // end of method FunctionExpression_L18C22::__js_call__
 
 	} // end of class FunctionExpression_L18C22
@@ -231,7 +215,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2268
+			// Method begins at RVA 0x2250
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -392,7 +376,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2297
+		// Method begins at RVA 0x227f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2470
+				// Method begins at RVA 0x23e2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,9 +45,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2240
+			// Method begins at RVA 0x221c
 			// Header size: 12
-			// Code size: 44 (0x2c)
+			// Code size: 32 (0x20)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -55,24 +55,16 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::written
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'written' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldstr "push"
-			IL_0023: ldarg.2
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0029: pop
-			IL_002a: ldnull
-			IL_002b: ret
+			IL_0006: ldstr "Cannot access 'written' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldstr "push"
+			IL_0017: ldarg.2
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_001d: pop
+			IL_001e: ldnull
+			IL_001f: ret
 		} // end of method FunctionExpression_L11C18::__js_call__
 
 	} // end of class FunctionExpression_L11C18
@@ -88,7 +80,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2479
+				// Method begins at RVA 0x23eb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -111,7 +103,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2278
+			// Method begins at RVA 0x2248
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -137,7 +129,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2482
+				// Method begins at RVA 0x23f4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -163,9 +155,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x228c
+			// Method begins at RVA 0x225c
 			// Header size: 12
-			// Code size: 88 (0x58)
+			// Code size: 76 (0x4c)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -178,32 +170,24 @@
 			IL_000f: pop
 			IL_0010: ldarg.0
 			IL_0011: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::written
-			IL_0016: dup
-			IL_0017: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_001c: ceq
-			IL_001e: brfalse.s IL_002c
-
-			IL_0020: pop
-			IL_0021: ldstr "Cannot access 'written' before initialization"
-			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_002b: throw
-
-			IL_002c: stloc.0
-			IL_002d: ldloc.0
-			IL_002e: ldstr "join"
-			IL_0033: ldstr ","
-			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_003d: stloc.0
-			IL_003e: ldstr "written:"
-			IL_0043: ldloc.0
-			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0049: stloc.1
-			IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004f: ldloc.1
-			IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0055: pop
-			IL_0056: ldnull
-			IL_0057: ret
+			IL_0016: ldstr "Cannot access 'written' before initialization"
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0020: stloc.0
+			IL_0021: ldloc.0
+			IL_0022: ldstr "join"
+			IL_0027: ldstr ","
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0031: stloc.0
+			IL_0032: ldstr "written:"
+			IL_0037: ldloc.0
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_003d: stloc.1
+			IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0043: ldloc.1
+			IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0049: pop
+			IL_004a: ldnull
+			IL_004b: ret
 		} // end of method FunctionExpression_L19C22::__js_call__
 
 	} // end of class FunctionExpression_L19C22
@@ -223,7 +207,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2494
+					// Method begins at RVA 0x2406
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -243,7 +227,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x249d
+					// Method begins at RVA 0x240f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -261,7 +245,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x248b
+				// Method begins at RVA 0x23fd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -287,9 +271,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x22f0
+			// Method begins at RVA 0x22b4
 			// Header size: 12
-			// Code size: 319 (0x13f)
+			// Code size: 237 (0xed)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -302,141 +286,87 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'index' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: ldstr "Cannot access 'index' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0017: stloc.1
+			IL_0018: ldloc.1
+			IL_0019: ldc.r8 1
+			IL_0022: add
 			IL_0023: stloc.1
 			IL_0024: ldloc.1
-			IL_0025: ldc.r8 1
-			IL_002e: add
-			IL_002f: stloc.1
-			IL_0030: ldloc.1
-			IL_0031: box [System.Runtime]System.Double
-			IL_0036: stloc.2
-			IL_0037: ldarg.0
-			IL_0038: ldloc.2
-			IL_0039: stfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_003e: ldarg.0
-			IL_003f: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_0044: dup
-			IL_0045: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_004a: ceq
-			IL_004c: brfalse.s IL_005a
+			IL_0025: box [System.Runtime]System.Double
+			IL_002a: stloc.2
+			IL_002b: ldarg.0
+			IL_002c: ldloc.2
+			IL_002d: stfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_0032: ldarg.0
+			IL_0033: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_0038: ldstr "Cannot access 'index' before initialization"
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0042: stloc.0
+			IL_0043: ldarg.0
+			IL_0044: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+			IL_0049: ldstr "Cannot access 'chunks' before initialization"
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0053: stloc.3
+			IL_0054: ldloc.3
+			IL_0055: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_005a: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_005f: conv.r8
+			IL_0060: stloc.1
+			IL_0061: ldloc.0
+			IL_0062: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0067: stloc.s 4
+			IL_0069: ldloc.s 4
+			IL_006b: ldloc.1
+			IL_006c: clt
+			IL_006e: brfalse IL_00c4
 
-			IL_004e: pop
-			IL_004f: ldstr "Cannot access 'index' before initialization"
-			IL_0054: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0059: throw
+			IL_0073: ldarg.0
+			IL_0074: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_0079: ldstr "Cannot access 'readable' before initialization"
+			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0083: stloc.0
+			IL_0084: ldarg.0
+			IL_0085: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+			IL_008a: ldstr "Cannot access 'chunks' before initialization"
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0094: stloc.3
+			IL_0095: ldarg.0
+			IL_0096: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_009b: ldstr "Cannot access 'index' before initialization"
+			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_00a5: stloc.s 5
+			IL_00a7: ldloc.3
+			IL_00a8: ldloc.s 5
+			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_00af: stloc.s 5
+			IL_00b1: ldloc.0
+			IL_00b2: ldstr "push"
+			IL_00b7: ldloc.s 5
+			IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00be: pop
+			IL_00bf: br IL_00ea
 
-			IL_005a: stloc.0
-			IL_005b: ldarg.0
-			IL_005c: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
-			IL_0061: dup
-			IL_0062: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0067: ceq
-			IL_0069: brfalse.s IL_0077
+			IL_00c4: nop
+			IL_00c5: ldarg.0
+			IL_00c6: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_00cb: ldstr "Cannot access 'readable' before initialization"
+			IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_00d5: stloc.s 5
+			IL_00d7: ldloc.s 5
+			IL_00d9: ldstr "push"
+			IL_00de: ldc.i4.0
+			IL_00df: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00e9: pop
 
-			IL_006b: pop
-			IL_006c: ldstr "Cannot access 'chunks' before initialization"
-			IL_0071: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0076: throw
-
-			IL_0077: stloc.3
-			IL_0078: ldloc.3
-			IL_0079: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_007e: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_0083: conv.r8
-			IL_0084: stloc.1
-			IL_0085: ldloc.0
-			IL_0086: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_008b: stloc.s 4
-			IL_008d: ldloc.s 4
-			IL_008f: ldloc.1
-			IL_0090: clt
-			IL_0092: brfalse IL_010c
-
-			IL_0097: ldarg.0
-			IL_0098: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-			IL_009d: dup
-			IL_009e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_00a3: ceq
-			IL_00a5: brfalse.s IL_00b3
-
-			IL_00a7: pop
-			IL_00a8: ldstr "Cannot access 'readable' before initialization"
-			IL_00ad: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_00b2: throw
-
-			IL_00b3: stloc.0
-			IL_00b4: ldarg.0
-			IL_00b5: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
-			IL_00ba: dup
-			IL_00bb: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_00c0: ceq
-			IL_00c2: brfalse.s IL_00d0
-
-			IL_00c4: pop
-			IL_00c5: ldstr "Cannot access 'chunks' before initialization"
-			IL_00ca: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_00cf: throw
-
-			IL_00d0: stloc.3
-			IL_00d1: ldarg.0
-			IL_00d2: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_00d7: dup
-			IL_00d8: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_00dd: ceq
-			IL_00df: brfalse.s IL_00ed
-
-			IL_00e1: pop
-			IL_00e2: ldstr "Cannot access 'index' before initialization"
-			IL_00e7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_00ec: throw
-
-			IL_00ed: stloc.s 5
-			IL_00ef: ldloc.3
-			IL_00f0: ldloc.s 5
-			IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_00f7: stloc.s 5
-			IL_00f9: ldloc.0
-			IL_00fa: ldstr "push"
-			IL_00ff: ldloc.s 5
-			IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0106: pop
-			IL_0107: br IL_013d
-
-			IL_010c: ldarg.0
-			IL_010d: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-			IL_0112: dup
-			IL_0113: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0118: ceq
-			IL_011a: brfalse.s IL_0128
-
-			IL_011c: pop
-			IL_011d: ldstr "Cannot access 'readable' before initialization"
-			IL_0122: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0127: throw
-
-			IL_0128: stloc.s 5
-			IL_012a: ldloc.s 5
-			IL_012c: ldstr "push"
-			IL_0131: ldc.i4.0
-			IL_0132: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_013c: pop
-
-			IL_013d: ldnull
-			IL_013e: ret
+			IL_00ea: nop
+			IL_00eb: ldnull
+			IL_00ec: ret
 		} // end of method FunctionExpression_L27C21::__js_call__
 
 	} // end of class FunctionExpression_L27C21
@@ -461,7 +391,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x243b
+			// Method begins at RVA 0x23ad
 			// Header size: 1
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -499,7 +429,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 484 (0x1e4)
+		// Code size: 448 (0x1c0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Pipe_Backpressure_Basic/Scope,
@@ -628,60 +558,36 @@
 		IL_0153: pop
 		IL_0154: ldloc.0
 		IL_0155: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-		IL_015a: dup
-		IL_015b: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0160: ceq
-		IL_0162: brfalse.s IL_0170
-
-		IL_0164: pop
-		IL_0165: ldstr "Cannot access 'readable' before initialization"
-		IL_016a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_016f: throw
-
-		IL_0170: stloc.3
-		IL_0171: ldloc.3
-		IL_0172: ldstr "pipe"
-		IL_0177: ldloc.2
-		IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_017d: pop
-		IL_017e: ldloc.0
-		IL_017f: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-		IL_0184: dup
-		IL_0185: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_018a: ceq
-		IL_018c: brfalse.s IL_019a
-
-		IL_018e: pop
-		IL_018f: ldstr "Cannot access 'readable' before initialization"
-		IL_0194: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0199: throw
-
-		IL_019a: stloc.3
-		IL_019b: ldloc.0
-		IL_019c: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
-		IL_01a1: dup
-		IL_01a2: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_01a7: ceq
-		IL_01a9: brfalse.s IL_01b7
-
-		IL_01ab: pop
-		IL_01ac: ldstr "Cannot access 'chunks' before initialization"
-		IL_01b1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_01b6: throw
-
-		IL_01b7: stloc.s 4
-		IL_01b9: ldloc.s 4
-		IL_01bb: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_01c0: ldc.r8 0.0
-		IL_01c9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_01ce: castclass [System.Runtime]System.String
-		IL_01d3: stloc.s 5
-		IL_01d5: ldloc.3
-		IL_01d6: ldstr "push"
-		IL_01db: ldloc.s 5
-		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_01e2: pop
-		IL_01e3: ret
+		IL_015a: ldstr "Cannot access 'readable' before initialization"
+		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0164: stloc.3
+		IL_0165: ldloc.3
+		IL_0166: ldstr "pipe"
+		IL_016b: ldloc.2
+		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0171: pop
+		IL_0172: ldloc.0
+		IL_0173: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+		IL_0178: ldstr "Cannot access 'readable' before initialization"
+		IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0182: stloc.3
+		IL_0183: ldloc.0
+		IL_0184: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+		IL_0189: ldstr "Cannot access 'chunks' before initialization"
+		IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0193: stloc.s 4
+		IL_0195: ldloc.s 4
+		IL_0197: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_019c: ldc.r8 0.0
+		IL_01a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_01aa: castclass [System.Runtime]System.String
+		IL_01af: stloc.s 5
+		IL_01b1: ldloc.3
+		IL_01b2: ldstr "push"
+		IL_01b7: ldloc.s 5
+		IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01be: pop
+		IL_01bf: ret
 	} // end of method Stream_Pipe_Backpressure_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Pipe_Backpressure_Basic
@@ -693,7 +599,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x24a6
+		// Method begins at RVA 0x2418
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

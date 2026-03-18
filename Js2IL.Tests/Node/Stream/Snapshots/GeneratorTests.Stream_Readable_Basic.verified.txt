@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2210
+				// Method begins at RVA 0x21f8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,9 +45,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x218c
+			// Method begins at RVA 0x2180
 			// Header size: 12
-			// Code size: 81 (0x51)
+			// Code size: 69 (0x45)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -62,32 +62,24 @@
 			IL_0010: pop
 			IL_0011: ldarg.0
 			IL_0012: ldfld object Modules.Stream_Readable_Basic/Scope::dataReceived
-			IL_0017: dup
-			IL_0018: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_001d: ceq
-			IL_001f: brfalse.s IL_002d
-
-			IL_0021: pop
-			IL_0022: ldstr "Cannot access 'dataReceived' before initialization"
-			IL_0027: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_002c: throw
-
-			IL_002d: stloc.0
-			IL_002e: ldloc.0
-			IL_002f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0017: ldstr "Cannot access 'dataReceived' before initialization"
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0021: stloc.0
+			IL_0022: ldloc.0
+			IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0028: stloc.1
+			IL_0029: ldloc.1
+			IL_002a: ldc.r8 1
+			IL_0033: add
 			IL_0034: stloc.1
 			IL_0035: ldloc.1
-			IL_0036: ldc.r8 1
-			IL_003f: add
-			IL_0040: stloc.1
-			IL_0041: ldloc.1
-			IL_0042: box [System.Runtime]System.Double
-			IL_0047: stloc.2
-			IL_0048: ldarg.0
-			IL_0049: ldloc.2
-			IL_004a: stfld object Modules.Stream_Readable_Basic/Scope::dataReceived
-			IL_004f: ldnull
-			IL_0050: ret
+			IL_0036: box [System.Runtime]System.Double
+			IL_003b: stloc.2
+			IL_003c: ldarg.0
+			IL_003d: ldloc.2
+			IL_003e: stfld object Modules.Stream_Readable_Basic/Scope::dataReceived
+			IL_0043: ldnull
+			IL_0044: ret
 		} // end of method FunctionExpression_L13C20::__js_call__
 
 	} // end of class FunctionExpression_L13C20
@@ -103,7 +95,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2219
+				// Method begins at RVA 0x2201
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -126,7 +118,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21e9
+			// Method begins at RVA 0x21d1
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -156,7 +148,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21fc
+			// Method begins at RVA 0x21e4
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -185,7 +177,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 303 (0x12f)
+		// Code size: 291 (0x123)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Readable_Basic/Scope,
@@ -270,30 +262,22 @@
 		IL_00e2: pop
 		IL_00e3: ldloc.0
 		IL_00e4: ldfld object Modules.Stream_Readable_Basic/Scope::dataReceived
-		IL_00e9: dup
-		IL_00ea: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_00ef: ceq
-		IL_00f1: brfalse.s IL_00ff
-
-		IL_00f3: pop
-		IL_00f4: ldstr "Cannot access 'dataReceived' before initialization"
-		IL_00f9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_00fe: throw
-
-		IL_00ff: stloc.s 4
-		IL_0101: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0106: ldstr "Data events:"
-		IL_010b: ldloc.s 4
-		IL_010d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0112: pop
-		IL_0113: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0118: ldstr "Readable after end:"
-		IL_011d: ldloc.3
-		IL_011e: ldstr "readable"
-		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0128: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_012d: pop
-		IL_012e: ret
+		IL_00e9: ldstr "Cannot access 'dataReceived' before initialization"
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00f3: stloc.s 4
+		IL_00f5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00fa: ldstr "Data events:"
+		IL_00ff: ldloc.s 4
+		IL_0101: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0106: pop
+		IL_0107: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_010c: ldstr "Readable after end:"
+		IL_0111: ldloc.3
+		IL_0112: ldstr "readable"
+		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_011c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0121: pop
+		IL_0122: ret
 	} // end of method Stream_Readable_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Readable_Basic
@@ -305,7 +289,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2222
+		// Method begins at RVA 0x220a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

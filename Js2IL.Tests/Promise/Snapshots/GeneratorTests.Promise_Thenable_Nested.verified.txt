@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219a
+				// Method begins at RVA 0x218e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a3
+				// Method begins at RVA 0x2197
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -106,7 +106,7 @@
 			)
 			// Method begins at RVA 0x212c
 			// Header size: 12
-			// Code size: 51 (0x33)
+			// Code size: 39 (0x27)
 			.maxstack 8
 			.locals init (
 				[0] object[],
@@ -122,24 +122,16 @@
 			IL_000a: stloc.0
 			IL_000b: ldarg.0
 			IL_000c: ldfld object Modules.Promise_Thenable_Nested/Scope::innerThenable
-			IL_0011: dup
-			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0017: ceq
-			IL_0019: brfalse.s IL_0027
-
-			IL_001b: pop
-			IL_001c: ldstr "Cannot access 'innerThenable' before initialization"
-			IL_0021: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0026: throw
-
-			IL_0027: stloc.1
-			IL_0028: ldarg.2
-			IL_0029: ldloc.0
-			IL_002a: ldloc.1
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-			IL_0030: pop
-			IL_0031: ldnull
-			IL_0032: ret
+			IL_0011: ldstr "Cannot access 'innerThenable' before initialization"
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_001b: stloc.1
+			IL_001c: ldarg.2
+			IL_001d: ldloc.0
+			IL_001e: ldloc.1
+			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+			IL_0024: pop
+			IL_0025: ldnull
+			IL_0026: ret
 		} // end of method outerThen::__js_call__
 
 	} // end of class outerThen
@@ -162,7 +154,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ac
+				// Method begins at RVA 0x21a0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -186,7 +178,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x216c
+			// Method begins at RVA 0x2160
 			// Header size: 12
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -224,7 +216,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2186
+			// Method begins at RVA 0x217a
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -336,7 +328,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b5
+		// Method begins at RVA 0x21a9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

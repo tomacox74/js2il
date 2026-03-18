@@ -260,7 +260,7 @@ internal sealed partial class LIRToILCompiler
             switch (instruction)
             {
                 case LIRLabel lirLabel:
-                    ilEncoder.MarkLabel(labelMap[lirLabel.LabelId]);
+                    MarkLabelAndEmitNop(ilEncoder, labelMap[lirLabel.LabelId]);
                     continue;
 
                 case LIRSequencePoint sp:

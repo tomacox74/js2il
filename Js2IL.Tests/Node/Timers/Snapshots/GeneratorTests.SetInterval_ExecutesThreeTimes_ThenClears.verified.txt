@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21f3
+					// Method begins at RVA 0x21c4
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ea
+				// Method begins at RVA 0x21bb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -68,7 +68,7 @@
 			)
 			// Method begins at RVA 0x20dc
 			// Header size: 12
-			// Code size: 227 (0xe3)
+			// Code size: 180 (0xb4)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -80,95 +80,64 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'count' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: ldstr "Cannot access 'count' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0017: stloc.1
+			IL_0018: ldloc.1
+			IL_0019: ldc.r8 1
+			IL_0022: add
 			IL_0023: stloc.1
 			IL_0024: ldloc.1
-			IL_0025: ldc.r8 1
-			IL_002e: add
-			IL_002f: stloc.1
-			IL_0030: ldloc.1
-			IL_0031: box [System.Runtime]System.Double
-			IL_0036: stloc.2
-			IL_0037: ldarg.0
-			IL_0038: ldloc.2
-			IL_0039: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-			IL_003e: ldarg.0
-			IL_003f: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-			IL_0044: dup
-			IL_0045: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_004a: ceq
-			IL_004c: brfalse.s IL_005a
+			IL_0025: box [System.Runtime]System.Double
+			IL_002a: stloc.2
+			IL_002b: ldarg.0
+			IL_002c: ldloc.2
+			IL_002d: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
+			IL_0032: ldarg.0
+			IL_0033: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
+			IL_0038: ldstr "Cannot access 'count' before initialization"
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0042: stloc.0
+			IL_0043: ldstr "tick "
+			IL_0048: ldloc.0
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_004e: stloc.3
+			IL_004f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0054: ldloc.3
+			IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_005a: pop
+			IL_005b: ldarg.0
+			IL_005c: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
+			IL_0061: ldstr "Cannot access 'count' before initialization"
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_006b: stloc.0
+			IL_006c: ldloc.0
+			IL_006d: ldc.r8 3
+			IL_0076: box [System.Runtime]System.Double
+			IL_007b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0080: stloc.s 4
+			IL_0082: ldloc.s 4
+			IL_0084: brfalse IL_00b1
 
-			IL_004e: pop
-			IL_004f: ldstr "Cannot access 'count' before initialization"
-			IL_0054: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0059: throw
+			IL_0089: ldarg.0
+			IL_008a: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
+			IL_008f: ldstr "Cannot access 'id' before initialization"
+			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0099: stloc.0
+			IL_009a: ldloc.0
+			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
+			IL_00a0: pop
+			IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a6: ldstr "cleared"
+			IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00b0: pop
 
-			IL_005a: stloc.0
-			IL_005b: ldstr "tick "
-			IL_0060: ldloc.0
-			IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0066: stloc.3
-			IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_006c: ldloc.3
-			IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0072: pop
-			IL_0073: ldarg.0
-			IL_0074: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-			IL_0079: dup
-			IL_007a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_007f: ceq
-			IL_0081: brfalse.s IL_008f
-
-			IL_0083: pop
-			IL_0084: ldstr "Cannot access 'count' before initialization"
-			IL_0089: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_008e: throw
-
-			IL_008f: stloc.0
-			IL_0090: ldloc.0
-			IL_0091: ldc.r8 3
-			IL_009a: box [System.Runtime]System.Double
-			IL_009f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00a4: stloc.s 4
-			IL_00a6: ldloc.s 4
-			IL_00a8: brfalse IL_00e1
-
-			IL_00ad: ldarg.0
-			IL_00ae: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
-			IL_00b3: dup
-			IL_00b4: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_00b9: ceq
-			IL_00bb: brfalse.s IL_00c9
-
-			IL_00bd: pop
-			IL_00be: ldstr "Cannot access 'id' before initialization"
-			IL_00c3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_00c8: throw
-
-			IL_00c9: stloc.0
-			IL_00ca: ldloc.0
-			IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
-			IL_00d0: pop
-			IL_00d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00d6: ldstr "cleared"
-			IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00e0: pop
-
-			IL_00e1: ldnull
-			IL_00e2: ret
+			IL_00b1: nop
+			IL_00b2: ldnull
+			IL_00b3: ret
 		} // end of method ArrowFunction_L5C24::__js_call__
 
 	} // end of class ArrowFunction_L5C24
@@ -188,7 +157,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21cb
+			// Method begins at RVA 0x219c
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -279,7 +248,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21fc
+		// Method begins at RVA 0x21cd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

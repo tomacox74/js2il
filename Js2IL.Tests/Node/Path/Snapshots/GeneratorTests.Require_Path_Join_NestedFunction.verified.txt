@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2135
+				// Method begins at RVA 0x2129
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -48,7 +48,7 @@
 			)
 			// Method begins at RVA 0x20e8
 			// Header size: 12
-			// Code size: 45 (0x2d)
+			// Code size: 33 (0x21)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -56,25 +56,17 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Require_Path_Join_NestedFunction/Scope::path
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'path' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldstr "join"
-			IL_0023: ldarg.2
-			IL_0024: ldarg.3
-			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_002a: stloc.0
-			IL_002b: ldloc.0
-			IL_002c: ret
+			IL_0006: ldstr "Cannot access 'path' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldstr "join"
+			IL_0017: ldarg.2
+			IL_0018: ldarg.3
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_001e: stloc.0
+			IL_001f: ldloc.0
+			IL_0020: ret
 		} // end of method joinWrapper::__js_call__
 
 	} // end of class joinWrapper
@@ -95,7 +87,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2121
+			// Method begins at RVA 0x2115
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -196,7 +188,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213e
+		// Method begins at RVA 0x2132
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

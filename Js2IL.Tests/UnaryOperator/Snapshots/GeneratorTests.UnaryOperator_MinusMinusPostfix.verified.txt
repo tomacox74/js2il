@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x249c
+				// Method begins at RVA 0x2454
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -88,7 +88,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24a5
+				// Method begins at RVA 0x245d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -116,7 +116,7 @@
 			)
 			// Method begins at RVA 0x2290
 			// Header size: 12
-			// Code size: 161 (0xa1)
+			// Code size: 125 (0x7d)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -129,76 +129,52 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalDouble
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'capturedGlobalDouble' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.3
-			IL_001d: ldloc.3
-			IL_001e: stloc.0
-			IL_001f: ldarg.0
-			IL_0020: ldfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalDouble
-			IL_0025: dup
-			IL_0026: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_002b: ceq
-			IL_002d: brfalse.s IL_003b
-
-			IL_002f: pop
-			IL_0030: ldstr "Cannot access 'capturedGlobalDouble' before initialization"
-			IL_0035: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_003a: throw
-
-			IL_003b: stloc.3
-			IL_003c: ldloc.3
-			IL_003d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0042: stloc.s 4
-			IL_0044: ldloc.s 4
-			IL_0046: box [System.Runtime]System.Double
-			IL_004b: stloc.s 5
-			IL_004d: ldloc.s 5
-			IL_004f: stloc.3
-			IL_0050: ldloc.s 4
-			IL_0052: ldc.r8 1
-			IL_005b: sub
-			IL_005c: stloc.s 4
-			IL_005e: ldloc.s 4
-			IL_0060: box [System.Runtime]System.Double
-			IL_0065: stloc.s 5
-			IL_0067: ldarg.0
-			IL_0068: ldloc.s 5
-			IL_006a: stfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalDouble
-			IL_006f: ldloc.3
-			IL_0070: stloc.1
-			IL_0071: ldarg.0
-			IL_0072: ldfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalDouble
-			IL_0077: dup
-			IL_0078: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_007d: ceq
-			IL_007f: brfalse.s IL_008d
-
-			IL_0081: pop
-			IL_0082: ldstr "Cannot access 'capturedGlobalDouble' before initialization"
-			IL_0087: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_008c: throw
-
-			IL_008d: stloc.3
-			IL_008e: ldloc.3
-			IL_008f: stloc.2
-			IL_0090: ldnull
-			IL_0091: ldstr "captured-double"
-			IL_0096: ldloc.0
-			IL_0097: ldloc.1
-			IL_0098: ldloc.2
-			IL_0099: call object Modules.UnaryOperator_MinusMinusPostfix/logCase::__js_call__(object, object, object, object, object)
-			IL_009e: pop
-			IL_009f: ldnull
-			IL_00a0: ret
+			IL_0006: ldstr "Cannot access 'capturedGlobalDouble' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.3
+			IL_0011: ldloc.3
+			IL_0012: stloc.0
+			IL_0013: ldarg.0
+			IL_0014: ldfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalDouble
+			IL_0019: ldstr "Cannot access 'capturedGlobalDouble' before initialization"
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0023: stloc.3
+			IL_0024: ldloc.3
+			IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002a: stloc.s 4
+			IL_002c: ldloc.s 4
+			IL_002e: box [System.Runtime]System.Double
+			IL_0033: stloc.s 5
+			IL_0035: ldloc.s 5
+			IL_0037: stloc.3
+			IL_0038: ldloc.s 4
+			IL_003a: ldc.r8 1
+			IL_0043: sub
+			IL_0044: stloc.s 4
+			IL_0046: ldloc.s 4
+			IL_0048: box [System.Runtime]System.Double
+			IL_004d: stloc.s 5
+			IL_004f: ldarg.0
+			IL_0050: ldloc.s 5
+			IL_0052: stfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalDouble
+			IL_0057: ldloc.3
+			IL_0058: stloc.1
+			IL_0059: ldarg.0
+			IL_005a: ldfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalDouble
+			IL_005f: ldstr "Cannot access 'capturedGlobalDouble' before initialization"
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0069: stloc.3
+			IL_006a: ldloc.3
+			IL_006b: stloc.2
+			IL_006c: ldnull
+			IL_006d: ldstr "captured-double"
+			IL_0072: ldloc.0
+			IL_0073: ldloc.1
+			IL_0074: ldloc.2
+			IL_0075: call object Modules.UnaryOperator_MinusMinusPostfix/logCase::__js_call__(object, object, object, object, object)
+			IL_007a: pop
+			IL_007b: ldnull
+			IL_007c: ret
 		} // end of method capturedDouble::__js_call__
 
 	} // end of class capturedDouble
@@ -214,7 +190,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24ae
+				// Method begins at RVA 0x2466
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -241,7 +217,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2340
+			// Method begins at RVA 0x231c
 			// Header size: 12
 			// Code size: 57 (0x39)
 			.maxstack 8
@@ -294,7 +270,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24b7
+				// Method begins at RVA 0x246f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -320,9 +296,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2388
+			// Method begins at RVA 0x2364
 			// Header size: 12
-			// Code size: 161 (0xa1)
+			// Code size: 125 (0x7d)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -335,76 +311,52 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalString
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'capturedGlobalString' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.3
-			IL_001d: ldloc.3
-			IL_001e: stloc.0
-			IL_001f: ldarg.0
-			IL_0020: ldfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalString
-			IL_0025: dup
-			IL_0026: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_002b: ceq
-			IL_002d: brfalse.s IL_003b
-
-			IL_002f: pop
-			IL_0030: ldstr "Cannot access 'capturedGlobalString' before initialization"
-			IL_0035: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_003a: throw
-
-			IL_003b: stloc.3
-			IL_003c: ldloc.3
-			IL_003d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0042: stloc.s 4
-			IL_0044: ldloc.s 4
-			IL_0046: box [System.Runtime]System.Double
-			IL_004b: stloc.s 5
-			IL_004d: ldloc.s 5
-			IL_004f: stloc.3
-			IL_0050: ldloc.s 4
-			IL_0052: ldc.r8 1
-			IL_005b: sub
-			IL_005c: stloc.s 4
-			IL_005e: ldloc.s 4
-			IL_0060: box [System.Runtime]System.Double
-			IL_0065: stloc.s 5
-			IL_0067: ldarg.0
-			IL_0068: ldloc.s 5
-			IL_006a: stfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalString
-			IL_006f: ldloc.3
-			IL_0070: stloc.1
-			IL_0071: ldarg.0
-			IL_0072: ldfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalString
-			IL_0077: dup
-			IL_0078: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_007d: ceq
-			IL_007f: brfalse.s IL_008d
-
-			IL_0081: pop
-			IL_0082: ldstr "Cannot access 'capturedGlobalString' before initialization"
-			IL_0087: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_008c: throw
-
-			IL_008d: stloc.3
-			IL_008e: ldloc.3
-			IL_008f: stloc.2
-			IL_0090: ldnull
-			IL_0091: ldstr "captured-string"
-			IL_0096: ldloc.0
-			IL_0097: ldloc.1
-			IL_0098: ldloc.2
-			IL_0099: call object Modules.UnaryOperator_MinusMinusPostfix/logCase::__js_call__(object, object, object, object, object)
-			IL_009e: pop
-			IL_009f: ldnull
-			IL_00a0: ret
+			IL_0006: ldstr "Cannot access 'capturedGlobalString' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.3
+			IL_0011: ldloc.3
+			IL_0012: stloc.0
+			IL_0013: ldarg.0
+			IL_0014: ldfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalString
+			IL_0019: ldstr "Cannot access 'capturedGlobalString' before initialization"
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0023: stloc.3
+			IL_0024: ldloc.3
+			IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002a: stloc.s 4
+			IL_002c: ldloc.s 4
+			IL_002e: box [System.Runtime]System.Double
+			IL_0033: stloc.s 5
+			IL_0035: ldloc.s 5
+			IL_0037: stloc.3
+			IL_0038: ldloc.s 4
+			IL_003a: ldc.r8 1
+			IL_0043: sub
+			IL_0044: stloc.s 4
+			IL_0046: ldloc.s 4
+			IL_0048: box [System.Runtime]System.Double
+			IL_004d: stloc.s 5
+			IL_004f: ldarg.0
+			IL_0050: ldloc.s 5
+			IL_0052: stfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalString
+			IL_0057: ldloc.3
+			IL_0058: stloc.1
+			IL_0059: ldarg.0
+			IL_005a: ldfld object Modules.UnaryOperator_MinusMinusPostfix/Scope::capturedGlobalString
+			IL_005f: ldstr "Cannot access 'capturedGlobalString' before initialization"
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0069: stloc.3
+			IL_006a: ldloc.3
+			IL_006b: stloc.2
+			IL_006c: ldnull
+			IL_006d: ldstr "captured-string"
+			IL_0072: ldloc.0
+			IL_0073: ldloc.1
+			IL_0074: ldloc.2
+			IL_0075: call object Modules.UnaryOperator_MinusMinusPostfix/logCase::__js_call__(object, object, object, object, object)
+			IL_007a: pop
+			IL_007b: ldnull
+			IL_007c: ret
 		} // end of method capturedString::__js_call__
 
 	} // end of class capturedString
@@ -420,7 +372,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24c0
+				// Method begins at RVA 0x2478
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -447,7 +399,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2438
+			// Method begins at RVA 0x23f0
 			// Header size: 12
 			// Code size: 57 (0x39)
 			.maxstack 8
@@ -522,7 +474,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x247d
+			// Method begins at RVA 0x2435
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -779,7 +731,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x24c9
+		// Method begins at RVA 0x2481
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

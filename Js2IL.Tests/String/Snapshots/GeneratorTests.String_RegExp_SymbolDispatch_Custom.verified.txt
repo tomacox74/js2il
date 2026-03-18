@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2582
+				// Method begins at RVA 0x24fe
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,9 +45,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x23c4
+			// Method begins at RVA 0x2370
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 78 (0x4e)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -57,38 +57,30 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'custom' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0022: ldloc.0
-			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0028: stloc.1
-			IL_0029: ldloc.1
-			IL_002a: box [System.Runtime]System.Boolean
-			IL_002f: stloc.2
+			IL_0006: ldstr "Cannot access 'custom' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0016: ldloc.0
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_001c: stloc.1
+			IL_001d: ldloc.1
+			IL_001e: box [System.Runtime]System.Boolean
+			IL_0023: stloc.2
+			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0029: ldloc.2
+			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002f: pop
 			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0035: ldloc.2
+			IL_0035: ldarg.2
 			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_003b: pop
-			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0041: ldarg.2
-			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0047: pop
-			IL_0048: ldc.i4.1
-			IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_004e: dup
-			IL_004f: ldstr "MATCH"
-			IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_0059: ret
+			IL_003c: ldc.i4.1
+			IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_0042: dup
+			IL_0043: ldstr "MATCH"
+			IL_0048: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_004d: ret
 		} // end of method FunctionExpression_L5C23::__js_call__
 
 	} // end of class FunctionExpression_L5C23
@@ -104,7 +96,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x258b
+				// Method begins at RVA 0x2507
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -132,9 +124,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x242c
+			// Method begins at RVA 0x23cc
 			// Header size: 12
-			// Code size: 99 (0x63)
+			// Code size: 87 (0x57)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -144,39 +136,31 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'custom' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0022: ldloc.0
-			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0028: stloc.1
-			IL_0029: ldloc.1
-			IL_002a: box [System.Runtime]System.Boolean
-			IL_002f: stloc.2
+			IL_0006: ldstr "Cannot access 'custom' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0016: ldloc.0
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_001c: stloc.1
+			IL_001d: ldloc.1
+			IL_001e: box [System.Runtime]System.Boolean
+			IL_0023: stloc.2
+			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0029: ldloc.2
+			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002f: pop
 			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0035: ldloc.2
+			IL_0035: ldarg.2
 			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_003b: pop
 			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0041: ldarg.2
+			IL_0041: ldarg.3
 			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_0047: pop
-			IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004d: ldarg.3
-			IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0053: pop
-			IL_0054: ldc.r8 17
-			IL_005d: box [System.Runtime]System.Double
-			IL_0062: ret
+			IL_0048: ldc.r8 17
+			IL_0051: box [System.Runtime]System.Double
+			IL_0056: ret
 		} // end of method FunctionExpression_L11C25::__js_call__
 
 	} // end of class FunctionExpression_L11C25
@@ -192,7 +176,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2594
+				// Method begins at RVA 0x2510
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -219,9 +203,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x249c
+			// Method begins at RVA 0x2430
 			// Header size: 12
-			// Code size: 78 (0x4e)
+			// Code size: 66 (0x42)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -231,34 +215,26 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'custom' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0022: ldloc.0
-			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0028: stloc.1
-			IL_0029: ldloc.1
-			IL_002a: box [System.Runtime]System.Boolean
-			IL_002f: stloc.2
+			IL_0006: ldstr "Cannot access 'custom' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0016: ldloc.0
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_001c: stloc.1
+			IL_001d: ldloc.1
+			IL_001e: box [System.Runtime]System.Boolean
+			IL_0023: stloc.2
+			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0029: ldloc.2
+			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002f: pop
 			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0035: ldloc.2
+			IL_0035: ldarg.2
 			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_003b: pop
-			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0041: ldarg.2
-			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0047: pop
-			IL_0048: ldstr "SEARCH"
-			IL_004d: ret
+			IL_003c: ldstr "SEARCH"
+			IL_0041: ret
 		} // end of method FunctionExpression_L18C24::__js_call__
 
 	} // end of class FunctionExpression_L18C24
@@ -274,7 +250,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x259d
+				// Method begins at RVA 0x2519
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -302,9 +278,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x24f8
+			// Method begins at RVA 0x2480
 			// Header size: 12
-			// Code size: 106 (0x6a)
+			// Code size: 94 (0x5e)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -314,42 +290,34 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'custom' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0022: ldloc.0
-			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0028: stloc.1
-			IL_0029: ldloc.1
-			IL_002a: box [System.Runtime]System.Boolean
-			IL_002f: stloc.2
+			IL_0006: ldstr "Cannot access 'custom' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0016: ldloc.0
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_001c: stloc.1
+			IL_001d: ldloc.1
+			IL_001e: box [System.Runtime]System.Boolean
+			IL_0023: stloc.2
+			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0029: ldloc.2
+			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002f: pop
 			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0035: ldloc.2
+			IL_0035: ldarg.2
 			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_003b: pop
 			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0041: ldarg.2
+			IL_0041: ldarg.3
 			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_0047: pop
-			IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004d: ldarg.3
-			IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0053: pop
-			IL_0054: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0059: dup
-			IL_005a: ldstr "marker"
-			IL_005f: ldstr "split-result"
-			IL_0064: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0069: ret
+			IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_004d: dup
+			IL_004e: ldstr "marker"
+			IL_0053: ldstr "split-result"
+			IL_0058: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_005d: ret
 		} // end of method FunctionExpression_L24C23::__js_call__
 
 	} // end of class FunctionExpression_L24C23
@@ -369,7 +337,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x25a6
+				// Method begins at RVA 0x2522
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -389,7 +357,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x25af
+				// Method begins at RVA 0x252b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -410,7 +378,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x256e
+			// Method begins at RVA 0x24ea
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -439,7 +407,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 856 (0x358)
+		// Code size: 770 (0x302)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_RegExp_SymbolDispatch_Custom/Scope,
@@ -463,316 +431,262 @@
 		IL_000c: stfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
 		IL_0011: ldloc.0
 		IL_0012: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_0017: dup
-		IL_0018: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_001d: ceq
-		IL_001f: brfalse.s IL_002d
-
-		IL_0021: pop
-		IL_0022: ldstr "Cannot access 'custom' before initialization"
-		IL_0027: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_002c: throw
-
-		IL_002d: stloc.s 9
-		IL_002f: ldstr "match"
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_0039: stloc.s 10
-		IL_003b: ldc.i4.1
-		IL_003c: newarr [System.Runtime]System.Object
-		IL_0041: dup
-		IL_0042: ldc.i4.0
-		IL_0043: ldloc.0
-		IL_0044: stelem.ref
-		IL_0045: ldc.i4.0
-		IL_0046: ldelem.ref
-		IL_0047: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
-		IL_004c: ldftn class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L5C23::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object)
-		IL_0052: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0057: stloc.s 11
-		IL_0059: ldloc.s 9
-		IL_005b: ldloc.s 10
-		IL_005d: ldloc.s 11
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
-		IL_0064: pop
-		IL_0065: ldloc.0
-		IL_0066: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_006b: dup
-		IL_006c: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0071: ceq
-		IL_0073: brfalse.s IL_0081
-
-		IL_0075: pop
-		IL_0076: ldstr "Cannot access 'custom' before initialization"
-		IL_007b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0080: throw
-
-		IL_0081: stloc.s 11
-		IL_0083: ldstr "replace"
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_008d: stloc.s 10
-		IL_008f: ldc.i4.1
-		IL_0090: newarr [System.Runtime]System.Object
-		IL_0095: dup
-		IL_0096: ldc.i4.0
-		IL_0097: ldloc.0
-		IL_0098: stelem.ref
-		IL_0099: ldc.i4.0
-		IL_009a: ldelem.ref
-		IL_009b: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
-		IL_00a0: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L11C25::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object, object)
-		IL_00a6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_00ab: stloc.s 9
-		IL_00ad: ldloc.s 11
-		IL_00af: ldloc.s 10
-		IL_00b1: ldloc.s 9
-		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
-		IL_00b8: pop
-		IL_00b9: ldloc.0
-		IL_00ba: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_00bf: dup
-		IL_00c0: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_00c5: ceq
-		IL_00c7: brfalse.s IL_00d5
-
-		IL_00c9: pop
-		IL_00ca: ldstr "Cannot access 'custom' before initialization"
-		IL_00cf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_00d4: throw
-
-		IL_00d5: stloc.s 9
-		IL_00d7: ldstr "search"
-		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_00e1: stloc.s 10
-		IL_00e3: ldc.i4.1
-		IL_00e4: newarr [System.Runtime]System.Object
-		IL_00e9: dup
-		IL_00ea: ldc.i4.0
-		IL_00eb: ldloc.0
-		IL_00ec: stelem.ref
-		IL_00ed: ldc.i4.0
-		IL_00ee: ldelem.ref
-		IL_00ef: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
-		IL_00f4: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L18C24::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object)
-		IL_00fa: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00ff: stloc.s 11
-		IL_0101: ldloc.s 9
-		IL_0103: ldloc.s 10
-		IL_0105: ldloc.s 11
-		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
-		IL_010c: pop
-		IL_010d: ldloc.0
-		IL_010e: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_0113: dup
-		IL_0114: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0119: ceq
-		IL_011b: brfalse.s IL_0129
-
-		IL_011d: pop
-		IL_011e: ldstr "Cannot access 'custom' before initialization"
-		IL_0123: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0128: throw
-
-		IL_0129: stloc.s 11
-		IL_012b: ldstr "split"
-		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_0135: stloc.s 10
-		IL_0137: ldc.i4.1
-		IL_0138: newarr [System.Runtime]System.Object
-		IL_013d: dup
-		IL_013e: ldc.i4.0
-		IL_013f: ldloc.0
-		IL_0140: stelem.ref
-		IL_0141: ldc.i4.0
-		IL_0142: ldelem.ref
-		IL_0143: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
-		IL_0148: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L24C23::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object, object)
-		IL_014e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0153: stloc.s 9
-		IL_0155: ldloc.s 11
-		IL_0157: ldloc.s 10
-		IL_0159: ldloc.s 9
-		IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
-		IL_0160: pop
-		IL_0161: ldloc.0
-		IL_0162: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_0167: dup
-		IL_0168: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_016d: ceq
-		IL_016f: brfalse.s IL_017d
-
-		IL_0171: pop
-		IL_0172: ldstr "Cannot access 'custom' before initialization"
-		IL_0177: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_017c: throw
-
-		IL_017d: stloc.s 9
-		IL_017f: ldstr "abc"
-		IL_0184: ldloc.s 9
-		IL_0186: call object [JavaScriptRuntime]JavaScriptRuntime.String::Match(string, object)
-		IL_018b: stloc.s 9
-		IL_018d: ldloc.s 9
-		IL_018f: stloc.1
-		IL_0190: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0195: ldloc.1
-		IL_0196: ldc.r8 0.0
-		IL_019f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_01a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01a9: pop
-		IL_01aa: ldloc.0
-		IL_01ab: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_01b0: dup
-		IL_01b1: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_01b6: ceq
-		IL_01b8: brfalse.s IL_01c6
-
-		IL_01ba: pop
-		IL_01bb: ldstr "Cannot access 'custom' before initialization"
-		IL_01c0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_01c5: throw
-
-		IL_01c6: stloc.s 9
-		IL_01c8: ldstr "abc"
-		IL_01cd: ldloc.s 9
-		IL_01cf: ldstr "x"
-		IL_01d4: call object [JavaScriptRuntime]JavaScriptRuntime.String::Replace(string, object, object)
-		IL_01d9: stloc.s 9
-		IL_01db: ldloc.s 9
-		IL_01dd: stloc.2
-		IL_01de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01e3: ldloc.2
-		IL_01e4: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_01e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01ee: pop
-		IL_01ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01f4: ldloc.2
-		IL_01f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01fa: pop
-		IL_01fb: ldloc.0
-		IL_01fc: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_0201: dup
-		IL_0202: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0207: ceq
-		IL_0209: brfalse.s IL_0217
-
-		IL_020b: pop
-		IL_020c: ldstr "Cannot access 'custom' before initialization"
-		IL_0211: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0216: throw
-
-		IL_0217: stloc.s 9
-		IL_0219: ldstr "abc"
-		IL_021e: ldloc.s 9
-		IL_0220: call object [JavaScriptRuntime]JavaScriptRuntime.String::Search(string, object)
-		IL_0225: stloc.s 9
-		IL_0227: ldloc.s 9
-		IL_0229: stloc.3
-		IL_022a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_022f: ldloc.3
-		IL_0230: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0235: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_023a: pop
-		IL_023b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0240: ldloc.3
-		IL_0241: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0246: pop
-		IL_0247: ldloc.0
-		IL_0248: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
-		IL_024d: dup
-		IL_024e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0253: ceq
-		IL_0255: brfalse.s IL_0263
-
-		IL_0257: pop
-		IL_0258: ldstr "Cannot access 'custom' before initialization"
-		IL_025d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0262: throw
-
-		IL_0263: stloc.s 9
-		IL_0265: ldstr "abc"
-		IL_026a: ldloc.s 9
-		IL_026c: ldc.r8 5
-		IL_0275: box [System.Runtime]System.Double
-		IL_027a: call object [JavaScriptRuntime]JavaScriptRuntime.String::Split(string, object, object)
-		IL_027f: stloc.s 9
-		IL_0281: ldloc.s 9
-		IL_0283: stloc.s 4
-		IL_0285: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_028a: ldloc.s 4
-		IL_028c: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0291: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0296: pop
-		IL_0297: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_029c: ldloc.s 4
-		IL_029e: ldstr "marker"
-		IL_02a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02ad: pop
-		IL_02ae: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_02b3: stloc.s 5
-		IL_02b5: ldstr "match"
-		IL_02ba: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_02bf: stloc.s 9
-		IL_02c1: ldloc.s 5
-		IL_02c3: ldloc.s 9
-		IL_02c5: ldc.r8 1
-		IL_02ce: box [System.Runtime]System.Double
-		IL_02d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
-		IL_02d8: pop
+		IL_0017: ldstr "Cannot access 'custom' before initialization"
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0021: stloc.s 9
+		IL_0023: ldstr "match"
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_002d: stloc.s 10
+		IL_002f: ldc.i4.1
+		IL_0030: newarr [System.Runtime]System.Object
+		IL_0035: dup
+		IL_0036: ldc.i4.0
+		IL_0037: ldloc.0
+		IL_0038: stelem.ref
+		IL_0039: ldc.i4.0
+		IL_003a: ldelem.ref
+		IL_003b: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
+		IL_0040: ldftn class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L5C23::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object)
+		IL_0046: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_004b: stloc.s 11
+		IL_004d: ldloc.s 9
+		IL_004f: ldloc.s 10
+		IL_0051: ldloc.s 11
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
+		IL_0058: pop
+		IL_0059: ldloc.0
+		IL_005a: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_005f: ldstr "Cannot access 'custom' before initialization"
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0069: stloc.s 11
+		IL_006b: ldstr "replace"
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_0075: stloc.s 10
+		IL_0077: ldc.i4.1
+		IL_0078: newarr [System.Runtime]System.Object
+		IL_007d: dup
+		IL_007e: ldc.i4.0
+		IL_007f: ldloc.0
+		IL_0080: stelem.ref
+		IL_0081: ldc.i4.0
+		IL_0082: ldelem.ref
+		IL_0083: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
+		IL_0088: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L11C25::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object, object)
+		IL_008e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0093: stloc.s 9
+		IL_0095: ldloc.s 11
+		IL_0097: ldloc.s 10
+		IL_0099: ldloc.s 9
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
+		IL_00a0: pop
+		IL_00a1: ldloc.0
+		IL_00a2: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_00a7: ldstr "Cannot access 'custom' before initialization"
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00b1: stloc.s 9
+		IL_00b3: ldstr "search"
+		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_00bd: stloc.s 10
+		IL_00bf: ldc.i4.1
+		IL_00c0: newarr [System.Runtime]System.Object
+		IL_00c5: dup
+		IL_00c6: ldc.i4.0
+		IL_00c7: ldloc.0
+		IL_00c8: stelem.ref
+		IL_00c9: ldc.i4.0
+		IL_00ca: ldelem.ref
+		IL_00cb: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
+		IL_00d0: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L18C24::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object)
+		IL_00d6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00db: stloc.s 11
+		IL_00dd: ldloc.s 9
+		IL_00df: ldloc.s 10
+		IL_00e1: ldloc.s 11
+		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
+		IL_00e8: pop
+		IL_00e9: ldloc.0
+		IL_00ea: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_00ef: ldstr "Cannot access 'custom' before initialization"
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00f9: stloc.s 11
+		IL_00fb: ldstr "split"
+		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_0105: stloc.s 10
+		IL_0107: ldc.i4.1
+		IL_0108: newarr [System.Runtime]System.Object
+		IL_010d: dup
+		IL_010e: ldc.i4.0
+		IL_010f: ldloc.0
+		IL_0110: stelem.ref
+		IL_0111: ldc.i4.0
+		IL_0112: ldelem.ref
+		IL_0113: castclass Modules.String_RegExp_SymbolDispatch_Custom/Scope
+		IL_0118: ldftn object Modules.String_RegExp_SymbolDispatch_Custom/FunctionExpression_L24C23::__js_call__(class Modules.String_RegExp_SymbolDispatch_Custom/Scope, object, object, object)
+		IL_011e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0123: stloc.s 9
+		IL_0125: ldloc.s 11
+		IL_0127: ldloc.s 10
+		IL_0129: ldloc.s 9
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
+		IL_0130: pop
+		IL_0131: ldloc.0
+		IL_0132: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_0137: ldstr "Cannot access 'custom' before initialization"
+		IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0141: stloc.s 9
+		IL_0143: ldstr "abc"
+		IL_0148: ldloc.s 9
+		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.String::Match(string, object)
+		IL_014f: stloc.s 9
+		IL_0151: ldloc.s 9
+		IL_0153: stloc.1
+		IL_0154: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0159: ldloc.1
+		IL_015a: ldc.r8 0.0
+		IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0168: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_016d: pop
+		IL_016e: ldloc.0
+		IL_016f: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_0174: ldstr "Cannot access 'custom' before initialization"
+		IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_017e: stloc.s 9
+		IL_0180: ldstr "abc"
+		IL_0185: ldloc.s 9
+		IL_0187: ldstr "x"
+		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.String::Replace(string, object, object)
+		IL_0191: stloc.s 9
+		IL_0193: ldloc.s 9
+		IL_0195: stloc.2
+		IL_0196: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_019b: ldloc.2
+		IL_019c: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_01a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01a6: pop
+		IL_01a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01ac: ldloc.2
+		IL_01ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01b2: pop
+		IL_01b3: ldloc.0
+		IL_01b4: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_01b9: ldstr "Cannot access 'custom' before initialization"
+		IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_01c3: stloc.s 9
+		IL_01c5: ldstr "abc"
+		IL_01ca: ldloc.s 9
+		IL_01cc: call object [JavaScriptRuntime]JavaScriptRuntime.String::Search(string, object)
+		IL_01d1: stloc.s 9
+		IL_01d3: ldloc.s 9
+		IL_01d5: stloc.3
+		IL_01d6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01db: ldloc.3
+		IL_01dc: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_01e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01e6: pop
+		IL_01e7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01ec: ldloc.3
+		IL_01ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01f2: pop
+		IL_01f3: ldloc.0
+		IL_01f4: ldfld object Modules.String_RegExp_SymbolDispatch_Custom/Scope::'custom'
+		IL_01f9: ldstr "Cannot access 'custom' before initialization"
+		IL_01fe: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0203: stloc.s 9
+		IL_0205: ldstr "abc"
+		IL_020a: ldloc.s 9
+		IL_020c: ldc.r8 5
+		IL_0215: box [System.Runtime]System.Double
+		IL_021a: call object [JavaScriptRuntime]JavaScriptRuntime.String::Split(string, object, object)
+		IL_021f: stloc.s 9
+		IL_0221: ldloc.s 9
+		IL_0223: stloc.s 4
+		IL_0225: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_022a: ldloc.s 4
+		IL_022c: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0231: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0236: pop
+		IL_0237: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_023c: ldloc.s 4
+		IL_023e: ldstr "marker"
+		IL_0243: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0248: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_024d: pop
+		IL_024e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0253: stloc.s 5
+		IL_0255: ldstr "match"
+		IL_025a: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_025f: stloc.s 9
+		IL_0261: ldloc.s 5
+		IL_0263: ldloc.s 9
+		IL_0265: ldc.r8 1
+		IL_026e: box [System.Runtime]System.Double
+		IL_0273: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
+		IL_0278: pop
+		IL_0279: nop
 		.try
 		{
-			IL_02d9: ldstr "abc"
-			IL_02de: ldloc.s 5
-			IL_02e0: call object [JavaScriptRuntime]JavaScriptRuntime.String::Match(string, object)
-			IL_02e5: pop
-			IL_02e6: leave IL_0357
+			IL_027a: nop
+			IL_027b: ldstr "abc"
+			IL_0280: ldloc.s 5
+			IL_0282: call object [JavaScriptRuntime]JavaScriptRuntime.String::Match(string, object)
+			IL_0287: pop
+			IL_0288: leave IL_0300
 		} // end .try
+		IL_028d: nop
 		catch [System.Runtime]System.Exception
 		{
-			IL_02eb: stloc.s 6
-			IL_02ed: ldloc.s 6
-			IL_02ef: dup
-			IL_02f0: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_02f5: dup
-			IL_02f6: brtrue IL_030c
+			IL_028e: nop
+			IL_028f: stloc.s 6
+			IL_0291: ldloc.s 6
+			IL_0293: dup
+			IL_0294: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0299: dup
+			IL_029a: brtrue IL_02b0
 
-			IL_02fb: pop
-			IL_02fc: dup
-			IL_02fd: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0302: dup
-			IL_0303: brtrue IL_0319
+			IL_029f: pop
+			IL_02a0: dup
+			IL_02a1: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_02a6: dup
+			IL_02a7: brtrue IL_02be
 
-			IL_0308: pop
-			IL_0309: pop
-			IL_030a: rethrow
+			IL_02ac: pop
+			IL_02ad: pop
+			IL_02ae: rethrow
 
-			IL_030c: pop
-			IL_030d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0312: stloc.s 7
-			IL_0314: br IL_031c
+			IL_02b0: nop
+			IL_02b1: pop
+			IL_02b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_02b7: stloc.s 7
+			IL_02b9: br IL_02c2
 
-			IL_0319: pop
-			IL_031a: stloc.s 7
+			IL_02be: nop
+			IL_02bf: pop
+			IL_02c0: stloc.s 7
 
-			IL_031c: ldloc.s 7
-			IL_031e: stloc.s 9
-			IL_0320: ldloc.s 9
-			IL_0322: stloc.s 8
-			IL_0324: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0329: ldloc.s 8
-			IL_032b: ldstr "name"
-			IL_0330: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0335: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_033a: pop
-			IL_033b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0340: ldloc.s 8
-			IL_0342: ldstr "message"
-			IL_0347: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_034c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0351: pop
-			IL_0352: leave IL_0357
+			IL_02c2: nop
+			IL_02c3: ldloc.s 7
+			IL_02c5: stloc.s 9
+			IL_02c7: ldloc.s 9
+			IL_02c9: stloc.s 8
+			IL_02cb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_02d0: ldloc.s 8
+			IL_02d2: ldstr "name"
+			IL_02d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_02e1: pop
+			IL_02e2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_02e7: ldloc.s 8
+			IL_02e9: ldstr "message"
+			IL_02ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_02f8: pop
+			IL_02f9: leave IL_0300
 		} // end handler
+		IL_02fe: nop
+		IL_02ff: nop
 
-		IL_0357: ret
+		IL_0300: nop
+		IL_0301: ret
 	} // end of method String_RegExp_SymbolDispatch_Custom::__js_module_init__
 
 } // end of class Modules.String_RegExp_SymbolDispatch_Custom
@@ -784,7 +698,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x25b8
+		// Method begins at RVA 0x2534
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

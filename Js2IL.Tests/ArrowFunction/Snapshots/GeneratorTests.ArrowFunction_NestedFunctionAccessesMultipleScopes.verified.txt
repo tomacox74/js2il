@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21bf
+					// Method begins at RVA 0x21a7
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -48,7 +48,7 @@
 				)
 				// Method begins at RVA 0x2108
 				// Header size: 12
-				// Code size: 131 (0x83)
+				// Code size: 107 (0x6b)
 				.maxstack 8
 				.locals init (
 					[0] string,
@@ -62,50 +62,34 @@
 				IL_0008: ldelem.ref
 				IL_0009: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
 				IL_000e: ldfld object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope::globalVar
-				IL_0013: dup
-				IL_0014: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0019: ceq
-				IL_001b: brfalse.s IL_0029
-
-				IL_001d: pop
-				IL_001e: ldstr "Cannot access 'globalVar' before initialization"
-				IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_0028: throw
-
-				IL_0029: stloc.1
-				IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_002f: ldstr "Global:"
-				IL_0034: ldloc.1
-				IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_003a: pop
-				IL_003b: ldarg.0
-				IL_003c: ldc.i4.1
-				IL_003d: ldelem.ref
-				IL_003e: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope
-				IL_0043: ldfld object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope::outerVar
-				IL_0048: dup
-				IL_0049: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_004e: ceq
-				IL_0050: brfalse.s IL_005e
-
-				IL_0052: pop
-				IL_0053: ldstr "Cannot access 'outerVar' before initialization"
-				IL_0058: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_005d: throw
-
-				IL_005e: stloc.1
-				IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0064: ldstr "Outer:"
-				IL_0069: ldloc.1
-				IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_006f: pop
-				IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0075: ldstr "Inner:"
-				IL_007a: ldloc.0
-				IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_0080: pop
-				IL_0081: ldnull
-				IL_0082: ret
+				IL_0013: ldstr "Cannot access 'globalVar' before initialization"
+				IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_001d: stloc.1
+				IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0023: ldstr "Global:"
+				IL_0028: ldloc.1
+				IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_002e: pop
+				IL_002f: ldarg.0
+				IL_0030: ldc.i4.1
+				IL_0031: ldelem.ref
+				IL_0032: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope
+				IL_0037: ldfld object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope::outerVar
+				IL_003c: ldstr "Cannot access 'outerVar' before initialization"
+				IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0046: stloc.1
+				IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_004c: ldstr "Outer:"
+				IL_0051: ldloc.1
+				IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0057: pop
+				IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_005d: ldstr "Inner:"
+				IL_0062: ldloc.0
+				IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0068: pop
+				IL_0069: ldnull
+				IL_006a: ret
 			} // end of method ArrowFunction_L8C28::__js_call__
 
 		} // end of class ArrowFunction_L8C28
@@ -124,7 +108,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ab
+				// Method begins at RVA 0x2193
 				// Header size: 1
 				// Code size: 19 (0x13)
 				.maxstack 8
@@ -215,7 +199,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2197
+			// Method begins at RVA 0x217f
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -295,7 +279,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c8
+		// Method begins at RVA 0x21b0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

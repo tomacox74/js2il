@@ -65,6 +65,16 @@ public class RuntimeServices
         return previous;
     }
 
+    public static object EnsureTemporalDeadZoneInitialized(object value, string bindingName)
+    {
+        if (ReferenceEquals(value, TemporalDeadZoneSentinel))
+        {
+            throw new ReferenceError($"Cannot access '{bindingName}' before initialization");
+        }
+
+        return value;
+    }
+
     public static object GetImportMeta(object? moduleIdOrPath)
     {
         var url = GetImportMetaUrl(moduleIdOrPath);

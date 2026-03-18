@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21b0
+					// Method begins at RVA 0x2198
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21b9
+					// Method begins at RVA 0x21a1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -94,7 +94,7 @@
 				)
 				// Method begins at RVA 0x2110
 				// Header size: 12
-				// Code size: 108 (0x6c)
+				// Code size: 84 (0x54)
 				.maxstack 8
 				.locals init (
 					[0] object
@@ -106,44 +106,28 @@
 				IL_0007: ldelem.ref
 				IL_0008: castclass Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/Scope
 				IL_000d: ldfld object Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/Scope::GLOBAL_VALUE
-				IL_0012: dup
-				IL_0013: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0018: ceq
-				IL_001a: brfalse.s IL_0028
-
-				IL_001c: pop
-				IL_001d: ldstr "Cannot access 'GLOBAL_VALUE' before initialization"
-				IL_0022: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_0027: throw
-
-				IL_0028: stloc.0
-				IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_002e: ldloc.0
-				IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0034: pop
-				IL_0035: ldarg.0
-				IL_0036: ldfld object[] Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/MyClass::_scopes
-				IL_003b: ldc.i4.1
-				IL_003c: ldelem.ref
-				IL_003d: castclass Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/Scope
-				IL_0042: ldfld object Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/Scope::FUNCTION_VALUE
-				IL_0047: dup
-				IL_0048: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_004d: ceq
-				IL_004f: brfalse.s IL_005d
-
+				IL_0012: ldstr "Cannot access 'GLOBAL_VALUE' before initialization"
+				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_001c: stloc.0
+				IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0022: ldloc.0
+				IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0028: pop
+				IL_0029: ldarg.0
+				IL_002a: ldfld object[] Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/MyClass::_scopes
+				IL_002f: ldc.i4.1
+				IL_0030: ldelem.ref
+				IL_0031: castclass Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/Scope
+				IL_0036: ldfld object Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction/Scope::FUNCTION_VALUE
+				IL_003b: ldstr "Cannot access 'FUNCTION_VALUE' before initialization"
+				IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0045: stloc.0
+				IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_004b: ldloc.0
+				IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 				IL_0051: pop
-				IL_0052: ldstr "Cannot access 'FUNCTION_VALUE' before initialization"
-				IL_0057: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_005c: throw
-
-				IL_005d: stloc.0
-				IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0063: ldloc.0
-				IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0069: pop
-				IL_006a: ldnull
-				IL_006b: ret
+				IL_0052: ldnull
+				IL_0053: ret
 			} // end of method MyClass::logValues
 
 		} // end of class MyClass
@@ -163,7 +147,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219c
+				// Method begins at RVA 0x2184
 				// Header size: 1
 				// Code size: 19 (0x13)
 				.maxstack 8
@@ -249,7 +233,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2188
+			// Method begins at RVA 0x2170
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -331,7 +315,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c2
+		// Method begins at RVA 0x21aa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

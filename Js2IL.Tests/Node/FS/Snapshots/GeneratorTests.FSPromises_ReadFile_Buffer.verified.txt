@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2261
+				// Method begins at RVA 0x223d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,9 +52,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21ac
+			// Method begins at RVA 0x2194
 			// Header size: 12
-			// Code size: 119 (0x77)
+			// Code size: 107 (0x6b)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -88,24 +88,16 @@
 			IL_004a: stloc.2
 			IL_004b: ldarg.0
 			IL_004c: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
-			IL_0051: dup
-			IL_0052: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0057: ceq
-			IL_0059: brfalse.s IL_0067
-
-			IL_005b: pop
-			IL_005c: ldstr "Cannot access 'testFile' before initialization"
-			IL_0061: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0066: throw
-
-			IL_0067: stloc.3
-			IL_0068: ldloc.2
-			IL_0069: ldstr "rmSync"
-			IL_006e: ldloc.3
-			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0074: pop
-			IL_0075: ldnull
-			IL_0076: ret
+			IL_0051: ldstr "Cannot access 'testFile' before initialization"
+			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_005b: stloc.3
+			IL_005c: ldloc.2
+			IL_005d: ldstr "rmSync"
+			IL_0062: ldloc.3
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0068: pop
+			IL_0069: ldnull
+			IL_006a: ret
 		} // end of method ArrowFunction_L8C28::__js_call__
 
 	} // end of class ArrowFunction_L8C28
@@ -128,7 +120,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x226a
+				// Method begins at RVA 0x2246
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -152,7 +144,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x222f
+			// Method begins at RVA 0x220b
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -186,7 +178,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x224d
+			// Method begins at RVA 0x2229
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -215,7 +207,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 333 (0x14d)
+		// Code size: 309 (0x135)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FSPromises_ReadFile_Buffer/Scope,
@@ -269,85 +261,69 @@
 		IL_0079: stloc.3
 		IL_007a: ldloc.0
 		IL_007b: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
-		IL_0080: dup
-		IL_0081: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0086: ceq
-		IL_0088: brfalse.s IL_0096
-
-		IL_008a: pop
-		IL_008b: ldstr "Cannot access 'testFile' before initialization"
-		IL_0090: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0095: throw
-
-		IL_0096: stloc.s 4
-		IL_0098: ldloc.3
-		IL_0099: ldstr "writeFileSync"
-		IL_009e: ldloc.s 4
-		IL_00a0: ldstr "Buffer test"
-		IL_00a5: ldstr "utf8"
-		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_00af: pop
-		IL_00b0: ldloc.0
-		IL_00b1: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
-		IL_00b6: dup
-		IL_00b7: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_00bc: ceq
-		IL_00be: brfalse.s IL_00cc
-
-		IL_00c0: pop
-		IL_00c1: ldstr "Cannot access 'testFile' before initialization"
-		IL_00c6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_00cb: throw
-
-		IL_00cc: stloc.s 4
-		IL_00ce: ldloc.1
-		IL_00cf: ldstr "readFile"
-		IL_00d4: ldloc.s 4
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00db: stloc.s 4
-		IL_00dd: ldc.i4.1
-		IL_00de: newarr [System.Runtime]System.Object
-		IL_00e3: dup
-		IL_00e4: ldc.i4.0
-		IL_00e5: ldloc.0
-		IL_00e6: stelem.ref
-		IL_00e7: ldc.i4.0
-		IL_00e8: ldelem.ref
-		IL_00e9: castclass Modules.FSPromises_ReadFile_Buffer/Scope
-		IL_00ee: ldftn object Modules.FSPromises_ReadFile_Buffer/ArrowFunction_L8C28::__js_call__(class Modules.FSPromises_ReadFile_Buffer/Scope, object, object)
-		IL_00f4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00f9: ldc.i4.1
-		IL_00fa: newarr [System.Runtime]System.Object
-		IL_00ff: dup
-		IL_0100: ldc.i4.0
-		IL_0101: ldloc.0
-		IL_0102: stelem.ref
-		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_010d: stloc.3
-		IL_010e: ldloc.s 4
-		IL_0110: ldstr "then"
-		IL_0115: ldloc.3
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_011b: stloc.3
-		IL_011c: ldnull
-		IL_011d: ldftn object Modules.FSPromises_ReadFile_Buffer/ArrowFunction_L12C10::__js_call__(object, object)
-		IL_0123: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0128: ldc.i4.1
-		IL_0129: newarr [System.Runtime]System.Object
-		IL_012e: dup
-		IL_012f: ldc.i4.0
-		IL_0130: ldloc.0
-		IL_0131: stelem.ref
-		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_013c: stloc.s 4
-		IL_013e: ldloc.3
-		IL_013f: ldstr "catch"
-		IL_0144: ldloc.s 4
-		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_014b: pop
-		IL_014c: ret
+		IL_0080: ldstr "Cannot access 'testFile' before initialization"
+		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_008a: stloc.s 4
+		IL_008c: ldloc.3
+		IL_008d: ldstr "writeFileSync"
+		IL_0092: ldloc.s 4
+		IL_0094: ldstr "Buffer test"
+		IL_0099: ldstr "utf8"
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_00a3: pop
+		IL_00a4: ldloc.0
+		IL_00a5: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
+		IL_00aa: ldstr "Cannot access 'testFile' before initialization"
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00b4: stloc.s 4
+		IL_00b6: ldloc.1
+		IL_00b7: ldstr "readFile"
+		IL_00bc: ldloc.s 4
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c3: stloc.s 4
+		IL_00c5: ldc.i4.1
+		IL_00c6: newarr [System.Runtime]System.Object
+		IL_00cb: dup
+		IL_00cc: ldc.i4.0
+		IL_00cd: ldloc.0
+		IL_00ce: stelem.ref
+		IL_00cf: ldc.i4.0
+		IL_00d0: ldelem.ref
+		IL_00d1: castclass Modules.FSPromises_ReadFile_Buffer/Scope
+		IL_00d6: ldftn object Modules.FSPromises_ReadFile_Buffer/ArrowFunction_L8C28::__js_call__(class Modules.FSPromises_ReadFile_Buffer/Scope, object, object)
+		IL_00dc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00e1: ldc.i4.1
+		IL_00e2: newarr [System.Runtime]System.Object
+		IL_00e7: dup
+		IL_00e8: ldc.i4.0
+		IL_00e9: ldloc.0
+		IL_00ea: stelem.ref
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00f5: stloc.3
+		IL_00f6: ldloc.s 4
+		IL_00f8: ldstr "then"
+		IL_00fd: ldloc.3
+		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0103: stloc.3
+		IL_0104: ldnull
+		IL_0105: ldftn object Modules.FSPromises_ReadFile_Buffer/ArrowFunction_L12C10::__js_call__(object, object)
+		IL_010b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0110: ldc.i4.1
+		IL_0111: newarr [System.Runtime]System.Object
+		IL_0116: dup
+		IL_0117: ldc.i4.0
+		IL_0118: ldloc.0
+		IL_0119: stelem.ref
+		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0124: stloc.s 4
+		IL_0126: ldloc.3
+		IL_0127: ldstr "catch"
+		IL_012c: ldloc.s 4
+		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0133: pop
+		IL_0134: ret
 	} // end of method FSPromises_ReadFile_Buffer::__js_module_init__
 
 } // end of class Modules.FSPromises_ReadFile_Buffer
@@ -359,7 +335,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2273
+		// Method begins at RVA 0x224f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -16,6 +16,12 @@ internal sealed partial class LIRToILCompiler
 {
     #region Handle Resolution Helpers
 
+    private static void MarkLabelAndEmitNop(InstructionEncoder ilEncoder, LabelHandle label)
+    {
+        ilEncoder.MarkLabel(label);
+        ilEncoder.OpCode(ILOpCode.Nop);
+    }
+
     /// <summary>
     /// Resolves a scope type handle from the registry with improved error context.
     /// </summary>
@@ -93,25 +99,13 @@ internal sealed partial class LIRToILCompiler
             return;
         }
 
-        var continueLabel = ilEncoder.DefineLabel();
-        var sentinelField = _memberRefRegistry.GetOrAddField(
+        var ensureInitialized = _memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.RuntimeServices),
-            nameof(JavaScriptRuntime.RuntimeServices.TemporalDeadZoneSentinel));
-        var referenceErrorCtor = _memberRefRegistry.GetOrAddConstructor(
-            typeof(JavaScriptRuntime.ReferenceError),
-            parameterTypes: new[] { typeof(string) });
-
-        ilEncoder.OpCode(ILOpCode.Dup);
-        ilEncoder.OpCode(ILOpCode.Ldsfld);
-        ilEncoder.Token(sentinelField);
-        ilEncoder.OpCode(ILOpCode.Ceq);
-        ilEncoder.Branch(ILOpCode.Brfalse_s, continueLabel);
-        ilEncoder.OpCode(ILOpCode.Pop);
+            nameof(JavaScriptRuntime.RuntimeServices.EnsureTemporalDeadZoneInitialized),
+            parameterTypes: new[] { typeof(object), typeof(string) });
         ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString($"Cannot access '{binding.Name}' before initialization"));
-        ilEncoder.OpCode(ILOpCode.Newobj);
-        ilEncoder.Token(referenceErrorCtor);
-        ilEncoder.OpCode(ILOpCode.Throw);
-        ilEncoder.MarkLabel(continueLabel);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(ensureInitialized);
     }
 
     /// <summary>
@@ -173,7 +167,7 @@ internal sealed partial class LIRToILCompiler
         }
         
         // Mark the fall-through label (for state 0 or values > max state)
-        ilEncoder.MarkLabel(fallThroughLabel);
+        MarkLabelAndEmitNop(ilEncoder, fallThroughLabel);
     }
 
     #endregion

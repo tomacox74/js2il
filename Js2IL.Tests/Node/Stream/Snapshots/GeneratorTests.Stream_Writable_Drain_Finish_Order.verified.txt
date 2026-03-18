@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22fb
+				// Method begins at RVA 0x22bf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -47,7 +47,7 @@
 			)
 			// Method begins at RVA 0x21a0
 			// Header size: 12
-			// Code size: 44 (0x2c)
+			// Code size: 32 (0x20)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -55,24 +55,16 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Stream_Writable_Drain_Finish_Order/Scope::written
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'written' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldstr "push"
-			IL_0023: ldarg.2
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0029: pop
-			IL_002a: ldnull
-			IL_002b: ret
+			IL_0006: ldstr "Cannot access 'written' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldstr "push"
+			IL_0017: ldarg.2
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_001d: pop
+			IL_001e: ldnull
+			IL_001f: ret
 		} // end of method FunctionExpression_L10C18::__js_call__
 
 	} // end of class FunctionExpression_L10C18
@@ -88,7 +80,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2304
+				// Method begins at RVA 0x22c8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -114,9 +106,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x21d8
+			// Method begins at RVA 0x21cc
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 36 (0x24)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -124,24 +116,16 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Stream_Writable_Drain_Finish_Order/Scope::sequence
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'sequence' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldstr "push"
-			IL_0023: ldstr "drain"
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_002d: pop
-			IL_002e: ldnull
-			IL_002f: ret
+			IL_0006: ldstr "Cannot access 'sequence' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldstr "push"
+			IL_0017: ldstr "drain"
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0021: pop
+			IL_0022: ldnull
+			IL_0023: ret
 		} // end of method FunctionExpression_L14C21::__js_call__
 
 	} // end of class FunctionExpression_L14C21
@@ -157,7 +141,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x230d
+				// Method begins at RVA 0x22d1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -183,9 +167,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2214
+			// Method begins at RVA 0x21fc
 			// Header size: 12
-			// Code size: 188 (0xbc)
+			// Code size: 152 (0x98)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -194,76 +178,52 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Stream_Writable_Drain_Finish_Order/Scope::sequence
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'sequence' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldstr "push"
-			IL_0023: ldstr "finish"
-			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_002d: pop
-			IL_002e: ldarg.0
-			IL_002f: ldfld object Modules.Stream_Writable_Drain_Finish_Order/Scope::sequence
-			IL_0034: dup
-			IL_0035: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_003a: ceq
-			IL_003c: brfalse.s IL_004a
-
-			IL_003e: pop
-			IL_003f: ldstr "Cannot access 'sequence' before initialization"
-			IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0049: throw
-
-			IL_004a: stloc.0
-			IL_004b: ldloc.0
-			IL_004c: ldstr "join"
-			IL_0051: ldstr ","
-			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_005b: stloc.0
-			IL_005c: ldstr "sequence:"
-			IL_0061: ldloc.0
-			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0067: stloc.1
-			IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_006d: ldloc.1
-			IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0073: pop
-			IL_0074: ldarg.0
-			IL_0075: ldfld object Modules.Stream_Writable_Drain_Finish_Order/Scope::written
-			IL_007a: dup
-			IL_007b: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0080: ceq
-			IL_0082: brfalse.s IL_0090
-
-			IL_0084: pop
-			IL_0085: ldstr "Cannot access 'written' before initialization"
-			IL_008a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_008f: throw
-
-			IL_0090: stloc.0
-			IL_0091: ldloc.0
-			IL_0092: ldstr "join"
-			IL_0097: ldstr ","
-			IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00a1: stloc.0
-			IL_00a2: ldstr "written:"
-			IL_00a7: ldloc.0
-			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00ad: stloc.1
-			IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00b3: ldloc.1
-			IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00b9: pop
-			IL_00ba: ldnull
-			IL_00bb: ret
+			IL_0006: ldstr "Cannot access 'sequence' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldstr "push"
+			IL_0017: ldstr "finish"
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0021: pop
+			IL_0022: ldarg.0
+			IL_0023: ldfld object Modules.Stream_Writable_Drain_Finish_Order/Scope::sequence
+			IL_0028: ldstr "Cannot access 'sequence' before initialization"
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0032: stloc.0
+			IL_0033: ldloc.0
+			IL_0034: ldstr "join"
+			IL_0039: ldstr ","
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0043: stloc.0
+			IL_0044: ldstr "sequence:"
+			IL_0049: ldloc.0
+			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_004f: stloc.1
+			IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0055: ldloc.1
+			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_005b: pop
+			IL_005c: ldarg.0
+			IL_005d: ldfld object Modules.Stream_Writable_Drain_Finish_Order/Scope::written
+			IL_0062: ldstr "Cannot access 'written' before initialization"
+			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_006c: stloc.0
+			IL_006d: ldloc.0
+			IL_006e: ldstr "join"
+			IL_0073: ldstr ","
+			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_007d: stloc.0
+			IL_007e: ldstr "written:"
+			IL_0083: ldloc.0
+			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0089: stloc.1
+			IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008f: ldloc.1
+			IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0095: pop
+			IL_0096: ldnull
+			IL_0097: ret
 		} // end of method FunctionExpression_L18C22::__js_call__
 
 	} // end of class FunctionExpression_L18C22
@@ -284,7 +244,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22dc
+			// Method begins at RVA 0x22a0
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -449,7 +409,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2316
+		// Method begins at RVA 0x22da
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

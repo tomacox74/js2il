@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x26c9
+					// Method begins at RVA 0x2615
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -47,9 +47,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2340
+				// Method begins at RVA 0x22ec
 				// Header size: 12
-				// Code size: 105 (0x69)
+				// Code size: 93 (0x5d)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -74,29 +74,21 @@
 				IL_002f: ldelem.ref
 				IL_0030: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
 				IL_0035: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
-				IL_003a: dup
-				IL_003b: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0040: ceq
-				IL_0042: brfalse.s IL_0050
-
-				IL_0044: pop
-				IL_0045: ldstr "Cannot access 'received' before initialization"
-				IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_004f: throw
-
-				IL_0050: stloc.1
-				IL_0051: ldloc.1
-				IL_0052: ldarg.2
-				IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0058: stloc.0
-				IL_0059: ldarg.0
-				IL_005a: ldc.i4.1
-				IL_005b: ldelem.ref
-				IL_005c: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
-				IL_0061: ldloc.0
-				IL_0062: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
-				IL_0067: ldnull
-				IL_0068: ret
+				IL_003a: ldstr "Cannot access 'received' before initialization"
+				IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0044: stloc.1
+				IL_0045: ldloc.1
+				IL_0046: ldarg.2
+				IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_004c: stloc.0
+				IL_004d: ldarg.0
+				IL_004e: ldc.i4.1
+				IL_004f: ldelem.ref
+				IL_0050: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
+				IL_0055: ldloc.0
+				IL_0056: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
+				IL_005b: ldnull
+				IL_005c: ret
 			} // end of method FunctionExpression_server::__js_call__
 
 		} // end of class FunctionExpression_server
@@ -112,7 +104,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x26d2
+					// Method begins at RVA 0x261e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -136,9 +128,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x23b8
+				// Method begins at RVA 0x2358
 				// Header size: 12
-				// Code size: 137 (0x89)
+				// Code size: 113 (0x71)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -151,58 +143,42 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
 				IL_0008: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
-				IL_000d: dup
-				IL_000e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0013: ceq
-				IL_0015: brfalse.s IL_0023
-
-				IL_0017: pop
-				IL_0018: ldstr "Cannot access 'received' before initialization"
-				IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_0022: throw
-
-				IL_0023: stloc.0
-				IL_0024: ldstr "server recv:"
-				IL_0029: ldloc.0
-				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_002f: stloc.1
-				IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0035: ldloc.1
-				IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_003b: pop
-				IL_003c: ldarg.0
-				IL_003d: ldc.i4.1
-				IL_003e: ldelem.ref
-				IL_003f: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
-				IL_0044: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::socket
-				IL_0049: stloc.0
-				IL_004a: ldarg.0
-				IL_004b: ldc.i4.1
-				IL_004c: ldelem.ref
-				IL_004d: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
-				IL_0052: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
-				IL_0057: dup
-				IL_0058: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_005d: ceq
-				IL_005f: brfalse.s IL_006d
-
-				IL_0061: pop
-				IL_0062: ldstr "Cannot access 'received' before initialization"
-				IL_0067: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_006c: throw
-
-				IL_006d: stloc.2
-				IL_006e: ldstr "done:"
-				IL_0073: ldloc.2
-				IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0079: stloc.1
-				IL_007a: ldloc.0
-				IL_007b: ldstr "end"
-				IL_0080: ldloc.1
-				IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_0086: pop
-				IL_0087: ldnull
-				IL_0088: ret
+				IL_000d: ldstr "Cannot access 'received' before initialization"
+				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0017: stloc.0
+				IL_0018: ldstr "server recv:"
+				IL_001d: ldloc.0
+				IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0023: stloc.1
+				IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0029: ldloc.1
+				IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_002f: pop
+				IL_0030: ldarg.0
+				IL_0031: ldc.i4.1
+				IL_0032: ldelem.ref
+				IL_0033: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
+				IL_0038: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::socket
+				IL_003d: stloc.0
+				IL_003e: ldarg.0
+				IL_003f: ldc.i4.1
+				IL_0040: ldelem.ref
+				IL_0041: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope
+				IL_0046: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server/Scope::received
+				IL_004b: ldstr "Cannot access 'received' before initialization"
+				IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0055: stloc.2
+				IL_0056: ldstr "done:"
+				IL_005b: ldloc.2
+				IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0061: stloc.1
+				IL_0062: ldloc.0
+				IL_0063: ldstr "end"
+				IL_0068: ldloc.1
+				IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_006e: pop
+				IL_006f: ldnull
+				IL_0070: ret
 			} // end of method FunctionExpression_server_L14C19::__js_call__
 
 		} // end of class FunctionExpression_server_L14C19
@@ -223,7 +199,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26b5
+				// Method begins at RVA 0x2601
 				// Header size: 1
 				// Code size: 19 (0x13)
 				.maxstack 8
@@ -253,7 +229,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0c 00 00 02
 			)
-			// Method begins at RVA 0x2120
+			// Method begins at RVA 0x2108
 			// Header size: 12
 			// Code size: 146 (0x92)
 			.maxstack 8
@@ -341,7 +317,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2703
+						// Method begins at RVA 0x264f
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -365,9 +341,9 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x2610
+					// Method begins at RVA 0x2568
 					// Header size: 12
-					// Code size: 103 (0x67)
+					// Code size: 91 (0x5b)
 					.maxstack 8
 					.locals init (
 						[0] object,
@@ -379,36 +355,28 @@
 					IL_0002: ldelem.ref
 					IL_0003: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
 					IL_0008: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::client
-					IL_000d: dup
-					IL_000e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-					IL_0013: ceq
-					IL_0015: brfalse.s IL_0023
-
-					IL_0017: pop
-					IL_0018: ldstr "Cannot access 'client' before initialization"
-					IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-					IL_0022: throw
-
-					IL_0023: stloc.0
-					IL_0024: ldc.i4.2
-					IL_0025: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-					IL_002a: dup
-					IL_002b: ldc.r8 172
-					IL_0034: box [System.Runtime]System.Double
-					IL_0039: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-					IL_003e: dup
-					IL_003f: ldc.r8 33
-					IL_0048: box [System.Runtime]System.Double
-					IL_004d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-					IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-					IL_0057: stloc.1
-					IL_0058: ldloc.0
-					IL_0059: ldstr "end"
-					IL_005e: ldloc.1
-					IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-					IL_0064: pop
-					IL_0065: ldnull
-					IL_0066: ret
+					IL_000d: ldstr "Cannot access 'client' before initialization"
+					IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+					IL_0017: stloc.0
+					IL_0018: ldc.i4.2
+					IL_0019: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+					IL_001e: dup
+					IL_001f: ldc.r8 172
+					IL_0028: box [System.Runtime]System.Double
+					IL_002d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+					IL_0032: dup
+					IL_0033: ldc.r8 33
+					IL_003c: box [System.Runtime]System.Double
+					IL_0041: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+					IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+					IL_004b: stloc.1
+					IL_004c: ldloc.0
+					IL_004d: ldstr "end"
+					IL_0052: ldloc.1
+					IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+					IL_0058: pop
+					IL_0059: ldnull
+					IL_005a: ret
 				} // end of method FunctionExpression_client::__js_call__
 
 			} // end of class FunctionExpression_client
@@ -420,7 +388,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x26fa
+					// Method begins at RVA 0x2646
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -444,9 +412,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2450
+				// Method begins at RVA 0x23d8
 				// Header size: 12
-				// Code size: 170 (0xaa)
+				// Code size: 158 (0x9e)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_client/Scope,
@@ -461,64 +429,56 @@
 				IL_0008: ldelem.ref
 				IL_0009: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
 				IL_000e: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::client
-				IL_0013: dup
-				IL_0014: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0019: ceq
-				IL_001b: brfalse.s IL_0029
-
-				IL_001d: pop
-				IL_001e: ldstr "Cannot access 'client' before initialization"
-				IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_0028: throw
-
-				IL_0029: stloc.1
-				IL_002a: ldc.i4.2
-				IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_0030: dup
-				IL_0031: ldc.r8 226
-				IL_003a: box [System.Runtime]System.Double
-				IL_003f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0044: dup
-				IL_0045: ldc.r8 130
-				IL_004e: box [System.Runtime]System.Double
-				IL_0053: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-				IL_005d: stloc.2
-				IL_005e: ldloc.1
-				IL_005f: ldstr "write"
-				IL_0064: ldloc.2
-				IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_006a: pop
-				IL_006b: ldc.i4.3
-				IL_006c: newarr [System.Runtime]System.Object
+				IL_0013: ldstr "Cannot access 'client' before initialization"
+				IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_001d: stloc.1
+				IL_001e: ldc.i4.2
+				IL_001f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_0024: dup
+				IL_0025: ldc.r8 226
+				IL_002e: box [System.Runtime]System.Double
+				IL_0033: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0038: dup
+				IL_0039: ldc.r8 130
+				IL_0042: box [System.Runtime]System.Double
+				IL_0047: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+				IL_0051: stloc.2
+				IL_0052: ldloc.1
+				IL_0053: ldstr "write"
+				IL_0058: ldloc.2
+				IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_005e: pop
+				IL_005f: ldc.i4.3
+				IL_0060: newarr [System.Runtime]System.Object
+				IL_0065: dup
+				IL_0066: ldc.i4.0
+				IL_0067: ldarg.0
+				IL_0068: ldc.i4.0
+				IL_0069: ldelem.ref
+				IL_006a: stelem.ref
+				IL_006b: dup
+				IL_006c: ldc.i4.1
+				IL_006d: ldarg.0
+				IL_006e: ldc.i4.1
+				IL_006f: ldelem.ref
+				IL_0070: stelem.ref
 				IL_0071: dup
-				IL_0072: ldc.i4.0
-				IL_0073: ldarg.0
-				IL_0074: ldc.i4.0
-				IL_0075: ldelem.ref
-				IL_0076: stelem.ref
-				IL_0077: dup
-				IL_0078: ldc.i4.1
-				IL_0079: ldarg.0
-				IL_007a: ldc.i4.1
-				IL_007b: ldelem.ref
-				IL_007c: stelem.ref
-				IL_007d: dup
-				IL_007e: ldc.i4.2
-				IL_007f: ldloc.0
-				IL_0080: stelem.ref
-				IL_0081: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_client/FunctionExpression_client::__js_call__(object[], object)
-				IL_0087: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-				IL_008c: stloc.1
-				IL_008d: ldloc.1
-				IL_008e: ldc.r8 0.0
-				IL_0097: box [System.Runtime]System.Double
-				IL_009c: ldc.i4.0
-				IL_009d: newarr [System.Runtime]System.Object
-				IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-				IL_00a7: pop
-				IL_00a8: ldnull
-				IL_00a9: ret
+				IL_0072: ldc.i4.2
+				IL_0073: ldloc.0
+				IL_0074: stelem.ref
+				IL_0075: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_client/FunctionExpression_client::__js_call__(object[], object)
+				IL_007b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+				IL_0080: stloc.1
+				IL_0081: ldloc.1
+				IL_0082: ldc.r8 0.0
+				IL_008b: box [System.Runtime]System.Double
+				IL_0090: ldc.i4.0
+				IL_0091: newarr [System.Runtime]System.Object
+				IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+				IL_009b: pop
+				IL_009c: ldnull
+				IL_009d: ret
 			} // end of method FunctionExpression_client::__js_call__
 
 		} // end of class FunctionExpression_client
@@ -534,7 +494,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x270c
+					// Method begins at RVA 0x2658
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -559,9 +519,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2508
+				// Method begins at RVA 0x2484
 				// Header size: 12
-				// Code size: 105 (0x69)
+				// Code size: 93 (0x5d)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -586,29 +546,21 @@
 				IL_002f: ldelem.ref
 				IL_0030: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
 				IL_0035: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
-				IL_003a: dup
-				IL_003b: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0040: ceq
-				IL_0042: brfalse.s IL_0050
-
-				IL_0044: pop
-				IL_0045: ldstr "Cannot access 'reply' before initialization"
-				IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_004f: throw
-
-				IL_0050: stloc.1
-				IL_0051: ldloc.1
-				IL_0052: ldarg.2
-				IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0058: stloc.0
-				IL_0059: ldarg.0
-				IL_005a: ldc.i4.1
-				IL_005b: ldelem.ref
-				IL_005c: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
-				IL_0061: ldloc.0
-				IL_0062: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
-				IL_0067: ldnull
-				IL_0068: ret
+				IL_003a: ldstr "Cannot access 'reply' before initialization"
+				IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0044: stloc.1
+				IL_0045: ldloc.1
+				IL_0046: ldarg.2
+				IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_004c: stloc.0
+				IL_004d: ldarg.0
+				IL_004e: ldc.i4.1
+				IL_004f: ldelem.ref
+				IL_0050: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
+				IL_0055: ldloc.0
+				IL_0056: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
+				IL_005b: ldnull
+				IL_005c: ret
 			} // end of method FunctionExpression_L31C20::__js_call__
 
 		} // end of class FunctionExpression_L31C20
@@ -628,7 +580,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x271e
+						// Method begins at RVA 0x266a
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -651,7 +603,7 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 00 00 00 00 00 00
 					)
-					// Method begins at RVA 0x2683
+					// Method begins at RVA 0x25cf
 					// Header size: 1
 					// Code size: 18 (0x12)
 					.maxstack 8
@@ -673,7 +625,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2715
+					// Method begins at RVA 0x2661
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -697,9 +649,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2580
+				// Method begins at RVA 0x24f0
 				// Header size: 12
-				// Code size: 130 (0x82)
+				// Code size: 106 (0x6a)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19/Scope,
@@ -715,52 +667,36 @@
 				IL_0008: ldelem.ref
 				IL_0009: castclass Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope
 				IL_000e: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
-				IL_0013: dup
-				IL_0014: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0019: ceq
-				IL_001b: brfalse.s IL_0029
-
-				IL_001d: pop
-				IL_001e: ldstr "Cannot access 'reply' before initialization"
-				IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_0028: throw
-
-				IL_0029: stloc.1
-				IL_002a: ldstr "client recv:"
-				IL_002f: ldloc.1
-				IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0035: stloc.2
-				IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_003b: ldloc.2
-				IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0041: pop
-				IL_0042: ldarg.0
-				IL_0043: ldc.i4.0
-				IL_0044: ldelem.ref
-				IL_0045: castclass Modules.Net_Socket_SetEncoding_Utf8/Scope
-				IL_004a: ldfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::server
-				IL_004f: dup
-				IL_0050: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0055: ceq
-				IL_0057: brfalse.s IL_0065
-
-				IL_0059: pop
-				IL_005a: ldstr "Cannot access 'server' before initialization"
-				IL_005f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_0064: throw
-
-				IL_0065: stloc.1
-				IL_0066: ldnull
-				IL_0067: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19/FunctionExpression_L38C17::__js_call__(object)
-				IL_006d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-				IL_0072: stloc.3
-				IL_0073: ldloc.1
-				IL_0074: ldstr "close"
-				IL_0079: ldloc.3
-				IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_007f: pop
-				IL_0080: ldnull
-				IL_0081: ret
+				IL_0013: ldstr "Cannot access 'reply' before initialization"
+				IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_001d: stloc.1
+				IL_001e: ldstr "client recv:"
+				IL_0023: ldloc.1
+				IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0029: stloc.2
+				IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_002f: ldloc.2
+				IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0035: pop
+				IL_0036: ldarg.0
+				IL_0037: ldc.i4.0
+				IL_0038: ldelem.ref
+				IL_0039: castclass Modules.Net_Socket_SetEncoding_Utf8/Scope
+				IL_003e: ldfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::server
+				IL_0043: ldstr "Cannot access 'server' before initialization"
+				IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_004d: stloc.1
+				IL_004e: ldnull
+				IL_004f: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19/FunctionExpression_L38C17::__js_call__(object)
+				IL_0055: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+				IL_005a: stloc.3
+				IL_005b: ldloc.1
+				IL_005c: ldstr "close"
+				IL_0061: ldloc.3
+				IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0067: pop
+				IL_0068: ldnull
+				IL_0069: ret
 			} // end of method FunctionExpression_L36C19::__js_call__
 
 		} // end of class FunctionExpression_L36C19
@@ -781,7 +717,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26db
+				// Method begins at RVA 0x2627
 				// Header size: 1
 				// Code size: 30 (0x1e)
 				.maxstack 8
@@ -813,9 +749,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0c 00 00 02
 			)
-			// Method begins at RVA 0x21c0
+			// Method begins at RVA 0x21a8
 			// Header size: 12
-			// Code size: 371 (0x173)
+			// Code size: 311 (0x137)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope,
@@ -830,154 +766,114 @@
 			IL_0005: stloc.0
 			IL_0006: ldarg.0
 			IL_0007: ldfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::server
-			IL_000c: dup
-			IL_000d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0012: ceq
-			IL_0014: brfalse.s IL_0022
-
-			IL_0016: pop
-			IL_0017: ldstr "Cannot access 'server' before initialization"
-			IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0021: throw
-
+			IL_000c: ldstr "Cannot access 'server' before initialization"
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0016: stloc.2
+			IL_0017: ldloc.2
+			IL_0018: ldstr "address"
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 			IL_0022: stloc.2
 			IL_0023: ldloc.2
-			IL_0024: ldstr "address"
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_002e: stloc.2
-			IL_002f: ldloc.2
-			IL_0030: stloc.1
-			IL_0031: ldarg.0
-			IL_0032: ldfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::net
-			IL_0037: dup
-			IL_0038: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_003d: ceq
-			IL_003f: brfalse.s IL_004d
-
-			IL_0041: pop
-			IL_0042: ldstr "Cannot access 'net' before initialization"
-			IL_0047: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_004c: throw
-
-			IL_004d: stloc.2
-			IL_004e: ldloc.1
-			IL_004f: ldstr "port"
-			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0059: stloc.3
-			IL_005a: ldloc.1
-			IL_005b: ldstr "address"
-			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0065: stloc.s 4
-			IL_0067: ldc.i4.2
-			IL_0068: newarr [System.Runtime]System.Object
-			IL_006d: dup
-			IL_006e: ldc.i4.0
-			IL_006f: ldarg.0
-			IL_0070: stelem.ref
-			IL_0071: dup
-			IL_0072: ldc.i4.1
-			IL_0073: ldloc.0
-			IL_0074: stelem.ref
-			IL_0075: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_client::__js_call__(object[], object)
-			IL_007b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_0080: stloc.s 5
-			IL_0082: ldloc.2
-			IL_0083: ldstr "connect"
-			IL_0088: ldloc.3
-			IL_0089: ldloc.s 4
-			IL_008b: ldloc.s 5
-			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-			IL_0092: stloc.s 5
-			IL_0094: ldloc.0
-			IL_0095: ldloc.s 5
-			IL_0097: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::client
-			IL_009c: ldloc.0
-			IL_009d: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::client
-			IL_00a2: dup
-			IL_00a3: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_00a8: ceq
-			IL_00aa: brfalse.s IL_00b8
-
-			IL_00ac: pop
-			IL_00ad: ldstr "Cannot access 'client' before initialization"
-			IL_00b2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_00b7: throw
-
-			IL_00b8: stloc.s 5
-			IL_00ba: ldloc.s 5
-			IL_00bc: ldstr "setEncoding"
-			IL_00c1: ldstr "utf8"
-			IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00cb: pop
-			IL_00cc: ldloc.0
-			IL_00cd: ldstr ""
-			IL_00d2: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
-			IL_00d7: ldloc.0
-			IL_00d8: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::client
-			IL_00dd: dup
-			IL_00de: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_00e3: ceq
-			IL_00e5: brfalse.s IL_00f3
-
-			IL_00e7: pop
-			IL_00e8: ldstr "Cannot access 'client' before initialization"
-			IL_00ed: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_00f2: throw
-
-			IL_00f3: stloc.s 5
-			IL_00f5: ldc.i4.2
-			IL_00f6: newarr [System.Runtime]System.Object
-			IL_00fb: dup
-			IL_00fc: ldc.i4.0
-			IL_00fd: ldarg.0
-			IL_00fe: stelem.ref
-			IL_00ff: dup
-			IL_0100: ldc.i4.1
-			IL_0101: ldloc.0
-			IL_0102: stelem.ref
-			IL_0103: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L31C20::__js_call__(object[], object, object)
-			IL_0109: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_010e: stloc.s 4
-			IL_0110: ldloc.s 5
-			IL_0112: ldstr "on"
-			IL_0117: ldstr "data"
-			IL_011c: ldloc.s 4
-			IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0123: pop
-			IL_0124: ldloc.0
-			IL_0125: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::client
-			IL_012a: dup
-			IL_012b: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0130: ceq
-			IL_0132: brfalse.s IL_0140
-
+			IL_0024: stloc.1
+			IL_0025: ldarg.0
+			IL_0026: ldfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::net
+			IL_002b: ldstr "Cannot access 'net' before initialization"
+			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0035: stloc.2
+			IL_0036: ldloc.1
+			IL_0037: ldstr "port"
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0041: stloc.3
+			IL_0042: ldloc.1
+			IL_0043: ldstr "address"
+			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_004d: stloc.s 4
+			IL_004f: ldc.i4.2
+			IL_0050: newarr [System.Runtime]System.Object
+			IL_0055: dup
+			IL_0056: ldc.i4.0
+			IL_0057: ldarg.0
+			IL_0058: stelem.ref
+			IL_0059: dup
+			IL_005a: ldc.i4.1
+			IL_005b: ldloc.0
+			IL_005c: stelem.ref
+			IL_005d: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_client::__js_call__(object[], object)
+			IL_0063: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_0068: stloc.s 5
+			IL_006a: ldloc.2
+			IL_006b: ldstr "connect"
+			IL_0070: ldloc.3
+			IL_0071: ldloc.s 4
+			IL_0073: ldloc.s 5
+			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_007a: stloc.s 5
+			IL_007c: ldloc.0
+			IL_007d: ldloc.s 5
+			IL_007f: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::client
+			IL_0084: ldloc.0
+			IL_0085: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::client
+			IL_008a: ldstr "Cannot access 'client' before initialization"
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0094: stloc.s 5
+			IL_0096: ldloc.s 5
+			IL_0098: ldstr "setEncoding"
+			IL_009d: ldstr "utf8"
+			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00a7: pop
+			IL_00a8: ldloc.0
+			IL_00a9: ldstr ""
+			IL_00ae: stfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::reply
+			IL_00b3: ldloc.0
+			IL_00b4: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::client
+			IL_00b9: ldstr "Cannot access 'client' before initialization"
+			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_00c3: stloc.s 5
+			IL_00c5: ldc.i4.2
+			IL_00c6: newarr [System.Runtime]System.Object
+			IL_00cb: dup
+			IL_00cc: ldc.i4.0
+			IL_00cd: ldarg.0
+			IL_00ce: stelem.ref
+			IL_00cf: dup
+			IL_00d0: ldc.i4.1
+			IL_00d1: ldloc.0
+			IL_00d2: stelem.ref
+			IL_00d3: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L31C20::__js_call__(object[], object, object)
+			IL_00d9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_00de: stloc.s 4
+			IL_00e0: ldloc.s 5
+			IL_00e2: ldstr "on"
+			IL_00e7: ldstr "data"
+			IL_00ec: ldloc.s 4
+			IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00f3: pop
+			IL_00f4: ldloc.0
+			IL_00f5: ldfld object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/Scope::client
+			IL_00fa: ldstr "Cannot access 'client' before initialization"
+			IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0104: stloc.s 4
+			IL_0106: ldc.i4.2
+			IL_0107: newarr [System.Runtime]System.Object
+			IL_010c: dup
+			IL_010d: ldc.i4.0
+			IL_010e: ldarg.0
+			IL_010f: stelem.ref
+			IL_0110: dup
+			IL_0111: ldc.i4.1
+			IL_0112: ldloc.0
+			IL_0113: stelem.ref
+			IL_0114: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19::__js_call__(object[], object)
+			IL_011a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_011f: stloc.s 5
+			IL_0121: ldloc.s 4
+			IL_0123: ldstr "on"
+			IL_0128: ldstr "end"
+			IL_012d: ldloc.s 5
+			IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
 			IL_0134: pop
-			IL_0135: ldstr "Cannot access 'client' before initialization"
-			IL_013a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_013f: throw
-
-			IL_0140: stloc.s 4
-			IL_0142: ldc.i4.2
-			IL_0143: newarr [System.Runtime]System.Object
-			IL_0148: dup
-			IL_0149: ldc.i4.0
-			IL_014a: ldarg.0
-			IL_014b: stelem.ref
-			IL_014c: dup
-			IL_014d: ldc.i4.1
-			IL_014e: ldloc.0
-			IL_014f: stelem.ref
-			IL_0150: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30/FunctionExpression_L36C19::__js_call__(object[], object)
-			IL_0156: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_015b: stloc.s 5
-			IL_015d: ldloc.s 4
-			IL_015f: ldstr "on"
-			IL_0164: ldstr "end"
-			IL_0169: ldloc.s 5
-			IL_016b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0170: pop
-			IL_0171: ldnull
-			IL_0172: ret
+			IL_0135: ldnull
+			IL_0136: ret
 		} // end of method FunctionExpression_L20C30::__js_call__
 
 	} // end of class FunctionExpression_L20C30
@@ -998,7 +894,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2696
+			// Method begins at RVA 0x25e2
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -1030,7 +926,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 194 (0xc2)
+		// Code size: 170 (0xaa)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Net_Socket_SetEncoding_Utf8/Scope,
@@ -1049,71 +945,55 @@
 		IL_0014: stfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::net
 		IL_0019: ldloc.0
 		IL_001a: ldfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::net
-		IL_001f: dup
-		IL_0020: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0025: ceq
-		IL_0027: brfalse.s IL_0035
-
-		IL_0029: pop
-		IL_002a: ldstr "Cannot access 'net' before initialization"
-		IL_002f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0034: throw
-
-		IL_0035: stloc.1
-		IL_0036: ldc.i4.1
-		IL_0037: newarr [System.Runtime]System.Object
-		IL_003c: dup
-		IL_003d: ldc.i4.0
-		IL_003e: ldloc.0
-		IL_003f: stelem.ref
-		IL_0040: ldc.i4.0
-		IL_0041: ldelem.ref
-		IL_0042: castclass Modules.Net_Socket_SetEncoding_Utf8/Scope
-		IL_0047: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server::__js_call__(class Modules.Net_Socket_SetEncoding_Utf8/Scope, object, object)
-		IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0052: stloc.2
-		IL_0053: ldloc.1
-		IL_0054: ldstr "createServer"
-		IL_0059: ldloc.2
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_005f: stloc.2
-		IL_0060: ldloc.0
-		IL_0061: ldloc.2
-		IL_0062: stfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::server
-		IL_0067: ldloc.0
-		IL_0068: ldfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::server
-		IL_006d: dup
-		IL_006e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0073: ceq
-		IL_0075: brfalse.s IL_0083
-
-		IL_0077: pop
-		IL_0078: ldstr "Cannot access 'server' before initialization"
-		IL_007d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0082: throw
-
-		IL_0083: stloc.2
-		IL_0084: ldc.i4.1
-		IL_0085: newarr [System.Runtime]System.Object
-		IL_008a: dup
-		IL_008b: ldc.i4.0
-		IL_008c: ldloc.0
-		IL_008d: stelem.ref
-		IL_008e: ldc.i4.0
-		IL_008f: ldelem.ref
-		IL_0090: castclass Modules.Net_Socket_SetEncoding_Utf8/Scope
-		IL_0095: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30::__js_call__(class Modules.Net_Socket_SetEncoding_Utf8/Scope, object)
-		IL_009b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00a0: stloc.1
-		IL_00a1: ldloc.2
-		IL_00a2: ldstr "listen"
-		IL_00a7: ldc.r8 0.0
-		IL_00b0: box [System.Runtime]System.Double
-		IL_00b5: ldstr "127.0.0.1"
-		IL_00ba: ldloc.1
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_00c0: pop
-		IL_00c1: ret
+		IL_001f: ldstr "Cannot access 'net' before initialization"
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0029: stloc.1
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldloc.0
+		IL_0033: stelem.ref
+		IL_0034: ldc.i4.0
+		IL_0035: ldelem.ref
+		IL_0036: castclass Modules.Net_Socket_SetEncoding_Utf8/Scope
+		IL_003b: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_server::__js_call__(class Modules.Net_Socket_SetEncoding_Utf8/Scope, object, object)
+		IL_0041: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0046: stloc.2
+		IL_0047: ldloc.1
+		IL_0048: ldstr "createServer"
+		IL_004d: ldloc.2
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0053: stloc.2
+		IL_0054: ldloc.0
+		IL_0055: ldloc.2
+		IL_0056: stfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::server
+		IL_005b: ldloc.0
+		IL_005c: ldfld object Modules.Net_Socket_SetEncoding_Utf8/Scope::server
+		IL_0061: ldstr "Cannot access 'server' before initialization"
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_006b: stloc.2
+		IL_006c: ldc.i4.1
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: dup
+		IL_0073: ldc.i4.0
+		IL_0074: ldloc.0
+		IL_0075: stelem.ref
+		IL_0076: ldc.i4.0
+		IL_0077: ldelem.ref
+		IL_0078: castclass Modules.Net_Socket_SetEncoding_Utf8/Scope
+		IL_007d: ldftn object Modules.Net_Socket_SetEncoding_Utf8/FunctionExpression_L20C30::__js_call__(class Modules.Net_Socket_SetEncoding_Utf8/Scope, object)
+		IL_0083: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0088: stloc.1
+		IL_0089: ldloc.2
+		IL_008a: ldstr "listen"
+		IL_008f: ldc.r8 0.0
+		IL_0098: box [System.Runtime]System.Double
+		IL_009d: ldstr "127.0.0.1"
+		IL_00a2: ldloc.1
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_00a8: pop
+		IL_00a9: ret
 	} // end of method Net_Socket_SetEncoding_Utf8::__js_module_init__
 
 } // end of class Modules.Net_Socket_SetEncoding_Utf8
@@ -1125,7 +1005,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2727
+		// Method begins at RVA 0x2673
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

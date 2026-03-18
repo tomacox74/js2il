@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2229
+				// Method begins at RVA 0x21ef
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x217f
+			// Method begins at RVA 0x214f
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -63,7 +63,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2232
+				// Method begins at RVA 0x21f8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -90,9 +90,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2184
+			// Method begins at RVA 0x2154
 			// Header size: 12
-			// Code size: 133 (0x85)
+			// Code size: 123 (0x7b)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -114,46 +114,40 @@
 			IL_0014: ldstr "message"
 			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_001e: stloc.0
-			IL_001f: br IL_002a
+			IL_001f: br IL_002b
 
-			IL_0024: ldstr "null"
-			IL_0029: stloc.0
+			IL_0024: nop
+			IL_0025: ldstr "null"
+			IL_002a: stloc.0
 
-			IL_002a: ldstr "callback:"
-			IL_002f: ldloc.0
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0035: stloc.3
-			IL_0036: ldloc.1
-			IL_0037: ldloc.3
-			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_003d: pop
-			IL_003e: ldarg.0
-			IL_003f: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-			IL_0044: dup
-			IL_0045: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_004a: ceq
-			IL_004c: brfalse.s IL_005a
-
-			IL_004e: pop
-			IL_004f: ldstr "Cannot access 'writable' before initialization"
-			IL_0054: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0059: throw
-
-			IL_005a: stloc.s 4
-			IL_005c: ldloc.s 4
-			IL_005e: ldstr "destroyed"
-			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0068: stloc.s 4
-			IL_006a: ldstr "destroyed:"
-			IL_006f: ldloc.s 4
-			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0076: stloc.3
-			IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007c: ldloc.3
-			IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0082: pop
-			IL_0083: ldnull
-			IL_0084: ret
+			IL_002b: nop
+			IL_002c: ldstr "callback:"
+			IL_0031: ldloc.0
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0037: stloc.3
+			IL_0038: ldloc.1
+			IL_0039: ldloc.3
+			IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_003f: pop
+			IL_0040: ldarg.0
+			IL_0041: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+			IL_0046: ldstr "Cannot access 'writable' before initialization"
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0050: stloc.s 4
+			IL_0052: ldloc.s 4
+			IL_0054: ldstr "destroyed"
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_005e: stloc.s 4
+			IL_0060: ldstr "destroyed:"
+			IL_0065: ldloc.s 4
+			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_006c: stloc.3
+			IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0072: ldloc.3
+			IL_0073: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0078: pop
+			IL_0079: ldnull
+			IL_007a: ret
 		} // end of method FunctionExpression_L8C26::__js_call__
 
 	} // end of class FunctionExpression_L8C26
@@ -172,7 +166,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2215
+			// Method begins at RVA 0x21db
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -201,7 +195,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 291 (0x123)
+		// Code size: 243 (0xf3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Finished_Callback_Basic/Scope,
@@ -231,101 +225,69 @@
 		IL_002d: stfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
 		IL_0032: ldloc.0
 		IL_0033: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_0038: dup
-		IL_0039: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_003e: ceq
-		IL_0040: brfalse.s IL_004e
-
-		IL_0042: pop
-		IL_0043: ldstr "Cannot access 'writable' before initialization"
-		IL_0048: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_004d: throw
-
-		IL_004e: stloc.2
-		IL_004f: ldnull
-		IL_0050: ldftn object Modules.Stream_Finished_Callback_Basic/FunctionExpression_L6C18::__js_call__(object)
-		IL_0056: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_005b: stloc.3
-		IL_005c: ldloc.2
-		IL_005d: ldstr "_write"
-		IL_0062: ldloc.3
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
-		IL_0068: pop
-		IL_0069: ldloc.0
-		IL_006a: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_006f: dup
-		IL_0070: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0075: ceq
-		IL_0077: brfalse.s IL_0085
-
-		IL_0079: pop
-		IL_007a: ldstr "Cannot access 'writable' before initialization"
-		IL_007f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0084: throw
-
-		IL_0085: stloc.3
-		IL_0086: ldc.i4.1
-		IL_0087: newarr [System.Runtime]System.Object
-		IL_008c: dup
-		IL_008d: ldc.i4.0
-		IL_008e: ldloc.0
-		IL_008f: stelem.ref
-		IL_0090: ldc.i4.0
-		IL_0091: ldelem.ref
-		IL_0092: castclass Modules.Stream_Finished_Callback_Basic/Scope
-		IL_0097: ldftn object Modules.Stream_Finished_Callback_Basic/FunctionExpression_L8C26::__js_call__(class Modules.Stream_Finished_Callback_Basic/Scope, object, object)
-		IL_009d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00a2: stloc.2
-		IL_00a3: ldloc.1
-		IL_00a4: ldstr "finished"
-		IL_00a9: ldloc.3
+		IL_0038: ldstr "Cannot access 'writable' before initialization"
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0042: stloc.2
+		IL_0043: ldnull
+		IL_0044: ldftn object Modules.Stream_Finished_Callback_Basic/FunctionExpression_L6C18::__js_call__(object)
+		IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_004f: stloc.3
+		IL_0050: ldloc.2
+		IL_0051: ldstr "_write"
+		IL_0056: ldloc.3
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
+		IL_005c: pop
+		IL_005d: ldloc.0
+		IL_005e: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_0063: ldstr "Cannot access 'writable' before initialization"
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_006d: stloc.3
+		IL_006e: ldc.i4.1
+		IL_006f: newarr [System.Runtime]System.Object
+		IL_0074: dup
+		IL_0075: ldc.i4.0
+		IL_0076: ldloc.0
+		IL_0077: stelem.ref
+		IL_0078: ldc.i4.0
+		IL_0079: ldelem.ref
+		IL_007a: castclass Modules.Stream_Finished_Callback_Basic/Scope
+		IL_007f: ldftn object Modules.Stream_Finished_Callback_Basic/FunctionExpression_L8C26::__js_call__(class Modules.Stream_Finished_Callback_Basic/Scope, object, object)
+		IL_0085: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_008a: stloc.2
+		IL_008b: ldloc.1
+		IL_008c: ldstr "finished"
+		IL_0091: ldloc.3
+		IL_0092: ldloc.2
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0098: pop
+		IL_0099: ldloc.0
+		IL_009a: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_009f: ldstr "Cannot access 'writable' before initialization"
+		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00a9: stloc.2
 		IL_00aa: ldloc.2
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00b0: pop
-		IL_00b1: ldloc.0
-		IL_00b2: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_00b7: dup
-		IL_00b8: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_00bd: ceq
-		IL_00bf: brfalse.s IL_00cd
-
-		IL_00c1: pop
-		IL_00c2: ldstr "Cannot access 'writable' before initialization"
-		IL_00c7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_00cc: throw
-
-		IL_00cd: stloc.2
-		IL_00ce: ldloc.2
-		IL_00cf: ldstr "end"
-		IL_00d4: ldstr "done"
-		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00de: pop
-		IL_00df: ldloc.0
-		IL_00e0: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_00e5: dup
-		IL_00e6: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_00eb: ceq
-		IL_00ed: brfalse.s IL_00fb
-
-		IL_00ef: pop
-		IL_00f0: ldstr "Cannot access 'writable' before initialization"
-		IL_00f5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_00fa: throw
-
-		IL_00fb: stloc.2
-		IL_00fc: ldloc.2
-		IL_00fd: ldstr "writable"
-		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0107: stloc.2
-		IL_0108: ldstr "after-end:"
-		IL_010d: ldloc.2
-		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0113: stloc.s 4
-		IL_0115: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_011a: ldloc.s 4
-		IL_011c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0121: pop
-		IL_0122: ret
+		IL_00ab: ldstr "end"
+		IL_00b0: ldstr "done"
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00ba: pop
+		IL_00bb: ldloc.0
+		IL_00bc: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_00c1: ldstr "Cannot access 'writable' before initialization"
+		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00cb: stloc.2
+		IL_00cc: ldloc.2
+		IL_00cd: ldstr "writable"
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d7: stloc.2
+		IL_00d8: ldstr "after-end:"
+		IL_00dd: ldloc.2
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00e3: stloc.s 4
+		IL_00e5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ea: ldloc.s 4
+		IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f1: pop
+		IL_00f2: ret
 	} // end of method Stream_Finished_Callback_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Finished_Callback_Basic
@@ -337,7 +299,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x223b
+		// Method begins at RVA 0x2201
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

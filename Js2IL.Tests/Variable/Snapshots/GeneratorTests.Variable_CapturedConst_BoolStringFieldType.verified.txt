@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2149
+				// Method begins at RVA 0x2133
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 			)
 			// Method begins at RVA 0x20c8
 			// Header size: 12
-			// Code size: 86 (0x56)
+			// Code size: 64 (0x40)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -56,45 +56,31 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
+			IL_0006: ldstr "Cannot access 'FLAG' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.1
+			IL_0011: ldloc.1
+			IL_0012: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0017: stloc.2
+			IL_0018: ldloc.2
+			IL_0019: brfalse IL_0036
 
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'FLAG' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
+			IL_001e: ldarg.0
+			IL_001f: ldfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
+			IL_0024: ldstr "Cannot access 'NAME' before initialization"
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_002e: stloc.1
+			IL_002f: ldloc.1
+			IL_0030: stloc.0
+			IL_0031: br IL_003d
 
-			IL_001c: stloc.1
-			IL_001d: ldloc.1
-			IL_001e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0023: stloc.2
-			IL_0024: ldloc.2
-			IL_0025: brfalse IL_004e
+			IL_0036: nop
+			IL_0037: ldstr "untyped"
+			IL_003c: stloc.0
 
-			IL_002a: ldarg.0
-			IL_002b: ldfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
-			IL_0030: dup
-			IL_0031: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0036: ceq
-			IL_0038: brfalse.s IL_0046
-
-			IL_003a: pop
-			IL_003b: ldstr "Cannot access 'NAME' before initialization"
-			IL_0040: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0045: throw
-
-			IL_0046: stloc.1
-			IL_0047: ldloc.1
-			IL_0048: stloc.0
-			IL_0049: br IL_0054
-
-			IL_004e: ldstr "untyped"
-			IL_0053: stloc.0
-
-			IL_0054: ldloc.0
-			IL_0055: ret
+			IL_003d: nop
+			IL_003e: ldloc.0
+			IL_003f: ret
 		} // end of method run::__js_call__
 
 	} // end of class run
@@ -116,7 +102,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x212a
+			// Method begins at RVA 0x2114
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -209,7 +195,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2152
+		// Method begins at RVA 0x213c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

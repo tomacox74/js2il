@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b3
+				// Method begins at RVA 0x2193
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,9 +44,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2140
+			// Method begins at RVA 0x2138
 			// Header size: 12
-			// Code size: 83 (0x53)
+			// Code size: 59 (0x3b)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -55,39 +55,23 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'x' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldc.r8 1
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_002c: stloc.1
-			IL_002d: ldarg.0
-			IL_002e: ldloc.1
-			IL_002f: stfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-			IL_0034: ldarg.0
-			IL_0035: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-			IL_003a: dup
-			IL_003b: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0040: ceq
-			IL_0042: brfalse.s IL_0050
-
-			IL_0044: pop
-			IL_0045: ldstr "Cannot access 'x' before initialization"
-			IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_004f: throw
-
-			IL_0050: stloc.0
-			IL_0051: ldloc.0
-			IL_0052: ret
+			IL_0006: ldstr "Cannot access 'x' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldc.r8 1
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0020: stloc.1
+			IL_0021: ldarg.0
+			IL_0022: ldloc.1
+			IL_0023: stfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+			IL_0028: ldarg.0
+			IL_0029: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+			IL_002e: ldstr "Cannot access 'x' before initialization"
+			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0038: stloc.0
+			IL_0039: ldloc.0
+			IL_003a: ret
 		} // end of method bump::__js_call__
 
 	} // end of class bump
@@ -107,7 +91,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219f
+			// Method begins at RVA 0x217f
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -136,7 +120,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 228 (0xe4)
+		// Code size: 218 (0xda)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope,
@@ -190,49 +174,43 @@
 		IL_0079: stloc.s 4
 		IL_007b: ldloc.s 4
 		IL_007d: stloc.2
-		IL_007e: br IL_00aa
+		IL_007e: br IL_00ab
 
-		IL_0083: ldc.i4.1
-		IL_0084: newarr [System.Runtime]System.Object
-		IL_0089: dup
-		IL_008a: ldc.i4.0
-		IL_008b: ldloc.0
-		IL_008c: stelem.ref
-		IL_008d: ldc.i4.0
-		IL_008e: ldelem.ref
-		IL_008f: castclass Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope
-		IL_0094: ldftn object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope, object)
-		IL_009a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_009f: ldnull
-		IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
-		IL_00a5: stloc.s 4
-		IL_00a7: ldloc.s 4
-		IL_00a9: stloc.2
+		IL_0083: nop
+		IL_0084: ldc.i4.1
+		IL_0085: newarr [System.Runtime]System.Object
+		IL_008a: dup
+		IL_008b: ldc.i4.0
+		IL_008c: ldloc.0
+		IL_008d: stelem.ref
+		IL_008e: ldc.i4.0
+		IL_008f: ldelem.ref
+		IL_0090: castclass Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope
+		IL_0095: ldftn object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/bump::__js_call__(class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope, object)
+		IL_009b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00a0: ldnull
+		IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+		IL_00a6: stloc.s 4
+		IL_00a8: ldloc.s 4
+		IL_00aa: stloc.2
 
-		IL_00aa: ldloc.2
-		IL_00ab: stloc.3
-		IL_00ac: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b1: ldloc.3
-		IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b7: pop
-		IL_00b8: ldloc.0
-		IL_00b9: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-		IL_00be: dup
-		IL_00bf: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_00c4: ceq
-		IL_00c6: brfalse.s IL_00d4
-
-		IL_00c8: pop
-		IL_00c9: ldstr "Cannot access 'x' before initialization"
-		IL_00ce: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_00d3: throw
-
-		IL_00d4: stloc.s 4
-		IL_00d6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00db: ldloc.s 4
-		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e2: pop
-		IL_00e3: ret
+		IL_00ab: nop
+		IL_00ac: ldloc.2
+		IL_00ad: stloc.3
+		IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b3: ldloc.3
+		IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b9: pop
+		IL_00ba: ldloc.0
+		IL_00bb: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+		IL_00c0: ldstr "Cannot access 'x' before initialization"
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00ca: stloc.s 4
+		IL_00cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d1: ldloc.s 4
+		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d8: pop
+		IL_00d9: ret
 	} // end of method ControlFlow_Conditional_Ternary_ShortCircuit::__js_module_init__
 
 } // end of class Modules.ControlFlow_Conditional_Ternary_ShortCircuit
@@ -244,7 +222,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21bc
+		// Method begins at RVA 0x219c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

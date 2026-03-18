@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28e1
+				// Method begins at RVA 0x27cd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,9 +46,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x21e4
+			// Method begins at RVA 0x21b4
 			// Header size: 12
-			// Code size: 130 (0x82)
+			// Code size: 106 (0x6a)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -57,54 +57,38 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'responses' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldc.r8 1
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_002c: stloc.1
-			IL_002d: ldarg.0
-			IL_002e: ldloc.1
-			IL_002f: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
-			IL_0034: ldarg.3
-			IL_0035: ldstr "setHeader"
-			IL_003a: ldstr "Content-Type"
-			IL_003f: ldstr "text/plain"
-			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0049: pop
-			IL_004a: ldarg.0
-			IL_004b: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
-			IL_0050: dup
-			IL_0051: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0056: ceq
-			IL_0058: brfalse.s IL_0066
-
-			IL_005a: pop
-			IL_005b: ldstr "Cannot access 'responses' before initialization"
-			IL_0060: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0065: throw
-
-			IL_0066: stloc.0
-			IL_0067: ldstr "resp"
-			IL_006c: ldloc.0
-			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0072: stloc.1
-			IL_0073: ldarg.3
-			IL_0074: ldstr "end"
-			IL_0079: ldloc.1
-			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_007f: pop
-			IL_0080: ldnull
-			IL_0081: ret
+			IL_0006: ldstr "Cannot access 'responses' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldc.r8 1
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0020: stloc.1
+			IL_0021: ldarg.0
+			IL_0022: ldloc.1
+			IL_0023: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
+			IL_0028: ldarg.3
+			IL_0029: ldstr "setHeader"
+			IL_002e: ldstr "Content-Type"
+			IL_0033: ldstr "text/plain"
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_003d: pop
+			IL_003e: ldarg.0
+			IL_003f: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
+			IL_0044: ldstr "Cannot access 'responses' before initialization"
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_004e: stloc.0
+			IL_004f: ldstr "resp"
+			IL_0054: ldloc.0
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_005a: stloc.1
+			IL_005b: ldarg.3
+			IL_005c: ldstr "end"
+			IL_0061: ldloc.1
+			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0067: pop
+			IL_0068: ldnull
+			IL_0069: ret
 		} // end of method FunctionExpression_server::__js_call__
 
 	} // end of class FunctionExpression_server
@@ -120,7 +104,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28ea
+				// Method begins at RVA 0x27d6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -146,9 +130,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x2274
+			// Method begins at RVA 0x222c
 			// Header size: 12
-			// Code size: 54 (0x36)
+			// Code size: 42 (0x2a)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -157,26 +141,18 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'connections' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: ldc.r8 1
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_002c: stloc.1
-			IL_002d: ldarg.0
-			IL_002e: ldloc.1
-			IL_002f: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
-			IL_0034: ldnull
-			IL_0035: ret
+			IL_0006: ldstr "Cannot access 'connections' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldc.r8 1
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0020: stloc.1
+			IL_0021: ldarg.0
+			IL_0022: ldloc.1
+			IL_0023: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
+			IL_0028: ldnull
+			IL_0029: ret
 		} // end of method FunctionExpression_L15C24::__js_call__
 
 	} // end of class FunctionExpression_L15C24
@@ -200,7 +176,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x291b
+						// Method begins at RVA 0x2807
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -225,9 +201,9 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x24b4
+					// Method begins at RVA 0x2424
 					// Header size: 12
-					// Code size: 60 (0x3c)
+					// Code size: 48 (0x30)
 					.maxstack 8
 					.locals init (
 						[0] object,
@@ -239,29 +215,21 @@
 					IL_0002: ldelem.ref
 					IL_0003: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope
 					IL_0008: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope::body
-					IL_000d: dup
-					IL_000e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-					IL_0013: ceq
-					IL_0015: brfalse.s IL_0023
-
-					IL_0017: pop
-					IL_0018: ldstr "Cannot access 'body' before initialization"
-					IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-					IL_0022: throw
-
-					IL_0023: stloc.0
-					IL_0024: ldloc.0
-					IL_0025: ldarg.2
-					IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-					IL_002b: stloc.1
-					IL_002c: ldarg.0
-					IL_002d: ldc.i4.2
-					IL_002e: ldelem.ref
-					IL_002f: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope
-					IL_0034: ldloc.1
-					IL_0035: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope::body
-					IL_003a: ldnull
-					IL_003b: ret
+					IL_000d: ldstr "Cannot access 'body' before initialization"
+					IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+					IL_0017: stloc.0
+					IL_0018: ldloc.0
+					IL_0019: ldarg.2
+					IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_001f: stloc.1
+					IL_0020: ldarg.0
+					IL_0021: ldc.i4.2
+					IL_0022: ldelem.ref
+					IL_0023: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope
+					IL_0028: ldloc.1
+					IL_0029: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope::body
+					IL_002e: ldnull
+					IL_002f: ret
 				} // end of method FunctionExpression_L34C21::__js_call__
 
 			} // end of class FunctionExpression_L34C21
@@ -285,7 +253,7 @@
 							.method public hidebysig specialname rtspecialname 
 								instance void .ctor () cil managed 
 							{
-								// Method begins at RVA 0x2941
+								// Method begins at RVA 0x282d
 								// Header size: 1
 								// Code size: 8 (0x8)
 								.maxstack 8
@@ -310,9 +278,9 @@
 							.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 								01 00 02 00 00 00 00 00
 							)
-							// Method begins at RVA 0x274c
+							// Method begins at RVA 0x2674
 							// Header size: 12
-							// Code size: 60 (0x3c)
+							// Code size: 48 (0x30)
 							.maxstack 8
 							.locals init (
 								[0] object,
@@ -324,29 +292,21 @@
 							IL_0002: ldelem.ref
 							IL_0003: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope
 							IL_0008: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope::nextBody
-							IL_000d: dup
-							IL_000e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-							IL_0013: ceq
-							IL_0015: brfalse.s IL_0023
-
-							IL_0017: pop
-							IL_0018: ldstr "Cannot access 'nextBody' before initialization"
-							IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-							IL_0022: throw
-
-							IL_0023: stloc.0
-							IL_0024: ldloc.0
-							IL_0025: ldarg.2
-							IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-							IL_002b: stloc.1
-							IL_002c: ldarg.0
-							IL_002d: ldc.i4.4
-							IL_002e: ldelem.ref
-							IL_002f: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope
-							IL_0034: ldloc.1
-							IL_0035: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope::nextBody
-							IL_003a: ldnull
-							IL_003b: ret
+							IL_000d: ldstr "Cannot access 'nextBody' before initialization"
+							IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+							IL_0017: stloc.0
+							IL_0018: ldloc.0
+							IL_0019: ldarg.2
+							IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+							IL_001f: stloc.1
+							IL_0020: ldarg.0
+							IL_0021: ldc.i4.4
+							IL_0022: ldelem.ref
+							IL_0023: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope
+							IL_0028: ldloc.1
+							IL_0029: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope::nextBody
+							IL_002e: ldnull
+							IL_002f: ret
 						} // end of method FunctionExpression_L53C31::__js_call__
 
 					} // end of class FunctionExpression_L53C31
@@ -366,7 +326,7 @@
 								.method public hidebysig specialname rtspecialname 
 									instance void .ctor () cil managed 
 								{
-									// Method begins at RVA 0x2953
+									// Method begins at RVA 0x283f
 									// Header size: 1
 									// Code size: 8 (0x8)
 									.maxstack 8
@@ -389,7 +349,7 @@
 								.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 									01 00 00 00 00 00 00 00
 								)
-								// Method begins at RVA 0x288e
+								// Method begins at RVA 0x277a
 								// Header size: 1
 								// Code size: 18 (0x12)
 								.maxstack 8
@@ -411,7 +371,7 @@
 							.method public hidebysig specialname rtspecialname 
 								instance void .ctor () cil managed 
 							{
-								// Method begins at RVA 0x294a
+								// Method begins at RVA 0x2836
 								// Header size: 1
 								// Code size: 8 (0x8)
 								.maxstack 8
@@ -435,9 +395,9 @@
 							.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 								01 00 02 00 00 00 00 00
 							)
-							// Method begins at RVA 0x2794
+							// Method begins at RVA 0x26b0
 							// Header size: 12
-							// Code size: 238 (0xee)
+							// Code size: 190 (0xbe)
 							.maxstack 8
 							.locals init (
 								[0] class Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/FunctionExpression_L57C30/Scope,
@@ -453,96 +413,64 @@
 							IL_0008: ldelem.ref
 							IL_0009: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope
 							IL_000e: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope::nextBody
-							IL_0013: dup
-							IL_0014: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-							IL_0019: ceq
-							IL_001b: brfalse.s IL_0029
-
-							IL_001d: pop
-							IL_001e: ldstr "Cannot access 'nextBody' before initialization"
-							IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-							IL_0028: throw
-
-							IL_0029: stloc.1
-							IL_002a: ldstr "body2:"
-							IL_002f: ldloc.1
-							IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-							IL_0035: stloc.2
-							IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-							IL_003b: ldloc.2
-							IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-							IL_0041: pop
-							IL_0042: ldarg.0
-							IL_0043: ldc.i4.0
-							IL_0044: ldelem.ref
-							IL_0045: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-							IL_004a: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
-							IL_004f: dup
-							IL_0050: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-							IL_0055: ceq
-							IL_0057: brfalse.s IL_0065
-
-							IL_0059: pop
-							IL_005a: ldstr "Cannot access 'connections' before initialization"
-							IL_005f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-							IL_0064: throw
-
-							IL_0065: stloc.1
-							IL_0066: ldstr "connections:"
-							IL_006b: ldloc.1
-							IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-							IL_0071: stloc.2
-							IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-							IL_0077: ldloc.2
-							IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-							IL_007d: pop
-							IL_007e: ldarg.0
-							IL_007f: ldc.i4.0
-							IL_0080: ldelem.ref
-							IL_0081: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-							IL_0086: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
-							IL_008b: dup
-							IL_008c: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-							IL_0091: ceq
-							IL_0093: brfalse.s IL_00a1
-
-							IL_0095: pop
-							IL_0096: ldstr "Cannot access 'agent' before initialization"
-							IL_009b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-							IL_00a0: throw
-
+							IL_0013: ldstr "Cannot access 'nextBody' before initialization"
+							IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+							IL_001d: stloc.1
+							IL_001e: ldstr "body2:"
+							IL_0023: ldloc.1
+							IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+							IL_0029: stloc.2
+							IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+							IL_002f: ldloc.2
+							IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+							IL_0035: pop
+							IL_0036: ldarg.0
+							IL_0037: ldc.i4.0
+							IL_0038: ldelem.ref
+							IL_0039: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+							IL_003e: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
+							IL_0043: ldstr "Cannot access 'connections' before initialization"
+							IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+							IL_004d: stloc.1
+							IL_004e: ldstr "connections:"
+							IL_0053: ldloc.1
+							IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+							IL_0059: stloc.2
+							IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+							IL_005f: ldloc.2
+							IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+							IL_0065: pop
+							IL_0066: ldarg.0
+							IL_0067: ldc.i4.0
+							IL_0068: ldelem.ref
+							IL_0069: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+							IL_006e: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
+							IL_0073: ldstr "Cannot access 'agent' before initialization"
+							IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+							IL_007d: stloc.1
+							IL_007e: ldloc.1
+							IL_007f: ldstr "destroy"
+							IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+							IL_0089: pop
+							IL_008a: ldarg.0
+							IL_008b: ldc.i4.0
+							IL_008c: ldelem.ref
+							IL_008d: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+							IL_0092: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
+							IL_0097: ldstr "Cannot access 'server' before initialization"
+							IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 							IL_00a1: stloc.1
-							IL_00a2: ldloc.1
-							IL_00a3: ldstr "destroy"
-							IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-							IL_00ad: pop
-							IL_00ae: ldarg.0
-							IL_00af: ldc.i4.0
-							IL_00b0: ldelem.ref
-							IL_00b1: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-							IL_00b6: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
-							IL_00bb: dup
-							IL_00bc: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-							IL_00c1: ceq
-							IL_00c3: brfalse.s IL_00d1
-
-							IL_00c5: pop
-							IL_00c6: ldstr "Cannot access 'server' before initialization"
-							IL_00cb: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-							IL_00d0: throw
-
-							IL_00d1: stloc.1
-							IL_00d2: ldnull
-							IL_00d3: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/FunctionExpression_L57C30/FunctionExpression_L61C27::__js_call__(object)
-							IL_00d9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-							IL_00de: stloc.3
-							IL_00df: ldloc.1
-							IL_00e0: ldstr "close"
-							IL_00e5: ldloc.3
-							IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-							IL_00eb: pop
-							IL_00ec: ldnull
-							IL_00ed: ret
+							IL_00a2: ldnull
+							IL_00a3: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/FunctionExpression_L57C30/FunctionExpression_L61C27::__js_call__(object)
+							IL_00a9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+							IL_00ae: stloc.3
+							IL_00af: ldloc.1
+							IL_00b0: ldstr "close"
+							IL_00b5: ldloc.3
+							IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+							IL_00bb: pop
+							IL_00bc: ldnull
+							IL_00bd: ret
 						} // end of method FunctionExpression_L57C30::__js_call__
 
 					} // end of class FunctionExpression_L57C30
@@ -561,7 +489,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x292d
+							// Method begins at RVA 0x2819
 							// Header size: 1
 							// Code size: 19 (0x13)
 							.maxstack 8
@@ -589,7 +517,7 @@
 						.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 							01 00 02 00 00 00 00 00
 						)
-						// Method begins at RVA 0x2670
+						// Method begins at RVA 0x2598
 						// Header size: 12
 						// Code size: 208 (0xd0)
 						.maxstack 8
@@ -712,7 +640,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2924
+						// Method begins at RVA 0x2810
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -736,9 +664,9 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x24fc
+					// Method begins at RVA 0x2460
 					// Header size: 12
-					// Code size: 358 (0x166)
+					// Code size: 298 (0x12a)
 					.maxstack 8
 					.locals init (
 						[0] class Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/Scope,
@@ -757,150 +685,110 @@
 					IL_0008: ldelem.ref
 					IL_0009: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope
 					IL_000e: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope::body
-					IL_0013: dup
-					IL_0014: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-					IL_0019: ceq
-					IL_001b: brfalse.s IL_0029
-
-					IL_001d: pop
-					IL_001e: ldstr "Cannot access 'body' before initialization"
-					IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-					IL_0028: throw
-
-					IL_0029: stloc.1
-					IL_002a: ldstr "body1:"
-					IL_002f: ldloc.1
-					IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-					IL_0035: stloc.2
-					IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_003b: ldloc.2
-					IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-					IL_0041: pop
-					IL_0042: ldarg.0
-					IL_0043: ldc.i4.0
-					IL_0044: ldelem.ref
-					IL_0045: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-					IL_004a: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
-					IL_004f: dup
-					IL_0050: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-					IL_0055: ceq
-					IL_0057: brfalse.s IL_0065
-
-					IL_0059: pop
-					IL_005a: ldstr "Cannot access 'http' before initialization"
-					IL_005f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-					IL_0064: throw
-
-					IL_0065: stloc.1
-					IL_0066: ldarg.0
-					IL_0067: ldc.i4.1
-					IL_0068: ldelem.ref
-					IL_0069: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope
-					IL_006e: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
-					IL_0073: dup
-					IL_0074: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-					IL_0079: ceq
-					IL_007b: brfalse.s IL_0089
-
-					IL_007d: pop
-					IL_007e: ldstr "Cannot access 'info' before initialization"
-					IL_0083: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-					IL_0088: throw
-
-					IL_0089: stloc.3
-					IL_008a: ldloc.3
-					IL_008b: ldstr "address"
-					IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-					IL_0095: stloc.3
-					IL_0096: ldarg.0
-					IL_0097: ldc.i4.1
-					IL_0098: ldelem.ref
-					IL_0099: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope
-					IL_009e: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
-					IL_00a3: dup
-					IL_00a4: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-					IL_00a9: ceq
-					IL_00ab: brfalse.s IL_00b9
-
-					IL_00ad: pop
-					IL_00ae: ldstr "Cannot access 'info' before initialization"
-					IL_00b3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-					IL_00b8: throw
-
-					IL_00b9: stloc.s 4
-					IL_00bb: ldloc.s 4
-					IL_00bd: ldstr "port"
-					IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-					IL_00c7: stloc.s 4
-					IL_00c9: ldarg.0
-					IL_00ca: ldc.i4.0
-					IL_00cb: ldelem.ref
-					IL_00cc: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-					IL_00d1: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
-					IL_00d6: dup
-					IL_00d7: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-					IL_00dc: ceq
-					IL_00de: brfalse.s IL_00ec
-
-					IL_00e0: pop
-					IL_00e1: ldstr "Cannot access 'agent' before initialization"
-					IL_00e6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-					IL_00eb: throw
-
-					IL_00ec: stloc.s 5
-					IL_00ee: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-					IL_00f3: dup
-					IL_00f4: ldstr "host"
-					IL_00f9: ldloc.3
-					IL_00fa: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-					IL_00ff: dup
-					IL_0100: ldstr "port"
-					IL_0105: ldloc.s 4
-					IL_0107: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-					IL_010c: dup
-					IL_010d: ldstr "path"
-					IL_0112: ldstr "/two"
-					IL_0117: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-					IL_011c: dup
-					IL_011d: ldstr "agent"
-					IL_0122: ldloc.s 5
-					IL_0124: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-					IL_0129: stloc.s 6
-					IL_012b: ldc.i4.4
-					IL_012c: newarr [System.Runtime]System.Object
-					IL_0131: dup
-					IL_0132: ldc.i4.0
-					IL_0133: ldarg.0
-					IL_0134: ldc.i4.0
-					IL_0135: ldelem.ref
-					IL_0136: stelem.ref
-					IL_0137: dup
-					IL_0138: ldc.i4.1
-					IL_0139: ldarg.0
-					IL_013a: ldc.i4.1
-					IL_013b: ldelem.ref
-					IL_013c: stelem.ref
-					IL_013d: dup
-					IL_013e: ldc.i4.2
-					IL_013f: ldarg.0
-					IL_0140: ldc.i4.2
-					IL_0141: ldelem.ref
-					IL_0142: stelem.ref
-					IL_0143: dup
-					IL_0144: ldc.i4.3
-					IL_0145: ldloc.0
-					IL_0146: stelem.ref
-					IL_0147: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10::__js_call__(object[], object, object)
-					IL_014d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-					IL_0152: stloc.s 5
-					IL_0154: ldloc.1
-					IL_0155: ldstr "get"
-					IL_015a: ldloc.s 6
-					IL_015c: ldloc.s 5
-					IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-					IL_0163: pop
-					IL_0164: ldnull
-					IL_0165: ret
+					IL_0013: ldstr "Cannot access 'body' before initialization"
+					IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+					IL_001d: stloc.1
+					IL_001e: ldstr "body1:"
+					IL_0023: ldloc.1
+					IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_0029: stloc.2
+					IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_002f: ldloc.2
+					IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_0035: pop
+					IL_0036: ldarg.0
+					IL_0037: ldc.i4.0
+					IL_0038: ldelem.ref
+					IL_0039: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+					IL_003e: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
+					IL_0043: ldstr "Cannot access 'http' before initialization"
+					IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+					IL_004d: stloc.1
+					IL_004e: ldarg.0
+					IL_004f: ldc.i4.1
+					IL_0050: ldelem.ref
+					IL_0051: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope
+					IL_0056: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
+					IL_005b: ldstr "Cannot access 'info' before initialization"
+					IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+					IL_0065: stloc.3
+					IL_0066: ldloc.3
+					IL_0067: ldstr "address"
+					IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+					IL_0071: stloc.3
+					IL_0072: ldarg.0
+					IL_0073: ldc.i4.1
+					IL_0074: ldelem.ref
+					IL_0075: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope
+					IL_007a: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
+					IL_007f: ldstr "Cannot access 'info' before initialization"
+					IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+					IL_0089: stloc.s 4
+					IL_008b: ldloc.s 4
+					IL_008d: ldstr "port"
+					IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+					IL_0097: stloc.s 4
+					IL_0099: ldarg.0
+					IL_009a: ldc.i4.0
+					IL_009b: ldelem.ref
+					IL_009c: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+					IL_00a1: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
+					IL_00a6: ldstr "Cannot access 'agent' before initialization"
+					IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+					IL_00b0: stloc.s 5
+					IL_00b2: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+					IL_00b7: dup
+					IL_00b8: ldstr "host"
+					IL_00bd: ldloc.3
+					IL_00be: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+					IL_00c3: dup
+					IL_00c4: ldstr "port"
+					IL_00c9: ldloc.s 4
+					IL_00cb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+					IL_00d0: dup
+					IL_00d1: ldstr "path"
+					IL_00d6: ldstr "/two"
+					IL_00db: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+					IL_00e0: dup
+					IL_00e1: ldstr "agent"
+					IL_00e6: ldloc.s 5
+					IL_00e8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+					IL_00ed: stloc.s 6
+					IL_00ef: ldc.i4.4
+					IL_00f0: newarr [System.Runtime]System.Object
+					IL_00f5: dup
+					IL_00f6: ldc.i4.0
+					IL_00f7: ldarg.0
+					IL_00f8: ldc.i4.0
+					IL_00f9: ldelem.ref
+					IL_00fa: stelem.ref
+					IL_00fb: dup
+					IL_00fc: ldc.i4.1
+					IL_00fd: ldarg.0
+					IL_00fe: ldc.i4.1
+					IL_00ff: ldelem.ref
+					IL_0100: stelem.ref
+					IL_0101: dup
+					IL_0102: ldc.i4.2
+					IL_0103: ldarg.0
+					IL_0104: ldc.i4.2
+					IL_0105: ldelem.ref
+					IL_0106: stelem.ref
+					IL_0107: dup
+					IL_0108: ldc.i4.3
+					IL_0109: ldloc.0
+					IL_010a: stelem.ref
+					IL_010b: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10::__js_call__(object[], object, object)
+					IL_0111: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+					IL_0116: stloc.s 5
+					IL_0118: ldloc.1
+					IL_0119: ldstr "get"
+					IL_011e: ldloc.s 6
+					IL_0120: ldloc.s 5
+					IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+					IL_0127: pop
+					IL_0128: ldnull
+					IL_0129: ret
 				} // end of method FunctionExpression_L38C20::__js_call__
 
 			} // end of class FunctionExpression_L38C20
@@ -919,7 +807,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2907
+					// Method begins at RVA 0x27f3
 					// Header size: 1
 					// Code size: 19 (0x13)
 					.maxstack 8
@@ -947,7 +835,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x23f0
+				// Method begins at RVA 0x2360
 				// Header size: 12
 				// Code size: 184 (0xb8)
 				.maxstack 8
@@ -1053,7 +941,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28f3
+				// Method begins at RVA 0x27df
 				// Header size: 1
 				// Code size: 19 (0x13)
 				.maxstack 8
@@ -1082,9 +970,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x22b8
+			// Method begins at RVA 0x2264
 			// Header size: 12
-			// Code size: 300 (0x12c)
+			// Code size: 240 (0xf0)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope,
@@ -1099,123 +987,83 @@
 			IL_0005: stloc.0
 			IL_0006: ldarg.0
 			IL_0007: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
-			IL_000c: dup
-			IL_000d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0012: ceq
-			IL_0014: brfalse.s IL_0022
-
-			IL_0016: pop
-			IL_0017: ldstr "Cannot access 'server' before initialization"
-			IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0021: throw
-
+			IL_000c: ldstr "Cannot access 'server' before initialization"
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ldstr "address"
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 			IL_0022: stloc.1
-			IL_0023: ldloc.1
-			IL_0024: ldstr "address"
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_002e: stloc.1
-			IL_002f: ldloc.0
-			IL_0030: ldloc.1
-			IL_0031: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
-			IL_0036: ldarg.0
-			IL_0037: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
-			IL_003c: dup
-			IL_003d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0042: ceq
-			IL_0044: brfalse.s IL_0052
-
-			IL_0046: pop
-			IL_0047: ldstr "Cannot access 'http' before initialization"
-			IL_004c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0051: throw
-
-			IL_0052: stloc.1
-			IL_0053: ldloc.0
-			IL_0054: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
-			IL_0059: dup
-			IL_005a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_005f: ceq
-			IL_0061: brfalse.s IL_006f
-
-			IL_0063: pop
-			IL_0064: ldstr "Cannot access 'info' before initialization"
-			IL_0069: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_006e: throw
-
-			IL_006f: stloc.2
-			IL_0070: ldloc.2
-			IL_0071: ldstr "address"
-			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_007b: stloc.2
-			IL_007c: ldloc.0
-			IL_007d: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
-			IL_0082: dup
-			IL_0083: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0088: ceq
-			IL_008a: brfalse.s IL_0098
-
-			IL_008c: pop
-			IL_008d: ldstr "Cannot access 'info' before initialization"
-			IL_0092: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0097: throw
-
-			IL_0098: stloc.3
-			IL_0099: ldloc.3
-			IL_009a: ldstr "port"
-			IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00a4: stloc.3
-			IL_00a5: ldarg.0
-			IL_00a6: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
-			IL_00ab: dup
-			IL_00ac: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_00b1: ceq
-			IL_00b3: brfalse.s IL_00c1
-
-			IL_00b5: pop
-			IL_00b6: ldstr "Cannot access 'agent' before initialization"
-			IL_00bb: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_00c0: throw
-
-			IL_00c1: stloc.s 4
-			IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_00c8: dup
-			IL_00c9: ldstr "host"
-			IL_00ce: ldloc.2
-			IL_00cf: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_00d4: dup
-			IL_00d5: ldstr "port"
-			IL_00da: ldloc.3
-			IL_00db: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_00e0: dup
-			IL_00e1: ldstr "path"
-			IL_00e6: ldstr "/one"
-			IL_00eb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_00f0: dup
-			IL_00f1: ldstr "agent"
-			IL_00f6: ldloc.s 4
-			IL_00f8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_00fd: stloc.s 5
-			IL_00ff: ldc.i4.2
-			IL_0100: newarr [System.Runtime]System.Object
-			IL_0105: dup
-			IL_0106: ldc.i4.0
-			IL_0107: ldarg.0
-			IL_0108: stelem.ref
-			IL_0109: dup
-			IL_010a: ldc.i4.1
-			IL_010b: ldloc.0
-			IL_010c: stelem.ref
-			IL_010d: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4::__js_call__(object[], object, object)
-			IL_0113: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0118: stloc.s 4
-			IL_011a: ldloc.1
-			IL_011b: ldstr "get"
-			IL_0120: ldloc.s 5
-			IL_0122: ldloc.s 4
-			IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0129: pop
-			IL_012a: ldnull
-			IL_012b: ret
+			IL_0023: ldloc.0
+			IL_0024: ldloc.1
+			IL_0025: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
+			IL_002a: ldarg.0
+			IL_002b: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
+			IL_0030: ldstr "Cannot access 'http' before initialization"
+			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_003a: stloc.1
+			IL_003b: ldloc.0
+			IL_003c: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
+			IL_0041: ldstr "Cannot access 'info' before initialization"
+			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_004b: stloc.2
+			IL_004c: ldloc.2
+			IL_004d: ldstr "address"
+			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0057: stloc.2
+			IL_0058: ldloc.0
+			IL_0059: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
+			IL_005e: ldstr "Cannot access 'info' before initialization"
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0068: stloc.3
+			IL_0069: ldloc.3
+			IL_006a: ldstr "port"
+			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0074: stloc.3
+			IL_0075: ldarg.0
+			IL_0076: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
+			IL_007b: ldstr "Cannot access 'agent' before initialization"
+			IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0085: stloc.s 4
+			IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_008c: dup
+			IL_008d: ldstr "host"
+			IL_0092: ldloc.2
+			IL_0093: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0098: dup
+			IL_0099: ldstr "port"
+			IL_009e: ldloc.3
+			IL_009f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_00a4: dup
+			IL_00a5: ldstr "path"
+			IL_00aa: ldstr "/one"
+			IL_00af: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_00b4: dup
+			IL_00b5: ldstr "agent"
+			IL_00ba: ldloc.s 4
+			IL_00bc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_00c1: stloc.s 5
+			IL_00c3: ldc.i4.2
+			IL_00c4: newarr [System.Runtime]System.Object
+			IL_00c9: dup
+			IL_00ca: ldc.i4.0
+			IL_00cb: ldarg.0
+			IL_00cc: stelem.ref
+			IL_00cd: dup
+			IL_00ce: ldc.i4.1
+			IL_00cf: ldloc.0
+			IL_00d0: stelem.ref
+			IL_00d1: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4::__js_call__(object[], object, object)
+			IL_00d7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_00dc: stloc.s 4
+			IL_00de: ldloc.1
+			IL_00df: ldstr "get"
+			IL_00e4: ldloc.s 5
+			IL_00e6: ldloc.s 4
+			IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00ed: pop
+			IL_00ee: ldnull
+			IL_00ef: ret
 		} // end of method FunctionExpression_L19C30::__js_call__
 
 	} // end of class FunctionExpression_L19C30
@@ -1243,7 +1091,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x28a1
+			// Method begins at RVA 0x278d
 			// Header size: 1
 			// Code size: 63 (0x3f)
 			.maxstack 8
@@ -1284,7 +1132,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 391 (0x187)
+		// Code size: 343 (0x157)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope,
@@ -1303,143 +1151,111 @@
 		IL_0014: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
 		IL_0019: ldloc.0
 		IL_001a: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
-		IL_001f: dup
-		IL_0020: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0025: ceq
-		IL_0027: brfalse.s IL_0035
-
-		IL_0029: pop
-		IL_002a: ldstr "Cannot access 'http' before initialization"
-		IL_002f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0034: throw
-
+		IL_001f: ldstr "Cannot access 'http' before initialization"
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0029: stloc.1
+		IL_002a: ldloc.1
+		IL_002b: ldstr "Agent"
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 		IL_0035: stloc.1
 		IL_0036: ldloc.1
-		IL_0037: ldstr "Agent"
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0041: stloc.1
-		IL_0042: ldloc.1
-		IL_0043: ldc.i4.1
-		IL_0044: newarr [System.Runtime]System.Object
-		IL_0049: dup
-		IL_004a: ldc.i4.0
-		IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0050: dup
-		IL_0051: ldstr "keepAlive"
-		IL_0056: ldc.i4.1
-		IL_0057: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_005c: stelem.ref
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_0062: stloc.1
-		IL_0063: ldloc.0
-		IL_0064: ldloc.1
-		IL_0065: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
-		IL_006a: ldloc.0
-		IL_006b: ldc.r8 0.0
-		IL_0074: box [System.Runtime]System.Double
-		IL_0079: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
-		IL_007e: ldloc.0
-		IL_007f: ldc.r8 0.0
-		IL_0088: box [System.Runtime]System.Double
-		IL_008d: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
-		IL_0092: ldloc.0
-		IL_0093: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
-		IL_0098: dup
-		IL_0099: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_009e: ceq
-		IL_00a0: brfalse.s IL_00ae
-
-		IL_00a2: pop
-		IL_00a3: ldstr "Cannot access 'http' before initialization"
-		IL_00a8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_00ad: throw
-
-		IL_00ae: stloc.1
-		IL_00af: ldc.i4.1
-		IL_00b0: newarr [System.Runtime]System.Object
-		IL_00b5: dup
-		IL_00b6: ldc.i4.0
-		IL_00b7: ldloc.0
-		IL_00b8: stelem.ref
-		IL_00b9: ldc.i4.0
-		IL_00ba: ldelem.ref
-		IL_00bb: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-		IL_00c0: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_server::__js_call__(class Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope, object, object, object)
-		IL_00c6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_00cb: stloc.2
-		IL_00cc: ldloc.1
-		IL_00cd: ldstr "createServer"
-		IL_00d2: ldloc.2
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0037: ldc.i4.1
+		IL_0038: newarr [System.Runtime]System.Object
+		IL_003d: dup
+		IL_003e: ldc.i4.0
+		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0044: dup
+		IL_0045: ldstr "keepAlive"
+		IL_004a: ldc.i4.1
+		IL_004b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0050: stelem.ref
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_0056: stloc.1
+		IL_0057: ldloc.0
+		IL_0058: ldloc.1
+		IL_0059: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
+		IL_005e: ldloc.0
+		IL_005f: ldc.r8 0.0
+		IL_0068: box [System.Runtime]System.Double
+		IL_006d: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
+		IL_0072: ldloc.0
+		IL_0073: ldc.r8 0.0
+		IL_007c: box [System.Runtime]System.Double
+		IL_0081: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
+		IL_0086: ldloc.0
+		IL_0087: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
+		IL_008c: ldstr "Cannot access 'http' before initialization"
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0096: stloc.1
+		IL_0097: ldc.i4.1
+		IL_0098: newarr [System.Runtime]System.Object
+		IL_009d: dup
+		IL_009e: ldc.i4.0
+		IL_009f: ldloc.0
+		IL_00a0: stelem.ref
+		IL_00a1: ldc.i4.0
+		IL_00a2: ldelem.ref
+		IL_00a3: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+		IL_00a8: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_server::__js_call__(class Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope, object, object, object)
+		IL_00ae: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_00b3: stloc.2
+		IL_00b4: ldloc.1
+		IL_00b5: ldstr "createServer"
+		IL_00ba: ldloc.2
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c0: stloc.2
+		IL_00c1: ldloc.0
+		IL_00c2: ldloc.2
+		IL_00c3: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
+		IL_00c8: ldloc.0
+		IL_00c9: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
+		IL_00ce: ldstr "Cannot access 'server' before initialization"
+		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 		IL_00d8: stloc.2
-		IL_00d9: ldloc.0
-		IL_00da: ldloc.2
-		IL_00db: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
-		IL_00e0: ldloc.0
-		IL_00e1: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
-		IL_00e6: dup
-		IL_00e7: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_00ec: ceq
-		IL_00ee: brfalse.s IL_00fc
-
-		IL_00f0: pop
-		IL_00f1: ldstr "Cannot access 'server' before initialization"
-		IL_00f6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_00fb: throw
-
-		IL_00fc: stloc.2
-		IL_00fd: ldc.i4.1
-		IL_00fe: newarr [System.Runtime]System.Object
-		IL_0103: dup
-		IL_0104: ldc.i4.0
-		IL_0105: ldloc.0
-		IL_0106: stelem.ref
-		IL_0107: ldc.i4.0
-		IL_0108: ldelem.ref
-		IL_0109: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-		IL_010e: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L15C24::__js_call__(class Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope, object)
-		IL_0114: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0119: stloc.1
-		IL_011a: ldloc.2
-		IL_011b: ldstr "on"
-		IL_0120: ldstr "connection"
-		IL_0125: ldloc.1
-		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_012b: pop
-		IL_012c: ldloc.0
-		IL_012d: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
-		IL_0132: dup
-		IL_0133: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0138: ceq
-		IL_013a: brfalse.s IL_0148
-
-		IL_013c: pop
-		IL_013d: ldstr "Cannot access 'server' before initialization"
-		IL_0142: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0147: throw
-
-		IL_0148: stloc.1
-		IL_0149: ldc.i4.1
-		IL_014a: newarr [System.Runtime]System.Object
-		IL_014f: dup
-		IL_0150: ldc.i4.0
-		IL_0151: ldloc.0
-		IL_0152: stelem.ref
-		IL_0153: ldc.i4.0
-		IL_0154: ldelem.ref
-		IL_0155: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-		IL_015a: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30::__js_call__(class Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope, object)
-		IL_0160: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0165: stloc.2
-		IL_0166: ldloc.1
-		IL_0167: ldstr "listen"
-		IL_016c: ldc.r8 0.0
-		IL_0175: box [System.Runtime]System.Double
-		IL_017a: ldstr "127.0.0.1"
-		IL_017f: ldloc.2
-		IL_0180: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_0185: pop
-		IL_0186: ret
+		IL_00d9: ldc.i4.1
+		IL_00da: newarr [System.Runtime]System.Object
+		IL_00df: dup
+		IL_00e0: ldc.i4.0
+		IL_00e1: ldloc.0
+		IL_00e2: stelem.ref
+		IL_00e3: ldc.i4.0
+		IL_00e4: ldelem.ref
+		IL_00e5: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+		IL_00ea: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L15C24::__js_call__(class Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope, object)
+		IL_00f0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00f5: stloc.1
+		IL_00f6: ldloc.2
+		IL_00f7: ldstr "on"
+		IL_00fc: ldstr "connection"
+		IL_0101: ldloc.1
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0107: pop
+		IL_0108: ldloc.0
+		IL_0109: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
+		IL_010e: ldstr "Cannot access 'server' before initialization"
+		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0118: stloc.1
+		IL_0119: ldc.i4.1
+		IL_011a: newarr [System.Runtime]System.Object
+		IL_011f: dup
+		IL_0120: ldc.i4.0
+		IL_0121: ldloc.0
+		IL_0122: stelem.ref
+		IL_0123: ldc.i4.0
+		IL_0124: ldelem.ref
+		IL_0125: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+		IL_012a: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30::__js_call__(class Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope, object)
+		IL_0130: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0135: stloc.2
+		IL_0136: ldloc.1
+		IL_0137: ldstr "listen"
+		IL_013c: ldc.r8 0.0
+		IL_0145: box [System.Runtime]System.Double
+		IL_014a: ldstr "127.0.0.1"
+		IL_014f: ldloc.2
+		IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_0155: pop
+		IL_0156: ret
 	} // end of method Http_Agent_KeepAlive_Reuses_Connection::__js_module_init__
 
 } // end of class Modules.Http_Agent_KeepAlive_Reuses_Connection
@@ -1451,7 +1267,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x295c
+		// Method begins at RVA 0x2848
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

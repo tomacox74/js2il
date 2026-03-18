@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20dd
+				// Method begins at RVA 0x20e5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e6
+				// Method begins at RVA 0x20ee
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20dc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 102 (0x66)
+		// Code size: 110 (0x6e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryCatch_NoBinding/Scope,
@@ -91,44 +91,52 @@
 
 		IL_0000: newobj instance void Modules.TryCatch_NoBinding/Scope::.ctor()
 		IL_0005: stloc.0
+		IL_0006: nop
 		.try
 		{
-			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_000b: ldstr "before throw"
-			IL_0010: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0015: pop
-			IL_0016: ldstr "test error message"
-			IL_001b: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0020: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_0025: dup
-			IL_0026: isinst [System.Runtime]System.Exception
-			IL_002b: dup
-			IL_002c: brtrue IL_0038
+			IL_0007: nop
+			IL_0008: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_000d: ldstr "before throw"
+			IL_0012: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0017: pop
+			IL_0018: ldstr "test error message"
+			IL_001d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0022: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_0027: dup
+			IL_0028: isinst [System.Runtime]System.Exception
+			IL_002d: dup
+			IL_002e: brtrue IL_003a
 
-			IL_0031: pop
-			IL_0032: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0037: throw
-
-			IL_0038: pop
+			IL_0033: pop
+			IL_0034: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 			IL_0039: throw
 
-			IL_003a: leave IL_0055
+			IL_003a: nop
+			IL_003b: pop
+			IL_003c: throw
+
+			IL_003d: leave IL_005c
 		} // end .try
+		IL_0042: nop
 		catch [System.Runtime]System.Exception
 		{
-			IL_003f: stloc.1
-			IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0045: ldstr "in catch"
-			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_004f: pop
-			IL_0050: leave IL_0055
+			IL_0043: nop
+			IL_0044: stloc.1
+			IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_004a: ldstr "in catch"
+			IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0054: pop
+			IL_0055: leave IL_005c
 		} // end handler
+		IL_005a: nop
+		IL_005b: nop
 
-		IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005a: ldstr "after catch"
-		IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0064: pop
-		IL_0065: ret
+		IL_005c: nop
+		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0062: ldstr "after catch"
+		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006c: pop
+		IL_006d: ret
 	} // end of method TryCatch_NoBinding::__js_module_init__
 
 } // end of class Modules.TryCatch_NoBinding
@@ -140,7 +148,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ef
+		// Method begins at RVA 0x20f7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

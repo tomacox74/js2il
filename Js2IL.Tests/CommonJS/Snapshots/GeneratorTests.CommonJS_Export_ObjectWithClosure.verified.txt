@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2263
+			// Method begins at RVA 0x2257
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -114,7 +114,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2280
+				// Method begins at RVA 0x2274
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -143,7 +143,7 @@
 			)
 			// Method begins at RVA 0x2194
 			// Header size: 12
-			// Code size: 56 (0x38)
+			// Code size: 44 (0x2c)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -154,32 +154,24 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::moduleFactor
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
-
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'moduleFactor' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
-
-			IL_001c: stloc.0
-			IL_001d: ldarg.2
-			IL_001e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0023: stloc.1
-			IL_0024: ldloc.0
-			IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_002a: stloc.2
-			IL_002b: ldloc.1
-			IL_002c: ldloc.2
-			IL_002d: mul
-			IL_002e: stloc.2
-			IL_002f: ldloc.2
-			IL_0030: box [System.Runtime]System.Double
-			IL_0035: stloc.3
-			IL_0036: ldloc.3
-			IL_0037: ret
+			IL_0006: ldstr "Cannot access 'moduleFactor' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldarg.2
+			IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0017: stloc.1
+			IL_0018: ldloc.0
+			IL_0019: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001e: stloc.2
+			IL_001f: ldloc.1
+			IL_0020: ldloc.2
+			IL_0021: mul
+			IL_0022: stloc.2
+			IL_0023: ldloc.2
+			IL_0024: box [System.Runtime]System.Double
+			IL_0029: stloc.3
+			IL_002a: ldloc.3
+			IL_002b: ret
 		} // end of method multiplyModuleFactor::__js_call__
 
 	} // end of class multiplyModuleFactor
@@ -199,7 +191,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2292
+					// Method begins at RVA 0x2286
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -224,7 +216,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2234
+				// Method begins at RVA 0x2228
 				// Header size: 12
 				// Code size: 35 (0x23)
 				.maxstack 8
@@ -268,7 +260,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2289
+				// Method begins at RVA 0x227d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -295,7 +287,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x21d8
+			// Method begins at RVA 0x21cc
 			// Header size: 12
 			// Code size: 78 (0x4e)
 			.maxstack 8
@@ -365,7 +357,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x226c
+			// Method begins at RVA 0x2260
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -465,7 +457,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x229b
+		// Method begins at RVA 0x228f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

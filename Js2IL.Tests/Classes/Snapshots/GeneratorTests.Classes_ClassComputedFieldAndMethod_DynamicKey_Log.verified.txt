@@ -20,9 +20,9 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2134
+			// Method begins at RVA 0x211c
 			// Header size: 12
-			// Code size: 66 (0x42)
+			// Code size: 54 (0x36)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -34,27 +34,19 @@
 			IL_0002: ldelem.ref
 			IL_0003: castclass Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope
 			IL_0008: ldfld object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::fieldKey
-			IL_000d: dup
-			IL_000e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0013: ceq
-			IL_0015: brfalse.s IL_0023
-
-			IL_0017: pop
-			IL_0018: ldstr "Cannot access 'fieldKey' before initialization"
-			IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0022: throw
-
+			IL_000d: ldstr "Cannot access 'fieldKey' before initialization"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0017: stloc.0
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_001d: ldloc.0
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
 			IL_0023: stloc.0
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0029: ldloc.0
-			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_002f: stloc.0
-			IL_0030: ldloc.0
-			IL_0031: ldc.r8 1
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_003f: stloc.1
-			IL_0040: ldloc.1
-			IL_0041: ret
+			IL_0024: ldloc.0
+			IL_0025: ldc.r8 1
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0033: stloc.1
+			IL_0034: ldloc.1
+			IL_0035: ret
 		} // end of method methodKey::__js_call__
 
 	} // end of class methodKey
@@ -70,7 +62,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2248
+				// Method begins at RVA 0x220c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -90,7 +82,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2251
+				// Method begins at RVA 0x2215
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -117,9 +109,9 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2184
+			// Method begins at RVA 0x2160
 			// Header size: 12
-			// Code size: 153 (0x99)
+			// Code size: 129 (0x81)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Example/Scope,
@@ -142,60 +134,44 @@
 			IL_0017: ldelem.ref
 			IL_0018: castclass Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope
 			IL_001d: ldfld object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::fieldKey
-			IL_0022: dup
-			IL_0023: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0028: ceq
-			IL_002a: brfalse.s IL_0038
-
-			IL_002c: pop
-			IL_002d: ldstr "Cannot access 'fieldKey' before initialization"
-			IL_0032: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0037: throw
-
-			IL_0038: stloc.2
-			IL_0039: ldarg.0
-			IL_003a: ldloc.2
-			IL_003b: ldc.r8 41
-			IL_0044: box [System.Runtime]System.Double
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
-			IL_004e: pop
-			IL_004f: ldarg.1
-			IL_0050: ldc.i4.0
-			IL_0051: ldelem.ref
-			IL_0052: castclass Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope
-			IL_0057: ldfld object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::methodKey
-			IL_005c: dup
-			IL_005d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0062: ceq
-			IL_0064: brfalse.s IL_0072
-
-			IL_0066: pop
-			IL_0067: ldstr "Cannot access 'methodKey' before initialization"
-			IL_006c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0071: throw
-
-			IL_0072: stloc.2
-			IL_0073: ldc.i4.2
-			IL_0074: newarr [System.Runtime]System.Object
-			IL_0079: dup
-			IL_007a: ldc.i4.0
-			IL_007b: ldarg.1
-			IL_007c: ldc.i4.0
-			IL_007d: ldelem.ref
-			IL_007e: stelem.ref
-			IL_007f: dup
-			IL_0080: ldc.i4.1
-			IL_0081: ldloc.0
-			IL_0082: stelem.ref
-			IL_0083: ldftn object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/methodKey::__js_call__(object[], object)
-			IL_0089: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_008e: stloc.3
-			IL_008f: ldarg.0
-			IL_0090: ldloc.2
-			IL_0091: ldloc.3
-			IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
-			IL_0097: pop
-			IL_0098: ret
+			IL_0022: ldstr "Cannot access 'fieldKey' before initialization"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_002c: stloc.2
+			IL_002d: ldarg.0
+			IL_002e: ldloc.2
+			IL_002f: ldc.r8 41
+			IL_0038: box [System.Runtime]System.Double
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
+			IL_0042: pop
+			IL_0043: ldarg.1
+			IL_0044: ldc.i4.0
+			IL_0045: ldelem.ref
+			IL_0046: castclass Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope
+			IL_004b: ldfld object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::methodKey
+			IL_0050: ldstr "Cannot access 'methodKey' before initialization"
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_005a: stloc.2
+			IL_005b: ldc.i4.2
+			IL_005c: newarr [System.Runtime]System.Object
+			IL_0061: dup
+			IL_0062: ldc.i4.0
+			IL_0063: ldarg.1
+			IL_0064: ldc.i4.0
+			IL_0065: ldelem.ref
+			IL_0066: stelem.ref
+			IL_0067: dup
+			IL_0068: ldc.i4.1
+			IL_0069: ldloc.0
+			IL_006a: stelem.ref
+			IL_006b: ldftn object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/methodKey::__js_call__(object[], object)
+			IL_0071: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_0076: stloc.3
+			IL_0077: ldarg.0
+			IL_0078: ldloc.2
+			IL_0079: ldloc.3
+			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
+			IL_007f: pop
+			IL_0080: ret
 		} // end of method Example::.ctor
 
 	} // end of class Example
@@ -217,7 +193,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2229
+			// Method begins at RVA 0x21ed
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -249,7 +225,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 214 (0xd6)
+		// Code size: 190 (0xbe)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope,
@@ -280,68 +256,52 @@
 		IL_002d: stloc.1
 		IL_002e: ldloc.0
 		IL_002f: ldfld object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::fieldKey
-		IL_0034: dup
-		IL_0035: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_003a: ceq
-		IL_003c: brfalse.s IL_004a
-
-		IL_003e: pop
-		IL_003f: ldstr "Cannot access 'fieldKey' before initialization"
-		IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0049: throw
-
-		IL_004a: stloc.3
-		IL_004b: ldloc.1
+		IL_0034: ldstr "Cannot access 'fieldKey' before initialization"
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_003e: stloc.3
+		IL_003f: ldloc.1
+		IL_0040: ldloc.3
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+		IL_0046: stloc.3
+		IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_004c: ldloc.3
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-		IL_0052: stloc.3
-		IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0058: ldloc.3
-		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005e: pop
-		IL_005f: ldloc.0
-		IL_0060: ldfld object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::methodKey
-		IL_0065: dup
-		IL_0066: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_006b: ceq
-		IL_006d: brfalse.s IL_007b
-
-		IL_006f: pop
-		IL_0070: ldstr "Cannot access 'methodKey' before initialization"
-		IL_0075: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_007a: throw
-
-		IL_007b: stloc.3
-		IL_007c: ldloc.1
-		IL_007d: ldloc.3
-		IL_007e: ldc.i4.0
-		IL_007f: newarr [System.Runtime]System.Object
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallComputedMember(object, object, object[])
-		IL_0089: stloc.3
-		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008f: ldloc.3
-		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0095: pop
-		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009b: ldloc.1
-		IL_009c: ldstr "value"
-		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ab: pop
-		IL_00ac: ldloc.1
-		IL_00ad: ldstr "fieldKey"
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00b7: ldnull
-		IL_00b8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00bd: stloc.s 4
-		IL_00bf: ldloc.s 4
-		IL_00c1: box [System.Runtime]System.Boolean
-		IL_00c6: stloc.s 5
-		IL_00c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cd: ldloc.s 5
-		IL_00cf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d4: pop
-		IL_00d5: ret
+		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0052: pop
+		IL_0053: ldloc.0
+		IL_0054: ldfld object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::methodKey
+		IL_0059: ldstr "Cannot access 'methodKey' before initialization"
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0063: stloc.3
+		IL_0064: ldloc.1
+		IL_0065: ldloc.3
+		IL_0066: ldc.i4.0
+		IL_0067: newarr [System.Runtime]System.Object
+		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallComputedMember(object, object, object[])
+		IL_0071: stloc.3
+		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0077: ldloc.3
+		IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007d: pop
+		IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0083: ldloc.1
+		IL_0084: ldstr "value"
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0093: pop
+		IL_0094: ldloc.1
+		IL_0095: ldstr "fieldKey"
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_009f: ldnull
+		IL_00a0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00a5: stloc.s 4
+		IL_00a7: ldloc.s 4
+		IL_00a9: box [System.Runtime]System.Boolean
+		IL_00ae: stloc.s 5
+		IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b5: ldloc.s 5
+		IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00bc: pop
+		IL_00bd: ret
 	} // end of method Classes_ClassComputedFieldAndMethod_DynamicKey_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log
@@ -353,7 +313,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x225a
+		// Method begins at RVA 0x221e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

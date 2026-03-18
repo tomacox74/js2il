@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223a
+				// Method begins at RVA 0x2216
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,9 +44,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x216c
+			// Method begins at RVA 0x2160
 			// Header size: 12
-			// Code size: 144 (0x90)
+			// Code size: 120 (0x78)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -61,55 +61,39 @@
 			IL_0010: stloc.1
 			IL_0011: ldarg.0
 			IL_0012: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-			IL_0017: dup
-			IL_0018: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_001d: ceq
-			IL_001f: brfalse.s IL_002d
-
-			IL_0021: pop
-			IL_0022: ldstr "Cannot access 'testFile' before initialization"
-			IL_0027: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_002c: throw
-
-			IL_002d: stloc.2
-			IL_002e: ldloc.1
-			IL_002f: ldstr "readFileSync"
+			IL_0017: ldstr "Cannot access 'testFile' before initialization"
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0021: stloc.2
+			IL_0022: ldloc.1
+			IL_0023: ldstr "readFileSync"
+			IL_0028: ldloc.2
+			IL_0029: ldstr "utf8"
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0033: stloc.2
 			IL_0034: ldloc.2
-			IL_0035: ldstr "utf8"
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_003f: stloc.2
-			IL_0040: ldloc.2
-			IL_0041: stloc.0
-			IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0047: ldstr "Written content:"
-			IL_004c: ldloc.0
-			IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0052: pop
-			IL_0053: ldarg.0
-			IL_0054: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
-			IL_0059: ldstr "fs"
-			IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-			IL_0063: stloc.2
-			IL_0064: ldarg.0
-			IL_0065: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-			IL_006a: dup
-			IL_006b: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0070: ceq
-			IL_0072: brfalse.s IL_0080
-
-			IL_0074: pop
-			IL_0075: ldstr "Cannot access 'testFile' before initialization"
-			IL_007a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_007f: throw
-
-			IL_0080: stloc.1
-			IL_0081: ldloc.2
-			IL_0082: ldstr "rmSync"
-			IL_0087: ldloc.1
-			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_008d: pop
-			IL_008e: ldnull
-			IL_008f: ret
+			IL_0035: stloc.0
+			IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003b: ldstr "Written content:"
+			IL_0040: ldloc.0
+			IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0046: pop
+			IL_0047: ldarg.0
+			IL_0048: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+			IL_004d: ldstr "fs"
+			IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+			IL_0057: stloc.2
+			IL_0058: ldarg.0
+			IL_0059: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
+			IL_005e: ldstr "Cannot access 'testFile' before initialization"
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0068: stloc.1
+			IL_0069: ldloc.2
+			IL_006a: ldstr "rmSync"
+			IL_006f: ldloc.1
+			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0075: pop
+			IL_0076: ldnull
+			IL_0077: ret
 		} // end of method ArrowFunction_L7C63::__js_call__
 
 	} // end of class ArrowFunction_L7C63
@@ -132,7 +116,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2243
+				// Method begins at RVA 0x221f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -156,7 +140,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2208
+			// Method begins at RVA 0x21e4
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -190,7 +174,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2226
+			// Method begins at RVA 0x2202
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -219,7 +203,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 270 (0x10e)
+		// Code size: 258 (0x102)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FSPromises_WriteFile_Utf8/Scope,
@@ -268,67 +252,59 @@
 		IL_0064: stfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
 		IL_0069: ldloc.0
 		IL_006a: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-		IL_006f: dup
-		IL_0070: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0075: ceq
-		IL_0077: brfalse.s IL_0085
-
-		IL_0079: pop
-		IL_007a: ldstr "Cannot access 'testFile' before initialization"
-		IL_007f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0084: throw
-
-		IL_0085: stloc.3
-		IL_0086: ldloc.1
-		IL_0087: ldstr "writeFile"
-		IL_008c: ldloc.3
-		IL_008d: ldstr "Written by fs/promises"
-		IL_0092: ldstr "utf8"
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_009c: stloc.3
-		IL_009d: ldc.i4.1
-		IL_009e: newarr [System.Runtime]System.Object
-		IL_00a3: dup
-		IL_00a4: ldc.i4.0
-		IL_00a5: ldloc.0
-		IL_00a6: stelem.ref
-		IL_00a7: ldc.i4.0
-		IL_00a8: ldelem.ref
-		IL_00a9: castclass Modules.FSPromises_WriteFile_Utf8/Scope
-		IL_00ae: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L7C63::__js_call__(class Modules.FSPromises_WriteFile_Utf8/Scope, object)
-		IL_00b4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00b9: ldc.i4.1
-		IL_00ba: newarr [System.Runtime]System.Object
-		IL_00bf: dup
-		IL_00c0: ldc.i4.0
-		IL_00c1: ldloc.0
-		IL_00c2: stelem.ref
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00cd: stloc.s 4
-		IL_00cf: ldloc.3
-		IL_00d0: ldstr "then"
-		IL_00d5: ldloc.s 4
-		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00dc: stloc.s 4
-		IL_00de: ldnull
-		IL_00df: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L11C10::__js_call__(object, object)
-		IL_00e5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00ea: ldc.i4.1
-		IL_00eb: newarr [System.Runtime]System.Object
-		IL_00f0: dup
-		IL_00f1: ldc.i4.0
-		IL_00f2: ldloc.0
-		IL_00f3: stelem.ref
-		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00fe: stloc.3
-		IL_00ff: ldloc.s 4
-		IL_0101: ldstr "catch"
-		IL_0106: ldloc.3
-		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_010c: pop
-		IL_010d: ret
+		IL_006f: ldstr "Cannot access 'testFile' before initialization"
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0079: stloc.3
+		IL_007a: ldloc.1
+		IL_007b: ldstr "writeFile"
+		IL_0080: ldloc.3
+		IL_0081: ldstr "Written by fs/promises"
+		IL_0086: ldstr "utf8"
+		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_0090: stloc.3
+		IL_0091: ldc.i4.1
+		IL_0092: newarr [System.Runtime]System.Object
+		IL_0097: dup
+		IL_0098: ldc.i4.0
+		IL_0099: ldloc.0
+		IL_009a: stelem.ref
+		IL_009b: ldc.i4.0
+		IL_009c: ldelem.ref
+		IL_009d: castclass Modules.FSPromises_WriteFile_Utf8/Scope
+		IL_00a2: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L7C63::__js_call__(class Modules.FSPromises_WriteFile_Utf8/Scope, object)
+		IL_00a8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00ad: ldc.i4.1
+		IL_00ae: newarr [System.Runtime]System.Object
+		IL_00b3: dup
+		IL_00b4: ldc.i4.0
+		IL_00b5: ldloc.0
+		IL_00b6: stelem.ref
+		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00c1: stloc.s 4
+		IL_00c3: ldloc.3
+		IL_00c4: ldstr "then"
+		IL_00c9: ldloc.s 4
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00d0: stloc.s 4
+		IL_00d2: ldnull
+		IL_00d3: ldftn object Modules.FSPromises_WriteFile_Utf8/ArrowFunction_L11C10::__js_call__(object, object)
+		IL_00d9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00de: ldc.i4.1
+		IL_00df: newarr [System.Runtime]System.Object
+		IL_00e4: dup
+		IL_00e5: ldc.i4.0
+		IL_00e6: ldloc.0
+		IL_00e7: stelem.ref
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00f2: stloc.3
+		IL_00f3: ldloc.s 4
+		IL_00f5: ldstr "catch"
+		IL_00fa: ldloc.3
+		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0100: pop
+		IL_0101: ret
 	} // end of method FSPromises_WriteFile_Utf8::__js_module_init__
 
 } // end of class Modules.FSPromises_WriteFile_Utf8
@@ -340,7 +316,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x224c
+		// Method begins at RVA 0x2228
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

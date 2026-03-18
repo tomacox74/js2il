@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x25a8
+					// Method begins at RVA 0x251a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x23c4
+				// Method begins at RVA 0x237c
 				// Header size: 12
 				// Code size: 26 (0x1a)
 				.maxstack 8
@@ -79,7 +79,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x25b1
+					// Method begins at RVA 0x2523
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -103,9 +103,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x23ec
+				// Method begins at RVA 0x23a4
 				// Header size: 12
-				// Code size: 211 (0xd3)
+				// Code size: 163 (0xa3)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -117,88 +117,56 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.FS_Open_Callback_FileHandle/Scope
 				IL_0008: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::fs
-				IL_000d: dup
-				IL_000e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0013: ceq
-				IL_0015: brfalse.s IL_0023
-
-				IL_0017: pop
-				IL_0018: ldstr "Cannot access 'fs' before initialization"
-				IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_0022: throw
-
-				IL_0023: stloc.0
-				IL_0024: ldarg.0
-				IL_0025: ldc.i4.0
-				IL_0026: ldelem.ref
-				IL_0027: castclass Modules.FS_Open_Callback_FileHandle/Scope
-				IL_002c: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
-				IL_0031: dup
-				IL_0032: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0037: ceq
-				IL_0039: brfalse.s IL_0047
-
-				IL_003b: pop
-				IL_003c: ldstr "Cannot access 'file' before initialization"
-				IL_0041: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_0046: throw
-
-				IL_0047: stloc.1
-				IL_0048: ldloc.0
-				IL_0049: ldstr "readFileSync"
-				IL_004e: ldloc.1
-				IL_004f: ldstr "utf8"
-				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_0059: stloc.1
-				IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_005f: ldstr "FileText:"
-				IL_0064: ldloc.1
-				IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_006a: pop
+				IL_000d: ldstr "Cannot access 'fs' before initialization"
+				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0017: stloc.0
+				IL_0018: ldarg.0
+				IL_0019: ldc.i4.0
+				IL_001a: ldelem.ref
+				IL_001b: castclass Modules.FS_Open_Callback_FileHandle/Scope
+				IL_0020: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
+				IL_0025: ldstr "Cannot access 'file' before initialization"
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_002f: stloc.1
+				IL_0030: ldloc.0
+				IL_0031: ldstr "readFileSync"
+				IL_0036: ldloc.1
+				IL_0037: ldstr "utf8"
+				IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_0041: stloc.1
+				IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0047: ldstr "FileText:"
+				IL_004c: ldloc.1
+				IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0052: pop
+				IL_0053: ldarg.0
+				IL_0054: ldc.i4.0
+				IL_0055: ldelem.ref
+				IL_0056: castclass Modules.FS_Open_Callback_FileHandle/Scope
+				IL_005b: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::fs
+				IL_0060: ldstr "Cannot access 'fs' before initialization"
+				IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_006a: stloc.1
 				IL_006b: ldarg.0
 				IL_006c: ldc.i4.0
 				IL_006d: ldelem.ref
 				IL_006e: castclass Modules.FS_Open_Callback_FileHandle/Scope
-				IL_0073: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::fs
-				IL_0078: dup
-				IL_0079: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_007e: ceq
-				IL_0080: brfalse.s IL_008e
-
-				IL_0082: pop
-				IL_0083: ldstr "Cannot access 'fs' before initialization"
-				IL_0088: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_008d: throw
-
-				IL_008e: stloc.1
-				IL_008f: ldarg.0
-				IL_0090: ldc.i4.0
-				IL_0091: ldelem.ref
-				IL_0092: castclass Modules.FS_Open_Callback_FileHandle/Scope
-				IL_0097: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
-				IL_009c: dup
-				IL_009d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_00a2: ceq
-				IL_00a4: brfalse.s IL_00b2
-
-				IL_00a6: pop
-				IL_00a7: ldstr "Cannot access 'file' before initialization"
-				IL_00ac: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_00b1: throw
-
-				IL_00b2: stloc.0
-				IL_00b3: ldloc.1
-				IL_00b4: ldstr "rmSync"
-				IL_00b9: ldloc.0
-				IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_00bf: dup
-				IL_00c0: ldstr "force"
-				IL_00c5: ldc.i4.1
-				IL_00c6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_00d0: pop
-				IL_00d1: ldnull
-				IL_00d2: ret
+				IL_0073: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
+				IL_0078: ldstr "Cannot access 'file' before initialization"
+				IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0082: stloc.0
+				IL_0083: ldloc.1
+				IL_0084: ldstr "rmSync"
+				IL_0089: ldloc.0
+				IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_008f: dup
+				IL_0090: ldstr "force"
+				IL_0095: ldc.i4.1
+				IL_0096: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_00a0: pop
+				IL_00a1: ldnull
+				IL_00a2: ret
 			} // end of method ArrowFunction_L20C67::__js_call__
 
 		} // end of class ArrowFunction_L20C67
@@ -221,7 +189,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x25ba
+					// Method begins at RVA 0x252c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -246,9 +214,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x24cc
+				// Method begins at RVA 0x2454
 				// Header size: 12
-				// Code size: 159 (0x9f)
+				// Code size: 137 (0x89)
 				.maxstack 8
 				.locals init (
 					[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
@@ -271,60 +239,46 @@
 				IL_0014: ldstr "message"
 				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 				IL_001e: stloc.3
-				IL_001f: br IL_0026
+				IL_001f: br IL_0027
 
-				IL_0024: ldarg.2
-				IL_0025: stloc.3
+				IL_0024: nop
+				IL_0025: ldarg.2
+				IL_0026: stloc.3
 
-				IL_0026: ldloc.0
-				IL_0027: ldstr "WriteError:"
-				IL_002c: ldloc.3
-				IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_0032: pop
-				IL_0033: ldarg.0
-				IL_0034: ldc.i4.0
-				IL_0035: ldelem.ref
-				IL_0036: castclass Modules.FS_Open_Callback_FileHandle/Scope
-				IL_003b: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::fs
-				IL_0040: dup
-				IL_0041: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0046: ceq
-				IL_0048: brfalse.s IL_0056
-
-				IL_004a: pop
-				IL_004b: ldstr "Cannot access 'fs' before initialization"
-				IL_0050: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_0055: throw
-
-				IL_0056: stloc.s 4
-				IL_0058: ldarg.0
-				IL_0059: ldc.i4.0
-				IL_005a: ldelem.ref
-				IL_005b: castclass Modules.FS_Open_Callback_FileHandle/Scope
-				IL_0060: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
-				IL_0065: dup
-				IL_0066: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_006b: ceq
-				IL_006d: brfalse.s IL_007b
-
-				IL_006f: pop
-				IL_0070: ldstr "Cannot access 'file' before initialization"
-				IL_0075: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_007a: throw
-
-				IL_007b: stloc.s 5
-				IL_007d: ldloc.s 4
-				IL_007f: ldstr "rmSync"
-				IL_0084: ldloc.s 5
-				IL_0086: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_008b: dup
-				IL_008c: ldstr "force"
-				IL_0091: ldc.i4.1
-				IL_0092: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_009c: pop
-				IL_009d: ldnull
-				IL_009e: ret
+				IL_0027: nop
+				IL_0028: ldloc.0
+				IL_0029: ldstr "WriteError:"
+				IL_002e: ldloc.3
+				IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0034: pop
+				IL_0035: ldarg.0
+				IL_0036: ldc.i4.0
+				IL_0037: ldelem.ref
+				IL_0038: castclass Modules.FS_Open_Callback_FileHandle/Scope
+				IL_003d: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::fs
+				IL_0042: ldstr "Cannot access 'fs' before initialization"
+				IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_004c: stloc.s 4
+				IL_004e: ldarg.0
+				IL_004f: ldc.i4.0
+				IL_0050: ldelem.ref
+				IL_0051: castclass Modules.FS_Open_Callback_FileHandle/Scope
+				IL_0056: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
+				IL_005b: ldstr "Cannot access 'file' before initialization"
+				IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0065: stloc.s 5
+				IL_0067: ldloc.s 4
+				IL_0069: ldstr "rmSync"
+				IL_006e: ldloc.s 5
+				IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0075: dup
+				IL_0076: ldstr "force"
+				IL_007b: ldc.i4.1
+				IL_007c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_0086: pop
+				IL_0087: ldnull
+				IL_0088: ret
 			} // end of method ArrowFunction_L23C8::__js_call__
 
 		} // end of class ArrowFunction_L23C8
@@ -345,7 +299,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x259f
+					// Method begins at RVA 0x2511
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -367,7 +321,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2596
+				// Method begins at RVA 0x2508
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -395,9 +349,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2234
+			// Method begins at RVA 0x2204
 			// Header size: 12
-			// Code size: 386 (0x182)
+			// Code size: 363 (0x16b)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/Scope,
@@ -417,7 +371,7 @@
 			IL_000e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0013: stloc.1
 			IL_0014: ldloc.1
-			IL_0015: brfalse IL_008f
+			IL_0015: brfalse IL_0077
 
 			IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_001f: ldstr "OpenError:"
@@ -428,131 +382,116 @@
 			IL_0034: pop
 			IL_0035: ldarg.0
 			IL_0036: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::fs
-			IL_003b: dup
-			IL_003c: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0041: ceq
-			IL_0043: brfalse.s IL_0051
+			IL_003b: ldstr "Cannot access 'fs' before initialization"
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0045: stloc.2
+			IL_0046: ldarg.0
+			IL_0047: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
+			IL_004c: ldstr "Cannot access 'file' before initialization"
+			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0056: stloc.3
+			IL_0057: ldloc.2
+			IL_0058: ldstr "rmSync"
+			IL_005d: ldloc.3
+			IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0063: dup
+			IL_0064: ldstr "force"
+			IL_0069: ldc.i4.1
+			IL_006a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0074: pop
+			IL_0075: ldnull
+			IL_0076: ret
 
-			IL_0045: pop
-			IL_0046: ldstr "Cannot access 'fs' before initialization"
-			IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0050: throw
-
-			IL_0051: stloc.2
-			IL_0052: ldarg.0
-			IL_0053: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
-			IL_0058: dup
-			IL_0059: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_005e: ceq
-			IL_0060: brfalse.s IL_006e
-
-			IL_0062: pop
-			IL_0063: ldstr "Cannot access 'file' before initialization"
-			IL_0068: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_006d: throw
-
-			IL_006e: stloc.3
-			IL_006f: ldloc.2
-			IL_0070: ldstr "rmSync"
-			IL_0075: ldloc.3
-			IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_007b: dup
-			IL_007c: ldstr "force"
-			IL_0081: ldc.i4.1
-			IL_0082: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_008c: pop
-			IL_008d: ldnull
-			IL_008e: ret
-
-			IL_008f: ldloc.0
-			IL_0090: ldfld object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/Scope::handle
-			IL_0095: ldstr "fd"
-			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_009f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_00a4: ldstr "number"
-			IL_00a9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00ae: stloc.1
-			IL_00af: ldloc.1
-			IL_00b0: box [System.Runtime]System.Boolean
-			IL_00b5: stloc.s 4
-			IL_00b7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00bc: ldstr "FDIsNumber:"
-			IL_00c1: ldloc.s 4
-			IL_00c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00c8: pop
-			IL_00c9: ldloc.0
-			IL_00ca: ldfld object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/Scope::handle
-			IL_00cf: stloc.3
-			IL_00d0: ldloc.3
-			IL_00d1: ldstr "write"
-			IL_00d6: ldstr "ok"
-			IL_00db: ldc.r8 0.0
-			IL_00e4: box [System.Runtime]System.Double
-			IL_00e9: ldstr "utf8"
-			IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-			IL_00f3: stloc.3
-			IL_00f4: ldnull
-			IL_00f5: ldftn object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/ArrowFunction_L20C40::__js_call__(object[], object)
-			IL_00fb: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-			IL_0100: ldc.i4.2
-			IL_0101: newarr [System.Runtime]System.Object
-			IL_0106: dup
-			IL_0107: ldc.i4.0
-			IL_0108: ldarg.0
-			IL_0109: stelem.ref
-			IL_010a: dup
-			IL_010b: ldc.i4.1
-			IL_010c: ldloc.0
-			IL_010d: stelem.ref
-			IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0118: stloc.2
-			IL_0119: ldloc.3
-			IL_011a: ldstr "then"
-			IL_011f: ldloc.2
-			IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0125: stloc.2
-			IL_0126: ldnull
-			IL_0127: ldftn object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/ArrowFunction_L20C67::__js_call__(object[], object)
-			IL_012d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-			IL_0132: ldc.i4.2
-			IL_0133: newarr [System.Runtime]System.Object
-			IL_0138: dup
-			IL_0139: ldc.i4.0
-			IL_013a: ldarg.0
-			IL_013b: stelem.ref
-			IL_013c: dup
-			IL_013d: ldc.i4.1
-			IL_013e: ldloc.0
-			IL_013f: stelem.ref
-			IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_014a: stloc.3
-			IL_014b: ldnull
-			IL_014c: ldftn object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/ArrowFunction_L23C8::__js_call__(object[], object, object)
-			IL_0152: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-			IL_0157: ldc.i4.2
-			IL_0158: newarr [System.Runtime]System.Object
-			IL_015d: dup
-			IL_015e: ldc.i4.0
-			IL_015f: ldarg.0
-			IL_0160: stelem.ref
-			IL_0161: dup
-			IL_0162: ldc.i4.1
-			IL_0163: ldloc.0
-			IL_0164: stelem.ref
-			IL_0165: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_016f: stloc.s 5
-			IL_0171: ldloc.2
-			IL_0172: ldstr "then"
-			IL_0177: ldloc.3
-			IL_0178: ldloc.s 5
-			IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_017f: pop
-			IL_0180: ldnull
-			IL_0181: ret
+			IL_0077: nop
+			IL_0078: ldloc.0
+			IL_0079: ldfld object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/Scope::handle
+			IL_007e: ldstr "fd"
+			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0088: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_008d: ldstr "number"
+			IL_0092: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0097: stloc.1
+			IL_0098: ldloc.1
+			IL_0099: box [System.Runtime]System.Boolean
+			IL_009e: stloc.s 4
+			IL_00a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a5: ldstr "FDIsNumber:"
+			IL_00aa: ldloc.s 4
+			IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00b1: pop
+			IL_00b2: ldloc.0
+			IL_00b3: ldfld object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/Scope::handle
+			IL_00b8: stloc.3
+			IL_00b9: ldloc.3
+			IL_00ba: ldstr "write"
+			IL_00bf: ldstr "ok"
+			IL_00c4: ldc.r8 0.0
+			IL_00cd: box [System.Runtime]System.Double
+			IL_00d2: ldstr "utf8"
+			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_00dc: stloc.3
+			IL_00dd: ldnull
+			IL_00de: ldftn object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/ArrowFunction_L20C40::__js_call__(object[], object)
+			IL_00e4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+			IL_00e9: ldc.i4.2
+			IL_00ea: newarr [System.Runtime]System.Object
+			IL_00ef: dup
+			IL_00f0: ldc.i4.0
+			IL_00f1: ldarg.0
+			IL_00f2: stelem.ref
+			IL_00f3: dup
+			IL_00f4: ldc.i4.1
+			IL_00f5: ldloc.0
+			IL_00f6: stelem.ref
+			IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0101: stloc.2
+			IL_0102: ldloc.3
+			IL_0103: ldstr "then"
+			IL_0108: ldloc.2
+			IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_010e: stloc.2
+			IL_010f: ldnull
+			IL_0110: ldftn object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/ArrowFunction_L20C67::__js_call__(object[], object)
+			IL_0116: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+			IL_011b: ldc.i4.2
+			IL_011c: newarr [System.Runtime]System.Object
+			IL_0121: dup
+			IL_0122: ldc.i4.0
+			IL_0123: ldarg.0
+			IL_0124: stelem.ref
+			IL_0125: dup
+			IL_0126: ldc.i4.1
+			IL_0127: ldloc.0
+			IL_0128: stelem.ref
+			IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0133: stloc.3
+			IL_0134: ldnull
+			IL_0135: ldftn object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21/ArrowFunction_L23C8::__js_call__(object[], object, object)
+			IL_013b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+			IL_0140: ldc.i4.2
+			IL_0141: newarr [System.Runtime]System.Object
+			IL_0146: dup
+			IL_0147: ldc.i4.0
+			IL_0148: ldarg.0
+			IL_0149: stelem.ref
+			IL_014a: dup
+			IL_014b: ldc.i4.1
+			IL_014c: ldloc.0
+			IL_014d: stelem.ref
+			IL_014e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0158: stloc.s 5
+			IL_015a: ldloc.2
+			IL_015b: ldstr "then"
+			IL_0160: ldloc.3
+			IL_0161: ldloc.s 5
+			IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0168: pop
+			IL_0169: ldnull
+			IL_016a: ret
 		} // end of method ArrowFunction_L11C21::__js_call__
 
 	} // end of class ArrowFunction_L11C21
@@ -572,7 +511,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2577
+			// Method begins at RVA 0x24e9
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -604,7 +543,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 469 (0x1d5)
+		// Code size: 421 (0x1a5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_Open_Callback_FileHandle/Scope,
@@ -702,94 +641,62 @@
 		IL_00ef: stfld object Modules.FS_Open_Callback_FileHandle/Scope::file
 		IL_00f4: ldloc.0
 		IL_00f5: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::fs
-		IL_00fa: dup
-		IL_00fb: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0100: ceq
-		IL_0102: brfalse.s IL_0110
-
-		IL_0104: pop
-		IL_0105: ldstr "Cannot access 'fs' before initialization"
-		IL_010a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_010f: throw
-
-		IL_0110: stloc.s 4
-		IL_0112: ldloc.0
-		IL_0113: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
-		IL_0118: dup
-		IL_0119: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_011e: ceq
-		IL_0120: brfalse.s IL_012e
-
-		IL_0122: pop
-		IL_0123: ldstr "Cannot access 'file' before initialization"
-		IL_0128: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_012d: throw
-
-		IL_012e: stloc.s 9
-		IL_0130: ldloc.s 4
-		IL_0132: ldstr "rmSync"
-		IL_0137: ldloc.s 9
-		IL_0139: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_013e: dup
-		IL_013f: ldstr "force"
-		IL_0144: ldc.i4.1
-		IL_0145: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_014f: pop
-		IL_0150: ldloc.0
-		IL_0151: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::fs
-		IL_0156: dup
-		IL_0157: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_015c: ceq
-		IL_015e: brfalse.s IL_016c
-
-		IL_0160: pop
-		IL_0161: ldstr "Cannot access 'fs' before initialization"
-		IL_0166: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_016b: throw
-
-		IL_016c: stloc.s 9
-		IL_016e: ldloc.0
-		IL_016f: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
-		IL_0174: dup
-		IL_0175: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_017a: ceq
-		IL_017c: brfalse.s IL_018a
-
-		IL_017e: pop
-		IL_017f: ldstr "Cannot access 'file' before initialization"
-		IL_0184: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0189: throw
-
-		IL_018a: stloc.s 4
-		IL_018c: ldc.i4.1
-		IL_018d: newarr [System.Runtime]System.Object
-		IL_0192: dup
-		IL_0193: ldc.i4.0
-		IL_0194: ldloc.0
-		IL_0195: stelem.ref
-		IL_0196: ldc.i4.0
-		IL_0197: ldelem.ref
-		IL_0198: castclass Modules.FS_Open_Callback_FileHandle/Scope
-		IL_019d: ldftn object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21::__js_call__(class Modules.FS_Open_Callback_FileHandle/Scope, object, object, object)
-		IL_01a3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_01a8: ldc.i4.1
-		IL_01a9: newarr [System.Runtime]System.Object
-		IL_01ae: dup
-		IL_01af: ldc.i4.0
-		IL_01b0: ldloc.0
-		IL_01b1: stelem.ref
-		IL_01b2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_01bc: stloc.s 10
-		IL_01be: ldloc.s 9
-		IL_01c0: ldstr "open"
-		IL_01c5: ldloc.s 4
-		IL_01c7: ldstr "w+"
-		IL_01cc: ldloc.s 10
-		IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_01d3: pop
-		IL_01d4: ret
+		IL_00fa: ldstr "Cannot access 'fs' before initialization"
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0104: stloc.s 4
+		IL_0106: ldloc.0
+		IL_0107: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
+		IL_010c: ldstr "Cannot access 'file' before initialization"
+		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0116: stloc.s 9
+		IL_0118: ldloc.s 4
+		IL_011a: ldstr "rmSync"
+		IL_011f: ldloc.s 9
+		IL_0121: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0126: dup
+		IL_0127: ldstr "force"
+		IL_012c: ldc.i4.1
+		IL_012d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0137: pop
+		IL_0138: ldloc.0
+		IL_0139: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::fs
+		IL_013e: ldstr "Cannot access 'fs' before initialization"
+		IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0148: stloc.s 9
+		IL_014a: ldloc.0
+		IL_014b: ldfld object Modules.FS_Open_Callback_FileHandle/Scope::file
+		IL_0150: ldstr "Cannot access 'file' before initialization"
+		IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_015a: stloc.s 4
+		IL_015c: ldc.i4.1
+		IL_015d: newarr [System.Runtime]System.Object
+		IL_0162: dup
+		IL_0163: ldc.i4.0
+		IL_0164: ldloc.0
+		IL_0165: stelem.ref
+		IL_0166: ldc.i4.0
+		IL_0167: ldelem.ref
+		IL_0168: castclass Modules.FS_Open_Callback_FileHandle/Scope
+		IL_016d: ldftn object Modules.FS_Open_Callback_FileHandle/ArrowFunction_L11C21::__js_call__(class Modules.FS_Open_Callback_FileHandle/Scope, object, object, object)
+		IL_0173: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0178: ldc.i4.1
+		IL_0179: newarr [System.Runtime]System.Object
+		IL_017e: dup
+		IL_017f: ldc.i4.0
+		IL_0180: ldloc.0
+		IL_0181: stelem.ref
+		IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0187: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_018c: stloc.s 10
+		IL_018e: ldloc.s 9
+		IL_0190: ldstr "open"
+		IL_0195: ldloc.s 4
+		IL_0197: ldstr "w+"
+		IL_019c: ldloc.s 10
+		IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_01a3: pop
+		IL_01a4: ret
 	} // end of method FS_Open_Callback_FileHandle::__js_module_init__
 
 } // end of class Modules.FS_Open_Callback_FileHandle
@@ -801,7 +708,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x25c3
+		// Method begins at RVA 0x2535
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

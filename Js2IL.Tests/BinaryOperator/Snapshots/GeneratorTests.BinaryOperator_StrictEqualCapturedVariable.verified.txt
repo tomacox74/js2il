@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b6
+				// Method begins at RVA 0x21b9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21c8
+					// Method begins at RVA 0x21cb
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21bf
+				// Method begins at RVA 0x21c2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -89,7 +89,7 @@
 			)
 			// Method begins at RVA 0x20d8
 			// Header size: 12
-			// Code size: 73 (0x49)
+			// Code size: 76 (0x4c)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -100,35 +100,38 @@
 			IL_0000: ldc.r8 0.0
 			IL_0009: stloc.0
 			// loop start (head: IL_000a)
-				IL_000a: ldloc.0
-				IL_000b: ldc.r8 10
-				IL_0014: clt
-				IL_0016: brfalse IL_0047
+				IL_000a: nop
+				IL_000b: ldloc.0
+				IL_000c: ldc.r8 10
+				IL_0015: clt
+				IL_0017: brfalse IL_0049
 
-				IL_001b: ldc.i4.1
-				IL_001c: newarr [System.Runtime]System.Object
-				IL_0021: dup
-				IL_0022: ldc.i4.0
-				IL_0023: ldarg.0
-				IL_0024: stelem.ref
-				IL_0025: stloc.1
-				IL_0026: ldloc.0
-				IL_0027: box [System.Runtime]System.Double
-				IL_002c: stloc.2
-				IL_002d: ldarg.2
-				IL_002e: ldloc.1
-				IL_002f: ldloc.2
-				IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-				IL_0035: pop
-				IL_0036: ldloc.0
-				IL_0037: ldc.r8 1
-				IL_0040: add
-				IL_0041: stloc.0
-				IL_0042: br IL_000a
+				IL_001c: ldc.i4.1
+				IL_001d: newarr [System.Runtime]System.Object
+				IL_0022: dup
+				IL_0023: ldc.i4.0
+				IL_0024: ldarg.0
+				IL_0025: stelem.ref
+				IL_0026: stloc.1
+				IL_0027: ldloc.0
+				IL_0028: box [System.Runtime]System.Double
+				IL_002d: stloc.2
+				IL_002e: ldarg.2
+				IL_002f: ldloc.1
+				IL_0030: ldloc.2
+				IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+				IL_0036: pop
+				IL_0037: nop
+				IL_0038: ldloc.0
+				IL_0039: ldc.r8 1
+				IL_0042: add
+				IL_0043: stloc.0
+				IL_0044: br IL_000a
 			// end loop
 
-			IL_0047: ldnull
-			IL_0048: ret
+			IL_0049: nop
+			IL_004a: ldnull
+			IL_004b: ret
 		} // end of method process::__js_call__
 
 	} // end of class process
@@ -152,7 +155,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21da
+					// Method begins at RVA 0x21dd
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -173,7 +176,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d1
+				// Method begins at RVA 0x21d4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -199,7 +202,7 @@
 			)
 			// Method begins at RVA 0x2130
 			// Header size: 12
-			// Code size: 113 (0x71)
+			// Code size: 116 (0x74)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -233,25 +236,28 @@
 			IL_0044: stloc.2
 			IL_0045: ldloc.2
 			IL_0046: stloc.s 4
-			IL_0048: br IL_0050
+			IL_0048: br IL_0051
 
-			IL_004d: ldloc.1
-			IL_004e: stloc.s 4
+			IL_004d: nop
+			IL_004e: ldloc.1
+			IL_004f: stloc.s 4
 
-			IL_0050: ldloc.s 4
-			IL_0052: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0057: stloc.0
-			IL_0058: ldloc.0
-			IL_0059: brfalse IL_006f
+			IL_0051: nop
+			IL_0052: ldloc.s 4
+			IL_0054: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0059: stloc.0
+			IL_005a: ldloc.0
+			IL_005b: brfalse IL_0071
 
-			IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0063: ldstr "matched:"
-			IL_0068: ldarg.1
-			IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_006e: pop
+			IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0065: ldstr "matched:"
+			IL_006a: ldarg.1
+			IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0070: pop
 
-			IL_006f: ldnull
-			IL_0070: ret
+			IL_0071: nop
+			IL_0072: ldnull
+			IL_0073: ret
 		} // end of method ArrowFunction_L14C9::__js_call__
 
 	} // end of class ArrowFunction_L14C9
@@ -270,7 +276,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ad
+			// Method begins at RVA 0x21b0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -363,7 +369,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e3
+		// Method begins at RVA 0x21e6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

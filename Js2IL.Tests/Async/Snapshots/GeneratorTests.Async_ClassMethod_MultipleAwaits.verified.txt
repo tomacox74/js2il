@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2286
+				// Method begins at RVA 0x228d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2274
+				// Method begins at RVA 0x227b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -111,7 +111,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x227d
+				// Method begins at RVA 0x2284
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -154,7 +154,7 @@
 			)
 			// Method begins at RVA 0x20fc
 			// Header size: 12
-			// Code size: 355 (0x163)
+			// Code size: 362 (0x16a)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Async_ClassMethod_MultipleAwaits/Processor/Scope_process,
@@ -191,135 +191,142 @@
 			IL_0035: stelem.ref
 			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindMoveNext(object, object[], object[])
 			IL_003b: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_0040: br IL_0046
+			IL_0040: br IL_0047
 
-			IL_0045: stloc.0
+			IL_0045: nop
+			IL_0046: stloc.0
 
-			IL_0046: ldloc.0
-			IL_0047: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_004c: brtrue IL_005d
+			IL_0047: nop
+			IL_0048: ldloc.0
+			IL_0049: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_004e: brtrue IL_005f
 
-			IL_0051: ldloc.0
-			IL_0052: ldc.i4.2
-			IL_0053: newarr [System.Runtime]System.Object
-			IL_0058: stfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_0053: ldloc.0
+			IL_0054: ldc.i4.2
+			IL_0055: newarr [System.Runtime]System.Object
+			IL_005a: stfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
 
-			IL_005d: ldloc.0
-			IL_005e: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_0063: ldc.i4.0
-			IL_0064: ble.s IL_0075
+			IL_005f: nop
+			IL_0060: ldloc.0
+			IL_0061: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0066: ldc.i4.0
+			IL_0067: ble.s IL_0078
 
-			IL_0066: ldloc.0
-			IL_0067: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_006c: dup
-			IL_006d: ldc.i4.0
-			IL_006e: ldelem.ref
-			IL_006f: stloc.1
-			IL_0070: dup
-			IL_0071: ldc.i4.1
-			IL_0072: ldelem.ref
-			IL_0073: stloc.2
-			IL_0074: pop
+			IL_0069: ldloc.0
+			IL_006a: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_006f: dup
+			IL_0070: ldc.i4.0
+			IL_0071: ldelem.ref
+			IL_0072: stloc.1
+			IL_0073: dup
+			IL_0074: ldc.i4.1
+			IL_0075: ldelem.ref
+			IL_0076: stloc.2
+			IL_0077: pop
 
-			IL_0075: ldloc.0
-			IL_0076: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_007b: switch (IL_008c, IL_00d2, IL_0121)
+			IL_0078: nop
+			IL_0079: ldloc.0
+			IL_007a: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_007f: switch (IL_0090, IL_00d7, IL_0127)
 
-			IL_008c: ldarg.3
-			IL_008d: ldc.r8 0.0
-			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-			IL_00a0: stloc.3
-			IL_00a1: ldloc.0
-			IL_00a2: ldc.i4.1
-			IL_00a3: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_00a8: ldloc.0
-			IL_00a9: ldloc.3
-			IL_00aa: ldarg.1
-			IL_00ab: ldc.i4.1
-			IL_00ac: ldloc.0
-			IL_00ad: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_00b2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
-			IL_00b7: ldloc.0
-			IL_00b8: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_00bd: dup
-			IL_00be: ldc.i4.0
-			IL_00bf: ldloc.1
-			IL_00c0: stelem.ref
-			IL_00c1: dup
-			IL_00c2: ldc.i4.1
-			IL_00c3: ldloc.2
-			IL_00c4: stelem.ref
-			IL_00c5: pop
-			IL_00c6: ldloc.0
-			IL_00c7: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_00cc: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_00d1: ret
+			IL_0090: nop
+			IL_0091: ldarg.3
+			IL_0092: ldc.r8 0.0
+			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+			IL_00a5: stloc.3
+			IL_00a6: ldloc.0
+			IL_00a7: ldc.i4.1
+			IL_00a8: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_00ad: ldloc.0
+			IL_00ae: ldloc.3
+			IL_00af: ldarg.1
+			IL_00b0: ldc.i4.1
+			IL_00b1: ldloc.0
+			IL_00b2: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_00b7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+			IL_00bc: ldloc.0
+			IL_00bd: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_00c2: dup
+			IL_00c3: ldc.i4.0
+			IL_00c4: ldloc.1
+			IL_00c5: stelem.ref
+			IL_00c6: dup
+			IL_00c7: ldc.i4.1
+			IL_00c8: ldloc.2
+			IL_00c9: stelem.ref
+			IL_00ca: pop
+			IL_00cb: ldloc.0
+			IL_00cc: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_00d1: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_00d6: ret
 
-			IL_00d2: ldloc.0
-			IL_00d3: ldfld object Modules.Async_ClassMethod_MultipleAwaits/Processor/Scope_process::_awaited1
-			IL_00d8: stloc.3
-			IL_00d9: ldloc.3
-			IL_00da: stloc.1
-			IL_00db: ldarg.3
-			IL_00dc: ldc.r8 1
-			IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-			IL_00ef: stloc.3
-			IL_00f0: ldloc.0
-			IL_00f1: ldc.i4.2
-			IL_00f2: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_00f7: ldloc.0
-			IL_00f8: ldloc.3
-			IL_00f9: ldarg.1
-			IL_00fa: ldc.i4.2
-			IL_00fb: ldloc.0
-			IL_00fc: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_0101: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
-			IL_0106: ldloc.0
-			IL_0107: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_010c: dup
-			IL_010d: ldc.i4.0
-			IL_010e: ldloc.1
-			IL_010f: stelem.ref
-			IL_0110: dup
-			IL_0111: ldc.i4.1
-			IL_0112: ldloc.2
-			IL_0113: stelem.ref
-			IL_0114: pop
-			IL_0115: ldloc.0
-			IL_0116: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_011b: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_0120: ret
+			IL_00d7: nop
+			IL_00d8: ldloc.0
+			IL_00d9: ldfld object Modules.Async_ClassMethod_MultipleAwaits/Processor/Scope_process::_awaited1
+			IL_00de: stloc.3
+			IL_00df: ldloc.3
+			IL_00e0: stloc.1
+			IL_00e1: ldarg.3
+			IL_00e2: ldc.r8 1
+			IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+			IL_00f5: stloc.3
+			IL_00f6: ldloc.0
+			IL_00f7: ldc.i4.2
+			IL_00f8: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_00fd: ldloc.0
+			IL_00fe: ldloc.3
+			IL_00ff: ldarg.1
+			IL_0100: ldc.i4.2
+			IL_0101: ldloc.0
+			IL_0102: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_0107: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+			IL_010c: ldloc.0
+			IL_010d: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_0112: dup
+			IL_0113: ldc.i4.0
+			IL_0114: ldloc.1
+			IL_0115: stelem.ref
+			IL_0116: dup
+			IL_0117: ldc.i4.1
+			IL_0118: ldloc.2
+			IL_0119: stelem.ref
+			IL_011a: pop
+			IL_011b: ldloc.0
+			IL_011c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0121: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_0126: ret
 
-			IL_0121: ldloc.0
-			IL_0122: ldfld object Modules.Async_ClassMethod_MultipleAwaits/Processor/Scope_process::_awaited2
-			IL_0127: stloc.3
-			IL_0128: ldloc.3
-			IL_0129: stloc.2
-			IL_012a: ldloc.1
-			IL_012b: ldloc.2
-			IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0131: stloc.s 4
-			IL_0133: ldloc.0
-			IL_0134: ldc.i4.m1
-			IL_0135: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0127: nop
+			IL_0128: ldloc.0
+			IL_0129: ldfld object Modules.Async_ClassMethod_MultipleAwaits/Processor/Scope_process::_awaited2
+			IL_012e: stloc.3
+			IL_012f: ldloc.3
+			IL_0130: stloc.2
+			IL_0131: ldloc.1
+			IL_0132: ldloc.2
+			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0138: stloc.s 4
 			IL_013a: ldloc.0
-			IL_013b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0140: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-			IL_0145: ldarg.1
-			IL_0146: ldc.i4.1
-			IL_0147: newarr [System.Runtime]System.Object
-			IL_014c: dup
-			IL_014d: ldc.i4.0
-			IL_014e: ldloc.s 4
-			IL_0150: stelem.ref
-			IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_0156: pop
-			IL_0157: ldloc.0
-			IL_0158: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_015d: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_0162: ret
+			IL_013b: ldc.i4.m1
+			IL_013c: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0141: ldloc.0
+			IL_0142: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0147: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+			IL_014c: ldarg.1
+			IL_014d: ldc.i4.1
+			IL_014e: newarr [System.Runtime]System.Object
+			IL_0153: dup
+			IL_0154: ldc.i4.0
+			IL_0155: ldloc.s 4
+			IL_0157: stelem.ref
+			IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_015d: pop
+			IL_015e: ldloc.0
+			IL_015f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0164: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_0169: ret
 		} // end of method Processor::process
 
 	} // end of class Processor
@@ -331,7 +338,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x226b
+			// Method begins at RVA 0x2272
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -423,7 +430,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x228f
+		// Method begins at RVA 0x2296
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

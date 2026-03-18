@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23ac
+					// Method begins at RVA 0x2392
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23b5
+					// Method begins at RVA 0x239b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23a3
+				// Method begins at RVA 0x2389
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -86,7 +86,7 @@
 			)
 			// Method begins at RVA 0x217c
 			// Header size: 12
-			// Code size: 129 (0x81)
+			// Code size: 139 (0x8b)
 			.maxstack 8
 			.locals init (
 				[0] class [System.Runtime]System.Exception,
@@ -96,66 +96,76 @@
 				[4] object
 			)
 
+			IL_0000: nop
 			.try
 			{
-				IL_0000: ldarg.1
-				IL_0001: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
-				IL_000b: pop
-				IL_000c: leave IL_007f
+				IL_0001: nop
+				IL_0002: ldarg.1
+				IL_0003: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+				IL_0008: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+				IL_000d: pop
+				IL_000e: leave IL_0088
 			} // end .try
+			IL_0013: nop
 			catch [System.Runtime]System.Exception
 			{
-				IL_0011: stloc.0
-				IL_0012: ldloc.0
-				IL_0013: dup
-				IL_0014: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_0019: dup
-				IL_001a: brtrue IL_0030
+				IL_0014: nop
+				IL_0015: stloc.0
+				IL_0016: ldloc.0
+				IL_0017: dup
+				IL_0018: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_001d: dup
+				IL_001e: brtrue IL_0034
 
-				IL_001f: pop
-				IL_0020: dup
-				IL_0021: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_0026: dup
-				IL_0027: brtrue IL_003c
-
-				IL_002c: pop
-				IL_002d: pop
-				IL_002e: rethrow
+				IL_0023: pop
+				IL_0024: dup
+				IL_0025: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_002a: dup
+				IL_002b: brtrue IL_0041
 
 				IL_0030: pop
-				IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0036: stloc.1
-				IL_0037: br IL_003e
+				IL_0031: pop
+				IL_0032: rethrow
 
-				IL_003c: pop
-				IL_003d: stloc.1
+				IL_0034: nop
+				IL_0035: pop
+				IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_003b: stloc.1
+				IL_003c: br IL_0044
 
-				IL_003e: ldloc.1
-				IL_003f: stloc.3
-				IL_0040: ldloc.3
-				IL_0041: stloc.2
-				IL_0042: ldloc.2
-				IL_0043: ldstr "name"
-				IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_004d: ldstr ": "
-				IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0057: stloc.s 4
-				IL_0059: ldloc.s 4
-				IL_005b: ldloc.2
-				IL_005c: ldstr "message"
-				IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_006b: stloc.s 4
-				IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0072: ldloc.s 4
-				IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0079: pop
-				IL_007a: leave IL_007f
+				IL_0041: nop
+				IL_0042: pop
+				IL_0043: stloc.1
+
+				IL_0044: nop
+				IL_0045: ldloc.1
+				IL_0046: stloc.3
+				IL_0047: ldloc.3
+				IL_0048: stloc.2
+				IL_0049: ldloc.2
+				IL_004a: ldstr "name"
+				IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0054: ldstr ": "
+				IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_005e: stloc.s 4
+				IL_0060: ldloc.s 4
+				IL_0062: ldloc.2
+				IL_0063: ldstr "message"
+				IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0072: stloc.s 4
+				IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0079: ldloc.s 4
+				IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0080: pop
+				IL_0081: leave IL_0088
 			} // end handler
+			IL_0086: nop
+			IL_0087: nop
 
-			IL_007f: ldnull
-			IL_0080: ret
+			IL_0088: nop
+			IL_0089: ldnull
+			IL_008a: ret
 		} // end of method logError::__js_call__
 
 	} // end of class logError
@@ -171,7 +181,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23be
+				// Method begins at RVA 0x23a4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -197,9 +207,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x221c
+			// Method begins at RVA 0x2224
 			// Header size: 12
-			// Code size: 76 (0x4c)
+			// Code size: 66 (0x42)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -208,35 +218,29 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::x
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
+			IL_0006: ldstr "Cannot access 'x' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.1
+			IL_0011: ldloc.1
+			IL_0012: brfalse IL_0022
 
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'x' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
+			IL_0017: ldloc.1
+			IL_0018: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_001d: brfalse IL_0033
 
-			IL_001c: stloc.1
-			IL_001d: ldloc.1
-			IL_001e: brfalse IL_002e
-
+			IL_0022: nop
 			IL_0023: ldloc.1
-			IL_0024: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0029: brfalse IL_003e
+			IL_0024: ldstr "x"
+			IL_0029: ldstr "a"
+			IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_002e: ldloc.1
-			IL_002f: ldstr "x"
-			IL_0034: ldstr "a"
-			IL_0039: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-
-			IL_003e: ldloc.1
-			IL_003f: ldstr "a"
-			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0049: stloc.0
-			IL_004a: ldnull
-			IL_004b: ret
+			IL_0033: nop
+			IL_0034: ldloc.1
+			IL_0035: ldstr "a"
+			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_003f: stloc.0
+			IL_0040: ldnull
+			IL_0041: ret
 		} // end of method ArrowFunction_L12C10::__js_call__
 
 	} // end of class ArrowFunction_L12C10
@@ -252,7 +256,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23c7
+				// Method begins at RVA 0x23ad
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -280,7 +284,7 @@
 			)
 			// Method begins at RVA 0x2274
 			// Header size: 12
-			// Code size: 76 (0x4c)
+			// Code size: 66 (0x42)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -289,35 +293,29 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::x
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
+			IL_0006: ldstr "Cannot access 'x' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.1
+			IL_0011: ldloc.1
+			IL_0012: brfalse IL_0022
 
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'x' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
+			IL_0017: ldloc.1
+			IL_0018: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_001d: brfalse IL_0033
 
-			IL_001c: stloc.1
-			IL_001d: ldloc.1
-			IL_001e: brfalse IL_002e
-
+			IL_0022: nop
 			IL_0023: ldloc.1
-			IL_0024: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0029: brfalse IL_003e
+			IL_0024: ldstr "x"
+			IL_0029: ldstr "a"
+			IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_002e: ldloc.1
-			IL_002f: ldstr "x"
-			IL_0034: ldstr "a"
-			IL_0039: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-
-			IL_003e: ldloc.1
-			IL_003f: ldstr "a"
-			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0049: stloc.0
-			IL_004a: ldnull
-			IL_004b: ret
+			IL_0033: nop
+			IL_0034: ldloc.1
+			IL_0035: ldstr "a"
+			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_003f: stloc.0
+			IL_0040: ldnull
+			IL_0041: ret
 		} // end of method ArrowFunction_L18C10::__js_call__
 
 	} // end of class ArrowFunction_L18C10
@@ -333,7 +331,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23d0
+				// Method begins at RVA 0x23b6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -359,9 +357,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x22cc
+			// Method begins at RVA 0x22c4
 			// Header size: 12
-			// Code size: 80 (0x50)
+			// Code size: 70 (0x46)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -370,35 +368,29 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::y
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
+			IL_0006: ldstr "Cannot access 'y' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.1
+			IL_0011: ldloc.1
+			IL_0012: brfalse IL_0022
 
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'y' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
+			IL_0017: ldloc.1
+			IL_0018: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_001d: brfalse IL_0033
 
-			IL_001c: stloc.1
-			IL_001d: ldloc.1
-			IL_001e: brfalse IL_002e
-
+			IL_0022: nop
 			IL_0023: ldloc.1
-			IL_0024: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0029: brfalse IL_003e
+			IL_0024: ldstr "y"
+			IL_0029: ldstr "0"
+			IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_002e: ldloc.1
-			IL_002f: ldstr "y"
-			IL_0034: ldstr "0"
-			IL_0039: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-
-			IL_003e: ldloc.1
-			IL_003f: ldc.r8 0.0
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_004d: stloc.0
-			IL_004e: ldnull
-			IL_004f: ret
+			IL_0033: nop
+			IL_0034: ldloc.1
+			IL_0035: ldc.r8 0.0
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0043: stloc.0
+			IL_0044: ldnull
+			IL_0045: ret
 		} // end of method ArrowFunction_L24C10::__js_call__
 
 	} // end of class ArrowFunction_L24C10
@@ -414,7 +406,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23d9
+				// Method begins at RVA 0x23bf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -440,9 +432,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2328
+			// Method begins at RVA 0x2318
 			// Header size: 12
-			// Code size: 80 (0x50)
+			// Code size: 70 (0x46)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -451,35 +443,29 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::y
-			IL_0006: dup
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: ceq
-			IL_000e: brfalse.s IL_001c
+			IL_0006: ldstr "Cannot access 'y' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.1
+			IL_0011: ldloc.1
+			IL_0012: brfalse IL_0022
 
-			IL_0010: pop
-			IL_0011: ldstr "Cannot access 'y' before initialization"
-			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001b: throw
+			IL_0017: ldloc.1
+			IL_0018: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_001d: brfalse IL_0033
 
-			IL_001c: stloc.1
-			IL_001d: ldloc.1
-			IL_001e: brfalse IL_002e
-
+			IL_0022: nop
 			IL_0023: ldloc.1
-			IL_0024: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0029: brfalse IL_003e
+			IL_0024: ldstr "y"
+			IL_0029: ldstr "0"
+			IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_002e: ldloc.1
-			IL_002f: ldstr "y"
-			IL_0034: ldstr "0"
-			IL_0039: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-
-			IL_003e: ldloc.1
-			IL_003f: ldc.r8 0.0
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_004d: stloc.0
-			IL_004e: ldnull
-			IL_004f: ret
+			IL_0033: nop
+			IL_0034: ldloc.1
+			IL_0035: ldc.r8 0.0
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0043: stloc.0
+			IL_0044: ldnull
+			IL_0045: ret
 		} // end of method ArrowFunction_L30C10::__js_call__
 
 	} // end of class ArrowFunction_L30C10
@@ -501,7 +487,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2384
+			// Method begins at RVA 0x236a
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -671,7 +657,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23e2
+		// Method begins at RVA 0x23c8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

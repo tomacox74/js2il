@@ -148,7 +148,7 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.Branch(ILOpCode.Br, doneLabel);
 
         // Fallback: pop null typed receiver and do runtime dispatch
-        ilEncoder.MarkLabel(fallbackLabel);
+        MarkLabelAndEmitNop(ilEncoder, fallbackLabel);
         ilEncoder.OpCode(ILOpCode.Pop);
 
         EmitLoadTempAsObject(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
@@ -204,7 +204,7 @@ internal sealed partial class LIRToILCompiler
             ilEncoder.OpCode(ILOpCode.Pop);
         }
 
-        ilEncoder.MarkLabel(doneLabel);
+        MarkLabelAndEmitNop(ilEncoder, doneLabel);
     }
 
     #endregion
