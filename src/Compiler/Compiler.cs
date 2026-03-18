@@ -49,6 +49,16 @@ public class Compiler
             return false;
         }
 
+        if (!this._moduleLoader.LinkModules(modules, _ux))
+        {
+            return false;
+        }
+
+        if (!this._moduleLoader.PlanModuleEvaluation(modules, _ux))
+        {
+            return false;
+        }
+
         // Analyze unused code (if requested)
         if (this.analyzeUnused)
         {
