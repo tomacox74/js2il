@@ -48,6 +48,29 @@ export const present = 1;
     }
 
     [Fact]
+    public void Import_MissingNamedExport_FromJsModuleWithStaticSyntax_ShouldFailLinkPhase()
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() => Compile(
+            """
+            "use strict";
+            import { missing } from "./lib.js";
+            console.log(missing);
+            """,
+            libSource: """
+            "use strict";
+            import "./dep.mjs";
+            console.log("side effect only");
+            """,
+            additionalFiles: new Dictionary<string, string>
+            {
+                ["dep.mjs"] = "\"use strict\";\nexport const present = 1;\n"
+            },
+            libRelativePath: "lib.js"));
+
+        Assert.Contains("does not export 'missing'", ex.Message);
+    }
+
+    [Fact]
     public void Import_AmbiguousStarReExport_ShouldFailLinkPhase()
     {
         var ex = Assert.Throws<InvalidOperationException>(() => Compile(
@@ -70,13 +93,17 @@ export * from "./b.mjs";
         Assert.Contains("exports 'shared' ambiguously", ex.Message);
     }
 
-    private static void Compile(string entrySource, string libSource, Dictionary<string, string>? additionalFiles = null)
+    private static void Compile(
+        string entrySource,
+        string libSource,
+        Dictionary<string, string>? additionalFiles = null,
+        string libRelativePath = "lib.mjs")
     {
         var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "ImportRewriteErrors", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
 
         var entryPath = Path.Combine(root, "main.mjs");
-        var libPath = Path.Combine(root, "lib.mjs");
+        var libPath = Path.Combine(root, libRelativePath);
 
         var mockFileSystem = new MockFileSystem();
         mockFileSystem.AddFile(entryPath, entrySource, null);

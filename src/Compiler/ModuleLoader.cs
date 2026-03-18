@@ -199,9 +199,8 @@ public class ModuleLoader
             {
                 var record = module.ModuleRecord!;
                 record.EvaluationComponent = components[module.Path];
-                record.EvaluationPhase = ModuleEvaluationPhase.Evaluating;
                 record.EvaluationOrder = order;
-                record.EvaluationPhase = ModuleEvaluationPhase.Evaluated;
+                record.EvaluationPhase = ModuleEvaluationPhase.Planned;
             }
         }
 
@@ -2003,13 +2002,21 @@ function __js2il_esm_export(name, getter) {
     private static ModuleRecord BuildModuleRecord(Acornima.Ast.Program ast, IReadOnlyList<ModuleDependency> moduleDependencies)
     {
         var record = new ModuleRecord();
-        foreach (var dependency in moduleDependencies)
+
+        void AddRequestedModule(string moduleRequest)
         {
+            var dependency = moduleDependencies.FirstOrDefault(existing =>
+                string.Equals(existing.Request, moduleRequest, StringComparison.Ordinal));
+            if (dependency == null)
+            {
+                return;
+            }
+
             if (record.RequestedModules.Any(existing =>
                     string.Equals(existing.Specifier, dependency.Request, StringComparison.Ordinal)
                     && string.Equals(existing.ResolvedPath, dependency.ResolvedPath, StringComparison.OrdinalIgnoreCase)))
             {
-                continue;
+                return;
             }
 
             record.RequestedModules.Add(new ModuleRequestRecord
@@ -2024,6 +2031,8 @@ function __js2il_esm_export(name, getter) {
             switch (statement)
             {
                 case ImportDeclaration { Source: StringLiteral sourceLiteral } importDeclaration:
+                    record.HasStaticModuleSyntax = true;
+                    AddRequestedModule(sourceLiteral.Value);
                     if (importDeclaration.Specifiers.Count == 0)
                     {
                         record.ImportEntries.Add(new ModuleImportEntry
@@ -2072,10 +2081,13 @@ function __js2il_esm_export(name, getter) {
                     break;
 
                 case ExportNamedDeclaration { Declaration: not null } exportNamedDeclaration:
+                    record.HasStaticModuleSyntax = true;
                     AddLocalDeclarationExports(record, exportNamedDeclaration.Declaration);
                     break;
 
                 case ExportNamedDeclaration { Source: StringLiteral sourceLiteral } exportNamedFrom:
+                    record.HasStaticModuleSyntax = true;
+                    AddRequestedModule(sourceLiteral.Value);
                     foreach (var specifier in exportNamedFrom.Specifiers)
                     {
                         record.IndirectExportEntries.Add(new ModuleExportEntry
@@ -2090,6 +2102,7 @@ function __js2il_esm_export(name, getter) {
                     break;
 
                 case ExportNamedDeclaration exportNamedDeclaration:
+                    record.HasStaticModuleSyntax = true;
                     foreach (var specifier in exportNamedDeclaration.Specifiers)
                     {
                         record.LocalExportEntries.Add(new ModuleExportEntry
@@ -2103,6 +2116,7 @@ function __js2il_esm_export(name, getter) {
                     break;
 
                 case ExportDefaultDeclaration exportDefaultDeclaration:
+                    record.HasStaticModuleSyntax = true;
                     var defaultBindingName = exportDefaultDeclaration.Declaration switch
                     {
                         FunctionDeclaration { Id: not null } functionDeclaration => functionDeclaration.Id!.Name,
@@ -2119,6 +2133,8 @@ function __js2il_esm_export(name, getter) {
                     break;
 
                 case ExportAllDeclaration { Source: StringLiteral sourceLiteral } exportAllDeclaration when exportAllDeclaration.Exported != null:
+                    record.HasStaticModuleSyntax = true;
+                    AddRequestedModule(sourceLiteral.Value);
                     record.IndirectExportEntries.Add(new ModuleExportEntry
                     {
                         Kind = ModuleExportKind.Namespace,
@@ -2129,6 +2145,8 @@ function __js2il_esm_export(name, getter) {
                     break;
 
                 case ExportAllDeclaration { Source: StringLiteral sourceLiteral }:
+                    record.HasStaticModuleSyntax = true;
+                    AddRequestedModule(sourceLiteral.Value);
                     record.StarExportEntries.Add(new ModuleExportEntry
                     {
                         Kind = ModuleExportKind.Star,
@@ -2473,9 +2491,12 @@ function __js2il_esm_export(name, getter) {
             return false;
         }
 
-        var resolvedPath = module.Dependencies
-            .FirstOrDefault(dependency => string.Equals(dependency.Request, moduleRequest, StringComparison.Ordinal))
-            ?.ResolvedPath;
+        var resolvedPath = module.ModuleRecord?.RequestedModules
+            .FirstOrDefault(request => string.Equals(request.Specifier, moduleRequest, StringComparison.Ordinal))
+            ?.ResolvedPath
+            ?? module.Dependencies
+                .FirstOrDefault(dependency => string.Equals(dependency.Request, moduleRequest, StringComparison.Ordinal))
+                ?.ResolvedPath;
 
         if (resolvedPath != null && modules._modules.TryGetValue(resolvedPath, out var resolvedDependencyModule))
         {
@@ -2495,6 +2516,11 @@ function __js2il_esm_export(name, getter) {
 
         var record = module.ModuleRecord;
         if (record == null || string.Equals(Path.GetExtension(module.Path), ".mjs", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (record.HasStaticModuleSyntax)
         {
             return false;
         }
@@ -2522,21 +2548,16 @@ function __js2il_esm_export(name, getter) {
             stack.Push(module);
             onStack.Add(module.Path);
 
-            foreach (var dependency in module.Dependencies)
+            foreach (var dependency in GetStaticModuleGraphDependencies(module, modules))
             {
-                if (!modules._modules.TryGetValue(dependency.ResolvedPath, out var dependencyModule))
+                if (!indices.ContainsKey(dependency.Path))
                 {
-                    continue;
+                    StrongConnect(dependency);
+                    lowLinks[module.Path] = Math.Min(lowLinks[module.Path], lowLinks[dependency.Path]);
                 }
-
-                if (!indices.ContainsKey(dependencyModule.Path))
+                else if (onStack.Contains(dependency.Path))
                 {
-                    StrongConnect(dependencyModule);
-                    lowLinks[module.Path] = Math.Min(lowLinks[module.Path], lowLinks[dependencyModule.Path]);
-                }
-                else if (onStack.Contains(dependencyModule.Path))
-                {
-                    lowLinks[module.Path] = Math.Min(lowLinks[module.Path], indices[dependencyModule.Path]);
+                    lowLinks[module.Path] = Math.Min(lowLinks[module.Path], indices[dependency.Path]);
                 }
             }
 
@@ -2589,9 +2610,9 @@ function __js2il_esm_export(name, getter) {
 
             foreach (var module in grouped[componentId])
             {
-                foreach (var dependency in module.Dependencies)
+                foreach (var dependency in GetStaticModuleGraphDependencies(module, modules))
                 {
-                    if (!components.TryGetValue(dependency.ResolvedPath, out var dependencyComponent)
+                    if (!components.TryGetValue(dependency.Path, out var dependencyComponent)
                         || dependencyComponent == componentId)
                     {
                         continue;
@@ -2610,6 +2631,28 @@ function __js2il_esm_export(name, getter) {
         }
 
         return ordered;
+    }
+
+    private static IEnumerable<ModuleDefinition> GetStaticModuleGraphDependencies(ModuleDefinition module, Modules modules)
+    {
+        var record = module.ModuleRecord;
+        if (record == null)
+        {
+            yield break;
+        }
+
+        var yielded = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var request in record.RequestedModules)
+        {
+            if (string.IsNullOrWhiteSpace(request.ResolvedPath)
+                || !yielded.Add(request.ResolvedPath)
+                || !modules._modules.TryGetValue(request.ResolvedPath, out var dependencyModule))
+            {
+                continue;
+            }
+
+            yield return dependencyModule;
+        }
     }
 
     private static void FlushModuleLinkErrors(Modules modules, ICompilerOutput logger)

@@ -82,6 +82,7 @@ public enum ModuleLinkPhase
 public enum ModuleEvaluationPhase
 {
     Unevaluated,
+    Planned,
     Evaluating,
     Evaluated,
     EvaluationError
@@ -155,6 +156,8 @@ public sealed class ModuleRecord
     public List<ModuleExportEntry> IndirectExportEntries { get; } = new();
 
     public List<ModuleExportEntry> StarExportEntries { get; } = new();
+
+    public bool HasStaticModuleSyntax { get; set; }
 
     public Dictionary<string, ModuleResolvedExport> ResolvedExports { get; } = new(StringComparer.Ordinal);
 
