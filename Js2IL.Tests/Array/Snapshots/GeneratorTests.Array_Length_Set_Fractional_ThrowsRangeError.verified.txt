@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2155
+				// Method begins at RVA 0x2151
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x215e
+				// Method begins at RVA 0x215a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x214c
+			// Method begins at RVA 0x2148
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 223 (0xdf)
+		// Code size: 219 (0xdb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope,
@@ -113,72 +113,68 @@
 		IL_0049: nop
 		.try
 		{
-			IL_004a: nop
-			IL_004b: ldloc.1
-			IL_004c: ldc.r8 3.5
-			IL_0055: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_length(float64)
-			IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005f: ldstr "no-throw"
-			IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0069: pop
-			IL_006a: leave IL_00c6
+			IL_004a: ldloc.1
+			IL_004b: ldc.r8 3.5
+			IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_length(float64)
+			IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_005e: ldstr "no-throw"
+			IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0068: pop
+			IL_0069: leave IL_00c2
 		} // end .try
-		IL_006f: nop
 		catch [System.Runtime]System.Exception
 		{
-			IL_0070: nop
-			IL_0071: stloc.2
-			IL_0072: ldloc.2
-			IL_0073: dup
-			IL_0074: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0079: dup
-			IL_007a: brtrue IL_0090
+			IL_006e: stloc.2
+			IL_006f: ldloc.2
+			IL_0070: dup
+			IL_0071: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0076: dup
+			IL_0077: brtrue IL_008d
 
-			IL_007f: pop
-			IL_0080: dup
-			IL_0081: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0086: dup
-			IL_0087: brtrue IL_009d
+			IL_007c: pop
+			IL_007d: dup
+			IL_007e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0083: dup
+			IL_0084: brtrue IL_009a
 
-			IL_008c: pop
-			IL_008d: pop
-			IL_008e: rethrow
+			IL_0089: pop
+			IL_008a: pop
+			IL_008b: rethrow
 
-			IL_0090: nop
-			IL_0091: pop
-			IL_0092: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0097: stloc.3
-			IL_0098: br IL_00a0
+			IL_008d: nop
+			IL_008e: pop
+			IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0094: stloc.3
+			IL_0095: br IL_009d
+
+			IL_009a: nop
+			IL_009b: pop
+			IL_009c: stloc.3
 
 			IL_009d: nop
-			IL_009e: pop
-			IL_009f: stloc.3
-
-			IL_00a0: nop
-			IL_00a1: ldloc.3
-			IL_00a2: stloc.s 5
-			IL_00a4: ldloc.s 5
-			IL_00a6: stloc.s 4
-			IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00ad: ldloc.s 4
-			IL_00af: ldstr "name"
-			IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00be: pop
-			IL_00bf: leave IL_00c6
+			IL_009e: ldloc.3
+			IL_009f: stloc.s 5
+			IL_00a1: ldloc.s 5
+			IL_00a3: stloc.s 4
+			IL_00a5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00aa: ldloc.s 4
+			IL_00ac: ldstr "name"
+			IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00bb: pop
+			IL_00bc: leave IL_00c2
 		} // end handler
-		IL_00c4: nop
-		IL_00c5: nop
+		IL_00c1: nop
 
-		IL_00c6: nop
-		IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cc: ldloc.1
-		IL_00cd: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-		IL_00d2: conv.r8
-		IL_00d3: box [System.Runtime]System.Double
-		IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00dd: pop
-		IL_00de: ret
+		IL_00c2: nop
+		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c8: ldloc.1
+		IL_00c9: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+		IL_00ce: conv.r8
+		IL_00cf: box [System.Runtime]System.Double
+		IL_00d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d9: pop
+		IL_00da: ret
 	} // end of method Array_Length_Set_Fractional_ThrowsRangeError::__js_module_init__
 
 } // end of class Modules.Array_Length_Set_Fractional_ThrowsRangeError
@@ -190,7 +186,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2167
+		// Method begins at RVA 0x2163
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
