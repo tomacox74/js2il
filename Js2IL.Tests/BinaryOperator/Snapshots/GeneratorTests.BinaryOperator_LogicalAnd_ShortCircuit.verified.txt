@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212c
+				// Method begins at RVA 0x2167
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,25 +44,38 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x210c
 			// Header size: 12
-			// Code size: 35 (0x23)
+			// Code size: 59 (0x3b)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope::x
-			IL_0006: ldc.r8 1
-			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0014: stloc.0
-			IL_0015: ldarg.0
-			IL_0016: ldloc.0
-			IL_0017: stfld object Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope::x
-			IL_001c: ldc.i4.1
-			IL_001d: box [System.Runtime]System.Boolean
-			IL_0022: ret
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'x' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldc.r8 1
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_002c: stloc.1
+			IL_002d: ldarg.0
+			IL_002e: ldloc.1
+			IL_002f: stfld object Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope::x
+			IL_0034: ldc.i4.1
+			IL_0035: box [System.Runtime]System.Boolean
+			IL_003a: ret
 		} // end of method inc::__js_call__
 
 	} // end of class inc
@@ -82,15 +95,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2123
+			// Method begins at RVA 0x2153
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope::x
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -108,7 +124,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 149 (0x95)
+		// Code size: 173 (0xad)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope,
@@ -171,12 +187,24 @@
 
 		IL_0080: ldloc.s 6
 		IL_0082: stloc.2
-		IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0088: ldloc.0
-		IL_0089: ldfld object Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope::x
-		IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0083: ldloc.0
+		IL_0084: ldfld object Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope::x
+		IL_0089: dup
+		IL_008a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_008f: ceq
+		IL_0091: brfalse.s IL_009f
+
 		IL_0093: pop
-		IL_0094: ret
+		IL_0094: ldstr "Cannot access 'x' before initialization"
+		IL_0099: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_009e: throw
+
+		IL_009f: stloc.3
+		IL_00a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a5: ldloc.3
+		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ab: pop
+		IL_00ac: ret
 	} // end of method BinaryOperator_LogicalAnd_ShortCircuit::__js_module_init__
 
 } // end of class Modules.BinaryOperator_LogicalAnd_ShortCircuit
@@ -188,7 +216,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2135
+		// Method begins at RVA 0x2170
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x227e
+				// Method begins at RVA 0x235d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2200
+			// Method begins at RVA 0x22bc
 			// Header size: 12
 			// Code size: 51 (0x33)
 			.maxstack 8
@@ -84,7 +84,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2287
+				// Method begins at RVA 0x2366
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -110,27 +110,40 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2240
+			// Method begins at RVA 0x22fc
 			// Header size: 12
-			// Code size: 41 (0x29)
+			// Code size: 65 (0x41)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
-			IL_0000: ldstr "encoding:"
-			IL_0005: ldarg.0
-			IL_0006: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-			IL_000b: ldstr "readableEncoding"
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_001a: stloc.0
-			IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0020: ldloc.0
-			IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0026: pop
-			IL_0027: ldnull
-			IL_0028: ret
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'readable' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldstr "encoding:"
+			IL_0022: ldloc.0
+			IL_0023: ldstr "readableEncoding"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0032: stloc.1
+			IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0038: ldloc.1
+			IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_003e: pop
+			IL_003f: ldnull
+			IL_0040: ret
 		} // end of method FunctionExpression_L19C19::__js_call__
 
 	} // end of class FunctionExpression_L19C19
@@ -149,15 +162,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2275
+			// Method begins at RVA 0x2349
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -175,7 +191,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 419 (0x1a3)
+		// Code size: 607 (0x25f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Readable_SetEncoding_Utf8/Scope,
@@ -183,7 +199,8 @@
 			[2] object,
 			[3] object,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-			[5] object
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Stream_Readable_SetEncoding_Utf8/Scope::.ctor()
@@ -206,119 +223,207 @@
 		IL_002d: stfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
 		IL_0032: ldloc.0
 		IL_0033: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_0038: stloc.3
-		IL_0039: ldc.i4.2
-		IL_003a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_003f: dup
-		IL_0040: ldc.r8 226
-		IL_0049: box [System.Runtime]System.Double
-		IL_004e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0053: dup
-		IL_0054: ldc.r8 130
-		IL_005d: box [System.Runtime]System.Double
-		IL_0062: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_006c: stloc.s 4
-		IL_006e: ldloc.3
-		IL_006f: ldstr "push"
-		IL_0074: ldloc.s 4
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_007b: pop
-		IL_007c: ldloc.0
-		IL_007d: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_0082: stloc.3
-		IL_0083: ldc.i4.1
-		IL_0084: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0089: dup
-		IL_008a: ldc.r8 172
-		IL_0093: box [System.Runtime]System.Double
-		IL_0098: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_00a2: stloc.s 4
-		IL_00a4: ldloc.3
-		IL_00a5: ldstr "push"
-		IL_00aa: ldloc.s 4
-		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00b1: pop
-		IL_00b2: ldloc.0
-		IL_00b3: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_00b8: ldstr "setEncoding"
-		IL_00bd: ldstr "utf8"
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00c7: pop
-		IL_00c8: ldloc.0
-		IL_00c9: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_00ce: ldstr "read"
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00d8: stloc.3
-		IL_00d9: ldloc.3
-		IL_00da: stloc.2
-		IL_00db: ldstr "buffered:"
-		IL_00e0: ldloc.2
-		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00e6: stloc.s 5
-		IL_00e8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ed: ldloc.s 5
-		IL_00ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f4: pop
-		IL_00f5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00fa: ldstr "buffered-type:"
-		IL_00ff: ldloc.2
-		IL_0100: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0105: call string [System.Runtime]System.String::Concat(string, string)
-		IL_010a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_010f: pop
-		IL_0110: ldnull
-		IL_0111: ldftn object Modules.Stream_Readable_SetEncoding_Utf8/FunctionExpression_L15C20::__js_call__(object, object)
-		IL_0117: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_011c: stloc.3
-		IL_011d: ldloc.0
-		IL_011e: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_0123: ldstr "on"
-		IL_0128: ldstr "data"
-		IL_012d: ldloc.3
-		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0133: pop
-		IL_0134: ldc.i4.1
-		IL_0135: newarr [System.Runtime]System.Object
-		IL_013a: dup
-		IL_013b: ldc.i4.0
-		IL_013c: ldloc.0
-		IL_013d: stelem.ref
-		IL_013e: ldc.i4.0
-		IL_013f: ldelem.ref
-		IL_0140: castclass Modules.Stream_Readable_SetEncoding_Utf8/Scope
-		IL_0145: ldftn object Modules.Stream_Readable_SetEncoding_Utf8/FunctionExpression_L19C19::__js_call__(class Modules.Stream_Readable_SetEncoding_Utf8/Scope, object)
-		IL_014b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0150: stloc.3
-		IL_0151: ldloc.0
-		IL_0152: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_0157: ldstr "on"
-		IL_015c: ldstr "end"
-		IL_0161: ldloc.3
-		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0167: pop
-		IL_0168: ldloc.0
-		IL_0169: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_016e: stloc.3
-		IL_016f: ldstr " ok"
-		IL_0174: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_0179: stloc.s 4
-		IL_017b: ldloc.3
-		IL_017c: ldstr "push"
-		IL_0181: ldloc.s 4
-		IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0188: pop
-		IL_0189: ldloc.0
-		IL_018a: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_018f: stloc.3
-		IL_0190: ldloc.3
-		IL_0191: ldstr "push"
-		IL_0196: ldc.i4.0
-		IL_0197: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_019c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_01a1: pop
-		IL_01a2: ret
+		IL_0038: dup
+		IL_0039: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_003e: ceq
+		IL_0040: brfalse.s IL_004e
+
+		IL_0042: pop
+		IL_0043: ldstr "Cannot access 'readable' before initialization"
+		IL_0048: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_004d: throw
+
+		IL_004e: stloc.3
+		IL_004f: ldc.i4.2
+		IL_0050: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0055: dup
+		IL_0056: ldc.r8 226
+		IL_005f: box [System.Runtime]System.Double
+		IL_0064: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0069: dup
+		IL_006a: ldc.r8 130
+		IL_0073: box [System.Runtime]System.Double
+		IL_0078: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_0082: stloc.s 4
+		IL_0084: ldloc.3
+		IL_0085: ldstr "push"
+		IL_008a: ldloc.s 4
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0091: pop
+		IL_0092: ldloc.0
+		IL_0093: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+		IL_0098: dup
+		IL_0099: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_009e: ceq
+		IL_00a0: brfalse.s IL_00ae
+
+		IL_00a2: pop
+		IL_00a3: ldstr "Cannot access 'readable' before initialization"
+		IL_00a8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_00ad: throw
+
+		IL_00ae: stloc.3
+		IL_00af: ldc.i4.1
+		IL_00b0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00b5: dup
+		IL_00b6: ldc.r8 172
+		IL_00bf: box [System.Runtime]System.Double
+		IL_00c4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00c9: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_00ce: stloc.s 4
+		IL_00d0: ldloc.3
+		IL_00d1: ldstr "push"
+		IL_00d6: ldloc.s 4
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00dd: pop
+		IL_00de: ldloc.0
+		IL_00df: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+		IL_00e4: dup
+		IL_00e5: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_00ea: ceq
+		IL_00ec: brfalse.s IL_00fa
+
+		IL_00ee: pop
+		IL_00ef: ldstr "Cannot access 'readable' before initialization"
+		IL_00f4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_00f9: throw
+
+		IL_00fa: stloc.3
+		IL_00fb: ldloc.3
+		IL_00fc: ldstr "setEncoding"
+		IL_0101: ldstr "utf8"
+		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_010b: pop
+		IL_010c: ldloc.0
+		IL_010d: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+		IL_0112: dup
+		IL_0113: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0118: ceq
+		IL_011a: brfalse.s IL_0128
+
+		IL_011c: pop
+		IL_011d: ldstr "Cannot access 'readable' before initialization"
+		IL_0122: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0127: throw
+
+		IL_0128: stloc.3
+		IL_0129: ldloc.3
+		IL_012a: ldstr "read"
+		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0134: stloc.3
+		IL_0135: ldloc.3
+		IL_0136: stloc.2
+		IL_0137: ldstr "buffered:"
+		IL_013c: ldloc.2
+		IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0142: stloc.s 5
+		IL_0144: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0149: ldloc.s 5
+		IL_014b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0150: pop
+		IL_0151: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0156: ldstr "buffered-type:"
+		IL_015b: ldloc.2
+		IL_015c: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0161: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0166: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_016b: pop
+		IL_016c: ldloc.0
+		IL_016d: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+		IL_0172: dup
+		IL_0173: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0178: ceq
+		IL_017a: brfalse.s IL_0188
+
+		IL_017c: pop
+		IL_017d: ldstr "Cannot access 'readable' before initialization"
+		IL_0182: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0187: throw
+
+		IL_0188: stloc.3
+		IL_0189: ldnull
+		IL_018a: ldftn object Modules.Stream_Readable_SetEncoding_Utf8/FunctionExpression_L15C20::__js_call__(object, object)
+		IL_0190: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0195: stloc.s 6
+		IL_0197: ldloc.3
+		IL_0198: ldstr "on"
+		IL_019d: ldstr "data"
+		IL_01a2: ldloc.s 6
+		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_01a9: pop
+		IL_01aa: ldloc.0
+		IL_01ab: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+		IL_01b0: dup
+		IL_01b1: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_01b6: ceq
+		IL_01b8: brfalse.s IL_01c6
+
+		IL_01ba: pop
+		IL_01bb: ldstr "Cannot access 'readable' before initialization"
+		IL_01c0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_01c5: throw
+
+		IL_01c6: stloc.s 6
+		IL_01c8: ldc.i4.1
+		IL_01c9: newarr [System.Runtime]System.Object
+		IL_01ce: dup
+		IL_01cf: ldc.i4.0
+		IL_01d0: ldloc.0
+		IL_01d1: stelem.ref
+		IL_01d2: ldc.i4.0
+		IL_01d3: ldelem.ref
+		IL_01d4: castclass Modules.Stream_Readable_SetEncoding_Utf8/Scope
+		IL_01d9: ldftn object Modules.Stream_Readable_SetEncoding_Utf8/FunctionExpression_L19C19::__js_call__(class Modules.Stream_Readable_SetEncoding_Utf8/Scope, object)
+		IL_01df: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_01e4: stloc.3
+		IL_01e5: ldloc.s 6
+		IL_01e7: ldstr "on"
+		IL_01ec: ldstr "end"
+		IL_01f1: ldloc.3
+		IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_01f7: pop
+		IL_01f8: ldloc.0
+		IL_01f9: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+		IL_01fe: dup
+		IL_01ff: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0204: ceq
+		IL_0206: brfalse.s IL_0214
+
+		IL_0208: pop
+		IL_0209: ldstr "Cannot access 'readable' before initialization"
+		IL_020e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0213: throw
+
+		IL_0214: stloc.3
+		IL_0215: ldstr " ok"
+		IL_021a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_021f: stloc.s 4
+		IL_0221: ldloc.3
+		IL_0222: ldstr "push"
+		IL_0227: ldloc.s 4
+		IL_0229: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_022e: pop
+		IL_022f: ldloc.0
+		IL_0230: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+		IL_0235: dup
+		IL_0236: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_023b: ceq
+		IL_023d: brfalse.s IL_024b
+
+		IL_023f: pop
+		IL_0240: ldstr "Cannot access 'readable' before initialization"
+		IL_0245: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_024a: throw
+
+		IL_024b: stloc.3
+		IL_024c: ldloc.3
+		IL_024d: ldstr "push"
+		IL_0252: ldc.i4.0
+		IL_0253: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0258: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_025d: pop
+		IL_025e: ret
 	} // end of method Stream_Readable_SetEncoding_Utf8::__js_module_init__
 
 } // end of class Modules.Stream_Readable_SetEncoding_Utf8
@@ -330,7 +435,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2290
+		// Method begins at RVA 0x236f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

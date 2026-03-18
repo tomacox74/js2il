@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x242d
+				// Method begins at RVA 0x2504
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,23 +46,32 @@
 			)
 			// Method begins at RVA 0x22fc
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 48 (0x30)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] object
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::events
-			IL_0006: ldstr "gzip:finish"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: box [System.Runtime]System.Double
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ret
+			IL_0001: ldfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::events
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'events' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "push"
+			IL_0023: ldstr "gzip:finish"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002d: stloc.0
+			IL_002e: ldloc.0
+			IL_002f: ret
 		} // end of method ArrowFunction_L14C19::__js_call__
 
 	} // end of class ArrowFunction_L14C19
@@ -78,7 +87,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2436
+				// Method begins at RVA 0x250d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -104,25 +113,34 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x2324
+			// Method begins at RVA 0x2338
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 48 (0x30)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] object
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::events
-			IL_0006: ldstr "gzip:end"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: box [System.Runtime]System.Double
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ret
+			IL_0001: ldfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::events
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'events' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "push"
+			IL_0023: ldstr "gzip:end"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002d: stloc.0
+			IL_002e: ldloc.0
+			IL_002f: ret
 		} // end of method ArrowFunction_L15C16::__js_call__
 
 	} // end of class ArrowFunction_L15C16
@@ -138,67 +156,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x243f
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
-
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				class Modules.Require_Zlib_Stream_RoundTrip/Scope scope,
-				object newTarget
-			) cil managed 
-		{
-			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
-				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
-				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
-				74 61 54 6f 6b 65 6e 09 00 00 02
-			)
-			// Method begins at RVA 0x234c
-			// Header size: 12
-			// Code size: 26 (0x1a)
-			.maxstack 8
-			.locals init (
-				[0] float64,
-				[1] object
-			)
-
-			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::events
-			IL_0006: ldstr "gunzip:finish"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: box [System.Runtime]System.Double
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ret
-		} // end of method ArrowFunction_L16C21::__js_call__
-
-	} // end of class ArrowFunction_L16C21
-
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L17C18
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested private auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x2448
+				// Method begins at RVA 0x2516
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -226,23 +184,101 @@
 			)
 			// Method begins at RVA 0x2374
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 48 (0x30)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] object
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::events
-			IL_0006: ldstr "gunzip:end"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: box [System.Runtime]System.Double
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ret
+			IL_0001: ldfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::events
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'events' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "push"
+			IL_0023: ldstr "gunzip:finish"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002d: stloc.0
+			IL_002e: ldloc.0
+			IL_002f: ret
+		} // end of method ArrowFunction_L16C21::__js_call__
+
+	} // end of class ArrowFunction_L16C21
+
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L17C18
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x251f
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Require_Zlib_Stream_RoundTrip/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 09 00 00 02
+			)
+			// Method begins at RVA 0x23b0
+			// Header size: 12
+			// Code size: 48 (0x30)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::events
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'events' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "push"
+			IL_0023: ldstr "gunzip:end"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002d: stloc.0
+			IL_002e: ldloc.0
+			IL_002f: ret
 		} // end of method ArrowFunction_L17C18::__js_call__
 
 	} // end of class ArrowFunction_L17C18
@@ -258,7 +294,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2451
+				// Method begins at RVA 0x2528
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -285,18 +321,34 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x239a
-			// Header size: 1
-			// Code size: 15 (0xf)
+			// Method begins at RVA 0x23ec
+			// Header size: 12
+			// Code size: 44 (0x2c)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::chunks
-			IL_0006: ldarg.2
-			IL_0007: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_000c: pop
-			IL_000d: ldnull
-			IL_000e: ret
+			IL_0001: ldfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::chunks
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'chunks' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "push"
+			IL_0023: ldarg.2
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0029: pop
+			IL_002a: ldnull
+			IL_002b: ret
 		} // end of method FunctionExpression_L19C18::__js_call__
 
 	} // end of class FunctionExpression_L19C18
@@ -312,7 +364,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x245a
+				// Method begins at RVA 0x2531
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -338,52 +390,84 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x23ac
+			// Method begins at RVA 0x2424
 			// Header size: 12
-			// Code size: 108 (0x6c)
+			// Code size: 181 (0xb5)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-				[1] object,
-				[2] string
+				[0] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::events
-			IL_0006: ldstr "writable:finish"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_0001: ldfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::events
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
 			IL_0010: pop
-			IL_0011: ldarg.0
-			IL_0012: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::chunks
-			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::concat(object)
+			IL_0011: ldstr "Cannot access 'events' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
 			IL_001c: stloc.0
 			IL_001d: ldloc.0
-			IL_001e: ldstr "toString"
-			IL_0023: ldstr "utf8"
+			IL_001e: ldstr "push"
+			IL_0023: ldstr "writable:finish"
 			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_002d: stloc.1
-			IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0033: ldstr "output:"
-			IL_0038: ldloc.1
-			IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_002d: pop
+			IL_002e: ldarg.0
+			IL_002f: ldfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::chunks
+			IL_0034: dup
+			IL_0035: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_003a: ceq
+			IL_003c: brfalse.s IL_004a
+
 			IL_003e: pop
-			IL_003f: ldarg.0
-			IL_0040: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::events
-			IL_0045: ldc.i4.1
-			IL_0046: newarr [System.Runtime]System.Object
-			IL_004b: dup
-			IL_004c: ldc.i4.0
-			IL_004d: ldstr ","
-			IL_0052: stelem.ref
-			IL_0053: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-			IL_0058: stloc.2
-			IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005e: ldstr "events:"
-			IL_0063: ldloc.2
-			IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0069: pop
-			IL_006a: ldnull
-			IL_006b: ret
+			IL_003f: ldstr "Cannot access 'chunks' before initialization"
+			IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0049: throw
+
+			IL_004a: stloc.0
+			IL_004b: ldloc.0
+			IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::concat(object)
+			IL_0051: stloc.1
+			IL_0052: ldloc.1
+			IL_0053: ldstr "toString"
+			IL_0058: ldstr "utf8"
+			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0062: stloc.0
+			IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0068: ldstr "output:"
+			IL_006d: ldloc.0
+			IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0073: pop
+			IL_0074: ldarg.0
+			IL_0075: ldfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::events
+			IL_007a: dup
+			IL_007b: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0080: ceq
+			IL_0082: brfalse.s IL_0090
+
+			IL_0084: pop
+			IL_0085: ldstr "Cannot access 'events' before initialization"
+			IL_008a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_008f: throw
+
+			IL_0090: stloc.0
+			IL_0091: ldloc.0
+			IL_0092: ldstr "join"
+			IL_0097: ldstr ","
+			IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00a1: stloc.0
+			IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a7: ldstr "events:"
+			IL_00ac: ldloc.0
+			IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00b2: pop
+			IL_00b3: ldnull
+			IL_00b4: ret
 		} // end of method FunctionExpression_L23C22::__js_call__
 
 	} // end of class FunctionExpression_L23C22
@@ -397,22 +481,28 @@
 			3d 7b 65 76 65 6e 74 73 7d 00 00
 		)
 		// Fields
-		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array chunks
-		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array events
+		.field public object chunks
+		.field public object events
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2424
+			// Method begins at RVA 0x24e5
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 30 (0x1e)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::chunks
+			IL_0011: ldarg.0
+			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0017: stfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::events
+			IL_001c: nop
+			IL_001d: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -497,11 +587,11 @@
 		IL_0099: ldloc.0
 		IL_009a: ldc.i4.0
 		IL_009b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00a0: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::chunks
+		IL_00a0: stfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::chunks
 		IL_00a5: ldloc.0
 		IL_00a6: ldc.i4.0
 		IL_00a7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00ac: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Require_Zlib_Stream_RoundTrip/Scope::events
+		IL_00ac: stfld object Modules.Require_Zlib_Stream_RoundTrip/Scope::events
 		IL_00b1: ldc.i4.1
 		IL_00b2: newarr [System.Runtime]System.Object
 		IL_00b7: dup
@@ -690,7 +780,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2463
+		// Method begins at RVA 0x253a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

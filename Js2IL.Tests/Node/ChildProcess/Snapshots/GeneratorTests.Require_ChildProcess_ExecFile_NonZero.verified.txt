@@ -29,7 +29,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22ca
+				// Method begins at RVA 0x22ef
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -60,7 +60,7 @@
 			)
 			// Method begins at RVA 0x215c
 			// Header size: 12
-			// Code size: 345 (0x159)
+			// Code size: 371 (0x173)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -190,16 +190,28 @@
 			IL_0132: pop
 			IL_0133: ldarg.0
 			IL_0134: ldfld object Modules.Require_ChildProcess_ExecFile_NonZero/Scope::child
-			IL_0139: ldstr "kill"
-			IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_0143: stloc.s 6
-			IL_0145: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_014a: ldstr "kill after callback:"
-			IL_014f: ldloc.s 6
-			IL_0151: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0156: pop
-			IL_0157: ldnull
-			IL_0158: ret
+			IL_0139: dup
+			IL_013a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_013f: ceq
+			IL_0141: brfalse.s IL_014f
+
+			IL_0143: pop
+			IL_0144: ldstr "Cannot access 'child' before initialization"
+			IL_0149: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_014e: throw
+
+			IL_014f: stloc.s 6
+			IL_0151: ldloc.s 6
+			IL_0153: ldstr "kill"
+			IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_015d: stloc.s 6
+			IL_015f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0164: ldstr "kill after callback:"
+			IL_0169: ldloc.s 6
+			IL_016b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0170: pop
+			IL_0171: ldnull
+			IL_0172: ret
 		} // end of method ArrowFunction_L11C49::__js_call__
 
 	} // end of class ArrowFunction_L11C49
@@ -218,15 +230,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22c1
+			// Method begins at RVA 0x22db
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Require_ChildProcess_ExecFile_NonZero/Scope::child
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -360,7 +375,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22d3
+		// Method begins at RVA 0x22f8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

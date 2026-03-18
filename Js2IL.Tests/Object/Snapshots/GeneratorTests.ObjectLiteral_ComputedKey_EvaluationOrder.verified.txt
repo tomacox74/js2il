@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2247
+				// Method begins at RVA 0x22b2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,24 +44,37 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x21a0
+			// Method begins at RVA 0x21b8
 			// Header size: 12
-			// Code size: 30 (0x1e)
+			// Code size: 54 (0x36)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
-			IL_0006: ldstr "f"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldloc.0
-			IL_0013: stfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
-			IL_0018: ldstr "k"
-			IL_001d: ret
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'log' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "f"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldloc.1
+			IL_002b: stfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
+			IL_0030: ldstr "k"
+			IL_0035: ret
 		} // end of method f::__js_call__
 
 	} // end of class f
@@ -77,7 +90,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2250
+				// Method begins at RVA 0x22bb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -103,25 +116,38 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x21cc
+			// Method begins at RVA 0x21fc
 			// Header size: 12
-			// Code size: 39 (0x27)
+			// Code size: 63 (0x3f)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
-			IL_0006: ldstr "g"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldloc.0
-			IL_0013: stfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
-			IL_0018: ldc.r8 1
-			IL_0021: box [System.Runtime]System.Double
-			IL_0026: ret
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'log' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "g"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldloc.1
+			IL_002b: stfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
+			IL_0030: ldc.r8 1
+			IL_0039: box [System.Runtime]System.Double
+			IL_003e: ret
 		} // end of method g::__js_call__
 
 	} // end of class g
@@ -137,7 +163,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2259
+				// Method begins at RVA 0x22c4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -163,28 +189,41 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2200
+			// Method begins at RVA 0x2248
 			// Header size: 12
-			// Code size: 50 (0x32)
+			// Code size: 74 (0x4a)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
-			IL_0006: ldstr "h"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldloc.0
-			IL_0013: stfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
-			IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_001d: dup
-			IL_001e: ldstr "a"
-			IL_0023: ldc.r8 2
-			IL_002c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-			IL_0031: ret
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'log' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "h"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldloc.1
+			IL_002b: stfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
+			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0035: dup
+			IL_0036: ldstr "a"
+			IL_003b: ldc.r8 2
+			IL_0044: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+			IL_0049: ret
 		} // end of method h::__js_call__
 
 	} // end of class h
@@ -207,15 +246,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x223e
+			// Method begins at RVA 0x229e
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -233,7 +275,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 321 (0x141)
+		// Code size: 347 (0x15b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope,
@@ -348,24 +390,36 @@
 		IL_00fc: pop
 		IL_00fd: ldloc.s 6
 		IL_00ff: stloc.s 4
-		IL_0101: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0106: ldloc.0
-		IL_0107: ldfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
-		IL_010c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0101: ldloc.0
+		IL_0102: ldfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
+		IL_0107: dup
+		IL_0108: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_010d: ceq
+		IL_010f: brfalse.s IL_011d
+
 		IL_0111: pop
-		IL_0112: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0117: ldloc.s 4
-		IL_0119: ldstr "k"
-		IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0123: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0128: pop
-		IL_0129: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_012e: ldloc.s 4
-		IL_0130: ldstr "a"
-		IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_013a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_013f: pop
-		IL_0140: ret
+		IL_0112: ldstr "Cannot access 'log' before initialization"
+		IL_0117: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_011c: throw
+
+		IL_011d: stloc.s 7
+		IL_011f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0124: ldloc.s 7
+		IL_0126: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_012b: pop
+		IL_012c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0131: ldloc.s 4
+		IL_0133: ldstr "k"
+		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_013d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0142: pop
+		IL_0143: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0148: ldloc.s 4
+		IL_014a: ldstr "a"
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0154: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0159: pop
+		IL_015a: ret
 	} // end of method ObjectLiteral_ComputedKey_EvaluationOrder::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_ComputedKey_EvaluationOrder
@@ -377,7 +431,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2262
+		// Method begins at RVA 0x22cd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

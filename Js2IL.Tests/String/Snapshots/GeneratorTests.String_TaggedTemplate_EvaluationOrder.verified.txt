@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2212
+				// Method begins at RVA 0x2253
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -75,7 +75,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x221b
+				// Method begins at RVA 0x225c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -103,34 +103,65 @@
 			)
 			// Method begins at RVA 0x21bc
 			// Header size: 12
-			// Code size: 65 (0x41)
+			// Code size: 119 (0x77)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] object,
+				[1] float64,
+				[2] object
 			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "getValue called:"
-			IL_000a: ldarg.0
-			IL_000b: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
-			IL_0010: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0015: pop
-			IL_0016: ldarg.0
-			IL_0017: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
-			IL_001c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0021: stloc.0
-			IL_0022: ldloc.0
-			IL_0023: box [System.Runtime]System.Double
-			IL_0028: stloc.1
-			IL_0029: ldarg.0
-			IL_002a: ldloc.0
-			IL_002b: ldc.r8 1
-			IL_0034: add
-			IL_0035: box [System.Runtime]System.Double
-			IL_003a: stfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
-			IL_003f: ldloc.1
-			IL_0040: ret
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'counter' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0022: ldstr "getValue called:"
+			IL_0027: ldloc.0
+			IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_002d: pop
+			IL_002e: ldarg.0
+			IL_002f: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
+			IL_0034: dup
+			IL_0035: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_003a: ceq
+			IL_003c: brfalse.s IL_004a
+
+			IL_003e: pop
+			IL_003f: ldstr "Cannot access 'counter' before initialization"
+			IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0049: throw
+
+			IL_004a: stloc.0
+			IL_004b: ldloc.0
+			IL_004c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0051: stloc.1
+			IL_0052: ldloc.1
+			IL_0053: box [System.Runtime]System.Double
+			IL_0058: stloc.2
+			IL_0059: ldloc.2
+			IL_005a: stloc.0
+			IL_005b: ldloc.1
+			IL_005c: ldc.r8 1
+			IL_0065: add
+			IL_0066: stloc.1
+			IL_0067: ldloc.1
+			IL_0068: box [System.Runtime]System.Double
+			IL_006d: stloc.2
+			IL_006e: ldarg.0
+			IL_006f: ldloc.2
+			IL_0070: stfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
+			IL_0075: ldloc.0
+			IL_0076: ret
 		} // end of method getValue::__js_call__
 
 	} // end of class getValue
@@ -153,15 +184,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2209
+			// Method begins at RVA 0x223f
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -327,7 +361,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2224
+		// Method begins at RVA 0x2265
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -34,7 +34,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x24d7
+							// Method begins at RVA 0x26d6
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -55,7 +55,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x24ce
+						// Method begins at RVA 0x26cd
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -80,13 +80,14 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x23e0
+					// Method begins at RVA 0x253c
 					// Header size: 12
-					// Code size: 181 (0xb5)
+					// Code size: 301 (0x12d)
 					.maxstack 8
 					.locals init (
 						[0] bool,
-						[1] object
+						[1] object,
+						[2] object
 					)
 
 					IL_0000: ldarg.2
@@ -105,53 +106,115 @@
 					IL_0028: ldnull
 					IL_0029: ret
 
-					IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_002f: ldstr "RenamedText:"
-					IL_0034: ldarg.0
-					IL_0035: ldc.i4.2
-					IL_0036: ldelem.ref
-					IL_0037: castclass Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope
-					IL_003c: ldfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
-					IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-					IL_0046: pop
-					IL_0047: ldarg.0
-					IL_0048: ldc.i4.0
-					IL_0049: ldelem.ref
-					IL_004a: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-					IL_004f: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-					IL_0054: ldstr "existsSync"
-					IL_0059: ldarg.0
-					IL_005a: ldc.i4.0
-					IL_005b: ldelem.ref
-					IL_005c: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-					IL_0061: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
-					IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-					IL_006b: stloc.1
-					IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_0071: ldstr "SourceExists:"
-					IL_0076: ldloc.1
-					IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-					IL_007c: pop
-					IL_007d: ldarg.0
-					IL_007e: ldc.i4.0
-					IL_007f: ldelem.ref
-					IL_0080: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-					IL_0085: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-					IL_008a: ldstr "existsSync"
-					IL_008f: ldarg.0
-					IL_0090: ldc.i4.0
-					IL_0091: ldelem.ref
-					IL_0092: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-					IL_0097: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
-					IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-					IL_00a1: stloc.1
-					IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_00a7: ldstr "RenamedExists:"
-					IL_00ac: ldloc.1
-					IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-					IL_00b2: pop
-					IL_00b3: ldnull
-					IL_00b4: ret
+					IL_002a: ldarg.0
+					IL_002b: ldc.i4.2
+					IL_002c: ldelem.ref
+					IL_002d: castclass Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope
+					IL_0032: ldfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
+					IL_0037: dup
+					IL_0038: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+					IL_003d: ceq
+					IL_003f: brfalse.s IL_004d
+
+					IL_0041: pop
+					IL_0042: ldstr "Cannot access 'text' before initialization"
+					IL_0047: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+					IL_004c: throw
+
+					IL_004d: stloc.1
+					IL_004e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_0053: ldstr "RenamedText:"
+					IL_0058: ldloc.1
+					IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_005e: pop
+					IL_005f: ldarg.0
+					IL_0060: ldc.i4.0
+					IL_0061: ldelem.ref
+					IL_0062: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_0067: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+					IL_006c: dup
+					IL_006d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+					IL_0072: ceq
+					IL_0074: brfalse.s IL_0082
+
+					IL_0076: pop
+					IL_0077: ldstr "Cannot access 'fs' before initialization"
+					IL_007c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+					IL_0081: throw
+
+					IL_0082: stloc.1
+					IL_0083: ldarg.0
+					IL_0084: ldc.i4.0
+					IL_0085: ldelem.ref
+					IL_0086: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_008b: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+					IL_0090: dup
+					IL_0091: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+					IL_0096: ceq
+					IL_0098: brfalse.s IL_00a6
+
+					IL_009a: pop
+					IL_009b: ldstr "Cannot access 'source' before initialization"
+					IL_00a0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+					IL_00a5: throw
+
+					IL_00a6: stloc.2
+					IL_00a7: ldloc.1
+					IL_00a8: ldstr "existsSync"
+					IL_00ad: ldloc.2
+					IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+					IL_00b3: stloc.2
+					IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_00b9: ldstr "SourceExists:"
+					IL_00be: ldloc.2
+					IL_00bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_00c4: pop
+					IL_00c5: ldarg.0
+					IL_00c6: ldc.i4.0
+					IL_00c7: ldelem.ref
+					IL_00c8: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_00cd: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+					IL_00d2: dup
+					IL_00d3: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+					IL_00d8: ceq
+					IL_00da: brfalse.s IL_00e8
+
+					IL_00dc: pop
+					IL_00dd: ldstr "Cannot access 'fs' before initialization"
+					IL_00e2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+					IL_00e7: throw
+
+					IL_00e8: stloc.2
+					IL_00e9: ldarg.0
+					IL_00ea: ldc.i4.0
+					IL_00eb: ldelem.ref
+					IL_00ec: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_00f1: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+					IL_00f6: dup
+					IL_00f7: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+					IL_00fc: ceq
+					IL_00fe: brfalse.s IL_010c
+
+					IL_0100: ldstr "Cannot access 'renamed' before initialization"
+					IL_0105: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+					IL_010a: throw
+
+					IL_010b: stloc.1
+
+					IL_010c: ldloc.2
+					IL_010d: ldstr "existsSync"
+					IL_0112: ldloc.1
+					IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+					IL_0118: stloc.1
+					IL_0119: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_011e: ldstr "RenamedExists:"
+					IL_0123: ldloc.1
+					IL_0124: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_0129: pop
+					IL_012a: ldnull
+					IL_012b: ret
+
+					IL_012c: .emitbyte 0xa6
 				} // end of method ArrowFunction_L28C28::__js_call__
 
 			} // end of class ArrowFunction_L28C28
@@ -172,7 +235,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x24c5
+						// Method begins at RVA 0x26c4
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -194,15 +257,18 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24bc
+					// Method begins at RVA 0x26b0
 					// Header size: 1
-					// Code size: 8 (0x8)
+					// Code size: 19 (0x13)
 					.maxstack 8
 
 					IL_0000: ldarg.0
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-					IL_0006: nop
-					IL_0007: ret
+					IL_0006: ldarg.0
+					IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+					IL_000c: stfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
+					IL_0011: nop
+					IL_0012: ret
 				} // end of method Scope::.ctor
 
 			} // end of class Scope
@@ -219,15 +285,16 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2318
+				// Method begins at RVA 0x2418
 				// Header size: 12
-				// Code size: 186 (0xba)
+				// Code size: 280 (0x118)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope,
 					[1] bool,
 					[2] object,
-					[3] object
+					[3] object,
+					[4] object
 				)
 
 				IL_0000: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::.ctor()
@@ -252,63 +319,107 @@
 				IL_0031: ldc.i4.0
 				IL_0032: ldelem.ref
 				IL_0033: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-				IL_0038: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
-				IL_003d: stloc.2
-				IL_003e: ldarg.0
-				IL_003f: ldc.i4.0
-				IL_0040: ldelem.ref
-				IL_0041: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-				IL_0046: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-				IL_004b: ldstr "readFileSync"
-				IL_0050: ldloc.2
-				IL_0051: ldstr "utf8"
-				IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_005b: stloc.2
-				IL_005c: ldloc.0
-				IL_005d: ldloc.2
-				IL_005e: stfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
-				IL_0063: ldarg.0
-				IL_0064: ldc.i4.0
-				IL_0065: ldelem.ref
-				IL_0066: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-				IL_006b: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
-				IL_0070: stloc.2
-				IL_0071: ldnull
-				IL_0072: ldftn object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28::__js_call__(object[], object, object)
-				IL_0078: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-				IL_007d: ldc.i4.3
-				IL_007e: newarr [System.Runtime]System.Object
-				IL_0083: dup
-				IL_0084: ldc.i4.0
-				IL_0085: ldarg.0
-				IL_0086: ldc.i4.0
-				IL_0087: ldelem.ref
-				IL_0088: stelem.ref
-				IL_0089: dup
-				IL_008a: ldc.i4.1
-				IL_008b: ldarg.0
-				IL_008c: ldc.i4.1
-				IL_008d: ldelem.ref
-				IL_008e: stelem.ref
-				IL_008f: dup
-				IL_0090: ldc.i4.2
-				IL_0091: ldloc.0
-				IL_0092: stelem.ref
-				IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-				IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-				IL_009d: stloc.3
-				IL_009e: ldarg.0
-				IL_009f: ldc.i4.0
-				IL_00a0: ldelem.ref
-				IL_00a1: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-				IL_00a6: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-				IL_00ab: ldstr "unlink"
-				IL_00b0: ldloc.2
-				IL_00b1: ldloc.3
-				IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_00b7: pop
-				IL_00b8: ldnull
-				IL_00b9: ret
+				IL_0038: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+				IL_003d: dup
+				IL_003e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_0043: ceq
+				IL_0045: brfalse.s IL_0053
+
+				IL_0047: pop
+				IL_0048: ldstr "Cannot access 'fs' before initialization"
+				IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_0052: throw
+
+				IL_0053: stloc.2
+				IL_0054: ldarg.0
+				IL_0055: ldc.i4.0
+				IL_0056: ldelem.ref
+				IL_0057: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_005c: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+				IL_0061: dup
+				IL_0062: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_0067: ceq
+				IL_0069: brfalse.s IL_0077
+
+				IL_006b: pop
+				IL_006c: ldstr "Cannot access 'renamed' before initialization"
+				IL_0071: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_0076: throw
+
+				IL_0077: stloc.3
+				IL_0078: ldloc.2
+				IL_0079: ldstr "readFileSync"
+				IL_007e: ldloc.3
+				IL_007f: ldstr "utf8"
+				IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_0089: stloc.3
+				IL_008a: ldloc.0
+				IL_008b: ldloc.3
+				IL_008c: stfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
+				IL_0091: ldarg.0
+				IL_0092: ldc.i4.0
+				IL_0093: ldelem.ref
+				IL_0094: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_0099: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+				IL_009e: dup
+				IL_009f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_00a4: ceq
+				IL_00a6: brfalse.s IL_00b4
+
+				IL_00a8: pop
+				IL_00a9: ldstr "Cannot access 'fs' before initialization"
+				IL_00ae: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_00b3: throw
+
+				IL_00b4: stloc.3
+				IL_00b5: ldarg.0
+				IL_00b6: ldc.i4.0
+				IL_00b7: ldelem.ref
+				IL_00b8: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_00bd: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+				IL_00c2: dup
+				IL_00c3: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_00c8: ceq
+				IL_00ca: brfalse.s IL_00d8
+
+				IL_00cc: pop
+				IL_00cd: ldstr "Cannot access 'renamed' before initialization"
+				IL_00d2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_00d7: throw
+
+				IL_00d8: stloc.2
+				IL_00d9: ldnull
+				IL_00da: ldftn object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28::__js_call__(object[], object, object)
+				IL_00e0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+				IL_00e5: ldc.i4.3
+				IL_00e6: newarr [System.Runtime]System.Object
+				IL_00eb: dup
+				IL_00ec: ldc.i4.0
+				IL_00ed: ldarg.0
+				IL_00ee: ldc.i4.0
+				IL_00ef: ldelem.ref
+				IL_00f0: stelem.ref
+				IL_00f1: dup
+				IL_00f2: ldc.i4.1
+				IL_00f3: ldarg.0
+				IL_00f4: ldc.i4.1
+				IL_00f5: ldelem.ref
+				IL_00f6: stelem.ref
+				IL_00f7: dup
+				IL_00f8: ldc.i4.2
+				IL_00f9: ldloc.0
+				IL_00fa: stelem.ref
+				IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+				IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+				IL_0105: stloc.s 4
+				IL_0107: ldloc.3
+				IL_0108: ldstr "unlink"
+				IL_010d: ldloc.2
+				IL_010e: ldloc.s 4
+				IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_0115: pop
+				IL_0116: ldnull
+				IL_0117: ret
 			} // end of method ArrowFunction_L21C32::__js_call__
 
 		} // end of class ArrowFunction_L21C32
@@ -328,7 +439,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24b3
+					// Method begins at RVA 0x26a7
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -349,7 +460,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24aa
+				// Method begins at RVA 0x269e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -376,16 +487,17 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2290
+			// Method begins at RVA 0x2348
 			// Header size: 12
-			// Code size: 123 (0x7b)
+			// Code size: 193 (0xc1)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/Scope,
 				[1] bool,
 				[2] object,
 				[3] object,
-				[4] object
+				[4] object,
+				[5] object
 			)
 
 			IL_0000: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/Scope::.ctor()
@@ -407,37 +519,69 @@
 			IL_002f: ret
 
 			IL_0030: ldarg.0
-			IL_0031: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
-			IL_0036: stloc.2
-			IL_0037: ldarg.0
-			IL_0038: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
-			IL_003d: stloc.3
-			IL_003e: ldnull
-			IL_003f: ldftn object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32::__js_call__(object[], object, object)
-			IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-			IL_004a: ldc.i4.2
-			IL_004b: newarr [System.Runtime]System.Object
-			IL_0050: dup
-			IL_0051: ldc.i4.0
-			IL_0052: ldarg.0
-			IL_0053: stelem.ref
-			IL_0054: dup
-			IL_0055: ldc.i4.1
-			IL_0056: ldloc.0
-			IL_0057: stelem.ref
-			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0062: stloc.s 4
-			IL_0064: ldarg.0
-			IL_0065: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-			IL_006a: ldstr "rename"
-			IL_006f: ldloc.2
-			IL_0070: ldloc.3
-			IL_0071: ldloc.s 4
-			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-			IL_0078: pop
-			IL_0079: ldnull
-			IL_007a: ret
+			IL_0031: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+			IL_0036: dup
+			IL_0037: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_003c: ceq
+			IL_003e: brfalse.s IL_004c
+
+			IL_0040: pop
+			IL_0041: ldstr "Cannot access 'fs' before initialization"
+			IL_0046: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_004b: throw
+
+			IL_004c: stloc.2
+			IL_004d: ldarg.0
+			IL_004e: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+			IL_0053: dup
+			IL_0054: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0059: ceq
+			IL_005b: brfalse.s IL_0069
+
+			IL_005d: pop
+			IL_005e: ldstr "Cannot access 'source' before initialization"
+			IL_0063: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0068: throw
+
+			IL_0069: stloc.3
+			IL_006a: ldarg.0
+			IL_006b: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+			IL_0070: dup
+			IL_0071: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0076: ceq
+			IL_0078: brfalse.s IL_0086
+
+			IL_007a: pop
+			IL_007b: ldstr "Cannot access 'renamed' before initialization"
+			IL_0080: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0085: throw
+
+			IL_0086: stloc.s 4
+			IL_0088: ldnull
+			IL_0089: ldftn object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32::__js_call__(object[], object, object)
+			IL_008f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+			IL_0094: ldc.i4.2
+			IL_0095: newarr [System.Runtime]System.Object
+			IL_009a: dup
+			IL_009b: ldc.i4.0
+			IL_009c: ldarg.0
+			IL_009d: stelem.ref
+			IL_009e: dup
+			IL_009f: ldc.i4.1
+			IL_00a0: ldloc.0
+			IL_00a1: stelem.ref
+			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_00ac: stloc.s 5
+			IL_00ae: ldloc.2
+			IL_00af: ldstr "rename"
+			IL_00b4: ldloc.3
+			IL_00b5: ldloc.s 4
+			IL_00b7: ldloc.s 5
+			IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_00be: pop
+			IL_00bf: ldnull
+			IL_00c0: ret
 		} // end of method ArrowFunction_L15C36::__js_call__
 
 	} // end of class ArrowFunction_L15C36
@@ -460,15 +604,24 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x24a1
+			// Method begins at RVA 0x2674
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 41 (0x29)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+			IL_0011: ldarg.0
+			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0017: stfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+			IL_001c: ldarg.0
+			IL_001d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0022: stfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+			IL_0027: nop
+			IL_0028: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -486,7 +639,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 563 (0x233)
+		// Code size: 747 (0x2eb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_Append_Rename_Unlink_Callback/Scope,
@@ -499,7 +652,8 @@
 			[7] object,
 			[8] string,
 			[9] object,
-			[10] object[]
+			[10] object,
+			[11] object[]
 		)
 
 		IL_0000: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/Scope::.ctor()
@@ -608,96 +762,180 @@
 		IL_0139: stfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
 		IL_013e: ldloc.0
 		IL_013f: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-		IL_0144: stloc.s 4
-		IL_0146: ldloc.0
-		IL_0147: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
-		IL_014c: stloc.s 9
-		IL_014e: ldloc.s 4
-		IL_0150: ldstr "rmSync"
-		IL_0155: ldloc.s 9
-		IL_0157: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_015c: dup
-		IL_015d: ldstr "force"
-		IL_0162: ldc.i4.1
-		IL_0163: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_016d: pop
-		IL_016e: ldloc.0
-		IL_016f: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-		IL_0174: stloc.s 9
-		IL_0176: ldloc.0
-		IL_0177: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
-		IL_017c: stloc.s 4
-		IL_017e: ldloc.s 9
-		IL_0180: ldstr "rmSync"
-		IL_0185: ldloc.s 4
-		IL_0187: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_018c: dup
-		IL_018d: ldstr "force"
-		IL_0192: ldc.i4.1
-		IL_0193: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0198: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_019d: pop
-		IL_019e: ldloc.0
-		IL_019f: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
-		IL_01a4: stloc.s 4
-		IL_01a6: ldloc.0
-		IL_01a7: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-		IL_01ac: ldstr "writeFileSync"
-		IL_01b1: ldloc.s 4
-		IL_01b3: ldstr "a"
-		IL_01b8: ldstr "utf8"
-		IL_01bd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_01c2: pop
-		IL_01c3: ldloc.0
-		IL_01c4: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
-		IL_01c9: stloc.s 4
-		IL_01cb: ldc.i4.1
-		IL_01cc: newarr [System.Runtime]System.Object
-		IL_01d1: dup
-		IL_01d2: ldc.i4.0
-		IL_01d3: ldloc.0
-		IL_01d4: stelem.ref
-		IL_01d5: ldc.i4.0
-		IL_01d6: ldelem.ref
-		IL_01d7: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
-		IL_01dc: ldftn object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36::__js_call__(class Modules.FS_Append_Rename_Unlink_Callback/Scope, object, object)
-		IL_01e2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_01e7: ldc.i4.1
-		IL_01e8: newarr [System.Runtime]System.Object
-		IL_01ed: dup
-		IL_01ee: ldc.i4.0
-		IL_01ef: ldloc.0
-		IL_01f0: stelem.ref
-		IL_01f1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01f6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_01fb: stloc.s 9
-		IL_01fd: ldc.i4.4
-		IL_01fe: newarr [System.Runtime]System.Object
-		IL_0203: dup
-		IL_0204: ldc.i4.0
-		IL_0205: ldloc.0
-		IL_0206: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
-		IL_020b: stelem.ref
-		IL_020c: dup
-		IL_020d: ldc.i4.1
-		IL_020e: ldstr "b"
-		IL_0213: stelem.ref
-		IL_0214: dup
-		IL_0215: ldc.i4.2
-		IL_0216: ldstr "utf8"
-		IL_021b: stelem.ref
-		IL_021c: dup
-		IL_021d: ldc.i4.3
-		IL_021e: ldloc.s 9
-		IL_0220: stelem.ref
-		IL_0221: stloc.s 10
-		IL_0223: ldloc.s 4
-		IL_0225: ldstr "appendFile"
-		IL_022a: ldloc.s 10
-		IL_022c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0231: pop
-		IL_0232: ret
+		IL_0144: dup
+		IL_0145: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_014a: ceq
+		IL_014c: brfalse.s IL_015a
+
+		IL_014e: pop
+		IL_014f: ldstr "Cannot access 'fs' before initialization"
+		IL_0154: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0159: throw
+
+		IL_015a: stloc.s 4
+		IL_015c: ldloc.0
+		IL_015d: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+		IL_0162: dup
+		IL_0163: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0168: ceq
+		IL_016a: brfalse.s IL_0178
+
+		IL_016c: pop
+		IL_016d: ldstr "Cannot access 'source' before initialization"
+		IL_0172: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0177: throw
+
+		IL_0178: stloc.s 9
+		IL_017a: ldloc.s 4
+		IL_017c: ldstr "rmSync"
+		IL_0181: ldloc.s 9
+		IL_0183: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0188: dup
+		IL_0189: ldstr "force"
+		IL_018e: ldc.i4.1
+		IL_018f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0199: pop
+		IL_019a: ldloc.0
+		IL_019b: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+		IL_01a0: dup
+		IL_01a1: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_01a6: ceq
+		IL_01a8: brfalse.s IL_01b6
+
+		IL_01aa: pop
+		IL_01ab: ldstr "Cannot access 'fs' before initialization"
+		IL_01b0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_01b5: throw
+
+		IL_01b6: stloc.s 9
+		IL_01b8: ldloc.0
+		IL_01b9: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+		IL_01be: dup
+		IL_01bf: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_01c4: ceq
+		IL_01c6: brfalse.s IL_01d4
+
+		IL_01c8: pop
+		IL_01c9: ldstr "Cannot access 'renamed' before initialization"
+		IL_01ce: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_01d3: throw
+
+		IL_01d4: stloc.s 4
+		IL_01d6: ldloc.s 9
+		IL_01d8: ldstr "rmSync"
+		IL_01dd: ldloc.s 4
+		IL_01df: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01e4: dup
+		IL_01e5: ldstr "force"
+		IL_01ea: ldc.i4.1
+		IL_01eb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_01f0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_01f5: pop
+		IL_01f6: ldloc.0
+		IL_01f7: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+		IL_01fc: dup
+		IL_01fd: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0202: ceq
+		IL_0204: brfalse.s IL_0212
+
+		IL_0206: pop
+		IL_0207: ldstr "Cannot access 'fs' before initialization"
+		IL_020c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0211: throw
+
+		IL_0212: stloc.s 4
+		IL_0214: ldloc.0
+		IL_0215: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+		IL_021a: dup
+		IL_021b: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0220: ceq
+		IL_0222: brfalse.s IL_0230
+
+		IL_0224: pop
+		IL_0225: ldstr "Cannot access 'source' before initialization"
+		IL_022a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_022f: throw
+
+		IL_0230: stloc.s 9
+		IL_0232: ldloc.s 4
+		IL_0234: ldstr "writeFileSync"
+		IL_0239: ldloc.s 9
+		IL_023b: ldstr "a"
+		IL_0240: ldstr "utf8"
+		IL_0245: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_024a: pop
+		IL_024b: ldloc.0
+		IL_024c: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+		IL_0251: dup
+		IL_0252: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0257: ceq
+		IL_0259: brfalse.s IL_0267
+
+		IL_025b: pop
+		IL_025c: ldstr "Cannot access 'fs' before initialization"
+		IL_0261: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0266: throw
+
+		IL_0267: stloc.s 9
+		IL_0269: ldloc.0
+		IL_026a: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+		IL_026f: dup
+		IL_0270: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0275: ceq
+		IL_0277: brfalse.s IL_0285
+
+		IL_0279: pop
+		IL_027a: ldstr "Cannot access 'source' before initialization"
+		IL_027f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0284: throw
+
+		IL_0285: stloc.s 4
+		IL_0287: ldc.i4.1
+		IL_0288: newarr [System.Runtime]System.Object
+		IL_028d: dup
+		IL_028e: ldc.i4.0
+		IL_028f: ldloc.0
+		IL_0290: stelem.ref
+		IL_0291: ldc.i4.0
+		IL_0292: ldelem.ref
+		IL_0293: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+		IL_0298: ldftn object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36::__js_call__(class Modules.FS_Append_Rename_Unlink_Callback/Scope, object, object)
+		IL_029e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_02a3: ldc.i4.1
+		IL_02a4: newarr [System.Runtime]System.Object
+		IL_02a9: dup
+		IL_02aa: ldc.i4.0
+		IL_02ab: ldloc.0
+		IL_02ac: stelem.ref
+		IL_02ad: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_02b2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_02b7: stloc.s 10
+		IL_02b9: ldc.i4.4
+		IL_02ba: newarr [System.Runtime]System.Object
+		IL_02bf: dup
+		IL_02c0: ldc.i4.0
+		IL_02c1: ldloc.s 4
+		IL_02c3: stelem.ref
+		IL_02c4: dup
+		IL_02c5: ldc.i4.1
+		IL_02c6: ldstr "b"
+		IL_02cb: stelem.ref
+		IL_02cc: dup
+		IL_02cd: ldc.i4.2
+		IL_02ce: ldstr "utf8"
+		IL_02d3: stelem.ref
+		IL_02d4: dup
+		IL_02d5: ldc.i4.3
+		IL_02d6: ldloc.s 10
+		IL_02d8: stelem.ref
+		IL_02d9: stloc.s 11
+		IL_02db: ldloc.s 9
+		IL_02dd: ldstr "appendFile"
+		IL_02e2: ldloc.s 11
+		IL_02e4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_02e9: pop
+		IL_02ea: ret
 	} // end of method FS_Append_Rename_Unlink_Callback::__js_module_init__
 
 } // end of class Modules.FS_Append_Rename_Unlink_Callback
@@ -709,7 +947,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x24e0
+		// Method begins at RVA 0x26df
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

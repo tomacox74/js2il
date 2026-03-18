@@ -28,7 +28,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2364
+					// Method begins at RVA 0x2472
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -52,7 +52,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2338
+				// Method begins at RVA 0x2430
 				// Header size: 12
 				// Code size: 14 (0xe)
 				.maxstack 8
@@ -84,7 +84,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x235b
+				// Method begins at RVA 0x2469
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -108,7 +108,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2278
+			// Method begins at RVA 0x2344
 			// Header size: 12
 			// Code size: 75 (0x4b)
 			.maxstack 8
@@ -166,7 +166,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x236d
+				// Method begins at RVA 0x247b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -190,7 +190,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22cf
+			// Method begins at RVA 0x239b
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -219,7 +219,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2376
+				// Method begins at RVA 0x2484
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -245,9 +245,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x22f0
+			// Method begins at RVA 0x23bc
 			// Header size: 12
-			// Code size: 58 (0x3a)
+			// Code size: 102 (0x66)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -256,26 +256,46 @@
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.FSPromises_Readdir_Names/Scope::syncFs
-			IL_0006: stloc.0
-			IL_0007: ldarg.0
-			IL_0008: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
-			IL_000d: stloc.1
-			IL_000e: ldloc.0
-			IL_000f: ldstr "rmSync"
-			IL_0014: ldloc.1
-			IL_0015: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_001a: dup
-			IL_001b: ldstr "recursive"
-			IL_0020: ldc.i4.1
-			IL_0021: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0026: dup
-			IL_0027: ldstr "force"
-			IL_002c: ldc.i4.1
-			IL_002d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0037: pop
-			IL_0038: ldnull
-			IL_0039: ret
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'syncFs' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldarg.0
+			IL_001e: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
+			IL_0023: dup
+			IL_0024: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0029: ceq
+			IL_002b: brfalse.s IL_0039
+
+			IL_002d: pop
+			IL_002e: ldstr "Cannot access 'dir' before initialization"
+			IL_0033: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0038: throw
+
+			IL_0039: stloc.1
+			IL_003a: ldloc.0
+			IL_003b: ldstr "rmSync"
+			IL_0040: ldloc.1
+			IL_0041: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0046: dup
+			IL_0047: ldstr "recursive"
+			IL_004c: ldc.i4.1
+			IL_004d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0052: dup
+			IL_0053: ldstr "force"
+			IL_0058: ldc.i4.1
+			IL_0059: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0063: pop
+			IL_0064: ldnull
+			IL_0065: ret
 		} // end of method ArrowFunction_L21C14::__js_call__
 
 	} // end of class ArrowFunction_L21C14
@@ -296,15 +316,21 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2352
+			// Method begins at RVA 0x244a
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 30 (0x1e)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.FSPromises_Readdir_Names/Scope::syncFs
+			IL_0011: ldarg.0
+			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0017: stfld object Modules.FSPromises_Readdir_Names/Scope::dir
+			IL_001c: nop
+			IL_001d: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -322,7 +348,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 540 (0x21c)
+		// Code size: 742 (0x2e6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FSPromises_Readdir_Names/Scope,
@@ -382,141 +408,233 @@
 		IL_0081: stfld object Modules.FSPromises_Readdir_Names/Scope::dir
 		IL_0086: ldloc.0
 		IL_0087: ldfld object Modules.FSPromises_Readdir_Names/Scope::syncFs
-		IL_008c: stloc.s 4
-		IL_008e: ldloc.0
-		IL_008f: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
-		IL_0094: stloc.s 5
-		IL_0096: ldloc.s 4
-		IL_0098: ldstr "mkdirSync"
-		IL_009d: ldloc.s 5
-		IL_009f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00a4: dup
-		IL_00a5: ldstr "recursive"
-		IL_00aa: ldc.i4.1
-		IL_00ab: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00b5: pop
-		IL_00b6: ldloc.0
-		IL_00b7: ldfld object Modules.FSPromises_Readdir_Names/Scope::syncFs
-		IL_00bc: stloc.s 5
-		IL_00be: ldloc.0
-		IL_00bf: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
-		IL_00c4: stloc.s 4
-		IL_00c6: ldloc.2
-		IL_00c7: ldstr "join"
-		IL_00cc: ldloc.s 4
-		IL_00ce: ldstr "alpha.txt"
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00d8: stloc.s 4
-		IL_00da: ldloc.s 5
-		IL_00dc: ldstr "writeFileSync"
-		IL_00e1: ldloc.s 4
-		IL_00e3: ldstr ""
-		IL_00e8: ldstr "utf8"
-		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_008c: dup
+		IL_008d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0092: ceq
+		IL_0094: brfalse.s IL_00a2
+
+		IL_0096: pop
+		IL_0097: ldstr "Cannot access 'syncFs' before initialization"
+		IL_009c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_00a1: throw
+
+		IL_00a2: stloc.s 4
+		IL_00a4: ldloc.0
+		IL_00a5: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
+		IL_00aa: dup
+		IL_00ab: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_00b0: ceq
+		IL_00b2: brfalse.s IL_00c0
+
+		IL_00b4: pop
+		IL_00b5: ldstr "Cannot access 'dir' before initialization"
+		IL_00ba: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_00bf: throw
+
+		IL_00c0: stloc.s 5
+		IL_00c2: ldloc.s 4
+		IL_00c4: ldstr "mkdirSync"
+		IL_00c9: ldloc.s 5
+		IL_00cb: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00d0: dup
+		IL_00d1: ldstr "recursive"
+		IL_00d6: ldc.i4.1
+		IL_00d7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00e1: pop
+		IL_00e2: ldloc.0
+		IL_00e3: ldfld object Modules.FSPromises_Readdir_Names/Scope::syncFs
+		IL_00e8: dup
+		IL_00e9: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_00ee: ceq
+		IL_00f0: brfalse.s IL_00fe
+
 		IL_00f2: pop
-		IL_00f3: ldloc.0
-		IL_00f4: ldfld object Modules.FSPromises_Readdir_Names/Scope::syncFs
-		IL_00f9: stloc.s 4
-		IL_00fb: ldloc.0
-		IL_00fc: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
-		IL_0101: stloc.s 5
-		IL_0103: ldloc.2
-		IL_0104: ldstr "join"
-		IL_0109: ldloc.s 5
-		IL_010b: ldstr "beta.txt"
-		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0115: stloc.s 5
-		IL_0117: ldloc.s 4
-		IL_0119: ldstr "writeFileSync"
-		IL_011e: ldloc.s 5
-		IL_0120: ldstr ""
-		IL_0125: ldstr "utf8"
-		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_012f: pop
-		IL_0130: ldloc.0
-		IL_0131: ldfld object Modules.FSPromises_Readdir_Names/Scope::syncFs
-		IL_0136: stloc.s 5
-		IL_0138: ldloc.0
-		IL_0139: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
-		IL_013e: stloc.s 4
-		IL_0140: ldloc.2
-		IL_0141: ldstr "join"
-		IL_0146: ldloc.s 4
-		IL_0148: ldstr "subdir"
-		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0152: stloc.s 4
-		IL_0154: ldloc.s 5
-		IL_0156: ldstr "mkdirSync"
-		IL_015b: ldloc.s 4
-		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0162: pop
-		IL_0163: ldloc.1
-		IL_0164: ldstr "readdir"
+		IL_00f3: ldstr "Cannot access 'syncFs' before initialization"
+		IL_00f8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_00fd: throw
+
+		IL_00fe: stloc.s 5
+		IL_0100: ldloc.0
+		IL_0101: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
+		IL_0106: dup
+		IL_0107: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_010c: ceq
+		IL_010e: brfalse.s IL_011c
+
+		IL_0110: pop
+		IL_0111: ldstr "Cannot access 'dir' before initialization"
+		IL_0116: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_011b: throw
+
+		IL_011c: stloc.s 4
+		IL_011e: ldloc.2
+		IL_011f: ldstr "join"
+		IL_0124: ldloc.s 4
+		IL_0126: ldstr "alpha.txt"
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0130: stloc.s 4
+		IL_0132: ldloc.s 5
+		IL_0134: ldstr "writeFileSync"
+		IL_0139: ldloc.s 4
+		IL_013b: ldstr ""
+		IL_0140: ldstr "utf8"
+		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_014a: pop
+		IL_014b: ldloc.0
+		IL_014c: ldfld object Modules.FSPromises_Readdir_Names/Scope::syncFs
+		IL_0151: dup
+		IL_0152: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0157: ceq
+		IL_0159: brfalse.s IL_0167
+
+		IL_015b: pop
+		IL_015c: ldstr "Cannot access 'syncFs' before initialization"
+		IL_0161: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0166: throw
+
+		IL_0167: stloc.s 4
 		IL_0169: ldloc.0
 		IL_016a: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
-		IL_016f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0174: stloc.s 4
-		IL_0176: ldnull
-		IL_0177: ldftn object Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11::__js_call__(object, object)
-		IL_017d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0182: ldc.i4.1
-		IL_0183: newarr [System.Runtime]System.Object
-		IL_0188: dup
-		IL_0189: ldc.i4.0
-		IL_018a: ldloc.0
-		IL_018b: stelem.ref
-		IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0196: stloc.s 5
-		IL_0198: ldloc.s 4
-		IL_019a: ldstr "then"
-		IL_019f: ldloc.s 5
-		IL_01a1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_01a6: stloc.s 5
-		IL_01a8: ldnull
-		IL_01a9: ldftn object Modules.FSPromises_Readdir_Names/ArrowFunction_L18C12::__js_call__(object, object)
-		IL_01af: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_01b4: ldc.i4.1
-		IL_01b5: newarr [System.Runtime]System.Object
+		IL_016f: dup
+		IL_0170: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0175: ceq
+		IL_0177: brfalse.s IL_0185
+
+		IL_0179: pop
+		IL_017a: ldstr "Cannot access 'dir' before initialization"
+		IL_017f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0184: throw
+
+		IL_0185: stloc.s 5
+		IL_0187: ldloc.2
+		IL_0188: ldstr "join"
+		IL_018d: ldloc.s 5
+		IL_018f: ldstr "beta.txt"
+		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0199: stloc.s 5
+		IL_019b: ldloc.s 4
+		IL_019d: ldstr "writeFileSync"
+		IL_01a2: ldloc.s 5
+		IL_01a4: ldstr ""
+		IL_01a9: ldstr "utf8"
+		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_01b3: pop
+		IL_01b4: ldloc.0
+		IL_01b5: ldfld object Modules.FSPromises_Readdir_Names/Scope::syncFs
 		IL_01ba: dup
-		IL_01bb: ldc.i4.0
-		IL_01bc: ldloc.0
-		IL_01bd: stelem.ref
-		IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_01c8: stloc.s 4
-		IL_01ca: ldloc.s 5
-		IL_01cc: ldstr "catch"
-		IL_01d1: ldloc.s 4
-		IL_01d3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_01d8: stloc.s 4
-		IL_01da: ldc.i4.1
-		IL_01db: newarr [System.Runtime]System.Object
-		IL_01e0: dup
-		IL_01e1: ldc.i4.0
-		IL_01e2: ldloc.0
-		IL_01e3: stelem.ref
-		IL_01e4: ldc.i4.0
-		IL_01e5: ldelem.ref
-		IL_01e6: castclass Modules.FSPromises_Readdir_Names/Scope
-		IL_01eb: ldftn object Modules.FSPromises_Readdir_Names/ArrowFunction_L21C14::__js_call__(class Modules.FSPromises_Readdir_Names/Scope, object)
-		IL_01f1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_01f6: ldc.i4.1
-		IL_01f7: newarr [System.Runtime]System.Object
-		IL_01fc: dup
-		IL_01fd: ldc.i4.0
-		IL_01fe: ldloc.0
-		IL_01ff: stelem.ref
-		IL_0200: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0205: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_020a: stloc.s 5
-		IL_020c: ldloc.s 4
-		IL_020e: ldstr "finally"
-		IL_0213: ldloc.s 5
-		IL_0215: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_021a: pop
-		IL_021b: ret
+		IL_01bb: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_01c0: ceq
+		IL_01c2: brfalse.s IL_01d0
+
+		IL_01c4: pop
+		IL_01c5: ldstr "Cannot access 'syncFs' before initialization"
+		IL_01ca: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_01cf: throw
+
+		IL_01d0: stloc.s 5
+		IL_01d2: ldloc.0
+		IL_01d3: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
+		IL_01d8: dup
+		IL_01d9: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_01de: ceq
+		IL_01e0: brfalse.s IL_01ee
+
+		IL_01e2: pop
+		IL_01e3: ldstr "Cannot access 'dir' before initialization"
+		IL_01e8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_01ed: throw
+
+		IL_01ee: stloc.s 4
+		IL_01f0: ldloc.2
+		IL_01f1: ldstr "join"
+		IL_01f6: ldloc.s 4
+		IL_01f8: ldstr "subdir"
+		IL_01fd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0202: stloc.s 4
+		IL_0204: ldloc.s 5
+		IL_0206: ldstr "mkdirSync"
+		IL_020b: ldloc.s 4
+		IL_020d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0212: pop
+		IL_0213: ldloc.0
+		IL_0214: ldfld object Modules.FSPromises_Readdir_Names/Scope::dir
+		IL_0219: dup
+		IL_021a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_021f: ceq
+		IL_0221: brfalse.s IL_022f
+
+		IL_0223: pop
+		IL_0224: ldstr "Cannot access 'dir' before initialization"
+		IL_0229: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_022e: throw
+
+		IL_022f: stloc.s 4
+		IL_0231: ldloc.1
+		IL_0232: ldstr "readdir"
+		IL_0237: ldloc.s 4
+		IL_0239: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_023e: stloc.s 4
+		IL_0240: ldnull
+		IL_0241: ldftn object Modules.FSPromises_Readdir_Names/ArrowFunction_L14C11::__js_call__(object, object)
+		IL_0247: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_024c: ldc.i4.1
+		IL_024d: newarr [System.Runtime]System.Object
+		IL_0252: dup
+		IL_0253: ldc.i4.0
+		IL_0254: ldloc.0
+		IL_0255: stelem.ref
+		IL_0256: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_025b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0260: stloc.s 5
+		IL_0262: ldloc.s 4
+		IL_0264: ldstr "then"
+		IL_0269: ldloc.s 5
+		IL_026b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0270: stloc.s 5
+		IL_0272: ldnull
+		IL_0273: ldftn object Modules.FSPromises_Readdir_Names/ArrowFunction_L18C12::__js_call__(object, object)
+		IL_0279: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_027e: ldc.i4.1
+		IL_027f: newarr [System.Runtime]System.Object
+		IL_0284: dup
+		IL_0285: ldc.i4.0
+		IL_0286: ldloc.0
+		IL_0287: stelem.ref
+		IL_0288: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_028d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0292: stloc.s 4
+		IL_0294: ldloc.s 5
+		IL_0296: ldstr "catch"
+		IL_029b: ldloc.s 4
+		IL_029d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_02a2: stloc.s 4
+		IL_02a4: ldc.i4.1
+		IL_02a5: newarr [System.Runtime]System.Object
+		IL_02aa: dup
+		IL_02ab: ldc.i4.0
+		IL_02ac: ldloc.0
+		IL_02ad: stelem.ref
+		IL_02ae: ldc.i4.0
+		IL_02af: ldelem.ref
+		IL_02b0: castclass Modules.FSPromises_Readdir_Names/Scope
+		IL_02b5: ldftn object Modules.FSPromises_Readdir_Names/ArrowFunction_L21C14::__js_call__(class Modules.FSPromises_Readdir_Names/Scope, object)
+		IL_02bb: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_02c0: ldc.i4.1
+		IL_02c1: newarr [System.Runtime]System.Object
+		IL_02c6: dup
+		IL_02c7: ldc.i4.0
+		IL_02c8: ldloc.0
+		IL_02c9: stelem.ref
+		IL_02ca: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_02cf: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_02d4: stloc.s 5
+		IL_02d6: ldloc.s 4
+		IL_02d8: ldstr "finally"
+		IL_02dd: ldloc.s 5
+		IL_02df: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_02e4: pop
+		IL_02e5: ret
 	} // end of method FSPromises_Readdir_Names::__js_module_init__
 
 } // end of class Modules.FSPromises_Readdir_Names
@@ -528,7 +646,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x237f
+		// Method begins at RVA 0x248d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

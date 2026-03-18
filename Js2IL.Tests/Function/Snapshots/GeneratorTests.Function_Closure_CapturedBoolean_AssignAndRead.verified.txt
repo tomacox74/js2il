@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2143
+					// Method begins at RVA 0x217e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x211b
+				// Method begins at RVA 0x214b
 				// Header size: 1
 				// Code size: 21 (0x15)
 				.maxstack 8
@@ -80,15 +80,18 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x213a
+				// Method begins at RVA 0x216a
 				// Header size: 1
-				// Code size: 8 (0x8)
+				// Code size: 19 (0x13)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
+				IL_0006: ldarg.0
+				IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_000c: stfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
+				IL_0011: nop
+				IL_0012: ret
 			} // end of method Scope::.ctor
 
 		} // end of class Scope
@@ -108,7 +111,7 @@
 			)
 			// Method begins at RVA 0x20a8
 			// Header size: 12
-			// Code size: 103 (0x67)
+			// Code size: 151 (0x97)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope,
@@ -137,31 +140,55 @@
 			IL_0023: ldc.i4.0
 			IL_0024: box [System.Runtime]System.Boolean
 			IL_0029: stfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
-			IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0033: ldloc.0
-			IL_0034: ldfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
-			IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002e: ldloc.0
+			IL_002f: ldfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
+			IL_0034: dup
+			IL_0035: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_003a: ceq
+			IL_003c: brfalse.s IL_004a
+
 			IL_003e: pop
-			IL_003f: ldc.i4.2
-			IL_0040: newarr [System.Runtime]System.Object
-			IL_0045: dup
-			IL_0046: ldc.i4.0
-			IL_0047: ldarg.0
-			IL_0048: stelem.ref
-			IL_0049: dup
-			IL_004a: ldc.i4.1
-			IL_004b: ldloc.0
-			IL_004c: stelem.ref
-			IL_004d: ldnull
-			IL_004e: call object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/setTrue::__js_call__(object[], object)
-			IL_0053: pop
-			IL_0054: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0059: ldloc.0
-			IL_005a: ldfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
-			IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0064: pop
+			IL_003f: ldstr "Cannot access 'flag' before initialization"
+			IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0049: throw
+
+			IL_004a: stloc.2
+			IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0050: ldloc.2
+			IL_0051: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0056: pop
+			IL_0057: ldc.i4.2
+			IL_0058: newarr [System.Runtime]System.Object
+			IL_005d: dup
+			IL_005e: ldc.i4.0
+			IL_005f: ldarg.0
+			IL_0060: stelem.ref
+			IL_0061: dup
+			IL_0062: ldc.i4.1
+			IL_0063: ldloc.0
+			IL_0064: stelem.ref
 			IL_0065: ldnull
-			IL_0066: ret
+			IL_0066: call object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/setTrue::__js_call__(object[], object)
+			IL_006b: pop
+			IL_006c: ldloc.0
+			IL_006d: ldfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
+			IL_0072: dup
+			IL_0073: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0078: ceq
+			IL_007a: brfalse.s IL_0088
+
+			IL_007c: pop
+			IL_007d: ldstr "Cannot access 'flag' before initialization"
+			IL_0082: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0087: throw
+
+			IL_0088: stloc.2
+			IL_0089: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008e: ldloc.2
+			IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0094: pop
+			IL_0095: ldnull
+			IL_0096: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -180,7 +207,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2131
+			// Method begins at RVA 0x2161
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -256,7 +283,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214c
+		// Method begins at RVA 0x2187
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

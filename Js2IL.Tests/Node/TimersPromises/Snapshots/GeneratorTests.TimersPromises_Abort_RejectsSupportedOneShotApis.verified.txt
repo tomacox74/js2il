@@ -26,7 +26,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x24ae
+						// Method begins at RVA 0x254e
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -44,7 +44,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24a5
+					// Method begins at RVA 0x2545
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -69,7 +69,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x235c
+				// Method begins at RVA 0x23a0
 				// Header size: 12
 				// Code size: 37 (0x25)
 				.maxstack 8
@@ -111,7 +111,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x24c0
+						// Method begins at RVA 0x2560
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -129,7 +129,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24b7
+					// Method begins at RVA 0x2557
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -154,7 +154,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2390
+				// Method begins at RVA 0x23d4
 				// Header size: 12
 				// Code size: 110 (0x6e)
 				.maxstack 8
@@ -229,7 +229,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x24d2
+						// Method begins at RVA 0x2572
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -247,7 +247,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24c9
+					// Method begins at RVA 0x2569
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -271,9 +271,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x240c
+				// Method begins at RVA 0x2450
 				// Header size: 12
-				// Code size: 93 (0x5d)
+				// Code size: 163 (0xa3)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -285,36 +285,70 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope
 				IL_0008: ldfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope::signal
-				IL_000d: stloc.0
-				IL_000e: ldloc.0
-				IL_000f: ldstr "aborted"
-				IL_0014: ldc.i4.1
-				IL_0015: box [System.Runtime]System.Boolean
-				IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
-				IL_001f: pop
-				IL_0020: ldarg.0
-				IL_0021: ldc.i4.1
-				IL_0022: ldelem.ref
-				IL_0023: castclass Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope
-				IL_0028: ldfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope::signal
-				IL_002d: ldstr "listener"
-				IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0037: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_003c: stloc.1
-				IL_003d: ldloc.1
-				IL_003e: brfalse IL_005b
+				IL_000d: dup
+				IL_000e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_0013: ceq
+				IL_0015: brfalse.s IL_0023
 
-				IL_0043: ldarg.0
-				IL_0044: ldc.i4.1
-				IL_0045: ldelem.ref
-				IL_0046: castclass Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope
-				IL_004b: ldfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope::signal
-				IL_0050: ldstr "listener"
-				IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-				IL_005a: pop
+				IL_0017: pop
+				IL_0018: ldstr "Cannot access 'signal' before initialization"
+				IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_0022: throw
 
-				IL_005b: ldnull
-				IL_005c: ret
+				IL_0023: stloc.0
+				IL_0024: ldloc.0
+				IL_0025: ldstr "aborted"
+				IL_002a: ldc.i4.1
+				IL_002b: box [System.Runtime]System.Boolean
+				IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
+				IL_0035: pop
+				IL_0036: ldarg.0
+				IL_0037: ldc.i4.1
+				IL_0038: ldelem.ref
+				IL_0039: castclass Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope
+				IL_003e: ldfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope::signal
+				IL_0043: dup
+				IL_0044: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_0049: ceq
+				IL_004b: brfalse.s IL_0059
+
+				IL_004d: pop
+				IL_004e: ldstr "Cannot access 'signal' before initialization"
+				IL_0053: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_0058: throw
+
+				IL_0059: stloc.0
+				IL_005a: ldloc.0
+				IL_005b: ldstr "listener"
+				IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0065: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_006a: stloc.1
+				IL_006b: ldloc.1
+				IL_006c: brfalse IL_00a1
+
+				IL_0071: ldarg.0
+				IL_0072: ldc.i4.1
+				IL_0073: ldelem.ref
+				IL_0074: castclass Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope
+				IL_0079: ldfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope::signal
+				IL_007e: dup
+				IL_007f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_0084: ceq
+				IL_0086: brfalse.s IL_0094
+
+				IL_0088: pop
+				IL_0089: ldstr "Cannot access 'signal' before initialization"
+				IL_008e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_0093: throw
+
+				IL_0094: stloc.0
+				IL_0095: ldloc.0
+				IL_0096: ldstr "listener"
+				IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+				IL_00a0: pop
+
+				IL_00a1: ldnull
+				IL_00a2: ret
 			} // end of method FunctionExpression_L22C11::__js_call__
 
 		} // end of class FunctionExpression_L22C11
@@ -333,15 +367,18 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x249c
+				// Method begins at RVA 0x2531
 				// Header size: 1
-				// Code size: 8 (0x8)
+				// Code size: 19 (0x13)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
+				IL_0006: ldarg.0
+				IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_000c: stfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope::signal
+				IL_0011: nop
+				IL_0012: ret
 			} // end of method Scope::.ctor
 
 		} // end of class Scope
@@ -359,9 +396,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x2194
+			// Method begins at RVA 0x21ac
 			// Header size: 12
-			// Code size: 144 (0x90)
+			// Code size: 168 (0xa8)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope,
@@ -397,32 +434,44 @@
 			IL_004a: ldloc.0
 			IL_004b: ldloc.3
 			IL_004c: stfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope::signal
-			IL_0051: ldc.i4.2
-			IL_0052: newarr [System.Runtime]System.Object
+			IL_0051: ldloc.0
+			IL_0052: ldfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope::signal
 			IL_0057: dup
-			IL_0058: ldc.i4.0
-			IL_0059: ldarg.0
-			IL_005a: stelem.ref
-			IL_005b: dup
-			IL_005c: ldc.i4.1
-			IL_005d: ldloc.0
-			IL_005e: stelem.ref
-			IL_005f: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/FunctionExpression_L22C11::__js_call__(object[], object)
-			IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_006a: stloc.2
-			IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0070: dup
-			IL_0071: ldstr "signal"
-			IL_0076: ldloc.0
-			IL_0077: ldfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/Scope::signal
-			IL_007c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0081: dup
-			IL_0082: ldstr "abort"
-			IL_0087: ldloc.2
-			IL_0088: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_008d: stloc.3
-			IL_008e: ldloc.3
-			IL_008f: ret
+			IL_0058: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_005d: ceq
+			IL_005f: brfalse.s IL_006d
+
+			IL_0061: pop
+			IL_0062: ldstr "Cannot access 'signal' before initialization"
+			IL_0067: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_006c: throw
+
+			IL_006d: stloc.2
+			IL_006e: ldc.i4.2
+			IL_006f: newarr [System.Runtime]System.Object
+			IL_0074: dup
+			IL_0075: ldc.i4.0
+			IL_0076: ldarg.0
+			IL_0077: stelem.ref
+			IL_0078: dup
+			IL_0079: ldc.i4.1
+			IL_007a: ldloc.0
+			IL_007b: stelem.ref
+			IL_007c: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/createController/FunctionExpression_L22C11::__js_call__(object[], object)
+			IL_0082: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_0087: stloc.1
+			IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_008d: dup
+			IL_008e: ldstr "signal"
+			IL_0093: ldloc.2
+			IL_0094: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0099: dup
+			IL_009a: ldstr "abort"
+			IL_009f: ldloc.1
+			IL_00a0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_00a5: stloc.3
+			IL_00a6: ldloc.3
+			IL_00a7: ret
 		} // end of method createController::__js_call__
 
 	} // end of class createController
@@ -438,7 +487,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24db
+				// Method begins at RVA 0x257b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -462,7 +511,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2230
+			// Method begins at RVA 0x2260
 			// Header size: 12
 			// Code size: 68 (0x44)
 			.maxstack 8
@@ -502,7 +551,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24e4
+				// Method begins at RVA 0x2584
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -525,7 +574,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2280
+			// Method begins at RVA 0x22b0
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -551,7 +600,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24ed
+				// Method begins at RVA 0x258d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -578,7 +627,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x2293
+			// Method begins at RVA 0x22c3
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -608,7 +657,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24ff
+					// Method begins at RVA 0x259f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -631,7 +680,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2475
+				// Method begins at RVA 0x24ff
 				// Header size: 1
 				// Code size: 18 (0x12)
 				.maxstack 8
@@ -657,7 +706,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2508
+					// Method begins at RVA 0x25a8
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -682,7 +731,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2488
+				// Method begins at RVA 0x2512
 				// Header size: 1
 				// Code size: 10 (0xa)
 				.maxstack 8
@@ -704,7 +753,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24f6
+				// Method begins at RVA 0x2596
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -730,9 +779,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x22a0
+			// Method begins at RVA 0x22d0
 			// Header size: 12
-			// Code size: 173 (0xad)
+			// Code size: 195 (0xc3)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L48C8/Scope,
@@ -765,48 +814,58 @@
 			IL_0036: pop
 			IL_0037: ldarg.0
 			IL_0038: ldfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope::timersPromises
-			IL_003d: stloc.2
-			IL_003e: ldloc.2
-			IL_003f: ldstr "setImmediate"
-			IL_0044: ldstr "immediate-value"
-			IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_004e: dup
-			IL_004f: ldstr "signal"
-			IL_0054: ldloc.1
-			IL_0055: ldstr "signal"
-			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_005f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0069: stloc.2
-			IL_006a: ldnull
-			IL_006b: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L48C8/FunctionExpression_L53C12::__js_call__(object)
-			IL_0071: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_0076: stloc.3
-			IL_0077: ldloc.2
-			IL_0078: ldstr "then"
-			IL_007d: ldloc.3
-			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0083: stloc.3
-			IL_0084: ldc.i4.2
-			IL_0085: newarr [System.Runtime]System.Object
-			IL_008a: dup
-			IL_008b: ldc.i4.0
-			IL_008c: ldarg.0
-			IL_008d: stelem.ref
-			IL_008e: dup
-			IL_008f: ldc.i4.1
-			IL_0090: ldloc.0
-			IL_0091: stelem.ref
-			IL_0092: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L48C8/FunctionExpression_L56C13::__js_call__(object[], object, object)
-			IL_0098: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_009d: stloc.2
-			IL_009e: ldloc.3
-			IL_009f: ldstr "catch"
-			IL_00a4: ldloc.2
-			IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00aa: stloc.2
-			IL_00ab: ldloc.2
-			IL_00ac: ret
+			IL_003d: dup
+			IL_003e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0043: ceq
+			IL_0045: brfalse.s IL_0053
+
+			IL_0047: pop
+			IL_0048: ldstr "Cannot access 'timersPromises' before initialization"
+			IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0052: throw
+
+			IL_0053: stloc.2
+			IL_0054: ldloc.2
+			IL_0055: ldstr "setImmediate"
+			IL_005a: ldstr "immediate-value"
+			IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0064: dup
+			IL_0065: ldstr "signal"
+			IL_006a: ldloc.1
+			IL_006b: ldstr "signal"
+			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0075: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_007f: stloc.2
+			IL_0080: ldnull
+			IL_0081: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L48C8/FunctionExpression_L53C12::__js_call__(object)
+			IL_0087: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_008c: stloc.3
+			IL_008d: ldloc.2
+			IL_008e: ldstr "then"
+			IL_0093: ldloc.3
+			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0099: stloc.3
+			IL_009a: ldc.i4.2
+			IL_009b: newarr [System.Runtime]System.Object
+			IL_00a0: dup
+			IL_00a1: ldc.i4.0
+			IL_00a2: ldarg.0
+			IL_00a3: stelem.ref
+			IL_00a4: dup
+			IL_00a5: ldc.i4.1
+			IL_00a6: ldloc.0
+			IL_00a7: stelem.ref
+			IL_00a8: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L48C8/FunctionExpression_L56C13::__js_call__(object[], object, object)
+			IL_00ae: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_00b3: stloc.2
+			IL_00b4: ldloc.3
+			IL_00b5: ldstr "catch"
+			IL_00ba: ldloc.2
+			IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00c0: stloc.2
+			IL_00c1: ldloc.2
+			IL_00c2: ret
 		} // end of method FunctionExpression_L48C8::__js_call__
 
 	} // end of class FunctionExpression_L48C8
@@ -832,15 +891,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2493
+			// Method begins at RVA 0x251d
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope::timersPromises
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -858,7 +920,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 312 (0x138)
+		// Code size: 334 (0x14e)
 		.maxstack 9
 		.locals init (
 			[0] class Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope,
@@ -917,71 +979,81 @@
 		IL_0075: stloc.1
 		IL_0076: ldloc.0
 		IL_0077: ldfld object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope::timersPromises
-		IL_007c: stloc.3
-		IL_007d: ldloc.3
-		IL_007e: ldstr "setTimeout"
-		IL_0083: ldc.r8 0.0
-		IL_008c: box [System.Runtime]System.Double
-		IL_0091: ldstr "timeout-value"
-		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_009b: dup
-		IL_009c: ldstr "signal"
-		IL_00a1: ldloc.1
-		IL_00a2: ldstr "signal"
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00ac: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_00b6: stloc.3
-		IL_00b7: ldloc.3
-		IL_00b8: stloc.2
-		IL_00b9: ldloc.1
-		IL_00ba: ldstr "abort"
-		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00c4: pop
-		IL_00c5: ldnull
-		IL_00c6: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L42C8::__js_call__(object)
-		IL_00cc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00d1: stloc.3
-		IL_00d2: ldloc.2
-		IL_00d3: ldstr "then"
-		IL_00d8: ldloc.3
-		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00de: stloc.3
-		IL_00df: ldc.i4.1
-		IL_00e0: newarr [System.Runtime]System.Object
-		IL_00e5: dup
-		IL_00e6: ldc.i4.0
-		IL_00e7: ldloc.0
-		IL_00e8: stelem.ref
-		IL_00e9: ldc.i4.0
-		IL_00ea: ldelem.ref
-		IL_00eb: castclass Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope
-		IL_00f0: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L45C9::__js_call__(class Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope, object, object)
-		IL_00f6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00fb: stloc.s 4
-		IL_00fd: ldloc.3
-		IL_00fe: ldstr "catch"
-		IL_0103: ldloc.s 4
-		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_010a: stloc.s 4
-		IL_010c: ldc.i4.1
-		IL_010d: newarr [System.Runtime]System.Object
-		IL_0112: dup
-		IL_0113: ldc.i4.0
-		IL_0114: ldloc.0
-		IL_0115: stelem.ref
-		IL_0116: ldc.i4.0
-		IL_0117: ldelem.ref
-		IL_0118: castclass Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope
-		IL_011d: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L48C8::__js_call__(class Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope, object)
-		IL_0123: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0128: stloc.3
-		IL_0129: ldloc.s 4
-		IL_012b: ldstr "then"
-		IL_0130: ldloc.3
-		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0136: pop
-		IL_0137: ret
+		IL_007c: dup
+		IL_007d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0082: ceq
+		IL_0084: brfalse.s IL_0092
+
+		IL_0086: pop
+		IL_0087: ldstr "Cannot access 'timersPromises' before initialization"
+		IL_008c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0091: throw
+
+		IL_0092: stloc.3
+		IL_0093: ldloc.3
+		IL_0094: ldstr "setTimeout"
+		IL_0099: ldc.r8 0.0
+		IL_00a2: box [System.Runtime]System.Double
+		IL_00a7: ldstr "timeout-value"
+		IL_00ac: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00b1: dup
+		IL_00b2: ldstr "signal"
+		IL_00b7: ldloc.1
+		IL_00b8: ldstr "signal"
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_00cc: stloc.3
+		IL_00cd: ldloc.3
+		IL_00ce: stloc.2
+		IL_00cf: ldloc.1
+		IL_00d0: ldstr "abort"
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00da: pop
+		IL_00db: ldnull
+		IL_00dc: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L42C8::__js_call__(object)
+		IL_00e2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00e7: stloc.3
+		IL_00e8: ldloc.2
+		IL_00e9: ldstr "then"
+		IL_00ee: ldloc.3
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f4: stloc.3
+		IL_00f5: ldc.i4.1
+		IL_00f6: newarr [System.Runtime]System.Object
+		IL_00fb: dup
+		IL_00fc: ldc.i4.0
+		IL_00fd: ldloc.0
+		IL_00fe: stelem.ref
+		IL_00ff: ldc.i4.0
+		IL_0100: ldelem.ref
+		IL_0101: castclass Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope
+		IL_0106: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L45C9::__js_call__(class Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope, object, object)
+		IL_010c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0111: stloc.s 4
+		IL_0113: ldloc.3
+		IL_0114: ldstr "catch"
+		IL_0119: ldloc.s 4
+		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0120: stloc.s 4
+		IL_0122: ldc.i4.1
+		IL_0123: newarr [System.Runtime]System.Object
+		IL_0128: dup
+		IL_0129: ldc.i4.0
+		IL_012a: ldloc.0
+		IL_012b: stelem.ref
+		IL_012c: ldc.i4.0
+		IL_012d: ldelem.ref
+		IL_012e: castclass Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope
+		IL_0133: ldftn object Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/FunctionExpression_L48C8::__js_call__(class Modules.TimersPromises_Abort_RejectsSupportedOneShotApis/Scope, object)
+		IL_0139: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_013e: stloc.3
+		IL_013f: ldloc.s 4
+		IL_0141: ldstr "then"
+		IL_0146: ldloc.3
+		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_014c: pop
+		IL_014d: ret
 	} // end of method TimersPromises_Abort_RejectsSupportedOneShotApis::__js_module_init__
 
 } // end of class Modules.TimersPromises_Abort_RejectsSupportedOneShotApis
@@ -993,7 +1065,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2511
+		// Method begins at RVA 0x25b1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -24,7 +24,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2106
+				// Method begins at RVA 0x2139
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -53,21 +53,44 @@
 			)
 			// Method begins at RVA 0x20dc
 			// Header size: 12
-			// Code size: 21 (0x15)
+			// Code size: 61 (0x3d)
 			.maxstack 8
 			.locals init (
-				[0] float64
+				[0] object,
+				[1] float64,
+				[2] float64,
+				[3] object
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld float64 Modules.ArrowFunction_CapturesOuterVariable/Scope::n
-			IL_0006: stloc.0
-			IL_0007: ldarg.2
-			IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000d: ldloc.0
-			IL_000e: mul
-			IL_000f: box [System.Runtime]System.Double
-			IL_0014: ret
+			IL_0001: ldfld object Modules.ArrowFunction_CapturesOuterVariable/Scope::n
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'n' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: box [System.Runtime]System.Double
+			IL_0021: stloc.0
+			IL_0022: ldarg.2
+			IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0028: stloc.1
+			IL_0029: ldloc.0
+			IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002f: stloc.2
+			IL_0030: ldloc.1
+			IL_0031: ldloc.2
+			IL_0032: mul
+			IL_0033: stloc.2
+			IL_0034: ldloc.2
+			IL_0035: box [System.Runtime]System.Double
+			IL_003a: stloc.3
+			IL_003b: ldloc.3
+			IL_003c: ret
 		} // end of method ArrowFunction_L4C13::__js_call__
 
 	} // end of class ArrowFunction_L4C13
@@ -79,21 +102,24 @@
 			01 00 0b 53 63 6f 70 65 20 6e 3d 7b 6e 7d 00 00
 		)
 		// Fields
-		.field public float64 n
+		.field public object n
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fd
+			// Method begins at RVA 0x2125
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.ArrowFunction_CapturesOuterVariable/Scope::n
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -126,7 +152,7 @@
 		IL_0007: ldc.r8 5
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: unbox.any [System.Runtime]System.Double
-		IL_001a: stfld float64 Modules.ArrowFunction_CapturesOuterVariable/Scope::n
+		IL_001a: stfld object Modules.ArrowFunction_CapturesOuterVariable/Scope::n
 		IL_001f: ldc.i4.1
 		IL_0020: newarr [System.Runtime]System.Object
 		IL_0025: dup
@@ -174,7 +200,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210f
+		// Method begins at RVA 0x2142
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

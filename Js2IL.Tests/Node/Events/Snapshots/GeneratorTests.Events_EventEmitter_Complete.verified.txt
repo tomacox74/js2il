@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26c2
+				// Method begins at RVA 0x2784
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x25fe
+			// Method begins at RVA 0x264c
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -63,7 +63,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26cb
+				// Method begins at RVA 0x278d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -86,7 +86,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2601
+			// Method begins at RVA 0x264f
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -108,7 +108,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26d4
+				// Method begins at RVA 0x2796
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -131,7 +131,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2604
+			// Method begins at RVA 0x2652
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -153,7 +153,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26dd
+				// Method begins at RVA 0x279f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -176,7 +176,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2607
+			// Method begins at RVA 0x2655
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -198,7 +198,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26e6
+				// Method begins at RVA 0x27a8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -224,24 +224,37 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 10 00 00 02
 			)
-			// Method begins at RVA 0x260c
+			// Method begins at RVA 0x2658
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 50 (0x32)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Events_EventEmitter_Complete/Scope::order
-			IL_0006: ldstr "a"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldloc.0
-			IL_0013: stfld object Modules.Events_EventEmitter_Complete/Scope::order
-			IL_0018: ldnull
-			IL_0019: ret
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'order' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "a"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldloc.1
+			IL_002b: stfld object Modules.Events_EventEmitter_Complete/Scope::order
+			IL_0030: ldnull
+			IL_0031: ret
 		} // end of method FunctionExpression_L27C21::__js_call__
 
 	} // end of class FunctionExpression_L27C21
@@ -257,7 +270,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26ef
+				// Method begins at RVA 0x27b1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -283,24 +296,37 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 10 00 00 02
 			)
-			// Method begins at RVA 0x2634
+			// Method begins at RVA 0x2698
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 50 (0x32)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Events_EventEmitter_Complete/Scope::order
-			IL_0006: ldstr "b"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldloc.0
-			IL_0013: stfld object Modules.Events_EventEmitter_Complete/Scope::order
-			IL_0018: ldnull
-			IL_0019: ret
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'order' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "b"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldloc.1
+			IL_002b: stfld object Modules.Events_EventEmitter_Complete/Scope::order
+			IL_0030: ldnull
+			IL_0031: ret
 		} // end of method FunctionExpression_L30C34::__js_call__
 
 	} // end of class FunctionExpression_L30C34
@@ -316,7 +342,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26f8
+				// Method begins at RVA 0x27ba
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -342,24 +368,37 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 10 00 00 02
 			)
-			// Method begins at RVA 0x265c
+			// Method begins at RVA 0x26d8
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 50 (0x32)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
-			IL_0006: ldstr "a"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldloc.0
-			IL_0013: stfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
-			IL_0018: ldnull
-			IL_0019: ret
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'prependOnceOrder' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "a"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldloc.1
+			IL_002b: stfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
+			IL_0030: ldnull
+			IL_0031: ret
 		} // end of method FunctionExpression_L39C20::__js_call__
 
 	} // end of class FunctionExpression_L39C20
@@ -375,7 +414,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2701
+				// Method begins at RVA 0x27c3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -401,24 +440,37 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 10 00 00 02
 			)
-			// Method begins at RVA 0x2684
+			// Method begins at RVA 0x2718
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 50 (0x32)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
-			IL_0006: ldstr "b"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldloc.0
-			IL_0013: stfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
-			IL_0018: ldnull
-			IL_0019: ret
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'prependOnceOrder' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "b"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldloc.1
+			IL_002b: stfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
+			IL_0030: ldnull
+			IL_0031: ret
 		} // end of method FunctionExpression_L42C37::__js_call__
 
 	} // end of class FunctionExpression_L42C37
@@ -434,7 +486,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x270a
+				// Method begins at RVA 0x27cc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -457,7 +509,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x26aa
+			// Method begins at RVA 0x2756
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -479,7 +531,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2713
+				// Method begins at RVA 0x27d5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -502,7 +554,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x26ad
+			// Method begins at RVA 0x2759
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -524,7 +576,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x271c
+				// Method begins at RVA 0x27de
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -547,7 +599,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x26b0
+			// Method begins at RVA 0x275c
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -569,7 +621,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2725
+				// Method begins at RVA 0x27e7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -592,7 +644,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x26b3
+			// Method begins at RVA 0x275f
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -614,7 +666,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x272e
+				// Method begins at RVA 0x27f0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -637,7 +689,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x26b6
+			// Method begins at RVA 0x2762
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -670,15 +722,21 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x26b9
+			// Method begins at RVA 0x2765
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 30 (0x1e)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Events_EventEmitter_Complete/Scope::order
+			IL_0011: ldarg.0
+			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0017: stfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
+			IL_001c: nop
+			IL_001d: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -696,7 +754,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1442 (0x5a2)
+		// Code size: 1520 (0x5f0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Events_EventEmitter_Complete/Scope,
@@ -891,283 +949,319 @@
 		IL_0204: ldstr "event"
 		IL_0209: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_020e: pop
-		IL_020f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0214: ldloc.0
-		IL_0215: ldfld object Modules.Events_EventEmitter_Complete/Scope::order
-		IL_021a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_020f: ldloc.0
+		IL_0210: ldfld object Modules.Events_EventEmitter_Complete/Scope::order
+		IL_0215: dup
+		IL_0216: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_021b: ceq
+		IL_021d: brfalse.s IL_022b
+
 		IL_021f: pop
-		IL_0220: ldloc.s 4
-		IL_0222: ldc.i4.0
-		IL_0223: newarr [System.Runtime]System.Object
-		IL_0228: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_022d: stloc.s 19
-		IL_022f: ldloc.s 19
-		IL_0231: stloc.s 10
-		IL_0233: ldloc.0
-		IL_0234: ldstr ""
-		IL_0239: stfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
-		IL_023e: ldc.i4.1
-		IL_023f: newarr [System.Runtime]System.Object
-		IL_0244: dup
-		IL_0245: ldc.i4.0
-		IL_0246: ldloc.0
-		IL_0247: stelem.ref
-		IL_0248: ldc.i4.0
-		IL_0249: ldelem.ref
-		IL_024a: castclass Modules.Events_EventEmitter_Complete/Scope
-		IL_024f: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_L39C20::__js_call__(class Modules.Events_EventEmitter_Complete/Scope, object)
-		IL_0255: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_025a: stloc.s 19
-		IL_025c: ldloc.s 10
-		IL_025e: ldstr "on"
-		IL_0263: ldstr "tick"
-		IL_0268: ldloc.s 19
-		IL_026a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_026f: pop
-		IL_0270: ldc.i4.1
-		IL_0271: newarr [System.Runtime]System.Object
-		IL_0276: dup
-		IL_0277: ldc.i4.0
-		IL_0278: ldloc.0
-		IL_0279: stelem.ref
-		IL_027a: ldc.i4.0
-		IL_027b: ldelem.ref
-		IL_027c: castclass Modules.Events_EventEmitter_Complete/Scope
-		IL_0281: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_L42C37::__js_call__(class Modules.Events_EventEmitter_Complete/Scope, object)
-		IL_0287: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_028c: stloc.s 19
-		IL_028e: ldloc.s 10
-		IL_0290: ldstr "prependOnceListener"
-		IL_0295: ldstr "tick"
-		IL_029a: ldloc.s 19
-		IL_029c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_02a1: pop
-		IL_02a2: ldloc.s 10
-		IL_02a4: ldstr "emit"
-		IL_02a9: ldstr "tick"
-		IL_02ae: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_02b3: pop
-		IL_02b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02b9: ldloc.0
-		IL_02ba: ldfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
-		IL_02bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02c4: pop
-		IL_02c5: ldloc.s 10
-		IL_02c7: ldstr "emit"
-		IL_02cc: ldstr "tick"
-		IL_02d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_02d6: pop
-		IL_02d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02dc: ldloc.0
-		IL_02dd: ldfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
-		IL_02e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02e7: pop
-		IL_02e8: ldloc.s 4
-		IL_02ea: ldc.i4.0
-		IL_02eb: newarr [System.Runtime]System.Object
-		IL_02f0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_02f5: stloc.s 19
-		IL_02f7: ldloc.s 19
-		IL_02f9: stloc.s 11
-		IL_02fb: ldloc.s 11
-		IL_02fd: ldstr "getMaxListeners"
-		IL_0302: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0307: stloc.s 19
-		IL_0309: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_030e: ldloc.s 19
-		IL_0310: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0315: pop
-		IL_0316: ldloc.s 11
-		IL_0318: ldstr "setMaxListeners"
-		IL_031d: ldc.r8 20
-		IL_0326: box [System.Runtime]System.Double
-		IL_032b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0330: pop
-		IL_0331: ldloc.s 11
-		IL_0333: ldstr "getMaxListeners"
-		IL_0338: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_033d: stloc.s 19
-		IL_033f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0344: ldloc.s 19
-		IL_0346: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_034b: pop
-		IL_034c: ldloc.s 11
-		IL_034e: ldstr "setMaxListeners"
-		IL_0353: ldc.r8 5
-		IL_035c: box [System.Runtime]System.Double
-		IL_0361: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0366: pop
-		IL_0367: ldloc.s 11
-		IL_0369: ldstr "getMaxListeners"
-		IL_036e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0373: stloc.s 19
-		IL_0375: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_037a: ldloc.s 19
-		IL_037c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0381: pop
-		IL_0382: ldloc.s 4
-		IL_0384: ldc.i4.0
-		IL_0385: newarr [System.Runtime]System.Object
-		IL_038a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_038f: stloc.s 19
-		IL_0391: ldloc.s 19
-		IL_0393: stloc.s 12
-		IL_0395: ldnull
-		IL_0396: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_L60C19::__js_call__(object)
-		IL_039c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_03a1: stloc.s 19
-		IL_03a3: ldloc.s 12
-		IL_03a5: ldstr "on"
-		IL_03aa: ldstr "raw"
-		IL_03af: ldloc.s 19
-		IL_03b1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_03b6: pop
-		IL_03b7: ldnull
-		IL_03b8: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_L61C21::__js_call__(object)
-		IL_03be: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_03c3: stloc.s 19
-		IL_03c5: ldloc.s 12
-		IL_03c7: ldstr "once"
-		IL_03cc: ldstr "raw"
-		IL_03d1: ldloc.s 19
-		IL_03d3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_03d8: pop
-		IL_03d9: ldloc.s 12
-		IL_03db: ldstr "rawListeners"
-		IL_03e0: ldstr "raw"
-		IL_03e5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_03ea: stloc.s 19
-		IL_03ec: ldloc.s 19
-		IL_03ee: stloc.s 13
-		IL_03f0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_03f5: ldloc.s 13
-		IL_03f7: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_03fc: box [System.Runtime]System.Double
-		IL_0401: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0406: pop
-		IL_0407: ldloc.s 4
-		IL_0409: ldc.i4.0
-		IL_040a: newarr [System.Runtime]System.Object
-		IL_040f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_0414: stloc.s 19
-		IL_0416: ldloc.s 19
-		IL_0418: stloc.s 14
-		IL_041a: ldnull
-		IL_041b: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_result::__js_call__(object)
-		IL_0421: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0426: stloc.s 19
-		IL_0428: ldloc.s 14
-		IL_042a: ldstr "on"
-		IL_042f: ldstr "a"
-		IL_0434: ldloc.s 19
-		IL_0436: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_043b: stloc.s 19
-		IL_043d: ldnull
-		IL_043e: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_result_L69C24::__js_call__(object)
-		IL_0444: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0449: stloc.s 20
-		IL_044b: ldloc.s 19
-		IL_044d: ldstr "prependListener"
-		IL_0452: ldstr "b"
-		IL_0457: ldloc.s 20
-		IL_0459: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_045e: stloc.s 20
-		IL_0460: ldloc.s 20
-		IL_0462: ldstr "setMaxListeners"
-		IL_0467: ldc.r8 15
-		IL_0470: box [System.Runtime]System.Double
-		IL_0475: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_047a: stloc.s 20
-		IL_047c: ldloc.s 20
-		IL_047e: ldstr "removeAllListeners"
-		IL_0483: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0488: stloc.s 20
-		IL_048a: ldloc.s 20
-		IL_048c: stloc.s 15
-		IL_048e: ldloc.s 15
-		IL_0490: ldloc.s 14
-		IL_0492: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0497: stloc.s 21
-		IL_0499: ldloc.s 21
-		IL_049b: box [System.Runtime]System.Boolean
-		IL_04a0: stloc.s 22
-		IL_04a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04a7: ldloc.s 22
-		IL_04a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04ae: pop
-		IL_04af: ldloc.s 14
-		IL_04b1: ldstr "eventNames"
-		IL_04b6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_04bb: stloc.s 20
-		IL_04bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04c2: ldloc.s 20
-		IL_04c4: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_04c9: box [System.Runtime]System.Double
-		IL_04ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04d3: pop
-		IL_04d4: ldloc.s 14
-		IL_04d6: ldstr "getMaxListeners"
-		IL_04db: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_04e0: stloc.s 20
-		IL_04e2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04e7: ldloc.s 20
-		IL_04e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_04ee: pop
-		IL_04ef: ldloc.s 4
-		IL_04f1: ldc.i4.0
-		IL_04f2: newarr [System.Runtime]System.Object
-		IL_04f7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_04fc: stloc.s 20
-		IL_04fe: ldloc.s 20
-		IL_0500: stloc.s 16
-		IL_0502: ldnull
-		IL_0503: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_L78C20::__js_call__(object)
-		IL_0509: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_050e: stloc.s 20
-		IL_0510: ldloc.s 16
-		IL_0512: ldstr "on"
-		IL_0517: ldstr "copy"
-		IL_051c: ldloc.s 20
-		IL_051e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0523: pop
-		IL_0524: ldloc.s 16
-		IL_0526: ldstr "listeners"
-		IL_052b: ldstr "copy"
-		IL_0530: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0535: stloc.s 20
-		IL_0537: ldloc.s 20
-		IL_0539: stloc.s 17
-		IL_053b: ldloc.s 16
-		IL_053d: ldstr "listeners"
-		IL_0542: ldstr "copy"
-		IL_0547: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_054c: stloc.s 20
-		IL_054e: ldloc.s 20
-		IL_0550: stloc.s 18
-		IL_0552: ldloc.s 17
-		IL_0554: ldloc.s 18
-		IL_0556: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_055b: stloc.s 21
-		IL_055d: ldloc.s 21
-		IL_055f: box [System.Runtime]System.Boolean
-		IL_0564: stloc.s 22
-		IL_0566: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_056b: ldloc.s 22
-		IL_056d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0572: pop
-		IL_0573: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0578: ldloc.s 17
-		IL_057a: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_057f: box [System.Runtime]System.Double
-		IL_0584: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0589: pop
-		IL_058a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_058f: ldloc.s 18
-		IL_0591: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0596: box [System.Runtime]System.Double
-		IL_059b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_05a0: pop
-		IL_05a1: ret
+		IL_0220: ldstr "Cannot access 'order' before initialization"
+		IL_0225: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_022a: throw
+
+		IL_022b: stloc.s 19
+		IL_022d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0232: ldloc.s 19
+		IL_0234: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0239: pop
+		IL_023a: ldloc.s 4
+		IL_023c: ldc.i4.0
+		IL_023d: newarr [System.Runtime]System.Object
+		IL_0242: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_0247: stloc.s 19
+		IL_0249: ldloc.s 19
+		IL_024b: stloc.s 10
+		IL_024d: ldloc.0
+		IL_024e: ldstr ""
+		IL_0253: stfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
+		IL_0258: ldc.i4.1
+		IL_0259: newarr [System.Runtime]System.Object
+		IL_025e: dup
+		IL_025f: ldc.i4.0
+		IL_0260: ldloc.0
+		IL_0261: stelem.ref
+		IL_0262: ldc.i4.0
+		IL_0263: ldelem.ref
+		IL_0264: castclass Modules.Events_EventEmitter_Complete/Scope
+		IL_0269: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_L39C20::__js_call__(class Modules.Events_EventEmitter_Complete/Scope, object)
+		IL_026f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0274: stloc.s 19
+		IL_0276: ldloc.s 10
+		IL_0278: ldstr "on"
+		IL_027d: ldstr "tick"
+		IL_0282: ldloc.s 19
+		IL_0284: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0289: pop
+		IL_028a: ldc.i4.1
+		IL_028b: newarr [System.Runtime]System.Object
+		IL_0290: dup
+		IL_0291: ldc.i4.0
+		IL_0292: ldloc.0
+		IL_0293: stelem.ref
+		IL_0294: ldc.i4.0
+		IL_0295: ldelem.ref
+		IL_0296: castclass Modules.Events_EventEmitter_Complete/Scope
+		IL_029b: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_L42C37::__js_call__(class Modules.Events_EventEmitter_Complete/Scope, object)
+		IL_02a1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_02a6: stloc.s 19
+		IL_02a8: ldloc.s 10
+		IL_02aa: ldstr "prependOnceListener"
+		IL_02af: ldstr "tick"
+		IL_02b4: ldloc.s 19
+		IL_02b6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_02bb: pop
+		IL_02bc: ldloc.s 10
+		IL_02be: ldstr "emit"
+		IL_02c3: ldstr "tick"
+		IL_02c8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_02cd: pop
+		IL_02ce: ldloc.0
+		IL_02cf: ldfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
+		IL_02d4: dup
+		IL_02d5: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_02da: ceq
+		IL_02dc: brfalse.s IL_02ea
+
+		IL_02de: pop
+		IL_02df: ldstr "Cannot access 'prependOnceOrder' before initialization"
+		IL_02e4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_02e9: throw
+
+		IL_02ea: stloc.s 19
+		IL_02ec: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02f1: ldloc.s 19
+		IL_02f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02f8: pop
+		IL_02f9: ldloc.s 10
+		IL_02fb: ldstr "emit"
+		IL_0300: ldstr "tick"
+		IL_0305: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_030a: pop
+		IL_030b: ldloc.0
+		IL_030c: ldfld object Modules.Events_EventEmitter_Complete/Scope::prependOnceOrder
+		IL_0311: dup
+		IL_0312: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0317: ceq
+		IL_0319: brfalse.s IL_0327
+
+		IL_031b: pop
+		IL_031c: ldstr "Cannot access 'prependOnceOrder' before initialization"
+		IL_0321: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0326: throw
+
+		IL_0327: stloc.s 19
+		IL_0329: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_032e: ldloc.s 19
+		IL_0330: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0335: pop
+		IL_0336: ldloc.s 4
+		IL_0338: ldc.i4.0
+		IL_0339: newarr [System.Runtime]System.Object
+		IL_033e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_0343: stloc.s 19
+		IL_0345: ldloc.s 19
+		IL_0347: stloc.s 11
+		IL_0349: ldloc.s 11
+		IL_034b: ldstr "getMaxListeners"
+		IL_0350: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0355: stloc.s 19
+		IL_0357: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_035c: ldloc.s 19
+		IL_035e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0363: pop
+		IL_0364: ldloc.s 11
+		IL_0366: ldstr "setMaxListeners"
+		IL_036b: ldc.r8 20
+		IL_0374: box [System.Runtime]System.Double
+		IL_0379: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_037e: pop
+		IL_037f: ldloc.s 11
+		IL_0381: ldstr "getMaxListeners"
+		IL_0386: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_038b: stloc.s 19
+		IL_038d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0392: ldloc.s 19
+		IL_0394: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0399: pop
+		IL_039a: ldloc.s 11
+		IL_039c: ldstr "setMaxListeners"
+		IL_03a1: ldc.r8 5
+		IL_03aa: box [System.Runtime]System.Double
+		IL_03af: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_03b4: pop
+		IL_03b5: ldloc.s 11
+		IL_03b7: ldstr "getMaxListeners"
+		IL_03bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_03c1: stloc.s 19
+		IL_03c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_03c8: ldloc.s 19
+		IL_03ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_03cf: pop
+		IL_03d0: ldloc.s 4
+		IL_03d2: ldc.i4.0
+		IL_03d3: newarr [System.Runtime]System.Object
+		IL_03d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_03dd: stloc.s 19
+		IL_03df: ldloc.s 19
+		IL_03e1: stloc.s 12
+		IL_03e3: ldnull
+		IL_03e4: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_L60C19::__js_call__(object)
+		IL_03ea: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_03ef: stloc.s 19
+		IL_03f1: ldloc.s 12
+		IL_03f3: ldstr "on"
+		IL_03f8: ldstr "raw"
+		IL_03fd: ldloc.s 19
+		IL_03ff: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0404: pop
+		IL_0405: ldnull
+		IL_0406: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_L61C21::__js_call__(object)
+		IL_040c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0411: stloc.s 19
+		IL_0413: ldloc.s 12
+		IL_0415: ldstr "once"
+		IL_041a: ldstr "raw"
+		IL_041f: ldloc.s 19
+		IL_0421: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0426: pop
+		IL_0427: ldloc.s 12
+		IL_0429: ldstr "rawListeners"
+		IL_042e: ldstr "raw"
+		IL_0433: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0438: stloc.s 19
+		IL_043a: ldloc.s 19
+		IL_043c: stloc.s 13
+		IL_043e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0443: ldloc.s 13
+		IL_0445: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_044a: box [System.Runtime]System.Double
+		IL_044f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0454: pop
+		IL_0455: ldloc.s 4
+		IL_0457: ldc.i4.0
+		IL_0458: newarr [System.Runtime]System.Object
+		IL_045d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_0462: stloc.s 19
+		IL_0464: ldloc.s 19
+		IL_0466: stloc.s 14
+		IL_0468: ldnull
+		IL_0469: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_result::__js_call__(object)
+		IL_046f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0474: stloc.s 19
+		IL_0476: ldloc.s 14
+		IL_0478: ldstr "on"
+		IL_047d: ldstr "a"
+		IL_0482: ldloc.s 19
+		IL_0484: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0489: stloc.s 19
+		IL_048b: ldnull
+		IL_048c: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_result_L69C24::__js_call__(object)
+		IL_0492: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0497: stloc.s 20
+		IL_0499: ldloc.s 19
+		IL_049b: ldstr "prependListener"
+		IL_04a0: ldstr "b"
+		IL_04a5: ldloc.s 20
+		IL_04a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_04ac: stloc.s 20
+		IL_04ae: ldloc.s 20
+		IL_04b0: ldstr "setMaxListeners"
+		IL_04b5: ldc.r8 15
+		IL_04be: box [System.Runtime]System.Double
+		IL_04c3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_04c8: stloc.s 20
+		IL_04ca: ldloc.s 20
+		IL_04cc: ldstr "removeAllListeners"
+		IL_04d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_04d6: stloc.s 20
+		IL_04d8: ldloc.s 20
+		IL_04da: stloc.s 15
+		IL_04dc: ldloc.s 15
+		IL_04de: ldloc.s 14
+		IL_04e0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_04e5: stloc.s 21
+		IL_04e7: ldloc.s 21
+		IL_04e9: box [System.Runtime]System.Boolean
+		IL_04ee: stloc.s 22
+		IL_04f0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_04f5: ldloc.s 22
+		IL_04f7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_04fc: pop
+		IL_04fd: ldloc.s 14
+		IL_04ff: ldstr "eventNames"
+		IL_0504: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0509: stloc.s 20
+		IL_050b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0510: ldloc.s 20
+		IL_0512: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0517: box [System.Runtime]System.Double
+		IL_051c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0521: pop
+		IL_0522: ldloc.s 14
+		IL_0524: ldstr "getMaxListeners"
+		IL_0529: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_052e: stloc.s 20
+		IL_0530: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0535: ldloc.s 20
+		IL_0537: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_053c: pop
+		IL_053d: ldloc.s 4
+		IL_053f: ldc.i4.0
+		IL_0540: newarr [System.Runtime]System.Object
+		IL_0545: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_054a: stloc.s 20
+		IL_054c: ldloc.s 20
+		IL_054e: stloc.s 16
+		IL_0550: ldnull
+		IL_0551: ldftn object Modules.Events_EventEmitter_Complete/FunctionExpression_L78C20::__js_call__(object)
+		IL_0557: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_055c: stloc.s 20
+		IL_055e: ldloc.s 16
+		IL_0560: ldstr "on"
+		IL_0565: ldstr "copy"
+		IL_056a: ldloc.s 20
+		IL_056c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0571: pop
+		IL_0572: ldloc.s 16
+		IL_0574: ldstr "listeners"
+		IL_0579: ldstr "copy"
+		IL_057e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0583: stloc.s 20
+		IL_0585: ldloc.s 20
+		IL_0587: stloc.s 17
+		IL_0589: ldloc.s 16
+		IL_058b: ldstr "listeners"
+		IL_0590: ldstr "copy"
+		IL_0595: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_059a: stloc.s 20
+		IL_059c: ldloc.s 20
+		IL_059e: stloc.s 18
+		IL_05a0: ldloc.s 17
+		IL_05a2: ldloc.s 18
+		IL_05a4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_05a9: stloc.s 21
+		IL_05ab: ldloc.s 21
+		IL_05ad: box [System.Runtime]System.Boolean
+		IL_05b2: stloc.s 22
+		IL_05b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05b9: ldloc.s 22
+		IL_05bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05c0: pop
+		IL_05c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05c6: ldloc.s 17
+		IL_05c8: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_05cd: box [System.Runtime]System.Double
+		IL_05d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05d7: pop
+		IL_05d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_05dd: ldloc.s 18
+		IL_05df: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_05e4: box [System.Runtime]System.Double
+		IL_05e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_05ee: pop
+		IL_05ef: ret
 	} // end of method Events_EventEmitter_Complete::__js_module_init__
 
 } // end of class Modules.Events_EventEmitter_Complete
@@ -1179,7 +1273,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2737
+		// Method begins at RVA 0x27f9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

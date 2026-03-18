@@ -27,7 +27,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2495
+				// Method begins at RVA 0x24ec
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,7 +52,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x23b8
+			// Method begins at RVA 0x23ec
 			// Header size: 12
 			// Code size: 39 (0x27)
 			.maxstack 8
@@ -94,7 +94,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24a7
+					// Method begins at RVA 0x24fe
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -112,7 +112,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x249e
+				// Method begins at RVA 0x24f5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -137,7 +137,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x23ec
+			// Method begins at RVA 0x2420
 			// Header size: 12
 			// Code size: 51 (0x33)
 			.maxstack 8
@@ -186,7 +186,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24b9
+					// Method begins at RVA 0x2510
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -208,7 +208,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24b0
+				// Method begins at RVA 0x2507
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -236,13 +236,14 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x242c
+			// Method begins at RVA 0x2460
 			// Header size: 12
-			// Code size: 84 (0x54)
+			// Code size: 108 (0x6c)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] bool
+				[1] bool,
+				[2] object
 			)
 
 			IL_0000: ldarg.3
@@ -263,18 +264,30 @@
 			IL_002b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0030: stloc.1
 			IL_0031: ldloc.1
-			IL_0032: brfalse IL_0052
+			IL_0032: brfalse IL_006a
 
 			IL_0037: ldarg.0
 			IL_0038: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-			IL_003d: ldstr "append"
-			IL_0042: ldstr "b"
-			IL_0047: ldstr "2"
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0051: pop
+			IL_003d: dup
+			IL_003e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0043: ceq
+			IL_0045: brfalse.s IL_0053
 
-			IL_0052: ldnull
-			IL_0053: ret
+			IL_0047: pop
+			IL_0048: ldstr "Cannot access 'mutating' before initialization"
+			IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0052: throw
+
+			IL_0053: stloc.2
+			IL_0054: ldloc.2
+			IL_0055: ldstr "append"
+			IL_005a: ldstr "b"
+			IL_005f: ldstr "2"
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0069: pop
+
+			IL_006a: ldnull
+			IL_006b: ret
 		} // end of method ArrowFunction_L33C18::__js_call__
 
 	} // end of class ArrowFunction_L33C18
@@ -293,15 +306,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x248c
+			// Method begins at RVA 0x24d8
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -319,7 +335,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 860 (0x35c)
+		// Code size: 912 (0x390)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Url_SearchParams_Mutate/Scope,
@@ -328,7 +344,8 @@
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] object,
 			[5] object,
-			[6] object
+			[6] object,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Url_SearchParams_Mutate/Scope::.ctor()
@@ -520,78 +537,102 @@
 		IL_0278: ldloc.0
 		IL_0279: ldloc.s 6
 		IL_027b: stfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-		IL_0280: ldc.i4.1
-		IL_0281: newarr [System.Runtime]System.Object
+		IL_0280: ldloc.0
+		IL_0281: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
 		IL_0286: dup
-		IL_0287: ldc.i4.0
-		IL_0288: ldloc.0
-		IL_0289: stelem.ref
-		IL_028a: ldc.i4.0
-		IL_028b: ldelem.ref
-		IL_028c: castclass Modules.Require_Url_SearchParams_Mutate/Scope
-		IL_0291: ldftn object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18::__js_call__(class Modules.Require_Url_SearchParams_Mutate/Scope, object, object, object)
-		IL_0297: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_029c: ldc.i4.1
-		IL_029d: newarr [System.Runtime]System.Object
-		IL_02a2: dup
-		IL_02a3: ldc.i4.0
-		IL_02a4: ldloc.0
-		IL_02a5: stelem.ref
-		IL_02a6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_02ab: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_02b0: stloc.s 6
-		IL_02b2: ldloc.0
-		IL_02b3: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-		IL_02b8: ldstr "forEach"
-		IL_02bd: ldloc.s 6
-		IL_02bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_02c4: pop
-		IL_02c5: ldloc.0
-		IL_02c6: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
-		IL_02cb: ldstr "toString"
-		IL_02d0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_02d5: stloc.s 6
-		IL_02d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02dc: ldstr "mutating final:"
-		IL_02e1: ldloc.s 6
-		IL_02e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02e8: pop
-		IL_02e9: ldloc.1
-		IL_02ea: ldstr "URLSearchParams"
-		IL_02ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_02f4: stloc.s 6
-		IL_02f6: ldloc.s 6
-		IL_02f8: ldc.i4.1
-		IL_02f9: newarr [System.Runtime]System.Object
-		IL_02fe: dup
-		IL_02ff: ldc.i4.0
-		IL_0300: ldstr "bad=%&plus=a+b%"
-		IL_0305: stelem.ref
-		IL_0306: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_030b: stloc.s 6
-		IL_030d: ldloc.s 6
-		IL_030f: stloc.s 5
-		IL_0311: ldloc.s 5
-		IL_0313: ldstr "get"
-		IL_0318: ldstr "bad"
-		IL_031d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0322: stloc.s 6
-		IL_0324: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0329: ldstr "malformed bad:"
-		IL_032e: ldloc.s 6
-		IL_0330: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0335: pop
-		IL_0336: ldloc.s 5
-		IL_0338: ldstr "get"
-		IL_033d: ldstr "plus"
-		IL_0342: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0347: stloc.s 6
-		IL_0349: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_034e: ldstr "malformed plus:"
-		IL_0353: ldloc.s 6
-		IL_0355: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_035a: pop
-		IL_035b: ret
+		IL_0287: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_028c: ceq
+		IL_028e: brfalse.s IL_029c
+
+		IL_0290: pop
+		IL_0291: ldstr "Cannot access 'mutating' before initialization"
+		IL_0296: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_029b: throw
+
+		IL_029c: stloc.s 6
+		IL_029e: ldc.i4.1
+		IL_029f: newarr [System.Runtime]System.Object
+		IL_02a4: dup
+		IL_02a5: ldc.i4.0
+		IL_02a6: ldloc.0
+		IL_02a7: stelem.ref
+		IL_02a8: ldc.i4.0
+		IL_02a9: ldelem.ref
+		IL_02aa: castclass Modules.Require_Url_SearchParams_Mutate/Scope
+		IL_02af: ldftn object Modules.Require_Url_SearchParams_Mutate/ArrowFunction_L33C18::__js_call__(class Modules.Require_Url_SearchParams_Mutate/Scope, object, object, object)
+		IL_02b5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_02ba: ldc.i4.1
+		IL_02bb: newarr [System.Runtime]System.Object
+		IL_02c0: dup
+		IL_02c1: ldc.i4.0
+		IL_02c2: ldloc.0
+		IL_02c3: stelem.ref
+		IL_02c4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_02c9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_02ce: stloc.s 7
+		IL_02d0: ldloc.s 6
+		IL_02d2: ldstr "forEach"
+		IL_02d7: ldloc.s 7
+		IL_02d9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_02de: pop
+		IL_02df: ldloc.0
+		IL_02e0: ldfld object Modules.Require_Url_SearchParams_Mutate/Scope::mutating
+		IL_02e5: dup
+		IL_02e6: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_02eb: ceq
+		IL_02ed: brfalse.s IL_02fb
+
+		IL_02ef: pop
+		IL_02f0: ldstr "Cannot access 'mutating' before initialization"
+		IL_02f5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_02fa: throw
+
+		IL_02fb: stloc.s 7
+		IL_02fd: ldloc.s 7
+		IL_02ff: ldstr "toString"
+		IL_0304: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0309: stloc.s 7
+		IL_030b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0310: ldstr "mutating final:"
+		IL_0315: ldloc.s 7
+		IL_0317: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_031c: pop
+		IL_031d: ldloc.1
+		IL_031e: ldstr "URLSearchParams"
+		IL_0323: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0328: stloc.s 7
+		IL_032a: ldloc.s 7
+		IL_032c: ldc.i4.1
+		IL_032d: newarr [System.Runtime]System.Object
+		IL_0332: dup
+		IL_0333: ldc.i4.0
+		IL_0334: ldstr "bad=%&plus=a+b%"
+		IL_0339: stelem.ref
+		IL_033a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_033f: stloc.s 7
+		IL_0341: ldloc.s 7
+		IL_0343: stloc.s 5
+		IL_0345: ldloc.s 5
+		IL_0347: ldstr "get"
+		IL_034c: ldstr "bad"
+		IL_0351: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0356: stloc.s 7
+		IL_0358: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_035d: ldstr "malformed bad:"
+		IL_0362: ldloc.s 7
+		IL_0364: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0369: pop
+		IL_036a: ldloc.s 5
+		IL_036c: ldstr "get"
+		IL_0371: ldstr "plus"
+		IL_0376: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_037b: stloc.s 7
+		IL_037d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0382: ldstr "malformed plus:"
+		IL_0387: ldloc.s 7
+		IL_0389: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_038e: pop
+		IL_038f: ret
 	} // end of method Require_Url_SearchParams_Mutate::__js_module_init__
 
 } // end of class Modules.Require_Url_SearchParams_Mutate
@@ -603,7 +644,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x24c2
+		// Method begins at RVA 0x2519
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

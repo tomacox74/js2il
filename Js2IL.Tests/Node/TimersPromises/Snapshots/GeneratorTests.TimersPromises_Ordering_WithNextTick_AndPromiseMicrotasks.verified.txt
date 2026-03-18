@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x227a
+				// Method begins at RVA 0x238d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,18 +44,34 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x213f
-			// Header size: 1
-			// Code size: 19 (0x13)
+			// Method begins at RVA 0x2174
+			// Header size: 12
+			// Code size: 48 (0x30)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
-			IL_0006: ldstr "nextTick"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_0001: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
 			IL_0010: pop
-			IL_0011: ldnull
-			IL_0012: ret
+			IL_0011: ldstr "Cannot access 'order' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "push"
+			IL_0023: ldstr "nextTick"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002d: pop
+			IL_002e: ldnull
+			IL_002f: ret
 		} // end of method FunctionExpression_L8C17::__js_call__
 
 	} // end of class FunctionExpression_L8C17
@@ -71,7 +87,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2283
+				// Method begins at RVA 0x2396
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -97,18 +113,34 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2153
-			// Header size: 1
-			// Code size: 19 (0x13)
+			// Method begins at RVA 0x21b0
+			// Header size: 12
+			// Code size: 48 (0x30)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
-			IL_0006: ldstr "promise"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_0001: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
 			IL_0010: pop
-			IL_0011: ldnull
-			IL_0012: ret
+			IL_0011: ldstr "Cannot access 'order' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "push"
+			IL_0023: ldstr "promise"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002d: pop
+			IL_002e: ldnull
+			IL_002f: ret
 		} // end of method FunctionExpression_L12C24::__js_call__
 
 	} // end of class FunctionExpression_L12C24
@@ -128,7 +160,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2295
+					// Method begins at RVA 0x23a8
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -153,12 +185,12 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x21d8
+				// Method begins at RVA 0x2290
 				// Header size: 12
-				// Code size: 141 (0x8d)
+				// Code size: 210 (0xd2)
 				.maxstack 8
 				.locals init (
-					[0] string,
+					[0] object,
 					[1] bool,
 					[2] object
 				)
@@ -167,55 +199,84 @@
 				IL_0001: ldc.i4.0
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
-				IL_0008: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
-				IL_000d: ldarg.2
-				IL_000e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-				IL_0013: pop
-				IL_0014: ldarg.0
-				IL_0015: ldc.i4.0
-				IL_0016: ldelem.ref
-				IL_0017: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
-				IL_001c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
-				IL_0021: ldc.i4.1
-				IL_0022: newarr [System.Runtime]System.Object
-				IL_0027: dup
-				IL_0028: ldc.i4.0
-				IL_0029: ldstr ","
-				IL_002e: stelem.ref
-				IL_002f: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-				IL_0034: stloc.0
-				IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_003a: ldstr "order"
-				IL_003f: ldloc.0
-				IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_0045: pop
-				IL_0046: ldarg.0
-				IL_0047: ldc.i4.0
-				IL_0048: ldelem.ref
-				IL_0049: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
-				IL_004e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
-				IL_0053: ldc.i4.1
-				IL_0054: newarr [System.Runtime]System.Object
-				IL_0059: dup
-				IL_005a: ldc.i4.0
+				IL_0008: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
+				IL_000d: dup
+				IL_000e: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_0013: ceq
+				IL_0015: brfalse.s IL_0023
+
+				IL_0017: pop
+				IL_0018: ldstr "Cannot access 'order' before initialization"
+				IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_0022: throw
+
+				IL_0023: stloc.0
+				IL_0024: ldloc.0
+				IL_0025: ldstr "push"
+				IL_002a: ldarg.2
+				IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0030: pop
+				IL_0031: ldarg.0
+				IL_0032: ldc.i4.0
+				IL_0033: ldelem.ref
+				IL_0034: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
+				IL_0039: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
+				IL_003e: dup
+				IL_003f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_0044: ceq
+				IL_0046: brfalse.s IL_0054
+
+				IL_0048: pop
+				IL_0049: ldstr "Cannot access 'order' before initialization"
+				IL_004e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_0053: throw
+
+				IL_0054: stloc.0
+				IL_0055: ldloc.0
+				IL_0056: ldstr "join"
 				IL_005b: ldstr ","
-				IL_0060: stelem.ref
-				IL_0061: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-				IL_0066: stloc.0
-				IL_0067: ldloc.0
-				IL_0068: ldstr "sync,nextTick,promise,immediate,timeout"
-				IL_006d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_0072: stloc.1
-				IL_0073: ldloc.1
-				IL_0074: box [System.Runtime]System.Boolean
-				IL_0079: stloc.2
-				IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_007f: ldstr "correct"
-				IL_0084: ldloc.2
-				IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_008a: pop
-				IL_008b: ldnull
-				IL_008c: ret
+				IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0065: stloc.0
+				IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_006b: ldstr "order"
+				IL_0070: ldloc.0
+				IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0076: pop
+				IL_0077: ldarg.0
+				IL_0078: ldc.i4.0
+				IL_0079: ldelem.ref
+				IL_007a: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
+				IL_007f: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
+				IL_0084: dup
+				IL_0085: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_008a: ceq
+				IL_008c: brfalse.s IL_009a
+
+				IL_008e: pop
+				IL_008f: ldstr "Cannot access 'order' before initialization"
+				IL_0094: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_0099: throw
+
+				IL_009a: stloc.0
+				IL_009b: ldloc.0
+				IL_009c: ldstr "join"
+				IL_00a1: ldstr ","
+				IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_00ab: stloc.0
+				IL_00ac: ldloc.0
+				IL_00ad: ldstr "sync,nextTick,promise,immediate,timeout"
+				IL_00b2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_00b7: stloc.1
+				IL_00b8: ldloc.1
+				IL_00b9: box [System.Runtime]System.Boolean
+				IL_00be: stloc.2
+				IL_00bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00c4: ldstr "correct"
+				IL_00c9: ldloc.2
+				IL_00ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_00cf: pop
+				IL_00d0: ldnull
+				IL_00d1: ret
 			} // end of method FunctionExpression_L19C54::__js_call__
 
 		} // end of class FunctionExpression_L19C54
@@ -227,7 +288,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x228c
+				// Method begins at RVA 0x239f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -254,9 +315,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2168
+			// Method begins at RVA 0x21ec
 			// Header size: 12
-			// Code size: 98 (0x62)
+			// Code size: 149 (0x95)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/FunctionExpression_L16C46/Scope,
@@ -267,40 +328,63 @@
 			IL_0000: newobj instance void Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/FunctionExpression_L16C46/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldarg.0
-			IL_0007: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
-			IL_000c: ldarg.2
-			IL_000d: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_0012: pop
-			IL_0013: ldarg.0
-			IL_0014: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::timersPromises
-			IL_0019: stloc.1
-			IL_001a: ldloc.1
-			IL_001b: ldstr "setTimeout"
-			IL_0020: ldc.r8 0.0
-			IL_0029: box [System.Runtime]System.Double
-			IL_002e: ldstr "timeout"
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0038: stloc.1
-			IL_0039: ldc.i4.2
-			IL_003a: newarr [System.Runtime]System.Object
-			IL_003f: dup
-			IL_0040: ldc.i4.0
-			IL_0041: ldarg.0
-			IL_0042: stelem.ref
-			IL_0043: dup
-			IL_0044: ldc.i4.1
-			IL_0045: ldloc.0
-			IL_0046: stelem.ref
-			IL_0047: ldftn object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/FunctionExpression_L16C46/FunctionExpression_L19C54::__js_call__(object[], object, object)
-			IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0052: stloc.2
-			IL_0053: ldloc.1
-			IL_0054: ldstr "then"
-			IL_0059: ldloc.2
-			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_005f: stloc.2
-			IL_0060: ldloc.2
-			IL_0061: ret
+			IL_0007: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
+			IL_000c: dup
+			IL_000d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0012: ceq
+			IL_0014: brfalse.s IL_0022
+
+			IL_0016: pop
+			IL_0017: ldstr "Cannot access 'order' before initialization"
+			IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0021: throw
+
+			IL_0022: stloc.1
+			IL_0023: ldloc.1
+			IL_0024: ldstr "push"
+			IL_0029: ldarg.2
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002f: pop
+			IL_0030: ldarg.0
+			IL_0031: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::timersPromises
+			IL_0036: dup
+			IL_0037: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_003c: ceq
+			IL_003e: brfalse.s IL_004c
+
+			IL_0040: pop
+			IL_0041: ldstr "Cannot access 'timersPromises' before initialization"
+			IL_0046: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_004b: throw
+
+			IL_004c: stloc.1
+			IL_004d: ldloc.1
+			IL_004e: ldstr "setTimeout"
+			IL_0053: ldc.r8 0.0
+			IL_005c: box [System.Runtime]System.Double
+			IL_0061: ldstr "timeout"
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_006b: stloc.1
+			IL_006c: ldc.i4.2
+			IL_006d: newarr [System.Runtime]System.Object
+			IL_0072: dup
+			IL_0073: ldc.i4.0
+			IL_0074: ldarg.0
+			IL_0075: stelem.ref
+			IL_0076: dup
+			IL_0077: ldc.i4.1
+			IL_0078: ldloc.0
+			IL_0079: stelem.ref
+			IL_007a: ldftn object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/FunctionExpression_L16C46/FunctionExpression_L19C54::__js_call__(object[], object, object)
+			IL_0080: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_0085: stloc.2
+			IL_0086: ldloc.1
+			IL_0087: ldstr "then"
+			IL_008c: ldloc.2
+			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0092: stloc.2
+			IL_0093: ldloc.2
+			IL_0094: ret
 		} // end of method FunctionExpression_L16C46::__js_call__
 
 	} // end of class FunctionExpression_L16C46
@@ -316,21 +400,27 @@
 		)
 		// Fields
 		.field public object timersPromises
-		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array order
+		.field public object order
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2271
+			// Method begins at RVA 0x236e
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 30 (0x1e)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::timersPromises
+			IL_0011: ldarg.0
+			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0017: stfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
+			IL_001c: nop
+			IL_001d: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -348,7 +438,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 227 (0xe3)
+		// Code size: 280 (0x118)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope,
@@ -368,74 +458,99 @@
 		IL_0019: ldloc.0
 		IL_001a: ldc.i4.0
 		IL_001b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0020: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
+		IL_0020: stfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
 		IL_0025: ldloc.0
-		IL_0026: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
-		IL_002b: ldstr "sync"
-		IL_0030: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+		IL_0026: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::order
+		IL_002b: dup
+		IL_002c: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_0031: ceq
+		IL_0033: brfalse.s IL_0041
+
 		IL_0035: pop
-		IL_0036: ldc.i4.1
-		IL_0037: newarr [System.Runtime]System.Object
-		IL_003c: dup
-		IL_003d: ldc.i4.0
-		IL_003e: ldloc.0
-		IL_003f: stelem.ref
-		IL_0040: ldc.i4.0
-		IL_0041: ldelem.ref
-		IL_0042: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
-		IL_0047: ldftn object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/FunctionExpression_L8C17::__js_call__(class Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope, object)
-		IL_004d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0052: stloc.1
-		IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_0058: ldstr "nextTick"
-		IL_005d: ldloc.1
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0063: pop
-		IL_0064: ldc.r8 0.0
-		IL_006d: box [System.Runtime]System.Double
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_0077: stloc.1
-		IL_0078: ldc.i4.1
-		IL_0079: newarr [System.Runtime]System.Object
-		IL_007e: dup
-		IL_007f: ldc.i4.0
-		IL_0080: ldloc.0
-		IL_0081: stelem.ref
-		IL_0082: ldc.i4.0
-		IL_0083: ldelem.ref
-		IL_0084: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
-		IL_0089: ldftn object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/FunctionExpression_L12C24::__js_call__(class Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope, object)
-		IL_008f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0094: stloc.2
-		IL_0095: ldloc.1
-		IL_0096: ldstr "then"
-		IL_009b: ldloc.2
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a1: pop
-		IL_00a2: ldloc.0
-		IL_00a3: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::timersPromises
-		IL_00a8: ldstr "setImmediate"
-		IL_00ad: ldstr "immediate"
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00b7: stloc.2
-		IL_00b8: ldc.i4.1
-		IL_00b9: newarr [System.Runtime]System.Object
-		IL_00be: dup
-		IL_00bf: ldc.i4.0
-		IL_00c0: ldloc.0
-		IL_00c1: stelem.ref
-		IL_00c2: ldc.i4.0
-		IL_00c3: ldelem.ref
-		IL_00c4: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
-		IL_00c9: ldftn object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/FunctionExpression_L16C46::__js_call__(class Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope, object, object)
-		IL_00cf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00d4: stloc.1
-		IL_00d5: ldloc.2
-		IL_00d6: ldstr "then"
-		IL_00db: ldloc.1
-		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00e1: pop
-		IL_00e2: ret
+		IL_0036: ldstr "Cannot access 'order' before initialization"
+		IL_003b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_0040: throw
+
+		IL_0041: stloc.1
+		IL_0042: ldloc.1
+		IL_0043: ldstr "push"
+		IL_0048: ldstr "sync"
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0052: pop
+		IL_0053: ldc.i4.1
+		IL_0054: newarr [System.Runtime]System.Object
+		IL_0059: dup
+		IL_005a: ldc.i4.0
+		IL_005b: ldloc.0
+		IL_005c: stelem.ref
+		IL_005d: ldc.i4.0
+		IL_005e: ldelem.ref
+		IL_005f: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
+		IL_0064: ldftn object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/FunctionExpression_L8C17::__js_call__(class Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope, object)
+		IL_006a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_006f: stloc.1
+		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_0075: ldstr "nextTick"
+		IL_007a: ldloc.1
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0080: pop
+		IL_0081: ldc.r8 0.0
+		IL_008a: box [System.Runtime]System.Double
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_0094: stloc.1
+		IL_0095: ldc.i4.1
+		IL_0096: newarr [System.Runtime]System.Object
+		IL_009b: dup
+		IL_009c: ldc.i4.0
+		IL_009d: ldloc.0
+		IL_009e: stelem.ref
+		IL_009f: ldc.i4.0
+		IL_00a0: ldelem.ref
+		IL_00a1: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
+		IL_00a6: ldftn object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/FunctionExpression_L12C24::__js_call__(class Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope, object)
+		IL_00ac: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00b1: stloc.2
+		IL_00b2: ldloc.1
+		IL_00b3: ldstr "then"
+		IL_00b8: ldloc.2
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00be: pop
+		IL_00bf: ldloc.0
+		IL_00c0: ldfld object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope::timersPromises
+		IL_00c5: dup
+		IL_00c6: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_00cb: ceq
+		IL_00cd: brfalse.s IL_00db
+
+		IL_00cf: pop
+		IL_00d0: ldstr "Cannot access 'timersPromises' before initialization"
+		IL_00d5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_00da: throw
+
+		IL_00db: stloc.2
+		IL_00dc: ldloc.2
+		IL_00dd: ldstr "setImmediate"
+		IL_00e2: ldstr "immediate"
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00ec: stloc.2
+		IL_00ed: ldc.i4.1
+		IL_00ee: newarr [System.Runtime]System.Object
+		IL_00f3: dup
+		IL_00f4: ldc.i4.0
+		IL_00f5: ldloc.0
+		IL_00f6: stelem.ref
+		IL_00f7: ldc.i4.0
+		IL_00f8: ldelem.ref
+		IL_00f9: castclass Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope
+		IL_00fe: ldftn object Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/FunctionExpression_L16C46::__js_call__(class Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks/Scope, object, object)
+		IL_0104: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0109: stloc.1
+		IL_010a: ldloc.2
+		IL_010b: ldstr "then"
+		IL_0110: ldloc.1
+		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0116: pop
+		IL_0117: ret
 	} // end of method TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks::__js_module_init__
 
 } // end of class Modules.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks
@@ -447,7 +562,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x229e
+		// Method begins at RVA 0x23b1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

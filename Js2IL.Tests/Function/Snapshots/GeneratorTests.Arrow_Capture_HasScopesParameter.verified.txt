@@ -24,7 +24,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2105
+				// Method begins at RVA 0x212c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -53,25 +53,43 @@
 			)
 			// Method begins at RVA 0x20d4
 			// Header size: 12
-			// Code size: 28 (0x1c)
+			// Code size: 56 (0x38)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] float64
+				[1] float64,
+				[2] float64,
+				[3] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Arrow_Capture_HasScopesParameter/Scope::factor
-			IL_0006: stloc.0
-			IL_0007: ldarg.2
-			IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000d: stloc.1
-			IL_000e: ldloc.1
-			IL_000f: ldloc.0
-			IL_0010: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0015: mul
-			IL_0016: box [System.Runtime]System.Double
-			IL_001b: ret
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'factor' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldarg.2
+			IL_001e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0023: stloc.1
+			IL_0024: ldloc.0
+			IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002a: stloc.2
+			IL_002b: ldloc.1
+			IL_002c: ldloc.2
+			IL_002d: mul
+			IL_002e: stloc.2
+			IL_002f: ldloc.2
+			IL_0030: box [System.Runtime]System.Double
+			IL_0035: stloc.3
+			IL_0036: ldloc.3
+			IL_0037: ret
 		} // end of method ArrowFunction_L6C15::__js_call__
 
 	} // end of class ArrowFunction_L6C15
@@ -90,15 +108,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fc
+			// Method begins at RVA 0x2118
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Arrow_Capture_HasScopesParameter/Scope::factor
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -177,7 +198,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210e
+		// Method begins at RVA 0x2135
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f8
+				// Method begins at RVA 0x214a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,26 +46,56 @@
 			)
 			// Method begins at RVA 0x20c4
 			// Header size: 12
-			// Code size: 31 (0x1f)
+			// Code size: 91 (0x5b)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object,
+				[2] bool
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld bool Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
-			IL_0006: brfalse IL_0017
+			IL_0001: ldfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
 
-			IL_000b: ldarg.0
-			IL_000c: ldfld string Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
-			IL_0011: stloc.0
-			IL_0012: br IL_001d
+			IL_0010: pop
+			IL_0011: ldstr "Cannot access 'FLAG' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
 
-			IL_0017: ldstr "untyped"
-			IL_001c: stloc.0
+			IL_001c: box [System.Runtime]System.Boolean
+			IL_0021: stloc.1
+			IL_0022: ldloc.1
+			IL_0023: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0028: stloc.2
+			IL_0029: ldloc.2
+			IL_002a: brfalse IL_0053
 
-			IL_001d: ldloc.0
-			IL_001e: ret
+			IL_002f: ldarg.0
+			IL_0030: ldfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
+			IL_0035: dup
+			IL_0036: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_003b: ceq
+			IL_003d: brfalse.s IL_004b
+
+			IL_003f: pop
+			IL_0040: ldstr "Cannot access 'NAME' before initialization"
+			IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_004a: throw
+
+			IL_004b: stloc.1
+			IL_004c: ldloc.1
+			IL_004d: stloc.0
+			IL_004e: br IL_0059
+
+			IL_0053: ldstr "untyped"
+			IL_0058: stloc.0
+
+			IL_0059: ldloc.0
+			IL_005a: ret
 		} // end of method run::__js_call__
 
 	} // end of class run
@@ -79,23 +109,29 @@
 			7d 2c 20 72 75 6e 3d 7b 72 75 6e 7d 00 00
 		)
 		// Fields
-		.field public bool FLAG
-		.field public string NAME
+		.field public object FLAG
+		.field public object NAME
 		.field public object run
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ef
+			// Method begins at RVA 0x212b
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 30 (0x1e)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
+			IL_0011: ldarg.0
+			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0017: stfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
+			IL_001c: nop
+			IL_001d: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -139,10 +175,10 @@
 		IL_0024: stloc.1
 		IL_0025: ldloc.0
 		IL_0026: ldc.i4.1
-		IL_0027: stfld bool Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
+		IL_0027: stfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
 		IL_002c: ldloc.0
 		IL_002d: ldstr "typed"
-		IL_0032: stfld string Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
+		IL_0032: stfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
 		IL_0037: ldc.i4.1
 		IL_0038: newarr [System.Runtime]System.Object
 		IL_003d: dup
@@ -173,7 +209,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2101
+		// Method begins at RVA 0x2153
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

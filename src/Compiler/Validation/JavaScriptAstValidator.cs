@@ -749,6 +749,18 @@ public class JavaScriptAstValidator : IAstValidator
 
                 switch (node)
                 {
+                    case SwitchStatement ss:
+                        scopeStack.Push(new ScopeFrame
+                        {
+                            DeclaredNames = new HashSet<string>(StringComparer.Ordinal),
+                            IsFunctionScope = false
+                        });
+                        foreach (var switchCase in ss.Cases)
+                        {
+                            CollectLexicalDeclarations(switchCase.Consequent, scopeStack.Peek());
+                        }
+                        break;
+
                     case BlockStatement:
                         scopeStack.Push(new ScopeFrame
                         {
@@ -1024,6 +1036,9 @@ public class JavaScriptAstValidator : IAstValidator
                 // Pop scopes on exit.
                 switch (node)
                 {
+                    case SwitchStatement:
+                        scopeStack.Pop();
+                        break;
                     case BlockStatement:
                         scopeStack.Pop();
                         break;

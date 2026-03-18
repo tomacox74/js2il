@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2259
+				// Method begins at RVA 0x22c8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,18 +44,34 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x21af
-			// Header size: 1
-			// Code size: 19 (0x13)
+			// Method begins at RVA 0x21b0
+			// Header size: 12
+			// Code size: 48 (0x30)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Readable_Pause_Resume/Scope::events
-			IL_0006: ldstr "pause"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_0001: ldfld object Modules.Stream_Readable_Pause_Resume/Scope::events
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
 			IL_0010: pop
-			IL_0011: ldnull
-			IL_0012: ret
+			IL_0011: ldstr "Cannot access 'events' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "push"
+			IL_0023: ldstr "pause"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002d: pop
+			IL_002e: ldnull
+			IL_002f: ret
 		} // end of method FunctionExpression_L8C21::__js_call__
 
 	} // end of class FunctionExpression_L8C21
@@ -71,7 +87,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2262
+				// Method begins at RVA 0x22d1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -97,18 +113,34 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x21c3
-			// Header size: 1
-			// Code size: 19 (0x13)
+			// Method begins at RVA 0x21ec
+			// Header size: 12
+			// Code size: 48 (0x30)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Readable_Pause_Resume/Scope::events
-			IL_0006: ldstr "resume"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_0001: ldfld object Modules.Stream_Readable_Pause_Resume/Scope::events
+			IL_0006: dup
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: ceq
+			IL_000e: brfalse.s IL_001c
+
 			IL_0010: pop
-			IL_0011: ldnull
-			IL_0012: ret
+			IL_0011: ldstr "Cannot access 'events' before initialization"
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: throw
+
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: ldstr "push"
+			IL_0023: ldstr "resume"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002d: pop
+			IL_002e: ldnull
+			IL_002f: ret
 		} // end of method FunctionExpression_L12C22::__js_call__
 
 	} // end of class FunctionExpression_L12C22
@@ -124,7 +156,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x226b
+				// Method begins at RVA 0x22da
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -148,7 +180,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21d8
+			// Method begins at RVA 0x2228
 			// Header size: 12
 			// Code size: 26 (0x1a)
 			.maxstack 8
@@ -181,7 +213,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2274
+				// Method begins at RVA 0x22e3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -207,12 +239,13 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2200
+			// Method begins at RVA 0x2250
 			// Header size: 12
-			// Code size: 68 (0x44)
+			// Code size: 88 (0x58)
 			.maxstack 8
 			.locals init (
-				[0] string
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -220,25 +253,33 @@
 			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_000f: pop
 			IL_0010: ldarg.0
-			IL_0011: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Readable_Pause_Resume/Scope::events
-			IL_0016: ldc.i4.1
-			IL_0017: newarr [System.Runtime]System.Object
-			IL_001c: dup
-			IL_001d: ldc.i4.0
-			IL_001e: ldstr ","
-			IL_0023: stelem.ref
-			IL_0024: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-			IL_0029: stloc.0
-			IL_002a: ldstr "events:"
-			IL_002f: ldloc.0
-			IL_0030: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0035: stloc.0
-			IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_003b: ldloc.0
-			IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0041: pop
-			IL_0042: ldnull
-			IL_0043: ret
+			IL_0011: ldfld object Modules.Stream_Readable_Pause_Resume/Scope::events
+			IL_0016: dup
+			IL_0017: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_001c: ceq
+			IL_001e: brfalse.s IL_002c
+
+			IL_0020: pop
+			IL_0021: ldstr "Cannot access 'events' before initialization"
+			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_002b: throw
+
+			IL_002c: stloc.0
+			IL_002d: ldloc.0
+			IL_002e: ldstr "join"
+			IL_0033: ldstr ","
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_003d: stloc.0
+			IL_003e: ldstr "events:"
+			IL_0043: ldloc.0
+			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0049: stloc.1
+			IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_004f: ldloc.1
+			IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0055: pop
+			IL_0056: ldnull
+			IL_0057: ret
 		} // end of method FunctionExpression_L20C19::__js_call__
 
 	} // end of class FunctionExpression_L20C19
@@ -251,21 +292,24 @@
 			7b 65 76 65 6e 74 73 7d 00 00
 		)
 		// Fields
-		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array events
+		.field public object events
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2250
+			// Method begins at RVA 0x22b4
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Stream_Readable_Pause_Resume/Scope::events
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -312,7 +356,7 @@
 		IL_002d: ldloc.0
 		IL_002e: ldc.i4.0
 		IL_002f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0034: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Readable_Pause_Resume/Scope::events
+		IL_0034: stfld object Modules.Stream_Readable_Pause_Resume/Scope::events
 		IL_0039: ldc.i4.1
 		IL_003a: newarr [System.Runtime]System.Object
 		IL_003f: dup
@@ -422,7 +466,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x227d
+		// Method begins at RVA 0x22ec
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
