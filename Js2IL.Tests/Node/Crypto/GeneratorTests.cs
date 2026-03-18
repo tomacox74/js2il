@@ -11,8 +11,16 @@ namespace Js2IL.Tests.Node.Crypto
             => GenerateTest(nameof(Require_Crypto_CreateHash_And_RandomBytes));
 
         [Fact]
+        public Task Require_Crypto_CreateHmac()
+            => GenerateTest(nameof(Require_Crypto_CreateHmac));
+
+        [Fact]
         public Task Require_Crypto_WebCrypto_GetRandomValues()
             => GenerateTest(nameof(Require_Crypto_WebCrypto_GetRandomValues));
+
+        [Fact]
+        public Task Require_Crypto_WebCrypto_Subtle()
+            => GenerateTest(nameof(Require_Crypto_WebCrypto_Subtle));
 
         [Fact]
         public Task Require_Crypto_ErrorPaths()

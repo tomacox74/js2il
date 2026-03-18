@@ -44,6 +44,13 @@ namespace Js2IL.Tests.Import
         }
 
         [Fact]
+        public Task Import_ExportStarFromMultiHop()
+        {
+            var testName = nameof(Import_ExportStarFromMultiHop);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
         public Task Import_LiveBindings_Named()
         {
             var testName = nameof(Import_LiveBindings_Named);

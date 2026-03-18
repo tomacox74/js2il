@@ -32,6 +32,15 @@ internal sealed partial class LIRToILCompiler
             tempDefinitions.TryGetValue(condition.Index, out var definingInstruction) &&
             BranchConditionOptimizer.IsComparisonInstruction(definingInstruction))
         {
+            if (definingInstruction is LIRIsInstanceOf isInstanceOf)
+            {
+                EmitLoadTempAsObject(isInstanceOf.Value, ilEncoder, allocation, methodDescriptor);
+                var targetType = _typeReferenceRegistry.GetOrAdd(isInstanceOf.TargetType);
+                ilEncoder.OpCode(ILOpCode.Isinst);
+                ilEncoder.Token(targetType);
+                return;
+            }
+
             var emitLoad = definingInstruction is LIRCompareNumberLessThan
                 or LIRCompareNumberGreaterThan
                 or LIRCompareNumberLessThanOrEqual

@@ -85,6 +85,26 @@ public class ModuleLoadTests
         Assert.Equal(27.0, (double)exports.readExport("hostValue"));
     }
 
+    [Fact]
+    public void JsEngine_LoadModule_WhenHostedModuleCallsFork_ThrowsExplicitUnsupportedError()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("hostingForkUnsupported", "Hosting_ForkUnsupported.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingForkUnsupported");
+        dynamic exports = exportsObj;
+
+        var ex = Assert.Throws<JsInvocationException>(() => exports.attemptFork());
+        Assert.Equal("hostingForkUnsupported", ex.ModuleId);
+        Assert.Equal("attemptFork", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("Error", jsError.JsName);
+        Assert.Contains(
+            "child_process.fork is not supported when running under JsEngine hosting yet",
+            jsError.JsMessage ?? jsError.Message,
+            StringComparison.OrdinalIgnoreCase);
+    }
+
     public interface IImmutableExports : IDisposable
     {
         double LockedValue { get; set; }

@@ -2119,6 +2119,25 @@ namespace JavaScriptRuntime
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
 
+        public static object? CallComputedMember(object receiver, object? propertyKey, object[]? args)
+        {
+            var callArgs = args ?? System.Array.Empty<object>();
+            var memberValue = ObjectRuntime.GetItem(receiver, propertyKey!);
+
+            if (memberValue is Delegate memberDelegate)
+            {
+                return InvokeMemberDelegate(receiver, memberDelegate, callArgs);
+            }
+
+            if (memberValue is not null && memberValue is not JsNull)
+            {
+                throw new TypeError($"{DotNet2JSConversions.ToString(memberValue)} is not a function");
+            }
+
+            var methodName = ToPropertyKeyString(propertyKey);
+            return CallMember(receiver, methodName, callArgs);
+        }
+
         private static bool TryGetFastDictionaryOwnValue(object receiver, string memberName, out object? value)
         {
             value = null;
