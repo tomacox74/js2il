@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2730
+					// Method begins at RVA 0x2738
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -99,7 +99,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2739
+					// Method begins at RVA 0x2741
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -125,14 +125,16 @@
 				)
 				// Method begins at RVA 0x2338
 				// Header size: 12
-				// Code size: 444 (0x1bc)
+				// Code size: 452 (0x1c4)
 				.maxstack 8
 				.locals init (
 					[0] object,
 					[1] object,
 					[2] object,
-					[3] string,
-					[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+					[3] float64,
+					[4] object,
+					[5] string,
+					[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 				)
 
 				IL_0000: ldstr "server method:"
@@ -227,68 +229,72 @@
 				IL_0101: stloc.2
 				IL_0102: ldloc.2
 				IL_0103: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-				IL_0108: box [System.Runtime]System.Double
-				IL_010d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_0112: stloc.3
-				IL_0113: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0118: dup
-				IL_0119: ldstr "Content-Type"
-				IL_011e: ldstr "text/plain"
-				IL_0123: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0128: dup
-				IL_0129: ldstr "X-Body-Length"
-				IL_012e: ldloc.3
-				IL_012f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0134: stloc.s 4
-				IL_0136: ldloc.1
-				IL_0137: ldstr "writeHead"
-				IL_013c: ldc.r8 202
-				IL_0145: box [System.Runtime]System.Double
-				IL_014a: ldloc.s 4
-				IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_0151: pop
-				IL_0152: ldarg.0
-				IL_0153: ldc.i4.1
-				IL_0154: ldelem.ref
-				IL_0155: castclass Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope
-				IL_015a: ldfld object Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope::res
-				IL_015f: ldstr "write"
-				IL_0164: ldstr "accepted:"
-				IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_016e: pop
-				IL_016f: ldarg.0
-				IL_0170: ldc.i4.1
-				IL_0171: ldelem.ref
-				IL_0172: castclass Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope
-				IL_0177: ldfld object Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope::res
-				IL_017c: stloc.1
-				IL_017d: ldarg.0
-				IL_017e: ldc.i4.1
-				IL_017f: ldelem.ref
-				IL_0180: castclass Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope
-				IL_0185: ldfld object Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope::body
-				IL_018a: dup
-				IL_018b: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-				IL_0190: ceq
-				IL_0192: brfalse.s IL_01a0
+				IL_0108: stloc.3
+				IL_0109: ldloc.3
+				IL_010a: box [System.Runtime]System.Double
+				IL_010f: stloc.s 4
+				IL_0111: ldloc.s 4
+				IL_0113: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_0118: stloc.s 5
+				IL_011a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_011f: dup
+				IL_0120: ldstr "Content-Type"
+				IL_0125: ldstr "text/plain"
+				IL_012a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_012f: dup
+				IL_0130: ldstr "X-Body-Length"
+				IL_0135: ldloc.s 5
+				IL_0137: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_013c: stloc.s 6
+				IL_013e: ldloc.1
+				IL_013f: ldstr "writeHead"
+				IL_0144: ldc.r8 202
+				IL_014d: box [System.Runtime]System.Double
+				IL_0152: ldloc.s 6
+				IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_0159: pop
+				IL_015a: ldarg.0
+				IL_015b: ldc.i4.1
+				IL_015c: ldelem.ref
+				IL_015d: castclass Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope
+				IL_0162: ldfld object Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope::res
+				IL_0167: ldstr "write"
+				IL_016c: ldstr "accepted:"
+				IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0176: pop
+				IL_0177: ldarg.0
+				IL_0178: ldc.i4.1
+				IL_0179: ldelem.ref
+				IL_017a: castclass Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope
+				IL_017f: ldfld object Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope::res
+				IL_0184: stloc.1
+				IL_0185: ldarg.0
+				IL_0186: ldc.i4.1
+				IL_0187: ldelem.ref
+				IL_0188: castclass Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope
+				IL_018d: ldfld object Modules.Http_Request_Post_Basic/FunctionExpression_server/Scope::body
+				IL_0192: dup
+				IL_0193: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_0198: ceq
+				IL_019a: brfalse.s IL_01a8
 
-				IL_0194: pop
-				IL_0195: ldstr "Cannot access 'body' before initialization"
-				IL_019a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-				IL_019f: throw
+				IL_019c: pop
+				IL_019d: ldstr "Cannot access 'body' before initialization"
+				IL_01a2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+				IL_01a7: throw
 
-				IL_01a0: stloc.2
-				IL_01a1: ldloc.2
-				IL_01a2: ldstr "toUpperCase"
-				IL_01a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-				IL_01ac: stloc.2
-				IL_01ad: ldloc.1
-				IL_01ae: ldstr "end"
-				IL_01b3: ldloc.2
-				IL_01b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_01b9: pop
-				IL_01ba: ldnull
-				IL_01bb: ret
+				IL_01a8: stloc.2
+				IL_01a9: ldloc.2
+				IL_01aa: ldstr "toUpperCase"
+				IL_01af: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+				IL_01b4: stloc.2
+				IL_01b5: ldloc.1
+				IL_01b6: ldstr "end"
+				IL_01bb: ldloc.2
+				IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_01c1: pop
+				IL_01c2: ldnull
+				IL_01c3: ret
 			} // end of method FunctionExpression_server_L13C16::__js_call__
 
 		} // end of class FunctionExpression_server_L13C16
@@ -310,7 +316,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x271c
+				// Method begins at RVA 0x2724
 				// Header size: 1
 				// Code size: 19 (0x13)
 				.maxstack 8
@@ -432,7 +438,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x275f
+						// Method begins at RVA 0x2767
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -457,7 +463,7 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x2614
+					// Method begins at RVA 0x261c
 					// Header size: 12
 					// Code size: 60 (0x3c)
 					.maxstack 8
@@ -513,7 +519,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x2771
+							// Method begins at RVA 0x2779
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -536,7 +542,7 @@
 						.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 							01 00 00 00 00 00 00 00
 						)
-						// Method begins at RVA 0x26ea
+						// Method begins at RVA 0x26f2
 						// Header size: 1
 						// Code size: 18 (0x12)
 						.maxstack 8
@@ -558,7 +564,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2768
+						// Method begins at RVA 0x2770
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -582,7 +588,7 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x265c
+					// Method begins at RVA 0x2664
 					// Header size: 12
 					// Code size: 130 (0x82)
 					.maxstack 8
@@ -665,7 +671,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x274b
+					// Method begins at RVA 0x2753
 					// Header size: 1
 					// Code size: 19 (0x13)
 					.maxstack 8
@@ -693,7 +699,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2500
+				// Method begins at RVA 0x2508
 				// Header size: 12
 				// Code size: 262 (0x106)
 				.maxstack 8
@@ -814,7 +820,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2742
+				// Method begins at RVA 0x274a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -975,7 +981,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x26fd
+			// Method begins at RVA 0x2705
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -1102,7 +1108,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x277a
+		// Method begins at RVA 0x2782
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2331
+			// Method begins at RVA 0x233d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 725 (0x2d5)
+		// Code size: 737 (0x2e1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Process_Platform_Versions_And_Env_Basics/Scope,
@@ -59,7 +59,8 @@
 			[13] object,
 			[14] object,
 			[15] object,
-			[16] object
+			[16] float64,
+			[17] object
 		)
 
 		IL_0000: newobj instance void Modules.Process_Platform_Versions_And_Env_Basics/Scope::.ctor()
@@ -251,7 +252,7 @@
 		IL_025c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 		IL_0261: stloc.s 4
 		IL_0263: ldloc.s 4
-		IL_0265: brfalse IL_029e
+		IL_0265: brfalse IL_02aa
 
 		IL_026a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
 		IL_026f: ldstr "env"
@@ -260,30 +261,36 @@
 		IL_027e: stloc.s 11
 		IL_0280: ldloc.s 11
 		IL_0282: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0287: ldc.r8 0.0
-		IL_0290: cgt
-		IL_0292: box [System.Runtime]System.Boolean
-		IL_0297: stloc.s 15
-		IL_0299: br IL_029e
+		IL_0287: stloc.s 16
+		IL_0289: ldloc.s 16
+		IL_028b: ldc.r8 0.0
+		IL_0294: cgt
+		IL_0296: stloc.s 4
+		IL_0298: ldloc.s 4
+		IL_029a: box [System.Runtime]System.Boolean
+		IL_029f: stloc.s 5
+		IL_02a1: ldloc.s 5
+		IL_02a3: stloc.s 15
+		IL_02a5: br IL_02aa
 
-		IL_029e: ldloc.s 15
-		IL_02a0: stloc.3
-		IL_02a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02a6: ldstr "known platform"
-		IL_02ab: ldloc.1
-		IL_02ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02b1: pop
-		IL_02b2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02b7: ldstr "has versions.node"
-		IL_02bc: ldloc.2
-		IL_02bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02c2: pop
-		IL_02c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02c8: ldstr "has env"
-		IL_02cd: ldloc.3
-		IL_02ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02d3: pop
-		IL_02d4: ret
+		IL_02aa: ldloc.s 15
+		IL_02ac: stloc.3
+		IL_02ad: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02b2: ldstr "known platform"
+		IL_02b7: ldloc.1
+		IL_02b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02bd: pop
+		IL_02be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02c3: ldstr "has versions.node"
+		IL_02c8: ldloc.2
+		IL_02c9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02ce: pop
+		IL_02cf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02d4: ldstr "has env"
+		IL_02d9: ldloc.3
+		IL_02da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02df: pop
+		IL_02e0: ret
 	} // end of method Process_Platform_Versions_And_Env_Basics::__js_module_init__
 
 } // end of class Modules.Process_Platform_Versions_And_Env_Basics
@@ -295,7 +302,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x233a
+		// Method begins at RVA 0x2346
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

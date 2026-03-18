@@ -20,9 +20,9 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2130
+			// Method begins at RVA 0x2134
 			// Header size: 12
-			// Code size: 64 (0x40)
+			// Code size: 66 (0x42)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -48,11 +48,13 @@
 			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_0029: ldloc.0
 			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_002f: ldc.r8 1
-			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_003d: stloc.1
-			IL_003e: ldloc.1
-			IL_003f: ret
+			IL_002f: stloc.0
+			IL_0030: ldloc.0
+			IL_0031: ldc.r8 1
+			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_003f: stloc.1
+			IL_0040: ldloc.1
+			IL_0041: ret
 		} // end of method methodKey::__js_call__
 
 	} // end of class methodKey
@@ -68,7 +70,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2240
+				// Method begins at RVA 0x2248
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -88,7 +90,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2249
+				// Method begins at RVA 0x2251
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -115,7 +117,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x217c
+			// Method begins at RVA 0x2184
 			// Header size: 12
 			// Code size: 153 (0x99)
 			.maxstack 8
@@ -215,7 +217,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2221
+			// Method begins at RVA 0x2229
 			// Header size: 1
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -247,7 +249,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 212 (0xd4)
+		// Code size: 214 (0xd6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope,
@@ -289,55 +291,57 @@
 		IL_0049: throw
 
 		IL_004a: stloc.3
-		IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0050: ldloc.1
-		IL_0051: ldloc.3
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005c: pop
-		IL_005d: ldloc.0
-		IL_005e: ldfld object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::methodKey
-		IL_0063: dup
-		IL_0064: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-		IL_0069: ceq
-		IL_006b: brfalse.s IL_0079
+		IL_004b: ldloc.1
+		IL_004c: ldloc.3
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+		IL_0052: stloc.3
+		IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0058: ldloc.3
+		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005e: pop
+		IL_005f: ldloc.0
+		IL_0060: ldfld object Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log/Scope::methodKey
+		IL_0065: dup
+		IL_0066: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+		IL_006b: ceq
+		IL_006d: brfalse.s IL_007b
 
-		IL_006d: pop
-		IL_006e: ldstr "Cannot access 'methodKey' before initialization"
-		IL_0073: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_0078: throw
+		IL_006f: pop
+		IL_0070: ldstr "Cannot access 'methodKey' before initialization"
+		IL_0075: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_007a: throw
 
-		IL_0079: stloc.3
-		IL_007a: ldloc.1
-		IL_007b: ldloc.3
-		IL_007c: ldc.i4.0
-		IL_007d: newarr [System.Runtime]System.Object
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallComputedMember(object, object, object[])
-		IL_0087: stloc.3
-		IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008d: ldloc.3
-		IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0093: pop
-		IL_0094: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0099: ldloc.1
-		IL_009a: ldstr "value"
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a9: pop
-		IL_00aa: ldloc.1
-		IL_00ab: ldstr "fieldKey"
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00b5: ldnull
-		IL_00b6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00bb: stloc.s 4
-		IL_00bd: ldloc.s 4
-		IL_00bf: box [System.Runtime]System.Boolean
-		IL_00c4: stloc.s 5
-		IL_00c6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cb: ldloc.s 5
-		IL_00cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d2: pop
-		IL_00d3: ret
+		IL_007b: stloc.3
+		IL_007c: ldloc.1
+		IL_007d: ldloc.3
+		IL_007e: ldc.i4.0
+		IL_007f: newarr [System.Runtime]System.Object
+		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallComputedMember(object, object, object[])
+		IL_0089: stloc.3
+		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008f: ldloc.3
+		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0095: pop
+		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009b: ldloc.1
+		IL_009c: ldstr "value"
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ab: pop
+		IL_00ac: ldloc.1
+		IL_00ad: ldstr "fieldKey"
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00b7: ldnull
+		IL_00b8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00bd: stloc.s 4
+		IL_00bf: ldloc.s 4
+		IL_00c1: box [System.Runtime]System.Boolean
+		IL_00c6: stloc.s 5
+		IL_00c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cd: ldloc.s 5
+		IL_00cf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d4: pop
+		IL_00d5: ret
 	} // end of method Classes_ClassComputedFieldAndMethod_DynamicKey_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassComputedFieldAndMethod_DynamicKey_Log
@@ -349,7 +353,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2252
+		// Method begins at RVA 0x225a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

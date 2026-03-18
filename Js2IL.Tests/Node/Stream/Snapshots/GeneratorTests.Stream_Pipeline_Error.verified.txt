@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x236d
+				// Method begins at RVA 0x2379
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2376
+				// Method begins at RVA 0x2382
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -123,7 +123,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x237f
+				// Method begins at RVA 0x238b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -152,7 +152,7 @@
 			)
 			// Method begins at RVA 0x2234
 			// Header size: 12
-			// Code size: 259 (0x103)
+			// Code size: 271 (0x10f)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -200,64 +200,70 @@
 			IL_0059: throw
 
 			IL_005a: stloc.s 4
-			IL_005c: ldstr "source-destroyed:"
-			IL_0061: ldloc.s 4
-			IL_0063: ldstr "destroyed"
-			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0072: stloc.3
-			IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0078: ldloc.3
-			IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_007e: pop
-			IL_007f: ldarg.0
-			IL_0080: ldfld object Modules.Stream_Pipeline_Error/Scope::transform
-			IL_0085: dup
-			IL_0086: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_008b: ceq
-			IL_008d: brfalse.s IL_009b
+			IL_005c: ldloc.s 4
+			IL_005e: ldstr "destroyed"
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0068: stloc.s 4
+			IL_006a: ldstr "source-destroyed:"
+			IL_006f: ldloc.s 4
+			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0076: stloc.3
+			IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_007c: ldloc.3
+			IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0082: pop
+			IL_0083: ldarg.0
+			IL_0084: ldfld object Modules.Stream_Pipeline_Error/Scope::transform
+			IL_0089: dup
+			IL_008a: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_008f: ceq
+			IL_0091: brfalse.s IL_009f
 
-			IL_008f: pop
-			IL_0090: ldstr "Cannot access 'transform' before initialization"
-			IL_0095: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_009a: throw
+			IL_0093: pop
+			IL_0094: ldstr "Cannot access 'transform' before initialization"
+			IL_0099: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_009e: throw
 
-			IL_009b: stloc.s 4
-			IL_009d: ldstr "transform-destroyed:"
-			IL_00a2: ldloc.s 4
-			IL_00a4: ldstr "destroyed"
-			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00b3: stloc.3
-			IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00b9: ldloc.3
-			IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00bf: pop
-			IL_00c0: ldarg.0
-			IL_00c1: ldfld object Modules.Stream_Pipeline_Error/Scope::writable
-			IL_00c6: dup
-			IL_00c7: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_00cc: ceq
-			IL_00ce: brfalse.s IL_00dc
+			IL_009f: stloc.s 4
+			IL_00a1: ldloc.s 4
+			IL_00a3: ldstr "destroyed"
+			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00ad: stloc.s 4
+			IL_00af: ldstr "transform-destroyed:"
+			IL_00b4: ldloc.s 4
+			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00bb: stloc.3
+			IL_00bc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00c1: ldloc.3
+			IL_00c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00c7: pop
+			IL_00c8: ldarg.0
+			IL_00c9: ldfld object Modules.Stream_Pipeline_Error/Scope::writable
+			IL_00ce: dup
+			IL_00cf: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_00d4: ceq
+			IL_00d6: brfalse.s IL_00e4
 
-			IL_00d0: pop
-			IL_00d1: ldstr "Cannot access 'writable' before initialization"
-			IL_00d6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_00db: throw
+			IL_00d8: pop
+			IL_00d9: ldstr "Cannot access 'writable' before initialization"
+			IL_00de: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_00e3: throw
 
-			IL_00dc: stloc.s 4
-			IL_00de: ldstr "writable-destroyed:"
-			IL_00e3: ldloc.s 4
-			IL_00e5: ldstr "destroyed"
-			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00f4: stloc.3
-			IL_00f5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00fa: ldloc.3
-			IL_00fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0100: pop
-			IL_0101: ldnull
-			IL_0102: ret
+			IL_00e4: stloc.s 4
+			IL_00e6: ldloc.s 4
+			IL_00e8: ldstr "destroyed"
+			IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00f2: stloc.s 4
+			IL_00f4: ldstr "writable-destroyed:"
+			IL_00f9: ldloc.s 4
+			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0100: stloc.3
+			IL_0101: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0106: ldloc.3
+			IL_0107: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_010c: pop
+			IL_010d: ldnull
+			IL_010e: ret
 		} // end of method FunctionExpression_L15C47::__js_call__
 
 	} // end of class FunctionExpression_L15C47
@@ -281,7 +287,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2343
+			// Method begins at RVA 0x234f
 			// Header size: 1
 			// Code size: 41 (0x29)
 			.maxstack 8
@@ -515,7 +521,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2388
+		// Method begins at RVA 0x2394
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

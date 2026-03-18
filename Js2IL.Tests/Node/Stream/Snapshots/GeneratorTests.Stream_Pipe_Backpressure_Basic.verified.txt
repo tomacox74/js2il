@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2466
+				// Method begins at RVA 0x2470
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,7 +45,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x223c
+			// Method begins at RVA 0x2240
 			// Header size: 12
 			// Code size: 44 (0x2c)
 			.maxstack 8
@@ -88,7 +88,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x246f
+				// Method begins at RVA 0x2479
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -111,7 +111,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2274
+			// Method begins at RVA 0x2278
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -137,7 +137,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2478
+				// Method begins at RVA 0x2482
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -163,7 +163,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2288
+			// Method begins at RVA 0x228c
 			// Header size: 12
 			// Code size: 88 (0x58)
 			.maxstack 8
@@ -223,7 +223,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x248a
+					// Method begins at RVA 0x2494
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -243,7 +243,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2493
+					// Method begins at RVA 0x249d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -261,7 +261,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2481
+				// Method begins at RVA 0x248b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -287,9 +287,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x22ec
+			// Method begins at RVA 0x22f0
 			// Header size: 12
-			// Code size: 313 (0x139)
+			// Code size: 319 (0x13f)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -363,7 +363,7 @@
 			IL_008d: ldloc.s 4
 			IL_008f: ldloc.1
 			IL_0090: clt
-			IL_0092: brfalse IL_0108
+			IL_0092: brfalse IL_010c
 
 			IL_0097: ldarg.0
 			IL_0098: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
@@ -404,37 +404,39 @@
 			IL_00ec: throw
 
 			IL_00ed: stloc.s 5
-			IL_00ef: ldloc.0
-			IL_00f0: ldstr "push"
-			IL_00f5: ldloc.3
-			IL_00f6: ldloc.s 5
-			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0102: pop
-			IL_0103: br IL_0137
+			IL_00ef: ldloc.3
+			IL_00f0: ldloc.s 5
+			IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_00f7: stloc.s 5
+			IL_00f9: ldloc.0
+			IL_00fa: ldstr "push"
+			IL_00ff: ldloc.s 5
+			IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0106: pop
+			IL_0107: br IL_013d
 
-			IL_0108: ldarg.0
-			IL_0109: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-			IL_010e: dup
-			IL_010f: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0114: ceq
-			IL_0116: brfalse.s IL_0124
+			IL_010c: ldarg.0
+			IL_010d: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_0112: dup
+			IL_0113: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0118: ceq
+			IL_011a: brfalse.s IL_0128
 
-			IL_0118: pop
-			IL_0119: ldstr "Cannot access 'readable' before initialization"
-			IL_011e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_0123: throw
+			IL_011c: pop
+			IL_011d: ldstr "Cannot access 'readable' before initialization"
+			IL_0122: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_0127: throw
 
-			IL_0124: stloc.0
-			IL_0125: ldloc.0
-			IL_0126: ldstr "push"
-			IL_012b: ldc.i4.0
-			IL_012c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0136: pop
+			IL_0128: stloc.s 5
+			IL_012a: ldloc.s 5
+			IL_012c: ldstr "push"
+			IL_0131: ldc.i4.0
+			IL_0132: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_013c: pop
 
-			IL_0137: ldnull
-			IL_0138: ret
+			IL_013d: ldnull
+			IL_013e: ret
 		} // end of method FunctionExpression_L27C21::__js_call__
 
 	} // end of class FunctionExpression_L27C21
@@ -459,7 +461,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2431
+			// Method begins at RVA 0x243b
 			// Header size: 1
 			// Code size: 52 (0x34)
 			.maxstack 8
@@ -497,14 +499,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 480 (0x1e0)
+		// Code size: 484 (0x1e4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Pipe_Backpressure_Basic/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object
+			[4] object,
+			[5] string
 		)
 
 		IL_0000: newobj instance void Modules.Stream_Pipe_Backpressure_Basic/Scope::.ctor()
@@ -667,16 +670,18 @@
 		IL_01b6: throw
 
 		IL_01b7: stloc.s 4
-		IL_01b9: ldloc.3
-		IL_01ba: ldstr "push"
-		IL_01bf: ldloc.s 4
-		IL_01c1: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_01c6: ldc.r8 0.0
-		IL_01cf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_01d4: castclass [System.Runtime]System.String
-		IL_01d9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_01de: pop
-		IL_01df: ret
+		IL_01b9: ldloc.s 4
+		IL_01bb: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_01c0: ldc.r8 0.0
+		IL_01c9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_01ce: castclass [System.Runtime]System.String
+		IL_01d3: stloc.s 5
+		IL_01d5: ldloc.3
+		IL_01d6: ldstr "push"
+		IL_01db: ldloc.s 5
+		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01e2: pop
+		IL_01e3: ret
 	} // end of method Stream_Pipe_Backpressure_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Pipe_Backpressure_Basic
@@ -688,7 +693,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x249c
+		// Method begins at RVA 0x24a6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
