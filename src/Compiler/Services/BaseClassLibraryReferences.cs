@@ -107,7 +107,6 @@ namespace Js2IL.Services
         }
 
         internal TypeReferenceRegistry TypeReferenceRegistry => _typeRefRegistry;
-        internal MemberReferenceRegistry MemberReferenceRegistry => _memberRefRegistry;
         
         public TypeReferenceHandle BooleanType => _typeRefRegistry.GetOrAdd(typeof(bool));
         public TypeReferenceHandle DoubleType => _typeRefRegistry.GetOrAdd(typeof(double));

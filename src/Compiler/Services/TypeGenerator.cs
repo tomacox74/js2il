@@ -20,6 +20,7 @@ namespace Js2IL.Services
     {
         private readonly MetadataBuilder _metadataBuilder;
         private readonly BaseClassLibraryReferences _bclReferences;
+        private readonly MemberReferenceRegistry _memberReferenceRegistry;
         private readonly MethodBodyStreamEncoder _methodBodyStream;
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes;
         private readonly Dictionary<string, List<FieldDefinitionHandle>> _scopeFields;
@@ -35,6 +36,7 @@ namespace Js2IL.Services
         public TypeGenerator(
             MetadataBuilder metadataBuilder,
             BaseClassLibraryReferences bclReferences,
+            MemberReferenceRegistry memberReferenceRegistry,
             MethodBodyStreamEncoder methodBodyStream,
             VariableRegistry variableRegistry,
             int deferredCtorStartRow,
@@ -42,6 +44,7 @@ namespace Js2IL.Services
         {
             _metadataBuilder = metadataBuilder;
             _bclReferences = bclReferences;
+            _memberReferenceRegistry = memberReferenceRegistry;
             _methodBodyStream = methodBodyStream;
             _variableRegistry = variableRegistry;
             _scopeTypes = new Dictionary<string, TypeDefinitionHandle>();
@@ -609,7 +612,7 @@ namespace Js2IL.Services
 
             if (_scopeTemporalDeadZoneFieldNames.TryGetValue(scopeKey, out var temporalDeadZoneFields))
             {
-                var sentinelField = _bclReferences.MemberReferenceRegistry.GetOrAddField(
+                var sentinelField = _memberReferenceRegistry.GetOrAddField(
                     typeof(JavaScriptRuntime.RuntimeServices),
                     nameof(JavaScriptRuntime.RuntimeServices.TemporalDeadZoneSentinel));
 
