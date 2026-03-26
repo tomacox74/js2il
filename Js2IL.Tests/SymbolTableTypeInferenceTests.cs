@@ -254,15 +254,10 @@ public class SymbolTableTypeInferenceTests
     {
         var source = @"
                 'use strict';
+                let read = () => ret;
                 let ret = [];
-                function test(fn) { fn(); }
 
-                test(() => {
-                    for (let i = 0; i < 4; i++) {
-                        ret = [];
-                        ret[i] = i;
-                    }
-                });
+                read();
             ";
 
         var outputDir = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "CapturedLetArray", Guid.NewGuid().ToString("N"));

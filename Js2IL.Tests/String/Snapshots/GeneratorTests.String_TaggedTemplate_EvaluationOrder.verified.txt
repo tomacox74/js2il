@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223b
+				// Method begins at RVA 0x2212
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -75,7 +75,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2244
+				// Method begins at RVA 0x221b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -103,49 +103,34 @@
 			)
 			// Method begins at RVA 0x21bc
 			// Header size: 12
-			// Code size: 95 (0x5f)
+			// Code size: 65 (0x41)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] float64,
-				[2] object
+				[0] float64,
+				[1] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
-			IL_0006: ldstr "Cannot access 'counter' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.0
-			IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0016: ldstr "getValue called:"
-			IL_001b: ldloc.0
-			IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0021: pop
-			IL_0022: ldarg.0
-			IL_0023: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
-			IL_0028: ldstr "Cannot access 'counter' before initialization"
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0032: stloc.0
-			IL_0033: ldloc.0
-			IL_0034: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0039: stloc.1
-			IL_003a: ldloc.1
-			IL_003b: box [System.Runtime]System.Double
-			IL_0040: stloc.2
-			IL_0041: ldloc.2
-			IL_0042: stloc.0
-			IL_0043: ldloc.1
-			IL_0044: ldc.r8 1
-			IL_004d: add
-			IL_004e: stloc.1
-			IL_004f: ldloc.1
-			IL_0050: box [System.Runtime]System.Double
-			IL_0055: stloc.2
-			IL_0056: ldarg.0
-			IL_0057: ldloc.2
-			IL_0058: stfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
-			IL_005d: ldloc.0
-			IL_005e: ret
+			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0005: ldstr "getValue called:"
+			IL_000a: ldarg.0
+			IL_000b: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
+			IL_0010: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0015: pop
+			IL_0016: ldarg.0
+			IL_0017: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
+			IL_001c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0021: stloc.0
+			IL_0022: ldloc.0
+			IL_0023: box [System.Runtime]System.Double
+			IL_0028: stloc.1
+			IL_0029: ldarg.0
+			IL_002a: ldloc.0
+			IL_002b: ldc.r8 1
+			IL_0034: add
+			IL_0035: box [System.Runtime]System.Double
+			IL_003a: stfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
+			IL_003f: ldloc.1
+			IL_0040: ret
 		} // end of method getValue::__js_call__
 
 	} // end of class getValue
@@ -168,18 +153,15 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2227
+			// Method begins at RVA 0x2209
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -345,7 +327,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x224d
+		// Method begins at RVA 0x2224
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20d4
+				// Method begins at RVA 0x20bd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20dd
+				// Method begins at RVA 0x20c6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -66,11 +66,10 @@
 			)
 			// Method begins at RVA 0x2080
 			// Header size: 12
-			// Code size: 52 (0x34)
+			// Code size: 40 (0x28)
 			.maxstack 8
 			.locals init (
-				[0] object[],
-				[1] object
+				[0] object[]
 			)
 
 			IL_0000: ldarg.0
@@ -80,19 +79,15 @@
 			IL_0008: ldarg.0
 			IL_0009: ldloc.0
 			IL_000a: stfld object[] Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/MyClass::_scopes
-			IL_000f: ldarg.1
-			IL_0010: ldc.i4.0
-			IL_0011: ldelem.ref
-			IL_0012: castclass Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/Scope
-			IL_0017: ldfld object Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
-			IL_001c: ldstr "Cannot access 'GLOBAL_VALUE' before initialization"
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0026: stloc.1
-			IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_002c: ldloc.1
-			IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0032: pop
-			IL_0033: ret
+			IL_000f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0014: ldarg.1
+			IL_0015: ldc.i4.0
+			IL_0016: ldelem.ref
+			IL_0017: castclass Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/Scope
+			IL_001c: ldfld string Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
+			IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0026: pop
+			IL_0027: ret
 		} // end of method MyClass::.ctor
 
 	} // end of class MyClass
@@ -106,24 +101,21 @@
 			4c 55 45 7d 00 00
 		)
 		// Fields
-		.field public object GLOBAL_VALUE
+		.field public string GLOBAL_VALUE
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c0
+			// Method begins at RVA 0x20b4
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -153,7 +145,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldstr "Hello from global"
-		IL_000c: stfld object Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
+		IL_000c: stfld string Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
 		IL_0011: ldc.i4.1
 		IL_0012: newarr [System.Runtime]System.Object
 		IL_0017: dup
@@ -176,7 +168,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e6
+		// Method begins at RVA 0x20cf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

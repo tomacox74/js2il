@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2193
+				// Method begins at RVA 0x2160
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,34 +44,25 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2138
+			// Method begins at RVA 0x2128
 			// Header size: 12
-			// Code size: 59 (0x3b)
+			// Code size: 35 (0x23)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] object
+				[0] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-			IL_0006: ldstr "Cannot access 'x' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldc.r8 1
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0020: stloc.1
-			IL_0021: ldarg.0
-			IL_0022: ldloc.1
-			IL_0023: stfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-			IL_0028: ldarg.0
-			IL_0029: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-			IL_002e: ldstr "Cannot access 'x' before initialization"
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0038: stloc.0
-			IL_0039: ldloc.0
-			IL_003a: ret
+			IL_0006: ldc.r8 1
+			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0014: stloc.0
+			IL_0015: ldarg.0
+			IL_0016: ldloc.0
+			IL_0017: stfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+			IL_001c: ldarg.0
+			IL_001d: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+			IL_0022: ret
 		} // end of method bump::__js_call__
 
 	} // end of class bump
@@ -91,18 +82,15 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217f
+			// Method begins at RVA 0x2157
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -120,7 +108,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 218 (0xda)
+		// Code size: 204 (0xcc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope,
@@ -201,16 +189,12 @@
 		IL_00b3: ldloc.3
 		IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00b9: pop
-		IL_00ba: ldloc.0
-		IL_00bb: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-		IL_00c0: ldstr "Cannot access 'x' before initialization"
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_00ca: stloc.s 4
-		IL_00cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d1: ldloc.s 4
-		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d8: pop
-		IL_00d9: ret
+		IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bf: ldloc.0
+		IL_00c0: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+		IL_00c5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ca: pop
+		IL_00cb: ret
 	} // end of method ControlFlow_Conditional_Ternary_ShortCircuit::__js_module_init__
 
 } // end of class Modules.ControlFlow_Conditional_Ternary_ShortCircuit
@@ -222,7 +206,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219c
+		// Method begins at RVA 0x2169
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

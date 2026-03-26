@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22c9
+				// Method begins at RVA 0x22a2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21e8
+			// Method begins at RVA 0x21d8
 			// Header size: 12
 			// Code size: 111 (0x6f)
 			.maxstack 8
@@ -109,7 +109,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22e4
+				// Method begins at RVA 0x22bd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -135,9 +135,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2264
+			// Method begins at RVA 0x2254
 			// Header size: 12
-			// Code size: 69 (0x45)
+			// Code size: 57 (0x39)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -149,27 +149,23 @@
 			IL_0005: pop
 			IL_0006: ldarg.0
 			IL_0007: ldfld object Modules.WeakRef_Deref_KeptObjects/Scope::ref
-			IL_000c: ldstr "Cannot access 'ref' before initialization"
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_000c: ldstr "deref"
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 			IL_0016: stloc.0
 			IL_0017: ldloc.0
-			IL_0018: ldstr "deref"
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_0022: stloc.0
-			IL_0023: ldloc.0
-			IL_0024: ldc.i4.0
-			IL_0025: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_002a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-			IL_002f: stloc.1
-			IL_0030: ldloc.1
-			IL_0031: box [System.Runtime]System.Boolean
-			IL_0036: stloc.2
-			IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_003c: ldloc.2
-			IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0042: pop
-			IL_0043: ldnull
-			IL_0044: ret
+			IL_0018: ldc.i4.0
+			IL_0019: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_001e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+			IL_0023: stloc.1
+			IL_0024: ldloc.1
+			IL_0025: box [System.Runtime]System.Boolean
+			IL_002a: stloc.2
+			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0030: ldloc.2
+			IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0036: pop
+			IL_0037: ldnull
+			IL_0038: ret
 		} // end of method ArrowFunction_L23C14::__js_call__
 
 	} // end of class ArrowFunction_L23C14
@@ -191,7 +187,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22d2
+				// Method begins at RVA 0x22ab
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -211,7 +207,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22db
+				// Method begins at RVA 0x22b4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -233,18 +229,15 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22b5
+			// Method begins at RVA 0x2299
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.WeakRef_Deref_KeptObjects/Scope::ref
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -262,7 +255,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 378 (0x17a)
+		// Code size: 364 (0x16c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.WeakRef_Deref_KeptObjects/Scope,
@@ -306,117 +299,113 @@
 		IL_004b: ldloc.0
 		IL_004c: ldloc.s 5
 		IL_004e: stfld object Modules.WeakRef_Deref_KeptObjects/Scope::ref
-		IL_0053: ldloc.0
-		IL_0054: ldfld object Modules.WeakRef_Deref_KeptObjects/Scope::ref
-		IL_0059: ldstr "Cannot access 'ref' before initialization"
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_0063: stloc.s 5
-		IL_0065: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-		IL_006a: ldstr "prototype"
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0074: ldstr "toString"
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_007e: ldstr "call"
+		IL_0053: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
+		IL_0058: ldstr "prototype"
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0062: ldstr "toString"
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_006c: ldstr "call"
+		IL_0071: ldloc.0
+		IL_0072: ldfld object Modules.WeakRef_Deref_KeptObjects/Scope::ref
+		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_007c: stloc.s 5
+		IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0083: ldloc.s 5
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_008a: stloc.s 5
-		IL_008c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0091: ldloc.s 5
-		IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0098: pop
-		IL_0099: nop
+		IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_008a: pop
+		IL_008b: nop
 		.try
 		{
-			IL_009a: ldc.r8 123
-			IL_00a3: box [System.Runtime]System.Double
-			IL_00a8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.WeakRef::.ctor(object)
-			IL_00ad: pop
-			IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00b3: ldstr "primitive target threw:"
-			IL_00b8: ldc.i4.0
-			IL_00b9: box [System.Runtime]System.Boolean
-			IL_00be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00c3: pop
-			IL_00c4: leave IL_0138
+			IL_008c: ldc.r8 123
+			IL_0095: box [System.Runtime]System.Double
+			IL_009a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.WeakRef::.ctor(object)
+			IL_009f: pop
+			IL_00a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00a5: ldstr "primitive target threw:"
+			IL_00aa: ldc.i4.0
+			IL_00ab: box [System.Runtime]System.Boolean
+			IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00b5: pop
+			IL_00b6: leave IL_012a
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00c9: stloc.2
-			IL_00ca: ldloc.2
-			IL_00cb: dup
-			IL_00cc: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00d1: dup
-			IL_00d2: brtrue IL_00e8
+			IL_00bb: stloc.2
+			IL_00bc: ldloc.2
+			IL_00bd: dup
+			IL_00be: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00c3: dup
+			IL_00c4: brtrue IL_00da
 
+			IL_00c9: pop
+			IL_00ca: dup
+			IL_00cb: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00d0: dup
+			IL_00d1: brtrue IL_00e7
+
+			IL_00d6: pop
 			IL_00d7: pop
-			IL_00d8: dup
-			IL_00d9: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_00de: dup
-			IL_00df: brtrue IL_00f5
+			IL_00d8: rethrow
 
-			IL_00e4: pop
-			IL_00e5: pop
-			IL_00e6: rethrow
+			IL_00da: nop
+			IL_00db: pop
+			IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00e1: stloc.3
+			IL_00e2: br IL_00ea
 
-			IL_00e8: nop
-			IL_00e9: pop
-			IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_00ef: stloc.3
-			IL_00f0: br IL_00f8
+			IL_00e7: nop
+			IL_00e8: pop
+			IL_00e9: stloc.3
 
-			IL_00f5: nop
-			IL_00f6: pop
-			IL_00f7: stloc.3
-
-			IL_00f8: nop
-			IL_00f9: ldloc.3
-			IL_00fa: stloc.s 5
-			IL_00fc: ldloc.s 5
-			IL_00fe: stloc.s 4
-			IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0105: ldstr "primitive target threw:"
-			IL_010a: ldc.i4.1
-			IL_010b: box [System.Runtime]System.Boolean
-			IL_0110: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0115: pop
-			IL_0116: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_011b: ldstr "primitive target name:"
-			IL_0120: ldloc.s 4
-			IL_0122: ldstr "name"
-			IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_012c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0131: pop
-			IL_0132: leave IL_0138
+			IL_00ea: nop
+			IL_00eb: ldloc.3
+			IL_00ec: stloc.s 5
+			IL_00ee: ldloc.s 5
+			IL_00f0: stloc.s 4
+			IL_00f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00f7: ldstr "primitive target threw:"
+			IL_00fc: ldc.i4.1
+			IL_00fd: box [System.Runtime]System.Boolean
+			IL_0102: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0107: pop
+			IL_0108: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_010d: ldstr "primitive target name:"
+			IL_0112: ldloc.s 4
+			IL_0114: ldstr "name"
+			IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_011e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0123: pop
+			IL_0124: leave IL_012a
 		} // end handler
-		IL_0137: nop
+		IL_0129: nop
 
-		IL_0138: nop
-		IL_0139: ldc.i4.1
-		IL_013a: newarr [System.Runtime]System.Object
-		IL_013f: dup
-		IL_0140: ldc.i4.0
-		IL_0141: ldloc.0
-		IL_0142: stelem.ref
-		IL_0143: ldc.i4.0
-		IL_0144: ldelem.ref
-		IL_0145: castclass Modules.WeakRef_Deref_KeptObjects/Scope
-		IL_014a: ldftn object Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14::__js_call__(class Modules.WeakRef_Deref_KeptObjects/Scope, object)
-		IL_0150: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0155: ldc.i4.1
-		IL_0156: newarr [System.Runtime]System.Object
-		IL_015b: dup
-		IL_015c: ldc.i4.0
-		IL_015d: ldloc.0
-		IL_015e: stelem.ref
-		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0169: stloc.s 5
-		IL_016b: ldloc.s 5
-		IL_016d: ldc.i4.0
-		IL_016e: newarr [System.Runtime]System.Object
-		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0178: pop
-		IL_0179: ret
+		IL_012a: nop
+		IL_012b: ldc.i4.1
+		IL_012c: newarr [System.Runtime]System.Object
+		IL_0131: dup
+		IL_0132: ldc.i4.0
+		IL_0133: ldloc.0
+		IL_0134: stelem.ref
+		IL_0135: ldc.i4.0
+		IL_0136: ldelem.ref
+		IL_0137: castclass Modules.WeakRef_Deref_KeptObjects/Scope
+		IL_013c: ldftn object Modules.WeakRef_Deref_KeptObjects/ArrowFunction_L23C14::__js_call__(class Modules.WeakRef_Deref_KeptObjects/Scope, object)
+		IL_0142: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0147: ldc.i4.1
+		IL_0148: newarr [System.Runtime]System.Object
+		IL_014d: dup
+		IL_014e: ldc.i4.0
+		IL_014f: ldloc.0
+		IL_0150: stelem.ref
+		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_015b: stloc.s 5
+		IL_015d: ldloc.s 5
+		IL_015f: ldc.i4.0
+		IL_0160: newarr [System.Runtime]System.Object
+		IL_0165: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_016a: pop
+		IL_016b: ret
 	} // end of method WeakRef_Deref_KeptObjects::__js_module_init__
 
 } // end of class Modules.WeakRef_Deref_KeptObjects
@@ -428,7 +417,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22ed
+		// Method begins at RVA 0x22c6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

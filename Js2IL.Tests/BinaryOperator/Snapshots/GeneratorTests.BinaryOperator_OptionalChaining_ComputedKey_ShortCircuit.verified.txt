@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2168
+				// Method begins at RVA 0x2133
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,36 +44,21 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2110
-			// Header size: 12
-			// Code size: 56 (0x38)
+			// Method begins at RVA 0x2103
+			// Header size: 1
+			// Code size: 38 (0x26)
 			.maxstack 8
-			.locals init (
-				[0] object,
-				[1] float64,
-				[2] object
-			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
-			IL_0006: ldstr "Cannot access 'called' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ldc.r8 1
-			IL_0022: add
-			IL_0023: stloc.1
-			IL_0024: ldloc.1
-			IL_0025: box [System.Runtime]System.Double
-			IL_002a: stloc.2
-			IL_002b: ldarg.0
-			IL_002c: ldloc.2
-			IL_002d: stfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
-			IL_0032: ldstr "x"
-			IL_0037: ret
+			IL_0001: ldarg.0
+			IL_0002: ldfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
+			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000c: ldc.r8 1
+			IL_0015: add
+			IL_0016: box [System.Runtime]System.Double
+			IL_001b: stfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
+			IL_0020: ldstr "x"
+			IL_0025: ret
 		} // end of method key::__js_call__
 
 	} // end of class key
@@ -94,18 +79,15 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2154
+			// Method begins at RVA 0x212a
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -123,7 +105,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 179 (0xb3)
+		// Code size: 167 (0xa7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope,
@@ -194,16 +176,12 @@
 		IL_008e: ldloc.3
 		IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0094: pop
-		IL_0095: ldloc.0
-		IL_0096: ldfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
-		IL_009b: ldstr "Cannot access 'called' before initialization"
-		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_00a5: stloc.3
-		IL_00a6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ab: ldloc.3
-		IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b1: pop
-		IL_00b2: ret
+		IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009a: ldloc.0
+		IL_009b: ldfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
+		IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a5: pop
+		IL_00a6: ret
 	} // end of method BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit::__js_module_init__
 
 } // end of class Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit
@@ -215,7 +193,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2171
+		// Method begins at RVA 0x213c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

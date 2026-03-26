@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2264
+				// Method begins at RVA 0x2235
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x226d
+				// Method begins at RVA 0x223e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -103,26 +103,18 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x21cc
-			// Header size: 12
-			// Code size: 32 (0x20)
+			// Method begins at RVA 0x21cb
+			// Header size: 1
+			// Code size: 15 (0xf)
 			.maxstack 8
-			.locals init (
-				[0] object
-			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Stream_Transform_Basic/Scope::written
-			IL_0006: ldstr "Cannot access 'written' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldstr "push"
-			IL_0017: ldarg.2
-			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_001d: pop
-			IL_001e: ldnull
-			IL_001f: ret
+			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Transform_Basic/Scope::written
+			IL_0006: ldarg.2
+			IL_0007: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_000c: pop
+			IL_000d: ldnull
+			IL_000e: ret
 		} // end of method FunctionExpression_L14C18::__js_call__
 
 	} // end of class FunctionExpression_L14C18
@@ -138,7 +130,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2276
+				// Method begins at RVA 0x2247
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -164,13 +156,12 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x21f8
+			// Method begins at RVA 0x21dc
 			// Header size: 12
-			// Code size: 76 (0x4c)
+			// Code size: 68 (0x44)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] object
+				[0] string
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -178,25 +169,25 @@
 			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_000f: pop
 			IL_0010: ldarg.0
-			IL_0011: ldfld object Modules.Stream_Transform_Basic/Scope::written
-			IL_0016: ldstr "Cannot access 'written' before initialization"
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0020: stloc.0
-			IL_0021: ldloc.0
-			IL_0022: ldstr "join"
-			IL_0027: ldstr ","
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0031: stloc.0
-			IL_0032: ldstr "written:"
-			IL_0037: ldloc.0
-			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_003d: stloc.1
-			IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0043: ldloc.1
-			IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0049: pop
-			IL_004a: ldnull
-			IL_004b: ret
+			IL_0011: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Transform_Basic/Scope::written
+			IL_0016: ldc.i4.1
+			IL_0017: newarr [System.Runtime]System.Object
+			IL_001c: dup
+			IL_001d: ldc.i4.0
+			IL_001e: ldstr ","
+			IL_0023: stelem.ref
+			IL_0024: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0029: stloc.0
+			IL_002a: ldstr "written:"
+			IL_002f: ldloc.0
+			IL_0030: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0035: stloc.0
+			IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_003b: ldloc.0
+			IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0041: pop
+			IL_0042: ldnull
+			IL_0043: ret
 		} // end of method FunctionExpression_L18C22::__js_call__
 
 	} // end of class FunctionExpression_L18C22
@@ -209,24 +200,21 @@
 			3d 7b 77 72 69 74 74 65 6e 7d 00 00
 		)
 		// Fields
-		.field public object written
+		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array written
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2250
+			// Method begins at RVA 0x222c
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.Stream_Transform_Basic/Scope::written
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -302,7 +290,7 @@
 		IL_0084: ldloc.0
 		IL_0085: ldc.i4.0
 		IL_0086: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_008b: stfld object Modules.Stream_Transform_Basic/Scope::written
+		IL_008b: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Transform_Basic/Scope::written
 		IL_0090: ldc.i4.1
 		IL_0091: newarr [System.Runtime]System.Object
 		IL_0096: dup
@@ -376,7 +364,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x227f
+		// Method begins at RVA 0x2250
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

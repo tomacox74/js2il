@@ -2,7 +2,7 @@
 
 const fallbackExit = setTimeout(() => {
     process.exit(0);
-}, 500);
+}, 2000);
 
 process.on("message", (message) => {
     clearTimeout(fallbackExit);

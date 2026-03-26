@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x214f
+				// Method begins at RVA 0x212c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,30 +44,25 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2100
+			// Method begins at RVA 0x20f4
 			// Header size: 12
-			// Code size: 47 (0x2f)
+			// Code size: 35 (0x23)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] object
+				[0] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
-			IL_0006: ldstr "Cannot access 'x' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldc.r8 1
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0020: stloc.1
-			IL_0021: ldarg.0
-			IL_0022: ldloc.1
-			IL_0023: stfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
-			IL_0028: ldc.i4.1
-			IL_0029: box [System.Runtime]System.Boolean
-			IL_002e: ret
+			IL_0006: ldc.r8 1
+			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0014: stloc.0
+			IL_0015: ldarg.0
+			IL_0016: ldloc.0
+			IL_0017: stfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
+			IL_001c: ldc.i4.1
+			IL_001d: box [System.Runtime]System.Boolean
+			IL_0022: ret
 		} // end of method inc::__js_call__
 
 	} // end of class inc
@@ -87,18 +82,15 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x213b
+			// Method begins at RVA 0x2123
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -116,7 +108,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 163 (0xa3)
+		// Code size: 151 (0x97)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope,
@@ -181,16 +173,12 @@
 		IL_0081: nop
 		IL_0082: ldloc.s 6
 		IL_0084: stloc.2
-		IL_0085: ldloc.0
-		IL_0086: ldfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
-		IL_008b: ldstr "Cannot access 'x' before initialization"
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_0095: stloc.3
-		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009b: ldloc.3
-		IL_009c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a1: pop
-		IL_00a2: ret
+		IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008a: ldloc.0
+		IL_008b: ldfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
+		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0095: pop
+		IL_0096: ret
 	} // end of method BinaryOperator_LogicalOr_ShortCircuit::__js_module_init__
 
 } // end of class Modules.BinaryOperator_LogicalOr_ShortCircuit
@@ -202,7 +190,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2158
+		// Method begins at RVA 0x2135
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
