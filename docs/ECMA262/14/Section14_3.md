@@ -4,9 +4,9 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-16T00:09:30Z
 
-JS2IL supports common declaration forms (`let`, `const`, `var`) and destructuring binding patterns. Some spec-required early errors are not exhaustively covered, and TDZ behavior currently has a skipped test (so not fully implemented/validated yet).
+JS2IL supports common declaration forms (`let`, `const`, `var`) and destructuring binding patterns, including temporal dead zone checks for lexical bindings. Some spec-required early errors are not exhaustively covered.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -37,7 +37,7 @@ Feature-level support tracking with test script references.
 | const assignment rejection | Supported | [`Variable_ConstReassignmentError.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_ConstReassignmentError.js) | Reassignment throws and can be caught. |
 | const declaration (basic) | Supported | [`Variable_ConstSimple.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_ConstSimple.js) |  |
 | let declarations + shadowing | Supported | [`Variable_LetShadowing.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_LetShadowing.js)<br>[`Variable_LetNestedShadowingChain.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_LetNestedShadowingChain.js)<br>[`Variable_LetFunctionNestedShadowing.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_LetFunctionNestedShadowing.js)<br>[`Variable_LetBlockScope.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js) |  |
-| temporal dead zone (TDZ) | Not Yet Supported | [`Variable_TemporalDeadZoneAccess.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js) | A TDZ test exists but is currently skipped in the test suite (try/catch + TDZ runtime behavior not implemented/validated yet). |
+| temporal dead zone (TDZ) | Supported | [`Variable_TemporalDeadZoneAccess.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js)<br>[`Variable_TemporalDeadZoneCapturedRead.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneCapturedRead.js)<br>[`Variable_TemporalDeadZoneShadowing.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneShadowing.js) | Reads of lexical bindings throw a ReferenceError before initialization, including captured reads and nested shadowing cases that must still preserve access to the outer initialized binding. |
 
 ### 14.3.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-variable-statement-runtime-semantics-evaluation))
 

@@ -250,19 +250,14 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
-    public void Compiler_CapturedLetArray_EmitsTypedArrayScopeField()
+    public void Compiler_CapturedLetArray_EmitsObjectScopeFieldWhenTdzChecksRequired()
     {
         var source = @"
                 'use strict';
+                let read = () => ret;
                 let ret = [];
-                function test(fn) { fn(); }
 
-                test(() => {
-                    for (let i = 0; i < 4; i++) {
-                        ret = [];
-                        ret[i] = i;
-                    }
-                });
+                read();
             ";
 
         var outputDir = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "CapturedLetArray", Guid.NewGuid().ToString("N"));
@@ -276,8 +271,8 @@ public class SymbolTableTypeInferenceTests
             additionalScripts: null);
 
         var il = Utilities.AssemblyToText.ConvertToText(compiled.AssemblyPath);
-        Assert.Contains("JavaScriptRuntime.Array 'ret'", il);
-        Assert.DoesNotContain("object 'ret'", il);
+        Assert.Contains("object 'ret'", il);
+        Assert.DoesNotContain("JavaScriptRuntime.Array 'ret'", il);
     }
 
     [Fact]

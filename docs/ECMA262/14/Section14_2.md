@@ -4,9 +4,9 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-16T00:09:30Z
 
-Block statements are supported, including lexical scoping for `let`/`const` declarations. Some early-error edge cases and full spec fidelity around declaration instantiation are not exhaustively validated.
+Block statements are supported, including lexical scoping for `let`/`const` declarations and temporal dead zone checks for lexical bindings. Some early-error edge cases and full spec fidelity around declaration instantiation are not exhaustively validated.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -42,5 +42,5 @@ Feature-level support tracking with test script references.
 |---|---|---|---|
 | lexical block scope (let shadowing) | Supported | [`Variable_LetBlockScope.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js) |  |
 | lexical declarations inside loop blocks | Supported | [`ControlFlow_DoWhile_NestedLet.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_NestedLet.js) |  |
-| temporal dead zone (TDZ) in blocks | Not Yet Supported | [`Variable_TemporalDeadZoneAccess.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js) | A TDZ test exists but is currently skipped in the test suite (try/catch + TDZ runtime behavior not implemented yet). |
+| temporal dead zone (TDZ) in blocks | Supported | [`Variable_TemporalDeadZoneAccess.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js)<br>[`Variable_TemporalDeadZoneShadowing.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneShadowing.js) | Reads of block-scoped lexical bindings throw a ReferenceError until the declaration initializes the binding, and shadowing applies the TDZ only to the inner lexical binding. |
 

@@ -71,6 +71,7 @@ internal sealed partial class LIRToILCompiler
                     }
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+                    EmitTemporalDeadZoneGuard(ilEncoder, loadParentField.Binding);
 
                     var fieldClrType = GetDeclaredScopeFieldClrType(loadParentField.Field.ScopeName, loadParentField.Field.FieldName);
                     EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(loadParentField.Result), ilEncoder);

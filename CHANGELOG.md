@@ -4,7 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/perf/tests: refine captured lexical TDZ lowering by separating semantic TDZ participation from runtime field guards so safe captured `let`/`const` bindings keep typed scope fields and direct loads, while conservatively preserving runtime guards for captures that can still be observed before initialization; this recovers the PR #909 benchmark-adjacent regressions and refreshes the affected generator coverage.
+- tests/node/child_process: stabilize the `fork(...)` message-passing coverage under full-suite load by widening the child fallback exit window and refreshing the paired execution/generator expectations.
 
 ## v0.9.4 - 2026-03-16
 

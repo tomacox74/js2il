@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2233
+				// Method begins at RVA 0x224e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223c
+				// Method begins at RVA 0x2257
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -61,7 +61,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2158
+			// Method begins at RVA 0x2168
 			// Header size: 12
 			// Code size: 114 (0x72)
 			.maxstack 8
@@ -130,7 +130,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2245
+				// Method begins at RVA 0x2260
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -150,7 +150,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x224e
+				// Method begins at RVA 0x2269
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -171,7 +171,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21d8
+			// Method begins at RVA 0x21e8
 			// Header size: 12
 			// Code size: 70 (0x46)
 			.maxstack 8
@@ -209,21 +209,24 @@
 			01 00 0b 53 63 6f 70 65 20 61 3d 7b 61 7d 00 00
 		)
 		// Fields
-		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array a
+		.field public object a
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x222a
+			// Method begins at RVA 0x223a
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Scope::a
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -241,14 +244,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 251 (0xfb)
+		// Code size: 265 (0x109)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Scope,
 			[1] object,
 			[2] object,
-			[3] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList,
-			[4] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y
+			[3] object,
+			[4] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList,
+			[5] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y
 		)
 
 		IL_0000: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Scope::.ctor()
@@ -268,54 +272,58 @@
 		IL_0036: ldc.r8 3
 		IL_003f: box [System.Runtime]System.Double
 		IL_0044: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0049: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Scope::a
+		IL_0049: stfld object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Scope::a
 		IL_004e: ldloc.0
-		IL_004f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Scope::a
-		IL_0054: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList::.ctor(object)
-		IL_0059: stloc.3
-		IL_005a: ldloc.3
-		IL_005b: stloc.1
-		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0061: ldloc.1
-		IL_0062: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0067: box [System.Runtime]System.Double
-		IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0071: pop
-		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0077: ldloc.1
-		IL_0078: ldc.r8 0.0
-		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_008b: pop
-		IL_008c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0091: ldloc.1
-		IL_0092: ldc.r8 2
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a5: pop
-		IL_00a6: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y::.ctor()
-		IL_00ab: stloc.s 4
-		IL_00ad: ldloc.s 4
-		IL_00af: stloc.2
-		IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b5: ldloc.2
-		IL_00b6: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_00bb: box [System.Runtime]System.Double
-		IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00c5: pop
-		IL_00c6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cb: ldloc.2
-		IL_00cc: ldc.r8 1
-		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00df: pop
-		IL_00e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e5: ldloc.2
-		IL_00e6: ldc.r8 2
-		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00f4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f9: pop
-		IL_00fa: ret
+		IL_004f: ldfld object Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Scope::a
+		IL_0054: ldstr "Cannot access 'a' before initialization"
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_005e: stloc.3
+		IL_005f: ldloc.3
+		IL_0060: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/NodeList::.ctor(object)
+		IL_0065: stloc.s 4
+		IL_0067: ldloc.s 4
+		IL_0069: stloc.1
+		IL_006a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006f: ldloc.1
+		IL_0070: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0075: box [System.Runtime]System.Double
+		IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007f: pop
+		IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0085: ldloc.1
+		IL_0086: ldc.r8 0.0
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0099: pop
+		IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009f: ldloc.1
+		IL_00a0: ldc.r8 2
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b3: pop
+		IL_00b4: newobj instance void Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength/Y::.ctor()
+		IL_00b9: stloc.s 5
+		IL_00bb: ldloc.s 5
+		IL_00bd: stloc.2
+		IL_00be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c3: ldloc.2
+		IL_00c4: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_00c9: box [System.Runtime]System.Double
+		IL_00ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d3: pop
+		IL_00d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d9: ldloc.2
+		IL_00da: ldc.r8 1
+		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ed: pop
+		IL_00ee: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f3: ldloc.2
+		IL_00f4: ldc.r8 2
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0102: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0107: pop
+		IL_0108: ret
 	} // end of method Classes_IntrinsicInheritance_ExtendsArray_SuperLength::__js_module_init__
 
 } // end of class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperLength
@@ -327,7 +335,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2257
+		// Method begins at RVA 0x2272
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

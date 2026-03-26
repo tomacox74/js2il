@@ -17,6 +17,7 @@ public class RuntimeServices
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
     // NOTE: Consumers must treat scopes arrays as immutable.
     public static readonly object[] EmptyScopes = new object[1];
+    public static readonly object TemporalDeadZoneSentinel = new();
 
 #if DEBUG
     public static void AssertEmptyScopesUnmodified()
@@ -62,6 +63,16 @@ public class RuntimeServices
         var previous = _currentNewTarget.Value;
         _currentNewTarget.Value = value;
         return previous;
+    }
+
+    public static object EnsureTemporalDeadZoneInitialized(object value, string bindingName)
+    {
+        if (ReferenceEquals(value, TemporalDeadZoneSentinel))
+        {
+            throw new ReferenceError($"Cannot access '{bindingName}' before initialization");
+        }
+
+        return value;
     }
 
     public static object GetImportMeta(object? moduleIdOrPath)

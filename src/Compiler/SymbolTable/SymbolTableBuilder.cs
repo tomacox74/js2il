@@ -60,6 +60,7 @@ namespace Js2IL.SymbolTables
             BuildScopeRecursive(globalScope,module.Ast, globalScope);
             AnalyzeFreeVariables(globalScope);
             MarkCapturedVariables(globalScope);
+            AnalyzeRuntimeTemporalDeadZoneChecks(globalScope);
 
             // Inference pass ordering matters:
             // - We infer globals/locals first to seed obvious primitives.

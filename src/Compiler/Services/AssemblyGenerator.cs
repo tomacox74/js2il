@@ -31,6 +31,7 @@ namespace Js2IL.Services
 
         private MethodDefinitionHandle _mainScriptMethod;
         private BaseClassLibraryReferences _bclReferences;
+        private readonly MemberReferenceRegistry _memberReferenceRegistry;
 
         private readonly VariableBindings.VariableRegistry _variableRegistry;
 
@@ -38,11 +39,17 @@ namespace Js2IL.Services
 
         private IServiceProvider _serviceProvider;
 
-        public AssemblyGenerator(IServiceProvider serviceProvider, MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, VariableBindings.VariableRegistry variableRegistry)
+        public AssemblyGenerator(
+            IServiceProvider serviceProvider,
+            MetadataBuilder metadataBuilder,
+            TypeReferenceRegistry typeReferenceRegistry,
+            MemberReferenceRegistry memberReferenceRegistry,
+            VariableBindings.VariableRegistry variableRegistry)
         {
             this._metadataBuilder = metadataBuilder;
             this._typeReferenceRegistry = typeReferenceRegistry;
             this._bclReferences = serviceProvider.GetRequiredService<BaseClassLibraryReferences>();
+            this._memberReferenceRegistry = memberReferenceRegistry;
             this._serviceProvider = serviceProvider;
             this._variableRegistry = variableRegistry;
         }
@@ -83,6 +90,7 @@ namespace Js2IL.Services
             var typeGenerator = new TypeGenerator(
                 _metadataBuilder,
                 _bclReferences,
+                _memberReferenceRegistry,
                 methodBodyStream,
                 _variableRegistry,
                 deferredCtorStartRow: _metadataBuilder.GetRowCount(TableIndex.MethodDef) + totalCallableMethods + totalModuleInitMethods + 1,
