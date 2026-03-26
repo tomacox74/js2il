@@ -72,15 +72,6 @@ internal sealed partial class LIRToILCompiler
             labelMap[lirLabel.LabelId] = ilEncoder.DefineLabel();
         }
 
-        var exceptionBoundaryLabels = new HashSet<int>();
-        foreach (var region in MethodBody.ExceptionRegions)
-        {
-            exceptionBoundaryLabels.Add(region.TryStartLabelId);
-            exceptionBoundaryLabels.Add(region.TryEndLabelId);
-            exceptionBoundaryLabels.Add(region.HandlerStartLabelId);
-            exceptionBoundaryLabels.Add(region.HandlerEndLabelId);
-        }
-
         // For constructors, emit base System.Object::.ctor() call before any body instructions.
         // Derived constructors (class extends ...) must call the base constructor via `super(...)`.
         if (methodDescriptor.IsConstructor && !methodDescriptor.IsDerivedConstructor)
@@ -269,14 +260,7 @@ internal sealed partial class LIRToILCompiler
             switch (instruction)
             {
                 case LIRLabel lirLabel:
-                    if (exceptionBoundaryLabels.Contains(lirLabel.LabelId))
-                    {
-                        ilEncoder.MarkLabel(labelMap[lirLabel.LabelId]);
-                    }
-                    else
-                    {
-                        MarkLabelAndEmitNop(ilEncoder, labelMap[lirLabel.LabelId]);
-                    }
+                    ilEncoder.MarkLabel(labelMap[lirLabel.LabelId]);
                     continue;
 
                 case LIRSequencePoint sp:

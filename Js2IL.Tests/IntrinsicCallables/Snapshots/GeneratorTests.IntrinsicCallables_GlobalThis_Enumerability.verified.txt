@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2155
+			// Method begins at RVA 0x214d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2170
+					// Method begins at RVA 0x2168
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2167
+				// Method begins at RVA 0x215f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x215e
+			// Method begins at RVA 0x2156
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -106,7 +106,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x218b
+					// Method begins at RVA 0x2183
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -124,7 +124,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2182
+				// Method begins at RVA 0x217a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -142,7 +142,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2179
+			// Method begins at RVA 0x2171
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -168,7 +168,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 249 (0xf9)
+		// Code size: 241 (0xf1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.IntrinsicCallables_GlobalThis_Enumerability/Scope,
@@ -191,98 +191,90 @@
 		IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
 		IL_0012: stloc.2
 		// loop start (head: IL_0013)
-			IL_0013: nop
-			IL_0014: ldloc.2
-			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-			IL_001a: stloc.s 7
-			IL_001c: ldloc.s 7
-			IL_001e: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-			IL_0023: stloc.s 8
-			IL_0025: ldloc.s 8
-			IL_0027: brtrue IL_0059
+			IL_0013: ldloc.2
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_0019: stloc.s 7
+			IL_001b: ldloc.s 7
+			IL_001d: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_0022: stloc.s 8
+			IL_0024: ldloc.s 8
+			IL_0026: brtrue IL_0056
 
-			IL_002c: ldloc.s 7
-			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-			IL_0033: stloc.s 7
-			IL_0035: ldloc.s 7
-			IL_0037: stloc.3
-			IL_0038: ldloc.3
-			IL_0039: ldstr "globalThis"
-			IL_003e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0043: stloc.s 8
-			IL_0045: ldloc.s 8
-			IL_0047: brfalse IL_0052
+			IL_002b: ldloc.s 7
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_0032: stloc.s 7
+			IL_0034: ldloc.s 7
+			IL_0036: stloc.3
+			IL_0037: ldloc.3
+			IL_0038: ldstr "globalThis"
+			IL_003d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0042: stloc.s 8
+			IL_0044: ldloc.s 8
+			IL_0046: brfalse IL_0051
 
-			IL_004c: ldc.i4.1
-			IL_004d: stloc.s 8
-			IL_004f: ldloc.s 8
-			IL_0051: stloc.1
+			IL_004b: ldc.i4.1
+			IL_004c: stloc.s 8
+			IL_004e: ldloc.s 8
+			IL_0050: stloc.1
 
-			IL_0052: nop
-			IL_0053: nop
-			IL_0054: br IL_0013
+			IL_0051: br IL_0013
 		// end loop
 
-		IL_0059: nop
-		IL_005a: ldloc.1
-		IL_005b: box [System.Runtime]System.Boolean
-		IL_0060: stloc.s 9
-		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0067: ldloc.s 9
-		IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_006e: pop
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
-		IL_0074: ldstr "__js2il_enum_test"
-		IL_0079: ldc.r8 1
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64)
-		IL_0087: pop
-		IL_0088: ldc.i4.0
-		IL_0089: stloc.s 4
-		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
-		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
-		IL_0095: stloc.s 5
-		// loop start (head: IL_0097)
-			IL_0097: nop
-			IL_0098: ldloc.s 5
-			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-			IL_009f: stloc.s 7
-			IL_00a1: ldloc.s 7
-			IL_00a3: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-			IL_00a8: stloc.s 8
-			IL_00aa: ldloc.s 8
-			IL_00ac: brtrue IL_00e1
+		IL_0056: ldloc.1
+		IL_0057: box [System.Runtime]System.Boolean
+		IL_005c: stloc.s 9
+		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0063: ldloc.s 9
+		IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006a: pop
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
+		IL_0070: ldstr "__js2il_enum_test"
+		IL_0075: ldc.r8 1
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64)
+		IL_0083: pop
+		IL_0084: ldc.i4.0
+		IL_0085: stloc.s 4
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
+		IL_008c: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+		IL_0091: stloc.s 5
+		// loop start (head: IL_0093)
+			IL_0093: ldloc.s 5
+			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_009a: stloc.s 7
+			IL_009c: ldloc.s 7
+			IL_009e: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_00a3: stloc.s 8
+			IL_00a5: ldloc.s 8
+			IL_00a7: brtrue IL_00da
 
-			IL_00b1: ldloc.s 7
-			IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-			IL_00b8: stloc.s 7
-			IL_00ba: ldloc.s 7
-			IL_00bc: stloc.s 6
-			IL_00be: ldloc.s 6
-			IL_00c0: ldstr "__js2il_enum_test"
-			IL_00c5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00ca: stloc.s 8
-			IL_00cc: ldloc.s 8
-			IL_00ce: brfalse IL_00da
+			IL_00ac: ldloc.s 7
+			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_00b3: stloc.s 7
+			IL_00b5: ldloc.s 7
+			IL_00b7: stloc.s 6
+			IL_00b9: ldloc.s 6
+			IL_00bb: ldstr "__js2il_enum_test"
+			IL_00c0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_00c5: stloc.s 8
+			IL_00c7: ldloc.s 8
+			IL_00c9: brfalse IL_00d5
 
-			IL_00d3: ldc.i4.1
-			IL_00d4: stloc.s 8
-			IL_00d6: ldloc.s 8
-			IL_00d8: stloc.s 4
+			IL_00ce: ldc.i4.1
+			IL_00cf: stloc.s 8
+			IL_00d1: ldloc.s 8
+			IL_00d3: stloc.s 4
 
-			IL_00da: nop
-			IL_00db: nop
-			IL_00dc: br IL_0097
+			IL_00d5: br IL_0093
 		// end loop
 
-		IL_00e1: nop
-		IL_00e2: ldloc.s 4
-		IL_00e4: box [System.Runtime]System.Boolean
-		IL_00e9: stloc.s 9
-		IL_00eb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f0: ldloc.s 9
-		IL_00f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f7: pop
-		IL_00f8: ret
+		IL_00da: ldloc.s 4
+		IL_00dc: box [System.Runtime]System.Boolean
+		IL_00e1: stloc.s 9
+		IL_00e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e8: ldloc.s 9
+		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ef: pop
+		IL_00f0: ret
 	} // end of method IntrinsicCallables_GlobalThis_Enumerability::__js_module_init__
 
 } // end of class Modules.IntrinsicCallables_GlobalThis_Enumerability
@@ -294,7 +286,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2194
+		// Method begins at RVA 0x218c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

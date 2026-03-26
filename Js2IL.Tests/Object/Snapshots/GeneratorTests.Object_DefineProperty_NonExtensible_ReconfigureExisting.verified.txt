@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2235
+				// Method begins at RVA 0x2231
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223e
+				// Method begins at RVA 0x223a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x222c
+			// Method begins at RVA 0x2228
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 447 (0x1bf)
+		// Code size: 441 (0x1b9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_DefineProperty_NonExtensible_ReconfigureExisting/Scope,
@@ -163,89 +163,83 @@
 		IL_00e4: ldloc.s 7
 		IL_00e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00eb: pop
-		IL_00ec: nop
 		.try
 		{
-			IL_00ed: ldloc.1
-			IL_00ee: ldstr "newProp"
-			IL_00f3: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_00f8: dup
-			IL_00f9: ldstr "value"
-			IL_00fe: ldc.r8 2
-			IL_0107: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-			IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-			IL_0111: pop
-			IL_0112: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0117: ldstr "new_prop=allowed"
-			IL_011c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0121: pop
-			IL_0122: leave IL_018c
+			IL_00ec: ldloc.1
+			IL_00ed: ldstr "newProp"
+			IL_00f2: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_00f7: dup
+			IL_00f8: ldstr "value"
+			IL_00fd: ldc.r8 2
+			IL_0106: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+			IL_0110: pop
+			IL_0111: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0116: ldstr "new_prop=allowed"
+			IL_011b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0120: pop
+			IL_0121: leave IL_0187
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0127: stloc.3
-			IL_0128: ldloc.3
-			IL_0129: dup
-			IL_012a: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_012f: dup
-			IL_0130: brtrue IL_0146
+			IL_0126: stloc.3
+			IL_0127: ldloc.3
+			IL_0128: dup
+			IL_0129: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_012e: dup
+			IL_012f: brtrue IL_0145
 
-			IL_0135: pop
-			IL_0136: dup
-			IL_0137: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_013c: dup
-			IL_013d: brtrue IL_0154
+			IL_0134: pop
+			IL_0135: dup
+			IL_0136: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_013b: dup
+			IL_013c: brtrue IL_0152
 
+			IL_0141: pop
 			IL_0142: pop
-			IL_0143: pop
-			IL_0144: rethrow
+			IL_0143: rethrow
 
-			IL_0146: nop
-			IL_0147: pop
-			IL_0148: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_014d: stloc.s 4
-			IL_014f: br IL_0158
+			IL_0145: pop
+			IL_0146: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_014b: stloc.s 4
+			IL_014d: br IL_0155
 
-			IL_0154: nop
-			IL_0155: pop
-			IL_0156: stloc.s 4
+			IL_0152: pop
+			IL_0153: stloc.s 4
 
-			IL_0158: nop
-			IL_0159: ldloc.s 4
-			IL_015b: stloc.s 6
-			IL_015d: ldloc.s 6
-			IL_015f: stloc.s 5
-			IL_0161: ldstr "new_prop="
-			IL_0166: ldloc.s 5
-			IL_0168: ldstr "name"
-			IL_016d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0172: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0177: stloc.s 7
-			IL_0179: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_017e: ldloc.s 7
-			IL_0180: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0185: pop
-			IL_0186: leave IL_018c
+			IL_0155: ldloc.s 4
+			IL_0157: stloc.s 6
+			IL_0159: ldloc.s 6
+			IL_015b: stloc.s 5
+			IL_015d: ldstr "new_prop="
+			IL_0162: ldloc.s 5
+			IL_0164: ldstr "name"
+			IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0173: stloc.s 7
+			IL_0175: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_017a: ldloc.s 7
+			IL_017c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0181: pop
+			IL_0182: leave IL_0187
 		} // end handler
-		IL_018b: nop
 
-		IL_018c: nop
-		IL_018d: ldloc.1
-		IL_018e: ldstr "newProp"
-		IL_0193: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
-		IL_0198: stloc.s 8
-		IL_019a: ldloc.s 8
-		IL_019c: box [System.Runtime]System.Boolean
-		IL_01a1: stloc.s 9
-		IL_01a3: ldstr "has_new="
-		IL_01a8: ldloc.s 9
-		IL_01aa: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_01af: stloc.s 7
-		IL_01b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01b6: ldloc.s 7
-		IL_01b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01bd: pop
-		IL_01be: ret
+		IL_0187: ldloc.1
+		IL_0188: ldstr "newProp"
+		IL_018d: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
+		IL_0192: stloc.s 8
+		IL_0194: ldloc.s 8
+		IL_0196: box [System.Runtime]System.Boolean
+		IL_019b: stloc.s 9
+		IL_019d: ldstr "has_new="
+		IL_01a2: ldloc.s 9
+		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_01a9: stloc.s 7
+		IL_01ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01b0: ldloc.s 7
+		IL_01b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01b7: pop
+		IL_01b8: ret
 	} // end of method Object_DefineProperty_NonExtensible_ReconfigureExisting::__js_module_init__
 
 } // end of class Modules.Object_DefineProperty_NonExtensible_ReconfigureExisting
@@ -257,7 +251,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2247
+		// Method begins at RVA 0x2243
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

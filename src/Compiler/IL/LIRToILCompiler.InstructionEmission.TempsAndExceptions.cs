@@ -69,7 +69,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Pop);
                     ilEncoder.OpCode(ILOpCode.Rethrow);
 
-                    MarkLabelAndEmitNop(ilEncoder, isThrownValue);
+                    ilEncoder.MarkLabel(isThrownValue);
                     // Stack: ex, (JsThrownValueException)
                     ilEncoder.OpCode(ILOpCode.Pop); // pop ex
                     var getValue = _memberRefRegistry.GetOrAddMethod(
@@ -80,11 +80,11 @@ internal sealed partial class LIRToILCompiler
                     EmitStoreTemp(unwrapCatch.Result, ilEncoder, allocation);
                     ilEncoder.Branch(ILOpCode.Br, done);
 
-                    MarkLabelAndEmitNop(ilEncoder, isJsError);
+                    ilEncoder.MarkLabel(isJsError);
                     // Stack: ex, (Error)
                     ilEncoder.OpCode(ILOpCode.Pop); // pop ex
                     EmitStoreTemp(unwrapCatch.Result, ilEncoder, allocation);
-                    MarkLabelAndEmitNop(ilEncoder, done);
+                    ilEncoder.MarkLabel(done);
                     return true;
                 }
 
@@ -110,7 +110,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(wrapperCtor);
                     ilEncoder.OpCode(ILOpCode.Throw);
 
-                    MarkLabelAndEmitNop(ilEncoder, throwException);
+                    ilEncoder.MarkLabel(throwException);
                     // Stack: value, exception
                     ilEncoder.OpCode(ILOpCode.Pop); // pop original value
                     ilEncoder.OpCode(ILOpCode.Throw);

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x220e
+				// Method begins at RVA 0x220b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,7 +45,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x21f5
+			// Method begins at RVA 0x21f2
 			// Header size: 1
 			// Code size: 15 (0xf)
 			.maxstack 8
@@ -76,7 +76,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2205
+			// Method begins at RVA 0x2202
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -100,7 +100,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2220
+				// Method begins at RVA 0x221d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -118,7 +118,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2217
+			// Method begins at RVA 0x2214
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -144,7 +144,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 409 (0x199)
+		// Code size: 406 (0x196)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Pipe_Basic/Scope,
@@ -251,54 +251,51 @@
 		IL_010d: box [System.Runtime]System.Double
 		IL_0112: stloc.s 6
 		// loop start (head: IL_0114)
-			IL_0114: nop
-			IL_0115: ldloc.0
-			IL_0116: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
-			IL_011b: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_0120: conv.r8
-			IL_0121: stloc.s 8
-			IL_0123: ldloc.s 6
-			IL_0125: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_012a: stloc.s 9
-			IL_012c: ldloc.s 9
-			IL_012e: ldloc.s 8
-			IL_0130: clt
-			IL_0132: brfalse IL_0197
+			IL_0114: ldloc.0
+			IL_0115: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
+			IL_011a: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_011f: conv.r8
+			IL_0120: stloc.s 8
+			IL_0122: ldloc.s 6
+			IL_0124: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0129: stloc.s 9
+			IL_012b: ldloc.s 9
+			IL_012d: ldloc.s 8
+			IL_012f: clt
+			IL_0131: brfalse IL_0195
 
-			IL_0137: ldstr "Chunk "
-			IL_013c: ldloc.s 6
-			IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0143: stloc.s 10
-			IL_0145: ldloc.s 10
-			IL_0147: ldstr ":"
-			IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0151: stloc.s 10
-			IL_0153: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0158: ldloc.s 10
-			IL_015a: ldloc.0
-			IL_015b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
-			IL_0160: ldloc.s 6
-			IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_0167: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_016c: pop
-			IL_016d: nop
-			IL_016e: ldloc.s 6
-			IL_0170: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0175: stloc.s 8
-			IL_0177: ldloc.s 8
-			IL_0179: ldc.r8 1
-			IL_0182: add
-			IL_0183: stloc.s 8
-			IL_0185: ldloc.s 8
-			IL_0187: box [System.Runtime]System.Double
-			IL_018c: stloc.s 11
-			IL_018e: ldloc.s 11
-			IL_0190: stloc.s 6
-			IL_0192: br IL_0114
+			IL_0136: ldstr "Chunk "
+			IL_013b: ldloc.s 6
+			IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0142: stloc.s 10
+			IL_0144: ldloc.s 10
+			IL_0146: ldstr ":"
+			IL_014b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0150: stloc.s 10
+			IL_0152: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0157: ldloc.s 10
+			IL_0159: ldloc.0
+			IL_015a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
+			IL_015f: ldloc.s 6
+			IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_0166: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_016b: pop
+			IL_016c: ldloc.s 6
+			IL_016e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0173: stloc.s 8
+			IL_0175: ldloc.s 8
+			IL_0177: ldc.r8 1
+			IL_0180: add
+			IL_0181: stloc.s 8
+			IL_0183: ldloc.s 8
+			IL_0185: box [System.Runtime]System.Double
+			IL_018a: stloc.s 11
+			IL_018c: ldloc.s 11
+			IL_018e: stloc.s 6
+			IL_0190: br IL_0114
 		// end loop
 
-		IL_0197: nop
-		IL_0198: ret
+		IL_0195: ret
 	} // end of method Stream_Pipe_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Pipe_Basic
@@ -310,7 +307,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2229
+		// Method begins at RVA 0x2226
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

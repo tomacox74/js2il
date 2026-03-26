@@ -49,7 +49,7 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.Token(_bclReferences.ObjectType);
         EmitStoreFieldByName(ilEncoder, scopeName, "_locals");
 
-        MarkLabelAndEmitNop(ilEncoder, hasLocalsLabel);
+        ilEncoder.MarkLabel(hasLocalsLabel);
     }
 
     private void EmitSpillVariableSlotsToAsyncLocalsArray(InstructionEncoder ilEncoder)

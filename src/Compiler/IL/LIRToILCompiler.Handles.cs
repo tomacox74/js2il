@@ -16,12 +16,6 @@ internal sealed partial class LIRToILCompiler
 {
     #region Handle Resolution Helpers
 
-    private static void MarkLabelAndEmitNop(InstructionEncoder ilEncoder, LabelHandle label)
-    {
-        ilEncoder.MarkLabel(label);
-        ilEncoder.OpCode(ILOpCode.Nop);
-    }
-
     /// <summary>
     /// Resolves a scope type handle from the registry with improved error context.
     /// </summary>
@@ -167,7 +161,7 @@ internal sealed partial class LIRToILCompiler
         }
         
         // Mark the fall-through label (for state 0 or values > max state)
-        MarkLabelAndEmitNop(ilEncoder, fallThroughLabel);
+        ilEncoder.MarkLabel(fallThroughLabel);
     }
 
     #endregion

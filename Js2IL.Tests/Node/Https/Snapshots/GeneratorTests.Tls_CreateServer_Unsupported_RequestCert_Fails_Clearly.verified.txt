@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d5
+				// Method begins at RVA 0x21cd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21de
+				// Method begins at RVA 0x21d6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21cc
+			// Method begins at RVA 0x21c4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 283 (0x11b)
+		// Code size: 275 (0x113)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly/Scope,
@@ -114,101 +114,93 @@
 
 		IL_002a: ldloc.s 7
 		IL_002c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0031: brfalse IL_0048
+		IL_0031: brfalse IL_0047
 
-		IL_0036: nop
-		IL_0037: ldloc.s 7
-		IL_0039: ldstr ""
-		IL_003e: ldstr "certPem"
-		IL_0043: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_0036: ldloc.s 7
+		IL_0038: ldstr ""
+		IL_003d: ldstr "certPem"
+		IL_0042: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_0048: nop
-		IL_0049: ldloc.s 7
-		IL_004b: ldstr "certPem"
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0055: stloc.2
-		IL_0056: ldloc.s 7
-		IL_0058: ldstr "keyPem"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0062: stloc.3
-		IL_0063: nop
+		IL_0047: ldloc.s 7
+		IL_0049: ldstr "certPem"
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0053: stloc.2
+		IL_0054: ldloc.s 7
+		IL_0056: ldstr "keyPem"
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0060: stloc.3
 		.try
 		{
-			IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0069: dup
-			IL_006a: ldstr "key"
-			IL_006f: ldloc.3
-			IL_0070: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0075: dup
-			IL_0076: ldstr "cert"
-			IL_007b: ldloc.2
-			IL_007c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0081: dup
-			IL_0082: ldstr "requestCert"
-			IL_0087: ldc.i4.1
-			IL_0088: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_008d: stloc.s 8
-			IL_008f: ldloc.1
-			IL_0090: ldstr "createServer"
-			IL_0095: ldloc.s 8
-			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_009c: pop
-			IL_009d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00a2: ldstr "unexpected success"
-			IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00ac: pop
-			IL_00ad: leave IL_0119
+			IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0066: dup
+			IL_0067: ldstr "key"
+			IL_006c: ldloc.3
+			IL_006d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0072: dup
+			IL_0073: ldstr "cert"
+			IL_0078: ldloc.2
+			IL_0079: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_007e: dup
+			IL_007f: ldstr "requestCert"
+			IL_0084: ldc.i4.1
+			IL_0085: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_008a: stloc.s 8
+			IL_008c: ldloc.1
+			IL_008d: ldstr "createServer"
+			IL_0092: ldloc.s 8
+			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0099: pop
+			IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_009f: ldstr "unexpected success"
+			IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00a9: pop
+			IL_00aa: leave IL_0112
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00b2: stloc.s 4
-			IL_00b4: ldloc.s 4
-			IL_00b6: dup
-			IL_00b7: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00bc: dup
-			IL_00bd: brtrue IL_00d3
+			IL_00af: stloc.s 4
+			IL_00b1: ldloc.s 4
+			IL_00b3: dup
+			IL_00b4: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00b9: dup
+			IL_00ba: brtrue IL_00d0
 
-			IL_00c2: pop
-			IL_00c3: dup
-			IL_00c4: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_00c9: dup
-			IL_00ca: brtrue IL_00e1
+			IL_00bf: pop
+			IL_00c0: dup
+			IL_00c1: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00c6: dup
+			IL_00c7: brtrue IL_00dd
 
-			IL_00cf: pop
+			IL_00cc: pop
+			IL_00cd: pop
+			IL_00ce: rethrow
+
 			IL_00d0: pop
-			IL_00d1: rethrow
+			IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00d6: stloc.s 5
+			IL_00d8: br IL_00e0
 
-			IL_00d3: nop
-			IL_00d4: pop
-			IL_00d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_00da: stloc.s 5
-			IL_00dc: br IL_00e5
+			IL_00dd: pop
+			IL_00de: stloc.s 5
 
-			IL_00e1: nop
-			IL_00e2: pop
-			IL_00e3: stloc.s 5
-
-			IL_00e5: nop
-			IL_00e6: ldloc.s 5
-			IL_00e8: stloc.s 7
-			IL_00ea: ldloc.s 7
-			IL_00ec: stloc.s 6
-			IL_00ee: ldstr "message:"
-			IL_00f3: ldloc.s 6
-			IL_00f5: ldstr "message"
-			IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0104: stloc.s 9
-			IL_0106: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_010b: ldloc.s 9
-			IL_010d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0112: pop
-			IL_0113: leave IL_0119
+			IL_00e0: ldloc.s 5
+			IL_00e2: stloc.s 7
+			IL_00e4: ldloc.s 7
+			IL_00e6: stloc.s 6
+			IL_00e8: ldstr "message:"
+			IL_00ed: ldloc.s 6
+			IL_00ef: ldstr "message"
+			IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00fe: stloc.s 9
+			IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0105: ldloc.s 9
+			IL_0107: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_010c: pop
+			IL_010d: leave IL_0112
 		} // end handler
-		IL_0118: nop
 
-		IL_0119: nop
-		IL_011a: ret
+		IL_0112: ret
 	} // end of method Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly::__js_module_init__
 
 } // end of class Modules.Tls_CreateServer_Unsupported_RequestCert_Fails_Clearly
@@ -224,7 +216,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21e7
+			// Method begins at RVA 0x21df
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -248,7 +240,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2188
+		// Method begins at RVA 0x2180
 		// Header size: 12
 		// Code size: 56 (0x38)
 		.maxstack 8
@@ -283,7 +275,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f0
+		// Method begins at RVA 0x21e8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

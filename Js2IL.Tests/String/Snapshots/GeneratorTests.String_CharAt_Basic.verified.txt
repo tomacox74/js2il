@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2291
+				// Method begins at RVA 0x228d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x229a
+				// Method begins at RVA 0x2296
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2288
+			// Method begins at RVA 0x2284
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 539 (0x21b)
+		// Code size: 533 (0x215)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_CharAt_Basic/Scope,
@@ -165,109 +165,103 @@
 		IL_00ed: ldloc.s 8
 		IL_00ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00f4: pop
-		IL_00f5: nop
 		.try
 		{
-			IL_00f6: ldc.r8 1
-			IL_00ff: box [System.Runtime]System.Double
-			IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.BigInt::Call(object)
-			IL_0109: stloc.s 9
-			IL_010b: ldloc.1
-			IL_010c: ldstr "charAt"
-			IL_0111: ldloc.s 9
-			IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0118: stloc.s 6
-			IL_011a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_011f: ldloc.s 6
-			IL_0121: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0126: pop
-			IL_0127: leave IL_01b7
+			IL_00f5: ldc.r8 1
+			IL_00fe: box [System.Runtime]System.Double
+			IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.BigInt::Call(object)
+			IL_0108: stloc.s 9
+			IL_010a: ldloc.1
+			IL_010b: ldstr "charAt"
+			IL_0110: ldloc.s 9
+			IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0117: stloc.s 6
+			IL_0119: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_011e: ldloc.s 6
+			IL_0120: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0125: pop
+			IL_0126: leave IL_01b2
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_012c: stloc.2
-			IL_012d: ldloc.2
-			IL_012e: dup
-			IL_012f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0134: dup
-			IL_0135: brtrue IL_014b
+			IL_012b: stloc.2
+			IL_012c: ldloc.2
+			IL_012d: dup
+			IL_012e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0133: dup
+			IL_0134: brtrue IL_014a
 
-			IL_013a: pop
-			IL_013b: dup
-			IL_013c: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0141: dup
-			IL_0142: brtrue IL_0158
+			IL_0139: pop
+			IL_013a: dup
+			IL_013b: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0140: dup
+			IL_0141: brtrue IL_0156
 
+			IL_0146: pop
 			IL_0147: pop
-			IL_0148: pop
-			IL_0149: rethrow
+			IL_0148: rethrow
 
-			IL_014b: nop
-			IL_014c: pop
-			IL_014d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0152: stloc.3
-			IL_0153: br IL_015b
+			IL_014a: pop
+			IL_014b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0150: stloc.3
+			IL_0151: br IL_0158
 
-			IL_0158: nop
-			IL_0159: pop
-			IL_015a: stloc.3
+			IL_0156: pop
+			IL_0157: stloc.3
 
-			IL_015b: nop
-			IL_015c: ldloc.3
-			IL_015d: stloc.s 6
-			IL_015f: ldloc.s 6
-			IL_0161: stloc.s 4
-			IL_0163: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0168: ldstr "bigint threw:"
-			IL_016d: ldc.i4.1
-			IL_016e: box [System.Runtime]System.Boolean
-			IL_0173: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0178: pop
-			IL_0179: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_017e: ldstr "bigint name:"
-			IL_0183: ldloc.s 4
-			IL_0185: ldstr "name"
-			IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_018f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0194: pop
-			IL_0195: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_019a: ldstr "bigint message:"
-			IL_019f: ldloc.s 4
-			IL_01a1: ldstr "message"
-			IL_01a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_01b0: pop
-			IL_01b1: leave IL_01b7
+			IL_0158: ldloc.3
+			IL_0159: stloc.s 6
+			IL_015b: ldloc.s 6
+			IL_015d: stloc.s 4
+			IL_015f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0164: ldstr "bigint threw:"
+			IL_0169: ldc.i4.1
+			IL_016a: box [System.Runtime]System.Boolean
+			IL_016f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0174: pop
+			IL_0175: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_017a: ldstr "bigint name:"
+			IL_017f: ldloc.s 4
+			IL_0181: ldstr "name"
+			IL_0186: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_018b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0190: pop
+			IL_0191: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0196: ldstr "bigint message:"
+			IL_019b: ldloc.s 4
+			IL_019d: ldstr "message"
+			IL_01a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_01ac: pop
+			IL_01ad: leave IL_01b2
 		} // end handler
-		IL_01b6: nop
 
-		IL_01b7: nop
-		IL_01b8: ldstr "world"
-		IL_01bd: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_01c2: stloc.s 10
-		IL_01c4: ldloc.s 10
-		IL_01c6: stloc.s 5
-		IL_01c8: ldloc.s 5
-		IL_01ca: ldstr "charAt"
-		IL_01cf: ldc.r8 0.0
-		IL_01d8: box [System.Runtime]System.Double
-		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_01e2: stloc.s 6
-		IL_01e4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01e9: ldloc.s 6
-		IL_01eb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01f0: pop
-		IL_01f1: ldloc.s 5
-		IL_01f3: ldstr "charAt"
-		IL_01f8: ldc.r8 2
-		IL_0201: box [System.Runtime]System.Double
-		IL_0206: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_020b: stloc.s 6
-		IL_020d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0212: ldloc.s 6
-		IL_0214: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0219: pop
-		IL_021a: ret
+		IL_01b2: ldstr "world"
+		IL_01b7: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_01bc: stloc.s 10
+		IL_01be: ldloc.s 10
+		IL_01c0: stloc.s 5
+		IL_01c2: ldloc.s 5
+		IL_01c4: ldstr "charAt"
+		IL_01c9: ldc.r8 0.0
+		IL_01d2: box [System.Runtime]System.Double
+		IL_01d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01dc: stloc.s 6
+		IL_01de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01e3: ldloc.s 6
+		IL_01e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01ea: pop
+		IL_01eb: ldloc.s 5
+		IL_01ed: ldstr "charAt"
+		IL_01f2: ldc.r8 2
+		IL_01fb: box [System.Runtime]System.Double
+		IL_0200: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0205: stloc.s 6
+		IL_0207: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_020c: ldloc.s 6
+		IL_020e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0213: pop
+		IL_0214: ret
 	} // end of method String_CharAt_Basic::__js_module_init__
 
 } // end of class Modules.String_CharAt_Basic
@@ -279,7 +273,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22a3
+		// Method begins at RVA 0x229f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

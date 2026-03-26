@@ -193,7 +193,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Ret);
 
                         // --- Step path ---
-                        MarkLabelAndEmitNop(ilEncoder, stepLabel);
+                        ilEncoder.MarkLabel(stepLabel);
                         ilEncoder.StoreLocal(0);
 
                         // Restore async locals across awaits (only meaningful when there are awaits).
@@ -208,7 +208,7 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.LoadConstantI4(0);
                             ilEncoder.Branch(ILOpCode.Ble_s, skipRestoreLabel);
                             EmitRestoreVariableSlotsFromAsyncLocalsArray(ilEncoder);
-                            MarkLabelAndEmitNop(ilEncoder, skipRestoreLabel);
+                            ilEncoder.MarkLabel(skipRestoreLabel);
 
                             if (asyncInfoForAsyncGen.MaxResumeStateId > 0)
                             {
@@ -257,7 +257,7 @@ internal sealed partial class LIRToILCompiler
                                 switchEncoder.Branch(switchTargets[i]);
                             }
 
-                            MarkLabelAndEmitNop(ilEncoder, defaultLabel);
+                            ilEncoder.MarkLabel(defaultLabel);
                         }
 
                         break;
@@ -388,11 +388,11 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Branch(ILOpCode.Br, afterInitLabel);
 
                         // --- Resume path: use existing scope from scopes[0] ---
-                        MarkLabelAndEmitNop(ilEncoder, resumeLabel);
+                        ilEncoder.MarkLabel(resumeLabel);
                         // Stack has the typed scope from isinst (dup'd before brtrue)
                         ilEncoder.StoreLocal(0);
 
-                        MarkLabelAndEmitNop(ilEncoder, afterInitLabel);
+                        ilEncoder.MarkLabel(afterInitLabel);
 
                         // Ensure we have persistent storage for variable locals and restore them on resumption.
                         // This is required because async MoveNext re-enters the method, so IL locals are re-initialized.
@@ -404,7 +404,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadConstantI4(0);
                         ilEncoder.Branch(ILOpCode.Ble_s, skipRestoreLabel);
                         EmitRestoreVariableSlotsFromAsyncLocalsArray(ilEncoder);
-                        MarkLabelAndEmitNop(ilEncoder, skipRestoreLabel);
+                        ilEncoder.MarkLabel(skipRestoreLabel);
 
                         // Now emit the state switch to dispatch to resume points
                         // State 0 = initial entry (fall through)
@@ -522,7 +522,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Ret);
 
                         // --- Step path ---
-                        MarkLabelAndEmitNop(ilEncoder, stepLabel);
+                        ilEncoder.MarkLabel(stepLabel);
                         ilEncoder.StoreLocal(0);
                     }
                     else

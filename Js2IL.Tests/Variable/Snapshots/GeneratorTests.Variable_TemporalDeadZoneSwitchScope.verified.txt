@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2131
+				// Method begins at RVA 0x2129
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x213a
+				// Method begins at RVA 0x2132
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2128
+			// Method begins at RVA 0x2120
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 187 (0xbb)
+		// Code size: 178 (0xb2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_TemporalDeadZoneSwitchScope/Scope,
@@ -96,90 +96,80 @@
 		IL_0000: newobj instance void Modules.Variable_TemporalDeadZoneSwitchScope/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: br IL_000b
-
-		IL_000b: nop
-		IL_000c: nop
 		.try
 		{
-			IL_000d: ldstr "Cannot access 'value' before initialization"
-			IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0017: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-			IL_001c: dup
-			IL_001d: isinst [System.Runtime]System.Exception
-			IL_0022: dup
-			IL_0023: brtrue IL_002f
+			IL_000b: ldstr "Cannot access 'value' before initialization"
+			IL_0010: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001a: dup
+			IL_001b: isinst [System.Runtime]System.Exception
+			IL_0020: dup
+			IL_0021: brtrue IL_002d
 
-			IL_0028: pop
-			IL_0029: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_0026: pop
+			IL_0027: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_002c: throw
+
+			IL_002d: pop
 			IL_002e: throw
 
-			IL_002f: nop
-			IL_0030: pop
-			IL_0031: throw
-
-			IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0037: ldnull
-			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_003d: pop
-			IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0043: ldstr "NO_TDZ"
-			IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_004d: pop
-			IL_004e: leave IL_009f
+			IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0034: ldnull
+			IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_003a: pop
+			IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0040: ldstr "NO_TDZ"
+			IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_004a: pop
+			IL_004b: leave IL_0098
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0053: stloc.1
-			IL_0054: ldloc.1
-			IL_0055: dup
-			IL_0056: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_005b: dup
-			IL_005c: brtrue IL_0072
+			IL_0050: stloc.1
+			IL_0051: ldloc.1
+			IL_0052: dup
+			IL_0053: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0058: dup
+			IL_0059: brtrue IL_006f
 
-			IL_0061: pop
-			IL_0062: dup
-			IL_0063: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0068: dup
-			IL_0069: brtrue IL_007f
+			IL_005e: pop
+			IL_005f: dup
+			IL_0060: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0065: dup
+			IL_0066: brtrue IL_007b
 
-			IL_006e: pop
+			IL_006b: pop
+			IL_006c: pop
+			IL_006d: rethrow
+
 			IL_006f: pop
-			IL_0070: rethrow
+			IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0075: stloc.2
+			IL_0076: br IL_007d
 
-			IL_0072: nop
-			IL_0073: pop
-			IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0079: stloc.2
-			IL_007a: br IL_0082
+			IL_007b: pop
+			IL_007c: stloc.2
 
-			IL_007f: nop
-			IL_0080: pop
-			IL_0081: stloc.2
-
-			IL_0082: nop
-			IL_0083: ldloc.2
-			IL_0084: stloc.s 5
-			IL_0086: ldloc.s 5
-			IL_0088: stloc.3
-			IL_0089: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_008e: ldstr "SWITCH_TDZ"
-			IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0098: pop
-			IL_0099: leave IL_009f
+			IL_007d: ldloc.2
+			IL_007e: stloc.s 5
+			IL_0080: ldloc.s 5
+			IL_0082: stloc.3
+			IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0088: ldstr "SWITCH_TDZ"
+			IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0092: pop
+			IL_0093: leave IL_0098
 		} // end handler
-		IL_009e: nop
 
-		IL_009f: nop
-		IL_00a0: ldstr "ready"
-		IL_00a5: stloc.s 4
-		IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ac: ldloc.s 4
-		IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b3: pop
-		IL_00b4: br IL_00b9
+		IL_0098: ldstr "ready"
+		IL_009d: stloc.s 4
+		IL_009f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a4: ldloc.s 4
+		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ab: pop
+		IL_00ac: br IL_00b1
 
-		IL_00b9: nop
-		IL_00ba: ret
+		IL_00b1: ret
 	} // end of method Variable_TemporalDeadZoneSwitchScope::__js_module_init__
 
 } // end of class Modules.Variable_TemporalDeadZoneSwitchScope
@@ -191,7 +181,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2143
+		// Method begins at RVA 0x213b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

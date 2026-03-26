@@ -122,9 +122,9 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Branch(ILOpCode.Br, done);
 
                         // Keep constructed instance; discard the return value.
-                        MarkLabelAndEmitNop(ilEncoder, keepThis);
+                        ilEncoder.MarkLabel(keepThis);
                         ilEncoder.OpCode(ILOpCode.Pop);
-                        MarkLabelAndEmitNop(ilEncoder, done);
+                        ilEncoder.MarkLabel(done);
                     }
                     break;
                 }

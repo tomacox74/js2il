@@ -200,7 +200,7 @@ internal sealed partial class LIRToILCompiler
                             resumeLabelAsync = ilEncoder.DefineLabel();
                             labelMap[yieldInstr.ResumeLabelId] = resumeLabelAsync;
                         }
-                        MarkLabelAndEmitNop(ilEncoder, resumeLabelAsync);
+                        ilEncoder.MarkLabel(resumeLabelAsync);
 
                         if (yieldInstr.HandleThrowReturn)
                         {
@@ -247,7 +247,7 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.Token(getPromiseRefAsync);
                             ilEncoder.OpCode(ILOpCode.Ret);
 
-                            MarkLabelAndEmitNop(ilEncoder, noReturnLabel);
+                            ilEncoder.MarkLabel(noReturnLabel);
 
                             // If _hasResumeException: throw at yield site
                             var noThrowLabel = ilEncoder.DefineLabel();
@@ -268,7 +268,7 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.Token(thrownCtor);
                             ilEncoder.OpCode(ILOpCode.Throw);
 
-                            MarkLabelAndEmitNop(ilEncoder, noThrowLabel);
+                            ilEncoder.MarkLabel(noThrowLabel);
                         }
 
                         if (IsMaterialized(yieldInstr.Result, allocation))
@@ -304,7 +304,7 @@ internal sealed partial class LIRToILCompiler
                         resumeLabel = ilEncoder.DefineLabel();
                         labelMap[yieldInstr.ResumeLabelId] = resumeLabel;
                     }
-                    MarkLabelAndEmitNop(ilEncoder, resumeLabel);
+                    ilEncoder.MarkLabel(resumeLabel);
 
                     if (yieldInstr.HandleThrowReturn)
                     {
@@ -325,7 +325,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(iterCreate);
                         ilEncoder.OpCode(ILOpCode.Ret);
 
-                        MarkLabelAndEmitNop(ilEncoder, noReturnLabel);
+                        ilEncoder.MarkLabel(noReturnLabel);
 
                         // If _hasResumeException: throw at yield site
                         var noThrowLabel = ilEncoder.DefineLabel();
@@ -348,7 +348,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(thrownCtor);
                         ilEncoder.OpCode(ILOpCode.Throw);
 
-                        MarkLabelAndEmitNop(ilEncoder, noThrowLabel);
+                        ilEncoder.MarkLabel(noThrowLabel);
                     }
 
                     if (IsMaterialized(yieldInstr.Result, allocation))
@@ -471,7 +471,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Ret);
 
                         // --- Step 4: Resume label ---
-                        MarkLabelAndEmitNop(ilEncoder, resumeLabel);
+                        ilEncoder.MarkLabel(resumeLabel);
 
                         // --- Step 5: Load awaited result from field ---
                         // ldloc.0, ldfld _awaitedN

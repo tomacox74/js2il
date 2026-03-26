@@ -612,7 +612,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 284 (0x11c)
+		// Code size: 282 (0x11a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Https_Get_Loopback_SelfSigned/Scope,
@@ -641,89 +641,87 @@
 
 		IL_002b: ldloc.3
 		IL_002c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0031: brfalse IL_0047
+		IL_0031: brfalse IL_0046
 
-		IL_0036: nop
-		IL_0037: ldloc.3
-		IL_0038: ldstr ""
-		IL_003d: ldstr "certPem"
-		IL_0042: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_0036: ldloc.3
+		IL_0037: ldstr ""
+		IL_003c: ldstr "certPem"
+		IL_0041: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_0047: nop
-		IL_0048: ldloc.3
-		IL_0049: ldstr "certPem"
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0053: stloc.1
-		IL_0054: ldloc.3
-		IL_0055: ldstr "keyPem"
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005f: stloc.2
-		IL_0060: ldloc.0
-		IL_0061: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::https
-		IL_0066: stloc.3
-		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_006c: dup
-		IL_006d: ldstr "key"
-		IL_0072: ldloc.2
-		IL_0073: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0078: dup
-		IL_0079: ldstr "cert"
-		IL_007e: ldloc.1
-		IL_007f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0084: stloc.s 4
-		IL_0086: ldnull
-		IL_0087: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L6C67::__js_call__(object, object, object)
-		IL_008d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0092: ldc.i4.1
-		IL_0093: newarr [System.Runtime]System.Object
-		IL_0098: dup
-		IL_0099: ldc.i4.0
-		IL_009a: ldloc.0
-		IL_009b: stelem.ref
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00a6: stloc.s 5
-		IL_00a8: ldloc.3
-		IL_00a9: ldstr "createServer"
-		IL_00ae: ldloc.s 4
-		IL_00b0: ldloc.s 5
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00b7: stloc.s 5
-		IL_00b9: ldloc.0
-		IL_00ba: ldloc.s 5
-		IL_00bc: stfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
-		IL_00c1: ldloc.0
-		IL_00c2: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
-		IL_00c7: stloc.s 5
-		IL_00c9: ldc.i4.1
-		IL_00ca: newarr [System.Runtime]System.Object
-		IL_00cf: dup
-		IL_00d0: ldc.i4.0
-		IL_00d1: ldloc.0
-		IL_00d2: stelem.ref
-		IL_00d3: ldc.i4.0
-		IL_00d4: ldelem.ref
-		IL_00d5: castclass Modules.Https_Get_Loopback_SelfSigned/Scope
-		IL_00da: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31::__js_call__(class Modules.Https_Get_Loopback_SelfSigned/Scope, object)
-		IL_00e0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00e5: ldc.i4.1
-		IL_00e6: newarr [System.Runtime]System.Object
-		IL_00eb: dup
-		IL_00ec: ldc.i4.0
-		IL_00ed: ldloc.0
-		IL_00ee: stelem.ref
-		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00f9: stloc.3
-		IL_00fa: ldloc.s 5
-		IL_00fc: ldstr "listen"
-		IL_0101: ldc.r8 0.0
-		IL_010a: box [System.Runtime]System.Double
-		IL_010f: ldstr "127.0.0.1"
-		IL_0114: ldloc.3
-		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_011a: pop
-		IL_011b: ret
+		IL_0046: ldloc.3
+		IL_0047: ldstr "certPem"
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0051: stloc.1
+		IL_0052: ldloc.3
+		IL_0053: ldstr "keyPem"
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_005d: stloc.2
+		IL_005e: ldloc.0
+		IL_005f: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::https
+		IL_0064: stloc.3
+		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_006a: dup
+		IL_006b: ldstr "key"
+		IL_0070: ldloc.2
+		IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0076: dup
+		IL_0077: ldstr "cert"
+		IL_007c: ldloc.1
+		IL_007d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0082: stloc.s 4
+		IL_0084: ldnull
+		IL_0085: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L6C67::__js_call__(object, object, object)
+		IL_008b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0090: ldc.i4.1
+		IL_0091: newarr [System.Runtime]System.Object
+		IL_0096: dup
+		IL_0097: ldc.i4.0
+		IL_0098: ldloc.0
+		IL_0099: stelem.ref
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00a4: stloc.s 5
+		IL_00a6: ldloc.3
+		IL_00a7: ldstr "createServer"
+		IL_00ac: ldloc.s 4
+		IL_00ae: ldloc.s 5
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00b5: stloc.s 5
+		IL_00b7: ldloc.0
+		IL_00b8: ldloc.s 5
+		IL_00ba: stfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
+		IL_00bf: ldloc.0
+		IL_00c0: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
+		IL_00c5: stloc.s 5
+		IL_00c7: ldc.i4.1
+		IL_00c8: newarr [System.Runtime]System.Object
+		IL_00cd: dup
+		IL_00ce: ldc.i4.0
+		IL_00cf: ldloc.0
+		IL_00d0: stelem.ref
+		IL_00d1: ldc.i4.0
+		IL_00d2: ldelem.ref
+		IL_00d3: castclass Modules.Https_Get_Loopback_SelfSigned/Scope
+		IL_00d8: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31::__js_call__(class Modules.Https_Get_Loopback_SelfSigned/Scope, object)
+		IL_00de: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00e3: ldc.i4.1
+		IL_00e4: newarr [System.Runtime]System.Object
+		IL_00e9: dup
+		IL_00ea: ldc.i4.0
+		IL_00eb: ldloc.0
+		IL_00ec: stelem.ref
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00f7: stloc.3
+		IL_00f8: ldloc.s 5
+		IL_00fa: ldstr "listen"
+		IL_00ff: ldc.r8 0.0
+		IL_0108: box [System.Runtime]System.Double
+		IL_010d: ldstr "127.0.0.1"
+		IL_0112: ldloc.3
+		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_0118: pop
+		IL_0119: ret
 	} // end of method Https_Get_Loopback_SelfSigned::__js_module_init__
 
 } // end of class Modules.Https_Get_Loopback_SelfSigned
