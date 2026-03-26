@@ -111,7 +111,7 @@ namespace Js2IL.Services
                 return typeof(JavaScriptRuntime.CommonJS.RequireDelegate);
             }
 
-            if (binding.RequiresTemporalDeadZoneChecks)
+            if (binding.RequiresRuntimeTemporalDeadZoneChecks)
             {
                 return typeof(object);
             }
@@ -284,7 +284,7 @@ namespace Js2IL.Services
                 scopeFieldNames.Add(variableName);
                 _scopeFieldHandlesByName[scopeKey][variableName] = fieldHandle;
 
-                if (binding.RequiresTemporalDeadZoneChecks)
+                if (binding.RequiresRuntimeTemporalDeadZoneChecks)
                 {
                     temporalDeadZoneFieldNames.Add(variableName);
                 }

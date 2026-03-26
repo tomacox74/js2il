@@ -397,7 +397,7 @@ public sealed partial class HIRToLIRLowerer
                         return new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate));
                     }
 
-                    if (b.RequiresTemporalDeadZoneChecks)
+                    if (b.RequiresRuntimeTemporalDeadZoneChecks)
                     {
                         return new ValueStorage(ValueStorageKind.Reference, typeof(object));
                     }

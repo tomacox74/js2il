@@ -94,7 +94,7 @@ internal sealed partial class LIRToILCompiler
 
     private void EmitTemporalDeadZoneGuard(InstructionEncoder ilEncoder, BindingInfo binding)
     {
-        if (!binding.RequiresTemporalDeadZoneChecks)
+        if (!binding.RequiresRuntimeTemporalDeadZoneChecks)
         {
             return;
         }

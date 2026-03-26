@@ -94,6 +94,14 @@ public class BindingInfo
         => (Kind == BindingKind.Let || Kind == BindingKind.Const)
            && !DeclaringScope.Parameters.Contains(Name);
 
+    /// <summary>
+    /// True when a captured lexical binding needs runtime TDZ machinery on its backing field.
+    /// This is stricter than <see cref="RequiresTemporalDeadZoneChecks"/>: safe captured lexicals
+    /// can still use typed fields and direct loads when the compiler proves they cannot be
+    /// observed before initialization.
+    /// </summary>
+    public bool RequiresRuntimeTemporalDeadZoneChecks { get; set; }
+
     public BindingInfo(string name, BindingKind kind, Scope declaringScope, Node declarationNode)
     {
         Name = name;

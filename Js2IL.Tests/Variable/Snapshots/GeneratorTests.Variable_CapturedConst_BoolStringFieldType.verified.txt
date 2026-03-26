@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2133
+				// Method begins at RVA 0x20fa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,43 +44,30 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20c8
+			// Method begins at RVA 0x20c4
 			// Header size: 12
-			// Code size: 64 (0x40)
+			// Code size: 33 (0x21)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] object,
-				[2] bool
+				[0] object
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
-			IL_0006: ldstr "Cannot access 'FLAG' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.1
-			IL_0011: ldloc.1
-			IL_0012: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0017: stloc.2
-			IL_0018: ldloc.2
-			IL_0019: brfalse IL_0036
+			IL_0001: ldfld bool Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
+			IL_0006: brfalse IL_0017
 
-			IL_001e: ldarg.0
-			IL_001f: ldfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
-			IL_0024: ldstr "Cannot access 'NAME' before initialization"
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_002e: stloc.1
-			IL_002f: ldloc.1
-			IL_0030: stloc.0
-			IL_0031: br IL_003d
+			IL_000b: ldarg.0
+			IL_000c: ldfld string Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
+			IL_0011: stloc.0
+			IL_0012: br IL_001e
 
-			IL_0036: nop
-			IL_0037: ldstr "untyped"
-			IL_003c: stloc.0
+			IL_0017: nop
+			IL_0018: ldstr "untyped"
+			IL_001d: stloc.0
 
-			IL_003d: nop
-			IL_003e: ldloc.0
-			IL_003f: ret
+			IL_001e: nop
+			IL_001f: ldloc.0
+			IL_0020: ret
 		} // end of method run::__js_call__
 
 	} // end of class run
@@ -94,29 +81,23 @@
 			7d 2c 20 72 75 6e 3d 7b 72 75 6e 7d 00 00
 		)
 		// Fields
-		.field public object FLAG
-		.field public object NAME
+		.field public bool FLAG
+		.field public string NAME
 		.field public object run
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2114
+			// Method begins at RVA 0x20f1
 			// Header size: 1
-			// Code size: 30 (0x1e)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
-			IL_0011: ldarg.0
-			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0017: stfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
-			IL_001c: nop
-			IL_001d: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -134,7 +115,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 108 (0x6c)
+		// Code size: 103 (0x67)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_CapturedConst_BoolStringFieldType/Scope,
@@ -160,30 +141,29 @@
 		IL_0024: stloc.1
 		IL_0025: ldloc.0
 		IL_0026: ldc.i4.1
-		IL_0027: box [System.Runtime]System.Boolean
-		IL_002c: stfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
-		IL_0031: ldloc.0
-		IL_0032: ldstr "typed"
-		IL_0037: stfld object Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
-		IL_003c: ldc.i4.1
-		IL_003d: newarr [System.Runtime]System.Object
-		IL_0042: dup
-		IL_0043: ldc.i4.0
-		IL_0044: ldloc.0
-		IL_0045: stelem.ref
-		IL_0046: ldc.i4.0
-		IL_0047: ldelem.ref
-		IL_0048: castclass Modules.Variable_CapturedConst_BoolStringFieldType/Scope
-		IL_004d: ldftn object Modules.Variable_CapturedConst_BoolStringFieldType/run::__js_call__(class Modules.Variable_CapturedConst_BoolStringFieldType/Scope, object)
-		IL_0053: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0058: ldnull
-		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
-		IL_005e: stloc.2
-		IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0064: ldloc.2
-		IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_006a: pop
-		IL_006b: ret
+		IL_0027: stfld bool Modules.Variable_CapturedConst_BoolStringFieldType/Scope::FLAG
+		IL_002c: ldloc.0
+		IL_002d: ldstr "typed"
+		IL_0032: stfld string Modules.Variable_CapturedConst_BoolStringFieldType/Scope::NAME
+		IL_0037: ldc.i4.1
+		IL_0038: newarr [System.Runtime]System.Object
+		IL_003d: dup
+		IL_003e: ldc.i4.0
+		IL_003f: ldloc.0
+		IL_0040: stelem.ref
+		IL_0041: ldc.i4.0
+		IL_0042: ldelem.ref
+		IL_0043: castclass Modules.Variable_CapturedConst_BoolStringFieldType/Scope
+		IL_0048: ldftn object Modules.Variable_CapturedConst_BoolStringFieldType/run::__js_call__(class Modules.Variable_CapturedConst_BoolStringFieldType/Scope, object)
+		IL_004e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0053: ldnull
+		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+		IL_0059: stloc.2
+		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005f: ldloc.2
+		IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0065: pop
+		IL_0066: ret
 	} // end of method Variable_CapturedConst_BoolStringFieldType::__js_module_init__
 
 } // end of class Modules.Variable_CapturedConst_BoolStringFieldType
@@ -195,7 +175,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213c
+		// Method begins at RVA 0x2103
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

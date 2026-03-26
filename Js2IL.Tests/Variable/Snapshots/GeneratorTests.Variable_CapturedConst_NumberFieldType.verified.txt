@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x210b
+				// Method begins at RVA 0x20ea
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,26 +44,17 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20c8
-			// Header size: 12
-			// Code size: 35 (0x23)
+			// Method begins at RVA 0x20ca
+			// Header size: 1
+			// Code size: 22 (0x16)
 			.maxstack 8
-			.locals init (
-				[0] object,
-				[1] object
-			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Variable_CapturedConst_NumberFieldType/Scope::NOW_UNITS_PER_SECOND
-			IL_0006: ldstr "Cannot access 'NOW_UNITS_PER_SECOND' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldc.r8 23
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0020: stloc.1
-			IL_0021: ldloc.1
-			IL_0022: ret
+			IL_0001: ldfld float64 Modules.Variable_CapturedConst_NumberFieldType/Scope::NOW_UNITS_PER_SECOND
+			IL_0006: ldc.r8 23
+			IL_000f: add
+			IL_0010: box [System.Runtime]System.Double
+			IL_0015: ret
 		} // end of method run::__js_call__
 
 	} // end of class run
@@ -78,25 +69,22 @@
 			4f 4e 44 7d 2c 20 72 75 6e 3d 7b 72 75 6e 7d 00 00
 		)
 		// Fields
-		.field public object NOW_UNITS_PER_SECOND
+		.field public float64 NOW_UNITS_PER_SECOND
 		.field public object run
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f7
+			// Method begins at RVA 0x20e1
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.Variable_CapturedConst_NumberFieldType/Scope::NOW_UNITS_PER_SECOND
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -114,7 +102,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 105 (0x69)
+		// Code size: 110 (0x6e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_CapturedConst_NumberFieldType/Scope,
@@ -141,26 +129,27 @@
 		IL_0025: ldloc.0
 		IL_0026: ldc.r8 1000
 		IL_002f: box [System.Runtime]System.Double
-		IL_0034: stfld object Modules.Variable_CapturedConst_NumberFieldType/Scope::NOW_UNITS_PER_SECOND
-		IL_0039: ldc.i4.1
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: dup
-		IL_0040: ldc.i4.0
-		IL_0041: ldloc.0
-		IL_0042: stelem.ref
-		IL_0043: ldc.i4.0
-		IL_0044: ldelem.ref
-		IL_0045: castclass Modules.Variable_CapturedConst_NumberFieldType/Scope
-		IL_004a: ldftn object Modules.Variable_CapturedConst_NumberFieldType/run::__js_call__(class Modules.Variable_CapturedConst_NumberFieldType/Scope, object)
-		IL_0050: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0055: ldnull
-		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
-		IL_005b: stloc.2
-		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0061: ldloc.2
-		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0067: pop
-		IL_0068: ret
+		IL_0034: unbox.any [System.Runtime]System.Double
+		IL_0039: stfld float64 Modules.Variable_CapturedConst_NumberFieldType/Scope::NOW_UNITS_PER_SECOND
+		IL_003e: ldc.i4.1
+		IL_003f: newarr [System.Runtime]System.Object
+		IL_0044: dup
+		IL_0045: ldc.i4.0
+		IL_0046: ldloc.0
+		IL_0047: stelem.ref
+		IL_0048: ldc.i4.0
+		IL_0049: ldelem.ref
+		IL_004a: castclass Modules.Variable_CapturedConst_NumberFieldType/Scope
+		IL_004f: ldftn object Modules.Variable_CapturedConst_NumberFieldType/run::__js_call__(class Modules.Variable_CapturedConst_NumberFieldType/Scope, object)
+		IL_0055: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_005a: ldnull
+		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+		IL_0060: stloc.2
+		IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0066: ldloc.2
+		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006c: pop
+		IL_006d: ret
 	} // end of method Variable_CapturedConst_NumberFieldType::__js_module_init__
 
 } // end of class Modules.Variable_CapturedConst_NumberFieldType
@@ -172,7 +161,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x20f3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

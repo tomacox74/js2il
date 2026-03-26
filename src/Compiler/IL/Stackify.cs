@@ -334,12 +334,12 @@ internal static class Stackify
 
             // Scope field loads - side-effect free field reads, similar to parameter loads
             case LIRLoadLeafScopeField loadLeafScopeField:
-                return !loadLeafScopeField.Binding.RequiresTemporalDeadZoneChecks;
+                return !loadLeafScopeField.Binding.RequiresRuntimeTemporalDeadZoneChecks;
             case LIRLoadParentScopeField loadParentScopeField:
-                return !loadParentScopeField.Binding.RequiresTemporalDeadZoneChecks;
+                return !loadParentScopeField.Binding.RequiresRuntimeTemporalDeadZoneChecks;
 
             case LIRLoadScopeField loadScopeField:
-                if (loadScopeField.Binding.RequiresTemporalDeadZoneChecks)
+                if (loadScopeField.Binding.RequiresRuntimeTemporalDeadZoneChecks)
                 {
                     return false;
                 }
