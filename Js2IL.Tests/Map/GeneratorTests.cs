@@ -41,5 +41,14 @@ namespace Js2IL.Tests.Map
 
         [Fact]
         public Task Map_Constructor_Prototype_Surface() { var testName = nameof(Map_Constructor_Prototype_Surface); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Map_Constructor_Iterable() { var testName = nameof(Map_Constructor_Iterable); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Map_ForEach_Basic() { var testName = nameof(Map_ForEach_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Map_Symbol_Iterator() { var testName = nameof(Map_Symbol_Iterator); return GenerateTest(testName); }
     }
 }

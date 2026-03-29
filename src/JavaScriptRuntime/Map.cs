@@ -1,20 +1,224 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("Map")]
     public sealed class Map : IEnumerable<object[]>
     {
-        internal static readonly object Prototype = CreatePrototype();
+        private static readonly Func<object[], object?[]?, object?> _prototypeEntriesValue = PrototypeEntries;
+        internal static readonly ExpandoObject Prototype = CreatePrototype();
         private static readonly object NullKeySentinel = new object();
         private readonly List<object[]> _entries = new List<object[]>(); // [key, value] pairs
         private readonly Dictionary<object, int> _keyIndex = new Dictionary<object, int>(new SameValueZeroKeyComparer());
 
-        public Map()
+        private static ExpandoObject CreatePrototype()
+        {
+            var exp = new ExpandoObject();
+            DefinePrototypeMethod(exp, "set", PrototypeSet);
+            DefinePrototypeMethod(exp, "get", PrototypeGet);
+            DefinePrototypeMethod(exp, "has", PrototypeHas);
+            DefinePrototypeMethod(exp, "delete", PrototypeDelete);
+            DefinePrototypeMethod(exp, "clear", PrototypeClear);
+            DefinePrototypeMethod(exp, "keys", PrototypeKeys);
+            DefinePrototypeMethod(exp, "values", PrototypeValues);
+            DefinePrototypeMethod(exp, "entries", _prototypeEntriesValue);
+            DefinePrototypeMethod(exp, "forEach", PrototypeForEach);
+            PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.iterator.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _prototypeEntriesValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(exp, "size", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = (Func<object[], object?[]?, object?>)PrototypeSizeGetter
+            });
+            PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "Map"
+            });
+            return exp;
+        }
+
+        private static void DefinePrototypeMethod(ExpandoObject prototype, string name, Func<object[], object?[]?, object?> method)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = method
+            });
+        }
+
+        private static Map GetMapReceiver(string methodName)
+        {
+            var receiver = RuntimeServices.GetCurrentThis();
+            if (receiver is not Map map)
+            {
+                throw new TypeError($"Map.prototype.{methodName} called on incompatible receiver");
+            }
+
+            return map;
+        }
+
+        private static object? PrototypeSet(object[] scopes, object?[]? args)
+        {
+            var map = GetMapReceiver("set");
+            var key = args != null && args.Length > 0 ? args[0] : null;
+            var value = args != null && args.Length > 1 ? args[1] : null;
+            return map.set(key, value);
+        }
+
+        private static object? PrototypeGet(object[] scopes, object?[]? args)
+        {
+            var map = GetMapReceiver("get");
+            var key = args != null && args.Length > 0 ? args[0] : null;
+            return map.get(key);
+        }
+
+        private static object? PrototypeHas(object[] scopes, object?[]? args)
+        {
+            var map = GetMapReceiver("has");
+            var key = args != null && args.Length > 0 ? args[0] : null;
+            return map.has(key);
+        }
+
+        private static object? PrototypeDelete(object[] scopes, object?[]? args)
+        {
+            var map = GetMapReceiver("delete");
+            var key = args != null && args.Length > 0 ? args[0] : null;
+            return map.delete(key);
+        }
+
+        private static object? PrototypeClear(object[] scopes, object?[]? args)
+        {
+            GetMapReceiver("clear").clear();
+            return null;
+        }
+
+        private static object? PrototypeKeys(object[] scopes, object?[]? args)
+        {
+            return GetMapReceiver("keys").keys();
+        }
+
+        private static object? PrototypeValues(object[] scopes, object?[]? args)
+        {
+            return GetMapReceiver("values").values();
+        }
+
+        private static object? PrototypeEntries(object[] scopes, object?[]? args)
+        {
+            return GetMapReceiver("entries").entries();
+        }
+
+        private static object? PrototypeForEach(object[] scopes, object?[]? args)
+        {
+            var map = GetMapReceiver("forEach");
+            var callback = args != null && args.Length > 0 ? args[0] : null;
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            map.forEach(callback, thisArg);
+            return null;
+        }
+
+        private static object? PrototypeSizeGetter(object[] scopes, object?[]? args)
+        {
+            return GetMapReceiver("size").size;
+        }
+
+        private void InitializeIntrinsicSurface()
         {
             PrototypeChain.SetPrototype(this, Prototype);
+        }
+
+        public Map()
+        {
+            InitializeIntrinsicSurface();
+        }
+
+        public Map(object? iterable)
+        {
+            InitializeIntrinsicSurface();
+            if (iterable is null || iterable is JsNull)
+            {
+                return;
+            }
+
+            AddEntriesFromIterable(iterable);
+        }
+
+        private void AddEntriesFromIterable(object iterable)
+        {
+            var iterator = ObjectRuntime.GetIterator(iterable);
+            var completedNormally = false;
+            try
+            {
+                while (true)
+                {
+                    var step = JavaScriptRuntime.Object.IteratorNext(iterator);
+                    if (JavaScriptRuntime.Object.IteratorResultDone(step))
+                    {
+                        break;
+                    }
+
+                    var (key, value) = ExtractEntry(JavaScriptRuntime.Object.IteratorResultValue(step));
+                    set(key, value);
+                }
+
+                completedNormally = true;
+            }
+            finally
+            {
+                if (!completedNormally)
+                {
+                    JavaScriptRuntime.Object.IteratorClose(iterator);
+                }
+            }
+        }
+
+        private static (object? Key, object? Value) ExtractEntry(object? entry)
+        {
+            if (entry is null || entry is JsNull)
+            {
+                throw new TypeError("Iterator value must be an object");
+            }
+
+            var entryType = TypeUtilities.Typeof(entry);
+            if (entryType != "object" && entryType != "function")
+            {
+                throw new TypeError("Iterator value is not an entry object");
+            }
+
+            if (entry is JavaScriptRuntime.Array arrayEntry)
+            {
+                return (
+                    arrayEntry.Count > 0 ? arrayEntry[0] : null,
+                    arrayEntry.Count > 1 ? arrayEntry[1] : null
+                );
+            }
+
+            if (entry is System.Collections.IList listEntry)
+            {
+                return (
+                    listEntry.Count > 0 ? listEntry[0] : null,
+                    listEntry.Count > 1 ? listEntry[1] : null
+                );
+            }
+
+            return (ObjectRuntime.GetItem(entry, 0.0), ObjectRuntime.GetItem(entry, 1.0));
         }
 
         // JavaScript Map.prototype.size property
@@ -81,128 +285,103 @@ namespace JavaScriptRuntime
             _entries.Clear();
         }
 
+        public void forEach(object? callback)
+        {
+            forEach(callback, null);
+        }
+
+        public void forEach(object? callback, object? thisArg)
+        {
+            if (callback is not Delegate del)
+            {
+                throw new TypeError("Map.prototype.forEach callback must be a function");
+            }
+
+            for (int i = 0; i < _entries.Count; i++)
+            {
+                var entry = _entries[i];
+                var previousThis = RuntimeServices.SetCurrentThis(thisArg);
+                try
+                {
+                    Closure.InvokeWithArgs(del, System.Array.Empty<object>(), new object?[] { entry[1], entry[0], this });
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+        }
+
         // Iterator support - returns entries as [key, value] arrays
         public IEnumerator<object[]> GetEnumerator() => _entries.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _entries.GetEnumerator();
 
         // JavaScript Map.prototype.keys()
-        public IEnumerable<object> keys()
-        {
-            foreach (var entry in _entries)
-            {
-                yield return entry[0];
-            }
-        }
+        public IJavaScriptIterator keys() => new MapIterator(this, MapIteratorKind.Keys);
 
         // JavaScript Map.prototype.values()
-        public IEnumerable<object> values()
-        {
-            foreach (var entry in _entries)
-            {
-                yield return entry[1];
-            }
-        }
+        public IJavaScriptIterator values() => new MapIterator(this, MapIteratorKind.Values);
 
         // JavaScript Map.prototype.entries()
-        public IEnumerable<object[]> entries()
-        {
-            return _entries;
-        }
-
-        private static object CreatePrototype()
-        {
-            var prototype = new JsObject();
-            DefinePrototypeMethod(prototype, "clear", PrototypeClear);
-            DefinePrototypeMethod(prototype, "delete", PrototypeDelete);
-            DefinePrototypeMethod(prototype, "entries", PrototypeEntries);
-            DefinePrototypeMethod(prototype, "get", PrototypeGet);
-            DefinePrototypeMethod(prototype, "has", PrototypeHas);
-            DefinePrototypeMethod(prototype, "keys", PrototypeKeys);
-            DefinePrototypeMethod(prototype, "set", PrototypeSet);
-            DefinePrototypeMethod(prototype, "values", PrototypeValues);
-            PropertyDescriptorStore.DefineOrUpdate(prototype, "size", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Accessor,
-                Enumerable = false,
-                Configurable = true,
-                Get = (Func<object[], object?[]?, object?>)PrototypeSizeGetter
-            });
-            return prototype;
-        }
-
-        private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)
-        {
-            PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = method
-            });
-        }
-
-        private static Map GetThisMap(string memberName)
-        {
-            var thisValue = RuntimeServices.GetCurrentThis();
-            if (thisValue is not Map map)
-            {
-                throw new TypeError($"Map.prototype.{memberName} called on non-Map");
-            }
-
-            return map;
-        }
-
-        private static object? PrototypeClear(object[] scopes, object?[]? args)
-        {
-            GetThisMap("clear").clear();
-            return null;
-        }
-
-        private static object? PrototypeDelete(object[] scopes, object?[]? args)
-        {
-            var map = GetThisMap("delete");
-            var key = args != null && args.Length > 0 ? args[0] : null;
-            return map.delete(key);
-        }
-
-        private static object? PrototypeEntries(object[] scopes, object?[]? args)
-            => GetThisMap("entries").entries();
-
-        private static object? PrototypeGet(object[] scopes, object?[]? args)
-        {
-            var map = GetThisMap("get");
-            var key = args != null && args.Length > 0 ? args[0] : null;
-            return map.get(key);
-        }
-
-        private static object? PrototypeHas(object[] scopes, object?[]? args)
-        {
-            var map = GetThisMap("has");
-            var key = args != null && args.Length > 0 ? args[0] : null;
-            return map.has(key);
-        }
-
-        private static object? PrototypeKeys(object[] scopes, object?[]? args)
-            => GetThisMap("keys").keys();
-
-        private static object? PrototypeSet(object[] scopes, object?[]? args)
-        {
-            var map = GetThisMap("set");
-            var key = args != null && args.Length > 0 ? args[0] : null;
-            var value = args != null && args.Length > 1 ? args[1] : null;
-            return map.set(key, value);
-        }
-
-        private static object? PrototypeSizeGetter(object[] scopes, object?[]? args)
-            => GetThisMap("size").size;
-
-        private static object? PrototypeValues(object[] scopes, object?[]? args)
-            => GetThisMap("values").values();
+        public IJavaScriptIterator entries() => new MapIterator(this, MapIteratorKind.Entries);
 
         private static object NormalizeKey(object? key)
         {
             return key ?? NullKeySentinel;
+        }
+
+        private enum MapIteratorKind
+        {
+            Keys,
+            Values,
+            Entries
+        }
+
+        private sealed class MapIterator : IJavaScriptIterator
+        {
+            private readonly Map _map;
+            private readonly MapIteratorKind _kind;
+            private int _index;
+            private bool _isClosed;
+
+            public MapIterator(Map map, MapIteratorKind kind)
+            {
+                _map = map;
+                _kind = kind;
+            }
+
+            public bool HasReturn => true;
+
+            public IteratorResultObject Next()
+            {
+                if (_isClosed)
+                {
+                    return new IteratorResultObject(null, done: true);
+                }
+
+                if (_index >= _map._entries.Count)
+                {
+                    return new IteratorResultObject(null, done: true);
+                }
+
+                var entry = _map._entries[_index++];
+                object? value = _kind switch
+                {
+                    MapIteratorKind.Keys => entry[0],
+                    MapIteratorKind.Values => entry[1],
+                    MapIteratorKind.Entries => new JavaScriptRuntime.Array(new object?[] { entry[0], entry[1] }),
+                    _ => null
+                };
+
+                return new IteratorResultObject(value, done: false);
+            }
+
+            public object next(object? value = null) => Next();
+
+            public void Return()
+            {
+                _isClosed = true;
+            }
         }
 
         private sealed class SameValueZeroKeyComparer : IEqualityComparer<object>
