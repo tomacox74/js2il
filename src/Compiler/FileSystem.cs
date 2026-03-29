@@ -7,5 +7,7 @@ public class FileSystem : IFileSystem
 {
     public string ReadAllText(string path) => File.ReadAllText(path);
 
+    public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
+
     public bool FileExists(string path) => File.Exists(path);
 }

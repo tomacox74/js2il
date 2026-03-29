@@ -24,13 +24,13 @@
     {
       "clause": "24.4.2",
       "title": "Properties of the WeakSet Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-weakset-constructor"
     },
     {
       "clause": "24.4.2.1",
       "title": "WeakSet.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-weakset.prototype"
     },
     {
@@ -48,7 +48,7 @@
     {
       "clause": "24.4.3.2",
       "title": "WeakSet.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-weakset.prototype.constructor"
     },
     {
@@ -98,9 +98,12 @@
       {
         "clause": "24.4.2.1",
         "feature": "WeakSet constructor value and WeakSet.prototype surface",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weakset.prototype",
-        "notes": "WeakSet is compiler-recognized in new expressions but is not exposed as a first-class global constructor value with readable prototype properties."
+        "testScripts": [
+          "Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Prototype_Surface.js"
+        ],
+        "notes": "JS2IL now exposes globalThis.WeakSet as a constructor value, wires WeakSet.prototype and WeakSet.prototype.constructor, and attaches the public prototype to new WeakSet instances so Object.getPrototypeOf(weakSet) and weakSet instanceof WeakSet observe the JS-visible surface. Iterable construction and the remaining WeakSet prototype gaps are still incomplete."
       },
       {
         "clause": "24.4.3",
