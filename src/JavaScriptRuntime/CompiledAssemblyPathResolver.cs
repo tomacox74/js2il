@@ -4,11 +4,19 @@ namespace JavaScriptRuntime;
 
 internal static class CompiledAssemblyPathResolver
 {
-    internal static string? Resolve(Assembly modulesAssembly, string? configuredAssemblyPath)
+    internal static string? Resolve(
+        Assembly modulesAssembly,
+        string? configuredAssemblyPath,
+        bool allowAssemblyLocationFallback = true)
     {
         if (!string.IsNullOrWhiteSpace(configuredAssemblyPath))
         {
             return configuredAssemblyPath;
+        }
+
+        if (!allowAssemblyLocationFallback)
+        {
+            return null;
         }
 
         try

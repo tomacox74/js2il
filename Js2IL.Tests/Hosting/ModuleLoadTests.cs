@@ -94,20 +94,17 @@ public class ModuleLoadTests
     public void JsEngine_LoadModule_WhenHostedForkNotConfigured_ThrowsExplicitConfigurationError()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("hostingForkUnsupported", "Hosting_ForkUnsupported.js");
+        AssertHostedForkConfigurationError(module);
+    }
 
-        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingForkUnsupported");
-        dynamic exports = exportsObj;
-
-        var ex = Assert.Throws<JsInvocationException>(() => exports.attemptFork());
-        Assert.Equal("hostingForkUnsupported", ex.ModuleId);
-        Assert.Equal("attemptFork", ex.MemberName);
-
-        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
-        Assert.Equal("Error", jsError.JsName);
-        Assert.Contains(
-            "child_process.fork requires a compiled assembly path when running under JsEngine hosting",
-            jsError.JsMessage ?? jsError.Message,
-            StringComparison.OrdinalIgnoreCase);
+    [Fact]
+    public void JsEngine_LoadModule_WhenHostedForkAssemblyLoadedFromPathWithoutExplicitConfig_ThrowsExplicitConfigurationError()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "hostingForkUnsupported",
+            "Hosting_ForkUnsupported.js",
+            loadAssemblyFromPath: true);
+        AssertHostedForkConfigurationError(module);
     }
 
     public interface IHostedForkExports : IDisposable
@@ -413,18 +410,44 @@ public class ModuleLoadTests
         return reader.ReadToEnd();
     }
 
-    private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResource(string moduleName, string scriptResourcePath)
+    private static void AssertHostedForkConfigurationError(CompiledModuleAssembly module)
+    {
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingForkUnsupported");
+        dynamic exports = exportsObj;
+
+        var ex = Assert.Throws<JsInvocationException>(() => exports.attemptFork());
+        Assert.Equal("hostingForkUnsupported", ex.ModuleId);
+        Assert.Equal("attemptFork", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("Error", jsError.JsName);
+        Assert.Contains(
+            "child_process.fork requires a compiled assembly path when running under JsEngine hosting",
+            jsError.JsMessage ?? jsError.Message,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(
+            "Pass JsModuleLoadOptions.CompiledAssemblyPath",
+            jsError.JsMessage ?? jsError.Message,
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResource(
+        string moduleName,
+        string scriptResourcePath,
+        bool loadAssemblyFromPath = false)
     {
         return CompileAndLoadModuleAssemblyFromResources(
             rootModuleName: moduleName,
             rootScriptResourcePath: scriptResourcePath,
-            additionalFiles: new Dictionary<string, string>(StringComparer.Ordinal));
+            additionalFiles: new Dictionary<string, string>(StringComparer.Ordinal),
+            loadAssemblyFromPath: loadAssemblyFromPath);
     }
 
     private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResources(
         string rootModuleName,
         string rootScriptResourcePath,
-        IReadOnlyDictionary<string, string> additionalFiles)
+        IReadOnlyDictionary<string, string> additionalFiles,
+        bool loadAssemblyFromPath = false)
     {
         var outputDir = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "ModuleLoad", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(outputDir);
@@ -458,12 +481,20 @@ public class ModuleLoadTests
 
         var alc = new HostingTestAssemblyLoadContext(jsRuntimeAsm, outputDir);
         Assembly compiledAssembly;
-        using (var stream = File.OpenRead(uniquePath))
+        string launchableAssemblyPath;
+        if (loadAssemblyFromPath)
         {
+            compiledAssembly = alc.LoadFromAssemblyPath(uniquePath);
+            launchableAssemblyPath = uniquePath;
+        }
+        else
+        {
+            using var stream = File.OpenRead(uniquePath);
             compiledAssembly = alc.LoadFromStream(stream);
+            launchableAssemblyPath = compiledPath;
         }
 
-        return new CompiledModuleAssembly(outputDir, uniquePath, compiledPath, alc, compiledAssembly);
+        return new CompiledModuleAssembly(outputDir, uniquePath, launchableAssemblyPath, alc, compiledAssembly);
     }
 
     private sealed class HostingTestAssemblyLoadContext : AssemblyLoadContext

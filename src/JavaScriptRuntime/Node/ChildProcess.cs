@@ -335,7 +335,7 @@ namespace JavaScriptRuntime.Node
                 {
                     throw new Error(
                         "child_process.fork requires a compiled assembly path when running under JsEngine hosting. " +
-                        "Pass JsModuleLoadOptions.CompiledAssemblyPath (or load the assembly from a physical path) so hosted children can launch the compiled assembly.");
+                        "Pass JsModuleLoadOptions.CompiledAssemblyPath when calling JsEngine.LoadModule(...) so hosted children know which compiled assembly to launch.");
                 }
 
                 throw new Error("child_process.fork requires the current compiled assembly path to be available.");
@@ -662,13 +662,18 @@ namespace JavaScriptRuntime.Node
             NodeNetworkingCommon.ScheduleImmediateOnEventLoop(NodeScheduler, action);
         }
 
-        private static string ResolveForkAssemblyPath(
+        private static string? ResolveForkAssemblyPath(
             DependencyInjection.ServiceContainer serviceProvider,
             RuntimeExecutionContext? runtimeContext)
         {
             if (!string.IsNullOrWhiteSpace(runtimeContext?.CompiledAssemblyPath))
             {
                 return runtimeContext.CompiledAssemblyPath!;
+            }
+
+            if (runtimeContext?.IsHosted == true)
+            {
+                return null;
             }
 
             return CommonJS.ModuleContext.CreateModuleContext(serviceProvider).__filename;

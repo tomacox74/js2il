@@ -236,7 +236,7 @@ internal sealed class JsRuntimeInstance : IDisposable
             var serviceProvider = Engine.ConfigureServiceProviderForCurrentThread(
                 compiledAssembly,
                 isHostedExecution: true,
-                compiledAssemblyPath: CompiledAssemblyPathResolver.Resolve(compiledAssembly, _options?.CompiledAssemblyPath));
+                compiledAssemblyPath: _options?.CompiledAssemblyPath);
             _serviceProvider = serviceProvider;
 
             if (_options?.ChildProcessLauncher != null)

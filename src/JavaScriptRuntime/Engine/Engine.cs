@@ -80,7 +80,10 @@ public class Engine
 
         serviceProvider.RegisterInstance(new RuntimeExecutionContext(
             isHostedExecution,
-            CompiledAssemblyPathResolver.Resolve(modulesAssembly, compiledAssemblyPath)));
+            CompiledAssemblyPathResolver.Resolve(
+                modulesAssembly,
+                compiledAssemblyPath,
+                allowAssemblyLocationFallback: !isHostedExecution)));
 
         // Resolve scheduler/event-loop singletons via DI so other services can depend on them.
         // Note: ServiceContainer manages singleton instances per-container.
