@@ -7,11 +7,15 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Map")]
     public sealed class Map : IEnumerable<object[]>
     {
+        internal static readonly object Prototype = CreatePrototype();
         private static readonly object NullKeySentinel = new object();
         private readonly List<object[]> _entries = new List<object[]>(); // [key, value] pairs
         private readonly Dictionary<object, int> _keyIndex = new Dictionary<object, int>(new SameValueZeroKeyComparer());
 
-        public Map() { }
+        public Map()
+        {
+            PrototypeChain.SetPrototype(this, Prototype);
+        }
 
         // JavaScript Map.prototype.size property
         public double size
@@ -104,6 +108,97 @@ namespace JavaScriptRuntime
         {
             return _entries;
         }
+
+        private static object CreatePrototype()
+        {
+            var prototype = new JsObject();
+            DefinePrototypeMethod(prototype, "clear", PrototypeClear);
+            DefinePrototypeMethod(prototype, "delete", PrototypeDelete);
+            DefinePrototypeMethod(prototype, "entries", PrototypeEntries);
+            DefinePrototypeMethod(prototype, "get", PrototypeGet);
+            DefinePrototypeMethod(prototype, "has", PrototypeHas);
+            DefinePrototypeMethod(prototype, "keys", PrototypeKeys);
+            DefinePrototypeMethod(prototype, "set", PrototypeSet);
+            DefinePrototypeMethod(prototype, "values", PrototypeValues);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "size", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = (Func<object[], object?[]?, object?>)PrototypeSizeGetter
+            });
+            return prototype;
+        }
+
+        private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = method
+            });
+        }
+
+        private static Map GetThisMap(string memberName)
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            if (thisValue is not Map map)
+            {
+                throw new TypeError($"Map.prototype.{memberName} called on non-Map");
+            }
+
+            return map;
+        }
+
+        private static object? PrototypeClear(object[] scopes, object?[]? args)
+        {
+            GetThisMap("clear").clear();
+            return null;
+        }
+
+        private static object? PrototypeDelete(object[] scopes, object?[]? args)
+        {
+            var map = GetThisMap("delete");
+            var key = args != null && args.Length > 0 ? args[0] : null;
+            return map.delete(key);
+        }
+
+        private static object? PrototypeEntries(object[] scopes, object?[]? args)
+            => GetThisMap("entries").entries();
+
+        private static object? PrototypeGet(object[] scopes, object?[]? args)
+        {
+            var map = GetThisMap("get");
+            var key = args != null && args.Length > 0 ? args[0] : null;
+            return map.get(key);
+        }
+
+        private static object? PrototypeHas(object[] scopes, object?[]? args)
+        {
+            var map = GetThisMap("has");
+            var key = args != null && args.Length > 0 ? args[0] : null;
+            return map.has(key);
+        }
+
+        private static object? PrototypeKeys(object[] scopes, object?[]? args)
+            => GetThisMap("keys").keys();
+
+        private static object? PrototypeSet(object[] scopes, object?[]? args)
+        {
+            var map = GetThisMap("set");
+            var key = args != null && args.Length > 0 ? args[0] : null;
+            var value = args != null && args.Length > 1 ? args[1] : null;
+            return map.set(key, value);
+        }
+
+        private static object? PrototypeSizeGetter(object[] scopes, object?[]? args)
+            => GetThisMap("size").size;
+
+        private static object? PrototypeValues(object[] scopes, object?[]? args)
+            => GetThisMap("values").values();
 
         private static object NormalizeKey(object? key)
         {

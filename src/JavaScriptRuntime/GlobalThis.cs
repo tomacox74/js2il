@@ -65,6 +65,46 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
 
+        private static readonly Func<object[], object?[]?, object?> _mapConstructorValue = static (_, args) =>
+        {
+            if (args == null || args.Length == 0)
+            {
+                return new JavaScriptRuntime.Map();
+            }
+
+            throw new NotSupportedException("The Map constructor only supports zero arguments in js2il.");
+        };
+
+        private static readonly Func<object[], object?[]?, object?> _setConstructorValue = static (_, args) =>
+        {
+            if (args == null || args.Length == 0)
+            {
+                return new JavaScriptRuntime.Set();
+            }
+
+            throw new NotSupportedException("The Set constructor only supports zero arguments in js2il.");
+        };
+
+        private static readonly Func<object[], object?[]?, object?> _weakMapConstructorValue = static (_, args) =>
+        {
+            if (args == null || args.Length == 0)
+            {
+                return new JavaScriptRuntime.WeakMap();
+            }
+
+            throw new NotSupportedException("The WeakMap constructor only supports zero arguments in js2il.");
+        };
+
+        private static readonly Func<object[], object?[]?, object?> _weakSetConstructorValue = static (_, args) =>
+        {
+            if (args == null || args.Length == 0)
+            {
+                return new JavaScriptRuntime.WeakSet();
+            }
+
+            throw new NotSupportedException("The WeakSet constructor only supports zero arguments in js2il.");
+        };
+
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
@@ -122,6 +162,10 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = JavaScriptRuntime.Array.Prototype
             });
+            ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);
+            ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
+            ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
+            ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -378,6 +422,18 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Array), Array);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Array), dict[nameof(GlobalThis.Array)]);
 
+            dict.TryAdd(nameof(GlobalThis.Map), Map);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Map), dict[nameof(GlobalThis.Map)]);
+
+            dict.TryAdd(nameof(GlobalThis.Set), Set);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Set), dict[nameof(GlobalThis.Set)]);
+
+            dict.TryAdd(nameof(GlobalThis.WeakMap), WeakMap);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.WeakMap), dict[nameof(GlobalThis.WeakMap)]);
+
+            dict.TryAdd(nameof(GlobalThis.WeakSet), WeakSet);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.WeakSet), dict[nameof(GlobalThis.WeakSet)]);
+
             dict.TryAdd(nameof(GlobalThis.Object), Object);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Object), dict[nameof(GlobalThis.Object)]);
 
@@ -474,6 +530,14 @@ namespace JavaScriptRuntime
         /// Invoking it will throw until Array constructor semantics are implemented.
         /// </summary>
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
+
+        public static Func<object[], object?[]?, object?> Map => _mapConstructorValue;
+
+        public static Func<object[], object?[]?, object?> Set => _setConstructorValue;
+
+        public static Func<object[], object?[]?, object?> WeakMap => _weakMapConstructorValue;
+
+        public static Func<object[], object?[]?, object?> WeakSet => _weakSetConstructorValue;
 
         public static Func<object[], object?, object> Object => _objectConstructorValue;
 
@@ -724,6 +788,26 @@ namespace JavaScriptRuntime
         private static Timers GetTimers()
         {
             return _serviceProvider.Value!.Resolve<Timers>();
+        }
+
+        private static void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = prototypeValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
         }
     }
 }

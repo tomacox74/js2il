@@ -38,5 +38,8 @@ namespace Js2IL.Tests.Map
 
         [Fact]
         public Task Map_Null_Key() { var testName = nameof(Map_Null_Key); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Map_Constructor_Prototype_Surface() { var testName = nameof(Map_Constructor_Prototype_Surface); return ExecutionTest(testName); }
     }
 }
