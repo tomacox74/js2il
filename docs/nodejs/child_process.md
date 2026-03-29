@@ -15,7 +15,7 @@
 
 ## Notes
 
-Provides synchronous process execution, async spawn/exec/execFile, and a documented fork baseline for compiled child modules in the current assembly. The supported slice includes authenticated JSON-only parent/child IPC over loopback (`child.on('message')`, `child.send(...)`, `process.on('message')`, `process.send(...)`), environment overlays, and basic signal/kill reporting with explicit diagnostics for unsupported detached, advanced serialization, non-IPC stdio modes, and hosted `JsEngine` fork calls (tracked by issue #914).
+Provides synchronous process execution, async spawn/exec/execFile, and a documented fork baseline for compiled child modules in the current assembly. The supported slice includes authenticated JSON-only parent/child IPC over loopback (`child.on('message')`, `child.send(...)`, `process.on('message')`, `process.send(...)`), environment overlays, and basic signal/kill reporting with explicit diagnostics for unsupported detached, advanced serialization, and non-IPC stdio modes. Hosted `JsEngine` runtimes can also use `fork()` when the host supplies a launchable compiled assembly path (for example via `JsModuleLoadOptions.CompiledAssemblyPath`), and may override process creation through `IChildProcessLauncher`.
 
 ## APIs
 
@@ -58,7 +58,7 @@ Runs a file directly without an implicit shell and optionally invokes an error-f
 
 ### fork(modulePath[, args][, options])
 
-Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables an authenticated JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, deterministic `disconnect` before `exit`/`close`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, Node-internal IPC behaviors, and hosted `JsEngine` fork support remain explicit unsupported diagnostics (hosted follow-up: issue #914).
+Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables an authenticated JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, deterministic `disconnect` before `exit`/`close`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. In hosted `JsEngine` scenarios, the child is launched from the compiled assembly path supplied by the host (for example `JsModuleLoadOptions.CompiledAssemblyPath`); if no launchable assembly path is available, `fork()` throws an explicit runtime error. Hosts can customize process creation through `IChildProcessLauncher`. Detached children, advanced serialization, handle passing, and Node-internal IPC behaviors remain unsupported.
 
 **Tests:**
 - `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_MessagePassing` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)

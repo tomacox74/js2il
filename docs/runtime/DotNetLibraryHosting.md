@@ -31,6 +31,12 @@ Calling `JsEngine.LoadModule(...)` creates a runtime instance that:
 
 Everything you interact with (exports, functions, constructors, object instances) is a proxy that marshals work to that script thread.
 
+### Hosted `child_process.fork()`
+
+Hosted runtimes can launch compiled child processes, but unlike standalone `Engine.Execute(...)` they may not have a launchable assembly path unless the host supplies one explicitly. Use the `JsEngine.LoadModule(..., new JsModuleLoadOptions { CompiledAssemblyPath = "..." })` overload when the compiled assembly was loaded from a stream or another non-file source.
+
+If you need to customize how hosted children are launched, provide an `IChildProcessLauncher` via `JsModuleLoadOptions.ChildProcessLauncher`. Hosted children still execute out-of-process, use the same authenticated JSON IPC bootstrap as standalone children, resolve `fork()` module ids from the compiled assembly manifest, and should be disposed from the host by disposing the module runtime returned by `LoadModule(...)` once no more work is needed.
+
 ### End-to-end example (script + C#)
 
 Example JavaScript module (for example, `example.js`) compiled into *some compiled assembly* under module id `example`:
