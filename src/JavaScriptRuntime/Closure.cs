@@ -616,6 +616,16 @@ namespace JavaScriptRuntime
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
             try
             {
+            if (target is global::JavaScriptRuntime.Proxy proxy)
+            {
+                if (proxy.TryInvokeTrap("apply", "apply", new object?[] { proxy.GetTarget("apply"), RuntimeServices.GetCurrentThis(), args }, out var trapResult))
+                {
+                    return trapResult!;
+                }
+
+                target = proxy.GetTarget("apply");
+            }
+
 
             // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
             // the standard js2il scopes array parameter. Support calling it via the generic dispatcher.
@@ -662,6 +672,11 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
+            if (target is global::JavaScriptRuntime.Proxy)
+            {
+                return InvokeWithArgsCore(target, scopes, newTarget: null, System.Array.Empty<object>());
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(System.Array.Empty<object>());
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -697,6 +712,12 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var args = new object?[] { a0 };
+
+            if (target is global::JavaScriptRuntime.Proxy)
+            {
+                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -732,6 +753,12 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var args = new object?[] { a0, a1 };
+
+            if (target is global::JavaScriptRuntime.Proxy)
+            {
+                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -767,6 +794,12 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var args = new object?[] { a0, a1, a2 };
+
+            if (target is global::JavaScriptRuntime.Proxy)
+            {
+                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -802,6 +835,12 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var args = new object?[] { a0, a1, a2, a3 };
+
+            if (target is global::JavaScriptRuntime.Proxy)
+            {
+                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -837,6 +876,12 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var args = new object?[] { a0, a1, a2, a3, a4 };
+
+            if (target is global::JavaScriptRuntime.Proxy)
+            {
+                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -1821,4 +1866,3 @@ namespace JavaScriptRuntime
         }
     }
 }
-
