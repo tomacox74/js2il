@@ -333,11 +333,16 @@ internal static class Stackify
                 return true;
 
             // Scope field loads - side-effect free field reads, similar to parameter loads
-            case LIRLoadLeafScopeField:
-            case LIRLoadParentScopeField:
-                return true;
+            case LIRLoadLeafScopeField loadLeafScopeField:
+                return !loadLeafScopeField.Binding.RequiresRuntimeTemporalDeadZoneChecks;
+            case LIRLoadParentScopeField loadParentScopeField:
+                return !loadParentScopeField.Binding.RequiresRuntimeTemporalDeadZoneChecks;
 
             case LIRLoadScopeField loadScopeField:
+                if (loadScopeField.Binding.RequiresRuntimeTemporalDeadZoneChecks)
+                {
+                    return false;
+                }
                 // Only inline if the scope-instance temp is stable.
                 // If the scope instance temp is backed by a variable slot that can be reassigned
                 // (e.g., per-iteration environment recreation), re-emitting the load could observe
@@ -472,26 +477,32 @@ internal static class Stackify
                 }
                 return true;
 
-            // LIRGetLength/LIRGetStringLength and LIRGetItem are pure runtime calls
-            case LIRGetLength:
-            case LIRGetStringLength:
-            case LIRGetItem:
-            case LIRGetItemAsNumber:
-                return true;
+            // Getter-like instructions are pure, but stackifying them re-emits the getter at the
+            // final use site. That is only safe when the receiver/index operands are themselves
+            // stable inline operands; otherwise delayed emission can observe a different value or
+            // extend a temp's effective lifetime past TempLocalAllocator's liveness model.
+            case LIRGetLength getLength:
+                return IsInlineableOperand(getLength.Object);
+            case LIRGetStringLength getStringLength:
+                return IsInlineableOperand(getStringLength.Receiver);
+            case LIRGetItem getItem:
+                return IsInlineableOperand(getItem.Object) && IsInlineableOperand(getItem.Index);
+            case LIRGetItemAsNumber getItemAsNumber:
+                return IsInlineableOperand(getItemAsNumber.Object) && IsInlineableOperand(getItemAsNumber.Index);
 
-            // Proven Array/Int32Array length gets are side-effect free.
-            case LIRGetJsArrayLength:
-            case LIRGetInt32ArrayLength:
-                return true;
+            // Proven Array/Int32Array length gets are side-effect free when the receiver is stable.
+            case LIRGetJsArrayLength getJsArrayLength:
+                return IsInlineableOperand(getJsArrayLength.Receiver);
+            case LIRGetInt32ArrayLength getInt32ArrayLength:
+                return IsInlineableOperand(getInt32ArrayLength.Receiver);
 
-            // Proven Array element get is side-effect free.
-            case LIRGetJsArrayElement:
-                return true;
+            // Proven Array element gets are side-effect free when receiver/index are stable.
+            case LIRGetJsArrayElement getJsArrayElement:
+                return IsInlineableOperand(getJsArrayElement.Receiver) && IsInlineableOperand(getJsArrayElement.Index);
 
             // Typed intrinsic element get is a side-effect free callvirt get_Item(double).
-            // Safe to inline/stackify.
-            case LIRGetInt32ArrayElement:
-                return true;
+            case LIRGetInt32ArrayElement getInt32ArrayElement:
+                return IsInlineableOperand(getInt32ArrayElement.Receiver) && IsInlineableOperand(getInt32ArrayElement.Index);
 
             // Typed intrinsic element set mutates the array and must never be re-emitted.
             case LIRSetInt32ArrayElement:

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218e
+				// Method begins at RVA 0x21a9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2197
+				// Method begins at RVA 0x21b2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -66,7 +66,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2110
+			// Method begins at RVA 0x2120
 			// Header size: 12
 			// Code size: 62 (0x3e)
 			.maxstack 8
@@ -107,7 +107,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a0
+				// Method begins at RVA 0x21bb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -127,7 +127,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a9
+				// Method begins at RVA 0x21c4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -152,7 +152,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x215a
+			// Method begins at RVA 0x216a
 			// Header size: 1
 			// Code size: 42 (0x2a)
 			.maxstack 8
@@ -184,15 +184,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2185
+			// Method begins at RVA 0x2195
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope::b
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -210,7 +213,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 179 (0xb3)
+		// Code size: 193 (0xc1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope,
@@ -277,14 +280,20 @@
 		IL_0090: ldloc.0
 		IL_0091: ldloc.2
 		IL_0092: stfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope::b
-		IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009c: ldloc.0
-		IL_009d: ldfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope::b
-		IL_00a2: ldstr "a"
-		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b1: pop
-		IL_00b2: ret
+		IL_0097: ldloc.0
+		IL_0098: ldfld object Modules.Classes_Constructor_ReturnObjectOverridesThis/Scope::b
+		IL_009d: ldstr "Cannot access 'b' before initialization"
+		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00a7: stloc.2
+		IL_00a8: ldloc.2
+		IL_00a9: ldstr "a"
+		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00b3: stloc.2
+		IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b9: ldloc.2
+		IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00bf: pop
+		IL_00c0: ret
 	} // end of method Classes_Constructor_ReturnObjectOverridesThis::__js_module_init__
 
 } // end of class Modules.Classes_Constructor_ReturnObjectOverridesThis
@@ -296,7 +305,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b2
+		// Method begins at RVA 0x21cd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

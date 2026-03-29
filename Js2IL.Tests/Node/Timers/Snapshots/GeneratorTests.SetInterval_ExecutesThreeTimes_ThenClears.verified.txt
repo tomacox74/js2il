@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2177
+					// Method begins at RVA 0x218e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216e
+				// Method begins at RVA 0x2185
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -68,7 +68,7 @@
 			)
 			// Method begins at RVA 0x20dc
 			// Header size: 12
-			// Code size: 125 (0x7d)
+			// Code size: 137 (0x89)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -102,19 +102,23 @@
 			IL_0053: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0058: stloc.2
 			IL_0059: ldloc.2
-			IL_005a: brfalse IL_007b
+			IL_005a: brfalse IL_0087
 
 			IL_005f: ldarg.0
 			IL_0060: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
-			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
-			IL_006a: pop
-			IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0070: ldstr "cleared"
-			IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_007a: pop
+			IL_0065: ldstr "Cannot access 'id' before initialization"
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_006f: stloc.1
+			IL_0070: ldloc.1
+			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
+			IL_0076: pop
+			IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_007c: ldstr "cleared"
+			IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0086: pop
 
-			IL_007b: ldnull
-			IL_007c: ret
+			IL_0087: ldnull
+			IL_0088: ret
 		} // end of method ArrowFunction_L5C24::__js_call__
 
 	} // end of class ArrowFunction_L5C24
@@ -134,15 +138,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2165
+			// Method begins at RVA 0x2171
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -219,7 +226,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2180
+		// Method begins at RVA 0x2197
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

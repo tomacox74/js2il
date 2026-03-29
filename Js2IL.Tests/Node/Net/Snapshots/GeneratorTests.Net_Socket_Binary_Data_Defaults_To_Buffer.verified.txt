@@ -26,7 +26,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x266c
+						// Method begins at RVA 0x269c
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -44,7 +44,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2663
+					// Method begins at RVA 0x2693
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -69,7 +69,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2244
+				// Method begins at RVA 0x2260
 				// Header size: 12
 				// Code size: 508 (0x1fc)
 				.maxstack 8
@@ -278,7 +278,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x265a
+				// Method begins at RVA 0x268a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -368,7 +368,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x267e
+					// Method begins at RVA 0x26b9
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -392,9 +392,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x244c
+				// Method begins at RVA 0x2468
 				// Header size: 12
-				// Code size: 121 (0x79)
+				// Code size: 131 (0x83)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -406,34 +406,36 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope
 				IL_0008: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
-				IL_000d: stloc.0
-				IL_000e: ldc.i4.4
-				IL_000f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_0014: dup
-				IL_0015: ldc.r8 1
-				IL_001e: box [System.Runtime]System.Double
-				IL_0023: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0028: dup
-				IL_0029: ldc.r8 2
-				IL_0032: box [System.Runtime]System.Double
-				IL_0037: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_003c: dup
-				IL_003d: ldc.r8 65
-				IL_0046: box [System.Runtime]System.Double
-				IL_004b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0050: dup
-				IL_0051: ldc.r8 66
-				IL_005a: box [System.Runtime]System.Double
-				IL_005f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-				IL_0069: stloc.1
-				IL_006a: ldloc.0
-				IL_006b: ldstr "write"
-				IL_0070: ldloc.1
-				IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_0076: pop
-				IL_0077: ldnull
-				IL_0078: ret
+				IL_000d: ldstr "Cannot access 'client' before initialization"
+				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0017: stloc.0
+				IL_0018: ldc.i4.4
+				IL_0019: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_001e: dup
+				IL_001f: ldc.r8 1
+				IL_0028: box [System.Runtime]System.Double
+				IL_002d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0032: dup
+				IL_0033: ldc.r8 2
+				IL_003c: box [System.Runtime]System.Double
+				IL_0041: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0046: dup
+				IL_0047: ldc.r8 65
+				IL_0050: box [System.Runtime]System.Double
+				IL_0055: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_005a: dup
+				IL_005b: ldc.r8 66
+				IL_0064: box [System.Runtime]System.Double
+				IL_0069: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+				IL_0073: stloc.1
+				IL_0074: ldloc.0
+				IL_0075: ldstr "write"
+				IL_007a: ldloc.1
+				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0080: pop
+				IL_0081: ldnull
+				IL_0082: ret
 			} // end of method FunctionExpression_client::__js_call__
 
 		} // end of class FunctionExpression_client
@@ -449,7 +451,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2687
+					// Method begins at RVA 0x26c2
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -474,14 +476,15 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x24d4
+				// Method begins at RVA 0x24f8
 				// Header size: 12
-				// Code size: 84 (0x54)
+				// Code size: 96 (0x60)
 				.maxstack 8
 				.locals init (
 					[0] bool,
 					[1] object,
-					[2] object
+					[2] object,
+					[3] object
 				)
 
 				IL_0000: ldarg.2
@@ -511,11 +514,15 @@
 				IL_003c: ldelem.ref
 				IL_003d: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope
 				IL_0042: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
-				IL_0047: ldstr "end"
-				IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-				IL_0051: pop
-				IL_0052: ldnull
-				IL_0053: ret
+				IL_0047: ldstr "Cannot access 'client' before initialization"
+				IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0051: stloc.3
+				IL_0052: ldloc.3
+				IL_0053: ldstr "end"
+				IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+				IL_005d: pop
+				IL_005e: ldnull
+				IL_005f: ret
 			} // end of method FunctionExpression_L30C20::__js_call__
 
 		} // end of class FunctionExpression_L30C20
@@ -535,7 +542,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2699
+						// Method begins at RVA 0x26d4
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -558,7 +565,7 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 00 00 00 00 00 00
 					)
-					// Method begins at RVA 0x263e
+					// Method begins at RVA 0x266e
 					// Header size: 1
 					// Code size: 18 (0x12)
 					.maxstack 8
@@ -580,7 +587,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2690
+					// Method begins at RVA 0x26cb
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -604,7 +611,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2534
+				// Method begins at RVA 0x2564
 				// Header size: 12
 				// Code size: 254 (0xfe)
 				.maxstack 8
@@ -714,15 +721,18 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2675
+				// Method begins at RVA 0x26a5
 				// Header size: 1
-				// Code size: 8 (0x8)
+				// Code size: 19 (0x13)
 				.maxstack 8
 
 				IL_0000: ldarg.0
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
+				IL_0006: ldarg.0
+				IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+				IL_000c: stfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
+				IL_0011: nop
+				IL_0012: ret
 			} // end of method Scope::.ctor
 
 		} // end of class Scope
@@ -742,7 +752,7 @@
 			)
 			// Method begins at RVA 0x2154
 			// Header size: 12
-			// Code size: 226 (0xe2)
+			// Code size: 254 (0xfe)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope,
@@ -800,48 +810,56 @@
 			IL_006f: ldc.i4.0
 			IL_0070: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 			IL_0075: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::reply
-			IL_007a: ldc.i4.2
-			IL_007b: newarr [System.Runtime]System.Object
-			IL_0080: dup
-			IL_0081: ldc.i4.0
-			IL_0082: ldarg.0
-			IL_0083: stelem.ref
-			IL_0084: dup
-			IL_0085: ldc.i4.1
-			IL_0086: ldloc.0
-			IL_0087: stelem.ref
-			IL_0088: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L30C20::__js_call__(object[], object, object)
-			IL_008e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0093: stloc.s 5
-			IL_0095: ldloc.0
-			IL_0096: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
-			IL_009b: ldstr "on"
-			IL_00a0: ldstr "data"
-			IL_00a5: ldloc.s 5
-			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_00ac: pop
-			IL_00ad: ldc.i4.2
-			IL_00ae: newarr [System.Runtime]System.Object
-			IL_00b3: dup
-			IL_00b4: ldc.i4.0
-			IL_00b5: ldarg.0
-			IL_00b6: stelem.ref
-			IL_00b7: dup
-			IL_00b8: ldc.i4.1
-			IL_00b9: ldloc.0
-			IL_00ba: stelem.ref
-			IL_00bb: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L36C19::__js_call__(object[], object)
-			IL_00c1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_00c6: stloc.s 5
-			IL_00c8: ldloc.0
-			IL_00c9: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
-			IL_00ce: ldstr "on"
-			IL_00d3: ldstr "end"
-			IL_00d8: ldloc.s 5
-			IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_00df: pop
-			IL_00e0: ldnull
-			IL_00e1: ret
+			IL_007a: ldloc.0
+			IL_007b: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
+			IL_0080: ldstr "Cannot access 'client' before initialization"
+			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_008a: stloc.s 5
+			IL_008c: ldc.i4.2
+			IL_008d: newarr [System.Runtime]System.Object
+			IL_0092: dup
+			IL_0093: ldc.i4.0
+			IL_0094: ldarg.0
+			IL_0095: stelem.ref
+			IL_0096: dup
+			IL_0097: ldc.i4.1
+			IL_0098: ldloc.0
+			IL_0099: stelem.ref
+			IL_009a: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L30C20::__js_call__(object[], object, object)
+			IL_00a0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_00a5: stloc.s 4
+			IL_00a7: ldloc.s 5
+			IL_00a9: ldstr "on"
+			IL_00ae: ldstr "data"
+			IL_00b3: ldloc.s 4
+			IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00ba: pop
+			IL_00bb: ldloc.0
+			IL_00bc: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
+			IL_00c1: ldstr "Cannot access 'client' before initialization"
+			IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_00cb: stloc.s 4
+			IL_00cd: ldc.i4.2
+			IL_00ce: newarr [System.Runtime]System.Object
+			IL_00d3: dup
+			IL_00d4: ldc.i4.0
+			IL_00d5: ldarg.0
+			IL_00d6: stelem.ref
+			IL_00d7: dup
+			IL_00d8: ldc.i4.1
+			IL_00d9: ldloc.0
+			IL_00da: stelem.ref
+			IL_00db: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L36C19::__js_call__(object[], object)
+			IL_00e1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_00e6: stloc.s 5
+			IL_00e8: ldloc.s 4
+			IL_00ea: ldstr "on"
+			IL_00ef: ldstr "end"
+			IL_00f4: ldloc.s 5
+			IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00fb: pop
+			IL_00fc: ldnull
+			IL_00fd: ret
 		} // end of method FunctionExpression_L23C30::__js_call__
 
 	} // end of class FunctionExpression_L23C30
@@ -862,7 +880,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2651
+			// Method begins at RVA 0x2681
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -961,7 +979,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x26a2
+		// Method begins at RVA 0x26dd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

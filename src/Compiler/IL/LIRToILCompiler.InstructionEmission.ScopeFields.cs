@@ -38,6 +38,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(scopeTypeHandle);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+                    EmitTemporalDeadZoneGuard(ilEncoder, loadScopeFieldTemp.Binding);
 
                     var fieldClrType = GetDeclaredScopeFieldClrType(loadScopeFieldTemp.Field.ScopeName, loadScopeFieldTemp.Field.FieldName);
                     EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(loadScopeFieldTemp.Result), ilEncoder);
@@ -102,6 +103,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.LoadLocal(0); // Scope instance is always in local 0
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+                    EmitTemporalDeadZoneGuard(ilEncoder, loadLeafField.Binding);
 
                     var fieldClrType = GetDeclaredScopeFieldClrType(loadLeafField.Field.ScopeName, loadLeafField.Field.FieldName);
                     EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(loadLeafField.Result), ilEncoder);

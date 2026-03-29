@@ -1,0 +1,225 @@
+﻿// IL code: Variable_TemporalDeadZoneShadowing
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Variable_TemporalDeadZoneShadowing
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L5C0
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested private auto ansi beforefieldinit Block_L6C6
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x213a
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L6C6::.ctor
+
+			} // end of class Block_L6C6
+
+			.class nested private auto ansi beforefieldinit Block_L9C14
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2143
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L9C14::.ctor
+
+			} // end of class Block_L9C14
+
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2131
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L5C0::.ctor
+
+		} // end of class Block_L5C0
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2128
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 187 (0xbb)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Variable_TemporalDeadZoneShadowing/Scope,
+			[1] string,
+			[2] class [System.Runtime]System.Exception,
+			[3] object,
+			[4] object,
+			[5] string,
+			[6] object
+		)
+
+		IL_0000: newobj instance void Modules.Variable_TemporalDeadZoneShadowing/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldstr "outer"
+		IL_000b: stloc.1
+		.try
+		{
+			IL_000c: ldstr "Cannot access 'value' before initialization"
+			IL_0011: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+			IL_001b: dup
+			IL_001c: isinst [System.Runtime]System.Exception
+			IL_0021: dup
+			IL_0022: brtrue IL_002e
+
+			IL_0027: pop
+			IL_0028: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_002d: throw
+
+			IL_002e: pop
+			IL_002f: throw
+
+			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0035: ldnull
+			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_003b: pop
+			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0041: ldstr "NO_TDZ"
+			IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_004b: pop
+			IL_004c: leave IL_009a
+		} // end .try
+		catch [System.Runtime]System.Exception
+		{
+			IL_0051: stloc.2
+			IL_0052: ldloc.2
+			IL_0053: dup
+			IL_0054: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0059: dup
+			IL_005a: brtrue IL_0070
+
+			IL_005f: pop
+			IL_0060: dup
+			IL_0061: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0066: dup
+			IL_0067: brtrue IL_007c
+
+			IL_006c: pop
+			IL_006d: pop
+			IL_006e: rethrow
+
+			IL_0070: pop
+			IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0076: stloc.3
+			IL_0077: br IL_007e
+
+			IL_007c: pop
+			IL_007d: stloc.3
+
+			IL_007e: ldloc.3
+			IL_007f: stloc.s 6
+			IL_0081: ldloc.s 6
+			IL_0083: stloc.s 4
+			IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008a: ldstr "INNER_TDZ"
+			IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0094: pop
+			IL_0095: leave IL_009a
+		} // end handler
+
+		IL_009a: ldstr "inner"
+		IL_009f: stloc.s 5
+		IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a6: ldloc.s 5
+		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ad: pop
+		IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b3: ldloc.1
+		IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b9: pop
+		IL_00ba: ret
+	} // end of method Variable_TemporalDeadZoneShadowing::__js_module_init__
+
+} // end of class Modules.Variable_TemporalDeadZoneShadowing
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x214c
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Variable_TemporalDeadZoneShadowing::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

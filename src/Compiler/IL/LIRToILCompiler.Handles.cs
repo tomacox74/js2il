@@ -3,6 +3,7 @@ using Js2IL.Services;
 using Js2IL.Services.ILGenerators;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Services.VariableBindings;
+using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -83,6 +84,22 @@ internal sealed partial class LIRToILCompiler
                 : _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         ilEncoder.OpCode(ILOpCode.Stfld);
         ilEncoder.Token(fieldHandle);
+    }
+
+    private void EmitTemporalDeadZoneGuard(InstructionEncoder ilEncoder, BindingInfo binding)
+    {
+        if (!binding.RequiresRuntimeTemporalDeadZoneChecks)
+        {
+            return;
+        }
+
+        var ensureInitialized = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.EnsureTemporalDeadZoneInitialized),
+            parameterTypes: new[] { typeof(object), typeof(string) });
+        ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString($"Cannot access '{binding.Name}' before initialization"));
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(ensureInitialized);
     }
 
     /// <summary>

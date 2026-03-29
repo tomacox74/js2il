@@ -11,7 +11,7 @@ namespace JavaScriptRuntime.Node
     /// that mirrors the host process Environment.ExitCode.
     /// </summary>
     [NodeModule("process")]
-    public sealed class Process
+    public sealed class Process : EventEmitter
     {
         private const string TargetNodeVersion = "22.0.0";
         private static readonly Lazy<string> _platform = new(DetectPlatform);
@@ -24,6 +24,15 @@ namespace JavaScriptRuntime.Node
             _environment = environment;
             _versions = new Lazy<object>(CreateVersions);
             _env = new Lazy<object>(CreateEnvSnapshot);
+
+            if (GlobalThis.ServiceProvider != null
+                && GlobalThis.ServiceProvider.TryResolve<ChildProcessIpcChannel>(out var ipcChannel)
+                && ipcChannel != null)
+            {
+                ipcChannel.MessageReceived += payload => emit("message", payload);
+                ipcChannel.Disconnected += () => emit("disconnect");
+                ipcChannel.Error += ex => emit("error", ex as Error ?? new Error(ex.Message, ex));
+            }
         }
 
         /// <summary>
@@ -143,6 +152,11 @@ namespace JavaScriptRuntime.Node
         public object env
         {
             get => _env.Value;
+        }
+
+        public bool connected
+        {
+            get => TryGetIpcChannel()?.Connected ?? false;
         }
 
         private static string DetectPlatform()
@@ -289,6 +303,33 @@ namespace JavaScriptRuntime.Node
             // Record explicitly provided exit code
             _environment.ExitCode = ec;
             _environment.Exit(ec);
+        }
+
+        public bool send(object? message)
+        {
+            var ipcChannel = TryGetIpcChannel();
+            if (ipcChannel == null)
+            {
+                throw new Error("process.send() is only available when the current process was started with an IPC channel.");
+            }
+
+            return ipcChannel.Send(message);
+        }
+
+        public void disconnect()
+        {
+            TryGetIpcChannel()?.Disconnect();
+        }
+
+        private static ChildProcessIpcChannel? TryGetIpcChannel()
+        {
+            if (GlobalThis.ServiceProvider != null
+                && GlobalThis.ServiceProvider.TryResolve<ChildProcessIpcChannel>(out var ipcChannel))
+            {
+                return ipcChannel;
+            }
+
+            return null;
         }
     }
 }

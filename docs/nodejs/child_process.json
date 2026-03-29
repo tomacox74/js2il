@@ -7,7 +7,7 @@
   "docsUrl": "https://nodejs.org/api/child_process.html",
   "nodeVersionTarget": "22.x LTS",
   "implementation": "src/JavaScriptRuntime/Node/ChildProcess.cs",
-  "notes": "Provides synchronous process execution plus a minimal async ChildProcess surface with piped stdout/stderr capture, exit/close events, callback completion for exec/execFile, kill() on the returned handle, and basic stdio support for 'pipe', 'inherit', and 'ignore'.",
+  "notes": "Provides synchronous process execution, async spawn/exec/execFile, and a documented fork baseline for compiled child modules in the current assembly. The supported slice includes authenticated JSON-only parent/child IPC over loopback (`child.on('message')`, `child.send(...)`, `process.on('message')`, `process.send(...)`), environment overlays, and basic signal/kill reporting with explicit diagnostics for unsupported detached, advanced serialization, non-IPC stdio modes, and hosted `JsEngine` fork calls (tracked by issue #914).",
   "apis": [
     {
       "name": "spawn(command[, args][, options])",
@@ -69,17 +69,50 @@
       ]
     },
     {
+      "name": "fork(modulePath[, args][, options])",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables an authenticated JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, deterministic `disconnect` before `exit`/`close`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, Node-internal IPC behaviors, and hosted `JsEngine` fork support remain explicit unsupported diagnostics (hosted follow-up: issue #914).",
+      "docs": "https://nodejs.org/api/child_process.html#child_processforkmodulepath-args-options",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_MessagePassing",
+          "file": "Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Kill_And_Env",
+          "file": "Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Unsupported_Options",
+          "file": "Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_MessagePassing",
+          "file": "Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Kill_And_Env",
+          "file": "Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Unsupported_Options",
+          "file": "Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
       "name": "spawnSync(command, args, options)",
       "kind": "function",
       "status": "supported",
-      "notes": "Supports cwd, shell, and stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling). Returns { status, stdout, stderr }.",
+      "notes": "Supports cwd, shell, environment overrides, and stdio ('pipe'/'inherit'/'ignore' for the first three slots). Returns { status, stdout, stderr }.",
       "docs": "https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options"
     },
     {
       "name": "execSync(command, options)",
       "kind": "function",
       "status": "supported",
-      "notes": "Supports cwd, stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling), and encoding ('utf8'). Throws an Error-like object with status/code/stdout/stderr on non-zero exit.",
+      "notes": "Supports cwd, environment overrides, stdio ('pipe'/'inherit'/'ignore' for the first three slots), and encoding ('utf8'). Throws an Error-like object with status/code/stdout/stderr on non-zero exit.",
       "docs": "https://nodejs.org/api/child_process.html#child_processexecsynccommand-options"
     }
   ]

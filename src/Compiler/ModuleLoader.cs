@@ -137,6 +137,76 @@ public class ModuleLoader
         return modules;
     }
 
+    public bool LinkModules(Modules modules, ICompilerOutput? logger = null)
+    {
+        ArgumentNullException.ThrowIfNull(modules);
+
+        foreach (var module in modules._modules.Values)
+        {
+            var record = module.ModuleRecord ??= new ModuleRecord();
+            record.LinkPhase = ModuleLinkPhase.Unlinked;
+            record.LinkErrors.Clear();
+            record.ResolvedExports.Clear();
+            record.EvaluationPhase = ModuleEvaluationPhase.Unevaluated;
+            record.EvaluationOrder = -1;
+            record.EvaluationComponent = -1;
+        }
+
+        var linkedModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var hadErrors = false;
+        foreach (var module in modules._modules.Values)
+        {
+            if (!LinkModule(module, modules, linkedModules))
+            {
+                hadErrors = true;
+            }
+        }
+
+        if (hadErrors)
+        {
+            FlushModuleLinkErrors(modules, logger ?? _ux);
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool PlanModuleEvaluation(Modules modules, ICompilerOutput? logger = null)
+    {
+        ArgumentNullException.ThrowIfNull(modules);
+
+        var localLogger = logger ?? _ux;
+        foreach (var module in modules._modules.Values)
+        {
+            var record = module.ModuleRecord ??= new ModuleRecord();
+            if (record.LinkPhase != ModuleLinkPhase.Linked)
+            {
+                localLogger.WriteLineError($"Error: [{module.ModuleId}] {module.Path}: module evaluation planning requires successful module linking.");
+                record.EvaluationPhase = ModuleEvaluationPhase.EvaluationError;
+                return false;
+            }
+
+            record.EvaluationPhase = ModuleEvaluationPhase.Unevaluated;
+            record.EvaluationOrder = -1;
+            record.EvaluationComponent = -1;
+        }
+
+        var components = ComputeModuleEvaluationComponents(modules);
+        var orderedComponents = TopologicallyOrderComponents(components, modules);
+        for (var order = 0; order < orderedComponents.Count; order++)
+        {
+            foreach (var module in orderedComponents[order])
+            {
+                var record = module.ModuleRecord!;
+                record.EvaluationComponent = components[module.Path];
+                record.EvaluationOrder = order;
+                record.EvaluationPhase = ModuleEvaluationPhase.Planned;
+            }
+        }
+
+        return true;
+    }
+
     private bool TryLoadAndParseModule(
         string modulePath,
         string rootModulePath,
@@ -201,6 +271,8 @@ public class ModuleLoader
             }
         }
 
+        var moduleRecord = BuildModuleRecord(ast, moduleDependencies);
+
         if (!TryRewriteStaticModuleSyntax(jsSource, ast, out var rewrittenSource, out var rewriteError))
         {
             module = null;
@@ -264,7 +336,8 @@ public class ModuleLoader
             ClrNamespace = clrNamespace,
             ClrTypeName = clrTypeName,
             IsPackageModule = isPackageModule,
-            Ast = ast
+            Ast = ast,
+            ModuleRecord = moduleRecord
         };
 
         module.Dependencies.AddRange(moduleDependencies);
@@ -465,6 +538,7 @@ function __js2il_esm_export(name, getter) {
 
             resolvedDependencies.Add(new ModuleDependency
             {
+                Request = runtimeSpecifier,
                 ResolvedPath = resolvedPath,
                 RequestedAliasModuleId = requestedAliasModuleId
             });
@@ -1923,6 +1997,709 @@ function __js2il_esm_export(name, getter) {
         }
 
         return sb.ToString();
+    }
+
+    private static ModuleRecord BuildModuleRecord(Acornima.Ast.Program ast, IReadOnlyList<ModuleDependency> moduleDependencies)
+    {
+        var record = new ModuleRecord();
+
+        void AddRequestedModule(string moduleRequest)
+        {
+            var dependency = moduleDependencies.FirstOrDefault(existing =>
+                string.Equals(existing.Request, moduleRequest, StringComparison.Ordinal));
+            if (dependency == null)
+            {
+                return;
+            }
+
+            if (record.RequestedModules.Any(existing =>
+                    string.Equals(existing.Specifier, dependency.Request, StringComparison.Ordinal)
+                    && string.Equals(existing.ResolvedPath, dependency.ResolvedPath, StringComparison.OrdinalIgnoreCase)))
+            {
+                return;
+            }
+
+            record.RequestedModules.Add(new ModuleRequestRecord
+            {
+                Specifier = dependency.Request,
+                ResolvedPath = dependency.ResolvedPath
+            });
+        }
+
+        foreach (var statement in ast.Body)
+        {
+            switch (statement)
+            {
+                case ImportDeclaration { Source: StringLiteral sourceLiteral } importDeclaration:
+                    record.HasStaticModuleSyntax = true;
+                    AddRequestedModule(sourceLiteral.Value);
+                    if (importDeclaration.Specifiers.Count == 0)
+                    {
+                        record.ImportEntries.Add(new ModuleImportEntry
+                        {
+                            Kind = ModuleImportKind.SideEffect,
+                            ModuleRequest = sourceLiteral.Value
+                        });
+                        break;
+                    }
+
+                    foreach (var specifier in importDeclaration.Specifiers)
+                    {
+                        switch (specifier)
+                        {
+                            case ImportDefaultSpecifier defaultSpecifier when defaultSpecifier.Local is Identifier defaultLocal:
+                                record.ImportEntries.Add(new ModuleImportEntry
+                                {
+                                    Kind = ModuleImportKind.Default,
+                                    ModuleRequest = sourceLiteral.Value,
+                                    LocalName = defaultLocal.Name,
+                                    ImportName = "default"
+                                });
+                                break;
+
+                            case ImportNamespaceSpecifier namespaceSpecifier when namespaceSpecifier.Local is Identifier namespaceLocal:
+                                record.ImportEntries.Add(new ModuleImportEntry
+                                {
+                                    Kind = ModuleImportKind.Namespace,
+                                    ModuleRequest = sourceLiteral.Value,
+                                    LocalName = namespaceLocal.Name
+                                });
+                                break;
+
+                            case ImportSpecifier importSpecifier when importSpecifier.Local is Identifier importLocal:
+                                record.ImportEntries.Add(new ModuleImportEntry
+                                {
+                                    Kind = ModuleImportKind.Named,
+                                    ModuleRequest = sourceLiteral.Value,
+                                    LocalName = importLocal.Name,
+                                    ImportName = GetExpressionName(importSpecifier.Imported)
+                                });
+                                break;
+                        }
+                    }
+
+                    break;
+
+                case ExportNamedDeclaration { Declaration: not null } exportNamedDeclaration:
+                    record.HasStaticModuleSyntax = true;
+                    AddLocalDeclarationExports(record, exportNamedDeclaration.Declaration);
+                    break;
+
+                case ExportNamedDeclaration { Source: StringLiteral sourceLiteral } exportNamedFrom:
+                    record.HasStaticModuleSyntax = true;
+                    AddRequestedModule(sourceLiteral.Value);
+                    foreach (var specifier in exportNamedFrom.Specifiers)
+                    {
+                        record.IndirectExportEntries.Add(new ModuleExportEntry
+                        {
+                            Kind = ModuleExportKind.Indirect,
+                            ExportName = GetExpressionName(specifier.Exported),
+                            LocalName = GetExpressionName(specifier.Local),
+                            ModuleRequest = sourceLiteral.Value
+                        });
+                    }
+
+                    break;
+
+                case ExportNamedDeclaration exportNamedDeclaration:
+                    record.HasStaticModuleSyntax = true;
+                    foreach (var specifier in exportNamedDeclaration.Specifiers)
+                    {
+                        record.LocalExportEntries.Add(new ModuleExportEntry
+                        {
+                            Kind = ModuleExportKind.Local,
+                            ExportName = GetExpressionName(specifier.Exported),
+                            LocalName = GetExpressionName(specifier.Local)
+                        });
+                    }
+
+                    break;
+
+                case ExportDefaultDeclaration exportDefaultDeclaration:
+                    record.HasStaticModuleSyntax = true;
+                    var defaultBindingName = exportDefaultDeclaration.Declaration switch
+                    {
+                        FunctionDeclaration { Id: not null } functionDeclaration => functionDeclaration.Id!.Name,
+                        ClassDeclaration { Id: not null } classDeclaration => classDeclaration.Id!.Name,
+                        _ => "default"
+                    };
+
+                    record.LocalExportEntries.Add(new ModuleExportEntry
+                    {
+                        Kind = ModuleExportKind.Default,
+                        ExportName = "default",
+                        LocalName = defaultBindingName
+                    });
+                    break;
+
+                case ExportAllDeclaration { Source: StringLiteral sourceLiteral } exportAllDeclaration when exportAllDeclaration.Exported != null:
+                    record.HasStaticModuleSyntax = true;
+                    AddRequestedModule(sourceLiteral.Value);
+                    record.IndirectExportEntries.Add(new ModuleExportEntry
+                    {
+                        Kind = ModuleExportKind.Namespace,
+                        ExportName = GetExpressionName(exportAllDeclaration.Exported),
+                        LocalName = "*namespace*",
+                        ModuleRequest = sourceLiteral.Value
+                    });
+                    break;
+
+                case ExportAllDeclaration { Source: StringLiteral sourceLiteral }:
+                    record.HasStaticModuleSyntax = true;
+                    AddRequestedModule(sourceLiteral.Value);
+                    record.StarExportEntries.Add(new ModuleExportEntry
+                    {
+                        Kind = ModuleExportKind.Star,
+                        ExportName = "*",
+                        ModuleRequest = sourceLiteral.Value
+                    });
+                    break;
+            }
+        }
+
+        return record;
+    }
+
+    private static void AddLocalDeclarationExports(ModuleRecord record, INode declaration)
+    {
+        switch (declaration)
+        {
+            case VariableDeclaration variableDeclaration:
+                var bindingNames = new List<string>();
+                foreach (var declarator in variableDeclaration.Declarations)
+                {
+                    CollectBindingNames(declarator.Id, bindingNames);
+                }
+
+                foreach (var bindingName in bindingNames.Distinct(StringComparer.Ordinal))
+                {
+                    record.LocalExportEntries.Add(new ModuleExportEntry
+                    {
+                        Kind = ModuleExportKind.Local,
+                        ExportName = bindingName,
+                        LocalName = bindingName
+                    });
+                }
+                break;
+
+            case FunctionDeclaration functionDeclaration when functionDeclaration.Id != null:
+                record.LocalExportEntries.Add(new ModuleExportEntry
+                {
+                    Kind = ModuleExportKind.Local,
+                    ExportName = functionDeclaration.Id.Name,
+                    LocalName = functionDeclaration.Id.Name
+                });
+                break;
+
+            case ClassDeclaration classDeclaration when classDeclaration.Id != null:
+                record.LocalExportEntries.Add(new ModuleExportEntry
+                {
+                    Kind = ModuleExportKind.Local,
+                    ExportName = classDeclaration.Id.Name,
+                    LocalName = classDeclaration.Id.Name
+                });
+                break;
+        }
+    }
+
+    private bool LinkModule(ModuleDefinition module, Modules modules, HashSet<string> linkedModules)
+    {
+        var record = module.ModuleRecord ??= new ModuleRecord();
+        if (record.LinkPhase == ModuleLinkPhase.Linked)
+        {
+            return true;
+        }
+
+        if (record.LinkPhase == ModuleLinkPhase.Linking)
+        {
+            return true;
+        }
+
+        if (record.LinkPhase == ModuleLinkPhase.LinkError)
+        {
+            return false;
+        }
+
+        record.LinkPhase = ModuleLinkPhase.Linking;
+
+        var hadErrors = false;
+        foreach (var request in record.RequestedModules)
+        {
+            if (!modules._modules.TryGetValue(request.ResolvedPath, out var dependencyModule))
+            {
+                record.LinkErrors.Add($"Module request '{request.Specifier}' resolved to '{request.ResolvedPath}', but that module was not loaded.");
+                hadErrors = true;
+                continue;
+            }
+
+            if (!linkedModules.Contains(dependencyModule.Path) && !LinkModule(dependencyModule, modules, linkedModules))
+            {
+                hadErrors = true;
+            }
+        }
+
+        var directExportNames = new HashSet<string>(
+            record.LocalExportEntries.Select(entry => entry.ExportName)
+                .Concat(record.IndirectExportEntries.Select(entry => entry.ExportName)),
+            StringComparer.Ordinal);
+
+        var exportNames = new HashSet<string>(GetExportedNames(module, modules, new HashSet<string>(StringComparer.OrdinalIgnoreCase)), StringComparer.Ordinal);
+        foreach (var exportName in exportNames)
+        {
+            var resolution = ResolveExport(module, exportName, modules, new HashSet<string>(StringComparer.Ordinal));
+            switch (resolution.Status)
+            {
+                case ModuleExportResolutionStatus.Resolved:
+                    record.ResolvedExports[exportName] = resolution.Export!;
+                    break;
+                case ModuleExportResolutionStatus.Ambiguous:
+                    record.LinkErrors.Add($"Ambiguous export '{exportName}' in module '{module.ModuleId}'.");
+                    hadErrors = true;
+                    break;
+                case ModuleExportResolutionStatus.NotFound when directExportNames.Contains(exportName):
+                    record.LinkErrors.Add($"Export '{exportName}' in module '{module.ModuleId}' could not be resolved during module linking.");
+                    hadErrors = true;
+                    break;
+            }
+        }
+
+        foreach (var importEntry in record.ImportEntries)
+        {
+            if (importEntry.Kind is ModuleImportKind.SideEffect or ModuleImportKind.Namespace)
+            {
+                continue;
+            }
+
+            if (!TryGetDependencyModule(module, importEntry.ModuleRequest, modules, out var dependencyModule))
+            {
+                record.LinkErrors.Add($"Import request '{importEntry.ModuleRequest}' in module '{module.ModuleId}' could not be resolved during module linking.");
+                hadErrors = true;
+                continue;
+            }
+
+            var importedName = importEntry.ImportName ?? "default";
+            var resolution = ResolveExport(dependencyModule, importedName, modules, new HashSet<string>(StringComparer.Ordinal));
+            switch (resolution.Status)
+            {
+                case ModuleExportResolutionStatus.NotFound:
+                    record.LinkErrors.Add($"Module '{dependencyModule.ModuleId}' does not export '{importedName}' required by '{module.ModuleId}'.");
+                    hadErrors = true;
+                    break;
+                case ModuleExportResolutionStatus.Ambiguous:
+                    record.LinkErrors.Add($"Module '{dependencyModule.ModuleId}' exports '{importedName}' ambiguously, so '{module.ModuleId}' cannot import it.");
+                    hadErrors = true;
+                    break;
+            }
+        }
+
+        record.LinkPhase = hadErrors || record.LinkErrors.Count > 0
+            ? ModuleLinkPhase.LinkError
+            : ModuleLinkPhase.Linked;
+
+        if (record.LinkPhase == ModuleLinkPhase.Linked)
+        {
+            linkedModules.Add(module.Path);
+            return true;
+        }
+
+        return false;
+    }
+
+    private IEnumerable<string> GetExportedNames(ModuleDefinition module, Modules modules, HashSet<string> exportStarSet)
+    {
+        if (!exportStarSet.Add(module.Path))
+        {
+            return Enumerable.Empty<string>();
+        }
+
+        var record = module.ModuleRecord;
+        if (record == null)
+        {
+            return Enumerable.Empty<string>();
+        }
+
+        var names = new HashSet<string>(
+            record.LocalExportEntries.Select(entry => entry.ExportName)
+                .Concat(record.IndirectExportEntries.Select(entry => entry.ExportName)),
+            StringComparer.Ordinal);
+
+        foreach (var starExport in record.StarExportEntries)
+        {
+            if (!TryGetDependencyModule(module, starExport.ModuleRequest, modules, out var dependencyModule))
+            {
+                continue;
+            }
+
+            foreach (var exportName in GetExportedNames(dependencyModule, modules, exportStarSet))
+            {
+                if (!string.Equals(exportName, "default", StringComparison.Ordinal))
+                {
+                    names.Add(exportName);
+                }
+            }
+        }
+
+        exportStarSet.Remove(module.Path);
+        return names;
+    }
+
+    private ModuleExportResolution ResolveExport(ModuleDefinition module, string exportName, Modules modules, HashSet<string> resolveSet)
+    {
+        var record = module.ModuleRecord;
+        if (record == null)
+        {
+            return ModuleExportResolution.NotFound();
+        }
+
+        // CommonJS-shaped modules expose properties dynamically through the existing runtime interop,
+        // so the linker treats any requested name as potentially available instead of rejecting it
+        // with the stricter static ESM ResolveExport rules.
+        if (IsDynamicExportSurface(module))
+        {
+            return ModuleExportResolution.Resolved(new ModuleResolvedExport
+            {
+                ExportName = exportName,
+                TargetModule = module,
+                BindingName = exportName,
+                Kind = string.Equals(exportName, "default", StringComparison.Ordinal)
+                    ? ModuleExportKind.Default
+                    : ModuleExportKind.Local
+            });
+        }
+
+        if (record.ResolvedExports.TryGetValue(exportName, out var cached))
+        {
+            return ModuleExportResolution.Resolved(cached);
+        }
+
+        var resolveKey = module.Path + "\n" + exportName;
+        if (!resolveSet.Add(resolveKey))
+        {
+            return ModuleExportResolution.NotFound();
+        }
+
+        ModuleResolvedExport? resolved = null;
+
+        foreach (var localExport in record.LocalExportEntries.Where(entry => string.Equals(entry.ExportName, exportName, StringComparison.Ordinal)))
+        {
+            var candidate = new ModuleResolvedExport
+            {
+                ExportName = exportName,
+                TargetModule = module,
+                BindingName = localExport.LocalName ?? exportName,
+                Kind = localExport.Kind
+            };
+
+            if (!TryMergeResolvedExport(ref resolved, candidate))
+            {
+                return ModuleExportResolution.Ambiguous();
+            }
+        }
+
+        foreach (var indirectExport in record.IndirectExportEntries.Where(entry => string.Equals(entry.ExportName, exportName, StringComparison.Ordinal)))
+        {
+            if (!TryGetDependencyModule(module, indirectExport.ModuleRequest, modules, out var dependencyModule))
+            {
+                continue;
+            }
+
+            ModuleExportResolution candidateResolution;
+            if (indirectExport.Kind == ModuleExportKind.Namespace)
+            {
+                candidateResolution = ModuleExportResolution.Resolved(new ModuleResolvedExport
+                {
+                    ExportName = exportName,
+                    TargetModule = dependencyModule,
+                    BindingName = "*namespace*",
+                    Kind = ModuleExportKind.Namespace
+                });
+            }
+            else
+            {
+                candidateResolution = ResolveExport(dependencyModule, indirectExport.LocalName ?? exportName, modules, resolveSet);
+            }
+
+            if (candidateResolution.Status == ModuleExportResolutionStatus.Ambiguous)
+            {
+                return candidateResolution;
+            }
+
+            if (candidateResolution.Status == ModuleExportResolutionStatus.Resolved
+                && !TryMergeResolvedExport(ref resolved, candidateResolution.Export!))
+            {
+                return ModuleExportResolution.Ambiguous();
+            }
+        }
+
+        if (resolved != null)
+        {
+            return ModuleExportResolution.Resolved(resolved);
+        }
+
+        if (string.Equals(exportName, "default", StringComparison.Ordinal))
+        {
+            return ModuleExportResolution.NotFound();
+        }
+
+        foreach (var starExport in record.StarExportEntries)
+        {
+            if (!TryGetDependencyModule(module, starExport.ModuleRequest, modules, out var dependencyModule))
+            {
+                continue;
+            }
+
+            var candidateResolution = ResolveExport(dependencyModule, exportName, modules, resolveSet);
+            if (candidateResolution.Status == ModuleExportResolutionStatus.NotFound)
+            {
+                continue;
+            }
+
+            if (candidateResolution.Status == ModuleExportResolutionStatus.Ambiguous)
+            {
+                return candidateResolution;
+            }
+
+            if (!TryMergeResolvedExport(ref resolved, candidateResolution.Export!))
+            {
+                return ModuleExportResolution.Ambiguous();
+            }
+        }
+
+        return resolved != null
+            ? ModuleExportResolution.Resolved(resolved)
+            : ModuleExportResolution.NotFound();
+    }
+
+    private static bool TryMergeResolvedExport(ref ModuleResolvedExport? current, ModuleResolvedExport candidate)
+    {
+        if (current == null)
+        {
+            current = candidate;
+            return true;
+        }
+
+        return ReferenceEquals(current.TargetModule, candidate.TargetModule)
+            && string.Equals(current.BindingName, candidate.BindingName, StringComparison.Ordinal)
+            && current.Kind == candidate.Kind;
+    }
+
+    private static bool TryGetDependencyModule(ModuleDefinition module, string? moduleRequest, Modules modules, out ModuleDefinition dependencyModule)
+    {
+        dependencyModule = null!;
+        if (string.IsNullOrWhiteSpace(moduleRequest))
+        {
+            return false;
+        }
+
+        var resolvedPath = module.ModuleRecord?.RequestedModules
+            .FirstOrDefault(request => string.Equals(request.Specifier, moduleRequest, StringComparison.Ordinal))
+            ?.ResolvedPath
+            ?? module.Dependencies
+                .FirstOrDefault(dependency => string.Equals(dependency.Request, moduleRequest, StringComparison.Ordinal))
+                ?.ResolvedPath;
+
+        if (resolvedPath != null && modules._modules.TryGetValue(resolvedPath, out var resolvedDependencyModule))
+        {
+            dependencyModule = resolvedDependencyModule;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsDynamicExportSurface(ModuleDefinition module)
+    {
+        if (string.Equals(Path.GetExtension(module.Path), ".cjs", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        var record = module.ModuleRecord;
+        if (record == null || string.Equals(Path.GetExtension(module.Path), ".mjs", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (record.HasStaticModuleSyntax)
+        {
+            return false;
+        }
+
+        return record.LocalExportEntries.Count == 0
+            && record.IndirectExportEntries.Count == 0
+            && record.StarExportEntries.Count == 0;
+    }
+
+    private static Dictionary<string, int> ComputeModuleEvaluationComponents(Modules modules)
+    {
+        var index = 0;
+        var componentIndex = 0;
+        var stack = new Stack<ModuleDefinition>();
+        var onStack = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var indices = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        var lowLinks = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        var components = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        void StrongConnect(ModuleDefinition module)
+        {
+            indices[module.Path] = index;
+            lowLinks[module.Path] = index;
+            index++;
+            stack.Push(module);
+            onStack.Add(module.Path);
+
+            foreach (var dependency in GetStaticModuleGraphDependencies(module, modules))
+            {
+                if (!indices.ContainsKey(dependency.Path))
+                {
+                    StrongConnect(dependency);
+                    lowLinks[module.Path] = Math.Min(lowLinks[module.Path], lowLinks[dependency.Path]);
+                }
+                else if (onStack.Contains(dependency.Path))
+                {
+                    lowLinks[module.Path] = Math.Min(lowLinks[module.Path], indices[dependency.Path]);
+                }
+            }
+
+            // If low-link does not point back to this node's DFS index, this module is not the
+            // root of a strongly connected component yet, so leave it on the stack for its root.
+            if (lowLinks[module.Path] != indices[module.Path])
+            {
+                return;
+            }
+
+            while (stack.Count > 0)
+            {
+                var connected = stack.Pop();
+                onStack.Remove(connected.Path);
+                components[connected.Path] = componentIndex;
+                if (string.Equals(connected.Path, module.Path, StringComparison.OrdinalIgnoreCase))
+                {
+                    break;
+                }
+            }
+
+            componentIndex++;
+        }
+
+        foreach (var module in modules._modules.Values)
+        {
+            if (!indices.ContainsKey(module.Path))
+            {
+                StrongConnect(module);
+            }
+        }
+
+        return components;
+    }
+
+    private static List<List<ModuleDefinition>> TopologicallyOrderComponents(Dictionary<string, int> components, Modules modules)
+    {
+        var grouped = modules._modules.Values
+            .GroupBy(module => components[module.Path])
+            .ToDictionary(group => group.Key, group => group.ToList());
+        var ordered = new List<List<ModuleDefinition>>();
+        var visited = new HashSet<int>();
+
+        void Visit(int componentId)
+        {
+            if (!visited.Add(componentId))
+            {
+                return;
+            }
+
+            foreach (var module in grouped[componentId])
+            {
+                foreach (var dependency in GetStaticModuleGraphDependencies(module, modules))
+                {
+                    if (!components.TryGetValue(dependency.Path, out var dependencyComponent)
+                        || dependencyComponent == componentId)
+                    {
+                        continue;
+                    }
+
+                    Visit(dependencyComponent);
+                }
+            }
+
+            ordered.Add(grouped[componentId]);
+        }
+
+        foreach (var componentId in grouped.Keys.OrderBy(id => id))
+        {
+            Visit(componentId);
+        }
+
+        return ordered;
+    }
+
+    private static IEnumerable<ModuleDefinition> GetStaticModuleGraphDependencies(ModuleDefinition module, Modules modules)
+    {
+        var record = module.ModuleRecord;
+        if (record == null)
+        {
+            yield break;
+        }
+
+        var yielded = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var request in record.RequestedModules)
+        {
+            if (string.IsNullOrWhiteSpace(request.ResolvedPath)
+                || !yielded.Add(request.ResolvedPath)
+                || !modules._modules.TryGetValue(request.ResolvedPath, out var dependencyModule))
+            {
+                continue;
+            }
+
+            yield return dependencyModule;
+        }
+    }
+
+    private static void FlushModuleLinkErrors(Modules modules, ICompilerOutput logger)
+    {
+        var errors = modules._modules.Values
+            .Select(module => (Module: module, Record: module.ModuleRecord))
+            .Where(item => item.Record != null && item.Record.LinkErrors.Count > 0)
+            .ToList();
+        if (errors.Count == 0)
+        {
+            return;
+        }
+
+        logger.WriteLineError("\nModule Link Errors:");
+        foreach (var (module, record) in errors)
+        {
+            foreach (var error in record!.LinkErrors)
+            {
+                logger.WriteLineError($"Error: [{module.ModuleId}] {module.Path}: {error}");
+            }
+        }
+    }
+
+    private enum ModuleExportResolutionStatus
+    {
+        NotFound,
+        Resolved,
+        Ambiguous
+    }
+
+    private readonly struct ModuleExportResolution
+    {
+        public ModuleExportResolutionStatus Status { get; }
+
+        public ModuleResolvedExport? Export { get; }
+
+        private ModuleExportResolution(ModuleExportResolutionStatus status, ModuleResolvedExport? export)
+        {
+            Status = status;
+            Export = export;
+        }
+
+        public static ModuleExportResolution NotFound() => new(ModuleExportResolutionStatus.NotFound, null);
+
+        public static ModuleExportResolution Resolved(ModuleResolvedExport export) => new(ModuleExportResolutionStatus.Resolved, export);
+
+        public static ModuleExportResolution Ambiguous() => new(ModuleExportResolutionStatus.Ambiguous, null);
     }
 
     private sealed class ModuleLoadDiagnostics

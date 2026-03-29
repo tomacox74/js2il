@@ -82,8 +82,9 @@ namespace Js2IL.Services.VariableBindings
             if (!fieldHandle.IsNil)
             {
                 // Keep this in sync with TypeGenerator's field signature emission.
+                var hasExplicitDeclaredFieldType = declaredFieldClrType != null;
                 var resolvedDeclaredFieldType = declaredFieldClrType ?? typeof(object);
-                if (resolvedDeclaredFieldType == typeof(object) && isStableType && clrType != null)
+                if (!hasExplicitDeclaredFieldType && resolvedDeclaredFieldType == typeof(object) && isStableType && clrType != null)
                 {
                     if (clrType == typeof(double)
                         || clrType == typeof(bool)

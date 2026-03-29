@@ -4,14 +4,14 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-03-16T03:21:39Z`
+**Generated:** `2026-03-16T06:25:20Z`
 
 ## Summary
 
-- **Modules:** 18
+- **Modules:** 19
 - **Globals:** 14
   - Supported: 14
-  - Partial: 16
+  - Partial: 17
 
 ## Modules
 
@@ -35,6 +35,7 @@
 | [tls](tls.md) | partial | [Node.js](https://nodejs.org/api/tls.html) |
 | [url](url.md) | partial | [Node.js](https://nodejs.org/api/url.html) |
 | [util](util.md) | partial | [Node.js](https://nodejs.org/api/util.html) |
+| [zlib](zlib.md) | partial | [Node.js](https://nodejs.org/api/zlib.html) |
 
 ## Globals
 

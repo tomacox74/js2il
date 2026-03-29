@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2098
+			// Method begins at RVA 0x20a0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,14 +40,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 60 (0x3c)
+		// Code size: 68 (0x44)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_Spread_Empty/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[4] object
+			[4] object,
+			[5] float64,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.ObjectLiteral_Spread_Empty/Scope::.ctor()
@@ -65,13 +67,17 @@
 		IL_001c: ldloc.2
 		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
 		IL_0022: stloc.s 4
-		IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0029: ldloc.s 4
-		IL_002b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0030: box [System.Runtime]System.Double
-		IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_003a: pop
-		IL_003b: ret
+		IL_0024: ldloc.s 4
+		IL_0026: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_002b: stloc.s 5
+		IL_002d: ldloc.s 5
+		IL_002f: box [System.Runtime]System.Double
+		IL_0034: stloc.s 6
+		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003b: ldloc.s 6
+		IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0042: pop
+		IL_0043: ret
 	} // end of method ObjectLiteral_Spread_Empty::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_Spread_Empty
@@ -83,7 +89,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a1
+		// Method begins at RVA 0x20a9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

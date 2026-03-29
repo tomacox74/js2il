@@ -21,5 +21,21 @@ namespace Js2IL.Tests.Node.ChildProcess
         [Fact]
         public Task Require_ChildProcess_ExecFile_NonZero()
             => GenerateTest(nameof(Require_ChildProcess_ExecFile_NonZero));
+
+        [Fact]
+        public Task Require_ChildProcess_Fork_MessagePassing()
+            => GenerateTest(
+                nameof(Require_ChildProcess_Fork_MessagePassing),
+                new[] { "Require_ChildProcess_Fork_MessagePassing_Child" });
+
+        [Fact]
+        public Task Require_ChildProcess_Fork_Kill_And_Env()
+            => GenerateTest(
+                nameof(Require_ChildProcess_Fork_Kill_And_Env),
+                new[] { "Require_ChildProcess_Fork_Kill_And_Env_Child" });
+
+        [Fact]
+        public Task Require_ChildProcess_Fork_Unsupported_Options()
+            => GenerateTest(nameof(Require_ChildProcess_Fork_Unsupported_Options));
     }
 }
