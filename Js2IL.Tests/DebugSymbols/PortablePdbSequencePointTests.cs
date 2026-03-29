@@ -1,3 +1,4 @@
+using Js2IL.DebugSymbols;
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Cryptography;
@@ -10,9 +11,6 @@ namespace Js2IL.Tests.DebugSymbols;
 
 public class PortablePdbSequencePointTests
 {
-    private static readonly Guid JavaScriptDocumentLanguage = new("3A12D0B8-C26C-11D0-B442-00A0244A1DD2");
-    private static readonly Guid Sha256DocumentHashAlgorithm = new("8829D00F-11B8-4213-878B-770E8597AC16");
-
     [Fact]
     public void SequencePoints_AreDecodedWithExpectedLineAndZeroBasedColumns()
     {
@@ -143,10 +141,10 @@ public class PortablePdbSequencePointTests
 
         var document = pdbReader.GetDocument(documentHandle);
         Assert.False(document.Language.IsNil, "Expected the PDB document to include a language GUID.");
-        Assert.Equal(JavaScriptDocumentLanguage, pdbReader.GetGuid(document.Language));
+        Assert.Equal(PortablePdbMetadataConstants.JavaScriptDocumentLanguage, pdbReader.GetGuid(document.Language));
 
         Assert.False(document.HashAlgorithm.IsNil, "Expected the PDB document to include a checksum algorithm GUID.");
-        Assert.Equal(Sha256DocumentHashAlgorithm, pdbReader.GetGuid(document.HashAlgorithm));
+        Assert.Equal(PortablePdbMetadataConstants.Sha256DocumentHashAlgorithm, pdbReader.GetGuid(document.HashAlgorithm));
 
         var expectedHash = SHA256.HashData(Encoding.UTF8.GetBytes(js));
         Assert.Equal(expectedHash, pdbReader.GetBlobBytes(document.Hash));

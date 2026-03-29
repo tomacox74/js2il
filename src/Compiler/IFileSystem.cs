@@ -11,6 +11,11 @@ public interface IFileSystem
     string ReadAllText(string path);
 
     /// <summary>
+    /// Reads all bytes from a file.
+    /// </summary>
+    byte[] ReadAllBytes(string path);
+
+    /// <summary>
     /// Checks if a file exists.
     /// </summary>
     bool FileExists(string path);
