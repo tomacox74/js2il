@@ -65,45 +65,17 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
 
-        private static readonly Func<object[], object?[]?, object?> _mapConstructorValue = static (_, args) =>
-        {
-            if (args == null || args.Length == 0)
-            {
-                return new JavaScriptRuntime.Map();
-            }
+        private static readonly Delegate _mapConstructorValue =
+            CreateCollectionConstructorValue("Map", static () => new JavaScriptRuntime.Map());
 
-            throw new NotSupportedException("The Map constructor only supports zero arguments in js2il.");
-        };
+        private static readonly Delegate _setConstructorValue =
+            CreateCollectionConstructorValue("Set", static () => new JavaScriptRuntime.Set());
 
-        private static readonly Func<object[], object?[]?, object?> _setConstructorValue = static (_, args) =>
-        {
-            if (args == null || args.Length == 0)
-            {
-                return new JavaScriptRuntime.Set();
-            }
+        private static readonly Delegate _weakMapConstructorValue =
+            CreateCollectionConstructorValue("WeakMap", static () => new JavaScriptRuntime.WeakMap());
 
-            throw new NotSupportedException("The Set constructor only supports zero arguments in js2il.");
-        };
-
-        private static readonly Func<object[], object?[]?, object?> _weakMapConstructorValue = static (_, args) =>
-        {
-            if (args == null || args.Length == 0)
-            {
-                return new JavaScriptRuntime.WeakMap();
-            }
-
-            throw new NotSupportedException("The WeakMap constructor only supports zero arguments in js2il.");
-        };
-
-        private static readonly Func<object[], object?[]?, object?> _weakSetConstructorValue = static (_, args) =>
-        {
-            if (args == null || args.Length == 0)
-            {
-                return new JavaScriptRuntime.WeakSet();
-            }
-
-            throw new NotSupportedException("The WeakSet constructor only supports zero arguments in js2il.");
-        };
+        private static readonly Delegate _weakSetConstructorValue =
+            CreateCollectionConstructorValue("WeakSet", static () => new JavaScriptRuntime.WeakSet());
 
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
@@ -531,13 +503,13 @@ namespace JavaScriptRuntime
         /// </summary>
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
 
-        public static Func<object[], object?[]?, object?> Map => _mapConstructorValue;
+        public static Delegate Map => _mapConstructorValue;
 
-        public static Func<object[], object?[]?, object?> Set => _setConstructorValue;
+        public static Delegate Set => _setConstructorValue;
 
-        public static Func<object[], object?[]?, object?> WeakMap => _weakMapConstructorValue;
+        public static Delegate WeakMap => _weakMapConstructorValue;
 
-        public static Func<object[], object?[]?, object?> WeakSet => _weakSetConstructorValue;
+        public static Delegate WeakSet => _weakSetConstructorValue;
 
         public static Func<object[], object?, object> Object => _objectConstructorValue;
 
@@ -790,14 +762,32 @@ namespace JavaScriptRuntime
             return _serviceProvider.Value!.Resolve<Timers>();
         }
 
+        private static JsFuncNoScopes1 CreateCollectionConstructorValue(string name, Func<object> factory)
+        {
+            return (newTarget, iterable) =>
+            {
+                if (newTarget is null)
+                {
+                    throw new TypeError($"Constructor {name} requires 'new'");
+                }
+
+                if (iterable is not null && iterable is not JsNull)
+                {
+                    throw new NotSupportedException($"The {name} constructor only supports zero arguments in js2il.");
+                }
+
+                return factory();
+            };
+        }
+
         private static void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
         {
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
-                Configurable = true,
-                Writable = true,
+                Configurable = false,
+                Writable = false,
                 Value = prototypeValue
             });
             PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor

@@ -71,6 +71,15 @@ public class GlobalThisTests
                     var prototype = ObjectRuntime.GetItem(pair.Constructor, "prototype");
                     Assert.NotNull(prototype);
                     Assert.Same(pair.Constructor, ObjectRuntime.GetItem(prototype!, "constructor"));
+
+                    var descriptor = JavaScriptRuntime.Object.getOwnPropertyDescriptor(pair.Constructor, "prototype");
+                    Assert.NotNull(descriptor);
+                    Assert.False((bool)ObjectRuntime.GetItem(descriptor!, "writable")!);
+                    Assert.False((bool)ObjectRuntime.GetItem(descriptor, "enumerable")!);
+                    Assert.False((bool)ObjectRuntime.GetItem(descriptor, "configurable")!);
+
+                    var error = Assert.Throws<TypeError>(() => Closure.InvokeWithArgs(pair.Constructor, RuntimeServices.EmptyScopes));
+                    Assert.Equal($"Constructor {pair.Name} requires 'new'", error.Message);
                 });
         }
         finally
