@@ -2,10 +2,7 @@
 
 This sample demonstrates compiling and hosting a real npm package: `@mixmark-io/domino`.
 
-It is split into two parts:
-
-- `compiler/` – the npm manifest/lock file plus restored package contents consumed during build.
-- `host/` – a C# console app that restores `Js2IL.SDK` + `Js2IL.Runtime`, runs `npm ci`, compiles the package entry into a .NET assembly, and parses an included HTML document.
+The sample is self-contained under `host/`, which includes the C# console app plus the npm manifest/lock file used during build.
 
 ## Prerequisites
 
@@ -14,7 +11,7 @@ It is split into two parts:
 
 ## Package entry resolution
 
-This sample restores domino into `compiler\node_modules`, points `Js2ILCompile` at the resolved `lib\index.js` entry file, and sets `RootModuleId="@mixmark-io/domino"` so the host can still load the package by module id.
+This sample restores domino into `host\node_modules`, declares `@mixmark-io/domino` directly in `Js2ILCompile`, and relies on the SDK's default module-resolution base (`$(MSBuildProjectDirectory)`), so no extra module-resolution metadata is required.
 
 ## Running the sample
 
@@ -24,6 +21,6 @@ From `samples/Hosting.Domino/host`:
 
 This will:
 
-1. Run `npm ci` in `..\compiler` (to restore `@mixmark-io/domino`)
-2. Compile `compiler\node_modules\@mixmark-io\domino\lib\index.js` via `Js2IL.SDK` with `RootModuleId="@mixmark-io/domino"`
+1. Run `npm ci` in the host project directory (to restore `@mixmark-io/domino`)
+2. Compile `@mixmark-io/domino` via `Js2IL.SDK` using the default same-directory module resolution
 3. Run the host which loads the compiled module and prints stats for `sample.html`
