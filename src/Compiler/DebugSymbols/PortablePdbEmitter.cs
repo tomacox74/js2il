@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
+using System.Security.Cryptography;
 using System.Threading;
 
 namespace Js2IL.DebugSymbols;
@@ -15,11 +16,13 @@ internal static class PortablePdbEmitter
     public static (BlobContentId pdbContentId, ushort portablePdbVersion) Emit(
         MetadataBuilder assemblyMetadata,
         DebugSymbolRegistry debugRegistry,
+        IFileSystem fileSystem,
         string pdbPath,
         MethodDefinitionHandle entryPoint)
     {
         ArgumentNullException.ThrowIfNull(assemblyMetadata);
         ArgumentNullException.ThrowIfNull(debugRegistry);
+        ArgumentNullException.ThrowIfNull(fileSystem);
         ArgumentNullException.ThrowIfNull(pdbPath);
 
         var pdbMetadata = new MetadataBuilder();
@@ -37,16 +40,54 @@ internal static class PortablePdbEmitter
 
             // Portable PDB document name blob encoding is handled by MetadataBuilder.
             var nameHandle = pdbMetadata.GetOrAddDocumentName(documentId);
-
-            // Hash, language, and hash algorithm are currently unspecified.
             var docHandle = pdbMetadata.AddDocument(
                 name: nameHandle,
-                hashAlgorithm: default,
-                hash: default,
-                language: default);
+                hashAlgorithm: TryComputeDocumentHash(documentId, fileSystem, out var documentHash)
+                    ? pdbMetadata.GetOrAddGuid(PortablePdbMetadataConstants.Sha256DocumentHashAlgorithm)
+                    : default,
+                hash: documentHash is { Length: > 0 }
+                    ? pdbMetadata.GetOrAddBlob(documentHash)
+                    : default,
+                language: pdbMetadata.GetOrAddGuid(PortablePdbMetadataConstants.JavaScriptDocumentLanguage));
 
             documentHandleById[documentId] = docHandle;
             return docHandle;
+        }
+
+        static bool TryComputeDocumentHash(string documentId, IFileSystem fileSystem, out byte[] hash)
+        {
+            hash = Array.Empty<byte>();
+            if (string.IsNullOrWhiteSpace(documentId))
+            {
+                return false;
+            }
+
+            byte[]? sourceBytes = null;
+            try
+            {
+                if (fileSystem.FileExists(documentId))
+                {
+                    sourceBytes = fileSystem.ReadAllBytes(documentId);
+                }
+                else if (File.Exists(documentId))
+                {
+                    // Some debug document ids intentionally point at a stable repo/on-disk source path
+                    // that is distinct from the compiler's logical file-system key.
+                    sourceBytes = File.ReadAllBytes(documentId);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException)
+            {
+                return false;
+            }
+
+            if (sourceBytes is null)
+            {
+                return false;
+            }
+
+            hash = SHA256.HashData(sourceBytes);
+            return true;
         }
 
         static (int startLine, int startColumn, int endLine, int endColumn) NormalizeSpan(SourceSpan span)

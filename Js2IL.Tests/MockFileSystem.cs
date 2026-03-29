@@ -76,6 +76,20 @@ public class MockFileSystem : IFileSystem
     }
 
     /// <summary>
+    /// Reads all bytes from a file. Falls back to real file system if file not found in mock.
+    /// </summary>
+    public byte[] ReadAllBytes(string path)
+    {
+        var normalized = NormalizePath(path);
+        if (_files.TryGetValue(normalized, out var content))
+        {
+            return System.Text.Encoding.UTF8.GetBytes(content);
+        }
+
+        return File.ReadAllBytes(normalized);
+    }
+
+    /// <summary>
     /// Checks if a file exists in mock or real file system.
     /// </summary>
     public bool FileExists(string path)
