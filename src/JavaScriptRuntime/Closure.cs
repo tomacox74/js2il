@@ -618,7 +618,8 @@ namespace JavaScriptRuntime
             {
             if (target is global::JavaScriptRuntime.Proxy proxy)
             {
-                if (proxy.TryInvokeTrap("apply", "apply", new object?[] { proxy.GetTarget("apply"), RuntimeServices.GetCurrentThis(), args }, out var trapResult))
+                var trapArgs = new global::JavaScriptRuntime.Array(args);
+                if (proxy.TryInvokeTrap("apply", "apply", new object?[] { proxy.GetTarget("apply"), RuntimeServices.GetCurrentThis(), trapArgs }, out var trapResult))
                 {
                     return trapResult!;
                 }

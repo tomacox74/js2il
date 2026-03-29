@@ -24,13 +24,13 @@
     {
       "clause": "28.2.2",
       "title": "Properties of the Proxy Constructor",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-proxy-constructor"
     },
     {
       "clause": "28.2.2.1",
       "title": "Proxy.revocable ( target , handler )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy.revocable"
     }
   ],
@@ -44,15 +44,23 @@
         "testScripts": [
           "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js",
           "Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js"
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js"
         ],
-        "notes": "Supports creating Proxy instances via new Proxy(target, handler) with get/set/has trap routing for core property access and the in operator. Does not implement full spec invariants, revocation, or other traps (e.g., ownKeys, getOwnPropertyDescriptor, defineProperty, deleteProperty, apply, construct)."
+        "notes": "Supports creating Proxy instances via new Proxy(target, handler) with get/set/has/deleteProperty/ownKeys/apply/construct/getPrototypeOf/setPrototypeOf routing and fallback-to-target behavior when a trap is absent. Full spec invariants plus descriptor-oriented traps (e.g., getOwnPropertyDescriptor, defineProperty) are still missing."
       },
       {
         "clause": "28.2.2.1",
         "feature": "Proxy.revocable",
-        "status": "Not Yet Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-proxy.revocable"
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-proxy.revocable",
+        "testScripts": [
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js"
+        ],
+        "notes": "Proxy.revocable(target, handler) returns { proxy, revoke }. Once revoked, subsequent property access, deletion, ownKeys, prototype operations, calls, and construction throw a TypeError."
       }
     ]
   }

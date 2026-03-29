@@ -49,7 +49,7 @@ namespace JavaScriptRuntime
             var previousThis = RuntimeServices.SetCurrentThis(_handler);
             try
             {
-                result = Closure.InvokeWithArgs(trap, Array.Empty<object>(), args);
+                result = Closure.InvokeWithArgs(trap, System.Array.Empty<object>(), args);
                 return true;
             }
             finally

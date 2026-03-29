@@ -12,13 +12,13 @@
     {
       "clause": "10.5.1",
       "title": "[[GetPrototypeOf]] ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getprototypeof"
     },
     {
       "clause": "10.5.2",
       "title": "[[SetPrototypeOf]] ( V )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-setprototypeof-v"
     },
     {
@@ -66,31 +66,31 @@
     {
       "clause": "10.5.10",
       "title": "[[Delete]] ( P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-delete-p"
     },
     {
       "clause": "10.5.11",
       "title": "[[OwnPropertyKeys]] ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys"
     },
     {
       "clause": "10.5.12",
       "title": "[[Call]] ( thisArgument , argumentsList )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-call-thisargument-argumentslist"
     },
     {
       "clause": "10.5.13",
       "title": "[[Construct]] ( argumentsList , newTarget )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-construct-argumentslist-newtarget"
     },
     {
       "clause": "10.5.14",
       "title": "ValidateNonRevokedProxy ( proxy )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-validatenonrevokedproxy"
     },
     {
@@ -140,18 +140,28 @@
         "testScripts": [
           "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js",
           "Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js"
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js"
         ],
-        "notes": "ProxyCreate is implemented as a minimal holder object that stores the target and handler and lets get/set/has route through them. apply, construct, ownKeys, deleteProperty, getPrototypeOf, setPrototypeOf, and revocation are still missing."
+        "notes": "ProxyCreate stores the target/handler and routes get, set, has, deleteProperty, ownKeys, apply, construct, getPrototypeOf, and setPrototypeOf through handler traps when present. Absent traps fall back to the target/default runtime behavior, but full Proxy invariant enforcement and descriptor-heavy traps remain unimplemented."
       },
       {
         "clause": "10.5.10",
         "feature": "Advanced proxy traps and revocation",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-delete-p",
-        "notes": "deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, isExtensible, preventExtensions, apply, construct, and ValidateNonRevokedProxy/revocable proxy semantics are not implemented yet."
+        "testScripts": [
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js"
+        ],
+        "notes": "deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, apply, construct, and revocation now route through proxy handlers and throw once revoked. isExtensible, preventExtensions, getOwnProperty, defineProperty, and full spec invariant validation are still not modeled."
       }
     ]
   },
-  "intro": "JS2IL currently implements only the core get, set, and has proxy traps needed by existing workloads. The remaining proxy internal methods still fall back to missing or ordinary-object behavior, so proxy support is useful but far from complete."
+  "intro": "JS2IL implements the core get/set/has proxy traps plus deleteProperty, ownKeys, apply, construct, getPrototypeOf, setPrototypeOf, and revocable proxies. Proxy support is still incomplete because descriptor-heavy traps and full Proxy invariant enforcement are not modeled yet."
 }

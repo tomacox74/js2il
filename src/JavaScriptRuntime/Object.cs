@@ -1921,7 +1921,8 @@ namespace JavaScriptRuntime
 
             if (constructor is JavaScriptRuntime.Proxy proxy)
             {
-                if (proxy.TryInvokeTrap("construct", "construct", new object?[] { proxy.GetTarget("construct"), callArgs, newTarget }, out var trapResult))
+                var trapArgs = new JavaScriptRuntime.Array(callArgs);
+                if (proxy.TryInvokeTrap("construct", "construct", new object?[] { proxy.GetTarget("construct"), trapArgs, newTarget }, out var trapResult))
                 {
                     return trapResult;
                 }
